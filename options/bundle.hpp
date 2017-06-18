@@ -48,8 +48,6 @@ class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
     };
 
 private:
-    friend struct bundler;
-
     mutex mtx;
     const QString group_name;
     group saved;
@@ -106,11 +104,11 @@ public:
 };
 
 OTR_OPTIONS_EXPORT bundler& singleton();
-}
+} // ns options::detail
 
 using bundle_ = detail::bundle;
 using bundle = std::shared_ptr<bundle_>;
 
 OTR_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name);
 
-}
+} // ns options

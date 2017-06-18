@@ -42,8 +42,6 @@ struct pose_transform final : private QThread
     pose_transform(QWidget* dst);
     ~pose_transform();
 
-    friend class pose_widget;
-
     void rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z);
     void rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z);
 

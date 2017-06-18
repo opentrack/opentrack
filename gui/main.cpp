@@ -84,7 +84,7 @@ void add_win32_path()
         lib_path.replace("/", "\\");
         const QByteArray lib_path_ = QFile::encodeName(lib_path);
 
-        QString mod_path = OPENTRACK_BASE_PATH + QString(OPENTRACK_LIBRARY_PATH);
+        QString mod_path = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
         mod_path.replace("/", "\\");
         const QByteArray mod_path_ = QFile::encodeName(mod_path);
 

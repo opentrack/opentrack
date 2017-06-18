@@ -179,7 +179,6 @@ std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k& key)
     auto shr = shared(new v(key), [this, key](v* ptr) {
         QMutexLocker l(&implsgl_mtx);
 
-
         auto it = implsgl_data.find(key);
         if (it != implsgl_data.end())
             implsgl_data.erase(it);

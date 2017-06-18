@@ -27,7 +27,6 @@ wine::~wine()
         shm->stop = true;
         wrapper.waitForFinished(100);
     }
-    wrapper.kill();
     wrapper.close();
     //shm_unlink("/" WINE_SHM_NAME);
 }
