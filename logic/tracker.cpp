@@ -147,6 +147,8 @@ void Tracker::logic()
         using std::copysign;
         using std::fabs;
 
+        value(i) = std::fmod(value(i), 360);
+
         const double x = value(i);
         if (fabs(x) - 1e-2 > 180)
             value(i) = fmod(x + copysign(180, x), 360) - copysign(180, x);
