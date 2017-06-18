@@ -18,11 +18,15 @@
 #include <QString>
 #include <QMutex>
 #include <QMutexLocker>
+
+#include <cinttypes>
+#include "freetrackclient/fttypes.h"
+
 #include "compat/shm.h"
 #include "options/options.hpp"
-#include "freetrackclient/fttypes.h"
-#include <memory>
 #include "mutex.hpp"
+
+#include <memory>
 
 using namespace options;
 
@@ -54,7 +58,7 @@ public:
 private:
     settings s;
     PortableLockedShm shm;
-    FTHeap *pMemData;
+    FTHeap volatile *pMemData;
 
     QLibrary FTIRViewsLib;
     QProcess dummyTrackIR;

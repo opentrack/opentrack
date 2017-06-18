@@ -9,6 +9,7 @@
  * copyright notice and this permission notice appear in all copies.             *
  */
 #include "ftnoir_protocol_ft.h"
+#include "opentrack-library-path.h"
 #include <QDebug>
 #include <QFileDialog>
 
@@ -29,17 +30,17 @@ FTControls::FTControls()
 
     tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
 
-    QFile memhacks_pathname(QCoreApplication::applicationDirPath() + "/TIRViews.dll");
+    static const QFile memhacks_pathname(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TIRViews.dll");
     if (!memhacks_pathname.exists()) {
-        ui.chkTIRViews->setChecked( false );
-        ui.chkTIRViews->setEnabled ( false );
+        ui.chkTIRViews->setEnabled(false);
     }
     else {
-        ui.chkTIRViews->setEnabled ( true );
+        ui.chkTIRViews->setEnabled(true);
     }
 }
 
-void FTControls::doOK() {
+void FTControls::doOK()
+{
     s.b->save();
     close();
 }
@@ -49,13 +50,18 @@ void FTControls::doCancel()
     close();
 }
 
-void FTControls::selectDLL() {
-    QString filename = QFileDialog::getOpenFileName( this, tr("Select the desired NPClient DLL"), QCoreApplication::applicationDirPath() + "/NPClient.dll", tr("Dll file (*.dll);;All Files (*)"));
+void FTControls::selectDLL()
+{
+    QString filename = QFileDialog::getOpenFileName(this,
+                                                    tr("Select the desired NPClient DLL"),
+                                                    OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "/NPClient.dll",
+                                                    tr("Dll file (*.dll);;All Files (*)"));
 
-    if (! filename.isEmpty() ) {
+    if (!filename.isEmpty())
+    {
             QSettings node("NaturalPoint", "NATURALPOINT\\NPClient Location");
             QFileInfo dllname(filename);
-            node.setValue( "Path" , dllname.dir().path() );
+            node.setValue("Path", dllname.dir().path());
     }
 }
 

@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013-2015, 2017 Stanislaw Halik <sthalik@misaki.pl>
  * Copyright (c) 2015 Wim Vriend
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -6,11 +6,16 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#include "compat/ndebug-guard.hpp"
+#include <cassert>
+
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 #include "opentrack-library-path.h"
 
+#include <atomic>
 #include <cmath>
+#include <windows.h>
 
 check_for_first_run freetrack::runonce_check = check_for_first_run();
 
@@ -19,7 +24,7 @@ freetrack::freetrack() :
     pMemData((FTHeap*) shm.ptr()),
     viewsStart(nullptr),
     viewsStop(nullptr),
-    intGameID(0)
+    intGameID(-1)
 {
     runonce_check.set_enabled(s.close_protocols_on_exit);
     QObject::connect(&s.close_protocols_on_exit,
@@ -34,8 +39,40 @@ freetrack::~freetrack()
         viewsStop();
         FTIRViewsLib.unload();
     }
-    dummyTrackIR.kill();
     dummyTrackIR.close();
+}
+
+static_assert(sizeof(LONG) == sizeof(std::int32_t), "");
+
+inline void store(float volatile& place, const float value)
+{
+    union
+    {
+        float f32;
+        LONG i32 alignas(alignof(float));
+    } value_;
+
+    value_.f32 = value;
+
+    static_assert(sizeof(value_) == sizeof(float), "");
+    static_assert(offsetof(decltype(value_), f32) == offsetof(decltype(value_), i32), "");
+
+    (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
+}
+
+inline void store(std::int32_t volatile& place, std::int32_t value)
+{
+    (void)InterlockedExchange((LONG volatile*) &place, value);
+}
+
+inline void store(std::uint8_t volatile& place, std::uint8_t value)
+{
+    (void)InterlockedExchange8((char volatile*) &place, char(value));
+}
+
+inline std::int32_t load(std::int32_t volatile& place)
+{
+    return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }
 
 void freetrack::pose(const double* headpose)
@@ -50,52 +87,39 @@ void freetrack::pose(const double* headpose)
     const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < 1e-4;
     const float pitch = -degrees_to_rads(is_crossing_90 ? 89.86 : headpose[Pitch]);
 
-    FTHeap* ft = pMemData;
-    FTData* data = &ft->data;
+    FTHeap volatile* ft = pMemData;
+    FTData volatile* data = &ft->data;
 
-    data->RawX = 0;
-    data->RawY = 0;
-    data->RawZ = 0;
-    data->RawPitch = 0;
-    data->RawYaw = 0;
-    data->RawRoll = 0;
+    store(data->X, tx);
+    store(data->Y, ty);
+    store(data->Z, tz);
 
-    data->X = tx;
-    data->Y = ty;
-    data->Z = tz;
-    data->Yaw = yaw;
-    data->Pitch = pitch;
-    data->Roll = roll;
+    store(data->Yaw, yaw);
+    store(data->Pitch, pitch);
+    store(data->Roll, roll);
 
-    data->X1 = data->DataID;
-    data->X2 = 0;
-    data->X3 = 0;
-    data->X4 = 0;
-    data->Y1 = 0;
-    data->Y2 = 0;
-    data->Y3 = 0;
-    data->Y4 = 0;
-
-    int32_t id = ft->GameID;
+    const std::int32_t id = load(ft->GameID);
 
     if (intGameID != id)
     {
         QString gamename;
-        {
-            unsigned char table[8] = { 0,0,0,0, 0,0,0,0 };
+        unsigned char table[8] {};
 
-            (void) CSV::getGameData(id, table, gamename);
+        (void)CSV::getGameData(id, (unsigned char*)table, gamename);
 
-            for (int i = 0; i < 8; i++)
-                pMemData->table[i] = table[i];
-        }
-        ft->GameID2 = id;
+        for (unsigned k = 0; k < 8; k++)
+            store(pMemData->table[k], table[k]);
+
+        store(ft->GameID2, id);
+        store(data->DataID, 0);
+
         intGameID = id;
+
         QMutexLocker foo(&game_name_mutex);
         connected_game = gamename;
     }
-
-    data->DataID += 1;
+    else
+        (void)InterlockedAdd((LONG volatile*)&data->DataID, 1);
 }
 
 float freetrack::degrees_to_rads(double degrees)
@@ -130,14 +154,14 @@ void freetrack::start_tirviews()
 }
 
 void freetrack::start_dummy() {
-    QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
+    static const QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
 }
 
 void freetrack::set_protocols(bool ft, bool npclient)
 {
-    const QString program_dir = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
+    static const QString program_dir = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
 
     // Registry settings (in HK_USER)
     QSettings settings_ft("Freetrack", "FreetrackClient");
@@ -178,19 +202,30 @@ bool freetrack::correct()
 
     set_protocols(use_ft, use_npclient);
 
-    if (s.useTIRViews) {
+    if (s.useTIRViews && use_npclient)
         start_tirviews();
-    }
-
-    // more games need the dummy executable than previously thought
-    start_dummy();
 
     pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
     pMemData->data.CamHeight = 250;
-    pMemData->GameID2 = 0;
+
+#if 0
+    store(pMemData->data.X1, float(100));
+    store(pMemData->data.Y1, float(200));
+    store(pMemData->data.X2, float(300));
+    store(pMemData->data.Y2, float(200));
+    store(pMemData->data.X3, float(300));
+    store(pMemData->data.Y3, float(100));
+#endif
+
+    store(pMemData->GameID2, 0);
+
     for (int i = 0; i < 8; i++)
-        pMemData->table[i] = 0;
+        store(pMemData->table[i], 0);
+
+    // more games need the dummy executable than previously thought
+    if (use_npclient)
+        start_dummy();
 
     return true;
 }
