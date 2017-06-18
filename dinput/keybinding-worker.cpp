@@ -28,7 +28,7 @@ KeybindingWorker::~KeybindingWorker()
 {
     qDebug() << "exit: keybinding worker";
 
-    should_quit = true;
+    requestInterruption();
     wait();
     if (dinkeyboard) {
         dinkeyboard->Unacquire();
@@ -74,11 +74,10 @@ bool KeybindingWorker::init()
     return true;
 }
 
-KeybindingWorker::KeybindingWorker() : dinkeyboard(nullptr), din(dinput_handle::make_di()), should_quit(false)
+KeybindingWorker::KeybindingWorker() : dinkeyboard(nullptr), din(dinput_handle::make_di())
 {
-    should_quit = !init();
-
-    start();
+    if (init())
+        start();
 }
 
 KeybindingWorker& KeybindingWorker::make()
@@ -92,7 +91,7 @@ void KeybindingWorker::run()
     unsigned char keystate[256] = {0};
     unsigned char old_keystate[256] = {0};
 
-    while (!should_quit)
+    while (!isInterruptionRequested())
     {
         {
             QMutexLocker l(&mtx);

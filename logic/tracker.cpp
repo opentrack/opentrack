@@ -44,7 +44,7 @@ Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
 
 Tracker::~Tracker()
 {
-    set(f_should_quit, true);
+    requestInterruption();
     wait();
 }
 
@@ -384,7 +384,7 @@ void Tracker::run()
 
     t.start();
 
-    while (!get(f_should_quit))
+    while (!isInterruptionRequested())
     {
         logic();
 
@@ -491,5 +491,4 @@ bits::bits() : b(0u)
     set(f_enabled_p, true);
     set(f_enabled_h, true);
     set(f_zero, false);
-    set(f_should_quit, false);
 }

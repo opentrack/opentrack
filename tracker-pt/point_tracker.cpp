@@ -37,7 +37,7 @@ PointModel::PointModel(settings_pt& s)
     set_model(s);
     // calculate u
     u = M01.cross(M02);
-    u /= norm(u);
+    u = cv::normalize(u);
 
     // calculate projection matrix on M01,M02 plane
     f s11 = M01.dot(M01);

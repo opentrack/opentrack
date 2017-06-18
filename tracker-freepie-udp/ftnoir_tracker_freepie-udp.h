@@ -42,7 +42,6 @@ private:
     QUdpSocket sock;
     settings s;
     QMutex mtx;
-    volatile bool should_quit;
 };
 
 class dialog_freepie : public ITrackerDialog

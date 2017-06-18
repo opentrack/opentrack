@@ -13,13 +13,12 @@
 
 udp::udp() :
     last_recv_pose { 0,0,0, 0,0,0 },
-    last_recv_pose2 { 0,0,0, 0,0,0 },
-    should_quit(false)
+    last_recv_pose2 { 0,0,0, 0,0,0 }
 {}
 
 udp::~udp()
 {
-    should_quit = true;
+    requestInterruption();
     wait();
 }
 
@@ -28,9 +27,10 @@ void udp::run()
     QByteArray datagram;
     datagram.resize(sizeof(last_recv_pose));
 
-    should_quit = !sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+    if (!sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+        return;
 
-    while (!should_quit)
+    while (!isInterruptionRequested())
     {
         if (sock.hasPendingDatagrams())
         {

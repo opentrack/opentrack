@@ -19,6 +19,7 @@ using namespace options;
 
 #include <functional>
 #include <atomic>
+
 #include <QObject>
 #include <QMutex>
 
@@ -77,7 +78,7 @@ private:
     } dev_state;
 
     double yaw, pitch;
-    volatile bool do_center;
+    std::atomic<bool> do_center;
 };
 
 class tobii_eyex_metadata : public Metadata

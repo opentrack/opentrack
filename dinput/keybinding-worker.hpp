@@ -48,7 +48,6 @@ private:
     QMutex mtx;
     QMainWindow fake_main_window;
     dinput_handle::di_t din;
-    volatile bool should_quit;
 
     void run() override;
     bool init();

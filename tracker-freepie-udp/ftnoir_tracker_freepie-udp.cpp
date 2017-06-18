@@ -6,13 +6,13 @@
 #include <cmath>
 
 
-tracker_freepie::tracker_freepie() : pose { 0,0,0, 0,0,0 }, should_quit(false)
+tracker_freepie::tracker_freepie() : pose { 0,0,0, 0,0,0 }
 {
 }
 
 tracker_freepie::~tracker_freepie()
 {
-    should_quit = true;
+    requestInterruption();
     wait();
 }
 
@@ -42,7 +42,8 @@ void tracker_freepie::run() {
 
     sock.bind(QHostAddress::Any, (unsigned short) s.port, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 
-    while (!should_quit) {
+    while (!isInterruptionRequested())
+    {
         int order[] = {
             bound<int>(s.idx_x, 0, 2),
             bound<int>(s.idx_y, 0, 2),

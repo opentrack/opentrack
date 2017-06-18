@@ -40,7 +40,6 @@ struct bits
         f_enabled_h      = 1 << 1,
         f_enabled_p      = 1 << 2,
         f_zero           = 1 << 3,
-        f_should_quit    = 1 << 4,
     };
 
     std::atomic<unsigned> b;

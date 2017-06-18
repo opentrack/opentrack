@@ -52,7 +52,6 @@ aruco_tracker::aruco_tracker() :
     roi_points(4),
     last_roi(65535, 65535, 0, 0),
     adaptive_size_pos(0),
-    stop(false),
     use_otsu(false)
 {
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
@@ -61,7 +60,7 @@ aruco_tracker::aruco_tracker() :
 
 aruco_tracker::~aruco_tracker()
 {
-    stop = true;
+    requestInterruption();
     wait();
     // fast start/stop causes breakage
     portable::sleep(1000);
@@ -368,7 +367,7 @@ void aruco_tracker::run()
     fps_timer.start();
     last_detection_timer.start();
 
-    while (!stop)
+    while (!isInterruptionRequested())
     {
         {
             QMutexLocker l(&camera_mtx);

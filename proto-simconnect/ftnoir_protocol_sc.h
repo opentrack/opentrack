@@ -11,8 +11,10 @@
  */
 #pragma once
 #include "api/plugin-api.hpp"
-
 #include "ui_ftnoir_sccontrols.h"
+
+#include <atomic>
+
 #include <QThread>
 #include <QMessageBox>
 #include <QSettings>
@@ -70,12 +72,12 @@ private:
 
     void run() override;
 
-    volatile float virtSCPosX;
-    volatile float virtSCPosY;
-    volatile float virtSCPosZ;
-    volatile float virtSCRotX;
-    volatile float virtSCRotY;
-    volatile float virtSCRotZ;
+    std::atomic<float> virtSCPosX;
+    std::atomic<float> virtSCPosY;
+    std::atomic<float> virtSCPosZ;
+    std::atomic<float> virtSCRotX;
+    std::atomic<float> virtSCRotY;
+    std::atomic<float> virtSCRotZ;
 
     importSimConnect_Open simconnect_open;
     importSimConnect_Close simconnect_close;
@@ -84,7 +86,7 @@ private:
     importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 
     HANDLE hSimConnect;
-    volatile bool should_stop, should_reconnect;
+    std::atomic<bool> should_reconnect;
     static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
     QLibrary SCClientLib;

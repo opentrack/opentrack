@@ -11,6 +11,8 @@
 #include "api/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 
+#include <atomic>
+
 #include "numeric.hpp"
 
 #include "camera.h"
@@ -79,9 +81,9 @@ private:
 
     QSize preview_size;
 
-    volatile unsigned point_count;
-    volatile unsigned char commands;
-    volatile bool ever_success;
+    std::atomic<unsigned> point_count;
+    std::atomic<unsigned char> commands;
+    std::atomic<bool> ever_success;
 
     static constexpr f rad2deg = f(180/M_PI);
     //static constexpr float deg2rad = float(M_PI/180);

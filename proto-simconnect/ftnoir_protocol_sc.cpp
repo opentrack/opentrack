@@ -14,13 +14,13 @@
 #include "opentrack-library-path.h"
 #include "compat/timer.hpp"
 
-simconnect::simconnect() : hSimConnect(nullptr), should_stop(false), should_reconnect(false)
+simconnect::simconnect() : hSimConnect(nullptr), should_reconnect(false)
 {
 }
 
 simconnect::~simconnect()
 {
-    should_stop = true;
+    requestInterruption();
     wait();
 }
 
@@ -34,7 +34,7 @@ void simconnect::run()
         return;
     }
 
-    while (!should_stop)
+    while (!isInterruptionRequested())
     {
         HRESULT hr;
 
@@ -52,7 +52,7 @@ void simconnect::run()
             Timer tm;
             int idle_seconds = 0;
 
-            while (!should_stop)
+            while (!isInterruptionRequested())
             {
                 if (should_reconnect)
                 {
@@ -88,14 +88,15 @@ void simconnect::run()
             qDebug() << "simconnect: can't open handle:" << hr;
         }
 
-        if (!should_stop)
+        if (!isInterruptionRequested())
             Sleep(100);
     }
 
     CloseHandle(event);
 }
 
-void simconnect::pose( const double *headpose ) {
+void simconnect::pose( const double *headpose )
+{
     // euler degrees
     virtSCRotX = float(-headpose[Pitch]);
     virtSCRotY = float(headpose[Yaw]);

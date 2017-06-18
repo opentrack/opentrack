@@ -117,7 +117,6 @@ private:
     cv::Rect last_roi;
     Timer fps_timer, last_detection_timer;
     unsigned adaptive_size_pos;
-    volatile bool stop;
     bool use_otsu;
 
     struct resolution_tuple
