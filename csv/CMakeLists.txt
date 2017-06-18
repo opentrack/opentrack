@@ -1,1 +1,1 @@
-otr_module(csv)
+otr_module(csv STATIC)

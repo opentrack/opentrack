@@ -7,9 +7,7 @@
 #include <QRegExp>
 #include <QtGlobal>
 
-#include "export.hpp"
-
-class OTR_CSV_EXPORT CSV
+class CSV
 {
 public:
     QString readLine();

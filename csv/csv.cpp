@@ -99,8 +99,7 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
     QString id_str(QString::number(id));
 
     static const QString csv_path(OPENTRACK_BASE_PATH +
-                                  OPENTRACK_DOC_PATH +
-                                  QString("settings/facetracknoir supported games.csv"));
+                                  OPENTRACK_DOC_PATH "settings/facetracknoir supported games.csv");
 
     QFile file(csv_path);
 
@@ -178,7 +177,8 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
         }
     }
 
-    qDebug() << "unknown game connected" << id;
+    if (id)
+        qDebug() << "unknown game connected" << id;
 
     return false;
 }
