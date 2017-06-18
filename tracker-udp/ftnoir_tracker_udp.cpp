@@ -11,6 +11,8 @@
 #include "compat/nan.hpp"
 #include "compat/util.hpp"
 
+#include <iterator>
+
 udp::udp() :
     last_recv_pose { 0,0,0, 0,0,0 },
     last_recv_pose2 { 0,0,0, 0,0,0 }
@@ -94,8 +96,9 @@ void udp::data(double *data)
 
     for (int i = 0; i < 3; i++)
     {
-        const unsigned k = clamp(unsigned(indices[i]), 0u, sizeof(values)/sizeof(*values) - 1u);
-        data[Yaw + i] += values[k];
+        const int k = indices[i];
+        if (k >= 0 && k < std::distance(std::begin(values), std::end(values)))
+            data[Yaw + i] += values[k];
     }
 }
 
