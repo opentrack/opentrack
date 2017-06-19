@@ -21,6 +21,27 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
+if(NOT CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+endif()
+
+set(CMAKE_BUILD_TYPE_INIT "RELEASE")
+
+if(APPLE)
+    if(NOT CMAKE_OSX_ARCHITECTURES)
+        set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    endif()
+endif()
+
+if(MSVC AND MSVC_VERSION LESS "1900")
+    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2015 Update 3 or newer.")
+endif()
+
+if(MSVC AND opentrack-64bit)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /HIGHENTROPYVA")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /HIGHENTROPYVA")
+endif()
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_GNUCXX TRUE)
     set(CMAKE_COMPILER_IS_CLANG TRUE)
@@ -33,7 +54,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
 endif()
 
 if((NOT CMAKE_COMPILER_IS_GNUCXX) EQUAL (NOT (NOT CMAKE_COMPILER_IS_GNUCC)))
-    message(FATAL_ERROR "cannot use either use both gcc and g++ or neither")
+    message(FATAL_ERROR "use either use both gcc and g++ or neither")
 endif()
 
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
