@@ -182,7 +182,7 @@ function(otr_module n_)
 
     string(REPLACE "-" "_" build-n ${n_})
     string(TOUPPER "${build-n}" build-n)
-    target_compile_definitions(${n} PRIVATE "BUILD_${build-n}")
+    set_property(TARGET ${n} PROPERTY DEFINE_SYMBOL "BUILD_${build-n}")
 
     if(arg_STATIC)
         set(arg_NO-INSTALL TRUE)
