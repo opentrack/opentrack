@@ -54,6 +54,7 @@ aruco_tracker::aruco_tracker() :
     adaptive_size_pos(0),
     use_otsu(false)
 {
+    cv::setBreakOnError(true);
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
     set_detector_params();
 }

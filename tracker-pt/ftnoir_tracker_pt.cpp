@@ -23,6 +23,8 @@ Tracker_PT::Tracker_PT() :
       commands(0),
       ever_success(false)
 {
+    cv::setBreakOnError(true);
+
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(maybe_reopen_camera()), Qt::DirectConnection);
     connect(&s.fov, SIGNAL(valueChanged(int)), this, SLOT(set_fov(int)), Qt::DirectConnection);
     set_fov(s.fov);
