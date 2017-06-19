@@ -88,8 +88,8 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     }
 
     // convert to grayscale
-    cv::cvtColor(frame, frame_gray, cv::COLOR_RGB2GRAY);
 
+    cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
 

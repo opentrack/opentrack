@@ -376,7 +376,7 @@ void aruco_tracker::run()
                 continue;
         }
 
-        cv::cvtColor(color, grayscale, cv::COLOR_RGB2GRAY);
+        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
 
 #ifdef DEBUG_UNSHARP_MASKING
         {
