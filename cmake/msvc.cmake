@@ -12,11 +12,11 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "/O2 /O2it /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy /Gm /Zc:inline /Zo /FS /Zc:implicitNoexcept /Zc:threadSafeInit")
+set(cc "/O2 /O2it /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy /Gm /Zc:inline /Zo /FS /Zc:threadSafeInit")
 
 set(warns_ "")
 
-set(warns-disable 4530 4577 4789 4244 4702)
+set(warns-disable 4530 4577 4789 4244 4702 4530 4244)
 
 foreach(i ${warns-disable})
     set(warns_ "${warns_} /wd${i}")
@@ -42,7 +42,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(cc "${cc} /GR- /arch:SSE2")
 endif()
 
-set(base-cflags "${warns_} -MT -Zi")
+set(base-cflags "${warns_} -MT -Zi -cgthreads8")
 
 set(_CFLAGS "${base-cflags}")
 set(_CXXFLAGS "${base-cflags}")
@@ -61,9 +61,9 @@ set(_LDFLAGS_STATIC_DEBUG "")
 
 foreach(j C CXX)
     foreach(i "" _DEBUG _RELEASE)
-        set(CMAKE_${j}_FLAGS${i} "${_${j}FLAGS${i}} ${CMAKE_${j}_FLAGS${i}}")
+        set(CMAKE_${j}_FLAGS${i} "${CMAKE_${j}_FLAGS${i}} ${_${j}FLAGS${i}}")
     endforeach()
-    set(CMAKE_${j}_FLAGS "${_${j}FLAGS} ${_${j}_WARNS} ${CMAKE_${j}_FLAGS}")
+    set(CMAKE_${j}_FLAGS "${CMAKE_${j}_FLAGS} ${_${j}FLAGS}")
 endforeach()
 
 foreach(j "" _DEBUG _RELEASE)
@@ -82,13 +82,7 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RELEASE")
 endif()
 
-if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
-    foreach (i CMAKE_CXX_FLAGS CMAKE_C_FLAGS)
-        string(REGEX MATCH "((^| )[-/][W][0-9]( |\$))" ret "${${i}}")
-        if(ret STREQUAL "")
-            set(${i} "-W3 ${${i}}")
-        endif()
-    endforeach()
-endif()
-
 set(CMAKE_RC_FLAGS "-nologo -DWIN32")
+
+include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
+
