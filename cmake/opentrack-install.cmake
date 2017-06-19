@@ -47,35 +47,37 @@ otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
 otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
 otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
 
+set(opentrack_disable-i18n-update FALSE CACHE BOOL "")
+
 function(merge_translations)
     install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/i18n\")")
 
     set(all-qm-files "")
 
-    foreach(i ${opentrack-all-translations})
+    foreach(i ${opentrack_all-translations})
         get_property(ts-files GLOBAL PROPERTY "opentrack-ts-files-${i}")
 
         set(ts-files_ "")
 
         foreach(k ${ts-files})
-            if(EXISTS "${k}")
+            if(EXISTS "${k}" OR NOT opentrack_disable-i18n-update)
                 list(APPEND ts-files_ "${k}")
             endif()
         endforeach()
 
-        set(ts-files "${ts-files_}")
+        if (opentrack_disable-i18n-update)
+            set(ts-files_ "")
+        endif()
 
-        if(NOT ".${ts-files}" STREQUAL ".")
+        if(NOT ".${ts-files_}" STREQUAL ".")
             set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
             list(APPEND all-qm-files "${qm-output}")
             add_custom_command(OUTPUT "${qm-output}"
-                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts-files} -qm "${qm-output}"
+                COMMAND "${Qt5_DIR}/../../../bin/lrelease" -nounfinished -silent ${ts-files_} -qm "${qm-output}"
                 DEPENDS ${ts-files}
-                COMMENT "Running lrelease for ${i}"
-            )
+                COMMENT "Running lrelease for ${i}")
             set(lang-target "i18n-lang-${i}")
             add_custom_target("${lang-target}" DEPENDS "${qm-output}")
-
             install(FILES "${qm-output}" DESTINATION "${opentrack-i18n-pfx}" RENAME "${i}.qm" ${opentrack-perms})
         endif()
     endforeach()

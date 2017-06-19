@@ -108,7 +108,7 @@ endfunction()
 
 function(otr_i18n_for_target_directory n)
     set(k "opentrack-${n}")
-    foreach(i ${opentrack-all-translations})
+    foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
         add_custom_command(OUTPUT "${t}"
             COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"

@@ -31,7 +31,7 @@ include(opentrack-policy NO_POLICY_SCOPE)
 
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
-set(opentrack-all-translations nl_NL ru_RU stub)
+set(opentrack_all-translations "nl_NL;ru_RU;stub" CACHE STRING "")
 
 include(opentrack-word-size)
 include(opentrack-hier)
