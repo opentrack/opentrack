@@ -21,7 +21,9 @@ typedef void* LPDIRECTINPUT8;
 #endif
 
 #if defined(_MSC_VER)
-    template struct __declspec(dllexport) std::atomic<int>;
+#   if defined BUILD_DINPUT
+        template struct __declspec(dllexport) std::atomic<int>;
+#   endif
 #endif
 
 class OTR_DINPUT_EXPORT dinput_handle final
