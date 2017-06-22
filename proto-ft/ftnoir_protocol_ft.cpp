@@ -7,7 +7,6 @@
  */
 
 #include "compat/ndebug-guard.hpp"
-#include <cassert>
 
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
@@ -43,8 +42,9 @@ freetrack::~freetrack()
 }
 
 static_assert(sizeof(LONG) == sizeof(std::int32_t), "");
+static_assert(sizeof(LONG) == 4u, "");
 
-inline void store(float volatile& place, const float value)
+never_inline void store(float volatile& place, const float value)
 {
     union
     {
@@ -60,17 +60,12 @@ inline void store(float volatile& place, const float value)
     (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
 }
 
-inline void store(std::int32_t volatile& place, std::int32_t value)
+never_inline void store(std::int32_t volatile& place, std::int32_t value)
 {
     (void)InterlockedExchange((LONG volatile*) &place, value);
 }
 
-inline void store(std::uint8_t volatile& place, std::uint8_t value)
-{
-    (void)InterlockedExchange8((char volatile*) &place, char(value));
-}
-
-inline std::int32_t load(std::int32_t volatile& place)
+never_inline std::int32_t load(std::int32_t volatile& place)
 {
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }
@@ -103,12 +98,30 @@ void freetrack::pose(const double* headpose)
     if (intGameID != id)
     {
         QString gamename;
-        unsigned char table[8] {};
+        union  {
+            unsigned char table[8] alignas(alignof(std::int32_t));
+            std::int32_t ints[2];
+        } t;
 
-        (void)CSV::getGameData(id, (unsigned char*)table, gamename);
+        t.ints[0] = 0; t.ints[1] = 0;
 
-        for (unsigned k = 0; k < 8; k++)
-            store(pMemData->table[k], table[k]);
+        (void)CSV::getGameData(id, t.table, gamename);
+
+        {
+            const std::uintptr_t addr = (std::uintptr_t)(void*)&pMemData->table[0];
+            const std::uintptr_t addr_ = addr & (sizeof(LONG)-1);
+
+            // the data `happens' to be aligned by virtue of element ordering
+            // inside FTHeap. there's no deeper reason behind it.
+
+            if (addr != addr_)
+                assert("!unaligned access");
+
+            static_assert(sizeof(char[8])/sizeof(LONG) == 2, "");
+
+            for (unsigned k = 0; k < 2; k++)
+                store(*(std::int32_t volatile*)&pMemData->table_ints[k], t.ints[k]);
+        }
 
         store(ft->GameID2, id);
         store(data->DataID, 0);
@@ -220,8 +233,8 @@ bool freetrack::correct()
 
     store(pMemData->GameID2, 0);
 
-    for (int i = 0; i < 8; i++)
-        store(pMemData->table[i], 0);
+    for (unsigned k = 0; k < 2; k++)
+        store(*(std::int32_t volatile*)&pMemData->table_ints[k], 0);
 
     // more games need the dummy executable than previously thought
     if (use_npclient)

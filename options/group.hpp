@@ -50,7 +50,7 @@ public:
     static void mark_ini_modified();
 
     template<typename t>
-    OTR_NEVER_INLINE
+    never_inline
     t get(const QString& k) const
     {
         auto value = kvs.find(k);
@@ -60,7 +60,7 @@ public:
     }
 
     template<typename F>
-    OTR_NEVER_INLINE
+    never_inline
     static auto with_settings_object(F&& fun)
     {
         saver_ saver { *cur_settings_object(), cur_ini_mtx };

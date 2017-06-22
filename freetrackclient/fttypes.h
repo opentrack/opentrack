@@ -59,6 +59,10 @@ typedef struct FTData__ {
 typedef struct FTHeap__ {
     FTData data;
     int32_t GameID;
-    unsigned char table[8];
+    union
+    {
+        unsigned char table[8];
+        int32_t table_ints[2];
+    };
     int32_t GameID2;
 } FTHeap;

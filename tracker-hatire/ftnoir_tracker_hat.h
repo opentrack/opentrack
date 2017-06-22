@@ -8,12 +8,10 @@
 #include <atomic>
 
 #include <QObject>
-#include <QPalette>
-#include <QtGui>
 #include <QByteArray>
 #include <QMessageBox>
-#include <QtSerialPort/QSerialPort>
-#include <QtSerialPort/QSerialPortInfo>
+#include <QSerialPort>
+#include <QSerialPortInfo>
 #include <QSettings>
 
 class hatire : public QObject, public ITracker

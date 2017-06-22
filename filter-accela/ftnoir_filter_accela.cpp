@@ -32,7 +32,7 @@ static inline constexpr T signum(T x)
 }
 
 template<int N = 3, typename F>
-OTR_NEVER_INLINE
+never_inline
 static void do_deltas(const double* deltas, double* output, double alpha, double& smoothed, F&& fun)
 {
     double norm[N];

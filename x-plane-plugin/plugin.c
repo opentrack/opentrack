@@ -68,12 +68,12 @@ static void reinit_offset() {
 }
 
 #ifdef __GNUC__
-#   define OT_UNUSED(varname) varname __attribute__((__unused__))
+#   define unused(varname) varname __attribute__((__unused__))
 #else
-#   define OT_UNUSED(varname) varname
+#   define unused(varname) varname
 #endif
 
-PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *OT_UNUSED(mutexName), int mapSize)
+PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *unused(mutexName), int mapSize)
 {
     PortableLockedShm* self = malloc(sizeof(PortableLockedShm));
     char shm_filename[NAME_MAX];
@@ -107,10 +107,10 @@ void PortableLockedShm_unlock(PortableLockedShm* self)
 }
 
 float write_head_position(
-        float                OT_UNUSED(inElapsedSinceLastCall),
-        float                OT_UNUSED(inElapsedTimeSinceLastFlightLoop),
-        int                  OT_UNUSED(inCounter),
-        void *               OT_UNUSED(inRefcon) )
+        float                unused(inElapsedSinceLastCall),
+        float                unused(inElapsedTimeSinceLastFlightLoop),
+        int                  unused(inCounter),
+        void *               unused(inRefcon) )
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         if(data_last == NULL){
@@ -235,9 +235,9 @@ PLUGIN_API OTR_COMPAT_EXPORT void XPluginDisable ( void ) {
 }
 
 PLUGIN_API OTR_COMPAT_EXPORT void XPluginReceiveMessage(
-        XPLMPluginID    OT_UNUSED(inFromWho),
-        int             OT_UNUSED(inMessage),
-        void *          OT_UNUSED(inParam))
+        XPLMPluginID    unused(inFromWho),
+        int             unused(inMessage),
+        void *          unused(inParam))
 {
     if (inMessage == XPLM_MSG_AIRPORT_LOADED)
         reinit_offset();

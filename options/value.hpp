@@ -48,7 +48,7 @@ class value final : public base_value
         return val1.value<element_type>() == val2.value<element_type>();
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     t get() const
     {
         if (!b->contains(self_name) || b->get<QVariant>(self_name).type() == QVariant::Invalid)
@@ -60,7 +60,7 @@ class value final : public base_value
     }
 
 public:
-    OTR_NEVER_INLINE
+    never_inline
     t operator=(const t& datum)
     {
         if (datum != get())
@@ -71,7 +71,7 @@ public:
     static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
     static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    OTR_NEVER_INLINE
+    never_inline
     value(bundle b, const QString& name, t def) :
         base_value(b, name, &is_equal, std::type_index(typeid(element_type))),
         def(def)
@@ -81,46 +81,46 @@ public:
                          DIRECT_CONNTYPE);
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     value(bundle b, const char* name, t def) : value(b, QString(name), def)
     {
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     t default_value() const
     {
         return def;
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     void set_to_default() override
     {
         *this = def;
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     operator t() const { return std::forward<t>(get()); }
 
-    OTR_NEVER_INLINE
+    never_inline
     void reload() override
     {
         *this = static_cast<t>(*this);
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     void bundle_value_changed() const override
     {
         emit valueChanged(traits::to_storage(get()));
     }
 
-    OTR_NEVER_INLINE
+    never_inline
     t operator()() const
     {
         return get();
     }
 
     template<typename u>
-    OTR_NEVER_INLINE
+    never_inline
     u to() const
     {
         return static_cast<u>(std::forward<t>(get()));

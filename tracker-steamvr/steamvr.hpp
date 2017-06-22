@@ -51,7 +51,7 @@ struct device_list final
     void refresh_device_list();
     const QList<device_spec>& devices() const { return device_specs; }
 
-    static OTR_NEVER_INLINE maybe_pose get_pose(int k);
+    static never_inline maybe_pose get_pose(int k);
     static QString strerror(error_t error);
     static constexpr int max_devices = int(vr::k_unMaxTrackedDeviceCount);
 
