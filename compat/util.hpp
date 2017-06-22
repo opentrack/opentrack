@@ -94,29 +94,29 @@ auto qptr(xs... args)
 template<typename t> using qshared = QSharedPointer<t>;
 
 #if defined _MSC_VER
-#   define OTR_NEVER_INLINE __declspec(noinline)
+#   define never_inline __declspec(noinline)
 #elif defined __GNUG__
-#   define OTR_NEVER_INLINE __attribute__((noinline))
+#   define never_inline __attribute__((noinline))
 #else
-#   define OTR_NEVER_INLINE
+#   define never_inline
 #endif
 
 #if defined _MSC_VER || defined __GNUG__
-#   define OTR_RESTRICT __restrict
+#   define restrict __restrict
 #else
-#   define OTR_RESTRICT
+#   define restrict
 #endif
 
 #if defined _MSC_VER
-#   define OTR_ALWAYS_INLINE __forceinline
+#   define force_inline __forceinline
 #elif defined __GNUG__
-#   define OTR_ALWAYS_INLINE __attribute__((always_inline))
+#   define force_inline __attribute__((always_inline, gnu_inline))
 #else
-#   define OTR_ALWAYS_INLINE inline
+#   define force_inline inline
 #endif
 
 #if defined __GNUG__
-#   define OTR_FLATTEN __attribute__((flatten))
+#   define flatten __attribute__((flatten, noinline))
 #else
-#   define OTR_FLATTEN OTR_ALWAYS_INLINE
+#   define flatten
 #endif

@@ -16,6 +16,7 @@
 #include "cv/video-widget.hpp"
 
 #include <QTimer>
+#include <QMutex>
 
 class TrackerDialog_PT : public ITrackerDialog
 {
@@ -41,6 +42,7 @@ private:
     Tracker_PT* tracker;
     QTimer timer, calib_timer;
     TranslationCalibrator trans_calib;
+    QMutex calibrator_mutex;
 
     Ui::UICPTClientControls ui;
 };

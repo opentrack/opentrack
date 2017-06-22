@@ -76,15 +76,17 @@ TrackerDialog_PT::TrackerDialog_PT()
     timer.setInterval(250);
 
     connect(&calib_timer, &QTimer::timeout, this, &TrackerDialog_PT::trans_calib_step);
-    calib_timer.setInterval(100);
+    calib_timer.setInterval(35);
 
     poll_tracker_info_impl();
 
-    connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::QueuedConnection);
+    connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::DirectConnection);
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)
 {
+    QMutexLocker l(&calibrator_mutex);
+
     if (start)
     {
         qDebug() << "pt: starting translation calibration";
@@ -174,6 +176,8 @@ void TrackerDialog_PT::show_camera_settings()
 
 void TrackerDialog_PT::trans_calib_step()
 {
+    QMutexLocker l(&calibrator_mutex);
+
     if (tracker)
     {
         Affine X_CM = tracker->pose();
