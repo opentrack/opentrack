@@ -31,6 +31,9 @@
 // value 0->1
 //#define DEBUG_UNSHARP_MASKING .75
 
+//canny thresholding
+//#define USE_EXPERIMENTAL_CANNY
+
 using namespace options;
 
 struct settings : opts {
@@ -127,11 +130,15 @@ private:
 
     static constexpr const int adaptive_sizes[] =
     {
+#if defined USE_EXPERIMENTAL_CANNY
+        3,
+        5,
+        7,
+#else
         7,
         9,
-        //11,
         13,
-        //5,
+#endif
     };
 
     static constexpr int adaptive_thres = 6;

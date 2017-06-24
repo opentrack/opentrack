@@ -278,6 +278,7 @@ private:
     */
     void detectRectangles(const cv::Mat &thresImg,vector<MarkerCandidate> & candidates);
 public:
+    std::vector<std::vector<cv::Point>> contours;
     //Current threshold method
     ThresholdMethods _thresMethod;
     //Threshold parameters

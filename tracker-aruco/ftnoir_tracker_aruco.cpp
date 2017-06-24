@@ -328,17 +328,23 @@ void aruco_tracker::set_detector_params()
 {
     detector.setDesiredSpeed(3);
     detector.setThresholdParams(adaptive_sizes[adaptive_size_pos], adaptive_thres);
+#if !defined USE_EXPERIMENTAL_CANNY
     if (use_otsu)
         detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
     else
         detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
+#else
+        detector._thresMethod = aruco::MarkerDetector::CANNY;
+#endif
 }
 
 void aruco_tracker::cycle_detection_params()
 {
+#if !defined USE_EXPERIMENTAL_CANNY
     if (!use_otsu)
         use_otsu = true;
     else
+#endif
     {
         use_otsu = false;
 
@@ -349,7 +355,9 @@ void aruco_tracker::cycle_detection_params()
     set_detector_params();
 
     qDebug() << "aruco: switched thresholding params"
+#if !defined USE_EXPERIMENTAL_CANNY
              << "otsu:" << use_otsu
+#endif
              << "size:" << adaptive_sizes[adaptive_size_pos];
 }
 
