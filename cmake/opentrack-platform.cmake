@@ -37,11 +37,6 @@ if(MSVC AND MSVC_VERSION LESS "1900")
     message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2015 Update 3 or newer.")
 endif()
 
-if(MSVC AND opentrack-64bit)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /HIGHENTROPYVA")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /HIGHENTROPYVA")
-endif()
-
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_GNUCXX TRUE)
     set(CMAKE_COMPILER_IS_CLANG TRUE)
@@ -68,9 +63,14 @@ if(MSVC)
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zi -std:c++14")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zi")
+    if(MSVC AND opentrack-64bit)
+        set(ent "-HIGHENTROPYVA")
+    else()
+        set(ent "")
+    endif()
 
     foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -DYNAMICBASE -NXCOMPAT -DEBUG")
+        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -DYNAMICBASE -NXCOMPAT -DEBUG ${ent}")
     endforeach()
 endif()
 
