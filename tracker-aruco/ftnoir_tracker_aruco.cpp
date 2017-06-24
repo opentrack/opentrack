@@ -227,7 +227,7 @@ cv::Point3f aruco_tracker::rotate_model(float x, float y, settings::rot mode)
         using std::cos;
         using std::sin;
 
-        const float theta = int(mode) * 90/4. * M_PI/180;
+        const double theta = int(mode) * 90/4. * M_PI/180;
         pt.x = x * cos(theta) - y * sin(theta);
         pt.y = y * cos(theta) + x * sin(theta);
     }
