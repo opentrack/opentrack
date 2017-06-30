@@ -119,7 +119,7 @@ public:
 
         const num val = dot(*this);
 
-        if (std::fabs(val) < 1e-4)
+        if (std::fabs(val) < num(1e-4))
             return num(0);
         else
             return std::sqrt(val);
@@ -132,7 +132,7 @@ public:
         static_assert(P == h_ && Q == w_, "");
 
         num ret = 0;
-        constexpr int len = vector_len<R, S>::value;
+        static constexpr int len = vector_len<R, S>::value;
         for (int i = 0; i < len; i++)
             ret += operator()(i) * p2(i);
         return ret;
