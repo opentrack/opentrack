@@ -46,8 +46,8 @@ template<typename t> using ptr = std::unique_ptr<t>;
 #endif
 
 #if defined __GNUC__
-#   define likely(x)       __builtin_expect((x),1)
-#   define unlikely(x)     __builtin_expect((x),0)
+#   define likely(x)       __builtin_expect(!!(x),1)
+#   define unlikely(x)     __builtin_expect(!!(x),0)
 #else
 #   define likely(x) (x)
 #   define unlikely(x) (x)
@@ -105,6 +105,14 @@ template<typename t> using qshared = QSharedPointer<t>;
 #   define restrict __restrict
 #else
 #   define restrict
+#endif
+
+#if defined _MSC_VER
+#   define restrict_ref restrict
+#elif defined __GNUG__
+#   define restrict_ref restrict
+#else
+#   define restrict_ref
 #endif
 
 #if defined _MSC_VER
