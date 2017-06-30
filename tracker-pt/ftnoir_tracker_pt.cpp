@@ -15,9 +15,6 @@
 #include <QCoreApplication>
 #include <functional>
 
-//#define PT_PERF_LOG	//log performance
-
-//-----------------------------------------------------------------------------
 Tracker_PT::Tracker_PT() :
       point_count(0),
       commands(0),
@@ -75,7 +72,9 @@ void Tracker_PT::run()
 
         if (new_frame)
         {
-            cv::resize(frame, preview_frame, cv::Size(preview_size.width(), preview_size.height()), 0, 0, cv::INTER_NEAREST);
+            cv::resize(frame, preview_frame,
+                       cv::Size(preview_size.width(), preview_size.height()),
+                       0, 0, cv::INTER_NEAREST);
 
             point_extractor.extract_points(frame, preview_frame, points);
             point_count = points.size();
@@ -103,7 +102,8 @@ void Tracker_PT::run()
                     X_CM = point_tracker.pose();
                 }
 
-                Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z)); // just copy pasted these lines from below
+                // just copy pasted these lines from below
+                Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
                 Affine X_GH = X_CM * X_MH;
                 vec3 p = X_GH.t; // head (center?) position in global space
                 vec2 p_((p[0] * fx) / p[2], (p[1] * fx) / p[2]);  // projected to screen

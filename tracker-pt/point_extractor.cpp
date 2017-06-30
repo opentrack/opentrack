@@ -226,7 +226,9 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
 
         const f kernel_radius = b.radius * radius_c;
         cv::Vec2d pos(b.pos[0] - rect.x, b.pos[1] - rect.y); // position relative to ROI.
+#if defined DEBUG_MEANSHIFT
         cv::Vec2d pos_(pos);
+#endif
 
         for (int iter = 0; iter < 10; ++iter)
         {
