@@ -136,14 +136,6 @@ void pose_transform::rotate_sync(double xAngle, double yAngle, double zAngle, do
     }, xAngle, yAngle, zAngle, x, y, z);
 }
 
-class Triangle {
-    num dot00, dot01, dot11, invDenom;
-    vec2 v0, v1, origin;
-public:
-    Triangle(const vec2& p1, const vec2& p2, const vec2& p3);
-    bool barycentric_coords(const vec2& px, vec2& uv, int& i) const;
-};
-
 Triangle::Triangle(const vec2& p1, const vec2& p2, const vec2& p3)
 {
     origin = p1;
@@ -183,6 +175,9 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
     return u >= 0 && v >= 0 && u + v <= 1;
 }
 
+#if defined __GNUG__
+__attribute__((optimize("unroll-loops")))
+#endif
 void pose_transform::project_quad_texture()
 {
     image.fill(Qt::transparent);
@@ -233,55 +228,66 @@ void pose_transform::project_quad_texture()
     }
 
     const QImage& tex = dir < 0 ? back : front;
-    const int ow = tex.width(), oh = tex.height();
-
-    vec2 origs[2][3] =
-    {
-        {
-            vec2(0, 0),
-            vec2(ow-1, 0),
-            vec2(0, oh-1)
-        },
-        {
-            vec2(ow-1, oh-1),
-            vec2(0, oh-1) - vec2(ow-1, oh-1),
-            vec2(ow-1, 0) - vec2(ow-1, oh-1),
-        }
-    };
 
     Triangle t(projected[0], projected[1], projected[2]);
 
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
 
-    const unsigned char* orig = tex.bits();
-    unsigned char* dest = image.bits() + offset*dest_pitch;
+    const unsigned char* restrict orig = tex.bits();
+    unsigned char* restrict dest = image.bits() + offset*dest_pitch;
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
 
-    /* image breakage? */
-    if (orig_depth != 4)
+    if (unlikely(orig_depth != 4 || dest_depth != 4))
     {
         qDebug() << "pose-widget: octopus must be saved as .png with 32 bits pixel";
-        return;
-    }
-
-    if (dest_depth != 4)
-    {
         qDebug() << "pose-widget: target texture must be ARGB32";
         return;
     }
 
-    for (int y = 0; y < sy; y++)
-        for (int x = 0; x < sx; x++)
-        {
-            vec2 pos(x, y);
-            vec2 uv;
-            int i;
+    static constexpr unsigned xmax = w, ymax = h;
 
-            if (t.barycentric_coords(pos, uv, i))
+    if (uv_vec.size() < xmax * ymax)
+        uv_vec.resize(xmax * ymax);
+
+    for (unsigned y = 0; y < ymax; y++)
+        for (unsigned x = 0; x < xmax; x++)
+        {
+            uv_& restrict_ref uv = uv_vec[y * xmax + x];
+            if (!t.barycentric_coords(vec2(x, y), uv.coords, uv.i))
+                uv.i = -1;
+        }
+
+    const int ow = tex.width(), oh = tex.height();
+
+    vec2 const origs[2][3] =
+    {
+        {
+            { 0, 0 },
+            { ow, 0 },
+            { 0, oh },
+        },
+        {
+            { ow, oh },
+            vec2(0, oh) - vec2(ow, oh),
+            vec2(ow, 0) - vec2(ow, oh),
+        }
+    };
+
+    for (unsigned y = 0; y < ymax; y++)
+        for (unsigned x = 0; x < xmax; x++)
+        {
+            uv_ const& restrict_ref uv__ = uv_vec[y * xmax + x];
+
+            if (uv__.i != -1)
             {
+                using uc = unsigned char;
+
+                vec2 const& uv = uv__.coords;
+                int const i = uv__.i;
+
                 const float fx = origs[i][0].x()
                                  + uv.x() * origs[i][2].x()
                                  + uv.y() * origs[i][1].x();
@@ -289,17 +295,21 @@ void pose_transform::project_quad_texture()
                                  + uv.x() * origs[i][2].y()
                                  + uv.y() * origs[i][1].y();
 
-                using uc = unsigned char;
+#define BILINEAR_FILTER
 
+#if defined BILINEAR_FILTER
                 const unsigned px_ = fx + 1;
                 const unsigned py_ = fy + 1;
+#endif
                 const unsigned px = fx;
                 const unsigned py = fy;
 
                 const unsigned orig_pos = py * orig_pitch + px * orig_depth;
+#if defined BILINEAR_FILTER
                 const unsigned orig_pos_ = py_ * orig_pitch + px_ * orig_depth;
                 const unsigned orig_pos__ = py * orig_pitch + px_ * orig_depth;
                 const unsigned orig_pos___ = py_ * orig_pitch + px * orig_depth;
+#endif
 
                 // 1, 0 -- ax_, ay
                 // 0, 1 -- ax, ay_
@@ -307,21 +317,27 @@ void pose_transform::project_quad_texture()
                 // 0, 0 -- ax, ay
                 //const uc alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
 
+#if defined BILINEAR_FILTER
                 const float ax_ = fx - unsigned(fx);
                 const float ay_ = fy - unsigned(fy);
                 const float ax = 1 - ax_;
                 const float ay = 1 - ay_;
+#endif
 
                 const unsigned pos = y * dest_pitch + (x+offset) * dest_depth;
 
                 for (int k = 0; k < 4; k++)
                 {
+#if defined BILINEAR_FILTER
                     const uc i = orig[orig_pos + k];
                     const uc i_ = orig[orig_pos_ + k];
                     const uc i__ = orig[orig_pos__ + k];
                     const uc i___ = orig[orig_pos___ + k];
 
                     dest[pos + k] = uc((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
+#else
+                    dest[pos + k] = orig[orig_pos + k];
+#endif
                 }
             }
         }

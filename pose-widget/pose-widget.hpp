@@ -16,6 +16,7 @@
 
 #include <mutex>
 #include <atomic>
+#include <vector>
 
 #ifdef BUILD_POSE_WIDGET
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -36,6 +37,14 @@ using namespace euler;
 using lock_guard = std::unique_lock<std::mutex>;
 
 class pose_widget;
+
+class Triangle {
+    num dot00, dot01, dot11, invDenom;
+    vec2 v0, v1, origin;
+public:
+    Triangle(const vec2& p1, const vec2& p2, const vec2& p3);
+    bool barycentric_coords(const vec2& px, vec2& uv, int& i) const;
+};
 
 struct pose_transform final : private QThread
 {
@@ -66,6 +75,14 @@ struct pose_transform final : private QThread
 
     QImage front, back;
     QImage image, image2;
+
+    struct uv_
+    {
+        vec2 coords;
+        int i;
+    };
+
+    std::vector<uv_> uv_vec;
 
     std::atomic<bool> fresh;
 
