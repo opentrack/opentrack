@@ -7,3 +7,6 @@
 #   define OTR_GENERIC_EXPORT __attribute__ ((visibility ("default")))
 #   define OTR_GENERIC_IMPORT
 #endif
+
+#define OTR_TEMPLATE_EXPORT template class OTR_GENERIC_EXPORT
+#define OTR_TEMPLATE_IMPORT extern template class OTR_GENERIC_IMPORT
