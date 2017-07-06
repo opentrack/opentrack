@@ -39,7 +39,6 @@ void KeyboardListener::keyPressEvent(QKeyEvent* event)
     case Qt::Key_Meta:
     case Qt::Key_Alt:
     case Qt::Key_AltGr:
-    case Qt::Key_CapsLock:
     case Qt::Key_NumLock:
         break;
     case Qt::Key_Escape:

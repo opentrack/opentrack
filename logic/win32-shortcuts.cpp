@@ -113,6 +113,7 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_X, Qt::Key::Key_X ),
        win_key(DIK_Y, Qt::Key::Key_Y ),
        win_key(DIK_Z, Qt::Key::Key_Z ),
+       win_key(DIK_TAB, Qt::Key::Key_Tab ),
        win_key(DIK_RETURN, Qt::Key::Key_Return),
        win_key(DIK_INSERT, Qt::Key::Key_Insert),
        win_key(DIK_DELETE, Qt::Key::Key_Delete),
@@ -121,6 +122,7 @@ QList<win_key> windows_key_sequences =
        win_key(DIK_SCROLL, Qt::Key::Key_ScrollLock),
        win_key(DIK_PAUSE, Qt::Key::Key_Pause),
        win_key(DIK_NUMLOCK, Qt::Key::Key_NumLock),
+       win_key(DIK_CAPSLOCK, Qt::Key::Key_CapsLock),
 #define mod(x, y) static_cast<Qt::Key>(x | y)
        win_key(DIK_NUMPAD0,      mod(Qt::Key::Key_0,        Qt::KeypadModifier)),
        win_key(DIK_NUMPAD0,      mod(Qt::Key::Key_0,        Qt::KeypadModifier)),
