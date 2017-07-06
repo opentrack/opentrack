@@ -142,6 +142,8 @@ void KeybindingWorker::run()
                         case DIK_RCONTROL:
                         case DIK_RSHIFT:
                         case DIK_RALT:
+                        case DIK_LWIN:
+                        case DIK_RWIN:
                             break;
                         default:
                             k.shift = !!((keystate[DIK_LSHIFT] & 0x80) || (keystate[DIK_RSHIFT] & 0x80));
