@@ -62,7 +62,6 @@ public:
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
-    void invalidate_pose() { X_CM = Affine(); }
 
 private:
     // the points in model order

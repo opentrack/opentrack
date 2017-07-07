@@ -92,8 +92,6 @@ void Tracker_PT::run()
                                     s.dynamic_pose ? s.init_phase_timeout : 0);
                 ever_success = true;
             }
-            else
-                point_tracker.invalidate_pose();
 
             {
                 Affine X_CM;

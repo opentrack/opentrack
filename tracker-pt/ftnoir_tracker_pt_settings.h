@@ -62,7 +62,7 @@ struct settings_pt : opts
         cap_z(b, "cap-z", 100),
         fov(b, "camera-fov", 56),
         dynamic_pose(b, "dynamic-pose-resolution", true),
-        init_phase_timeout(b, "init-phase-timeout", 500),
+        init_phase_timeout(b, "init-phase-timeout", 250),
         auto_threshold(b, "automatic-threshold", true)
     {}
 };

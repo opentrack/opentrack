@@ -53,17 +53,32 @@
         </property>
         <item>
          <property name="text">
+          <string>RTM</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>SP1</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>SP2</string>
+          <string>SP2 -- Acceleration</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>Acceleration</string>
+          <string>Prepar3d SP2 XPACK</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Steam FSX (older)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Steam FSX (new)</string>
          </property>
         </item>
        </widget>

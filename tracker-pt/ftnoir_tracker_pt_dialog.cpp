@@ -104,16 +104,31 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
         qDebug() << "pt: stopping translation calibration";
         {
             cv::Vec3f tmp;
-            unsigned nsamples;
+            cv::Vec3i nsamples;
             std::tie(tmp, nsamples) = trans_calib.get_estimate();
             s.t_MH_x = int(tmp[0]);
             s.t_MH_y = int(tmp[1]);
             s.t_MH_z = int(tmp[2]);
 
-            static constexpr unsigned min_samples = 80;
-            const QString sample_feedback = nsamples >= min_samples
-                ? tr("%1 samples. Over %2, good!").arg(nsamples).arg(min_samples)
-                : tr("%1 samples. Try for at least %2 for a precise calibration.").arg(nsamples).arg(min_samples);
+            static constexpr unsigned min_yaw_samples = 15;
+            static constexpr unsigned min_pitch_samples = 15;
+            static constexpr unsigned min_samples = min_yaw_samples+min_pitch_samples;
+
+            // Don't bother counting roll samples. Roll calibration is hard enough
+            // that it's a hidden unsupported feature anyway.
+
+            const QString sample_feedback = progn(
+                if (nsamples[0] < min_yaw_samples)
+                    return tr("%1 yaw samples. Yaw more to %2 samples for stable calibration.")
+                        .arg(nsamples[0]).arg(min_yaw_samples);
+                if (nsamples[1] < min_pitch_samples)
+                    return tr("%1 pitch samples. Pitch more to %2 samples for stable calibration.")
+                        .arg(nsamples[1]).arg(min_pitch_samples);
+
+                const unsigned nsamples_total = nsamples[0] + nsamples[1];
+
+                return tr("%1 samples. Over %2, good!").arg(nsamples_total).arg(min_samples);
+            );
 
             ui.sample_count_display->setText(sample_feedback);
         }

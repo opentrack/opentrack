@@ -1,4 +1,7 @@
 #include <winuser.h>
-142 RT_MANIFEST scserver.manifest
-143 RT_MANIFEST scserver_sp2.manifest
-144 RT_MANIFEST scserver_acceleration.manifest
+142 RT_MANIFEST fsx_rtm.manifest
+143 RT_MANIFEST fsx_sp1.manifest
+144 RT_MANIFEST fsx_sp2.manifest
+145 RT_MANIFEST fsx_p3d_sp2_xpack.manifest
+146 RT_MANIFEST fsx_steam_orig.manifest
+147 RT_MANIFEST fsx_steam_last.manifest

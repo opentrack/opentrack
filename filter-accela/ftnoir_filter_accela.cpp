@@ -11,11 +11,9 @@
 #include <QMutexLocker>
 #include "api/plugin-api.hpp"
 
-using std::fabs;
-using std::sqrt;
-using std::pow;
-using std::copysign;
-using std::fmin;
+#include "compat/math-imports.hpp"
+
+using namespace otr_math;
 
 constexpr settings_accela::gains settings_accela::rot_gains[16];
 constexpr settings_accela::gains settings_accela::pos_gains[16];
@@ -23,12 +21,6 @@ constexpr settings_accela::gains settings_accela::pos_gains[16];
 accela::accela() : first_run(true)
 {
     s.make_splines(spline_rot, spline_pos);
-}
-
-template <typename T>
-static inline constexpr T signum(T x)
-{
-    return T((T(0) < x) - (x < T(0)));
 }
 
 template<int N = 3, typename F>
@@ -44,7 +36,8 @@ static void do_deltas(const double* deltas, double* output, double alpha, double
         return sqrt(ret);
     );
 
-    const double dist = smoothed = fmin(dist_, alpha*dist_ + (1-alpha)*smoothed);
+    const double dist = fmin(dist_, alpha*dist_ + (1-alpha)*smoothed);
+    smoothed = dist;
     const double value = double(fun(dist));
 
     for (unsigned k = 0; k < N; k++)
@@ -78,18 +71,26 @@ static void do_deltas(const double* deltas, double* output, double alpha, double
 
 void accela::filter(const double* input, double *output)
 {
-    if (first_run)
+    if (unlikely(first_run))
     {
+        first_run = false;
+
         for (int i = 0; i < 6; i++)
         {
             const double f = input[i];
             output[i] = f;
             last_output[i] = f;
         }
-        first_run = false;
+
         smoothed_input[0] = 0;
         smoothed_input[1] = 0;
+
         t.start();
+#if defined DEBUG_ACCELA
+        debug_max = 0;
+        debug_timer.start();
+#endif
+
         return;
     }
 
@@ -131,6 +132,24 @@ void accela::filter(const double* input, double *output)
     }
 
     do_deltas(&deltas[Yaw], &output[Yaw], alpha, smoothed_input[0], [this](double x) { return spline_rot.get_value_no_save(x); });
+
+#if defined DEBUG_ACCELA
+    var.input(smoothed_input[0]);
+    debug_max = fmax(debug_max, smoothed_input[0]);
+
+    using time_units::secs_;
+
+    if (debug_timer.is_elapsed(secs_(1)))
+    {
+        qDebug() << "accela:"
+                 << "max" << debug_max
+                 << "mean" << var.avg()
+                 << "stddev" << var.stddev();
+
+        var.clear();
+        debug_max = 0;
+    }
+#endif
 
     // pos
 

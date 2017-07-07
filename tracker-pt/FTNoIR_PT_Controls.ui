@@ -250,7 +250,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Dynamic pose resolution</string>
+             <string>Dynamic pose (for caps only, never clips)</string>
             </property>
            </widget>
           </item>
