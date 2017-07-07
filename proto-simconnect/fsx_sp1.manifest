@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<assembly xmlns='urn:schemas-microsoft-com:asm.v1' manifestVersion='1.0'>
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity type='win32' name='Microsoft.FlightSimulator.SimConnect' version='10.0.61242.0' processorArchitecture='x86' publicKeyToken='67c7c14424d61b5b' />
+    </dependentAssembly>
+  </dependency>
+</assembly>
