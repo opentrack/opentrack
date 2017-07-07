@@ -7,6 +7,7 @@
  */
 
 #include "compat/ndebug-guard.hpp"
+#include "compat/util.hpp"
 
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"

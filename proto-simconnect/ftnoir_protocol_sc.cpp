@@ -26,7 +26,7 @@ simconnect::~simconnect()
 
 void simconnect::run()
 {
-    HANDLE event = CreateEvent(NULL, FALSE, FALSE, nullptr);
+    HANDLE event = CreateEventA(NULL, FALSE, FALSE, nullptr);
 
     if (event == nullptr)
     {
@@ -38,59 +38,56 @@ void simconnect::run()
     {
         HRESULT hr;
 
-        qDebug() << "simconnect: starting";
-
         if (SUCCEEDED(hr = simconnect_open(&hSimConnect, "opentrack", nullptr, 0, event, 0)))
         {
             if (!SUCCEEDED(hr = simconnect_subscribetosystemevent(hSimConnect, 0, "Frame")))
             {
                 qDebug() << "simconnect: can't subscribe to frame event:" << hr;
-
-                should_reconnect = true; // will free simconnect handle and continue the loop
             }
 
             Timer tm;
-            int idle_seconds = 0;
+            should_reconnect = false;
 
-            while (!isInterruptionRequested())
-            {
-                if (should_reconnect)
+            if (SUCCEEDED(hr))
+                while (!isInterruptionRequested())
                 {
-                    should_reconnect = false;
-                    break;
-                }
-
-                if (WaitForSingleObject(event, 10) == WAIT_OBJECT_0)
-                {
-                    tm.start();
-                    idle_seconds = 0;
-
-                    if (!SUCCEEDED(hr = simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
-                    {
-                        qDebug() << "simconnect: calldispatch failed:" << hr;
+                    if (should_reconnect)
                         break;
-                    }
-                }
-                else
-                {
-                    if (int(tm.elapsed_seconds()) > idle_seconds)
+
+                    if (WaitForSingleObject(event, 100) == WAIT_OBJECT_0)
                     {
-                        idle_seconds++;
-                        qDebug() << "simconnect: can't process event for" << int(tm.elapsed_seconds()) << "seconds";
+                        tm.start();
+
+                        if (!SUCCEEDED(hr = simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
+                        {
+                            qDebug() << "simconnect: calldispatch failed:" << hr;
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        const int idle_seconds = tm.elapsed_seconds();
+
+                        static constexpr int max_idle_seconds = 2;
+
+                        if (idle_seconds >= max_idle_seconds)
+                        {
+                            qDebug() << "simconnect: reconnect";
+                            break;
+                        }
                     }
                 }
-            }
 
             (void) simconnect_close(hSimConnect);
         }
         else
-        {
             qDebug() << "simconnect: can't open handle:" << hr;
-        }
 
         if (!isInterruptionRequested())
-            Sleep(100);
+            Sleep(3000);
     }
+
+    qDebug() << "simconnect: exit";
 
     CloseHandle(event);
 }
@@ -120,8 +117,8 @@ public:
     {
         hactctx = INVALID_HANDLE_VALUE;
         actctx_cookie = 0;
-        ACTCTXA actx = {0};
-        actx.cbSize = sizeof(ACTCTXA);
+        ACTCTXA actx = {};
+        actx.cbSize = sizeof(actx);
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
 #ifdef _MSC_VER
@@ -229,9 +226,12 @@ void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWO
     default:
         break;
     case SIMCONNECT_RECV_ID_EXCEPTION:
+        qDebug() << "simconnect: got exception";
+        //self.should_reconnect = true;
+        break;
     case SIMCONNECT_RECV_ID_QUIT:
+        qDebug() << "simconnect: got quit event";
         self.should_reconnect = true;
-        qDebug() << "simconnect: received ID_QUIT event";
         break;
     case SIMCONNECT_RECV_ID_EVENT_FRAME:
         self.handle();

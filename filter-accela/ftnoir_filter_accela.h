@@ -11,10 +11,16 @@
 #include "accela-settings.hpp"
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
+#include "compat/variance.hpp"
 
 #include <atomic>
 #include <QMutex>
 #include <QTimer>
+
+// ------------------------------------
+// debug knob
+// ------------------------------------
+//#define DEBUG_ACCELA
 
 class accela : public IFilter
 {
@@ -25,13 +31,18 @@ public:
     spline spline_rot, spline_pos;
 private:
     settings_accela s;
-    bool first_run;
     double last_output[6], deltas[6];
     double smoothed_input[2];
     Timer t;
+#if defined DEBUG_ACCELA
+    Timer debug_timer;
+    double debug_max;
+    variance var;
+#endif
+    bool first_run;
 };
 
-class dialog_accela: public IFilterDialog
+class dialog_accela : public IFilterDialog
 {
     Q_OBJECT
 public:
