@@ -145,7 +145,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     contours.clear();
 
     cv::findContours(frame_bin, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
-    const unsigned cnt = std::min(unsigned(max_blobs), contours.size());
+    const unsigned cnt = std::min<unsigned>(max_blobs, contours.size());
 
     for (unsigned k = 0; k < cnt; k++)
     {
