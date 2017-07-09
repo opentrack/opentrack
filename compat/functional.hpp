@@ -3,9 +3,10 @@
 #include <algorithm>
 #include <iterator>
 #include <type_traits>
+#include <vector>
 
 template<typename t>
-using remove_qualifiers = std::remove_reference_t<std::remove_cv_t<t>>;
+using remove_qualifiers = std::remove_cv_t<std::remove_reference_t<t>>;
 
 namespace functools
 {
@@ -52,10 +53,11 @@ struct constant final
 template<typename seq_, typename F>
 auto map(F&& fun, const seq_& seq)
 {
-    using seq_type = remove_qualifiers<seq_>;
+    using value_type = remove_qualifiers<typename std::iterator_traits<decltype(std::begin(seq))>::value_type>;
+    using ret_type = remove_qualifiers<decltype(fun(std::declval<value_type>()))>;
 
-    seq_type ret;
-    std::back_insert_iterator<seq_type> it = std::back_inserter(ret);
+    std::vector<ret_type> ret;
+    auto it = std::back_inserter(ret);
 
     for (const auto& elt : seq)
         it = fun(elt);
@@ -69,8 +71,8 @@ auto remove_if_not(F&& fun, const seq_& seq)
     using namespace functools;
 
     using seq_type = remove_qualifiers<seq_>;
-    using value_type = typename std::iterator_traits<decltype(std::begin(std::declval<seq_>()))>::value_type;
-    using fun_ret_type = decltype(fun(std::declval<const value_type&>()));
+    using value_type = remove_qualifiers<typename std::iterator_traits<decltype(std::begin(seq))>::value_type>;
+    using fun_ret_type = decltype(fun(std::declval<value_type>()));
     static_assert(std::is_convertible<fun_ret_type, bool>::value, "must return bool");
 
     seq_type ret;
