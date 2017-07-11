@@ -27,17 +27,6 @@ static const t bound(t datum, t least, t max)
     return datum;
 }
 
-#include <QFile>
-#include <QTextStream>
-
-void logtext(QString txt) {
-	//QFile caFile("c:/tools/log.txt");
-	//caFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append);
-	//QTextStream outStream(&caFile);
-	//outStream << txt;
-	//caFile.close();
-}
-
 void tracker_s2bot::run() {
 #pragma pack(push, 1)
     struct {
@@ -52,16 +41,12 @@ void tracker_s2bot::run() {
         Mask = flag_Raw | flag_Orient
     };
 
-	logtext("GO");
-
 	if (s.freq == 0) s.freq = 10;
 	timer.setInterval(1000.0/s.freq);
 	timer.setSingleShot(false);	
 	connect(&timer, &QTimer::timeout, [this]() {
-		logtext("timer ");
 		auto reply = m_nam->get(QNetworkRequest(QUrl("http://localhost:17317/poll")));
 		connect(reply, &QNetworkReply::finished, [this, reply]() {
-			logtext("reply ");
 			if (reply->error() == QNetworkReply::NoError) {
 				qDebug() << "Request submitted OK";
 			}
@@ -70,15 +55,12 @@ void tracker_s2bot::run() {
 				return;
 			}
 			QByteArray ba = reply->readAll();
-			logtext("\nlength " + ba.length());
 			QStringList slist = QString(ba).split(QRegExp("[\r\n]"), QString::SkipEmptyParts);
 			int order[] = {
 				bound<int>(s.idx_x, 0, 3),
 				bound<int>(s.idx_y, 0, 3),
 				bound<int>(s.idx_z, 0, 3)
 			};
-			logtext(QString::number(s.idx_x()) + "\n\r");
-			logtext(QString::number(order[0]) + "\n\r");
 			double orient[4] = { 0, 0, 0, 0 };
 			static const int add_cbx[] = {
 				0,
@@ -91,12 +73,11 @@ void tracker_s2bot::run() {
 			for (auto line : slist) {
 				QStringList keyval = line.split(" ");
 				if (keyval.count() < 2) continue;
-				if (keyval[0].startsWith("accelerometerX")) orient[0] = keyval[1].toInt();
+				if (keyval[0].startsWith("accelerometerZ")) orient[0] = keyval[1].toInt();
 				else if (keyval[0].startsWith("accelerometerY")) orient[1] = keyval[1].toInt();
-				else if (keyval[0].startsWith("accelerometerZ")) orient[2] = keyval[1].toInt();
+				else if (keyval[0].startsWith("accelerometerX")) orient[2] = keyval[1].toInt();
 				else if (keyval[0].startsWith("bearing")) orient[3] = keyval[1].toInt();
 			}
-			logtext("RAW: " + QString::number(orient[0]) + " " + QString::number(orient[1]) + " " + QString::number(orient[2]) + " " + QString::number(orient[3]) + "\n\r");
 			QMutexLocker foo(&mtx);
 			static constexpr double r2d = 180 / M_PI;
 			for (int i = 0; i < 3; i++)
@@ -107,17 +88,12 @@ void tracker_s2bot::run() {
 					val = add_cbx[idx];
 				pose[Yaw + i] = orient[order[i]] + val; // * r2d if it was radians
 			}
-			logtext("Processed: " + QString::number(pose[Yaw]) + " " + QString::number(pose[Yaw + 1]) + " " + QString::number(pose[Yaw + 2]) + "\n\r");
-
-
-
 			reply->close();
 			reply->deleteLater();
 		});
 	});
 	timer.start();
 	exec();
-    //sock.bind(QHostAddress::Any, (unsigned short) s.freq, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
 }
 
 void tracker_s2bot::start_tracker(QFrame*)
