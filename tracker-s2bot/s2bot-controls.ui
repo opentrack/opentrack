@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UI_s2bot_dialog</class>
+ <widget class="QWidget" name="UI_s2bot_dialog">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>227</width>
+    <height>372</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Tracker settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../gui/images/facetracknoir.png</normaloff>../gui/images/facetracknoir.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Update frequency (Hz)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="freq">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>120</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Axis order</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" rowspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>output yaw</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="input_x">
+        <item>
+         <property name="text">
+          <string>input yaw</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>input pitch</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>input roll</string>
+         </property>
+        </item>
+         <item>
+           <property name="text">
+             <string>input bearing</string>
+           </property>
+         </item>
+       </widget>
+      </item>
+      <item row="1" column="1" rowspan="2">
+       <widget class="QComboBox" name="input_y">
+        <item>
+         <property name="text">
+          <string>input yaw</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>input pitch</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>input roll</string>
+         </property>
+        </item>
+         <item>
+           <property name="text">
+             <string>input bearing</string>
+           </property>
+         </item>
+       </widget>
+      </item>
+      <item row="2" column="0" rowspan="2">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>output pitch</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" rowspan="2">
+       <widget class="QComboBox" name="input_z">
+        <item>
+         <property name="text">
+          <string>input yaw</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>input pitch</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>input roll</string>
+         </property>
+        </item>
+         <item>
+           <property name="text">
+             <string>input bearing</string>
+           </property>
+         </item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>output roll</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Add to axis</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>yaw</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="add_yaw">
+        <item>
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>+90</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>-90</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>+180</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>-180</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>pitch</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_9">
+        <property name="text">
+         <string>roll</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="add_pitch">
+        <item>
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>+90</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>-90</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>+180</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>-180</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="add_roll">
+        <item>
+         <property name="text">
+          <string>0</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>+90</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>-90</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>+180</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>-180</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+ <slots>
+  <slot>startEngineClicked()</slot>
+  <slot>stopEngineClicked()</slot>
+  <slot>cameraSettingsClicked()</slot>
+ </slots>
+</ui>

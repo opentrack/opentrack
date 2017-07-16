@@ -6,5 +6,6 @@ chronological order:
 - Donovan Baarda <<abo@minkirri.apana.org.au>>
 - Xavier Hallade <<xavier.hallade@intel.com>>
 - Michael Welter <<mw.pub@welter-4d.de>>
+- Attila Csipa <<git@csipa.net>>
 
 See OPENTRACK-LICENSING.txt for licensing information.

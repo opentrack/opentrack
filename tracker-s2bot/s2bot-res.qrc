@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>s2bot.png</file>
+    </qresource>
+</RCC>
