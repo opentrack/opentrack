@@ -19,30 +19,22 @@
 #include <sys/types.h>
 #endif
 
-#ifdef __GNUC__
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wattributes"
-#endif
-
 #include "export.hpp"
 
-class OTR_COMPAT_EXPORT PortableLockedShm {
-public:
-    PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
-    ~PortableLockedShm();
-    void lock();
-    void unlock();
-    bool success();
-    inline void* ptr() { return mem; }
-private:
+class OTR_COMPAT_EXPORT PortableLockedShm final
+{
     void* mem;
 #if defined(_WIN32)
     HANDLE hMutex, hMapFile;
 #else
     int fd, size;
 #endif
-};
 
-#ifdef __GNUC__
-#   pragma GCC diagnostic pop
-#endif
+public:
+    PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
+    ~PortableLockedShm();
+    bool lock();
+    bool unlock();
+    bool success();
+    inline void* ptr() { return mem; }
+};

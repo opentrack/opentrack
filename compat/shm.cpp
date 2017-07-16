@@ -7,6 +7,8 @@
 
 #include "shm.h"
 
+#include <QDebug>
+
 #if defined(_WIN32)
 
 #include <cstring>
@@ -109,11 +111,13 @@ PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName,
     secattr sa(GENERIC_ALL|SYNCHRONIZE);
 
     hMutex = CreateMutexA(sa.success ? &sa.attrs : nullptr, false, mutexName);
+
     if (!hMutex)
     {
-        fprintf(stderr, "CreateMutexA: %d\n", (int) GetLastError());
-        fflush(stderr);
+        qDebug() << "CreateMutexA:" << (int) GetLastError();
+        return;
     }
+
     hMapFile = CreateFileMappingA(
                  INVALID_HANDLE_VALUE,
                  sa.success ? &sa.attrs : nullptr,
@@ -121,38 +125,49 @@ PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName,
                  0,
                  mapSize,
                  shmName);
+
     if (!hMapFile)
     {
-        fprintf(stderr, "CreateFileMappingA: %d\n", (int) GetLastError());
-        fflush(stderr);
+        qDebug() << "CreateFileMappingA:", (int) GetLastError();
+
+        return;
     }
+
     mem = MapViewOfFile(hMapFile,
                         FILE_MAP_WRITE,
                         0,
                         0,
                         mapSize);
+
     if (!mem)
-    {
-        fprintf(stderr, "MapViewOfFile: %d\n", (int) GetLastError());
-        fflush(stderr);
-    }
+        qDebug() << "MapViewOfFile:" << (int) GetLastError();
 }
 
 PortableLockedShm::~PortableLockedShm()
 {
-    UnmapViewOfFile(mem);
-    CloseHandle(hMapFile);
-    CloseHandle(hMutex);
+    if(!UnmapViewOfFile(mem))
+        goto fail;
+
+    if (!CloseHandle(hMapFile))
+        goto fail;
+
+    if (!CloseHandle(hMutex))
+        goto fail;
+
+    return;
+
+fail:
+    qDebug() << "failed to close mapping";
 }
 
-void PortableLockedShm::lock()
+bool PortableLockedShm::lock()
 {
-    (void) WaitForSingleObject(hMutex, INFINITE);
+    return WaitForSingleObject(hMutex, INFINITE) == WAIT_OBJECT_0;
 }
 
-void PortableLockedShm::unlock()
+bool PortableLockedShm::unlock()
 {
-    (void) ReleaseMutex(hMutex);
+    return ReleaseMutex(hMutex);
 }
 #else
 
@@ -161,7 +176,7 @@ void PortableLockedShm::unlock()
 #pragma GCC diagnostic ignored "-Wunused-result"
 PortableLockedShm::PortableLockedShm(const char *shmName, const char* /*mutexName*/, int mapSize) : size(mapSize)
 {
-    char filename[PATH_MAX+2] = {0};
+    char filename[PATH_MAX+2] {};
     strcpy(filename, "/");
     strcat(filename, shmName);
     fd = shm_open(filename, O_RDWR | O_CREAT, 0600);
@@ -175,14 +190,14 @@ PortableLockedShm::~PortableLockedShm()
     (void) close(fd);
 }
 
-void PortableLockedShm::lock()
+bool PortableLockedShm::lock()
 {
-    flock(fd, LOCK_EX);
+    return flock(fd, LOCK_EX) == 0;
 }
 
-void PortableLockedShm::unlock()
+bool PortableLockedShm::unlock()
 {
-    flock(fd, LOCK_UN);
+    return flock(fd, LOCK_UN) == 0;
 }
 #endif
 
