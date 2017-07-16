@@ -31,7 +31,11 @@ include(opentrack-policy NO_POLICY_SCOPE)
 
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
-set(opentrack_all-translations "nl_NL;ru_RU;stub" CACHE STRING "")
+set(opentrack_all-translations "" CACHE STRING "Leave empty for default")
+
+if(".${opentrack_all-translations}" STREQUAL ".")
+    set(opentrack_all-translations "nl_NL;ru_RU;stub")
+endif()
 
 include(opentrack-word-size)
 include(opentrack-hier)
