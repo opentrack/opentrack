@@ -35,7 +35,7 @@ void tracker_s2bot::run() {
 		auto reply = m_nam->get(QNetworkRequest(QUrl("http://localhost:17317/poll")));
 		connect(reply, &QNetworkReply::finished, [this, reply]() {
 			if (reply->error() == QNetworkReply::NoError) {
-				qDebug() << "Request submitted OK";
+				//qDebug() << "Request submitted OK";
 			}
 			else {
 				qWarning() << "Request bounced:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString();
