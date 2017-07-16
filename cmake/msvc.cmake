@@ -12,7 +12,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "/O2 /O2it /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy /Gm /Zc:inline /Zo /FS /Zc:threadSafeInit /arch:SSE2 -D_HAS_EXCEPTIONS=0")
+set(cc "/O2 /O2it /Oy /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy /Gm /Zc:inline /Zo /FS /Zc:threadSafeInit /arch:SSE2 -D_HAS_EXCEPTIONS=0")
 
 set(warns_ "")
 
@@ -76,13 +76,14 @@ set(CMAKE_STATIC_LINKER_FLAGS "${_LDFLAGS_STATIC} ${CMAKE_STATIC_LINKER_FLAGS}")
 set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${_LDFLAGS_STATIC_RELEASE} ${CMAKE_STATIC_LINKER_FLAGS_RELEASE}")
 set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${_LDFLAGS_STATIC_DEBUG} ${CMAKE_STATIC_LINKER_FLAGS_DEBUG}")
 
-set(CMAKE_BUILD_TYPE_INIT RELEASE)
-# for nmake/jom build directories
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "RELEASE")
-endif()
-
 set(CMAKE_RC_FLAGS "-nologo -DWIN32")
 
-include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
+if(NOT CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
+endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
