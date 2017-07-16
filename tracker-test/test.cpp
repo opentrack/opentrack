@@ -8,6 +8,7 @@
 
 #include "test.h"
 #include "api/plugin-api.hpp"
+#include "compat/math-imports.hpp"
 
 #include <QPushButton>
 
@@ -40,11 +41,6 @@ void test_tracker::start_tracker(QFrame*)
 
 void test_tracker::data(double *data)
 {
-    using std::fmod;
-    using std::sin;
-    using std::fabs;
-    using std::copysign;
-
     const double dt = t.elapsed_seconds();
     t.start();
 

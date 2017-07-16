@@ -10,6 +10,7 @@
 #include "cv/video-property-page.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/sleep.hpp"
+#include "compat/math-imports.hpp"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
@@ -224,9 +225,6 @@ cv::Point3f aruco_tracker::rotate_model(float x, float y, settings::rot mode)
 
     if (mode)
     {
-        using std::cos;
-        using std::sin;
-
         const double theta = int(mode) * 90/4. * M_PI/180;
         pt.x = x * cos(theta) - y * sin(theta);
         pt.y = y * cos(theta) + x * sin(theta);
@@ -364,11 +362,6 @@ void aruco_tracker::cycle_detection_params()
 void aruco_tracker::run()
 {
     cv::setNumThreads(0);
-
-    using std::fabs;
-    using std::atan;
-    using std::tan;
-    using std::sqrt;
 
     if (!open_camera())
         return;

@@ -8,6 +8,7 @@
 
 #include "point_extractor.h"
 #include "compat/util.hpp"
+#include "compat/math-imports.hpp"
 #include "point_tracker.h"
 #include <QDebug>
 
@@ -19,10 +20,6 @@
 #include <cinttypes>
 #include <vector>
 #include <array>
-
-using std::sqrt;
-using std::fmax;
-using std::min;
 
 using namespace pt_extractor_impl;
 
@@ -51,7 +48,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
     vec2 com(0, 0);
     for (int i = 0; i < frame_gray.rows; i++)
     {
-        const auto frame_ptr = (const std::uint8_t*)frame_gray.ptr(i);
+        const auto frame_ptr = (const uint8_t*)frame_gray.ptr(i);
         for (int j = 0; j < frame_gray.cols; j++)
         {
             f val = frame_ptr[j];
@@ -145,7 +142,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     contours.clear();
 
     cv::findContours(frame_bin, contours, cv::RETR_LIST, cv::CHAIN_APPROX_SIMPLE);
-    const unsigned cnt = std::min<unsigned>(max_blobs, contours.size());
+    const unsigned cnt = min(max_blobs, int(contours.size()));
 
     for (unsigned k = 0; k < cnt; k++)
     {
@@ -155,14 +152,12 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         cv::Moments moments = cv::moments(contours[k]);
 
         const double area = moments.m00;
-        const double radius = std::sqrt(area) / std::sqrt(M_PI);
+        const double radius = sqrt(area) / sqrt(M_PI);
 
-        if (radius < std::fmax(2.5, region_size_min) || (radius > region_size_max))
+        if (radius < fmax(2.5, region_size_min) || (radius > region_size_max))
             continue;
 
-        cv::Rect rect = cv::boundingRect(contours[k]) & cv::Rect(0, 0, frame.cols, frame.rows);
-
-        rect &= cv::Rect(0, 0, frame.cols, frame.rows); // crop at frame boundaries
+        const cv::Rect rect = cv::boundingRect(contours[k]) & cv::Rect(0, 0, frame.cols, frame.rows);
 
         if (rect.width == 0 || rect.height == 0)
             continue;
@@ -240,7 +235,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         }
 
 #if defined DEBUG_MEANSHIFT
-        meanshift_total += std::sqrt((pos_ - pos).dot(pos_ - pos));
+        meanshift_total += sqrt((pos_ - pos).dot(pos_ - pos));
 #endif
 
         b.pos[0] = pos[0] + rect.x;

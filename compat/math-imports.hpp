@@ -1,10 +1,12 @@
 #pragma once
 
-#include <cmath>
-#include <cinttypes>
-
-namespace otr_math
+template <typename T>
+static inline constexpr auto signum(T x)
 {
+    return (T() < x) - (x < T());
+}
+
+#include <cmath>
 
 using std::copysign;
 
@@ -27,19 +29,20 @@ using std::tan;
 using std::round;
 using std::fmod;
 
+#include <cinttypes>
+
 using std::uintptr_t;
 using std::intptr_t;
 
 using std::int64_t;
 using std::int32_t;
+using std::int8_t;
 
 using std::uint64_t;
 using std::uint32_t;
+using std::uint8_t;
 
-template <typename T>
-static inline constexpr auto signum(T x)
-{
-    return (T() < x) - (x < T());
-}
+#include <algorithm>
 
-} // ns otr_math
+using std::min;
+using std::max;

@@ -13,8 +13,6 @@
 
 #include "compat/math-imports.hpp"
 
-using namespace otr_math;
-
 constexpr settings_accela::gains settings_accela::rot_gains[16];
 constexpr settings_accela::gains settings_accela::pos_gains[16];
 

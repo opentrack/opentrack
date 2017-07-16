@@ -8,6 +8,7 @@
 
 #include "ftnoir_tracker_pt.h"
 #include "compat/camera-names.hpp"
+#include "compat/math-imports.hpp"
 #include <QHBoxLayout>
 #include <cmath>
 #include <QDebug>
@@ -189,12 +190,6 @@ void Tracker_PT::data(double *data)
                    -1, 0, 0,
                    0, 1, 0);
         mat33 R = R_EG *  X_GH.R * R_EG.t();
-
-        using std::atan2;
-        using std::sqrt;
-        using std::atan;
-        using std::fabs;
-        using std::copysign;
 
         // get translation(s)
         const vec3& t = X_GH.t;

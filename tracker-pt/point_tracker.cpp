@@ -7,6 +7,7 @@
 
 #include "point_tracker.h"
 #include "compat/nan.hpp"
+#include "compat/math-imports.hpp"
 
 using namespace types;
 
@@ -279,12 +280,6 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
     mat33* R_current = &R_1;
 
     static constexpr int max_iter = 100;
-
-    using std::sqrt;
-    using std::atan;
-    using std::cos;
-    using std::sin;
-    using std::fabs;
 
     int i=1;
     for (; i<max_iter; ++i)

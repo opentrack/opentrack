@@ -1,13 +1,11 @@
 #include "euler.hpp"
+#include "math-imports.hpp"
 #include <cmath>
 
 namespace euler {
 
 euler_t OTR_COMPAT_EXPORT rmat_to_euler(const rmat& R)
 {
-    using std::atan2;
-    using std::sqrt;
-
     const double cy = sqrt(R(2,2)*R(2, 2) + R(2, 1)*R(2, 1));
     const bool large_enough = cy > 1e-10;
     if (large_enough)
@@ -30,9 +28,6 @@ rmat OTR_COMPAT_EXPORT euler_to_rmat(const euler_t& input)
     const double H = -input(0);
     const double P = -input(1);
     const double B = -input(2);
-
-    using std::cos;
-    using std::sin;
 
     const auto c1 = cos(H);
     const auto s1 = sin(H);
@@ -63,9 +58,6 @@ void OTR_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
                                                     rmat& r_pitch,
                                                     rmat& r_yaw)
 {
-    using std::cos;
-    using std::sin;
-
     {
         const double phi = -input(2);
         const double sin_phi = sin(phi);

@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "compat/sleep.hpp"
 #include "compat/camera-names.hpp"
+#include "compat/math-imports.hpp"
 
 constexpr double Camera::dt_eps;
 
@@ -23,10 +24,6 @@ QString Camera::get_active_name() const
 
 void CamInfo::get_focal_length(double& fx) const
 {
-    using std::tan;
-    using std::atan;
-    using std::sqrt;
-
     const double diag_len = sqrt(double(res_x*res_x + res_y*res_y));
     const double aspect_x = res_x / diag_len;
     //const double aspect_y = res_y / diag_len;
