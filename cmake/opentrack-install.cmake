@@ -65,10 +65,6 @@ function(merge_translations)
             endif()
         endforeach()
 
-        if (opentrack_disable-i18n-update)
-            set(ts-files_ "")
-        endif()
-
         if(NOT ".${ts-files_}" STREQUAL ".")
             set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
             list(APPEND all-qm-files "${qm-output}")
