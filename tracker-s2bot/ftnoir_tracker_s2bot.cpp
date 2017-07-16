@@ -28,19 +28,6 @@ static const t bound(t datum, t least, t max)
 }
 
 void tracker_s2bot::run() {
-#pragma pack(push, 1)
-    struct {
-        uint8_t pad1;
-        uint8_t flags;
-        float fl[12];
-    } data;
-#pragma pack(pop)
-    enum F {
-        flag_Raw = 1 << 0,
-        flag_Orient = 1 << 1,
-        Mask = flag_Raw | flag_Orient
-    };
-
 	if (s.freq == 0) s.freq = 10;
 	timer.setInterval(1000.0/s.freq);
 	timer.setSingleShot(false);	
