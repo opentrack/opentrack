@@ -326,21 +326,25 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
     const int point_pixel_closeness_limit = get_closeness_limit();
 
+    moving_control_point_idx = -1;
+
     points_t points = _config->get_points();
+
     if (e->button() == Qt::LeftButton)
     {
-        bool bTouchingPoint = false;
-        moving_control_point_idx = -1;
+        bool is_touching_point = false;
+
         for (int i = 0; i < points.size(); i++)
         {
             if (point_within_pixel(points[i], e->pos()))
             {
-                bTouchingPoint = true;
+                is_touching_point = true;
                 moving_control_point_idx = i;
                 break;
             }
         }
-        if (!bTouchingPoint)
+
+        if (!is_touching_point)
         {
             bool too_close = false;
             const QPoint pos = e->pos();
@@ -362,6 +366,8 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 show_tooltip(e->pos());
             }
         }
+
+        _draw_function = true;
     }
 
     if (e->button() == Qt::RightButton)
@@ -381,12 +387,13 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             if (found_pt != -1)
             {
                 _config->remove_point(found_pt);
+                _draw_function = true;
             }
-            moving_control_point_idx = -1;
         }
     }
-    _draw_function = true;
-    repaint();
+
+    if (_draw_function)
+        repaint();
 }
 
 void spline_widget::mouseMoveEvent(QMouseEvent *e)
@@ -431,11 +438,12 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
             new_pt = QPointF(points[i].x(), new_pt.y());
 
         _config->move_point(i, new_pt);
+
         _draw_function = true;
+        repaint();
 
         setCursor(Qt::ClosedHandCursor);
         show_tooltip(pix, new_pt);
-        repaint();
     }
     else if (sz)
     {
@@ -466,6 +474,9 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
         return;
     }
 
+    const bool redraw = moving_control_point_idx != -1;
+    moving_control_point_idx = -1;
+
     if (e->button() == Qt::LeftButton)
     {
         {
@@ -474,14 +485,16 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
             else
                 setCursor(Qt::ArrowCursor);
         }
-        moving_control_point_idx = -1;
-        _draw_function = true;
 
         if (is_in_bounds(e->pos()))
             show_tooltip(e->pos());
         else
             QToolTip::hideText();
+    }
 
+    if (redraw)
+    {
+        _draw_function = true;
         repaint();
     }
 }
