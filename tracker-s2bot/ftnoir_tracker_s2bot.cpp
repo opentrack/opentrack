@@ -67,6 +67,7 @@ void tracker_s2bot::run() {
 			}
 			QMutexLocker foo(&mtx);
 			static constexpr double r2d = 180 / M_PI;
+                        (void)r2d;
 			for (int i = 0; i < 3; i++)
 			{
 				int val = 0;
