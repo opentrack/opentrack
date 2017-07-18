@@ -110,9 +110,9 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
             s.t_MH_y = int(tmp[1]);
             s.t_MH_z = int(tmp[2]);
 
-            static constexpr unsigned min_yaw_samples = 15;
-            static constexpr unsigned min_pitch_samples = 15;
-            static constexpr unsigned min_samples = min_yaw_samples+min_pitch_samples;
+            static constexpr int min_yaw_samples = 15;
+            static constexpr int min_pitch_samples = 15;
+            static constexpr int min_samples = min_yaw_samples+min_pitch_samples;
 
             // Don't bother counting roll samples. Roll calibration is hard enough
             // that it's a hidden unsupported feature anyway.
