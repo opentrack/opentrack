@@ -175,9 +175,6 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
     return u >= 0 && v >= 0 && u + v <= 1;
 }
 
-#if defined __GNUG__
-__attribute__((optimize("unroll-loops")))
-#endif
 void pose_transform::project_quad_texture()
 {
     image.fill(Qt::transparent);
