@@ -13,7 +13,7 @@ tracker_s2bot::tracker_s2bot() : pose { 0,0,0, 0,0,0 }, m_nam (std::make_unique<
 
 tracker_s2bot::~tracker_s2bot()
 {
-    requestInterruption();
+    QThread::exit(0); // stop event loop
     wait();
 }
 
@@ -30,12 +30,12 @@ static const t bound(t datum, t least, t max)
 void tracker_s2bot::run() {
 	if (s.freq == 0) s.freq = 10;
 	timer.setInterval(1000.0/s.freq);
-	timer.setSingleShot(false);	
+	timer.setSingleShot(false);
 	connect(&timer, &QTimer::timeout, [this]() {
 		auto reply = m_nam->get(QNetworkRequest(QUrl("http://localhost:17317/poll")));
 		connect(reply, &QNetworkReply::finished, [this, reply]() {
 			if (reply->error() == QNetworkReply::NoError) {
-				//qDebug() << "Request submitted OK";
+				qDebug() << "Request submitted OK";
 			}
 			else {
 				qWarning() << "Request bounced:" << reply->attribute(QNetworkRequest::HttpStatusCodeAttribute) << reply->errorString();
@@ -80,14 +80,17 @@ void tracker_s2bot::run() {
 			reply->deleteLater();
 		});
 	});
+
 	timer.start();
 	exec();
+        timer.stop();
 }
 
 void tracker_s2bot::start_tracker(QFrame*)
 {
     start();
     timer.moveToThread(this);
+    m_nam->moveToThread(this);
 }
 
 void tracker_s2bot::data(double *data)
