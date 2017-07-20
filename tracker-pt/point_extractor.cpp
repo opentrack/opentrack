@@ -23,6 +23,8 @@
 
 using namespace pt_extractor_impl;
 
+constexpr int PointExtractor::max_blobs;
+
 /*
 http://en.wikipedia.org/wiki/Mean-shift
 In this application the idea, is to eliminate any bias of the point estimate 
