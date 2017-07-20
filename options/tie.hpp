@@ -58,11 +58,6 @@ void tie_setting(value<t>& v, QLabel* lb, const QString& format, const xs&... ar
                         v.SAFE_CONNTYPE);
 }
 
-// Clang 3.9 has a bug
-// error: missing default argument on parameter 'args'
-
-// cf. http://stackoverflow.com/questions/29098835/can-parameter-pack-function-arguments-be-defaulted
-
 template<typename t, typename F, typename... xs>
 decltype((void)((std::declval<F>())(std::declval<const t&>())))
 tie_setting(value<t>& v, QLabel* lb, F&& fun, const QString& fmt, const xs&... args)
@@ -73,6 +68,13 @@ tie_setting(value<t>& v, QLabel* lb, F&& fun, const QString& fmt, const xs&... a
     base_value::connect(&v, static_cast<void(base_value::*)(const t&) const>(&base_value::valueChanged),
                         lb, closure,
                         v.SAFE_CONNTYPE);
+}
+
+template<typename t, typename F, typename... xs>
+decltype((void)((std::declval<F>())(std::declval<const t&>())))
+tie_setting(value<t>& v, QLabel* lb, F&& fun)
+{
+    tie_setting(v, lb, fun, QStringLiteral("%1"));
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
