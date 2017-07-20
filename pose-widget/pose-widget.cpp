@@ -18,16 +18,16 @@
 
 using namespace pose_widget_impl;
 
-static constexpr int offset = 2;
-
 pose_transform::pose_transform(QWidget* dst) :
     dst(dst),
-    image(w+offset*2, h+offset*2, QImage::Format_ARGB32),
-    image2(w+offset*2, h+offset*2, QImage::Format_ARGB32),
+    front(":/images/side1.png", nullptr),
+    back(":/images/side6.png", nullptr),
+    image(w, h, QImage::Format_ARGB32),
+    image2(w, h, QImage::Format_ARGB32),
     fresh(false)
 {
-    front = QImage(QString(":/images/side1.png"));
-    back = QImage(QString(":/images/side6.png"));
+    front = front.copy(front.rect());
+    back = back.copy(back.rect());
 
     image.fill(Qt::transparent);
     image2.fill(Qt::transparent);
@@ -47,7 +47,7 @@ void pose_widget::paintEvent(QPaintEvent* event)
 
     xform.with_image_lock([&](const QImage& image)
     {
-        p.drawImage(event->rect(), image, QRect(offset, offset, pose_transform::w, pose_transform::h));
+        p.drawImage(event->rect(), image, QRect(0, 0, pose_transform::w, pose_transform::h));
     });
 }
 
@@ -219,7 +219,7 @@ void pose_transform::project_quad_texture()
     if (std::fabs(dir) < 1e-3)
     {
         lock_guard l(mtx2);
-        std::swap(image, image2);
+        image.swap(image2);
         fresh = true;
         return;
     }
@@ -231,13 +231,14 @@ void pose_transform::project_quad_texture()
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
 
-    const unsigned char* restrict orig = tex.bits();
-    unsigned char* restrict dest = image.bits() + offset*dest_pitch;
+    const unsigned char* restrict orig = tex.constBits();
+    unsigned char* restrict dest = image.bits();
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
+    static constexpr int const_depth = 4;
 
-    if (unlikely(orig_depth != 4 || dest_depth != 4))
+    if (unlikely(orig_depth != const_depth || dest_depth != const_depth))
     {
         qDebug() << "pose-widget: octopus must be saved as .png with 32 bits pixel";
         qDebug() << "pose-widget: target texture must be ARGB32";
@@ -301,11 +302,11 @@ void pose_transform::project_quad_texture()
                 const unsigned px = fx;
                 const unsigned py = fy;
 
-                const unsigned orig_pos = py * orig_pitch + px * orig_depth;
+                const unsigned orig_pos = py * orig_pitch + px * const_depth;
 #if defined BILINEAR_FILTER
-                const unsigned orig_pos_ = py_ * orig_pitch + px_ * orig_depth;
-                const unsigned orig_pos__ = py * orig_pitch + px_ * orig_depth;
-                const unsigned orig_pos___ = py_ * orig_pitch + px * orig_depth;
+                const unsigned orig_pos_ = py_ * orig_pitch + px_ * const_depth;
+                const unsigned orig_pos__ = py * orig_pitch + px_ * const_depth;
+                const unsigned orig_pos___ = py_ * orig_pitch + px * const_depth;
 #endif
 
                 // 1, 0 -- ax_, ay
@@ -321,9 +322,9 @@ void pose_transform::project_quad_texture()
                 const float ay = 1 - ay_;
 #endif
 
-                const unsigned pos = y * dest_pitch + (x+offset) * dest_depth;
+                const unsigned pos = y * dest_pitch + x * const_depth;
 
-                for (int k = 0; k < 4; k++)
+                for (int k = 0; k < const_depth; k++)
                 {
 #if defined BILINEAR_FILTER
                     const uc i = orig[orig_pos + k];
@@ -341,7 +342,7 @@ void pose_transform::project_quad_texture()
 
     {
         lock_guard l2(mtx2);
-        std::swap(image, image2);
+        image.swap(image2);
         fresh = true;
     }
 }
