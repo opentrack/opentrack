@@ -116,11 +116,11 @@ template<typename t> using qshared = QSharedPointer<t>;
 #endif
 
 #if defined _MSC_VER
-#   define force_inline __forceinline
+#   define always_inline __forceinline
 #elif defined __GNUG__
-#   define force_inline __attribute__((always_inline, gnu_inline))
+#   define always_inline __attribute__((always_inline, gnu_inline))
 #else
-#   define force_inline inline
+#   define always_inline inline
 #endif
 
 #if defined __GNUG__
