@@ -309,9 +309,6 @@ bool MainWindow::get_new_config_name_from_dialog(QString& ret)
 
 MainWindow::~MainWindow()
 {
-    if (tray)
-        tray->hide();
-    stop_tracker_();
 }
 
 void MainWindow::set_working_directory()
@@ -653,6 +650,10 @@ void MainWindow::showCurveConfiguration()
 
 void MainWindow::exit()
 {
+    if (tray)
+        tray->hide();
+    stop_tracker_();
+
     QCoreApplication::exit(0);
 }
 
