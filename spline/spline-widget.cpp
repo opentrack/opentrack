@@ -213,15 +213,23 @@ void spline_widget::drawFunction()
 
     path.moveTo(point_to_pixel(QPointF(0, 0)));
 
+    const double max_x_pixel = point_to_pixel_(QPointF(maxx, 0)).x();
+
+    auto check = [=](const QPointF& val) {
+        return val.x() < max_x_pixel
+               ? val
+               : QPointF(max_x_pixel, val.y());
+    };
+
     for (double k = 0; k < maxx; k += step*3)
     {
         const float next_1(_config->get_value_no_save(k + step*1));
         const float next_2(_config->get_value_no_save(k + step*2));
         const float next_3(_config->get_value_no_save(k + step*3));
 
-        const QPointF b(point_to_pixel_(QPointF(k + step*1, qreal(next_1)))),
-                      c(point_to_pixel_(QPointF(k + step*2, qreal(next_2)))),
-                      d(point_to_pixel_(QPointF(k + step*3, qreal(next_3))));
+        QPointF b(check(point_to_pixel_(QPointF(k + step*1, qreal(next_1))))),
+                c(check(point_to_pixel_(QPointF(k + step*2, qreal(next_2))))),
+                d(check(point_to_pixel_(QPointF(k + step*3, qreal(next_3)))));
 
         path.cubicTo(b, c, d);
     }
