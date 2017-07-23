@@ -4,7 +4,7 @@
 <context>
     <name>PT_metadata</name>
     <message>
-        <location filename="../ftnoir_tracker_pt.h" line="+94"/>
+        <location filename="../ftnoir_tracker_pt.h" line="+96"/>
         <source>PointTracker 1.1</source>
         <translation></translation>
     </message>
@@ -12,17 +12,22 @@
 <context>
     <name>TrackerDialog_PT</name>
     <message>
-        <location filename="../ftnoir_tracker_pt_dialog.cpp" line="+113"/>
+        <location filename="../ftnoir_tracker_pt_dialog.cpp" line="+130"/>
         <source>%1 samples. Over %2, good!</source>
         <translation>Получено %1 образца(-ов). Больше %2, отлично!!</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>%1 samples. Try for at least %2 for a precise calibration.</source>
-        <translation>Получено %1 образца(-ов). Для точной калибровки попробуйте достичь, как минимум %2.</translation>
+        <location line="-8"/>
+        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
+        <translation>По оси YAW выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+3"/>
+        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
+        <translation>По оси Pitch выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
+    </message>
+    <message>
+        <location line="+16"/>
         <source>Stop calibration</source>
         <translation>Остановить калибровку</translation>
     </message>
@@ -134,8 +139,8 @@
     </message>
     <message>
         <location line="+19"/>
-        <source>Dynamic pose resolution</source>
-        <translation>Динамическая поза (активация) </translation>
+        <source>Dynamic pose (for caps only, never clips)</source>
+        <translation>Динамическая поза (Только для модели &quot;Кепка&quot;)</translation>
     </message>
     <message>
         <location line="+13"/>

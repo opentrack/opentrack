@@ -33,29 +33,29 @@
     </message>
     <message>
         <location line="+78"/>
-        <location line="+376"/>
+        <location line="+381"/>
         <source>opentrack</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-373"/>
+        <location line="-378"/>
         <source> (debug)</source>
         <translation></translation>
     </message>
     <message>
         <location line="+8"/>
-        <location line="+553"/>
+        <location line="+558"/>
         <source>Show the Octopus</source>
         <translation>Показать осьминожка</translation>
     </message>
     <message>
-        <location line="-553"/>
-        <location line="+553"/>
+        <location line="-558"/>
+        <location line="+558"/>
         <source>Hide the Octopus</source>
         <translation>Спрятать осьминожка</translation>
     </message>
     <message>
-        <location line="-546"/>
+        <location line="-551"/>
         <source>Tracker settings</source>
         <translation>Настройка источника данных</translation>
     </message>
@@ -103,7 +103,7 @@ Exiting now.</source>
 Закрытие программы.</translation>
     </message>
     <message>
-        <location line="+190"/>
+        <location line="+198"/>
         <source>Library load error</source>
         <translation>Ошибка загрузки библиотеки</translation>
     </message>
@@ -113,10 +113,18 @@ Exiting now.</source>
         <translation>Одна из библиотек загрузилась неудачно. Проверьте инсталлятор.</translation>
     </message>
     <message>
-        <location line="+96"/>
+        <location line="+93"/>
         <location line="+4"/>
         <source> :: </source>
         <translation> :: </translation>
+    </message>
+</context>
+<context>
+    <name>MapWidget</name>
+    <message>
+        <location filename="../mapping-window.cpp" line="+65"/>
+        <source>%1°</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -128,7 +136,7 @@ Exiting now.</source>
     </message>
     <message>
         <location line="+3"/>
-        <location line="+164"/>
+        <location line="+163"/>
         <source>None</source>
         <translation>Не назначена</translation>
     </message>
@@ -162,7 +170,7 @@ Exiting now.</source>
 <context>
     <name>main_window</name>
     <message>
-        <location filename="../main-window.ui" line="+278"/>
+        <location filename="../main-window.ui" line="+296"/>
         <source>Raw tracker data</source>
         <translation>Исходные данные</translation>
     </message>
@@ -374,14 +382,14 @@ Exiting now.</source>
         <location line="+13"/>
         <location line="+13"/>
         <location line="+32"/>
-        <location line="+76"/>
+        <location line="+70"/>
         <location line="+51"/>
         <location line="+13"/>
         <source>Bind</source>
         <translation>Назначить</translation>
     </message>
     <message>
-        <location line="-403"/>
+        <location line="-397"/>
         <source>Restart tracking</source>
         <translation>Перезапустить трекер</translation>
     </message>
@@ -426,7 +434,7 @@ Exiting now.</source>
         <translation>Фиксация обзора</translation>
     </message>
     <message>
-        <location line="+528"/>
+        <location line="+522"/>
         <source>Center at startup</source>
         <translation>Центрирование при запуске</translation>
     </message>
@@ -441,20 +449,20 @@ Exiting now.</source>
         <translation>Настройка трея</translation>
     </message>
     <message>
-        <location line="+245"/>
-        <location line="+69"/>
-        <location line="+53"/>
+        <location line="+114"/>
+        <location line="+87"/>
+        <location line="+65"/>
         <source>°</source>
         <translation>°</translation>
     </message>
     <message>
         <location line="+812"/>
-        <location line="+261"/>
+        <location line="+191"/>
         <source>Enable</source>
         <translation>Включить</translation>
     </message>
     <message>
-        <location line="-1403"/>
+        <location line="-1232"/>
         <source>Minimize to tray on startup when enabled</source>
         <translation>Сворачивать в трей при запуске</translation>
     </message>
@@ -469,24 +477,8 @@ Exiting now.</source>
         <translation>Камера</translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>Camera angle</source>
-        <translation>Коррекция расположения камеры</translation>
-    </message>
-    <message>
-        <location line="+9"/>
-        <source>Use camera center as translation offset</source>
-        <translation>Включить</translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Specify an angle to rotate position tracking. It lets the tracker avoid moving on the X and Y axes when zooming, since camera isn&apos;t mounted perfectly in front of the model, but above or below.</source>
-        <translation>Используйте данную настройку для того, чтобы скорректировать работу камеры в случае, когда она у Вас расположена не четко напротив клипсы. Если у вас при зуме осьминожек убегает - то это то, что Вам нужно! Например: при &quot;убегании&quot; вниз скорректируйте ось Pitch.</translation>
-    </message>
-    <message>
-        <location line="+34"/>
-        <location line="+215"/>
-        <location line="+247"/>
+        <location line="+170"/>
+        <location line="+259"/>
         <location line="+65"/>
         <location line="+58"/>
         <location line="+45"/>
@@ -497,9 +489,8 @@ Exiting now.</source>
         <translation>Roll</translation>
     </message>
     <message>
-        <location line="-843"/>
-        <location line="+139"/>
-        <location line="+344"/>
+        <location line="-722"/>
+        <location line="+362"/>
         <location line="+24"/>
         <location line="+34"/>
         <location line="+45"/>
@@ -510,9 +501,8 @@ Exiting now.</source>
         <translation>Pitch</translation>
     </message>
     <message>
-        <location line="-815"/>
-        <location line="+176"/>
-        <location line="+279"/>
+        <location line="-645"/>
+        <location line="+285"/>
         <location line="+58"/>
         <location line="+45"/>
         <location line="+81"/>
@@ -523,7 +513,7 @@ Exiting now.</source>
         <translation>Yaw</translation>
     </message>
     <message>
-        <location line="-791"/>
+        <location line="-827"/>
         <source>Custom center pose</source>
         <translation>Пользовательское положение центральной позиции</translation>
     </message>
@@ -533,16 +523,15 @@ Exiting now.</source>
         <translation>Данная настройка позволяет изменить изначальную точку нахождения в вашей любимой игре. Например: если вам хочется сидеть подальше от лобового стекла внесите поправку в ось Z. И каждый раз при центрировании Вы будете находиться в данном позиции.</translation>
     </message>
     <message>
-        <location line="+49"/>
-        <location line="+23"/>
-        <location line="+60"/>
-        <location line="+1039"/>
-        <location line="+22"/>
+        <location line="+61"/>
+        <location line="+29"/>
+        <location line="+72"/>
+        <location line="+1048"/>
         <source> cm</source>
         <translation> см</translation>
     </message>
     <message>
-        <location line="-1010"/>
+        <location line="-991"/>
         <source>Centering method</source>
         <translation>Режим центрирования</translation>
     </message>
@@ -630,8 +619,8 @@ Exiting now.</source>
         <translation>Сопоставление исходных и игровых осей.</translation>
     </message>
     <message>
-        <location line="-777"/>
-        <location line="+320"/>
+        <location line="-801"/>
+        <location line="+344"/>
         <location line="+27"/>
         <location line="+58"/>
         <location line="+45"/>
@@ -647,8 +636,8 @@ Exiting now.</source>
         <translation>Инвертировать</translation>
     </message>
     <message>
-        <location line="-303"/>
-        <location line="+322"/>
+        <location line="-321"/>
+        <location line="+340"/>
         <location line="+58"/>
         <location line="+45"/>
         <location line="+52"/>
@@ -659,8 +648,8 @@ Exiting now.</source>
         <translation>Y</translation>
     </message>
     <message>
-        <location line="-654"/>
-        <location line="+304"/>
+        <location line="-666"/>
+        <location line="+316"/>
         <location line="+58"/>
         <location line="+45"/>
         <location line="+136"/>
@@ -706,17 +695,12 @@ Exiting now.</source>
         <translation>Настройка смещения шеи, как смещения оси поворота</translation>
     </message>
     <message>
-        <location line="+52"/>
-        <source>Height from center of rotation</source>
-        <translation>Выше/ниже</translation>
-    </message>
-    <message>
-        <location line="+57"/>
+        <location line="+90"/>
         <source>Forward from center of rotation</source>
         <translation>Вперед/назад</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="+36"/>
         <location line="+12"/>
         <source>Game detection</source>
         <translation>Захват игр</translation>
