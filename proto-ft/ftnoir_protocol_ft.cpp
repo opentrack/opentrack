@@ -110,13 +110,13 @@ void freetrack::pose(const double* headpose)
 
         {
             const std::uintptr_t addr = (std::uintptr_t)(void*)&pMemData->table[0];
-            const std::uintptr_t addr_ = addr & (sizeof(LONG)-1);
+            const std::uintptr_t addr_ = addr & ~(sizeof(LONG)-1u);
 
             // the data `happens' to be aligned by virtue of element ordering
             // inside FTHeap. there's no deeper reason behind it.
 
             if (addr != addr_)
-                assert("!unaligned access");
+                assert(!"unaligned access");
 
             static_assert(sizeof(char[8])/sizeof(LONG) == 2, "");
 
