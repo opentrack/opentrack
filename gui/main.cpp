@@ -185,17 +185,17 @@ main(int argc, char** argv)
        app.setQuitOnLastWindowClosed(false);
        app.exec();
 
-       // msvc crashes in Qt plugin system's dtor
-#if defined(_MSC_VER)
-       qDebug() << "exit: terminating";
-       TerminateProcess(GetCurrentProcess(), 0);
-#endif
-
        app.exit(0);
 
        qDebug() << "exit: window";
     }
     while (false);
+
+    // msvc crashes in Qt plugin system's dtor
+#if defined(_MSC_VER)
+    qDebug() << "exit: terminating";
+    TerminateProcess(GetCurrentProcess(), 0);
+#endif
 
     qDebug() << "exit: main()";
 
