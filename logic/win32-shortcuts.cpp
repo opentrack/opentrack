@@ -7,9 +7,8 @@
  */
 
 #if defined(_WIN32)
-#   ifndef DIRECTINPUT_VERSION
-#       define DIRECTINPUT_VERSION 0x800
-#   endif
+#   undef DIRECTINPUT_VERSION
+#   define DIRECTINPUT_VERSION 0x800
 #   include <dinput.h>
 
 #include "win32-shortcuts.h"
