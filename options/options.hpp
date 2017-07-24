@@ -16,4 +16,5 @@
 #include "slider.hpp"
 #include "value.hpp"
 #include "tie.hpp"
+#include "metatype.hpp"
 #include "scoped.hpp"
