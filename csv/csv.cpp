@@ -96,7 +96,9 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
     for (int i = 0; i < 8; i++)
         table[i] = 0;
 
-    qDebug() << "csv: lookup game id" << id;
+    if (id != 0)
+        qDebug() << "csv: lookup game id" << id;
+
     QString id_str(QString::number(id));
 
     static const QString csv_path(OPENTRACK_BASE_PATH +
