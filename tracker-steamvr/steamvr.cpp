@@ -32,7 +32,7 @@
 QMutex device_list::mtx(QMutex::Recursive);
 
 template<typename F>
-static auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()))
+auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()))
 {
     QMutexLocker l(&device_list::mtx);
     error_t e; vr_t v;
