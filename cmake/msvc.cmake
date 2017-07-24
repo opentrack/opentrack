@@ -11,15 +11,18 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+set(cc "")
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "/O2 /O2it /Oy /Ob2 /fp:fast /GS- /GF /GL /Gw /Gy /Gm /Zc:inline /Zo /FS /Zc:threadSafeInit /arch:SSE2 -D_HAS_EXCEPTIONS=0")
+set(cc "${cc} -O2 -O2it -Oy -Ob2 -fp:fast -GS- -GF -GL -Gw -Gy -Gm -Zc:inline")
+set(cc "${cc} -Zo -FS -Zc:threadSafeInit -arch:SSE2 -D_HAS_EXCEPTIONS=0")
+set(cc "${cc} -bigobj")
 
 set(warns_ "")
 
-set(warns-disable 4530 4577 4789 4244 4702 4530 4244)
+set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251)
 
 foreach(i ${warns-disable})
-    set(warns_ "${warns_} /wd${i}")
+    set(warns_ "${warns_} -wd${i}")
 endforeach()
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
@@ -33,30 +36,30 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(warns-noerr 4265)
 
     foreach(i ${warns})
-        set(warns_ "${warns_} /w1${i} /we${i}")
+        set(warns_ "${warns_} -w1${i} -we${i}")
     endforeach()
 
     foreach(i ${warns-noerr})
-        set(warns_ "${warns_} /w1${i}")
+        set(warns_ "${warns_} -w1${i}")
     endforeach()
-    set(cc "${cc} /GR-")
+    set(cc "${cc} -GR-")
 endif()
 
-set(base-cflags "${warns_} -MT -Zi -cgthreads8")
+set(base-cflags "${warns_} -MT -Zi -cgthreads8 -W4")
 
 set(_CFLAGS "${base-cflags}")
 set(_CXXFLAGS "${base-cflags}")
 set(_CFLAGS_RELEASE "${cc}")
-set(_CFLAGS_DEBUG "/GS /sdl /Gs /guard:cf")
+set(_CFLAGS_DEBUG "-GS -sdl -Gs -guard:cf")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "/machine:X86 /DEBUG")
-set(_LDFLAGS_RELEASE "/LTCG:INCREMENTAL /OPT:REF /OPT:ICF=10")
+set(_LDFLAGS "-machine:X86 -DEBUG")
+set(_LDFLAGS_RELEASE "-LTCG:INCREMENTAL -OPT:REF -OPT:ICF=10")
 set(_LDFLAGS_DEBUG "")
 
-set(_LDFLAGS_STATIC "/machine:X86 /WX")
-set(_LDFLAGS_STATIC_RELEASE "/LTCG:INCREMENTAL")
+set(_LDFLAGS_STATIC "-machine:X86 -WX")
+set(_LDFLAGS_STATIC_RELEASE "-LTCG:INCREMENTAL")
 set(_LDFLAGS_STATIC_DEBUG "")
 
 foreach(j C CXX)
