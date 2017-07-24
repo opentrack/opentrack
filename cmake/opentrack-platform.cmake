@@ -60,6 +60,10 @@ if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0 -D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
+    if(MSVC_VERSION GREATER 1910) # 1911 is 15.3 update
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -permissive-")
+        set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} -permissive-")
+    endif()
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zi -std:c++14")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zi")
