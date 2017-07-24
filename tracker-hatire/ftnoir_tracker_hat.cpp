@@ -21,10 +21,10 @@ hatire::hatire()
         HAT.Trans[1]=0;
         HAT.Trans[2]=0;
 
-        Begin.append((char) 0xAA);
-        Begin.append((char) 0xAA);
-        End.append((char) 0x55);
-        End.append((char) 0x55);
+        Begin.append((unsigned char) 0xAA);
+        Begin.append((unsigned char) 0xAA);
+        End.append((unsigned char) 0x55);
+        End.append((unsigned char) 0x55);
 }
 
 hatire::~hatire()
