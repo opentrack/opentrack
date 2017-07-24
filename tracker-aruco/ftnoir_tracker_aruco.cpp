@@ -12,6 +12,10 @@
 #include "compat/sleep.hpp"
 #include "compat/math-imports.hpp"
 
+#ifdef _MSC_VER
+#   pragma warning(disable : 4702)
+#endif
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/calib3d.hpp>
