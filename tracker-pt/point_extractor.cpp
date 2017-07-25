@@ -41,7 +41,7 @@ corresponding location is a good candidate for the extracted point.
 The idea similar to the window scaling suggested in  Berglund et al. "Fast, bias-free 
 algorithm for tracking single particles with variable size and shape." (2008).
 */
-static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &current_center, f filter_width)
+static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &current_center, f filter_width, f& m_)
 {
     // Most amazingling this function runs faster with doubles than with floats.
     const f s = 1 / filter_width;
@@ -66,6 +66,9 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
             com[1] += i * val;
         }
     }
+
+    m_ = m;
+
     if (m > f(.1))
     {
         com *= 1 / m;
@@ -137,9 +140,9 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
 
     blobs.clear();
 
-    // -----
-    // start code borrowed from OpenCV's modules/features2d/src/blobdetector.cpp
-    // -----
+// -----
+// start code borrowed from OpenCV's modules/features2d/src/blobdetector.cpp
+// -----
 
     contours.clear();
 
@@ -169,11 +172,12 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         if (!cv::Point2d(center).inside(cv::Rect2d(rect)))
             continue;
 
-        const double value = radius;
-
-        blob b(radius, center, value, rect);
-
+        blob b(radius, center, 0, rect);
         blobs.push_back(b);
+
+// -----
+// end of code borrowed from OpenCV's modules/features2d/src/blobdetector.cpp
+// -----
 
         static const f offx = 10, offy = 7.5;
         const f cx = preview_frame.cols / f(frame.cols),
@@ -199,11 +203,6 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                     cv::Scalar(0, 0, 255),
                     1);
     }
-    // -----
-    // end of code borrowed from OpenCV's modules/features2d/src/blobdetector.cpp
-    // -----
-
-    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) { return b2.value < b1.value; });
 
     const int W = frame.cols;
     const int H = frame.rows;
@@ -227,14 +226,18 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         cv::Vec2d pos_(pos);
 #endif
 
+        f norm;
+
         for (int iter = 0; iter < 10; ++iter)
         {
-            cv::Vec2d com_new = MeanShiftIteration(frame_roi, pos, kernel_radius);
+            cv::Vec2d com_new = MeanShiftIteration(frame_roi, pos, kernel_radius, norm);
             cv::Vec2d delta = com_new - pos;
             pos = com_new;
             if (delta.dot(delta) < 1e-3)
                 break;
         }
+
+        b.value = norm / sqrt(b.radius);
 
 #if defined DEBUG_MEANSHIFT
         meanshift_total += sqrt((pos_ - pos).dot(pos_ - pos));
@@ -250,6 +253,8 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
 #if defined DEBUG_MEANSHIFT
     qDebug() << "meanshift adjust total" << meanshift_total;
 #endif
+
+    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) { return b2.value < b1.value; });
 
     // End of mean shift code. At this point, blob positions are updated with hopefully less noisy, less biased values.
     points.reserve(max_blobs);
