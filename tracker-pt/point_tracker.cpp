@@ -163,7 +163,7 @@ bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamI
     }
 
     // CAVEAT don't increase too much, it visibly loses precision
-    static constexpr f max_dist = f(.2);
+    static constexpr f max_dist = f(.13);
 
     const bool validp = sum < max_dist;
 
