@@ -28,8 +28,9 @@ struct blob
     double radius, value;
     vec2 pos;
     cv::Rect rect;
+    unsigned idx;
 
-    blob(double radius, const cv::Vec2d& pos, double value, const cv::Rect &rect);
+    blob(double radius, const cv::Vec2d& pos, double value, const cv::Rect &rect, unsigned idx);
 };
 
 class PointExtractor final
@@ -45,12 +46,11 @@ private:
     static constexpr int max_blobs = 16;
 
     cv::Mat1b frame_bin, frame_gray;
-    //cv::Mat1b frame_blobs;
+    cv::Mat1b contour_masks[max_blobs];
     cv::Mat1f hist;
 
     std::vector<blob> blobs;
     std::vector<std::vector<cv::Point>> contours;
-    //std::vector<cv::Point> hull;
 };
 
 } // ns pt_extractor_impl
