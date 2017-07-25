@@ -29,6 +29,11 @@ using std::tan;
 using std::round;
 using std::fmod;
 
+using std::log;
+using std::log2;
+using std::log10;
+using std::exp;
+
 #include <cinttypes>
 
 using std::uintptr_t;
