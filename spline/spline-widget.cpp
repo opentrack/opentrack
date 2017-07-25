@@ -79,13 +79,13 @@ QColor spline_widget::colorBezier() const
 void spline_widget::setColorBezier(QColor color)
 {
     spline_color = color;
-    update();
+    repaint();
 }
 
 void spline_widget::force_redraw()
 {
     _background = QPixmap();
-    update();
+    repaint();
 }
 
 void spline_widget::set_preview_only(bool val)
