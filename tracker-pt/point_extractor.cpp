@@ -125,16 +125,18 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                      hist_ranges,
                      false);
 
-        static constexpr double min_radius = 2.5;
-        static constexpr double max_radius = 15;
+        const double cx = frame.cols / 640., cy = frame.rows / 480.;
+
+        const double min_radius = 1.75 * cx;
+        const double max_radius = 15 * cy;
 
         const float* restrict ptr = reinterpret_cast<const float*>(hist.data);
-        const double radius = fmax(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
+        const double radius = (max_radius-min_radius) * s.threshold / 255 + min_radius;
         const unsigned area = uround(3 * M_PI * radius * radius);
-        unsigned thres = 255;
+        unsigned thres = 32;
         unsigned accum = 0;
 
-        for (unsigned k = 255; k != 16; k--)
+        for (unsigned k = 255; k != 32; k--)
         {
             accum += ptr[k];
             if (accum >= area)
@@ -173,7 +175,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
 
         const double radius = sqrt(area) / sqrt(M_PI);
 
-        if (radius < fmax(2.5, region_size_min) || (radius > region_size_max))
+        if (radius < region_size_min || radius > region_size_max)
             continue;
 
         const cv::Rect rect = cv::boundingRect(contours[k]) & cv::Rect(0, 0, frame.cols, frame.rows);
