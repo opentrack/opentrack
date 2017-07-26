@@ -47,4 +47,3 @@ QDataStream& operator >> (QDataStream& in, options::slider_value& v);
 
 QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(options::slider_value)
