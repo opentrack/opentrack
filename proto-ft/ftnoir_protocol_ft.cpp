@@ -100,7 +100,7 @@ void freetrack::pose(const double* headpose)
     {
         QString gamename;
         union  {
-            unsigned char table[8] alignas(alignof(std::int32_t));
+            unsigned char table[8];
             std::int32_t ints[2];
         } t;
 
