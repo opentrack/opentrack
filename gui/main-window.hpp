@@ -95,6 +95,7 @@ class MainWindow : public QMainWindow, private State
 
     void changeEvent(QEvent* e) override;
     void closeEvent(QCloseEvent*) override;
+    bool event(QEvent *event) override;
     bool maybe_hide_to_tray(QEvent* e);
 
     // only use in impl file since no definition in header!

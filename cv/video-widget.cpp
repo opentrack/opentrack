@@ -7,6 +7,8 @@
  */
 
 #include "video-widget.hpp"
+#include "compat/check-visible.hpp"
+
 #include <opencv2/imgproc.hpp>
 
 cv_video_widget::cv_video_widget(QWidget* parent) : QWidget(parent),
@@ -67,6 +69,9 @@ void cv_video_widget::paintEvent(QPaintEvent*)
 
 void cv_video_widget::update_and_repaint()
 {
+    if (!check_is_visible())
+        return;
+
     QMutexLocker l(&mtx);
 
     preview_size = size();

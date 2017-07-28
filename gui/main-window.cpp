@@ -12,6 +12,8 @@
 #include "opentrack-library-path.h"
 #include "new_file_dialog.h"
 #include "migration/migration.hpp"
+#include "compat/check-visible.hpp"
+
 #include <QFile>
 #include <QFileDialog>
 #include <QDesktopServices>
@@ -561,6 +563,11 @@ void MainWindow::set_title(const QString& game_title_)
 
 void MainWindow::showHeadPose()
 {
+    set_is_visible(*this);
+
+    if (!check_is_visible())
+        return;
+
     double mapped[6], raw[6];
 
     work->tracker->raw_and_mapped_pose(mapped, raw);
@@ -838,6 +845,28 @@ void MainWindow::changeEvent(QEvent* e)
 void MainWindow::closeEvent(QCloseEvent*)
 {
     exit();
+}
+
+bool MainWindow::event(QEvent* event)
+{
+    using t = QEvent::Type;
+
+    if (work)
+    {
+        switch (event->type())
+        {
+        case t::Show:
+        case t::Hide:
+        case t::WindowActivate:
+        case t::WindowDeactivate:
+        case t::WindowStateChange:
+            set_is_visible(*this, true);
+            /*FALLTHROUGH*/
+        default:
+            break;
+        }
+    }
+    return QMainWindow::event(event);
 }
 
 bool MainWindow::is_tray_enabled()

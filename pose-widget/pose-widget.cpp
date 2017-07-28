@@ -9,6 +9,7 @@
 #include "compat/util.hpp"
 #include "compat/timer.hpp"
 #include "compat/sleep.hpp"
+#include "compat/check-visible.hpp"
 #include <cmath>
 #include <algorithm>
 #include <QPainter>
@@ -86,6 +87,9 @@ pose_widget::~pose_widget()
 
 void pose_widget::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
+    if (!check_is_visible())
+        return;
+
     bool expected = true;
     if (xform.fresh.compare_exchange_weak(expected, false))
     {
