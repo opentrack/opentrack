@@ -22,6 +22,11 @@
 
 #include <cmath>
 
+#if defined __GNUG__
+#   pragma GCC diagnostic push
+#   pragma GCC diagnostic ignored "-Wattributes"
+#endif
+
 namespace options {
 
 template<typename t>
@@ -90,3 +95,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t);
 OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w);
 
 } // ns options
+
+#if defined __GNUG__
+#   pragma GCC diagnostic pop
+#endif
