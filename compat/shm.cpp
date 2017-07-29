@@ -7,9 +7,11 @@
 
 #include "shm.h"
 
-#include <QDebug>
-
 #if defined(_WIN32)
+
+#if !defined __WINE__
+#   include <QDebug>
+#endif
 
 #include <cstring>
 #include <stdio.h>
@@ -114,7 +116,9 @@ PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName,
 
     if (!hMutex)
     {
+#if !defined __WINE__
         qDebug() << "CreateMutexA:" << (int) GetLastError();
+#endif
         return;
     }
 
@@ -128,7 +132,9 @@ PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName,
 
     if (!hMapFile)
     {
+#if !defined __WINE__
         qDebug() << "CreateFileMappingA:", (int) GetLastError();
+#endif
 
         return;
     }
@@ -140,7 +146,11 @@ PortableLockedShm::PortableLockedShm(const char* shmName, const char* mutexName,
                         mapSize);
 
     if (!mem)
+    {
+#if !defined __WINE__
         qDebug() << "MapViewOfFile:" << (int) GetLastError();
+#endif
+    }
 }
 
 PortableLockedShm::~PortableLockedShm()
@@ -157,7 +167,10 @@ PortableLockedShm::~PortableLockedShm()
     return;
 
 fail:
+    (void)0;
+#if !defined __WINE__
     qDebug() << "failed to close mapping";
+#endif
 }
 
 bool PortableLockedShm::lock()

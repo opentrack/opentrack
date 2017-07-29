@@ -53,12 +53,12 @@ bool check_is_visible()
 
 #else
 
-force_inline OTR_COMPAT_EXPORT
-void set_is_visible(const QWidget&)
+never_inline OTR_COMPAT_EXPORT
+void set_is_visible(const QWidget&, bool)
 {
 }
 
-force_inline OTR_COMPAT_EXPORT
+never_inline  OTR_COMPAT_EXPORT
 bool check_is_visible()
 {
     return true;
