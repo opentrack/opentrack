@@ -525,9 +525,6 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                                   mapped[TX], mapped[TY], mapped[TZ]);
 
-    if (mapping_widget)
-        mapping_widget->refresh_tab();
-
     QLCDNumber* raw_[] = {
         ui.raw_x, ui.raw_y, ui.raw_z,
         ui.raw_yaw, ui.raw_pitch, ui.raw_roll,
@@ -564,6 +561,9 @@ void MainWindow::set_title(const QString& game_title_)
 void MainWindow::showHeadPose()
 {
     set_is_visible(*this);
+
+    if (mapping_widget)
+        mapping_widget->refresh_tab();
 
     if (!check_is_visible())
         return;
