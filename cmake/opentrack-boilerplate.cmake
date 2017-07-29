@@ -205,7 +205,9 @@ function(otr_module n_)
     endif()
 
     otr_compat(${n})
-    otr_i18n_for_target_directory(${n_})
+    if(NOT arg_NO-QT)
+        otr_i18n_for_target_directory(${n_})
+    endif()
 
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
     set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
