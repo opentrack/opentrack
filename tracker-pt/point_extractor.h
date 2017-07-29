@@ -17,20 +17,17 @@
 
 #include <vector>
 
-//#define DEBUG_MEANSHIFT
-
-namespace pt_extractor_impl {
+namespace pt_impl {
 
 using namespace types;
 
 struct blob
 {
-    double radius, value;
+    double radius, brightness;
     vec2 pos;
     cv::Rect rect;
-    unsigned idx;
 
-    blob(double radius, const cv::Vec2d& pos, double value, const cv::Rect &rect, unsigned idx);
+    blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect &rect);
 };
 
 class PointExtractor final
@@ -45,14 +42,14 @@ public:
 private:
     static constexpr int max_blobs = 16;
 
-    cv::Mat1b frame_bin, frame_gray;
-    cv::Mat1b contour_masks[max_blobs];
-    cv::Mat1f hist;
+    cv::Mat frame_gray;
+    cv::Mat frame_bin;
+    cv::Mat hist;
+    cv::Mat frame_blobs;
 
     std::vector<blob> blobs;
-    std::vector<std::vector<cv::Point>> contours;
 };
 
-} // ns pt_extractor_impl
+} // ns impl
 
-using pt_extractor_impl::PointExtractor;
+using pt_impl::PointExtractor;
