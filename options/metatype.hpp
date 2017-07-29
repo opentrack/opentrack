@@ -27,7 +27,7 @@ struct custom_type_initializer final
 
     custom_type_initializer();
 
-    template<typename t> static inline void declare_for_type(const char* str)
+    template<typename t> static void declare_for_type(const char* str)
     {
         qRegisterMetaType<t>(str);
         qRegisterMetaTypeStreamOperators<t>();

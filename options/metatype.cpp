@@ -7,7 +7,7 @@ namespace detail {
 
 custom_type_initializer::custom_type_initializer()
 {
-    OPENTRACK_REGISTER_METATYPE(::options::slider_value);
+    OPENTRACK_REGISTER_METATYPE(options::slider_value);
     OPENTRACK_REGISTER_METATYPE(QList<double>);
     OPENTRACK_REGISTER_METATYPE(QList<float>);
     OPENTRACK_REGISTER_METATYPE(QList<int>);
