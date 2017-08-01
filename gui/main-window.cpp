@@ -855,7 +855,6 @@ bool MainWindow::event(QEvent* event)
     {
         switch (event->type())
         {
-        case t::Show:
         case t::Hide:
         case t::WindowActivate:
         case t::WindowDeactivate:
