@@ -110,12 +110,19 @@ endfunction()
 
 function(otr_i18n_for_target_directory n)
     set(k "opentrack-${n}")
+
+    if (LINUX)
+        set(LUPDATE_BIN "${Qt5_DIR}/../../../../bin/lupdate")
+    else()
+        set(LUPDATE_BIN "${Qt5_DIR}/../../../bin/lupdate")
+    endif()
+
     foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
         if(NOT opentrack_disable-i18n-update)
             add_custom_command(OUTPUT "${t}"
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-                COMMAND "${Qt5_DIR}/../../../bin/lupdate" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
+                COMMAND ${LUPDATE_BIN} -silent -recursive -no-obsolete -locations relative . -ts "${t}"
                 WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
                 DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-ui} ${${k}-rc}
                 COMMENT "Running lupdate for ${n}/${i}")
