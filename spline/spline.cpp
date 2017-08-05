@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <cmath>
 #include <memory>
+#include <cinttypes>
 
 #include <QObject>
 #include <QMutexLocker>
