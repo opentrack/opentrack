@@ -19,6 +19,11 @@ int __cdecl my_fpclassify(double)__asm__("___fpclassify");
 #define my_isinf(x) (my_fpclassify(x) == FP_INFINITE)
 
 extern "C" OTR_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
+#elif defined __APPLE__
+#   include <math.h>
+#   define my_isnan(x) isnan(x)
+#   define my_isinf(x) isinf(x)
+extern "C" OTR_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
 #else
 int my_isnan(double)__asm__("isnan");
 int my_isinf(double)__asm__("isinf");

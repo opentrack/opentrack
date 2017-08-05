@@ -80,7 +80,7 @@ quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key keys)
 {
     UTF16Char ch;
     // Constants found in NSEvent.h from AppKit.framework
-    switch (key)
+    switch (keys)
     {
     case Qt::Key_Return:
         return kVK_Return;
@@ -170,11 +170,11 @@ quint32 QxtGlobalShortcutPrivate::nativeKeycode(Qt::Key keys)
         ;
     }
 
-    if (key == Qt::Key_Escape)	ch = 27;
-    else if (key == Qt::Key_Return) ch = 13;
-    else if (key == Qt::Key_Enter) ch = 3;
-    else if (key == Qt::Key_Tab) ch = 9;
-    else ch = key;
+    if (keys == Qt::Key_Escape)	ch = 27;
+    else if (keys == Qt::Key_Return) ch = 13;
+    else if (keys == Qt::Key_Enter) ch = 3;
+    else if (keys == Qt::Key_Tab) ch = 9;
+    else ch = keys;
 
     CFDataRef currentLayoutData;
     TISInputSourceRef currentKeyboard = TISCopyCurrentKeyboardInputSource();

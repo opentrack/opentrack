@@ -9,6 +9,7 @@
 #include "spline.hpp"
 
 #include <algorithm>
+#include <cstdlib>
 #include <cmath>
 #include <memory>
 #include <cinttypes>
