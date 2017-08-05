@@ -109,7 +109,7 @@ mach_timebase_info_data_t Timer::otr_get_mach_frequency()
     return timebase_info;
 }
 
-double Timer::otr_clock_gettime(timespec* ts)
+void Timer::otr_clock_gettime(timespec* ts)
 {
     static const mach_timebase_info_data_t timebase_info = otr_get_mach_frequency();
     uint64_t state, nsec;
