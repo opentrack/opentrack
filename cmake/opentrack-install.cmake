@@ -65,17 +65,13 @@ function(merge_translations)
             endif()
         endforeach()
 
-        if (LINUX)
-            set(LRELEASE_BIN "${Qt5_DIR}/../../../../bin/lrelease")
-        else()
-            set(LRELEASE_BIN "${Qt5_DIR}/../../../bin/lrelease")
-        endif()
+        get_property(lrelease-binary TARGET "${Qt5_LRELEASE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
 
         if(NOT ".${ts-files_}" STREQUAL ".")
             set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
             list(APPEND all-qm-files "${qm-output}")
             add_custom_command(OUTPUT "${qm-output}"
-                COMMAND ${LRELEASE_BIN} -nounfinished -silent ${ts-files_} -qm "${qm-output}"
+                COMMAND "${lrelease-binary}" -nounfinished -silent ${ts-files_} -qm "${qm-output}"
                 DEPENDS ${ts-files}
                 COMMENT "Running lrelease for ${i}")
             set(lang-target "i18n-lang-${i}")
