@@ -9,8 +9,8 @@
 
 #include "compat/timer.hpp"
 #include "ftnoir_tracker_pt_settings.h"
-#include "affine.hpp"
-#include "numeric.hpp"
+#include "cv/affine.hpp"
+#include "cv/numeric.hpp"
 #include "camera.h"
 
 #include <opencv2/core.hpp>

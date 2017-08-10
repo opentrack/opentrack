@@ -13,7 +13,7 @@
 
 #include <atomic>
 
-#include "numeric.hpp"
+#include "cv/numeric.hpp"
 
 #include "camera.h"
 #include "point_extractor.h"

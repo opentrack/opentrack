@@ -10,7 +10,7 @@
 
 #include "ftnoir_tracker_pt_settings.h"
 #include "camera.h"
-#include "numeric.hpp"
+#include "cv/numeric.hpp"
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
