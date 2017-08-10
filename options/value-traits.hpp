@@ -13,7 +13,7 @@ namespace detail {
 template<typename t, typename u = t, typename Enable = void>
 struct default_value_traits
 {
-    using element_type = remove_qualifiers<t>;
+    using element_type = std::decay_t<t>;
     using value_type = u;
 
     static inline value_type from_value(const value_type& val, const value_type&) { return val; }

@@ -30,7 +30,7 @@
 namespace options {
 
 template<typename t>
-typename std::enable_if<std::is_enum<t>::value>::type
+std::enable_if_t<std::is_enum<t>::value>
 tie_setting(value<t>& v, QComboBox* cb)
 {
     cb->setCurrentIndex(cb->findData(int(static_cast<t>(v))));
