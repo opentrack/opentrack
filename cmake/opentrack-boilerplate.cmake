@@ -1,4 +1,6 @@
-set(opentrack-perms PERMISSIONS WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
+set(opentrack-perms-file WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
+set(opentrack-perms-dir WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
+set(opentrack-perms-exec "${opentrack-perms-dir}")
 
 set(new-hier-path "#pragma once
 #ifndef OPENTRACK_NO_QT_PATH
@@ -104,7 +106,7 @@ include(CMakeParseArguments)
 
 function(otr_install_pdb_current_project target)
     if(MSVC)
-        install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-hier-debug}" ${opentrack-perms})
+        install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-file})
     endif()
 endfunction()
 
@@ -197,9 +199,9 @@ function(otr_module n_)
 
     if(NOT arg_NO-INSTALL)
         if(arg_BIN AND WIN32)
-            install(TARGETS "${n}" RUNTIME DESTINATION . ${opentrack-perms})
+            install(TARGETS "${n}" RUNTIME DESTINATION . PERMISSIONS ${opentrack-perms-exec})
         else()
-            install(TARGETS "${n}" ${opentrack-hier-str} ${opentrack-perms})
+            install(TARGETS "${n}" ${opentrack-hier-str} PERMISSIONS ${opentrack-perms-exec})
         endif()
         set(opentrack_install-debug-info FALSE CACHE BOOL "Whether to build and install debug info at install time")
         if(opentrack_install-debug-info)

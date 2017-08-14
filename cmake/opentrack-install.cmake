@@ -1,15 +1,16 @@
-set(opentrack-perms_ WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
-set(opentrack-perms PERMISSIONS ${opentrack-perms_})
-
 macro(otr_inst2 path)
-    install(${ARGN} DESTINATION "${path}" ${opentrack-perms})
+    install(${ARGN} DESTINATION "${path}" PERMISSIONS ${opentrack-perms-file})
+endmacro()
+
+macro(otr_inst_exec path)
+    install(${ARGN} DESTINATION "${path}" PERMISSIONS ${opentrack-perms-file})
 endmacro()
 
 macro(otr_inst_dir path)
     install(
         DIRECTORY ${ARGN} DESTINATION "${path}"
-        FILE_PERMISSIONS ${opentrack-perms_}
-        DIRECTORY_PERMISSIONS ${opentrack-perms_}
+        FILE_PERMISSIONS ${opentrack-perms-file}
+        DIRECTORY_PERMISSIONS ${opentrack-perms-dir}
     )
 endmacro()
 
@@ -34,8 +35,8 @@ endif()
 
 otr_inst2("${opentrack-doc-pfx}" FILES ${CMAKE_SOURCE_DIR}/README.md)
 
-otr_inst2("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
-otr_inst2("${opentrack-hier-pfx}" FILES
+otr_inst_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
+otr_inst_exec("${opentrack-hier-pfx}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient.dll"
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe")
