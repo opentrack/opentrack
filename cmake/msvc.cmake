@@ -3,7 +3,7 @@
 # mkdir build && cmake -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../cmake/msvc.cmake build/
 
 SET(CMAKE_SYSTEM_NAME Windows)
-SET(CMAKE_SYSTEM_VERSION 1)
+SET(CMAKE_SYSTEM_VERSION 6.0)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -83,10 +83,11 @@ set(CMAKE_RC_FLAGS "-nologo -DWIN32")
 
 if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
-endif()
-
-if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS_RELEASE " " CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS_RELEASE " " CACHE STRING "" FORCE)
+    set(CMAKE_CXX_FLAGS " " CACHE STRING "" FORCE)
+    set(CMAKE_C_FLAGS " " CACHE STRING "" FORCE)
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
