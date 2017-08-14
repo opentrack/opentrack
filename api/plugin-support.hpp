@@ -40,7 +40,7 @@ extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
 struct dylib final
 {
-    enum Type { Filter = 0xdeadbabe, Tracker = 0xcafebeef, Protocol = 0xdeadf00d, Invalid = 0xcafebabe };
+    enum Type : unsigned { Filter = 0xdeadbabeu, Tracker = 0xcafebeefu, Protocol = 0xdeadf00du, Invalid = 0xcafebabeu };
 
     dylib(const QString& filename_, Type t) :
         type(Invalid),

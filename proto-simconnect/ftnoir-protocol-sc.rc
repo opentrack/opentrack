@@ -1,4 +1,4 @@
-#include <winuser.h>
+#define RT_MANIFEST 24
 142 RT_MANIFEST fsx_rtm.manifest
 143 RT_MANIFEST fsx_sp1.manifest
 144 RT_MANIFEST fsx_sp2.manifest

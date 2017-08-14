@@ -31,12 +31,6 @@
 
 namespace options {
 
-namespace detail {
-
-OTR_OPTIONS_EXPORT void acct_lookup(bool is_fresh);
-
-} // ns detail
-
 template<typename t>
 class value final : public base_value
 {

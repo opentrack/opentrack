@@ -20,8 +20,6 @@
 #include <utility>
 #include <algorithm>
 
-using std::move;
-
 const QTextCodec* CSV::m_codec = QTextCodec::codecForName("System");
 const QRegExp CSV::m_rx = QRegExp(QString("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)?\\n?"));
 const QRegExp CSV::m_rx2 = QRegExp(QString("(?:\"([^\"]*)\";?)|(?:([^;]*);?)?"));
@@ -79,7 +77,7 @@ bool CSV::parseLine(QStringList& ret)
             else if (m_rx2.cap(2).size() > 0)
                 col = m_rx2.cap(2);
 
-            list << move(col);
+            list << col;
 
             if (col.size())
                 pos2 += m_rx2.matchedLength();
@@ -87,7 +85,7 @@ bool CSV::parseLine(QStringList& ret)
                 pos2++;
         }
     }
-    ret = move(list);
+    ret = std::move(list);
     return true;
 }
 
@@ -135,8 +133,8 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
         {
             if (gameLine.at(6).compare(id_str, Qt::CaseInsensitive) == 0)
             {
-                const QString proto(move(gameLine.at(3)));
-                const QString name(move(gameLine.at(1)));
+                const QString proto(std::move(gameLine.at(3)));
+                const QString name(std::move(gameLine.at(1)));
 
                 const QByteArray id_cstr = gameLine.at(7).toLatin1();
 
@@ -169,7 +167,7 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
                         table[i] = t(tmp[i]);
                     }
                 }
-                gamename = move(name);
+                gamename = std::move(name);
                 return true;
             }
         }
