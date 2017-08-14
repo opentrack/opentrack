@@ -85,7 +85,7 @@ function(otr_compat target)
     set(l-props)
     get_property(linker-lang TARGET ${target} PROPERTY LINKER_LANGUAGE)
 
-    if(CMAKE_COMPILER_IS_GNUCXX)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT MSVC)
         set(c-props " -fvisibility=hidden")
         if(NOT is-c-only)
             if(NOT WIN32 OR NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
@@ -94,7 +94,7 @@ function(otr_compat target)
         endif()
     endif()
 
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+    if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE AND NOT MSVC)
         set(l-props "-Wl,--as-needed")
     endif()
 
