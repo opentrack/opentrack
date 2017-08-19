@@ -68,30 +68,50 @@ inline unsigned uround(const t& val)
 namespace util_detail {
 
 template<typename n>
-inline auto clamp_(n val, n min, n max) -> n
+inline auto clamp_float(n val, n min, n max)
 {
-    if (unlikely(val > max))
-        return max;
-    if (unlikely(val < min))
-        return min;
-    return val;
+    return std::fmin(std::fmax(val, min), max);
 }
 
-}
+template<typename n>
+struct clamp final
+{
+    static inline auto clamp_(const n& val, const n& min, const n& max)
+    {
+        if (unlikely(val > max))
+            return max;
+        if (unlikely(val < min))
+            return min;
+        return val;
+    }
+};
+
+template<>
+struct clamp<float>
+{
+    static inline auto clamp_(float val, float min, float max)
+    {
+        return clamp_float(val, min, max);
+    }
+};
+
+template<>
+struct clamp<double>
+{
+    static inline auto clamp_(double val, double min, double max)
+    {
+        return clamp_float(val, min, max);
+    }
+};
+
+} // ns util_detail
 
 template<typename t, typename u, typename w>
-inline auto clamp(const t& val, const u& min, const w& max) -> decltype(val + min + max)
+inline auto clamp(const t& val, const u& min, const w& max)
 {
-    return ::util_detail::clamp_<decltype(val + min + max)>(val, min, max);
+    using tp = decltype(val + min + max);
+    return ::util_detail::clamp<tp>::clamp_(val, min, max);
 }
-
-template<typename t, typename... xs>
-auto qptr(xs... args)
-{
-    return QSharedPointer<t>(new t(std::forward<xs>(args)...));
-}
-
-template<typename t> using qshared = QSharedPointer<t>;
 
 #if defined _MSC_VER
 #   define never_inline __declspec(noinline)
