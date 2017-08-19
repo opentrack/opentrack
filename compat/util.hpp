@@ -4,6 +4,7 @@
 #include "run-in-thread.hpp"
 #include "meta.hpp"
 #include "functional.hpp"
+#include "macros.hpp"
 
 #include <memory>
 #include <cmath>
@@ -24,34 +25,6 @@
 
 template<typename t> using mem = std::shared_ptr<t>;
 template<typename t> using ptr = std::unique_ptr<t>;
-
-#ifdef Q_CREATOR_RUN
-#   define DEFUN_WARN_UNUSED
-#elif defined(_MSC_VER)
-#   define DEFUN_WARN_UNUSED _Check_return_
-#else
-#   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
-#endif
-
-#if defined(__GNUG__)
-#   define unused(t, i) t __attribute__((unused)) i
-#else
-#   define unused(t, i) t
-#endif
-
-#if !defined(_WIN32)
-#   define unused_on_unix(t, i) unused(t, i)
-#else
-#   define unused_on_unix(t, i) t i
-#endif
-
-#if defined __GNUC__
-#   define likely(x)       __builtin_expect(!!(x),1)
-#   define unlikely(x)     __builtin_expect(!!(x),0)
-#else
-#   define likely(x) (x)
-#   define unlikely(x) (x)
-#endif
 
 template<typename t>
 inline int iround(const t& val)
@@ -112,39 +85,3 @@ inline auto clamp(const t& val, const u& min, const w& max)
     using tp = decltype(val + min + max);
     return ::util_detail::clamp<tp>::clamp_(val, min, max);
 }
-
-#if defined _MSC_VER
-#   define never_inline __declspec(noinline)
-#elif defined __GNUG__
-#   define never_inline __attribute__((noinline))
-#else
-#   define never_inline
-#endif
-
-#if defined _MSC_VER || defined __GNUG__
-#   define restrict __restrict
-#else
-#   define restrict
-#endif
-
-#if defined _MSC_VER
-#   define restrict_ref restrict
-#elif defined __GNUG__
-#   define restrict_ref restrict
-#else
-#   define restrict_ref
-#endif
-
-#if defined _MSC_VER
-#   define force_inline __forceinline
-#elif defined __GNUG__
-#   define force_inline __attribute__((always_inline, gnu_inline)) inline
-#else
-#   define force_inline inline
-#endif
-
-#if defined __GNUG__
-#   define flatten __attribute__((flatten, noinline))
-#else
-#   define flatten
-#endif
