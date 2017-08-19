@@ -11,8 +11,6 @@
 #include "api/plugin-api.hpp"
 #include "ftnoir_tracker_pt_settings.h"
 
-#include <atomic>
-
 #include "cv/numeric.hpp"
 
 #include "camera.h"
@@ -21,6 +19,10 @@
 #include "cv/video-widget.hpp"
 #include "compat/util.hpp"
 
+#include <atomic>
+#include <memory>
+#include <vector>
+
 #include <QCoreApplication>
 #include <QThread>
 #include <QMutex>
@@ -28,9 +30,6 @@
 #include <QTime>
 #include <QLayout>
 #include <QSize>
-#include <atomic>
-#include <memory>
-#include <vector>
 
 class TrackerDialog_PT;
 
@@ -72,8 +71,8 @@ private:
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 
-    qshared<cv_video_widget> video_widget;
-    qshared<QLayout> layout;
+    std::unique_ptr<cv_video_widget> video_widget;
+    std::unique_ptr<QLayout> layout;
 
     settings_pt s;
     cv::Mat frame, preview_frame;

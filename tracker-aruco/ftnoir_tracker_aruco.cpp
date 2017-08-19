@@ -76,11 +76,11 @@ aruco_tracker::~aruco_tracker()
 void aruco_tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
-    videoWidget = qptr<cv_video_widget>(videoframe);
-    layout = qptr<QHBoxLayout>();
+    videoWidget = std::make_unique<cv_video_widget>(videoframe);
+    layout = std::make_unique<QHBoxLayout>();
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(videoWidget.data());
-    videoframe->setLayout(layout.data());
+    layout->addWidget(videoWidget.get());
+    videoframe->setLayout(layout.get());
     videoWidget->show();
     start();
 }

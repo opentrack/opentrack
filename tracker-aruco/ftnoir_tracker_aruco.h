@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QTimer>
 
+#include <memory>
 #include <cinttypes>
 
 #include <opencv2/core.hpp>
@@ -97,8 +98,8 @@ private:
     cv::VideoCapture camera;
     QMutex camera_mtx;
     QMutex mtx;
-    qshared<cv_video_widget> videoWidget;
-    qshared<QHBoxLayout> layout;
+    std::unique_ptr<cv_video_widget> videoWidget;
+    std::unique_ptr<QHBoxLayout> layout;
     settings s;
     double pose[6], fps, no_detection_timeout;
     cv::Mat frame, grayscale, color;

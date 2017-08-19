@@ -162,11 +162,11 @@ void Tracker_PT::start_tracker(QFrame* video_frame)
     preview_frame = cv::Mat(video_frame->height(), video_frame->width(), CV_8UC3);
     preview_frame.setTo(cv::Scalar(0, 0, 0));
 
-    video_widget = qptr<cv_video_widget>(video_frame);
-    layout = qptr<QHBoxLayout>(video_frame);
+    video_widget = std::make_unique<cv_video_widget>(video_frame);
+    layout = std::make_unique<QHBoxLayout>(video_frame);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(video_widget.data());
-    video_frame->setLayout(layout.data());
+    layout->addWidget(video_widget.get());
+    video_frame->setLayout(layout.get());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
 
