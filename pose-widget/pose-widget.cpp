@@ -164,10 +164,10 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
     const num dot02 = v0.dot(v2);
     num u = (dot11 * dot02 - dot01 * dot12) * invDenom;
     num v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
     if (!(u >= 0 && v >= 0))
-    {
         return false;
-    }
+
     if (u + v > 1)
     {
         i = 1;
@@ -185,7 +185,7 @@ void pose_transform::project_quad_texture()
 
     num dir;
     vec2 pt[4];
-    const int sx = w - 1, sy = h - 1;
+    const int sx = w, sy = h;
     vec2 projected[3];
 
     {
@@ -196,10 +196,10 @@ void pose_transform::project_quad_texture()
 
         const vec3 dst_corners[] =
         {
-            vec3(-sx_/2. * c, -sy_/2., 0),
-            vec3(sx_/2. * c, -sy_/2., 0),
-            vec3(-sx_/2. * c, sy_/2., 0),
-            vec3(sx_/2. * c, sy_/2., 0.)
+            { -sx_/2. * c, -sy_/2., 0 },
+            { sx_/2. * c, -sy_/2., 0 },
+            { -sx_/2. * c, sy_/2., 0 },
+            { sx_/2. * c, sy_/2., 0 },
         };
 
         for (int i = 0; i < 4; i++)
@@ -242,6 +242,7 @@ void pose_transform::project_quad_texture()
     const int dest_depth = image.depth() / 8;
     static constexpr int const_depth = 4;
 
+
     if (unlikely(orig_depth != const_depth || dest_depth != const_depth))
     {
         qDebug() << "pose-widget: octopus must be saved as .png with 32 bits pixel";
@@ -249,15 +250,13 @@ void pose_transform::project_quad_texture()
         return;
     }
 
-    static constexpr unsigned xmax = w, ymax = h;
+    if (uv_vec.size() < sx * sy)
+        uv_vec.resize(sx * sy);
 
-    if (uv_vec.size() < xmax * ymax)
-        uv_vec.resize(xmax * ymax);
-
-    for (unsigned y = 0; y < ymax; y++)
-        for (unsigned x = 0; x < xmax; x++)
+    for (unsigned y = 0; y < sy; y++)
+        for (unsigned x = 0; x < sx; x++)
         {
-            uv_& restrict_ref uv = uv_vec[y * xmax + x];
+            uv_& restrict_ref uv = uv_vec[y * sx + x];
             if (!t.barycentric_coords(vec2(x, y), uv.coords, uv.i))
                 uv.i = -1;
         }
@@ -278,10 +277,10 @@ void pose_transform::project_quad_texture()
         }
     };
 
-    for (unsigned y = 0; y < ymax; y++)
-        for (unsigned x = 0; x < xmax; x++)
+    for (unsigned y = 0; y < sy; y++)
+        for (unsigned x = 0; x < sx; x++)
         {
-            uv_ const& restrict_ref uv__ = uv_vec[y * xmax + x];
+            uv_ const& restrict_ref uv__ = uv_vec[y * sx + x];
 
             if (uv__.i != -1)
             {
@@ -290,12 +289,15 @@ void pose_transform::project_quad_texture()
                 vec2 const& uv = uv__.coords;
                 int const i = uv__.i;
 
-                const float fx = origs[i][0].x()
-                                 + uv.x() * origs[i][2].x()
-                                 + uv.y() * origs[i][1].x();
-                const float fy = origs[i][0].y()
-                                 + uv.x() * origs[i][2].y()
-                                 + uv.y() * origs[i][1].y();
+                float fx = origs[i][0].x()
+                           + uv.x() * origs[i][2].x()
+                           + uv.y() * origs[i][1].x();
+                float fy = origs[i][0].y()
+                           + uv.x() * origs[i][2].y()
+                           + uv.y() * origs[i][1].y();
+
+                fx = clamp(fx, 0, ow - 1.95f);
+                fy = clamp(fy, 0, oh - 1.95f);
 
 #define BILINEAR_FILTER
 
