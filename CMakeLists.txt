@@ -28,25 +28,7 @@ include(opentrack-mrproper)
 project(opentrack)
 cmake_minimum_required(VERSION 2.8.11)
 include(opentrack-policy NO_POLICY_SCOPE)
-
-include(CMakeDetermineCCompiler)
-include(CMakeDetermineCXXCompiler)
-
-if(WIN32)
-    set(__sdk_username "$ENV{USERNAME}")
-else()
-    set(__sdk_username "$ENV{USER}")
-endif()
-
-if(".${__sdk_username}" STREQUAL ".")
-    set(__sdk_username "(I-have-no-name)")
-endif()
-
-set(__sdk_paths_filename "${CMAKE_SOURCE_DIR}/sdk-paths-${__sdk_username}@${CMAKE_CXX_COMPILER_ID}.cmake")
-
-if(EXISTS "${__sdk_paths_filename}")
-    include("${__sdk_paths_filename}")
-endif()
+include(opentrack-load-user-settings)
 
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
