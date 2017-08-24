@@ -46,7 +46,7 @@ inline auto clamp_float(n val, n min, n max)
     return std::fmin(std::fmax(val, min), max);
 }
 
-template<typename n>
+template<typename t, typename n>
 struct clamp final
 {
     static inline auto clamp_(const n& val, const n& min, const n& max)
@@ -59,8 +59,8 @@ struct clamp final
     }
 };
 
-template<>
-struct clamp<float>
+template<typename t>
+struct clamp<float, t>
 {
     static inline auto clamp_(float val, float min, float max)
     {
@@ -68,8 +68,8 @@ struct clamp<float>
     }
 };
 
-template<>
-struct clamp<double>
+template<typename t>
+struct clamp<double, t>
 {
     static inline auto clamp_(double val, double min, double max)
     {
@@ -83,5 +83,5 @@ template<typename t, typename u, typename w>
 inline auto clamp(const t& val, const u& min, const w& max)
 {
     using tp = decltype(val + min + max);
-    return ::util_detail::clamp<tp>::clamp_(val, min, max);
+    return ::util_detail::clamp<std::decay_t<tp>, tp>::clamp_(val, min, max);
 }
