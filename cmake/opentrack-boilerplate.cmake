@@ -117,7 +117,8 @@ function(otr_i18n_for_target_directory n)
 
     foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-        if(NOT opentrack_disable-i18n-update)
+        set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY CLEAN_NO_CUSTOM 1)
+        if(NOT opentrack_disable-i17n-update)
             add_custom_command(OUTPUT "${t}"
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
                 COMMAND "${lupdate-binary}" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
