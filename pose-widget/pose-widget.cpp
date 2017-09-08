@@ -32,8 +32,6 @@ pose_transform::pose_transform(QWidget* dst) :
 
     image.fill(Qt::transparent);
     image2.fill(Qt::transparent);
-
-    start();
 }
 
 pose_transform::~pose_transform()
@@ -50,6 +48,9 @@ void pose_widget::paintEvent(QPaintEvent* event)
     {
         p.drawImage(event->rect(), image, QRect(0, 0, pose_transform::w, pose_transform::h));
     });
+
+    if (!xform.isRunning())
+        xform.start();
 }
 
 void pose_transform::run()
@@ -241,7 +242,6 @@ void pose_transform::project_quad_texture()
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
     static constexpr int const_depth = 4;
-
 
     if (unlikely(orig_depth != const_depth || dest_depth != const_depth))
     {

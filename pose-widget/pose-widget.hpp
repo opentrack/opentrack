@@ -46,7 +46,7 @@ public:
     bool barycentric_coords(const vec2& px, vec2& uv, int& i) const;
 };
 
-struct pose_transform final : private QThread
+struct pose_transform final : QThread
 {
     pose_transform(QWidget* dst);
     ~pose_transform();
