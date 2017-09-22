@@ -46,9 +46,7 @@ MainWindow::MainWindow() :
     ui.setupUi(this);
 
     {
-        setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        adjustSize();
-        setFixedSize(size());
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
     }
 
@@ -587,13 +585,15 @@ bool MainWindow::mk_window_common(ptr<t>& d, F&& ctor)
     }
     else if ((d = ptr<t>(ctor())))
     {
-        QEventLoop e(d.get());
+        QWidget& w = *d;
 
-        e.processEvents(); d->adjustSize(); e.processEvents();
+        w.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | w.windowFlags());
 
-        // drain the event loop to reflow properly
-        d->setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d->windowFlags()); e.processEvents();
-        d->show();
+        w.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+        w.show();
+        w.adjustSize();
+        w.setFixedSize(w.size());
 
         return true;
     }
@@ -615,14 +615,6 @@ bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, ptr<t>& d)
             return reinterpret_cast<t*>(lib->Dialog());
         return nullptr;
     });
-
-    if (just_created)
-    {
-        using plugin_api::detail::BaseDialog;
-        QObject::connect(static_cast<BaseDialog*>(d.get()), &BaseDialog::closing,
-                         this, [&d]() { d = nullptr; },
-                         Qt::QueuedConnection);
-    }
 
     return just_created;
 }

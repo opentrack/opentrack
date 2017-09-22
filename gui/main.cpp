@@ -178,6 +178,8 @@ main(int argc, char** argv)
        {
            w->setVisible(true);
            w->show();
+           w->adjustSize();
+           w->setFixedSize(w->size());
        }
        else
            w->setVisible(false);
