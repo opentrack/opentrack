@@ -5,6 +5,7 @@
 #include "meta.hpp"
 #include "functional.hpp"
 #include "macros.hpp"
+#include "value-templates.hpp"
 
 #include <memory>
 #include <cmath>
