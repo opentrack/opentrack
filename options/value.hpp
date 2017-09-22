@@ -126,9 +126,7 @@ private:
 
 #if defined _MSC_VER
 
-#   if defined OTR_OPT_VALUE_TMPL_EXPORT && defined BUILD_OPTIONS
-#      define OTR_OPT_VALUE OTR_TEMPLATE_EXPORT
-#   else
+#   if !defined OTR_OPT_VALUE
 #      define OTR_OPT_VALUE OTR_TEMPLATE_IMPORT
 #   endif
 
