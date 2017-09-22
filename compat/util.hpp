@@ -16,7 +16,7 @@
 #define progn(...) (([&]() { __VA_ARGS__ })())
 #define prog1(x, ...) (([&]() { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
 
-#define once_only(...) progn(static bool once = false; if (!once) { once = true; __VA_ARGS__; })
+#define once_only(...) do { static bool once = false; if (!once) { once = true; __VA_ARGS__; } } while(false)
 #define load_time_value(x) \
     progn( \
         static const auto _value132((x)); \
