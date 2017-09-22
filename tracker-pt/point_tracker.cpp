@@ -33,7 +33,7 @@ static void set_row(mat33& m, int i, const vec3& v)
     m(i,2) = v[2];
 }
 
-PointModel::PointModel(settings_pt& s)
+PointModel::PointModel(const settings_pt& s)
 {
     set_model(s);
     // calculate u
@@ -47,7 +47,7 @@ PointModel::PointModel(settings_pt& s)
     P = 1/(s11*s22-s12*s12) * mat22(s22, -s12, -s12,  s11);
 }
 
-void PointModel::set_model(settings_pt& s)
+void PointModel::set_model(const settings_pt& s)
 {
     switch (s.active_model_panel)
     {

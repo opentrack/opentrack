@@ -78,6 +78,28 @@ PointExtractor::PointExtractor()
     blobs.reserve(max_blobs);
 }
 
+void PointExtractor::separate_channels(cv::Mat const& orig, const int* order, int order_npairs)
+{
+    if (unlikely(ch[0].rows != orig.rows || ch[0].cols != orig.cols))
+    {
+        for (unsigned k = 0; k < 3; k++)
+        {
+            ch[k] = cv::Mat1b(orig.rows, orig.cols);
+            ch_float[k] = cv::Mat1f(orig.rows, orig.cols);
+        }
+        // extra channel is a scratch buffer
+        ch_float[3] = cv::Mat1f(orig.rows, orig.cols);
+    }
+
+    if (order == nullptr)
+        cv::split(orig, (cv::Mat*) ch);
+    else
+        cv::mixChannels(&orig, 1, (cv::Mat*) ch, order_npairs, order, order_npairs);
+
+    for (unsigned k = 0; k < 3; k++)
+        ch[k].convertTo(ch_float[k], CV_32F);
+}
+
 void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
     using std::sqrt;
@@ -92,8 +114,60 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         frame_blobs = cv::Mat1b(frame.rows, frame.cols);
     }
 
-    // convert to grayscale
-    cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+    const pt_color_type color = s.blob_color;
+    if (color == pt_color_normal)
+    {
+        // convert to grayscale
+        // this operation is optimized
+        cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+    }
+    else
+    {
+        switch (color)
+        {
+        case pt_color_floppy_filter:
+        {
+            // weight for blue color
+            static constexpr float B = .8;
+            // single channel weight
+            static constexpr float A = 1./2;
+
+            static constexpr int from_to[] = {
+                0, 0,
+                1, 1
+            };
+
+            separate_channels(frame, from_to, 2);
+
+            ch_float[2] =   ch_float[0] * B * A // blue
+                          + ch_float[1] * (1 - B) * A; // green
+            ch_float[2].convertTo(frame_gray, CV_8U);
+
+            break;
+        }
+        case pt_color_red_only:
+        {
+            static constexpr int from_to[] = {
+                2, 0
+            };
+
+            separate_channels(frame, from_to, 1);
+
+            static constexpr float R = 3;
+
+            ch_float[1] = ch_float[0] * R; // red
+
+            ch_float[1].convertTo(frame_gray, CV_8U);
+
+            break;
+        }
+        default:
+            once_only(qDebug() << "wrong pt_color_type enum value" << int(color));
+            // don't violate POLA
+            cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+            break;
+        }
+    }
 
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;

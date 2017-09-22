@@ -42,8 +42,8 @@ struct PointModel final
 
     enum Model { Clip, Cap, Custom };
 
-    PointModel(settings_pt& s);
-    void set_model(settings_pt& s);
+    PointModel(const settings_pt& s);
+    void set_model(const settings_pt& s);
     void get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const;
 };
 

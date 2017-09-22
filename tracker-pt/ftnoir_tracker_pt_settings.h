@@ -11,6 +11,15 @@
 #include "options/options.hpp"
 using namespace options;
 
+enum pt_color_type
+{
+    // explicit values, gotta preserve the numbering in .ini
+    // don't reuse when removing some of the modes
+    pt_color_normal = 2,
+    pt_color_red_only = 3,
+    pt_color_floppy_filter = 4,
+};
+
 struct settings_pt : opts
 {
     value<QString> camera_name;
@@ -33,6 +42,7 @@ struct settings_pt : opts
     value<bool> dynamic_pose;
     value<int> init_phase_timeout;
     value<bool> auto_threshold;
+    value<pt_color_type> blob_color;
 
     settings_pt() :
         opts("tracker-pt"),
@@ -63,6 +73,7 @@ struct settings_pt : opts
         fov(b, "camera-fov", 56),
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 250),
-        auto_threshold(b, "automatic-threshold", true)
+        auto_threshold(b, "automatic-threshold", true),
+        blob_color(b, "blob-color", pt_color_normal)
     {}
 };

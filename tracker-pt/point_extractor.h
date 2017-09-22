@@ -46,8 +46,10 @@ private:
     cv::Mat frame_bin;
     cv::Mat hist;
     cv::Mat frame_blobs;
-
     std::vector<blob> blobs;
+    cv::Mat ch[3], ch_float[4];
+
+    void separate_channels(cv::Mat const& orig_frame, int const* order = nullptr, int order_cnt = -1);
 };
 
 } // ns impl

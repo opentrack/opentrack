@@ -81,6 +81,18 @@ TrackerDialog_PT::TrackerDialog_PT()
     poll_tracker_info_impl();
 
     connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::DirectConnection);
+
+    static constexpr pt_color_type color_types[] = {
+        pt_color_normal,
+        pt_color_floppy_filter,
+        pt_color_red_only,
+    };
+
+    static constexpr unsigned color_type_sz = sizeof(color_types) / sizeof(*color_types);
+    for (unsigned k = 0; k < color_type_sz; k++)
+        ui.blob_color->setItemData(k, int(color_types[k]));
+
+    tie_setting(s.blob_color, ui.blob_color);
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)
