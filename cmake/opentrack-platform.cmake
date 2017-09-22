@@ -59,8 +59,8 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(MSVC)
-    add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
-    add_definitions(-D_ITERATOR_DEBUG_LEVEL=0 -D_ITERATOR_DEBUG_LEVEL=0)
+    add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -D_NO_DEBUG_HEAP)
+    add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
     if(MSVC_VERSION GREATER 1909) # visual studio 2017
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -permissive- -diagnostics:caret")
