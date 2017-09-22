@@ -103,7 +103,7 @@ DEFUN_WARN_UNUSED Camera::open_status Camera::start(int idx, int fps, int res_x,
             {
                 cam_info = CamInfo();
                 active_name = QString();
-                cam_info.idx = -1;
+                cam_info.idx = idx;
                 dt_mean = 0;
                 active_name = desired_name;
 

@@ -9,17 +9,34 @@
 
 #ifdef _WIN32
 
+#include "compat/camera-names.hpp"
+#include "opentrack-library-path.h"
+
 #include <cstring>
+
 #include <QRegularExpression>
+#include <QProcess>
 #include <QDebug>
+#include <QFile>
+
+#include <dshow.h>
 
 #define CHECK(expr) if (FAILED(hr = (expr))) { qDebug() << QStringLiteral(#expr) << hr; goto done; }
 #define CHECK2(expr) if (!(expr)) { qDebug() << QStringLiteral(#expr); goto done; }
 
-bool video_property_page::show_from_capture(cv::VideoCapture& cap, int)
+bool video_property_page::show_from_capture(cv::VideoCapture& cap, int index)
 {
-    cap.set(cv::CAP_PROP_SETTINGS, 0);
-    return true;
+    const QString name = get_camera_names().value(index, "");
+
+    if (name == "PS3Eye Camera")
+    {
+        return QProcess::startDetached(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "./amcap.exe");
+    }
+    else
+    {
+        cap.set(cv::CAP_PROP_SETTINGS, 0);
+        return true;
+    }
 }
 
 bool video_property_page::should_show_dialog(const QString& camera_name)
@@ -27,7 +44,7 @@ bool video_property_page::should_show_dialog(const QString& camera_name)
     using re = QRegularExpression;
     static const re regexen[] =
     {
-        re("^PS3Eye Camera$"),
+        //re("^PS3Eye Camera$"),
         re("^A4 TECH "),
     };
     bool avail = true;
@@ -42,21 +59,28 @@ bool video_property_page::should_show_dialog(const QString& camera_name)
 
 bool video_property_page::show(int id)
 {
-    IBaseFilter* filter = NULL;
-    bool ret = false;
+    const QString name = get_camera_names().value(id, "");
 
-    CHECK2(filter = get_device(id));
+    if (name == "PS3Eye Camera")
+        return QProcess::startDetached(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "./amcap.exe");
+    else
+    {
+        IBaseFilter* filter = NULL;
+        bool ret = false;
 
-    ret = SUCCEEDED(ShowFilterPropertyPages(filter));
+        CHECK2(filter = get_device(id));
+
+        ret = SUCCEEDED(ShowFilterPropertyPages(filter));
 
 done:
-    if (filter)
-        filter->Release();
+        if (filter)
+            filter->Release();
 
-    return ret;
+        return ret;
+    }
 }
 
-HRESULT video_property_page::ShowFilterPropertyPages(IBaseFilter* filter)
+int video_property_page::ShowFilterPropertyPages(IBaseFilter* filter)
 {
     ISpecifyPropertyPages* pProp = NULL;
     IUnknown* unk = NULL;
