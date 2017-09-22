@@ -52,7 +52,7 @@ MainWindow::MainWindow() :
         setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
     }
 
-    updateButtonState(false, false);
+    update_button_state(false, false);
 
     if (group::ini_directory().size() == 0)
     {
@@ -63,11 +63,11 @@ MainWindow::MainWindow() :
     if (!refresh_config_list())
         return;
 
-    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(showCurveConfiguration()));
+    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(show_mapping_window()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
-    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(showTrackerSettings()));
-    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(showProtocolSettings()));
-    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(showFilterSettings()));
+    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(show_tracker_settings()));
+    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(show_proto_settings()));
+    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(show_filter_settings()));
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
     connect(ui.iconcomboProfile, &QComboBox::currentTextChanged, this, [&](const QString& x) { set_profile(x); });
@@ -88,7 +88,7 @@ MainWindow::MainWindow() :
 
     // timers
     connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(); });
-    connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(showHeadPose()), Qt::DirectConnection);
+    connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(show_pose()), Qt::DirectConnection);
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
 
     // ctrl+q exits
@@ -196,24 +196,24 @@ void MainWindow::init_tray_menu()
 
     menu_action_tracker.setText(tr("Tracker settings"));
     menu_action_tracker.setIcon(QIcon(":/images/tools.png"));
-    QObject::connect(&menu_action_tracker, &QAction::triggered, this, &MainWindow::showTrackerSettings);
+    QObject::connect(&menu_action_tracker, &QAction::triggered, this, &MainWindow::show_tracker_settings);
     tray_menu.addAction(&menu_action_tracker);
 
     menu_action_filter.setText(tr("Filter settings"));
     menu_action_filter.setIcon(QIcon(":/images/filter-16.png"));
-    QObject::connect(&menu_action_filter, &QAction::triggered, this, &MainWindow::showFilterSettings);
+    QObject::connect(&menu_action_filter, &QAction::triggered, this, &MainWindow::show_filter_settings);
     tray_menu.addAction(&menu_action_filter);
 
     menu_action_proto.setText(tr("Protocol settings"));
     menu_action_proto.setIcon(QIcon(":/images/settings16.png"));
-    QObject::connect(&menu_action_proto, &QAction::triggered, this, &MainWindow::showProtocolSettings);
+    QObject::connect(&menu_action_proto, &QAction::triggered, this, &MainWindow::show_proto_settings);
     tray_menu.addAction(&menu_action_proto);
 
     tray_menu.addSeparator();
 
     menu_action_mappings.setIcon(QIcon(":/images/curves.png"));
     menu_action_mappings.setText(tr("Mappings"));
-    QObject::connect(&menu_action_mappings, &QAction::triggered, this, &MainWindow::showCurveConfiguration);
+    QObject::connect(&menu_action_mappings, &QAction::triggered, this, &MainWindow::show_mapping_window);
     tray_menu.addAction(&menu_action_mappings);
 
     menu_action_options.setIcon(QIcon(":/images/tools.png"));
@@ -426,7 +426,7 @@ bool MainWindow::refresh_config_list()
     return true;
 }
 
-void MainWindow::updateButtonState(bool running, bool inertialp)
+void MainWindow::update_button_state(bool running, bool inertialp)
 {
     bool not_running = !running;
     ui.iconcomboProfile->setEnabled(not_running);
@@ -482,7 +482,7 @@ void MainWindow::start_tracker_()
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates
     const bool is_inertial = ui.video_frame->layout() == nullptr;
-    updateButtonState(true, is_inertial);
+    update_button_state(true, is_inertial);
 
     ui.btnStopTracker->setFocus();
 }
@@ -515,7 +515,7 @@ void MainWindow::stop_tracker_()
 
     opts::set_teardown_flag(false); // XXX hack -sh 20160926
 
-    updateButtonState(false, false);
+    update_button_state(false, false);
     set_title();
     ui.btnStartTracker->setFocus();
 }
@@ -558,7 +558,7 @@ void MainWindow::set_title(const QString& game_title_)
     setWindowTitle(version + tr(" :: ") + current + game_title);
 }
 
-void MainWindow::showHeadPose()
+void MainWindow::show_pose()
 {
     set_is_visible(*this);
 
@@ -627,19 +627,19 @@ bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, ptr<t>& d)
     return just_created;
 }
 
-void MainWindow::showTrackerSettings()
+void MainWindow::show_tracker_settings()
 {
     if (mk_dialog(current_tracker(), pTrackerDialog) && work && work->libs.pTracker)
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
 }
 
-void MainWindow::showProtocolSettings()
+void MainWindow::show_proto_settings()
 {
     if (mk_dialog(current_protocol(), pProtocolDialog) && work && work->libs.pProtocol)
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
 }
 
-void MainWindow::showFilterSettings()
+void MainWindow::show_filter_settings()
 {
     if (mk_dialog(current_filter(), pFilterDialog) && work && work->libs.pFilter)
         pFilterDialog->register_filter(work->libs.pFilter.get());
@@ -653,7 +653,7 @@ void MainWindow::show_options_dialog()
     }
 }
 
-void MainWindow::showCurveConfiguration()
+void MainWindow::show_mapping_window()
 {
     mk_window(mapping_widget, pose);
 }
@@ -859,6 +859,7 @@ bool MainWindow::event(QEvent* event)
         case t::WindowActivate:
         case t::WindowDeactivate:
         case t::WindowStateChange:
+        case t::FocusIn:
             set_is_visible(*this, true);
             /*FALLTHROUGH*/
         default:

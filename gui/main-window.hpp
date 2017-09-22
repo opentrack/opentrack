@@ -81,7 +81,7 @@ class MainWindow : public QMainWindow, private State
         return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
     }
 
-    void updateButtonState(bool running, bool inertialp);
+    void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
     void ensure_tray();
     void set_title(const QString& game_title = QStringLiteral(""));
@@ -115,12 +115,12 @@ private slots:
     void exit();
     bool set_profile(const QString& new_name);
 
-    void showTrackerSettings();
-    void showProtocolSettings();
-    void showFilterSettings();
+    void show_tracker_settings();
+    void show_proto_settings();
+    void show_filter_settings();
     void show_options_dialog();
-    void showCurveConfiguration();
-    void showHeadPose();
+    void show_mapping_window();
+    void show_pose();
 
     void maybe_start_profile_from_executable();
 
