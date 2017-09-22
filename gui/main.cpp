@@ -5,6 +5,7 @@
 #   include <QCoreApplication>
 #   include <QFile>
 #   include <QString>
+#   include <QSysInfo>
 #   include <QtGlobal>
 #else
 #   include <unistd.h>
@@ -27,6 +28,11 @@ using namespace options;
 
 void set_qt_style()
 {
+#if defined _WIN32
+    if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
+        return;
+#endif
+
 #if defined(_WIN32) || defined(__APPLE__)
     // our layouts on OSX make some control wrongly sized -sh 20160908
     {
