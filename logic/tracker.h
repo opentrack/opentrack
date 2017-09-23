@@ -104,7 +104,7 @@ public:
     ~Tracker();
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;
-    void start() { QThread::start(); }
+    void start() { QThread::start(QThread::HighPriority); }
 
     void center();
     void set_toggle(bool value);

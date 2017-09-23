@@ -50,7 +50,7 @@ void pose_widget::paintEvent(QPaintEvent* event)
     });
 
     if (!xform.isRunning())
-        xform.start();
+        xform.start(QThread::LowPriority);
 }
 
 void pose_transform::run()
