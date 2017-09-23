@@ -1368,6 +1368,7 @@ Don't roll or change position.</string>
   <tabstop>dynamic_pose</tabstop>
   <tabstop>init_phase_timeout</tabstop>
   <tabstop>camera_settings</tabstop>
+  <tabstop>blob_color</tabstop>
   <tabstop>auto_threshold</tabstop>
   <tabstop>threshold_slider</tabstop>
   <tabstop>mindiam_spin</tabstop>
