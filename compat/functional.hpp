@@ -1,5 +1,7 @@
 #pragma once
 
+#include "value-templates.hpp"
+
 #include <algorithm>
 #include <iterator>
 #include <type_traits>
@@ -70,7 +72,7 @@ auto remove_if_not(F&& fun, const seq_& seq)
     using seq_type = std::decay_t<seq_>;
     using value_type = std::decay_t<typename std::iterator_traits<decltype(std::begin(seq))>::value_type>;
     using fun_ret_type = decltype(fun(std::declval<value_type>()));
-    static_assert(std::is_convertible<fun_ret_type, bool>::value, "must return bool");
+    static_assert(is_convertible_v<fun_ret_type, bool>, "must return bool");
 
     seq_type ret;
     maybe_reserve_space(ret, seq.size());

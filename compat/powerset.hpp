@@ -1,5 +1,7 @@
 #pragma once
 
+#include "util.hpp"
+
 #include <type_traits>
 #include <cinttypes>
 #include <vector>
@@ -12,13 +14,13 @@
 template<typename t, int M, typename size_type_ = std::uintptr_t>
 struct powerset final
 {
-    static_assert(std::is_integral<size_type_>::value, "");
+    static_assert(is_integral_v<size_type_>, "");
 
     using size_type = size_type_;
 
     static_assert(M > 0, "");
     static_assert(M < sizeof(size_type[8]), "");
-    static_assert(std::is_unsigned<size_type>::value || M < sizeof(size_type)*8 - 1, "");
+    static_assert((is_unsigned_v<size_type>) || M < sizeof(size_type)*8 - 1, "");
 
     using N = std::integral_constant<size_type, (size_type(1) << size_type(M))-1>;
     static_assert((N::value & (N::value + 1)) == 0, "");
