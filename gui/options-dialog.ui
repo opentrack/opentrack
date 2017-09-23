@@ -7,14 +7,8 @@
     <x>0</x>
     <y>0</y>
     <width>588</width>
-    <height>552</height>
+    <height>562</height>
    </rect>
-  </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Options</string>
@@ -840,16 +834,54 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="center_at_startup">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <widget class="QFrame" name="frame_5">
+         <property name="frameShadow">
+          <enum>QFrame::Raised</enum>
          </property>
-         <property name="text">
-          <string>Center at startup</string>
-         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="topMargin">
+           <number>2</number>
+          </property>
+          <property name="bottomMargin">
+           <number>2</number>
+          </property>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="disable_translation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Never translate the application interface</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QCheckBox" name="center_at_startup">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Center at startup</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="label_29">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="pixmap">
+             <pixmap resource="opentrack-res.qrc">:/images/english.png</pixmap>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
        <item>
@@ -873,29 +905,6 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item>
-           <widget class="QCheckBox" name="disable_translation">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Never translate the application interface</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string/>
-            </property>
-            <property name="pixmap">
-             <pixmap resource="opentrack-res.qrc">:/images/english.png</pixmap>
-            </property>
-           </widget>
-          </item>
          </layout>
         </widget>
        </item>
@@ -1287,7 +1296,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Minimum</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -1880,7 +1889,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Minimum</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -1943,7 +1952,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -2228,7 +2237,7 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType">
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Minimum</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -2326,6 +2335,17 @@
   <tabstop>bind_stop</tabstop>
   <tabstop>bind_toggle_tracking</tabstop>
   <tabstop>bind_restart_tracking</tabstop>
+  <tabstop>bind_center_2</tabstop>
+  <tabstop>bind_toggle_2</tabstop>
+  <tabstop>bind_toggle_held_2</tabstop>
+  <tabstop>bind_zero_2</tabstop>
+  <tabstop>bind_zero_held_2</tabstop>
+  <tabstop>bind_start_2</tabstop>
+  <tabstop>bind_stop_2</tabstop>
+  <tabstop>bind_toggle_tracking_2</tabstop>
+  <tabstop>bind_restart_tracking_2</tabstop>
+  <tabstop>center_at_startup</tabstop>
+  <tabstop>disable_translation</tabstop>
   <tabstop>trayp</tabstop>
   <tabstop>tray_start</tabstop>
   <tabstop>pos_rx</tabstop>
@@ -2348,6 +2368,15 @@
   <tabstop>src_z</tabstop>
   <tabstop>invert_z</tabstop>
   <tabstop>tracklogging_enabled</tabstop>
+  <tabstop>tcomp_enable</tabstop>
+  <tabstop>tcomp_tx_disable</tabstop>
+  <tabstop>tcomp_ty_disable</tabstop>
+  <tabstop>tcomp_tz_disable</tabstop>
+  <tabstop>tcomp_src_yaw_disable</tabstop>
+  <tabstop>tcomp_src_pitch_disable</tabstop>
+  <tabstop>tcomp_src_roll_disable</tabstop>
+  <tabstop>neck_enable</tabstop>
+  <tabstop>neck_z</tabstop>
  </tabstops>
  <resources>
   <include location="opentrack-res.qrc"/>
