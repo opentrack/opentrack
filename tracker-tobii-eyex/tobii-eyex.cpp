@@ -236,7 +236,7 @@ void tobii_eyex_tracker::start_tracker(QFrame*)
         dbg_verbose("api initialized");
 }
 
-tobii_eyex_tracker::num tobii_eyex_tracker::gain(num x_)
+tobii_eyex_tracker::num tobii_eyex_tracker::gain(num /*x_*/)
 {
     return 1;
 }
