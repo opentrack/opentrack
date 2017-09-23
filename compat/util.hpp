@@ -11,7 +11,8 @@
 #include <cmath>
 #include <utility>
 
-#include <QSharedPointer>
+#include <iterator>
+
 #include <QDebug>
 
 #define progn(...) (([&]() { __VA_ARGS__ })())

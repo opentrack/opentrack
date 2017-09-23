@@ -144,7 +144,7 @@ void hatire::data(double *data)
         { s.EnableRoll, s.InvertRoll, HAT.Rot[s.RollAxis], data[Roll] },
     };
 
-    for (unsigned i = 0; i < sizeof(spec) / sizeof(*spec); i++)
+    for (unsigned i = 0; i < std::size(spec); i++)
     {
         auto& k = spec[i];
         k.place = (k.sign ? -1.f : 1.f) * (k.enable ? k.input : 0.f);

@@ -95,7 +95,7 @@ void tracker_freepie::run() {
                 const int axis = order[i];
                 const int add_idx = add_indices[i];
                 int add = 0;
-                if (add_idx >= 0 && add_idx < (int)(sizeof(add_cbx) / sizeof(*add_cbx)))
+                if (add_idx >= 0 && add_idx < (int)std::size(add_cbx))
                     add = add_cbx[add_idx];
                 pose[Yaw + i] = r2d * orient[axis] + add;
             }

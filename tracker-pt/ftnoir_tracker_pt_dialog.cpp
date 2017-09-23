@@ -88,8 +88,7 @@ TrackerDialog_PT::TrackerDialog_PT()
         pt_color_red_only,
     };
 
-    static constexpr unsigned color_type_sz = sizeof(color_types) / sizeof(*color_types);
-    for (unsigned k = 0; k < color_type_sz; k++)
+    for (unsigned k = 0; k < std::size(color_types); k++)
         ui.blob_color->setItemData(k, int(color_types[k]));
 
     tie_setting(s.blob_color, ui.blob_color);

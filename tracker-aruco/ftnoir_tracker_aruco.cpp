@@ -351,7 +351,7 @@ void aruco_tracker::cycle_detection_params()
         use_otsu = false;
 
         adaptive_size_pos++;
-        adaptive_size_pos %= sizeof(adaptive_sizes)/sizeof(*adaptive_sizes);
+        adaptive_size_pos %= std::size(adaptive_sizes);
     }
 
     set_detector_params();
