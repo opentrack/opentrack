@@ -1,5 +1,5 @@
 /* Copyright (c) 2012 Patrick Ruoff
- * Copyright (c) 2015-2016 Stanislaw Halik <sthalik@misaki.pl>
+ * Copyright (c) 2015-2017 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -148,16 +148,12 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         case pt_color_red_only:
         {
             static constexpr int from_to[] = {
-                2, 0
+                2, 0 // red
             };
 
             separate_channels(frame, from_to, 1);
 
-            static constexpr float R = 3;
-
-            ch_float[1] = ch_float[0] * R; // red
-
-            ch_float[1].convertTo(frame_gray, CV_8U);
+            ch_float[0].convertTo(frame_gray, CV_8U);
 
             break;
         }
