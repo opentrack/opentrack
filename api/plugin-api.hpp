@@ -15,6 +15,7 @@
 #include <QWidget>
 #include <QDialog>
 
+#include "compat/simple-mat.hpp"
 #include "export.hpp"
 
 using Pose = Mat<double, 6, 1>;
@@ -101,7 +102,7 @@ struct OTR_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
     IFilterDialog();
 
     // optional destructor
-    virtual ~IFilterDialog();
+    //~IFilterDialog() override;
     // receive a pointer to the filter from ui thread
     virtual void register_filter(IFilter* filter) = 0;
     // received filter pointer is about to get deleted
@@ -135,7 +136,7 @@ struct OTR_API_EXPORT IProtocol
 struct OTR_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
-    virtual ~IProtocolDialog();
+    // ~IProtocolDialog() override;
     // receive a pointer to the protocol from ui thread
     virtual void register_protocol(IProtocol *protocol) = 0;
     // received protocol pointer is about to get deleted
@@ -151,9 +152,6 @@ struct OTR_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
 // implement this in trackers
 struct OTR_API_EXPORT ITracker
 {
-    ITracker(const ITracker&) = delete;
-    ITracker(ITracker&&) = delete;
-    ITracker& operator=(const ITracker&) = delete;
     ITracker();
 
     // optional destructor
@@ -164,13 +162,17 @@ struct OTR_API_EXPORT ITracker
     virtual void data(double *data) = 0;
     // tracker notified of centering
     // returning true makes identity the center pose
-    virtual bool center() { return false; }
+    virtual bool center();
+
+    ITracker(const ITracker&) = delete;
+    ITracker(ITracker&&) = delete;
+    ITracker& operator=(const ITracker&) = delete;
 };
 
 struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
 {
     // optional destructor
-    virtual ~ITrackerDialog();
+    //~ITrackerDialog() override;
     // receive a pointer to the tracker from ui thread
     virtual void register_tracker(ITracker *tracker);
     // received tracker pointer is about to get deleted
@@ -182,3 +184,54 @@ struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
 // call once with your chosen class names in the plugin
 #define OPENTRACK_DECLARE_TRACKER(tracker_class, dialog_class, metadata_class) \
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(tracker_class, ITracker, metadata_class, dialog_class, ITrackerDialog)
+
+struct OTR_API_EXPORT IExtension
+{
+    enum event_mask : unsigned
+    {
+        none = 0u,
+        on_raw              = 1 << 0,
+        on_after_center     = 1 << 1,
+        on_before_filter    = 1 << 2,
+        on_before_transform = 1 << 3,
+        on_before_mapping   = 1 << 4,
+        on_finished         = 1 << 5,
+    };
+
+    enum event_ordinal : unsigned
+    {
+        ev_raw                 = 0,
+        ev_after_center        = 1,
+        ev_before_filter       = 2,
+        ev_before_transform    = 3,
+        ev_before_mapping      = 4,
+        ev_finished            = 5,
+
+        event_count = 6,
+    };
+
+    IExtension() = default;
+    virtual ~IExtension();
+
+    virtual event_mask hook_types() = 0;
+
+    virtual void process_raw(Pose&) {}
+    virtual void process_after_center(Pose&) {}
+    virtual void process_before_filter(Pose&) {}
+    virtual void process_before_transform(Pose&) {}
+    virtual void process_before_mapping(Pose&) {}
+    virtual void process_finished(Pose&) {}
+
+    IExtension(const IExtension&) = delete;
+    IExtension(IExtension&&) = delete;
+    IExtension& operator=(const IExtension&) = delete;
+};
+
+struct OTR_API_EXPORT IExtensionDialog : public plugin_api::detail::BaseDialog
+{
+    virtual void register_extension(IExtension& ext) = 0;
+    virtual void unregister_extension() = 0;
+};
+
+#define OPENTRACK_DECLARE_EXTENSION(ext_class, dialog_class, metadata_class) \
+    OPENTRACK_DECLARE_PLUGIN_INTERNAL(ext_class, IExtension, metadata_class, dialog_class, IExtensionDialog)

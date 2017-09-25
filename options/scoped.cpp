@@ -52,4 +52,4 @@ opts::opts(const QString &name) : b(make_bundle(name))
 {
 }
 
-}
+} // ns options

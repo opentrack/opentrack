@@ -15,7 +15,7 @@ struct OTR_OPTIONS_EXPORT opts
     opts(const QString& name);
     opts& operator=(const opts&) = delete;
     opts(const opts&) = delete;
-    ~opts();
+    virtual ~opts();
 
     // XXX hack: the flag shouldn't be here as action at distance -sh 20160926
     static void set_teardown_flag(bool value);

@@ -6,11 +6,9 @@ using namespace plugin_api::detail;
 
 Metadata::~Metadata() {}
 IFilter::~IFilter() {}
-IFilterDialog::~IFilterDialog() {}
 IProtocol::~IProtocol() {}
-IProtocolDialog::~IProtocolDialog() {}
 ITracker::~ITracker() {}
-ITrackerDialog::~ITrackerDialog() {}
+IExtension::~IExtension() {}
 
 void ITrackerDialog::register_tracker(ITracker*) {}
 void ITrackerDialog::unregister_tracker() {}
@@ -25,6 +23,8 @@ void BaseDialog::closeEvent(QCloseEvent*)
         emit closing();
     }
 }
+
+bool ITracker::center() { return false; }
 
 Metadata::Metadata() {}
 IFilter::IFilter() {}
@@ -42,3 +42,4 @@ void BaseDialog::done(int)
         close();
     }
 }
+
