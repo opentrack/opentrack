@@ -40,7 +40,14 @@ extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
 
 struct dylib final
 {
-    enum Type : unsigned { Filter = 0xdeadbabeu, Tracker = 0xcafebeefu, Protocol = 0xdeadf00du, Invalid = 0xcafebabeu };
+    enum Type : unsigned
+    {
+        Filter = 0xdeadbabeu,
+        Tracker = 0xcafebeefu,
+        Protocol = 0xdeadf00du,
+        Extension = 0xdeadf001u,
+        Invalid = 0xcafebabeu,
+    };
 
     dylib(const QString& filename_, Type t) :
         type(Invalid),
@@ -93,6 +100,7 @@ struct dylib final
             { Filter, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT), },
             { Tracker, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT), },
             { Protocol, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT), },
+            { Extension, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-ext-*." OPENTRACK_SOLIB_EXT), },
         };
 
         for (const filter_& filter : filters)
@@ -158,6 +166,7 @@ private:
                     "opentrack-tracker-",
                     "opentrack-proto-",
                     "opentrack-filter-",
+                    "opentrack-ext-",
                 };
 
                 for (auto name : names)
@@ -167,7 +176,7 @@ private:
                 }
             }
         }
-        return QStringLiteral("");
+        return QString();
     }
 
     bool check(bool fail)
@@ -199,16 +208,19 @@ struct Modules final
         module_list(dylib::enum_libraries(library_path)),
         filter_modules(filter(dylib::Filter)),
         tracker_modules(filter(dylib::Tracker)),
-        protocol_modules(filter(dylib::Protocol))
+        protocol_modules(filter(dylib::Protocol)),
+        extension_modules(filter(dylib::Extension))
     {}
     dylib_list& filters() { return filter_modules; }
     dylib_list& trackers() { return tracker_modules; }
     dylib_list& protocols() { return protocol_modules; }
+    dylib_list& extensions() { return extension_modules; }
 private:
     dylib_list module_list;
     dylib_list filter_modules;
     dylib_list tracker_modules;
     dylib_list protocol_modules;
+    dylib_list extension_modules;
 
     static dylib_list& sorted(dylib_list& xs)
     {

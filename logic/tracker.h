@@ -31,8 +31,6 @@
 
 namespace gui_tracker_impl {
 
-using Pose = Mat<double, 6, 1>;
-
 struct bits
 {
     enum flags : unsigned {

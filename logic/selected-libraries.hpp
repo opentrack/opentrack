@@ -9,11 +9,29 @@
 #pragma once
 
 #include "api/plugin-support.hpp"
-#include <QFrame>
-
 #include "export.hpp"
 
-struct OTR_LOGIC_EXPORT SelectedLibraries
+#include <array>
+#include <functional>
+
+#include <QFrame>
+
+// XXX todo remove camel case in identifier
+
+struct runtime_event_handler
+{
+    using ext_event_ordinal = IExtension::event_ordinal;
+    using ext = std::shared_ptr<IExtension>;
+
+    enum : unsigned { ext_max_events = 64 };
+    using ext_list = std::array<ext, ext_max_events>;
+
+    std::array<ext_list, ext_event_ordinal::event_count> extension_events;
+
+    void run_events(ext_event_ordinal k, Pose& pose);
+};
+
+struct OTR_LOGIC_EXPORT SelectedLibraries : runtime_event_handler
 {
     using dylibptr = std::shared_ptr<dylib>;
 

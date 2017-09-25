@@ -17,6 +17,8 @@
 
 #include "export.hpp"
 
+using Pose = Mat<double, 6, 1>;
+
 enum Axis {
     TX, TY, TZ, Yaw, Pitch, Roll,
 };
