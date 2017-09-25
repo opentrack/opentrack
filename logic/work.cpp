@@ -103,5 +103,5 @@ Work::~Work()
     // order matters, otherwise use-after-free -sh
     sc = nullptr;
     tracker = nullptr;
-    libs = SelectedLibraries();
+    libs = runtime_libraries();
 }

@@ -16,8 +16,6 @@
 
 #include <QFrame>
 
-// XXX todo remove camel case in identifier
-
 struct runtime_event_handler
 {
     using ext_event_ordinal = IExtension::event_ordinal;
@@ -31,7 +29,7 @@ struct runtime_event_handler
     void run_events(ext_event_ordinal k, Pose& pose);
 };
 
-struct OTR_LOGIC_EXPORT SelectedLibraries : runtime_event_handler
+struct OTR_LOGIC_EXPORT runtime_libraries : runtime_event_handler
 {
     using dylibptr = std::shared_ptr<dylib>;
 
@@ -39,8 +37,8 @@ struct OTR_LOGIC_EXPORT SelectedLibraries : runtime_event_handler
     std::shared_ptr<IFilter> pFilter;
     std::shared_ptr<IProtocol> pProtocol;
 
-    SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
-    SelectedLibraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
+    runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
+    runtime_libraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
 
     bool correct;
 };

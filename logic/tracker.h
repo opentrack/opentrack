@@ -63,7 +63,7 @@ private:
     Pose output_pose, raw_6dof, last_mapped, last_raw;
 
     Pose newpose;
-    SelectedLibraries const& libs;
+    runtime_libraries const& libs;
     // The owner of the reference is the main window.
     // This design might be usefull if we decide later on to swap out
     // the logger while the tracker is running.
@@ -98,7 +98,7 @@ private:
     static constexpr double c_mult = 16;
     static constexpr double c_div = 1./c_mult;
 public:
-    Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger);
+    Tracker(Mappings& m, runtime_libraries& libs, TrackLogger& logger);
     ~Tracker();
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;

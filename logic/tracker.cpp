@@ -33,7 +33,7 @@ using namespace time_units;
 constexpr double Tracker::r2d;
 constexpr double Tracker::d2r;
 
-Tracker::Tracker(Mappings& m, SelectedLibraries& libs, TrackLogger& logger) :
+Tracker::Tracker(Mappings& m, runtime_libraries& libs, TrackLogger& logger) :
     m(m),
     libs(libs),
     logger(logger),

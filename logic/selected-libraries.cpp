@@ -20,7 +20,7 @@ static constexpr struct event_type_mapping
     { &IExtension::process_finished, ext_mask::on_finished, ext_ord::ev_finished, },
 };
 
-SelectedLibraries::SelectedLibraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f) :
+runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f) :
     pTracker(nullptr),
     pFilter(nullptr),
     pProtocol(nullptr),
