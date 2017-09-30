@@ -2,6 +2,6 @@
 #   undef _WIN32
 #endif
 
-#define PortableLockedShm ShmPosix
+#define shm_wrapper ShmPosix
 #include "compat/shm.h"
 #include "compat/shm.cpp"

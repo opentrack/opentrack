@@ -14,7 +14,7 @@
 #include "shortcuts.h"
 #include "export.hpp"
 #include "tracklogger.hpp"
-#include "logic/selected-libraries.hpp"
+#include "logic/runtime-libraries.hpp"
 #include "api/plugin-support.hpp"
 
 #include <QObject>

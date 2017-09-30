@@ -21,18 +21,18 @@
 
 #include "export.hpp"
 
-class OTR_COMPAT_EXPORT PortableLockedShm final
+class OTR_COMPAT_EXPORT shm_wrapper final
 {
     void* mem;
 #if defined(_WIN32)
-    HANDLE hMutex, hMapFile;
+    HANDLE mutex, mapped_file;
 #else
     int fd, size;
 #endif
 
 public:
-    PortableLockedShm(const char *shmName, const char *mutexName, int mapSize);
-    ~PortableLockedShm();
+    shm_wrapper(const char *shm_name, const char *mutex_name, int map_size);
+    ~shm_wrapper();
     bool lock();
     bool unlock();
     bool success();

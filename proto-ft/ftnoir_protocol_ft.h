@@ -57,7 +57,7 @@ public:
     }
 private:
     settings s;
-    PortableLockedShm shm;
+    shm_wrapper shm;
     FTHeap volatile *pMemData;
 
     QLibrary FTIRViewsLib;

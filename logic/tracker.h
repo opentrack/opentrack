@@ -14,7 +14,7 @@
 #include "api/plugin-support.hpp"
 #include "mappings.hpp"
 #include "compat/euler.hpp"
-#include "selected-libraries.hpp"
+#include "runtime-libraries.hpp"
 
 #include "spline/spline.hpp"
 #include "main-settings.hpp"

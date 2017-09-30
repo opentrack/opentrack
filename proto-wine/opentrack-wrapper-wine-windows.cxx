@@ -2,7 +2,7 @@
 #   error "bad cross"
 #endif
 
-#define PortableLockedShm ShmWine
+#define shm_wrapper ShmWine
 #include "compat/shm.h"
 #include "compat/shm.cpp"
 #include "wine-shm.h"

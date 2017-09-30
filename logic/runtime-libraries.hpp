@@ -29,7 +29,7 @@ struct runtime_event_handler
     void run_events(ext_event_ordinal k, Pose& pose);
 };
 
-struct OTR_LOGIC_EXPORT runtime_libraries : runtime_event_handler
+struct OTR_LOGIC_EXPORT runtime_libraries final : runtime_event_handler
 {
     using dylibptr = std::shared_ptr<dylib>;
 

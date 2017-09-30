@@ -25,7 +25,7 @@ public:
         return connected_game;
     }
 private:
-    PortableLockedShm lck_shm;
+    shm_wrapper lck_shm;
     WineSHM* shm;
     QProcess wrapper;
     int gameid;

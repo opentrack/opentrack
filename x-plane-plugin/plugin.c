@@ -38,11 +38,11 @@ enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-typedef struct PortableLockedShm
+typedef struct shm_wrapper
 {
     void* mem;
     int fd, size;
-} PortableLockedShm;
+} shm_wrapper;
 
 typedef struct WineSHM
 {
@@ -52,7 +52,7 @@ typedef struct WineSHM
     bool stop;
 } WineSHM;
 
-static PortableLockedShm* lck_posix = NULL;
+static shm_wrapper* lck_posix = NULL;
 static WineSHM* shm_posix = NULL;
 static WineSHM* data_last = NULL;
 static void *view_x, *view_y, *view_z, *view_heading, *view_pitch, *view_roll;
@@ -73,9 +73,9 @@ static void reinit_offset() {
 #   define unused(varname) varname
 #endif
 
-PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *unused(mutexName), int mapSize)
+shm_wrapper* shm_wrapper_init(const char *shmName, const char *unused(mutexName), int mapSize)
 {
-    PortableLockedShm* self = malloc(sizeof(PortableLockedShm));
+    shm_wrapper* self = malloc(sizeof(shm_wrapper));
     char shm_filename[NAME_MAX];
     shm_filename[0] = '/';
     strncpy(shm_filename+1, shmName, NAME_MAX-2);
@@ -88,7 +88,7 @@ PortableLockedShm* PortableLockedShm_init(const char *shmName, const char *unuse
     return self;
 }
 
-void PortableLockedShm_free(PortableLockedShm* self)
+void shm_wrapper_free(shm_wrapper* self)
 {
     /*(void) shm_unlink(shm_filename);*/
     (void) munmap(self->mem, self->size);
@@ -96,12 +96,12 @@ void PortableLockedShm_free(PortableLockedShm* self)
     free(self);
 }
 
-void PortableLockedShm_lock(PortableLockedShm* self)
+void shm_wrapper_lock(shm_wrapper* self)
 {
     flock(self->fd, LOCK_SH);
 }
 
-void PortableLockedShm_unlock(PortableLockedShm* self)
+void shm_wrapper_unlock(shm_wrapper* self)
 {
     flock(self->fd, LOCK_UN);
 }
@@ -119,7 +119,7 @@ float write_head_position(
 
         //only set the view if tracking is running
         if(memcmp(shm_posix, data_last, sizeof(shm_posix->data)) != 0){
-            PortableLockedShm_lock(lck_posix);
+            shm_wrapper_lock(lck_posix);
             if (!translation_disabled)
             {
                 XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
@@ -136,7 +136,7 @@ float write_head_position(
 
         memcpy(&data_last, &shm_posix, sizeof(WineSHM));
 
-        PortableLockedShm_unlock(lck_posix);
+        shm_wrapper_unlock(lck_posix);
     }
     return -1.0;
 }
@@ -199,7 +199,7 @@ PLUGIN_API OTR_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignat
 
 
     if (view_x && view_y && view_z && view_heading && view_pitch && track_toggle && translation_disable_toggle) {
-        lck_posix = PortableLockedShm_init(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
+        lck_posix = shm_wrapper_init(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
         if (lck_posix->mem == (void*)-1) {
             fprintf(stderr, "opentrack failed to init SHM!\n");
             return 0;
@@ -218,7 +218,7 @@ PLUGIN_API OTR_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignat
 PLUGIN_API OTR_COMPAT_EXPORT void XPluginStop ( void ) {
     if (lck_posix)
     {
-        PortableLockedShm_free(lck_posix);
+        shm_wrapper_free(lck_posix);
         lck_posix = NULL;
         shm_posix = NULL;
     }
