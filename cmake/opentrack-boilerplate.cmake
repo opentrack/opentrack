@@ -98,7 +98,7 @@ function(otr_compat target)
         set(l-props "-Wl,--as-needed")
     endif()
 
-    otr_prop(TARGET ${target}   COMPILE_FLAGS "${c-props} ${arg_COMPILE}"
+    otr_prop(TARGET ${target}   COMPIcLE_FLAGS "${c-props} ${arg_COMPILE}"
                                 LINK_FLAGS "${l-props} ${arg_LINK}")
 endfunction()
 
@@ -108,28 +108,6 @@ function(otr_install_pdb_current_project target)
     if(MSVC)
         install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-file})
     endif()
-endfunction()
-
-function(otr_i18n_for_target_directory n)
-    set(k "opentrack-${n}")
-
-    get_property(lupdate-binary TARGET "${Qt5_LUPDATE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
-
-    foreach(i ${opentrack_all-translations})
-        set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
-        set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY CLEAN_NO_CUSTOM 1)
-        if(NOT opentrack_disable-i18n-update)
-            add_custom_command(OUTPUT "${t}"
-                COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
-                COMMAND "${lupdate-binary}" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
-                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-                DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-ui} ${${k}-rc}
-                COMMENT "Running lupdate for ${n}/${i}")
-            set(target-name "i18n-lang-${i}-module-${n}")
-            add_custom_target(${target-name} DEPENDS "${t}")
-        endif()
-        set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${i}" "${t}")
-    endforeach()
 endfunction()
 
 function(otr_module n_)
