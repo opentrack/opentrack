@@ -10,9 +10,11 @@
 #include "defs.hpp"
 
 #include "compat/timer.hpp"
+#include "opentrack-library-path.h"
 
 #include <cmath>
 
+#include <QFile>
 #include <QStandardPaths>
 #include <QDir>
 #include <QDebug>
@@ -63,14 +65,44 @@ bool group::contains(const QString &s) const
     return kvs.find(s) != kvs.cend();
 }
 
+bool group::is_portable_installation()
+{
+#if defined _WIN32
+    if (QFile::exists(OPENTRACK_BASE_PATH + "/portable.txt"))
+        return true;
+#endif
+    return false;
+}
+
 QString group::ini_directory()
 {
-    const auto dirs = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation);
-    if (dirs.size() == 0)
-        return "";
-    if (QDir(dirs[0]).mkpath(OPENTRACK_ORG))
-        return dirs[0] + "/" OPENTRACK_ORG;
-    return "";
+
+    QString dir;
+
+    if (is_portable_installation())
+    {
+        dir = OPENTRACK_BASE_PATH;
+
+        static const QString subdir = "ini";
+
+        if (!QDir(dir).mkpath(subdir))
+            return QString();
+
+        return dir + '/' + subdir;
+    }
+    else
+    {
+        dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
+        if (dir.isEmpty())
+            return QString();
+        if (!QDir(dir).mkpath(OPENTRACK_ORG))
+            return QString();
+
+        dir += '/';
+        dir += OPENTRACK_ORG;
+    }
+
+    return dir;
 }
 
 QString group::ini_filename()

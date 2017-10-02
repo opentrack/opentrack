@@ -49,6 +49,7 @@ public:
     static QString ini_pathname();
     static QString ini_combine(const QString& filename);
     static QStringList ini_list();
+    static bool is_portable_installation();
 
     static void mark_ini_modified();
 
