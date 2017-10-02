@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <QPainter>
 #include <QPaintEvent>
+#include <QPalette>
+#include <QGroupBox>
 
 #include <QDebug>
 
@@ -180,20 +182,67 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
     return u >= 0 && v >= 0 && u + v <= 1;
 }
 
+std::pair<vec2i, vec2i> pose_transform::get_bounds(const vec2& size)
+{
+    const int x = size.x(), y = size.y();
+
+    const vec3 corners[] = {
+        { -x, -y, 0 },
+        { x, -y, 0 },
+        { -x, y, 0 },
+        { x, y, 0 },
+    };
+
+    vec2 min(w-1, h-1), max(0, 0);
+
+    for (unsigned k = 0; k < 4; k++)
+    {
+        const vec2 pt = project(corners[k]) + vec2(w/2, h/2);
+
+        min.x() = std::fmin(min.x(), pt.x());
+        min.y() = std::fmin(min.y(), pt.y());
+
+        max.x() = std::fmax(max.x(), pt.x());
+        max.y() = std::fmax(max.y(), pt.y());
+    }
+
+    min.x() = clamp(min.x(), 0, w-1);
+    min.y() = clamp(min.y(), 0, h-1);
+    max.x() = clamp(max.x(), 0, w-1);
+    max.y() = clamp(max.y(), 0, h-1);
+
+#if 0
+    {
+        QPainter p(&image);
+        p.drawRect(min.x(), min.y(), max.x()-min.x(), max.y()-min.y());
+    }
+#endif
+
+    return std::make_pair(vec2i(iround(min.x()), iround(min.y())),
+                          vec2i(iround(max.x()), iround(max.y())));
+}
+
 void pose_transform::project_quad_texture()
 {
-    image.fill(Qt::transparent);
+    vec3 bgcolor;
+    {
+        QColor bg = dst->palette().background().color();
+        image.fill(bg);
+        bgcolor = vec3(bg.red(), bg.green(), bg.blue());
+    }
 
     num dir;
     vec2 pt[4];
-    const int sx = w, sy = h;
-    vec2 projected[3];
+
+    vec2i min, max;
 
     {
-        const int sx_ = (sx - std::max(0, (sx - sy)/2)) * 5/9;
-        const int sy_ = (sy - std::max(0, (sy - sx)/2)) * 5/9;
-
         static constexpr const double c = 85/100.;
+
+        const int sx_ = (w - std::max(0, (w - h)/2)) * 5/9;
+        const int sy_ = (h - std::max(0, (h - w)/2)) * 5/9;
+
+        std::tie(min, max) = get_bounds(vec2(sx_/2.*c, sy_/2));
 
         const vec3 dst_corners[] =
         {
@@ -204,15 +253,12 @@ void pose_transform::project_quad_texture()
         };
 
         for (int i = 0; i < 4; i++)
-            pt[i] = project(dst_corners[i]) + vec2(sx/2, sy/2);
+            pt[i] = project(dst_corners[i]) + vec2(w/2, h/2);
 
         {
             vec3 foo[3];
             for (int i = 0; i < 3; i++)
-            {
                 foo[i] = project2(dst_corners[i]);
-                projected[i] = project(dst_corners[i]) + vec2(sx/2, sy/2);
-            }
 
             vec3 p1 = foo[1] - foo[0];
             vec3 p2 = foo[2] - foo[0];
@@ -231,7 +277,7 @@ void pose_transform::project_quad_texture()
 
     const QImage& tex = dir < 0 ? back : front;
 
-    Triangle t(projected[0], projected[1], projected[2]);
+    Triangle t(pt[0], pt[1], pt[2]);
 
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
@@ -250,14 +296,16 @@ void pose_transform::project_quad_texture()
         return;
     }
 
-    if (uv_vec.size() < sx * sy)
-        uv_vec.resize(sx * sy);
+    const vec2u dist(max.x() - min.x(), max.y() - min.y());
 
-    for (unsigned y = 0; y < sy; y++)
-        for (unsigned x = 0; x < sx; x++)
+    if (int(uv_vec.size()) < dist.x() * dist.y())
+        uv_vec.resize(dist.x() * dist.y());
+
+    for (int y = 0; y < dist.y(); y++)
+        for (int x = 0; x < dist.x(); x++)
         {
-            uv_& restrict_ref uv = uv_vec[y * sx + x];
-            if (!t.barycentric_coords(vec2(x, y), uv.coords, uv.i))
+            uv_& restrict_ref uv = uv_vec[y * dist.x() + x];
+            if (!t.barycentric_coords(vec2(x + min.x(), y + min.y()), uv.coords, uv.i))
                 uv.i = -1;
         }
 
@@ -277,10 +325,11 @@ void pose_transform::project_quad_texture()
         }
     };
 
-    for (unsigned y = 0; y < sy; y++)
-        for (unsigned x = 0; x < sx; x++)
+    for (int y_ = 0; y_ < dist.y(); y_++)
+        for (int x_ = 0; x_ < dist.x(); x_++)
         {
-            uv_ const& restrict_ref uv__ = uv_vec[y * sx + x];
+            const int y = y_ + min.y(), x = x_ + min.x();
+            uv_ const& restrict_ref uv__ = uv_vec[y_ * dist.x() + x_];
 
             if (uv__.i != -1)
             {
@@ -330,7 +379,22 @@ void pose_transform::project_quad_texture()
 
                 const unsigned pos = y * dest_pitch + x * const_depth;
 
-                for (int k = 0; k < const_depth; k++)
+#if defined BILINEAR_FILTER
+                float a;
+                {
+                    static constexpr unsigned k = 3;
+                    const uc i = orig[orig_pos + k];
+                    const uc i_ = orig[orig_pos_ + k];
+                    const uc i__ = orig[orig_pos__ + k];
+                    const uc i___ = orig[orig_pos___ + k];
+
+                    unsigned c((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
+
+                    a = c/255.;
+                }
+#endif
+
+                for (int k = 0; k < 3; k++)
                 {
 #if defined BILINEAR_FILTER
                     const uc i = orig[orig_pos + k];
@@ -338,7 +402,9 @@ void pose_transform::project_quad_texture()
                     const uc i__ = orig[orig_pos__ + k];
                     const uc i___ = orig[orig_pos___ + k];
 
-                    dest[pos + k] = uc((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
+                    unsigned c((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
+
+                    dest[pos + k] = clamp(uround(bgcolor(k)*(1-a) + c*a), 0, 255);
 #else
                     dest[pos + k] = orig[orig_pos + k];
 #endif

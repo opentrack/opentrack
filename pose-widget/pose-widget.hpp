@@ -7,16 +7,18 @@
 
 #pragma once
 
+#include "api/plugin-api.hpp"
+#include "compat/euler.hpp"
+
+#include <tuple>
+#include <mutex>
+#include <atomic>
+#include <vector>
+
 #include <QtGlobal>
 #include <QWidget>
 #include <QThread>
 #include <QPixmap>
-#include "api/plugin-api.hpp"
-#include "compat/euler.hpp"
-
-#include <mutex>
-#include <atomic>
-#include <vector>
 
 #ifdef BUILD_POSE_WIDGET
 #   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
@@ -29,6 +31,8 @@ namespace pose_widget_impl {
 using num = float;
 using vec3 = Mat<num, 3, 1>;
 using vec2 = Mat<num, 2, 1>;
+using vec2i = Mat<int, 2, 1>;
+using vec2u = Mat<int, 2, 1>;
 
 using rmat = Mat<num, 3, 3>;
 
@@ -62,6 +66,7 @@ struct pose_transform final : QThread
     vec2 project(const vec3& point);
     vec3 project2(const vec3& point);
     void project_quad_texture();
+    std::pair<vec2i, vec2i> get_bounds(const vec2& size);
 
     template<typename F>
     inline void with_image_lock(F&& fun);
