@@ -11,25 +11,9 @@
 #include "api/plugin-support.hpp"
 #include "export.hpp"
 
-#include <array>
-#include <functional>
-
 #include <QFrame>
 
-struct runtime_event_handler
-{
-    using ext_event_ordinal = IExtension::event_ordinal;
-    using ext = std::shared_ptr<IExtension>;
-
-    enum : unsigned { ext_max_events = 64 };
-    using ext_list = std::array<ext, ext_max_events>;
-
-    std::array<ext_list, ext_event_ordinal::event_count> extension_events;
-
-    void run_events(ext_event_ordinal k, Pose& pose);
-};
-
-struct OTR_LOGIC_EXPORT runtime_libraries final : runtime_event_handler
+struct OTR_LOGIC_EXPORT runtime_libraries final
 {
     using dylibptr = std::shared_ptr<dylib>;
 
