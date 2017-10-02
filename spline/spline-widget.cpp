@@ -104,7 +104,7 @@ void spline_widget::drawBackground()
 
     QPainter painter(&_background);
 
-    painter.fillRect(rect(), palette().color(QPalette::Light));
+    painter.fillRect(rect(), palette().background().color());
 
     QColor bg_color(112, 154, 209);
     if (!isEnabled() && !_preview_only)
