@@ -96,6 +96,12 @@ public:
     operator t() const { return std::forward<t>(get()); }
 
     never_inline
+    t operator->() const
+    {
+        return get();
+    }
+
+    never_inline
     void reload() override
     {
         *this = static_cast<t>(*this);
