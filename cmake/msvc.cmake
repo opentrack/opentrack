@@ -64,7 +64,8 @@ set(_LDFLAGS_STATIC_DEBUG "")
 
 set(CMAKE_RC_FLAGS "-nologo -DWIN32")
 
-if(NOT CMAKE_INSTALL_PREFIX)
+if(NOT __otr_already_initialized OR "$ENV{OTR_REDO}")
+    set(__otr_already_initialized 1 CACHE INTERNAL "" FORCE)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 
@@ -76,7 +77,6 @@ if(NOT CMAKE_INSTALL_PREFIX)
         foreach(i "" _DEBUG _RELEASE)
             set(CMAKE_${j}_FLAGS${i} "${_${j}FLAGS${i}}" CACHE STRING "" FORCE)
         endforeach()
-        set(CMAKE_${j}_FLAGS "${_${j}FLAGS}" CACHE STRING "" FORCE)
     endforeach()
 
     foreach(j "" _DEBUG _RELEASE)
