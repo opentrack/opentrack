@@ -14,6 +14,36 @@ MapWidget::MapWidget(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);
 
+    QWidget* pages[] = {
+        ui.tabWidgetPage1,
+        ui.tabWidgetPage2,
+        ui.tabWidgetPage3,
+        ui.tabWidgetPage4,
+        ui.tabWidgetPage5,
+        ui.tabWidgetPage6,
+    };
+
+    {
+        QColor bg = palette().background().color();
+
+        QString tmp;
+        tmp.reserve(32);
+
+        tmp += QStringLiteral(".QWidget { background-color: #");
+
+        for (int i : { bg.red(), bg.green(), bg.blue() })
+        {
+            if (i < 0xf0)
+                tmp += '0';
+            tmp += QString::number(i, 16);
+        }
+
+        tmp += "; }";
+
+        for (QWidget* w : pages)
+            w->setStyleSheet(tmp);
+    }
+
     load();
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));

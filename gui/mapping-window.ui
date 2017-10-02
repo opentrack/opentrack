@@ -93,13 +93,6 @@
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </property>
         </widget>
        </item>
        <item>
@@ -116,13 +109,6 @@
            <red>255</red>
            <green>0</green>
            <blue>0</blue>
-          </color>
-         </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
           </color>
          </property>
         </widget>
@@ -181,13 +167,6 @@
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </property>
         </widget>
        </item>
        <item>
@@ -204,13 +183,6 @@
            <red>0</red>
            <green>255</green>
            <blue>0</blue>
-          </color>
-         </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -269,13 +241,6 @@
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </property>
         </widget>
        </item>
        <item>
@@ -292,13 +257,6 @@
            <red>0</red>
            <green>0</green>
            <blue>255</blue>
-          </color>
-         </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -361,13 +319,6 @@
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </property>
         </widget>
        </item>
        <item>
@@ -384,13 +335,6 @@
            <red>255</red>
            <green>0</green>
            <blue>255</blue>
-          </color>
-         </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -449,13 +393,6 @@
            <blue>0</blue>
           </color>
          </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </property>
         </widget>
        </item>
        <item>
@@ -472,13 +409,6 @@
            <red>255</red>
            <green>255</green>
            <blue>0</blue>
-          </color>
-         </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
           </color>
          </property>
         </widget>
@@ -537,13 +467,6 @@
            <blue>255</blue>
           </color>
          </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </property>
         </widget>
        </item>
        <item>
@@ -560,13 +483,6 @@
            <red>0</red>
            <green>255</green>
            <blue>255</blue>
-          </color>
-         </property>
-         <property name="colorBackground" stdset="0">
-          <color>
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
           </color>
          </property>
         </widget>
