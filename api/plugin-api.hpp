@@ -229,6 +229,8 @@ struct OTR_API_EXPORT IExtension
 
 struct OTR_API_EXPORT IExtensionDialog : public plugin_api::detail::BaseDialog
 {
+    ~IExtensionDialog() override;
+
     virtual void register_extension(IExtension& ext) = 0;
     virtual void unregister_extension() = 0;
 };

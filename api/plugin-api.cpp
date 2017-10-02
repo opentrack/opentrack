@@ -43,3 +43,6 @@ void BaseDialog::done(int)
     }
 }
 
+IExtensionDialog::~IExtensionDialog()
+{
+}
