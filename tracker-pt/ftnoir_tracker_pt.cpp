@@ -54,7 +54,7 @@ void Tracker_PT::run()
     cv::setNumThreads(0);
 
 #ifdef PT_PERF_LOG
-    QFile log_file(QCoreApplication::applicationDirPath() + "/PointTrackerPerformance.txt");
+    QFile log_file(OPENTRACK_BASE_PATH + "/PointTrackerPerformance.txt");
     if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
     QTextStream log_stream(&log_file);
 #endif
