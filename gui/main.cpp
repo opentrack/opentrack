@@ -167,9 +167,11 @@ main(int argc, char** argv)
 
     // QLocale::setDefault(QLocale("ru_RU")); // force i18n for testing
 
-    if (!QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool())
+    if (group::with_global_settings_object([&](QSettings& s) {
+        return !s.value("disable-translation", false).toBool();
+    }))
     {
-        (void) t.load(QLocale(), "", "", QCoreApplication::applicationDirPath() + "/" OPENTRACK_I18N_PATH, ".qm");
+        (void) t.load(QLocale(), "", "", OPENTRACK_BASE_PATH + "/" OPENTRACK_I18N_PATH, ".qm");
         (void) QCoreApplication::installTranslator(&t);
     }
 

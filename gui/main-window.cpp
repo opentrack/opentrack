@@ -873,6 +873,7 @@ bool MainWindow::start_in_tray()
 
 void MainWindow::set_profile_in_registry(const QString &profile)
 {
-    QSettings settings(OPENTRACK_ORG);
-    settings.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
+    group::with_global_settings_object([&](QSettings& s) {
+        s.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
+    });
 }

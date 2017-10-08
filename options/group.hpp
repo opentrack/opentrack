@@ -23,20 +23,28 @@ class OTR_OPTIONS_EXPORT group final
     QString name;
 
     static QString cur_ini_pathname;
+
     static std::shared_ptr<QSettings> cur_ini;
-    static QMutex cur_ini_mtx;
     static int ini_refcount;
     static bool ini_modifiedp;
+    static QMutex cur_ini_mtx;
+
+    static std::shared_ptr<QSettings> cur_global_ini;
+    static int global_ini_refcount;
+    static bool global_ini_modifiedp;
+    static QMutex global_ini_mtx;
+
     struct OTR_OPTIONS_EXPORT saver_ final
     {
         QSettings& s;
-        QMutex& mtx;
-        QMutexLocker lck;
+        int& refcount;
+        bool& modifiedp;
 
-        ~saver_();
-        saver_(QSettings& s, QMutex&);
+        never_inline ~saver_();
+        never_inline saver_(QSettings& s, int& refcount, bool& modifiedp);
     };
     static std::shared_ptr<QSettings> cur_settings_object();
+    static std::shared_ptr<QSettings> cur_global_settings_object();
 
 public:
     std::map<QString, QVariant> kvs;
@@ -67,9 +75,20 @@ public:
     never_inline
     static auto with_settings_object(F&& fun)
     {
-        saver_ saver { *cur_settings_object(), cur_ini_mtx };
+        QMutexLocker l(&cur_ini_mtx);
+        saver_ saver { *cur_settings_object(), ini_refcount, ini_modifiedp };
 
-        return fun(static_cast<QSettings&>(saver.s));
+        return fun(saver.s);
+    }
+
+    template<typename F>
+    static auto with_global_settings_object(F&& fun)
+    {
+        QMutexLocker l(&global_ini_mtx);
+        saver_ saver { *cur_global_settings_object(), global_ini_refcount, ini_modifiedp };
+        global_ini_modifiedp = true;
+
+        return fun(saver.s);
     }
 };
 

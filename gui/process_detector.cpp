@@ -19,26 +19,30 @@
 
 void settings::set_game_list(const QString &game_list)
 {
-    QSettings settings(OPENTRACK_ORG);
-    settings.setValue("executable-list", game_list);
+    group::with_global_settings_object([&](QSettings& settings) {
+        settings.setValue("executable-list", game_list);
+    });
 }
 
 QString settings::get_game_list()
 {
-    QSettings settings(OPENTRACK_ORG);
-    return settings.value("executable-list").toString();
+    return group::with_global_settings_object([&](QSettings& settings) {
+        return settings.value("executable-list").toString();
+    });
 }
 
 bool settings::is_enabled()
 {
-    QSettings settings(OPENTRACK_ORG);
-    return settings.value("executable-detector-enabled", false).toBool();
+    return group::with_global_settings_object([&](QSettings& settings) {
+        return settings.value("executable-detector-enabled", false).toBool();
+    });
 }
 
 void settings::set_is_enabled(bool enabled)
 {
-    QSettings settings(OPENTRACK_ORG);
-    settings.setValue("executable-detector-enabled", enabled);
+    group::with_global_settings_object([&](QSettings& settings) {
+        settings.setValue("executable-detector-enabled", enabled);
+    });
 }
 
 QHash<QString, QString> settings::split_process_names()

@@ -33,7 +33,10 @@ QString OptionsDialog::kopts_to_string(const key_opts& kopts)
 
 void OptionsDialog::set_disable_translation_state(bool value)
 {
-    QSettings(OPENTRACK_ORG).setValue("disable-translation", value);
+    group::with_global_settings_object([&](QSettings& s)
+    {
+        s.setValue("disable-translation", value);
+    });
 }
 
 OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
@@ -88,7 +91,10 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
 
     tie_setting(main.neck_enable, ui.neck_enable);
 
-    ui.disable_translation->setChecked(QSettings(OPENTRACK_ORG).value("disable-translation", false).toBool());
+    const bool is_translation_disabled = group::with_global_settings_object([] (QSettings& s) {
+        return s.value("disable-translation", false).toBool();
+    });
+    ui.disable_translation->setChecked(is_translation_disabled);
 
     struct tmp
     {

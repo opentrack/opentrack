@@ -107,11 +107,12 @@ QString group::ini_directory()
 
 QString group::ini_filename()
 {
-    QSettings settings(OPENTRACK_ORG);
-    const QString ret = settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
-    if (ret.size() == 0)
-        return OPENTRACK_DEFAULT_CONFIG;
-    return ret;
+    return with_global_settings_object([&](QSettings& settings) {
+        const QString ret = settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
+        if (ret.size() == 0)
+            return QStringLiteral(OPENTRACK_DEFAULT_CONFIG);
+        return ret;
+    });
 }
 
 QString group::ini_pathname()
@@ -145,10 +146,16 @@ void group::mark_ini_modified()
 }
 
 QString group::cur_ini_pathname;
+
 std::shared_ptr<QSettings> group::cur_ini;
 QMutex group::cur_ini_mtx(QMutex::Recursive);
 int group::ini_refcount = 0;
 bool group::ini_modifiedp = false;
+
+std::shared_ptr<QSettings> group::cur_global_ini;
+QMutex group::global_ini_mtx(QMutex::Recursive);
+int group::global_ini_refcount = 0;
+bool group::global_ini_modifiedp = false;
 
 std::shared_ptr<QSettings> group::cur_settings_object()
 {
@@ -156,8 +163,6 @@ std::shared_ptr<QSettings> group::cur_settings_object()
 
     if (pathname.isEmpty())
         return std::make_shared<QSettings>();
-
-    QMutexLocker l(&cur_ini_mtx);
 
     if (pathname != cur_ini_pathname)
     {
@@ -168,22 +173,39 @@ std::shared_ptr<QSettings> group::cur_settings_object()
     return cur_ini;
 }
 
+std::shared_ptr<QSettings> group::cur_global_settings_object()
+{
+    if (cur_global_ini)
+        return cur_global_ini;
+
+    if (!is_portable_installation())
+        cur_global_ini = std::make_shared<QSettings>(OPENTRACK_ORG);
+    else
+    {
+        static const QString pathname = OPENTRACK_BASE_PATH + QStringLiteral("/globals.ini");
+        cur_global_ini = std::make_shared<QSettings>(pathname, QSettings::IniFormat);
+    }
+
+    return cur_global_ini;
+}
+
+never_inline
 group::saver_::~saver_()
 {
-    if (--ini_refcount == 0 && ini_modifiedp)
+    if (--refcount == 0 && modifiedp)
     {
-        ini_modifiedp = false;
-        static Timer t;
-        const double tm = t.elapsed_seconds();
-        qDebug() << QStringLiteral("%1.%2").arg(int(tm)).arg(int(std::fmod(tm, 1.)*10)).toLatin1().data()
-                 << "saving .ini file" << cur_ini_pathname;
+        modifiedp = false;
         s.sync();
+        if (s.status() != QSettings::NoError)
+            qDebug() << "error with .ini file" << s.fileName() << s.status();
     }
 }
 
-group::saver_::saver_(QSettings& s, QMutex& mtx) : s(s), mtx(mtx), lck(&mtx)
+never_inline
+group::saver_::saver_(QSettings& s, int& refcount, bool& modifiedp) :
+    s(s), refcount(refcount), modifiedp(modifiedp)
 {
-    ini_refcount++;
+    refcount++;
 }
 
 } // ns options
