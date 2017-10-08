@@ -191,23 +191,19 @@ struct OTR_API_EXPORT IExtension
     {
         none = 0u,
         on_raw              = 1 << 0,
-        on_after_center     = 1 << 1,
-        on_before_filter    = 1 << 2,
-        on_before_transform = 1 << 3,
-        on_before_mapping   = 1 << 4,
-        on_finished         = 1 << 5,
+        on_before_filter    = 1 << 1,
+        on_before_mapping   = 1 << 2,
+        on_finished         = 1 << 3,
     };
 
     enum event_ordinal : unsigned
     {
         ev_raw                 = 0,
-        ev_after_center        = 1,
-        ev_before_filter       = 2,
-        ev_before_transform    = 3,
-        ev_before_mapping      = 4,
-        ev_finished            = 5,
+        ev_before_filter       = 1,
+        ev_before_mapping      = 2,
+        ev_finished            = 3,
 
-        event_count = 6,
+        event_count = 4,
     };
 
     IExtension() = default;
@@ -216,9 +212,7 @@ struct OTR_API_EXPORT IExtension
     virtual event_mask hook_types() = 0;
 
     virtual void process_raw(Pose&) {}
-    virtual void process_after_center(Pose&) {}
     virtual void process_before_filter(Pose&) {}
-    virtual void process_before_transform(Pose&) {}
     virtual void process_before_mapping(Pose&) {}
     virtual void process_finished(Pose&) {}
 

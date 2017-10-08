@@ -15,6 +15,7 @@
 #include "mappings.hpp"
 #include "compat/euler.hpp"
 #include "runtime-libraries.hpp"
+#include "extensions.hpp"
 
 #include "spline/spline.hpp"
 #include "main-settings.hpp"
@@ -31,7 +32,7 @@
 
 namespace gui_tracker_impl {
 
-struct bits
+struct OTR_LOGIC_EXPORT bits
 {
     enum flags : unsigned {
         f_center         = 1 << 0,
@@ -58,6 +59,7 @@ private:
     QMutex mtx;
     main_settings s;
     Mappings& m;
+    event_handler& ev;
 
     Timer t;
     Pose output_pose, raw_6dof, last_mapped, last_raw;
@@ -98,7 +100,7 @@ private:
     static constexpr double c_mult = 16;
     static constexpr double c_div = 1./c_mult;
 public:
-    Tracker(Mappings& m, runtime_libraries& libs, TrackLogger& logger);
+    Tracker(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
     ~Tracker();
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;

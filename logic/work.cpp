@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QFileDialog>
 
-
 QString Work::browse_datalogging_file(main_settings &s)
 {
     QString filename = s.tracklogging_filename;
@@ -60,10 +59,10 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
 }
 
 
-Work::Work(Mappings& m, QFrame* frame, std::shared_ptr<dylib> tracker_, std::shared_ptr<dylib> filter_, std::shared_ptr<dylib> proto_) :
+Work::Work(Mappings& m, event_handler& ev,  QFrame* frame, std::shared_ptr<dylib> tracker_, std::shared_ptr<dylib> filter_, std::shared_ptr<dylib> proto_) :
     libs(frame, tracker_, filter_, proto_),
     logger(make_logger(s)),
-    tracker(std::make_shared<Tracker>(m, libs, *logger)),
+    tracker(std::make_shared<Tracker>(m, libs, ev, *logger)),
     sc(std::make_shared<Shortcuts>()),
     keys {
         key_tuple(s.key_center1, [&](bool) -> void { tracker->center(); }, true),

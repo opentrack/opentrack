@@ -33,8 +33,9 @@ using namespace time_units;
 constexpr double Tracker::r2d;
 constexpr double Tracker::d2r;
 
-Tracker::Tracker(Mappings& m, runtime_libraries& libs, TrackLogger& logger) :
+Tracker::Tracker(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m),
+    ev(ev),
     libs(libs),
     logger(logger),
     backlog_time(ns(0)),
@@ -110,6 +111,7 @@ constexpr double Tracker::c_div;
 void Tracker::logic()
 {
     using namespace euler;
+    using EV = event_handler::event_ordinal;
 
     logger.write_dt();
     logger.reset_dt();
@@ -121,10 +123,11 @@ void Tracker::logic()
     {
         Pose tmp;
         libs.pTracker->data(tmp);
+        ev.run_events(EV::ev_raw, tmp);
 
         if (get(f_enabled_p) ^ !get(f_enabled_h))
             for (int i = 0; i < 6; i++)
-                newpose[i] = elide_nan(tmp(i), newpose(i));
+                newpose(i) = elide_nan(tmp(i), newpose(i));
     }
 
     Pose value, raw;
@@ -249,6 +252,8 @@ void Tracker::logic()
         }
     }
 
+    ev.run_events(EV::ev_before_filter, value);
+
     logger.write_pose(value); // "corrected" - after various transformations to account for camera position
 
     nanp |= is_nan(value);
@@ -268,6 +273,8 @@ void Tracker::logic()
     nanp |= is_nan(value);
 
     {
+        ev.run_events(EV::ev_before_mapping, value);
+
         euler_t neck, rel;
 
         if (s.neck_enable)
@@ -346,6 +353,8 @@ void Tracker::logic()
     // custom zero position
     for (int i = 0; i < 6; i++)
         value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
+
+    ev.run_events(EV::ev_finished, value);
 
     if (!nanp)
         libs.pProtocol->pose(value);

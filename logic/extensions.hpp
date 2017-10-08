@@ -6,7 +6,9 @@
 #include <vector>
 #include <array>
 
-struct event_handler final
+#include "export.hpp"
+
+struct OTR_LOGIC_EXPORT event_handler final
 {
     using event_ordinal = IExtension::event_ordinal;
 
@@ -26,11 +28,10 @@ struct event_handler final
 
 private:
     using ext_list = std::vector<extension>;
-    std::array<ext_list, IExtension::event_count> extension_events;
+    std::array<ext_list, IExtension::event_count> extensions_for_event;
+
+    options::bundle ext_bundle;
+
+    bool is_enabled(const QString& name);
 };
 
-struct ext_settings final
-{
-    static bool is_enabled(const QString& name);
-    ext_settings() = delete;
-};

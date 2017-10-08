@@ -13,6 +13,7 @@ using namespace options;
 #include "api/plugin-support.hpp"
 #include "main-settings.hpp"
 #include "mappings.hpp"
+#include "extensions.hpp"
 #include "work.hpp"
 #include <vector>
 #include <QString>
@@ -21,9 +22,11 @@ struct State
 {
     State(const QString& library_path) :
         modules(library_path),
+        ev(modules.extensions()),
         pose(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll})
     {}
     Modules modules;
+    event_handler ev;
     main_settings s;
     Mappings pose;
     std::shared_ptr<Work> work;

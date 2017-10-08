@@ -454,7 +454,7 @@ void MainWindow::start_tracker_()
         display_pose(p, p);
     }
 
-    work = std::make_shared<Work>(pose, ui.video_frame, current_tracker(), current_protocol(), current_filter());
+    work = std::make_shared<Work>(pose, ev, ui.video_frame, current_tracker(), current_protocol(), current_filter());
 
     if (!work->is_ok())
     {

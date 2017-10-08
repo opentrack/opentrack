@@ -16,24 +16,24 @@ static constexpr struct event_type_mapping
     ext_ord idx;
 } ordinal_to_function[] = {
     { &IExtension::process_raw, ext_mask::on_raw, ext_ord::ev_raw, },
-    { &IExtension::process_after_center, ext_mask::on_after_center, ext_ord::ev_after_center, },
     { &IExtension::process_before_filter, ext_mask::on_before_filter, ext_ord::ev_before_filter, },
-    { &IExtension::process_before_transform, ext_mask::on_before_transform, ext_ord::ev_before_transform, },
     { &IExtension::process_before_mapping, ext_mask::on_before_mapping, ext_ord::ev_before_mapping, },
     { &IExtension::process_finished, ext_mask::on_finished, ext_ord::ev_finished, },
 };
 
-bool ext_settings::is_enabled(const QString& name)
+bool event_handler::is_enabled(const QString& name)
 {
-    static const bundle b = make_bundle("extensions");
-
-    if (!b->contains(name))
+#if 1
+    return true;
+#else
+    if (!ext_bundle->contains(name))
         return false;
 
-    return b->get<bool>(name);
+    return ext_bundle->get<bool>(name);
+#endif
 }
 
-event_handler::event_handler(Modules::dylib_list const& extensions)
+event_handler::event_handler(Modules::dylib_list const& extensions) : ext_bundle(make_bundle("extensions"))
 {
     for (std::shared_ptr<dylib> const& lib : extensions)
     {
@@ -43,8 +43,12 @@ event_handler::event_handler(Modules::dylib_list const& extensions)
 
         const ext_mask mask = ext->hook_types();
 
-        if (!ext_settings::is_enabled(lib->module_name))
+        if (!is_enabled(lib->module_name))
             continue;
+
+#if 1
+        qDebug() << "extension" << lib->module_name << "mask" << (void*)mask;
+#endif
 
         for (event_type_mapping const& mapping : ordinal_to_function)
         {
@@ -52,7 +56,7 @@ event_handler::event_handler(Modules::dylib_list const& extensions)
             const ext_mask mask_ = mapping.mask;
 
             if (mask & mask_)
-                extension_events[i].push_back({ ext, dlg, m });
+                extensions_for_event[i].push_back({ ext, dlg, m });
         }
     }
 }
@@ -61,7 +65,7 @@ void event_handler::run_events(event_ordinal k, Pose& pose)
 {
     auto fun = std::mem_fn(ordinal_to_function[k].ptr);
 
-    for (extension& x : extension_events[k])
+    for (extension& x : extensions_for_event[k])
         fun(*x.logic, pose);
 }
 
