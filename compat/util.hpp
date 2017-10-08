@@ -1,5 +1,6 @@
 #pragma once
 
+#include "opentrack-library-path.h"
 #include "ndebug-guard.hpp"
 #include "run-in-thread.hpp"
 #include "meta.hpp"

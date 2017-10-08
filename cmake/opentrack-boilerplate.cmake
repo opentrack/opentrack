@@ -4,14 +4,10 @@ set(opentrack-perms-exec "${opentrack-perms-dir}")
 
 set(new-hier-path "#pragma once
 #ifndef OPENTRACK_NO_QT_PATH
-
 #   include <QCoreApplication>
 #   include <QString>
-
-#   define OPENTRACK_BASE_PATH (([]() -> const QString& { \\
-        const static QString const__path___ = QCoreApplication::applicationDirPath(); \\
-        return const__path___; \\
-        })())
+#   include \"compat/base-path.hpp\"
+#   define OPENTRACK_BASE_PATH (application_base_path())
 #endif
 #define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
 #define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"

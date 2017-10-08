@@ -1,5 +1,6 @@
 #include "thread.hpp"
 #include "compat/sleep.hpp"
+#include "compat/util.hpp"
 #include <utility>
 
 #include <QTextStream>
@@ -52,7 +53,7 @@ struct Diag final : public QFile
 {
     Diag()
     {
-        setFileName(QCoreApplication::applicationDirPath() + "/HATDiagnostics.txt");
+        setFileName(OPENTRACK_BASE_PATH + "/HATDiagnostics.txt");
     }
 };
 

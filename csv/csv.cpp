@@ -13,7 +13,6 @@
 #include "opentrack-library-path.h"
 #include <QTextDecoder>
 #include <QFile>
-#include <QCoreApplication>
 #include <QString>
 #include <QDebug>
 
