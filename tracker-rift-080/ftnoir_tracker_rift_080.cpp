@@ -40,7 +40,8 @@ void rift_tracker_080::start_tracker(QFrame*)
     ovrResult code;
     ovrGraphicsLuid luid = {{0}};
 
-    if (!OVR_SUCCESS(code = ovr_Initialize(nullptr)))
+    code = ovr_Initialize(nullptr);
+    if (!OVR_SUCCESS(code))
         goto error;
 
     code = ovr_Create(&hmd, &luid);

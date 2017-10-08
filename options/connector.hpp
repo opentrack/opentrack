@@ -26,7 +26,7 @@ class base_value;
 
 namespace detail {
 
-class connector
+class OTR_OPTIONS_EXPORT connector
 {
     friend class ::options::base_value;
 

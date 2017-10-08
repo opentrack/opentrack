@@ -39,8 +39,11 @@ void set_is_visible(const QWidget& w, bool force)
     };
 
     for (const QPoint& pt : points)
-        if (!!(visible = WindowFromPoint({ pt.x(), pt.y() }) == id))
+    {
+        visible = WindowFromPoint({ pt.x(), pt.y() }) == id;
+        if (visible)
             break;
+    }
 }
 
 never_inline OTR_COMPAT_EXPORT
