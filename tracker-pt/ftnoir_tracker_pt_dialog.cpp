@@ -83,7 +83,8 @@ TrackerDialog_PT::TrackerDialog_PT()
     connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::DirectConnection);
 
     static constexpr pt_color_type color_types[] = {
-        pt_color_normal,
+        pt_color_average,
+        pt_color_natural,
         pt_color_floppy_filter,
         pt_color_red_only,
     };

@@ -15,9 +15,10 @@ enum pt_color_type
 {
     // explicit values, gotta preserve the numbering in .ini
     // don't reuse when removing some of the modes
-    pt_color_normal = 2,
+    pt_color_natural = 2,
     pt_color_red_only = 3,
     pt_color_floppy_filter = 4,
+    pt_color_average = 5,
 };
 
 struct settings_pt : opts
@@ -74,6 +75,6 @@ struct settings_pt : opts
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 250),
         auto_threshold(b, "automatic-threshold", true),
-        blob_color(b, "blob-color", pt_color_normal)
+        blob_color(b, "blob-color", pt_color_average)
     {}
 };

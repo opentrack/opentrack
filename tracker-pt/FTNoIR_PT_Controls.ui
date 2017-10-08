@@ -423,7 +423,12 @@
             </property>
             <item>
              <property name="text">
-              <string>Normal</string>
+              <string>Average</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Natural</string>
              </property>
             </item>
             <item>

@@ -12,6 +12,7 @@
 #include <QDebug>
 
 #include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
 
 #include <cmath>
 #include <algorithm>
@@ -115,55 +116,52 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     }
 
     const pt_color_type color = s.blob_color;
-    if (color == pt_color_normal)
+
+    switch (color)
     {
-        // convert to grayscale
-        // this operation is optimized
+    case pt_color_floppy_filter:
+    {
+        // weight for blue color
+        static constexpr float B = .8;
+
+        static constexpr int from_to[] = {
+            0, 0,
+            1, 1
+        };
+
+        separate_channels(frame, from_to, 2);
+
+        cv::addWeighted(ch_float[0], B, ch_float[1], 1-B, 0, ch_float[2], 1);
+        ch_float[2].convertTo(frame_gray, CV_8U);
+
+        break;
+    }
+    case pt_color_red_only:
+    {
+        static constexpr int from_to[] = {
+            2, 0 // red
+        };
+
+        separate_channels(frame, from_to, 1);
+
+        ch_float[0].convertTo(frame_gray, CV_8U);
+        break;
+    }
+    default:
+        once_only(qDebug() << "wrong pt_color_type enum value" << int(color));
+        /*FALLTHROUGH*/
+    case pt_color_average:
+    {
+        separate_channels(frame, nullptr);
+        ch_float[3] = (ch_float[0] + ch_float[1] + ch_float[2]) * (1./3);
+        ch_float[3].convertTo(frame_gray, CV_8U);
+        break;
+    }
+    case pt_color_natural:
         cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
+        break;
     }
-    else
-    {
-        switch (color)
-        {
-        case pt_color_floppy_filter:
-        {
-            // weight for blue color
-            static constexpr float B = .8;
-            // single channel weight
-            static constexpr float A = 1./2;
 
-            static constexpr int from_to[] = {
-                0, 0,
-                1, 1
-            };
-
-            separate_channels(frame, from_to, 2);
-
-            ch_float[2] =   ch_float[0] * B * A // blue
-                          + ch_float[1] * (1 - B) * A; // green
-            ch_float[2].convertTo(frame_gray, CV_8U);
-
-            break;
-        }
-        case pt_color_red_only:
-        {
-            static constexpr int from_to[] = {
-                2, 0 // red
-            };
-
-            separate_channels(frame, from_to, 1);
-
-            ch_float[0].convertTo(frame_gray, CV_8U);
-
-            break;
-        }
-        default:
-            once_only(qDebug() << "wrong pt_color_type enum value" << int(color));
-            // don't violate POLA
-            cv::cvtColor(frame, frame_gray, cv::COLOR_BGR2GRAY);
-            break;
-        }
-    }
 
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
