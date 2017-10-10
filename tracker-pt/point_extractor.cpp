@@ -42,7 +42,7 @@ algorithm for tracking single particles with variable size and shape." (2008).
 */
 static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &current_center, double filter_width)
 {
-    // Most amazingling this function runs faster with doubles than with floats.
+    // Most amazingly this function runs faster with doubles than with floats.
     const double s = 1.0 / filter_width;
 
     double m = 0;
@@ -337,7 +337,7 @@ end:
         b.pos[1] = pos[1] + rect.y;
     }
 
-    // End of mean shift code. At this point, blob positions are updated which hopefully less noisy less biased values.
+    // End of mean shift code. At this point, blob positions are updated with hopefully less noisy less biased values.
     points.reserve(max_blobs);
     points.clear();
 
