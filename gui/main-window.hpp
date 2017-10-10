@@ -49,17 +49,17 @@ class MainWindow : public QMainWindow, private State
 
     Shortcuts global_shortcuts;
     module_settings m;
-    ptr<QSystemTrayIcon> tray;
+    std::unique_ptr<QSystemTrayIcon> tray;
     QMenu tray_menu;
     QTimer pose_update_timer;
     QTimer det_timer;
     QTimer config_list_timer;
-    ptr<OptionsDialog> options_widget;
-    ptr<MapWidget> mapping_widget;
+    std::unique_ptr<OptionsDialog> options_widget;
+    std::unique_ptr<MapWidget> mapping_widget;
     QShortcut kbd_quit;
-    ptr<IFilterDialog> pFilterDialog;
-    ptr<IProtocolDialog> pProtocolDialog;
-    ptr<ITrackerDialog> pTrackerDialog;
+    std::unique_ptr<IFilterDialog> pFilterDialog;
+    std::unique_ptr<IProtocolDialog> pProtocolDialog;
+    std::unique_ptr<ITrackerDialog> pTrackerDialog;
 
     process_detector_worker det;
     QMenu profile_menu;
@@ -100,15 +100,15 @@ class MainWindow : public QMainWindow, private State
 
     // only use in impl file since no definition in header!
     template<typename t>
-    bool mk_dialog(std::shared_ptr<dylib> lib, ptr<t>& d);
+    bool mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d);
 
     // idem
     template<typename t, typename... Args>
-    inline bool mk_window(ptr<t>& place, Args&&... params);
+    inline bool mk_window(std::unique_ptr<t>& place, Args&&... params);
 
     // idem
     template<typename t, typename F>
-    bool mk_window_common(ptr<t>& d, F&& ctor);
+    bool mk_window_common(std::unique_ptr<t>& d, F&& ctor);
 
 private slots:
     void save_modules();

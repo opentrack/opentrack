@@ -20,14 +20,6 @@
 #define prog1(x, ...) (([&]() { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
 
 #define once_only(...) do { static bool once = false; if (!once) { once = true; __VA_ARGS__; } } while(false)
-#define load_time_value(x) \
-    progn( \
-        static const auto _value132((x)); \
-        return static_cast<decltype(_value132)&>(value132); \
-    )
-
-template<typename t> using mem = std::shared_ptr<t>;
-template<typename t> using ptr = std::unique_ptr<t>;
 
 template<typename t>
 inline int iround(const t& val)

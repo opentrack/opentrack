@@ -574,7 +574,7 @@ void MainWindow::show_pose()
 }
 
 template<typename t, typename F>
-bool MainWindow::mk_window_common(ptr<t>& d, F&& ctor)
+bool MainWindow::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
 {
     if (d)
     {
@@ -583,7 +583,7 @@ bool MainWindow::mk_window_common(ptr<t>& d, F&& ctor)
 
         return false;
     }
-    else if ((d = ptr<t>(ctor())))
+    else if ((d = std::unique_ptr<t>(ctor())))
     {
         QWidget& w = *d;
 
@@ -602,13 +602,13 @@ bool MainWindow::mk_window_common(ptr<t>& d, F&& ctor)
 }
 
 template<typename t, typename... Args>
-inline bool MainWindow::mk_window(ptr<t>& place, Args&&... params)
+inline bool MainWindow::mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
     return mk_window_common(place, [&]() { return new t(std::forward<Args>(params)...); });
 }
 
 template<typename t>
-bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, ptr<t>& d)
+bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
         if (lib && lib->Dialog)
