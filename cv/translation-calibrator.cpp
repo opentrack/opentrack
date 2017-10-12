@@ -97,7 +97,6 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
     if (yaw_k < used_yaw_poses.size() &&
         pitch_k < used_pitch_poses.size() &&
         roll_k < used_roll_poses.size())
-
     {
         used_yaw_poses[yaw_k]++;
         used_pitch_poses[pitch_k]++;

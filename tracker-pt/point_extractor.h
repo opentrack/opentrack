@@ -12,10 +12,10 @@
 #include "camera.h"
 #include "cv/numeric.hpp"
 
+#include <vector>
+
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
-
-#include <vector>
 
 namespace pt_impl {
 

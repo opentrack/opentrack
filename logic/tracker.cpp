@@ -214,19 +214,19 @@ void Tracker::logic()
     }
 
     {
-        rmat rotation;
+        rmat rotation = scaled_rotation.rotation;
         euler_t pos = euler_t(&value[TX]) - t_center;
 
         switch (s.center_method)
         {
         // inertial
         case 0:
-            rotation = scaled_rotation.rot_center * scaled_rotation.rotation;
+            rotation = scaled_rotation.rot_center * rotation;
             break;
         // camera
         default:
         case 1:
-            rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
+            rotation = rotation * scaled_rotation.rot_center;
             t_compensate(real_rotation.rot_center, pos, pos, false, false, false);
 
             break;
