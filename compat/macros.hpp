@@ -8,16 +8,18 @@
 #   define never_inline
 #endif
 
-#if defined _MSC_VER || defined __GNUG__
-#   define restrict __restrict
+#if defined __GNUG__
+#   define restrict_ptr __restrict
+#elif defined _MSC_VER
+#   define restrict_ptr __restrict
 #else
-#   define restrict
+#   define restrict_ptr
 #endif
 
 #if defined _MSC_VER
-#   define restrict_ref restrict
+#   define restrict_ref restrict_ptr
 #elif defined __GNUG__
-#   define restrict_ref restrict
+#   define restrict_ref restrict_ptr
 #else
 #   define restrict_ref
 #endif

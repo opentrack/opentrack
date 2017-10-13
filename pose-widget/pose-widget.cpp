@@ -267,7 +267,7 @@ void pose_transform::project_quad_texture()
     }
 
     // rotation of (0, 90, 0) makes it numerically unstable
-    if (std::fabs(dir) < 1e-3)
+    if (std::fabs(dir) < 1e-3f)
     {
         lock_guard l(mtx2);
         image.swap(image2);
@@ -282,8 +282,8 @@ void pose_transform::project_quad_texture()
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
 
-    const unsigned char* restrict orig = tex.constBits();
-    unsigned char* restrict dest = image.bits();
+    const unsigned char* restrict_ptr orig = tex.constBits();
+    unsigned char* restrict_ptr dest = image.bits();
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;

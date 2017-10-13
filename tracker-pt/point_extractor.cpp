@@ -49,7 +49,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const cv::Vec2d &
     cv::Vec2d com(0.0, 0.0);
     for (int i = 0; i < frame_gray.rows; i++)
     {
-        auto frame_ptr = (uint8_t const * restrict)frame_gray.ptr(i);
+        auto frame_ptr = (uint8_t const* restrict_ptr)frame_gray.ptr(i);
         for (int j = 0; j < frame_gray.cols; j++)
         {
             double val = frame_ptr[j];
@@ -192,7 +192,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         const double max_radius = 15 * cy;
 
         const double radius = fmax(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
-        float const* restrict ptr = reinterpret_cast<float const* restrict>(hist.ptr(0));
+        float const* restrict_ptr ptr = reinterpret_cast<float const* restrict_ptr>(hist.ptr(0));
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         unsigned thres = 32;
