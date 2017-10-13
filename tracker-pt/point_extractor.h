@@ -39,6 +39,8 @@ public:
     PointExtractor();
 
     settings_pt s;
+
+    static double threshold_radius_value(int w, int h, int threshold);
 private:
     static constexpr int max_blobs = 16;
 

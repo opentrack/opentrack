@@ -101,6 +101,18 @@ void PointExtractor::separate_channels(cv::Mat const& orig, const int* order, in
         ch[k].convertTo(ch_float[k], CV_32F);
 }
 
+double PointExtractor::threshold_radius_value(int w, int h, int threshold)
+{
+    double cx = w / 640., cy = h / 480.;
+
+    const double min_radius = 1.75 * cx;
+    const double max_radius = 15 * cy;
+
+    const double radius = std::fmax(0., (max_radius-min_radius) * threshold / 255 + min_radius);
+
+    return radius;
+}
+
 void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
     using std::sqrt;
@@ -122,7 +134,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     case pt_color_floppy_filter:
     {
         // weight for blue color
-        static constexpr float B = .8;
+        static constexpr float B = .667;
 
         static constexpr int from_to[] = {
             0, 0,
@@ -162,6 +174,8 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
         break;
     }
 
+    //cv::imshow("capture", frame_gray);
+    //cv::waitKey(1);
 
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
@@ -186,12 +200,8 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                      (int const*) &hist_size,
                      &ranges);
 
-        const double cx = frame.cols / 640., cy = frame.rows / 480.;
+        const double radius = threshold_radius_value(frame.cols, frame.rows, s.threshold);
 
-        const double min_radius = 1.75 * cx;
-        const double max_radius = 15 * cy;
-
-        const double radius = fmax(0., (max_radius-min_radius) * s.threshold / 255 + min_radius);
         float const* restrict_ptr ptr = reinterpret_cast<float const* restrict_ptr>(hist.ptr(0));
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
