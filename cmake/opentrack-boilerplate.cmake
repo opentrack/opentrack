@@ -108,8 +108,6 @@ function(otr_install_pdb_current_project target)
     endif()
 endfunction()
 
-include(cotire)
-
 function(otr_module n_)
     message(STATUS "module ${n_}")
     cmake_parse_arguments(arg
@@ -195,8 +193,6 @@ function(otr_module n_)
 
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
     set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
-
-    cotire(${n})
 endfunction()
 
 function(otr_prop type)
