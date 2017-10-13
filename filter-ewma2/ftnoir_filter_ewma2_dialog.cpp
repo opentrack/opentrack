@@ -20,16 +20,13 @@ dialog_ewma::dialog_ewma()
     tie_setting(s.kSmoothingScaleCurve, ui.powCurve);
 
     tie_setting(s.kSmoothingScaleCurve, ui.curve_label,
-                [](auto& x) { return x * 100; },
-                "%1%", 0, 'f', 2);
+                [](auto& x) { return QStringLiteral("%1%").arg(x * 100, 0, 'f', 2); });
 
     tie_setting(s.kMinSmoothing, ui.min_label,
-                [](auto& x) { return x * 100; },
-                "%1%", 0, 'f', 2);
+                [](auto& x) { return QStringLiteral("%1%").arg(x * 100, 0, 'f', 2);});
 
     tie_setting(s.kMaxSmoothing, ui.max_label,
-                [](auto& x) { return x * 100; },
-                "%1%", 0, 'f', 2);
+                [](auto& x) { return QStringLiteral("%1%").arg(x * 100, 0, 'f', 2);});
 
     connect(ui.minSmooth, &QSlider::valueChanged, this,
             [&](int v) -> void { if (ui.maxSmooth->value() < v) ui.maxSmooth->setValue(v); });

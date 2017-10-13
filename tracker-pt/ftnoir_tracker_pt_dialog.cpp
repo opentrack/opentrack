@@ -93,6 +93,23 @@ TrackerDialog_PT::TrackerDialog_PT()
         ui.blob_color->setItemData(k, int(color_types[k]));
 
     tie_setting(s.blob_color, ui.blob_color);
+
+    tie_setting(s.threshold, ui.threshold_value_display, [this](int x) {
+        if (!s.auto_threshold)
+            return tr("Brightness %1/255").arg(x);
+        else
+        {
+            CamInfo info;
+            int w = 640, h = 480;
+
+            if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
+                w = info.res_x, h = info.res_y;
+
+            double value = PointExtractor::threshold_radius_value(w, h, x);
+
+            return tr("LED radius %1 pixels").arg(value, 0, 'f', 2);
+        }
+    });
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)

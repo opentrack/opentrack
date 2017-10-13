@@ -52,34 +52,15 @@ tie_setting(value<t>& v, QComboBox* cb)
                         v.SAFE_CONNTYPE);
 }
 
-template<typename t, typename... xs>
-void tie_setting(value<t>& v, QLabel* lb, const QString& format, const xs&... args)
+template<typename t, typename F>
+void tie_setting(value<t>& v, QLabel* lb, F&& fun)
 {
-    auto closure = [=](const t& x) { lb->setText(format.arg(x, args...)); };
+    auto closure = [=](cv_qualified<t> x) { lb->setText(fun(x)); };
 
     closure(v());
-    base_value::connect(&v, static_cast<void(base_value::*)(const t&) const>(&base_value::valueChanged),
+    base_value::connect(&v, base_value::signal_fun<t>(),
                         lb, closure,
                         v.SAFE_CONNTYPE);
-}
-
-template<typename t, typename F, typename... xs>
-decltype((void)((std::declval<F>())(std::declval<const t&>())))
-tie_setting(value<t>& v, QLabel* lb, F&& fun, const QString& fmt, const xs&... args)
-{
-    auto closure = [=](const t& x) { lb->setText(fmt.arg(fun(x), args...)); };
-
-    closure(v());
-    base_value::connect(&v, static_cast<void(base_value::*)(const t&) const>(&base_value::valueChanged),
-                        lb, closure,
-                        v.SAFE_CONNTYPE);
-}
-
-template<typename t, typename F, typename... xs>
-decltype((void)((std::declval<F>())(std::declval<const t&>())))
-tie_setting(value<t>& v, QLabel* lb, F&& fun)
-{
-    tie_setting(v, lb, fun, QStringLiteral("%1"));
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);

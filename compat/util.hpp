@@ -8,6 +8,7 @@
 #include "macros.hpp"
 #include "value-templates.hpp"
 
+#include <type_traits>
 #include <memory>
 #include <cmath>
 #include <utility>
@@ -80,3 +81,8 @@ inline auto clamp(const t& val, const u& min, const w& max)
     using tp = decltype(val + min + max);
     return ::util_detail::clamp<std::decay_t<tp>, tp>::clamp_(val, min, max);
 }
+
+template<typename t>
+using cv_qualified = std::conditional_t<is_fundamental_v<std::decay_t<t>>, std::decay_t<t>, const t&>;
+
+

@@ -22,13 +22,25 @@ namespace options {
 class OTR_OPTIONS_EXPORT base_value : public QObject
 {
     Q_OBJECT
+
     friend class detail::connector;
 
     using comparator = bool(*)(const QVariant& val1, const QVariant& val2);
+    template<typename t>
+    using signal_sig = void(base_value::*)(cv_qualified<t>) const;
 public:
     QString name() const { return self_name; }
     base_value(bundle b, const QString& name, comparator cmp, std::type_index type_idx);
     ~base_value() override;
+
+    // MSVC has ODR problems in 15.4
+    // no C++17 "constexpr inline" for data declarations in MSVC
+    template<typename t>
+    constexpr static auto signal_fun()
+    {
+        return static_cast<signal_sig<t>>(&base_value::valueChanged);
+    }
+
 signals:
     OPENTRACK_DEFINE_SIGNAL(double);
     OPENTRACK_DEFINE_SIGNAL(float);
@@ -80,6 +92,8 @@ public slots:
     virtual void reload() = 0;
     virtual void bundle_value_changed() const = 0;
     virtual void set_to_default() = 0;
+
+    friend void ::options::detail::set_base_value_to_default(base_value* val);
 };
 
 } //ns options

@@ -109,14 +109,14 @@ void MapWidget::load()
         if (altp)
         {
             connect(&axis.opts.altp,
-                    static_cast<void(base_value::*)(bool) const>(&base_value::valueChanged),
+                    base_value::signal_fun<bool>(),
                     this,
                     [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
             qfc.setEnabled(axis.opts.altp);
             qfc.force_redraw();
         }
 
-        connect(&axis.opts.clamp, static_cast<void(base_value::*)(int) const>(&base_value::valueChanged),
+        connect(&axis.opts.clamp, base_value::signal_fun<int>(),
                 &qfc, [i, &conf, &qfc](int value) {
             conf.set_max_input(value);
             qfc.reload_spline();

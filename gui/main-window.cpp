@@ -115,17 +115,17 @@ MainWindow::MainWindow() :
     // dylibs
     {
         connect(&m.tracker_dll,
-                static_cast<void(base_value::*)(const QString&) const>(&base_value::valueChanged),
+                base_value::signal_fun<QString>(),
                 this,
                 [&](const QString&) { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
 
         connect(&m.protocol_dll,
-                static_cast<void(base_value::*)(const QString&) const>(&base_value::valueChanged),
+                base_value::signal_fun<QString>(),
                 this,
                 [&](const QString&) { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
 
         connect(&m.filter_dll,
-                static_cast<void(base_value::*)(const QString&) const>(&base_value::valueChanged),
+                base_value::signal_fun<QString>(),
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
     }
