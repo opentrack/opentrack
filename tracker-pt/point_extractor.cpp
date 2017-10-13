@@ -180,10 +180,11 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     const double region_size_min = s.min_point_size;
     const double region_size_max = s.max_point_size;
 
+    const int threshold_slider_value = s.threshold_slider.to<int>();
+
     if (!s.auto_threshold)
     {
-        const int thres = s.threshold;
-        cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
+        cv::threshold(frame_gray, frame_bin, threshold_slider_value, 255, cv::THRESH_BINARY);
     }
     else
     {
@@ -200,7 +201,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                      (int const*) &hist_size,
                      &ranges);
 
-        const double radius = threshold_radius_value(frame.cols, frame.rows, s.threshold);
+        const double radius = threshold_radius_value(frame.cols, frame.rows, threshold_slider_value);
 
         float const* restrict_ptr ptr = reinterpret_cast<float const* restrict_ptr>(hist.ptr(0));
         const unsigned area = uround(3 * M_PI * radius*radius);

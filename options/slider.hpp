@@ -8,6 +8,9 @@
 #pragma once
 
 #include "export.hpp"
+
+#include "compat/util.hpp"
+
 #include <QMetaType>
 #include <QDataStream>
 #include <QDebug>
@@ -31,6 +34,7 @@ namespace options
         slider_value& operator=(const slider_value& v);
         bool operator==(const slider_value& v) const;
         operator double() const { return cur_; }
+        explicit operator int() const { return iround(cur_); }
         double cur() const { return cur_; }
         double min() const { return min_; }
         double max() const { return max_; }

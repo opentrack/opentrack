@@ -26,8 +26,7 @@ struct settings_pt : opts
     value<QString> camera_name;
     value<int> cam_res_x,
                cam_res_y,
-               cam_fps,
-               threshold;
+               cam_fps;
     value<double> min_point_size, max_point_size;
 
     value<int> m01_x, m01_y, m01_z;
@@ -45,13 +44,15 @@ struct settings_pt : opts
     value<bool> auto_threshold;
     value<pt_color_type> blob_color;
 
+    value<slider_value> threshold_slider;
+
     settings_pt() :
         opts("tracker-pt"),
         camera_name(b, "camera-name", ""),
         cam_res_x(b, "camera-res-width", 640),
         cam_res_y(b, "camera-res-height", 480),
         cam_fps(b, "camera-fps", 30),
-        threshold(b, "threshold-primary", 128),
+        threshold_slider(b, "threshold-slider", slider_value(128, 0, 255)),
         min_point_size(b, "min-point-size", 1),
         max_point_size(b, "max-point-size", 50),
         m01_x(b, "m_01-x", 0),

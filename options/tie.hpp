@@ -63,13 +63,25 @@ void tie_setting(value<t>& v, QLabel* lb, F&& fun)
                         v.SAFE_CONNTYPE);
 }
 
+template<typename t, typename F>
+void tie_setting(value<t>& v, QObject* obj, F&& fun)
+{
+    if (obj == nullptr)
+        abort();
+
+    fun(v());
+
+    base_value::connect(&v, base_value::signal_fun<t>(),
+                        obj, fun,
+                        v.DIRECT_CONNTYPE);
+}
+
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb);
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb);
-OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSlider* sl);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb);
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t);

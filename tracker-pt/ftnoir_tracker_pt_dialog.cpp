@@ -28,7 +28,7 @@ TrackerDialog_PT::TrackerDialog_PT()
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
 
-    tie_setting(s.threshold, ui.threshold_slider);
+    tie_setting(s.threshold_slider, ui.threshold_slider);
 
     tie_setting(s.min_point_size, ui.mindiam_spin);
     tie_setting(s.max_point_size, ui.maxdiam_spin);
@@ -94,22 +94,32 @@ TrackerDialog_PT::TrackerDialog_PT()
 
     tie_setting(s.blob_color, ui.blob_color);
 
-    tie_setting(s.threshold, ui.threshold_value_display, [this](int x) {
-        if (!s.auto_threshold)
-            return tr("Brightness %1/255").arg(x);
-        else
-        {
-            CamInfo info;
-            int w = 640, h = 480;
-
-            if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
-                w = info.res_x, h = info.res_y;
-
-            double value = PointExtractor::threshold_radius_value(w, h, x);
-
-            return tr("LED radius %1 pixels").arg(value, 0, 'f', 2);
-        }
+    tie_setting(s.threshold_slider, ui.threshold_value_display, [this](const slider_value& val) {
+        return threshold_display_text(int(val));
     });
+
+    // refresh threshold display on auto-threshold checkbox state change
+    tie_setting(s.auto_threshold,
+                this,
+                [this](bool) { s.threshold_slider.notify(); });
+}
+
+QString TrackerDialog_PT::threshold_display_text(int threshold_value)
+{
+    if (!s.auto_threshold)
+        return tr("Brightness %1/255").arg(threshold_value);
+    else
+    {
+        CamInfo info;
+        int w = 640, h = 480;
+
+        if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
+            w = info.res_x, h = info.res_y;
+
+        double value = PointExtractor::threshold_radius_value(w, h, threshold_value);
+
+        return tr("LED radius %1 pixels").arg(value, 0, 'f', 2);
+    }
 }
 
 void TrackerDialog_PT::startstop_trans_calib(bool start)

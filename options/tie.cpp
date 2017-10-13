@@ -87,14 +87,6 @@ OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb)
     base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSlider* sl)
-{
-    sl->setValue(v);
-    v = sl->value();
-    base_value::connect(sl, &QSlider::valueChanged, &v, base_value::signal_fun<int>(), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, base_value::signal_fun<int>(), sl, &QSlider::setValue, v.SAFE_CONNTYPE);
-}
-
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le)
 {
     le->setText(v);

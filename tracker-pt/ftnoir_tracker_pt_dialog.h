@@ -38,6 +38,8 @@ public slots:
 signals:
     void poll_tracker_info();
 private:
+    QString threshold_display_text(int threshold_value);
+
     settings_pt s;
     Tracker_PT* tracker;
     QTimer timer, calib_timer;

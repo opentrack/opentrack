@@ -16,6 +16,11 @@ base_value::~base_value()
     b->on_value_destructed(self_name, this);
 }
 
+void base_value::notify() const
+{
+    bundle_value_changed();
+}
+
 void base_value::store(const QVariant& datum)
 {
     b->store_kv(self_name, datum);

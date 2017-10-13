@@ -41,6 +41,8 @@ public:
         return static_cast<signal_sig<t>>(&base_value::valueChanged);
     }
 
+    void notify() const;
+
 signals:
     OPENTRACK_DEFINE_SIGNAL(double);
     OPENTRACK_DEFINE_SIGNAL(float);
