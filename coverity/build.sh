@@ -38,7 +38,7 @@ cd "./opentrack"
 
 cmake .
 ninja32 clean
-cov-build --dir cov-int ninja
+cov-build --dir cov-int ninja -v -j1
 rm -f "../$myfile" || true
 7za -mx a "../$myfile" cov-int
 trap '' EXIT
