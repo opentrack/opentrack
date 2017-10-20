@@ -438,7 +438,17 @@
             </item>
             <item>
              <property name="text">
-              <string>Red</string>
+              <string>Red only</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Blue only</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Smoothed average</string>
              </property>
             </item>
            </widget>

@@ -23,11 +23,11 @@ using namespace types;
 
 struct blob
 {
-    double radius, brightness;
+    f radius, brightness;
     vec2 pos;
     cv::Rect rect;
 
-    blob(double radius, const cv::Vec2d& pos, double brightness, cv::Rect &rect);
+    blob(f radius, const vec2& pos, f brightness, cv::Rect &rect);
 };
 
 class PointExtractor final
@@ -51,7 +51,16 @@ private:
     std::vector<blob> blobs;
     cv::Mat ch[3], ch_float[4];
 
-    void separate_channels(cv::Mat const& orig_frame, int const* order = nullptr, int order_cnt = -1);
+    void ensure_channel_buffers(const cv::Mat& orig_frame);
+    void ensure_buffers(const cv::Mat& frame);
+
+    void extract_single_channel(const cv::Mat& orig_frame, int idx, cv::Mat& dest);
+    void extract_channels(const cv::Mat& orig_frame, const int* order, int order_npairs);
+    void extract_all_channels(const cv::Mat& orig_frame);
+    void channels_to_float(unsigned num_channels);
+
+    void color_to_grayscale(const cv::Mat& frame, cv::Mat& output);
+    void threshold_image(const cv::Mat& frame_gray, cv::Mat& output);
 };
 
 } // ns impl

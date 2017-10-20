@@ -87,6 +87,8 @@ TrackerDialog_PT::TrackerDialog_PT()
         pt_color_natural,
         pt_color_floppy_filter,
         pt_color_red_only,
+        pt_color_blue_only,
+        pt_color_smoothed_average,
     };
 
     for (unsigned k = 0; k < std::size(color_types); k++)
@@ -111,7 +113,10 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
     else
     {
         CamInfo info;
-        int w = 640, h = 480;
+        int w = s.cam_res_x, h = s.cam_res_y;
+
+        if (w * h <= 0)
+            w = 640, h = 480;
 
         if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
             w = info.res_x, h = info.res_y;
