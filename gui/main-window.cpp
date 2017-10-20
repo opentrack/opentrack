@@ -490,7 +490,7 @@ void MainWindow::stop_tracker_()
     if (!work)
         return;
 
-    opts::set_teardown_flag(true); // XXX hack -sh 20160926
+    with_tracker_teardown sentinel;
 
     pose_update_timer.stop();
     ui.pose_display->rotate_sync(0,0,0, 0,0,0);
@@ -510,8 +510,6 @@ void MainWindow::stop_tracker_()
         double p[6] = {0,0,0, 0,0,0};
         display_pose(p, p);
     }
-
-    opts::set_teardown_flag(false); // XXX hack -sh 20160926
 
     update_button_state(false, false);
     set_title();

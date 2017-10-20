@@ -10,9 +10,7 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 {
     using namespace options;
 
-    const bool prev_teardown_flag = opts::is_tracker_teardown();
-
-    opts::set_teardown_flag(true);
+    with_tracker_teardown sentinel;
 
     pProtocol = make_dylib_instance<IProtocol>(p);
 
@@ -42,6 +40,6 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 
     correct = true;
 end:
-    opts::set_teardown_flag(prev_teardown_flag);
+    (void)0;
 }
 
