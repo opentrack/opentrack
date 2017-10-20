@@ -67,7 +67,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Max rotation</string>
+             <string>Max input</string>
             </property>
            </widget>
           </item>
@@ -141,7 +141,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Max rotation</string>
+             <string>Max input</string>
             </property>
            </widget>
           </item>
@@ -153,6 +153,27 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Max output</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_pitch_output">
+            <item>
+             <property name="text">
+              <string>180°</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>90°</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -215,7 +236,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Max rotation</string>
+             <string>Max input</string>
             </property>
            </widget>
           </item>
@@ -293,7 +314,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Max translation</string>
+             <string>Max input</string>
             </property>
            </widget>
           </item>
@@ -367,7 +388,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Max translation</string>
+             <string>Max input</string>
             </property>
            </widget>
           </item>
@@ -441,7 +462,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Max translation</string>
+             <string>Max input</string>
             </property>
            </widget>
           </item>

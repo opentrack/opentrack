@@ -56,12 +56,14 @@ MapWidget::MapWidget(Mappings& m) : m(m), widgets{}
     tie_setting(s.a_y.altp, ui.ty_altp);
     tie_setting(s.a_z.altp, ui.tz_altp);
 
-    tie_setting(s.a_yaw.clamp, ui.max_yaw_rotation);
-    tie_setting(s.a_pitch.clamp, ui.max_pitch_rotation);
-    tie_setting(s.a_roll.clamp, ui.max_roll_rotation);
-    tie_setting(s.a_x.clamp, ui.max_x_translation);
-    tie_setting(s.a_y.clamp, ui.max_y_translation);
-    tie_setting(s.a_z.clamp, ui.max_z_translation);
+    tie_setting(s.a_yaw.clamp_x, ui.max_yaw_rotation);
+    tie_setting(s.a_pitch.clamp_x, ui.max_pitch_rotation);
+    tie_setting(s.a_roll.clamp_x, ui.max_roll_rotation);
+    tie_setting(s.a_x.clamp_x, ui.max_x_translation);
+    tie_setting(s.a_y.clamp_x, ui.max_y_translation);
+    tie_setting(s.a_z.clamp_x, ui.max_z_translation);
+
+    tie_setting(s.a_pitch.clamp_y, ui.max_pitch_output);
 }
 
 void MapWidget::load()
@@ -88,6 +90,9 @@ void MapWidget::load()
         { nullptr, Yaw, nullptr, false }
     };
 
+    ui.max_pitch_output->setItemData(0, int(axis_opts::o_r180));
+    ui.max_pitch_output->setItemData(1, int(axis_opts::o_r90));
+
     using a = axis_opts::max_clamp;
 
     for (QComboBox* x : { ui.max_yaw_rotation, ui.max_pitch_rotation, ui.max_roll_rotation })
@@ -97,6 +102,8 @@ void MapWidget::load()
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
         for (a y : { a::t30, a::t20, a::t15, a::t10, a::t100 })
             x->addItem(QStringLiteral("%1 cm").arg(int(y)), y);
+
+    // XXX TODO add tie_setting overload for spline_widget!!! -sh 20171020
 
     for (int i = 0; qfcs[i].qfc; i++)
     {
@@ -116,7 +123,7 @@ void MapWidget::load()
             qfc.force_redraw();
         }
 
-        connect(&axis.opts.clamp, base_value::signal_fun<int>(),
+        connect(&axis.opts.clamp_x, base_value::signal_fun<int>(),
                 &qfc, [i, &conf, &qfc](int value) {
             conf.set_max_input(value);
             qfc.reload_spline();
@@ -133,11 +140,30 @@ void MapWidget::load()
 
         // force signal to avoid duplicating the slot's logic
         qfc.setConfig(&conf);
-        axis.opts.clamp.valueChanged(axis.opts.clamp);
+        axis.opts.clamp_x.valueChanged(axis.opts.clamp_x);
 
         widgets[i % 6][altp ? 1 : 0] = &qfc;
     }
 
+    {
+        value<axis_opts::max_clamp>& val = s.a_pitch.clamp_y;
+
+        Map& axis = m(Pitch);
+
+        connect(&val, base_value::signal_fun<int>(), this, [&](int x) {
+            x = std::abs(x);
+
+            spline* splines[] { &axis.spline_main, &axis.spline_alt };
+
+            for (spline* spl : splines)
+                spl->set_max_output(x);
+
+            ui.ryconfig->setConfig(&axis.spline_main);
+            ui.ryconfig_alt->setConfig(&axis.spline_alt);
+        });
+
+        axis.opts.clamp_y.valueChanged(axis.opts.clamp_y);
+    }
 }
 
 void MapWidget::closeEvent(QCloseEvent*)

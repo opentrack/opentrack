@@ -62,7 +62,7 @@ class OTR_SPLINE_EXPORT spline final
 
     MyMutex _mutex;
     QPointF last_input_value;
-    qreal max_x, max_y;
+    qreal max_x, max_y; // XXX TODO move to value<double> -sh 20171020
     bool activep;
     bool validp;
 

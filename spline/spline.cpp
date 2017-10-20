@@ -427,7 +427,18 @@ void spline::ensure_valid(const QList<QPointF>& the_points)
             }
             return false;
         );
-        if (!overlap)
+
+        const bool over_limit = progn(
+            bool ret = false;
+            if (pt.y() - 1e-2 > max_y)
+            {
+                pt.setY(max_y);
+                ret = true;
+            }
+            return ret;
+        );
+
+        if (!overlap && !over_limit)
             ret_list.push_back(pt);
     }
 

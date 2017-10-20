@@ -68,7 +68,8 @@ axis_opts::axis_opts(bundle b_settings_window, bundle b_mapping_window, QString 
     src(b_settings_window, n(pfx, "source-index"), idx),
     invert(b_settings_window, n(pfx, "invert-sign"), false),
     altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
-    clamp(b_mapping_window, n(pfx, "max-value"), idx >= Yaw ? r180 : t30)
+    clamp_x(b_mapping_window, n(pfx, "max-value"), idx >= Yaw ? r180 : t30),
+    clamp_y(b_mapping_window, n(pfx, "max-output-value"), idx >= Yaw ? o_r180 : o_t75)
 {}
 
 QString axis_opts::n(QString pfx, QString name)

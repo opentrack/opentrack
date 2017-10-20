@@ -49,25 +49,23 @@ spline_widget::~spline_widget()
 
 void spline_widget::setConfig(spline* spl)
 {
-    if (spl != _config)
+    if (connection)
     {
-        if (connection)
-        {
-            QObject::disconnect(connection);
-            connection = QMetaObject::Connection();
-        }
+        QObject::disconnect(connection);
+        connection = QMetaObject::Connection();
+    }
 
-        if (spl)
-        {
-            std::shared_ptr<spline::settings> s = spl->get_settings();
-            connection = connect(s.get(), &spline::settings::recomputed,
-                                 this, [this]() { reload_spline(); },
-                                 Qt::QueuedConnection);
-        }
+    _config = spl;
 
-        _config = spl;
-        _background = QPixmap();
+    if (spl)
+    {
         update_range();
+        _config->ensure_valid(_config->get_points());
+
+        std::shared_ptr<spline::settings> s = spl->get_settings();
+        connection = connect(s.get(), &spline::settings::recomputed,
+                             this, [this]() { reload_spline(); },
+        Qt::QueuedConnection);
     }
 }
 
@@ -509,6 +507,8 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 
 void spline_widget::reload_spline()
 {
+    if (_config)
+        _config->ensure_valid(_config->get_points());
     // don't recompute here as the value's about to be recomputed in the callee
     update_range();
 }

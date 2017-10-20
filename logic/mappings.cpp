@@ -1,5 +1,7 @@
 #include "mappings.hpp"
 
+#include <utility>
+
 Map::Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& opts) :
     opts(opts),
     name1(primary),
@@ -7,8 +9,11 @@ Map::Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& op
     spline_main(max_x, max_y, primary),
     spline_alt(max_x, max_y, secondary)
 {
-    spline_main.set_max_input(opts.clamp);
-    spline_alt.set_max_input(opts.clamp);
+    spline_main.set_max_input(max_x);
+    spline_alt.set_max_input(max_x);
+
+    spline_main.set_max_output(max_y);
+    spline_alt.set_max_output(max_y);
 }
 
 void Map::save()
@@ -29,7 +34,7 @@ Mappings::Mappings(std::vector<axis_opts*> opts) :
         Map("spline-Y", "alt-spline-Y", 100, 75, *opts[TY]),
         Map("spline-Z", "alt-spline-Z", 100, 75, *opts[TZ]),
         Map("spline-yaw", "alt-spline-yaw", 180, 180, *opts[Yaw]),
-        Map("spline-pitch", "alt-spline-pitch", 180, 180, *opts[Pitch]),
+        Map("spline-pitch", "alt-spline-pitch", 180, std::abs((int)opts[Pitch]->clamp_y), *opts[Pitch]),
         Map("spline-roll", "alt-spline-roll", 180, 180, *opts[Roll])
     }
 {}
