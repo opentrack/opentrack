@@ -37,7 +37,7 @@ struct max_pitch_output : migration
 
             bundle b = make_bundle("opentrack-mappings");
 
-            if (b->contains(name) && b->get<QVariant>(name) != QVariant::Invalid)
+            if (b->contains(name))
                 return false;
         }
 
@@ -51,9 +51,9 @@ struct max_pitch_output : migration
         for (const spline& spl : { pitch_spline_1, pitch_spline_2 })
             for (QPointF& point : spl.get_points())
                 if (point.y() - 1e-2 > 90)
-                    return false;
+                    return true;
 
-        return true;
+        return false;
     }
 
     void run() override
@@ -61,7 +61,7 @@ struct max_pitch_output : migration
         main_settings s;
         axis_opts& pitch_opts = s.a_pitch;
 
-        pitch_opts.clamp_y = axis_opts::o_r90;
+        pitch_opts.clamp_y = axis_opts::o_r180;
 
         s.b_map->save();
     }

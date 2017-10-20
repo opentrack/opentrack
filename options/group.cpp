@@ -62,7 +62,8 @@ void group::put(const QString &s, const QVariant &d)
 
 bool group::contains(const QString &s) const
 {
-    return kvs.find(s) != kvs.cend();
+    const auto it = kvs.find(s);
+    return it != kvs.cend() && it->second != QVariant::Invalid;
 }
 
 bool group::is_portable_installation()

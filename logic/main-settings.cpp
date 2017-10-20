@@ -60,6 +60,16 @@ key_opts::key_opts(bundle b, const QString& name) :
     button(b, QString("button-%1").arg(name), -1)
 {}
 
+using max_clamp = axis_opts::max_clamp;
+
+static max_clamp get_max_x(Axis k)
+{
+    if (k == Pitch)
+        return max_clamp::r90;
+    if (k >= Yaw)
+        return max_clamp::r180;
+    return max_clamp::t30;
+}
 
 axis_opts::axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, Axis idx) :
     b_settings_window(b_settings_window),
@@ -68,8 +78,8 @@ axis_opts::axis_opts(bundle b_settings_window, bundle b_mapping_window, QString 
     src(b_settings_window, n(pfx, "source-index"), idx),
     invert(b_settings_window, n(pfx, "invert-sign"), false),
     altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
-    clamp_x(b_mapping_window, n(pfx, "max-value"), idx >= Yaw ? r180 : t30),
-    clamp_y(b_mapping_window, n(pfx, "max-output-value"), idx >= Yaw ? o_r180 : o_t75)
+    clamp_x(b_mapping_window, n(pfx, "max-value"), get_max_x(idx)),
+    clamp_y(b_mapping_window, n(pfx, "max-output-value"), idx >= Yaw ? o_r90 : o_t75)
 {}
 
 QString axis_opts::n(QString pfx, QString name)
