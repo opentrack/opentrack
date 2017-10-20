@@ -45,6 +45,7 @@ For the latest releases visit: <<https://github.com/opentrack/opentrack/releases
 - Tablet-like mouse output (Windows)
 - FlightGear
 - FSUIPC for Microsoft Flight Simulator 2002/2004 (Windows)
+- SteamVR through a bridge (Windows; see <<https://github.com/r57zone/OpenVR-OpenTrack>> by @r57zone)
 
 ***
 
