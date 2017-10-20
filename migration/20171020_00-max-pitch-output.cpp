@@ -61,7 +61,7 @@ struct max_pitch_output : migration
         main_settings s;
         axis_opts& pitch_opts = s.a_pitch;
 
-        pitch_opts.clamp_y = axis_opts::o_r180;
+        pitch_opts.clamp_y_ = axis_opts::o_r180;
 
         s.b_map->save();
     }

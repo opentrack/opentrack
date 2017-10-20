@@ -79,8 +79,7 @@ rel_settings::rel_settings() :
     expt_slope(b, "exponent-slope", s(1.75, 1.5, 3)),
     expt_len(b, "exponent-length", s(.2, 0, .5)),
     expt_norm(b, "exponent-norm", s(.4, .1, .5)),
-    log_len(b, "log-len", s(.1, 0, .2)),
-    acc_mode_spline(100, 100, "")
+    log_len(b, "log-len", s(.1, 0, .2))
 {
     make_spline();
 }
