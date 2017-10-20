@@ -45,6 +45,9 @@ class value final : public base_value
     never_inline
     t get() const
     {
+        if (self_name.isEmpty())
+            return def;
+
         if (!b->contains(self_name) || b->get<QVariant>(self_name).type() == QVariant::Invalid)
             return def;
 
@@ -57,8 +60,12 @@ public:
     never_inline
     t operator=(const t& datum)
     {
+        if (self_name.isEmpty())
+            return def;
+
         if (datum != get())
             store(traits::to_storage(datum));
+
         return datum;
     }
 
@@ -104,13 +111,15 @@ public:
     never_inline
     void reload() override
     {
-        *this = static_cast<t>(*this);
+        if (!self_name.isEmpty())
+            *this = static_cast<t>(*this);
     }
 
     never_inline
     void bundle_value_changed() const override
     {
-        emit valueChanged(traits::to_storage(get()));
+        if (!self_name.isEmpty())
+            emit valueChanged(traits::to_storage(get()));
     }
 
     never_inline
