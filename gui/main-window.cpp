@@ -114,18 +114,18 @@ MainWindow::MainWindow() :
 
     // dylibs
     {
-        connect(&m.tracker_dll,
-                base_value::signal_fun<QString>(),
+        connect(ui.iconcomboTrackerSource,
+                &QComboBox::currentTextChanged,
                 this,
                 [&](const QString&) { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
 
-        connect(&m.protocol_dll,
-                base_value::signal_fun<QString>(),
+        connect(ui.iconcomboTrackerSource,
+                &QComboBox::currentTextChanged,
                 this,
                 [&](const QString&) { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
 
-        connect(&m.filter_dll,
-                base_value::signal_fun<QString>(),
+        connect(ui.iconcomboTrackerSource,
+                &QComboBox::currentTextChanged,
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
     }
