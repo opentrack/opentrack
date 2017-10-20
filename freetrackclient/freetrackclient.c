@@ -32,7 +32,12 @@
 
 #include "fttypes.h"
 
-#define FT_EXPORT(t) t __stdcall
+#if !defined _WIN64
+#   define FT_EXPORT(t) t __stdcall
+#else
+#   define FT_EXPORT(t) __declspec(dllexport) t
+#endif
+
 
 #if 0
 #   include <stdio.h>
@@ -110,7 +115,7 @@ FT_EXPORT(const char*) FTProvider(void)
     return dllProvider;
 }
 
-#ifdef _MSC_VER
+#if defined _MSC_VER && !defined _WIN64
 #pragma comment (linker, "/export:FTReportID=_FTReportID@4")
 #pragma comment (linker, "/export:FTReportName=_FTReportName@4")
 #pragma comment (linker, "/export:FTGetDllVersion=_FTGetDllVersion@0")
