@@ -68,7 +68,7 @@ struct mappings_from_2_3_0_rc11 : migration
     static Mappings get_new_mappings()
     {
         main_settings s;
-        return Mappings(std::vector<axis_opts*>{&s.a_x, &s.a_y, &s.a_z, &s.a_yaw, &s.a_pitch, &s.a_roll});
+        return Mappings(s.all_axis_opts);
     }
 
     bool should_run() const override
