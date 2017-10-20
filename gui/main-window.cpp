@@ -671,12 +671,12 @@ bool MainWindow::set_profile(const QString& new_name_)
     ui.iconcomboProfile->setCurrentText(new_name);
     set_profile_in_registry(new_name);
 
+    set_title();
+    options::detail::bundler::refresh_all_bundles();
+
     // migrations are for config layout changes and other user-visible
     // incompatibilities in future versions
     run_migrations();
-
-    set_title();
-    options::detail::bundler::refresh_all_bundles();
 
     return true;
 }
