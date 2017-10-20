@@ -47,9 +47,11 @@ tie_setting(value<t>& v, QComboBox* cb)
                                                });
                         },
                         v.DIRECT_CONNTYPE);
-    base_value::connect(&v, static_cast<void (base_value::*)(int) const>(&base_value::valueChanged),
-                        cb, [cb](int x) { cb->setCurrentIndex(cb->findData(x)); },
-                        v.SAFE_CONNTYPE);
+    base_value::connect(&v, base_value::signal_fun<int>(),
+                        cb, [cb](int x) {
+                            run_in_thread_sync(cb, [&]() { cb->setCurrentIndex(cb->findData(x)); });
+                        },
+                        v.DIRECT_CONNTYPE);
 }
 
 template<typename t, typename F>
