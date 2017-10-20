@@ -13,9 +13,11 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(cc "")
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "${cc} -O2 -O2it -Oy- -Ob2 -fp:fast -GS- -GF -GL -Gw -Gy -Gm -Zc:inline")
+set(cc "${cc} -O2 -O2it -Oy- -Ob2 -fp:fast -GS- -GF -GL -Gw -Gy -Gm")
 set(cc "${cc} -Zo -FS -Zc:threadSafeInit -arch:SSE2 -D_HAS_EXCEPTIONS=0")
 set(cc "${cc} -bigobj")
+set(cc "${cc} -Zc:inline -Zc:rvalueCast -Zc:sizedDealloc -Zc:throwingNew")
+set(cc "${cc} -Qvec-report:1")
 
 set(warns_ "")
 
@@ -23,6 +25,12 @@ set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100)
 
 foreach(i ${warns-disable})
     set(warns_ "${warns_} -wd${i}")
+endforeach()
+
+foreach(k CMP0020 CMP0022 CMP0058 CMP0028 CMP0042 CMP0063 CMP0053 CMP0011 CMP0054 CMP0012)
+    if(POLICY ${k})
+        cmake_policy(SET ${k} NEW)
+    endif()
 endforeach()
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
@@ -64,8 +72,8 @@ set(_LDFLAGS_STATIC_DEBUG "")
 
 set(CMAKE_RC_FLAGS "-nologo -DWIN32")
 
-if(NOT __otr_already_initialized OR "$ENV{OTR_REDO}")
-    set(__otr_already_initialized 1 CACHE INTERNAL "" FORCE)
+if(NOT __otr_already_initialized STREQUAL "${cc}" OR "$ENV{OTR_REDO}")
+    set(__otr_already_initialized "${cc}" CACHE INTERNAL "" FORCE)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 
