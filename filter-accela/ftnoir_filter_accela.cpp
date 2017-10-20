@@ -6,7 +6,6 @@
  */
 #include "ftnoir_filter_accela.h"
 #include <algorithm>
-#include <cmath>
 #include <QDebug>
 #include <QMutexLocker>
 #include "api/plugin-api.hpp"
@@ -122,7 +121,7 @@ void accela::filter(const double* input, double *output)
     {
         for (unsigned k = 3; k < 6; k++)
         {
-            static constexpr double nl_end = 5;
+            static constexpr double nl_end = 7;
 
             if (fabs(deltas[k]) <= nl_end)
                 deltas[k] = copysign(pow(fabs(deltas[k]/nl_end), nl) * nl_end, deltas[k]);
@@ -132,7 +131,7 @@ void accela::filter(const double* input, double *output)
     do_deltas(&deltas[Yaw], &output[Yaw], alpha, smoothed_input[0], [this](double x) { return spline_rot.get_value_no_save(x); });
 
 #if defined DEBUG_ACCELA
-    var.input(smoothed_input[0]);
+    var.input(fabs(smoothed_input[0]) + fabs(smoothed_input[1]) + fabs(smoothed_input[2]));
     debug_max = fmax(debug_max, smoothed_input[0]);
 
     using time_units::secs_;
@@ -142,7 +141,7 @@ void accela::filter(const double* input, double *output)
         qDebug() << "accela:"
                  << "max" << debug_max
                  << "mean" << var.avg()
-                 << "stddev" << var.stddev();
+                 << "stddev/mean" << var.stddev() / var.avg();
 
         var.clear();
         debug_max = 0;

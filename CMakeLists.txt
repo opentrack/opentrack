@@ -52,35 +52,34 @@ if(WIN32)
     enable_language(RC)
 endif()
 
-add_custom_target(mrproper COMMAND ${CMAKE_COMMAND} -P "${CMAKE_SOURCE_DIR}/cmake/opentrack-clean-build-directory.cmake" WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+add_custom_target(mrproper COMMAND
+    "${CMAKE_COMMAND}" -P
+    "${CMAKE_SOURCE_DIR}/cmake/opentrack-clean-build-directory.cmake"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-set(C CMakeLists.txt)
-file(GLOB opentrack-subprojects
-    "tracker-*/${C}"
-    "proto-*/${C}"
-    "filter-*/${C}"
-    "ext-*/${C}"
-    "options/${C}"
-    "api/${C}"
-    "compat/${C}"
-    "logic/${C}"
-    "dinput/${C}"
-    "gui/${C}"
-    "x-plane-plugin/${C}"
-    "csv/${C}"
-    "pose-widget/${C}"
-    "spline/${C}"
-    "qxt-mini/${C}"
-    "macosx/${C}"
-    "cv/${C}"
-    "migration/${C}"
-)
+otr_add_target_dirs(opentrack-subprojects
+    "tracker-*"
+    "proto-*"
+    "filter-*"
+    "ext-*"
+    "options"
+    "api"
+    "compat"
+    "logic"
+    "dinput"
+    "gui"
+    "x-plane-plugin"
+    "csv"
+    "pose-widget"
+    "spline"
+    "qxt-mini"
+    "macosx"
+    "cv"
+    "migration")
 
-list(SORT opentrack-subprojects)
-
-foreach(i ${opentrack-subprojects})
-    get_filename_component(i ${i} DIRECTORY)
-    add_subdirectory(${i})
+foreach(k ${opentrack-subprojects})
+    get_filename_component(k "${k}" DIRECTORY)
+    add_subdirectory("${k}")
 endforeach()
 
 otr_merge_translations()
