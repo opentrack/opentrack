@@ -10,52 +10,11 @@
 
 #include <QString>
 #include "options/options.hpp"
-#include "api/plugin-api.hpp"
-
 using namespace options;
+#include "api/plugin-api.hpp"
+#include "spline/axis-opts.hpp"
 
 #include "export.hpp"
-
-namespace axis_clamp_opts
-{
-
-} // ns axis-clamp-opts
-
-struct OTR_LOGIC_EXPORT axis_opts final
-{
-    enum max_clamp
-    {
-        r180 = 180,
-        r90 = 90,
-        r60 = 60,
-        r45 = 45,
-        r30 = 30,
-        r25 = 25,
-        r20 = 20,
-        r15 = 15,
-        r10 = 10,
-
-        t100 = 100,
-        t30 = 30,
-        t20 = 20,
-        t15 = 15,
-        t10 = 10,
-
-        o_r180 = -180,
-        o_r90 = -90,
-        o_t75 = -75,
-    };
-
-    // note, these two bundles can be the same value with no issues
-    bundle b_settings_window, b_mapping_window;
-    value<double> zero;
-    value<int> src;
-    value<bool> invert, altp;
-    value<max_clamp> clamp_x, clamp_y;
-    axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, Axis idx);
-private:
-    static inline QString n(QString pfx, QString name);
-};
 
 struct OTR_LOGIC_EXPORT key_opts
 {

@@ -60,12 +60,15 @@ void spline_widget::setConfig(spline* spl)
     if (spl)
     {
         update_range();
-        _config->ensure_valid(_config->get_points());
+        {
+            QList<QPointF> pts = _config->get_points();
+            _config->ensure_valid(pts);
+        }
 
         std::shared_ptr<spline::settings> s = spl->get_settings();
         connection = connect(s.get(), &spline::settings::recomputed,
                              this, [this]() { reload_spline(); },
-        Qt::QueuedConnection);
+                             Qt::QueuedConnection);
     }
 }
 
@@ -104,10 +107,12 @@ void spline_widget::drawBackground()
 
     painter.fillRect(rect(), palette().background().color());
 
-    QColor bg_color(112, 154, 209);
-    if (!isEnabled() && !_preview_only)
-        bg_color = QColor(176,176,180);
-    painter.fillRect(pixel_bounds, bg_color);
+    {
+        QColor bg_color(112, 154, 209);
+        if (!isEnabled() && !_preview_only)
+            bg_color = QColor(176,176,180);
+        painter.fillRect(pixel_bounds, bg_color);
+    }
 
     QFont font;
     font.setPointSize(8);
@@ -300,6 +305,16 @@ void spline_widget::paintEvent(QPaintEvent *e)
     QPointF last;
     if (_config->get_last_value(last) && isEnabled())
         drawPoint(p, point_to_pixel(last), QColor(255, 0, 0, 120));
+
+    const QColor bg = palette().background().color();
+
+    const QRect r1(pixel_bounds.left(), 0, width() - pixel_bounds.left(), pixel_bounds.top()),
+                r2(pixel_bounds.right(), 0, width() - pixel_bounds.right(), height());
+
+    // prevent topward artifacts the lazy way
+    p.fillRect(r1, bg);
+    // same for rightward artifacts
+    p.fillRect(r2, bg);
 }
 
 void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColor& colBG, const QColor& border)
@@ -508,9 +523,13 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 void spline_widget::reload_spline()
 {
     if (_config)
-        _config->ensure_valid(_config->get_points());
+    {
+        QList<QPointF> pts = _config->get_points();
+        _config->ensure_valid(pts);
+    }
     // don't recompute here as the value's about to be recomputed in the callee
     update_range();
+    update();
 }
 
 int spline_widget::get_closeness_limit()

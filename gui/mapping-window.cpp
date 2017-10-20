@@ -56,14 +56,14 @@ MapWidget::MapWidget(Mappings& m) : m(m), widgets{}
     tie_setting(s.a_y.altp, ui.ty_altp);
     tie_setting(s.a_z.altp, ui.tz_altp);
 
-    tie_setting(s.a_yaw.clamp_x, ui.max_yaw_rotation);
-    tie_setting(s.a_pitch.clamp_x, ui.max_pitch_rotation);
-    tie_setting(s.a_roll.clamp_x, ui.max_roll_rotation);
-    tie_setting(s.a_x.clamp_x, ui.max_x_translation);
-    tie_setting(s.a_y.clamp_x, ui.max_y_translation);
-    tie_setting(s.a_z.clamp_x, ui.max_z_translation);
+    tie_setting(s.a_yaw.clamp_x_, ui.max_yaw_rotation);
+    tie_setting(s.a_pitch.clamp_x_, ui.max_pitch_rotation);
+    tie_setting(s.a_roll.clamp_x_, ui.max_roll_rotation);
+    tie_setting(s.a_x.clamp_x_, ui.max_x_translation);
+    tie_setting(s.a_y.clamp_x_, ui.max_y_translation);
+    tie_setting(s.a_z.clamp_x_, ui.max_z_translation);
 
-    tie_setting(s.a_pitch.clamp_y, ui.max_pitch_output);
+    tie_setting(s.a_pitch.clamp_y_, ui.max_pitch_output);
 }
 
 void MapWidget::load()
@@ -123,10 +123,9 @@ void MapWidget::load()
             qfc.force_redraw();
         }
 
-        connect(&axis.opts.clamp_x, base_value::signal_fun<int>(),
+        connect(&axis.opts.clamp_x_, base_value::signal_fun<int>(),
                 &qfc, [i, &conf, &qfc](int value) {
-            conf.set_max_input(value);
-            qfc.reload_spline();
+            //qfc.reload_spline();
             qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
 
             if (i >= 3)
@@ -140,29 +139,9 @@ void MapWidget::load()
 
         // force signal to avoid duplicating the slot's logic
         qfc.setConfig(&conf);
-        axis.opts.clamp_x.valueChanged(axis.opts.clamp_x);
+        axis.opts.clamp_x_.valueChanged(axis.opts.clamp_x_);
 
         widgets[i % 6][altp ? 1 : 0] = &qfc;
-    }
-
-    {
-        value<axis_opts::max_clamp>& val = s.a_pitch.clamp_y;
-
-        Map& axis = m(Pitch);
-
-        connect(&val, base_value::signal_fun<int>(), this, [&](int x) {
-            x = std::abs(x);
-
-            spline* splines[] { &axis.spline_main, &axis.spline_alt };
-
-            for (spline* spl : splines)
-                spl->set_max_output(x);
-
-            ui.ryconfig->setConfig(&axis.spline_main);
-            ui.ryconfig_alt->setConfig(&axis.spline_alt);
-        });
-
-        axis.opts.clamp_y.valueChanged(axis.opts.clamp_y);
     }
 }
 

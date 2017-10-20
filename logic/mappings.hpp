@@ -15,13 +15,13 @@ using namespace options;
 
 struct OTR_LOGIC_EXPORT Map final
 {
-    Map(QString primary, QString secondary, int max_x, int max_y, axis_opts& opts);
+    Map(const QString& spline_name, const QString& alt_spline_name, axis_opts& opts);
 
     void save();
     void load();
 
     axis_opts& opts;
-    QString name1, name2;
+    QString name, alt_name;
     spline spline_main, spline_alt;
 };
 

@@ -3,12 +3,12 @@
 main_settings::main_settings() :
     b(make_bundle("opentrack-ui")),
     b_map(make_bundle("opentrack-mappings")),
-    a_x(b, b_map, "x", TX),
-    a_y(b, b_map, "y", TY),
-    a_z(b, b_map, "z", TZ),
-    a_yaw(b, b_map, "yaw", Yaw),
-    a_pitch(b, b_map, "pitch", Pitch),
-    a_roll(b, b_map, "roll", Roll),
+    a_x("x", TX),
+    a_y("y", TY),
+    a_z("z", TZ),
+    a_yaw("yaw", Yaw),
+    a_pitch("pitch", Pitch),
+    a_roll("roll", Roll),
     all_axis_opts { &a_x, &a_y, &a_z, &a_yaw, &a_pitch, &a_roll },
     tcomp_p(b, "compensate-translation", false),
     tcomp_disable_tx(b, "compensate-translation-disable-x-axis", false),
@@ -59,30 +59,3 @@ key_opts::key_opts(bundle b, const QString& name) :
     guid(b, QString("guid-%1").arg(name), ""),
     button(b, QString("button-%1").arg(name), -1)
 {}
-
-using max_clamp = axis_opts::max_clamp;
-
-static max_clamp get_max_x(Axis k)
-{
-    if (k == Pitch)
-        return max_clamp::r90;
-    if (k >= Yaw)
-        return max_clamp::r180;
-    return max_clamp::t30;
-}
-
-axis_opts::axis_opts(bundle b_settings_window, bundle b_mapping_window, QString pfx, Axis idx) :
-    b_settings_window(b_settings_window),
-    b_mapping_window(b_mapping_window),
-    zero(b_settings_window, n(pfx, "zero-pos"), 0),
-    src(b_settings_window, n(pfx, "source-index"), idx),
-    invert(b_settings_window, n(pfx, "invert-sign"), false),
-    altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
-    clamp_x(b_mapping_window, n(pfx, "max-value"), get_max_x(idx)),
-    clamp_y(b_mapping_window, n(pfx, "max-output-value"), idx >= Yaw ? o_r90 : o_t75)
-{}
-
-QString axis_opts::n(QString pfx, QString name)
-{
-    return QString("%1-%2").arg(pfx, name);
-}

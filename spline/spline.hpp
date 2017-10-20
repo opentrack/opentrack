@@ -13,11 +13,14 @@
 #include "compat/util.hpp"
 using namespace options;
 
+#include "axis-opts.hpp"
+
 #include "export.hpp"
 
 #include <vector>
 #include <limits>
 #include <memory>
+#include <functional>
 
 #include <QObject>
 #include <QPointF>
@@ -29,10 +32,12 @@ namespace spline_detail {
 class OTR_SPLINE_EXPORT settings final : public QObject
 {
     Q_OBJECT
+
 public:
     bundle b;
     value<QList<QPointF>> points;
-    settings(bundle b);
+    axis_opts opts;
+    settings(bundle b, const QString& axis_name, Axis idx);
     ~settings() override;
 signals:
     void recomputed() const;
@@ -49,11 +54,11 @@ class OTR_SPLINE_EXPORT spline final
     float get_value_no_save_internal(double x);
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
-    static QPointF ensure_in_bounds(const QList<QPointF>& points, double max_x, int i);
-    static int element_count(const QList<QPointF>& points, double max_x);
+    static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
+    static int element_count(const QList<QPointF>& points, double max_input);
 
     std::shared_ptr<spline_detail::settings> s;
-    QMetaObject::Connection connection;
+    QMetaObject::Connection connection, conn_maxx, conn_maxy;
 
     std::vector<float> data;
     using interp_data_t = decltype(data);
@@ -62,21 +67,27 @@ class OTR_SPLINE_EXPORT spline final
 
     MyMutex _mutex;
     QPointF last_input_value;
-    qreal max_x, max_y; // XXX TODO move to value<double> -sh 20171020
+    std::shared_ptr<QObject> ctx;
+
+    Axis axis;
+
     bool activep;
     bool validp;
 
 public:
     using settings = spline_detail::settings;
 
+    void invalidate_settings();
+
     void reload();
     void save();
-    void set_bundle(bundle b);
+    void set_bundle(bundle b, const QString& axis_name, Axis axis);
 
-    qreal max_input() const;
-    qreal max_output() const;
+    double max_input() const;
+    double max_output() const;
+
     spline();
-    spline(qreal maxx, qreal maxy, const QString& name);
+    spline(const QString& name, const QString& axis_name, Axis axis);
     ~spline();
 
     spline& operator=(const spline&) = default;
@@ -92,12 +103,10 @@ public:
     void add_point(double x, double y);
     void move_point(int idx, QPointF pt);
     QList<QPointF> get_points() const;
-    void set_max_input(qreal MaxInput);
-    void set_max_output(qreal MaxOutput);
 
     void set_tracking_active(bool value);
     bundle get_bundle();
-    void ensure_valid(const QList<QPointF>& the_points);
+    void ensure_valid(QList<QPointF>& the_points);
 
     std::shared_ptr<settings> get_settings();
     std::shared_ptr<const settings> get_settings() const;

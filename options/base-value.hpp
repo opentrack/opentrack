@@ -29,6 +29,7 @@ class OTR_OPTIONS_EXPORT base_value : public QObject
     template<typename t>
     using signal_sig = void(base_value::*)(cv_qualified<t>) const;
 public:
+    bundle get_bundle() { return b; }
     QString name() const { return self_name; }
     base_value(bundle b, const QString& name, comparator cmp, std::type_index type_idx);
     ~base_value() override;
