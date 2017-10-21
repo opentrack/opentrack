@@ -60,10 +60,6 @@ void spline_widget::setConfig(spline* spl)
     if (spl)
     {
         update_range();
-        {
-            QList<QPointF> pts = _config->get_points();
-            _config->ensure_valid(pts);
-        }
 
         std::shared_ptr<spline::settings> s = spl->get_settings();
         connection = connect(s.get(), &spline::settings::recomputed,
