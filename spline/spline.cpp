@@ -399,8 +399,8 @@ void spline::ensure_valid(QList<QPointF>& the_points)
 
     const int sz = list.size();
 
-    QList<QPointF> ret_list;
-    ret_list.reserve(sz);
+    QList<QPointF> ret_list, ret_list_2;
+    ret_list.reserve(sz), ret_list_2.reserve(sz);
 
     const double maxx = max_input(), maxy = max_output();
 
@@ -422,12 +422,18 @@ void spline::ensure_valid(QList<QPointF>& the_points)
         );
 
         if (!overlap)
+            ret_list_2.append(pt);
+
+        if (pt.x() - 1e-2 < maxx && pt.x() >= 0 &&
+            pt.y() - 1e-2 < maxy && pt.y() >= 0 && !overlap)
+        {
             ret_list.push_back(pt);
+        }
     }
 
     if (ret_list != the_points)
     {
-        s->points = ret_list;
+        s->points = std::move(ret_list_2);
         the_points = std::move(ret_list);
     }
 
