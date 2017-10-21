@@ -257,6 +257,16 @@ void spline_widget::drawFunction()
     }
 #endif
 
+    const QColor bg = palette().background().color();
+
+    const QRect r1(pixel_bounds.left(), 0, width() - pixel_bounds.left(), pixel_bounds.top()),
+                r2(pixel_bounds.right(), 0, width() - pixel_bounds.right(), pixel_bounds.bottom());
+
+    // prevent topward artifacts the lazy way
+    painter.fillRect(r1, bg);
+    // same for rightward artifacts
+    painter.fillRect(r2, bg);
+
     const int alpha = !isEnabled() ? 64 : 120;
     if (!_preview_only)
     {
@@ -305,16 +315,6 @@ void spline_widget::paintEvent(QPaintEvent *e)
     QPointF last;
     if (_config->get_last_value(last) && isEnabled())
         drawPoint(p, point_to_pixel(last), QColor(255, 0, 0, 120));
-
-    const QColor bg = palette().background().color();
-
-    const QRect r1(pixel_bounds.left(), 0, width() - pixel_bounds.left(), pixel_bounds.top()),
-                r2(pixel_bounds.right(), 0, width() - pixel_bounds.right(), height());
-
-    // prevent topward artifacts the lazy way
-    p.fillRect(r1, bg);
-    // same for rightward artifacts
-    p.fillRect(r2, bg);
 }
 
 void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColor& colBG, const QColor& border)
