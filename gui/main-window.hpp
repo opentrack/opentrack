@@ -13,7 +13,7 @@
 #include "options-dialog.hpp"
 #include "process_detector.h"
 #include "logic/main-settings.hpp"
-#include "logic/tracker.h"
+#include "logic/pipeline.hpp"
 #include "logic/shortcuts.h"
 #include "logic/work.hpp"
 #include "logic/state.hpp"

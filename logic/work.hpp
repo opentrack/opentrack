@@ -10,7 +10,7 @@
 
 #include "main-settings.hpp"
 #include "api/plugin-support.hpp"
-#include "tracker.h"
+#include "pipeline.hpp"
 #include "shortcuts.h"
 #include "export.hpp"
 #include "tracklogger.hpp"
@@ -31,7 +31,7 @@ struct OTR_LOGIC_EXPORT Work
     main_settings s; // tracker needs settings, so settings must come before it
     runtime_libraries libs; // idem
     std::shared_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
-    std::shared_ptr<Tracker> tracker;
+    std::shared_ptr<pipeline> tracker;
     std::shared_ptr<Shortcuts> sc;
     std::vector<key_tuple> keys;
 

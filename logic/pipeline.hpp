@@ -49,7 +49,7 @@ struct OTR_LOGIC_EXPORT bits
     bits();
 };
 
-class OTR_LOGIC_EXPORT Tracker : private QThread, private bits
+class OTR_LOGIC_EXPORT pipeline : private QThread, private bits
 {
     Q_OBJECT
 private:
@@ -100,8 +100,8 @@ private:
     static constexpr double c_mult = 16;
     static constexpr double c_div = 1./c_mult;
 public:
-    Tracker(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
-    ~Tracker();
+    pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
+    ~pipeline();
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;
     void start() { QThread::start(QThread::HighPriority); }
@@ -115,4 +115,4 @@ public:
 
 } // ns impl
 
-using gui_tracker_impl::Tracker;
+using gui_tracker_impl::pipeline;

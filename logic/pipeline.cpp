@@ -16,7 +16,7 @@
 #include "compat/sleep.hpp"
 #include "compat/util.hpp"
 
-#include "tracker.h"
+#include "pipeline.hpp"
 
 #include <cmath>
 #include <algorithm>
@@ -30,10 +30,10 @@ using namespace euler;
 using namespace gui_tracker_impl;
 using namespace time_units;
 
-constexpr double Tracker::r2d;
-constexpr double Tracker::d2r;
+constexpr double pipeline::r2d;
+constexpr double pipeline::d2r;
 
-Tracker::Tracker(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
+pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m),
     ev(ev),
     libs(libs),
@@ -43,13 +43,13 @@ Tracker::Tracker(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackL
 {
 }
 
-Tracker::~Tracker()
+pipeline::~pipeline()
 {
     requestInterruption();
     wait();
 }
 
-double Tracker::map(double pos, Map& axis)
+double pipeline::map(double pos, Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
     axis.spline_main.set_tracking_active( !altp );
@@ -58,7 +58,7 @@ double Tracker::map(double pos, Map& axis)
     return double(fc.get_value(pos));
 }
 
-void Tracker::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
+void pipeline::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
                            bool disable_tx, bool disable_ty, bool disable_tz)
 {
     enum { tb_Z, tb_X, tb_Y };
@@ -105,10 +105,10 @@ static bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-constexpr double Tracker::c_mult;
-constexpr double Tracker::c_div;
+constexpr double pipeline::c_mult;
+constexpr double pipeline::c_div;
 
-void Tracker::logic()
+void pipeline::logic()
 {
     using namespace euler;
     using EV = event_handler::event_ordinal;
@@ -369,7 +369,7 @@ void Tracker::logic()
     logger.next_line();
 }
 
-void Tracker::run()
+void pipeline::run()
 {
 #if defined _WIN32
     const MMRESULT mmres = timeBeginPeriod(1);
@@ -439,9 +439,9 @@ void Tracker::run()
 #endif
 }
 
-void Tracker::raw_and_mapped_pose(double* mapped, double* raw) const
+void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
 {
-    QMutexLocker foo(&const_cast<Tracker&>(*this).mtx);
+    QMutexLocker foo(&const_cast<pipeline&>(*this).mtx);
 
     for (int i = 0; i < 6; i++)
     {
@@ -450,13 +450,13 @@ void Tracker::raw_and_mapped_pose(double* mapped, double* raw) const
     }
 }
 
-void Tracker::center() { set(f_center, true); }
+void pipeline::center() { set(f_center, true); }
 
-void Tracker::set_toggle(bool value) { set(f_enabled_h, value); }
-void Tracker::set_zero(bool value) { set(f_zero, value); }
+void pipeline::set_toggle(bool value) { set(f_enabled_h, value); }
+void pipeline::set_zero(bool value) { set(f_zero, value); }
 
-void Tracker::zero() { negate(f_zero); }
-void Tracker::toggle_enabled() { negate(f_enabled_p); }
+void pipeline::zero() { negate(f_zero); }
+void pipeline::toggle_enabled() { negate(f_enabled_p); }
 
 
 void bits::set(bits::flags flag_, bool val_)

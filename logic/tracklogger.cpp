@@ -1,5 +1,5 @@
 #include "tracklogger.hpp"
-#include "tracker.h"
+#include "pipeline.hpp"
 
 TrackLogger::~TrackLogger() {}
 
