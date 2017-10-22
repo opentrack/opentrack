@@ -92,7 +92,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
                                                                      const PointModel& model,
                                                                      const CamInfo& info)
 {
-    double fx; info.get_focal_length(fx);
+    const double fx = info.get_focal_length();
     PointTracker::PointOrder p;
     p[0] = project(vec3(0,0,0), fx);
     p[1] = project(model.M01, fx);
@@ -205,8 +205,7 @@ void PointTracker::track(const std::vector<vec2>& points,
                          const CamInfo& info,
                          int init_phase_timeout)
 {
-    double fx;
-    info.get_focal_length(fx);
+    const double fx = info.get_focal_length();
     PointOrder order;
 
     if (init_phase_timeout > 0 && t.elapsed_ms() > init_phase_timeout)

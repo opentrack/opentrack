@@ -25,7 +25,7 @@
 struct CamInfo final
 {
     CamInfo() : fov(0), fps(0), res_x(0), res_y(0), idx(-1) {}
-    void get_focal_length(double& fx) const;
+    double get_focal_length() const;
 
     double fov;
     double fps;

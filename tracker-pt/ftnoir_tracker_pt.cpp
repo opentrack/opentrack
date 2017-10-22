@@ -80,8 +80,7 @@ void Tracker_PT::run()
             point_extractor.extract_points(frame, preview_frame, points);
             point_count = points.size();
 
-            double fx;
-            cam_info.get_focal_length(fx);
+            const double fx = cam_info.get_focal_length();
 
             const bool success = points.size() >= PointModel::N_POINTS;
 
