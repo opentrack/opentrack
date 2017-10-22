@@ -378,13 +378,31 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
 double spline::max_input() const
 {
     QMutexLocker l(&_mutex);
-    return s ? s->opts.clamp_x_.to<double>() : 0;
+    if (s)
+    {
+        using m = axis_opts::max_clamp;
+        const value<m>& clamp = s->opts.clamp_x_;
+        const QList<QPointF> points = s->points;
+        if (clamp == m::x1000 && points.size())
+            return points[points.size() - 1].x();
+        return s ? std::fabs(clamp.to<double>()) : 0;
+    }
+    return 0;
 }
 
 double spline::max_output() const
 {
     QMutexLocker l(&_mutex);
-    return s ? std::fabs(s->opts.clamp_y_.to<double>()) : 0;
+    if (s)
+    {
+        using m = axis_opts::max_clamp;
+        const value<m>& clamp = s->opts.clamp_y_;
+        const QList<QPointF> points = s->points;
+        if (clamp == m::x1000 && points.size())
+            return points[points.size() - 1].y();
+        return s ? std::fabs(clamp.to<double>()) : 0;
+    }
+    return 0;
 }
 
 void spline::ensure_valid(QList<QPointF>& the_points)

@@ -621,18 +621,27 @@ void MainWindow::show_tracker_settings()
 {
     if (mk_dialog(current_tracker(), pTrackerDialog) && work && work->libs.pTracker)
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
+    if (pTrackerDialog)
+        // must run bundle::reload(), don't remove next line
+        QObject::connect(pTrackerDialog.get(), &ITrackerDialog::closing, this, [this]() { pTrackerDialog = nullptr; });
 }
 
 void MainWindow::show_proto_settings()
 {
     if (mk_dialog(current_protocol(), pProtocolDialog) && work && work->libs.pProtocol)
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
+    if (pProtocolDialog)
+        // must run bundle::reload(), don't remove next line
+        QObject::connect(pProtocolDialog.get(), &IProtocolDialog::closing, this, [this]() { pProtocolDialog = nullptr; });
 }
 
 void MainWindow::show_filter_settings()
 {
     if (mk_dialog(current_filter(), pFilterDialog) && work && work->libs.pFilter)
         pFilterDialog->register_filter(work->libs.pFilter.get());
+    if (pFilterDialog)
+        // must run bundle::reload(), don't remove next line
+        QObject::connect(pFilterDialog.get(), &IFilterDialog::closing, this, [this]() { pFilterDialog = nullptr; });
 }
 
 void MainWindow::show_options_dialog()
