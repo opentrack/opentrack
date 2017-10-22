@@ -9,6 +9,7 @@
 #include <windows.h>
 
 static constexpr int visible_timeout = 5000;
+static constexpr int invisible_timeout = 250;
 
 static Timer timer;
 static QMutex mtx;
@@ -19,7 +20,7 @@ void set_is_visible(const QWidget& w, bool force)
 {
     QMutexLocker l(&mtx);
 
-    if (!force && timer.elapsed_ms() < visible_timeout)
+    if (!force && timer.elapsed_ms() < (visible ? visible_timeout : invisible_timeout))
         return;
 
     timer.start();
