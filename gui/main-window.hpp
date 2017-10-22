@@ -9,8 +9,8 @@
 #pragma once
 
 #include "api/plugin-support.hpp"
-#include "mapping-window.hpp"
-#include "options-dialog.hpp"
+#include "mapping-dialog.hpp"
+#include "settings.hpp"
 #include "process_detector.h"
 #include "logic/main-settings.hpp"
 #include "logic/pipeline.hpp"

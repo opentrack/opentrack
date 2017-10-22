@@ -6,7 +6,7 @@
  * notice appear in all copies.
  */
 
-#include "options-dialog.hpp"
+#include "settings.hpp"
 #include "keyboard.h"
 #include "opentrack-library-path.h"
 #include <QPushButton>

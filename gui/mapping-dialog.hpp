@@ -1,7 +1,7 @@
 #pragma once
 
 #include "logic/mappings.hpp"
-#include "ui_mapping-window.h"
+#include "ui_mapping-dialog.h"
 
 #include <QWidget>
 #include <QDialog>

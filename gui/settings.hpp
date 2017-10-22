@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui_options-dialog.h"
+#include "ui_settings-dialog.h"
 #include "logic/shortcuts.h"
 #include <QObject>
 #include <QDialog>

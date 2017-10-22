@@ -6,7 +6,7 @@
  * notice appear in all copies.
  */
 
-#include "mapping-window.hpp"
+#include "mapping-dialog.hpp"
 #include "logic/main-settings.hpp"
 #include "spline/spline-widget.hpp"
 
