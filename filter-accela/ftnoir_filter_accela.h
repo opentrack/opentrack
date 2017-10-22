@@ -16,12 +16,6 @@
 #include <QMutex>
 #include <QTimer>
 
-// ------------------------------------
-// debug knob
-// ------------------------------------
-
-//#define DEBUG_ACCELA
-
 class accela : public IFilter
 {
 public:

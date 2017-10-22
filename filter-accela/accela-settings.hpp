@@ -4,6 +4,14 @@
 using namespace options;
 #include "spline/spline.hpp"
 
+// ------------------------------------
+// debug knobs
+// ------------------------------------
+
+//#define DEBUG_ACCELA
+//#define SPLINE_ROT_DEBUG
+//#define SPLINE_TRANS_DEBUG
+
 struct settings_accela : opts
 {
     struct gains
