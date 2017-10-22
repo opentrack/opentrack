@@ -25,20 +25,12 @@ dialog_accela::dialog_accela()
     tie_setting(s.ewma, ui.ewma_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.pos_deadzone, ui.trans_dz_slider);
-    tie_setting(s.rot_nonlinearity, ui.rot_nl_slider);
 
     tie_setting(s.rot_sensitivity, ui.rot_gain, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
     tie_setting(s.pos_sensitivity, ui.trans_gain, [](const slider_value& s) { return tr("%1mm").arg(s, 0, 'g', 4); });
     tie_setting(s.ewma, ui.ewma_label, [](const slider_value& s) { return tr("%1ms").arg(s); });
     tie_setting(s.rot_deadzone, ui.rot_dz, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
     tie_setting(s.pos_deadzone, ui.trans_dz, [](const slider_value& s) { return tr("%1mm").arg(s); });
-    tie_setting(s.rot_nonlinearity, ui.rot_nl, [](const slider_value& s) {
-        return tr("<html><head/><body>"
-                  "<p>x<span style='vertical-align:super;'>"
-                  "%1"
-                  "</span></p>"
-                  "</body></html>").arg(s);
-    });
 
 //#define SPLINE_ROT_DEBUG
 //#define SPLINE_TRANS_DEBUG

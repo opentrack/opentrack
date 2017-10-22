@@ -101,7 +101,6 @@ void accela::filter(const double* input, double *output)
     const double alpha = dt/(dt+RC);
     const double rot_dz = s.rot_deadzone.to<double>();
     const double pos_dz = s.pos_deadzone.to<double>();
-    const double nl = s.rot_nonlinearity.to<double>();
 
     // rot
 
@@ -115,17 +114,6 @@ void accela::filter(const double* input, double *output)
             d = 0;
 
         deltas[i] = d / rot_thres;
-    }
-
-    if (nl > 1.)
-    {
-        for (unsigned k = 3; k < 6; k++)
-        {
-            static constexpr double nl_end = 7;
-
-            if (fabs(deltas[k]) <= nl_end)
-                deltas[k] = copysign(pow(fabs(deltas[k]/nl_end), nl) * nl_end, deltas[k]);
-        }
     }
 
     do_deltas(&deltas[Yaw], &output[Yaw], alpha, smoothed_input[0], [this](double x) { return spline_rot.get_value_no_save(x); });

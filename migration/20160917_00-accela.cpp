@@ -107,11 +107,6 @@ struct move_accela_to_sliders : migration
             tmp = val;
         }
 
-        value<slider_value> tmp(new_b, slider_name, slider_value(-1e6, s.rot_nonlinearity().min(), s.rot_nonlinearity().max()));
-        tmp = old_b->contains(slider_name)
-                  ? old_b->get<slider_value>(slider_name)
-                  : slider_value(1.1, 1, 1.75);
-
         new_b->save();
     }
 };

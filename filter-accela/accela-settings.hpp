@@ -50,14 +50,12 @@ struct settings_accela : opts
     value<slider_value> rot_sensitivity, pos_sensitivity;
     value<slider_value> rot_deadzone, pos_deadzone;
     value<slider_value> ewma;
-    value<slider_value> rot_nonlinearity;
     settings_accela() :
         opts("accela-sliders"),
         rot_sensitivity(b, "rotation-sensitivity", slider_value(1.5, .05, 2.5)),
         pos_sensitivity(b, "translation-sensitivity", slider_value(1., .05, 1.5)),
         rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, .1)),
         pos_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
-        ewma(b, "ewma", slider_value(0, 0, 200)),
-        rot_nonlinearity(b, "rotation-nonlinearity", slider_value(1, 1, 1.25))
+        ewma(b, "ewma", slider_value(0, 0, 200))
     {}
 };
