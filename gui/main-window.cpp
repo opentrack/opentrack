@@ -13,6 +13,7 @@
 #include "new_file_dialog.h"
 #include "migration/migration.hpp"
 #include "compat/check-visible.hpp"
+#include "compat/sleep.hpp"
 
 #include <QFile>
 #include <QFileDialog>
@@ -311,7 +312,17 @@ MainWindow::~MainWindow()
 {
     if (tray)
         tray->hide();
+    const bool just_stopping = bool(work);
     stop_tracker_();
+
+    // stupid ps3 eye has LED issues
+    if (just_stopping)
+    {
+        close();
+        QEventLoop ev;
+        ev.processEvents();
+        portable::sleep(2000);
+    }
 }
 
 void MainWindow::set_working_directory()
