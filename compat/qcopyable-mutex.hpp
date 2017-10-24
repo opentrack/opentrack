@@ -1,37 +1,27 @@
 #pragma once
 
+#include <memory>
+
 #include <QMutex>
 
-class MyMutex {
-private:
-    QMutex inner;
+#include "export.hpp"
+
+class OTR_COMPAT_EXPORT mutex
+{
+    std::unique_ptr<QMutex> inner;
 
 public:
-    QMutex* operator->() { return &inner; }
-    QMutex* operator->() const { return &const_cast<MyMutex*>(this)->inner; }
-
-    MyMutex operator=(const MyMutex& datum)
+    enum mode
     {
-        auto mode =
-                datum->isRecursive()
-                ? QMutex::Recursive
-                : QMutex::NonRecursive;
+        recursive = QMutex::Recursive,
+        normal = QMutex::NonRecursive,
+    };
 
-        return MyMutex(mode);
-    }
+    mutex& operator=(const mutex& datum);
+    mutex(const mutex& datum);
+    mutex(mode m = normal);
 
-    MyMutex(const MyMutex& datum)
-    {
-        *this = datum;
-    }
-
-    MyMutex(QMutex::RecursionMode mode = QMutex::NonRecursive) :
-        inner(mode)
-    {
-    }
-
-    QMutex* operator&() const
-    {
-        return const_cast<QMutex*>(&inner);
-    }
+    QMutex* operator&() const;
+    operator QMutex*() const;
+    QMutex* operator->() const;
 };
