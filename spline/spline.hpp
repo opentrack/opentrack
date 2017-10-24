@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include "compat/qcopyable-mutex.hpp"
+#include "compat/copyable-mutex.hpp"
 #include "options/options.hpp"
 #include "compat/util.hpp"
 using namespace options;

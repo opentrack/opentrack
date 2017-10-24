@@ -1,4 +1,4 @@
-#include "qcopyable-mutex.hpp"
+#include "copyable-mutex.hpp"
 
 mutex& mutex::operator=(const mutex& datum)
 {
