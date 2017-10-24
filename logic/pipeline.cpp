@@ -37,9 +37,7 @@ pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, Trac
     m(m),
     ev(ev),
     libs(libs),
-    logger(logger),
-    backlog_time(ns(0)),
-    tracking_started(false)
+    logger(logger)
 {
 }
 

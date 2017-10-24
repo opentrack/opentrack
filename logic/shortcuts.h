@@ -27,9 +27,13 @@
 
 using namespace options;
 
-struct OTR_LOGIC_EXPORT Shortcuts final : public QObject
+class OTR_LOGIC_EXPORT Shortcuts final : public QObject
 {
     Q_OBJECT
+
+#ifdef _WIN32
+    void receiver(const Key& k);
+#endif
 
 public:
     using K =
@@ -46,21 +50,14 @@ public:
     using t_keys = std::vector<t_key>;
     std::vector<tt> keys;
 #ifdef _WIN32
-    KeybindingWorker::Token key_token;
+    KeybindingWorker::Token key_token = [this](const Key& k) { receiver(k); };
 #endif
 
-    Shortcuts()
-#ifdef _WIN32
-        : key_token([&](const Key& k) { receiver(k); })
-#endif
-    {}
+    Shortcuts() {}
     ~Shortcuts();
 
     void reload(const t_keys& keys_);
 private:
     void free_binding(K& key);
     void bind_shortcut(K &key, const key_opts& k, bool held);
-#ifdef _WIN32
-    void receiver(const Key& k);
-#endif
 };

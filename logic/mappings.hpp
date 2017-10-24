@@ -30,7 +30,17 @@ class OTR_LOGIC_EXPORT Mappings final
 private:
     Map axes[6];
 public:
-    Mappings(std::vector<axis_opts*> opts);
+    template<typename t>
+    Mappings(t& opts) :
+        axes {
+            { "spline-X", "alt-spline-X", *opts[TX] },
+            { "spline-Y", "alt-spline-Y", *opts[TY] },
+            { "spline-Z", "alt-spline-Z", *opts[TZ] },
+            { "spline-yaw", "alt-spline-yaw", *opts[Yaw] },
+            { "spline-pitch", "alt-spline-pitch", *opts[Pitch] },
+            { "spline-roll", "alt-spline-roll", *opts[Roll] }
+        }
+    {}
 
     Map& operator()(int i) { return axes[i]; }
     const Map& operator()(int i) const { return axes[i]; }

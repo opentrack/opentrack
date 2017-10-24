@@ -23,13 +23,3 @@ void Map::load()
     spline_alt.reload();
 }
 
-Mappings::Mappings(std::vector<axis_opts*> opts) :
-    axes {
-        Map("spline-X", "alt-spline-X", *opts[TX]),
-        Map("spline-Y", "alt-spline-Y", *opts[TY]),
-        Map("spline-Z", "alt-spline-Z", *opts[TZ]),
-        Map("spline-yaw", "alt-spline-yaw", *opts[Yaw]),
-        Map("spline-pitch", "alt-spline-pitch", *opts[Pitch]),
-        Map("spline-roll", "alt-spline-roll", *opts[Roll])
-    }
-{}

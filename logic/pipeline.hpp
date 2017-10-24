@@ -32,6 +32,8 @@
 
 namespace gui_tracker_impl {
 
+using namespace time_units;
+
 struct OTR_LOGIC_EXPORT bits
 {
     enum flags : unsigned {
@@ -83,9 +85,9 @@ private:
     state real_rotation, scaled_rotation;
     euler_t t_center;
 
-    time_units::ns backlog_time;
+    ns backlog_time = ns(0);
 
-    bool tracking_started;
+    bool tracking_started = false;
 
     double map(double pos, Map& axis);
     void logic();
