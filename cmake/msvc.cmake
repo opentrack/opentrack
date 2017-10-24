@@ -54,6 +54,8 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
 endif()
 
 set(base-cflags "${warns_} -MT -Zi -cgthreads8 -W4")
+#set(base-cflags "${base-cflags} -d2cgsummary")
+#set(base-cflags "${base-cflags} -Bt")
 
 set(_CFLAGS "${base-cflags}")
 set(_CXXFLAGS "${base-cflags}")
@@ -72,8 +74,9 @@ set(_LDFLAGS_STATIC_DEBUG "")
 
 set(CMAKE_RC_FLAGS "-nologo -DWIN32")
 
-if(NOT __otr_already_initialized STREQUAL "${cc}" OR "$ENV{OTR_REDO}")
-    set(__otr_already_initialized "${cc}" CACHE INTERNAL "" FORCE)
+set(new-__otr_already_initialized "_${cc}_${base-cflags}_")
+if(NOT "${__otr_already_initialized}" STREQUAL "${new-__otr_already_initialized}")
+    set(__otr_already_initialized "${cc}__${base-cflags}" CACHE INTERNAL "" FORCE)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 
