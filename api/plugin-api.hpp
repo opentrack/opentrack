@@ -22,6 +22,8 @@ using Pose = Mat<double, 6, 1>;
 
 enum Axis {
     TX, TY, TZ, Yaw, Pitch, Roll,
+
+    NonAxis = -1,
 };
 
 namespace plugin_api {

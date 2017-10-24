@@ -43,7 +43,7 @@ signals:
     void recomputed() const;
 };
 
-}
+} // ns spline_detail
 
 class OTR_SPLINE_EXPORT spline final
 {
@@ -60,23 +60,20 @@ class OTR_SPLINE_EXPORT spline final
     std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection connection, conn_maxx, conn_maxy;
 
-    std::vector<float> data;
-    using interp_data_t = decltype(data);
+    static constexpr std::size_t value_count = 4096;
 
-    static constexpr int value_count = 4096;
+    std::vector<float> data = std::vector<float>(value_count, float(-16));
 
-    MyMutex _mutex;
+    mutex _mutex { mutex::recursive };
     QPointF last_input_value;
-    std::shared_ptr<QObject> ctx;
+    std::shared_ptr<QObject> ctx { std::make_shared<QObject>() };
 
-    Axis axis;
+    Axis axis = NonAxis;
 
-    bool activep;
-    bool validp;
+    bool activep = false;
+    bool validp = false;
 
 public:
-    using settings = spline_detail::settings;
-
     void invalidate_settings();
 
     void reload();
@@ -108,9 +105,11 @@ public:
     bundle get_bundle();
     void ensure_valid(QList<QPointF>& the_points);
 
-    std::shared_ptr<settings> get_settings();
-    std::shared_ptr<const settings> get_settings() const;
+    std::shared_ptr<spline_detail::settings> get_settings();
+    std::shared_ptr<const spline_detail::settings> get_settings() const;
 
     using points_t = decltype(s->points());
     int get_point_count() const;
+
+    using settings = spline_detail::settings;
 };

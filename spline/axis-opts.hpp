@@ -34,7 +34,8 @@ struct OTR_SPLINE_EXPORT axis_opts final
     };
 
     // note, these two bundles can be the same value with no issues
-    bundle b_settings_window, b_mapping_window;
+    bundle b_settings_window = make_bundle("opentrack-ui");
+    bundle b_mapping_window = make_bundle("opentrack-mappings");
     value<double> zero;
     value<int> src;
     value<bool> invert, altp;

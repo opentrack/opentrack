@@ -25,8 +25,6 @@ static max_clamp get_max_y(Axis k)
 }
 
 axis_opts::axis_opts(QString pfx, Axis idx) :
-    b_settings_window(make_bundle("opentrack-ui")),
-    b_mapping_window(make_bundle("opentrack-mappings")),
     zero(b_settings_window, n(pfx, "zero-pos"), 0),
     src(b_settings_window, n(pfx, "source-index"), idx),
     invert(b_settings_window, n(pfx, "invert-sign"), false),

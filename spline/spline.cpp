@@ -24,16 +24,13 @@
 
 #include <QDebug>
 
-constexpr int spline::value_count;
+using namespace spline_detail;
+
+constexpr std::size_t spline::value_count;
 
 spline::spline(const QString& name, const QString& axis_name, Axis axis) :
-    s(nullptr),
-    data(value_count, -16),
-    _mutex(QMutex::Recursive),
     ctx(std::make_shared<QObject>()),
-    axis(axis),
-    activep(false),
-    validp(false)
+    axis(axis)
 {
     set_bundle(options::make_bundle(name), axis_name, axis);
 }
@@ -460,13 +457,13 @@ void spline::ensure_valid(QList<QPointF>& the_points)
 }
 
 // the return value is only safe to use with no spline::set_bundle calls
-std::shared_ptr<spline::settings> spline::get_settings()
+std::shared_ptr<settings> spline::get_settings()
 {
     QMutexLocker foo(&_mutex);
     return s;
 }
 
-std::shared_ptr<const spline::settings> spline::get_settings() const
+std::shared_ptr<const settings> spline::get_settings() const
 {
     QMutexLocker foo(&_mutex);
     return s;
