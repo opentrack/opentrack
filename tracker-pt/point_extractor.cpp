@@ -230,9 +230,9 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat& output)
     }
     else
     {
-        int hist_size = 256;
-        float ranges_[] = { 0, 256 };
-        float const* ranges = (float*) ranges_;
+        static const int hist_size = 256;
+        static const float ranges_[] = { 0, 256 };
+        static float const* ranges = (const float*) ranges_;
 
         cv::calcHist(&frame_gray,
                      1,
@@ -245,7 +245,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat& output)
 
         const f radius = (f) threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
 
-        float const* restrict_ptr ptr = reinterpret_cast<float const* restrict_ptr>(hist.ptr(0));
+        auto ptr = (float const* restrict_ptr) hist.ptr(0);
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         unsigned thres = 32;
@@ -311,83 +311,50 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
                           &rect,
                           cv::Scalar(0),
                           cv::Scalar(0),
-                          8);
+                          4 | cv::FLOODFILL_FIXED_RANGE);
 
-            // these are doubles since m10 and m01 could overflow theoretically
-            // log2(255^2 * 640^2 * pi) > 36
-            double m10 = 0;
-            double m01 = 0;
-            // norm can't overflow since there's no 640^2 component
-            int norm = 0;
-            int cnt = 0;
+            unsigned cnt = 0;
+            unsigned norm = 0;
 
-            for (int i=rect.y; i < (rect.y+rect.height); i++)
+            const int ymax = rect.y+rect.height,
+                      xmax = rect.x+rect.width;
+
+            for (int i=rect.y; i < ymax; i++)
             {
-                unsigned char* ptr_blobs = frame_blobs.ptr(i);
-                const unsigned char* ptr_gray = frame_gray.ptr(i);
-                for (int j=rect.x; j < (rect.x+rect.width); j++)
+                unsigned char* restrict_ptr ptr_blobs = frame_blobs.ptr(i);
+                unsigned char const* restrict_ptr ptr_gray = frame_gray.ptr(i);
+                for (int j=rect.x; j < xmax; j++)
                 {
                     if (ptr_blobs[j] != idx)
                         continue;
 
-                    ptr_blobs[j] = 0;
-
-                    // square as a weight gives better results
-                    const int val(int(ptr_gray[j]) * int(ptr_gray[j]));
-
-                    norm += val;
-                    m01 += i * val;
-                    m10 += j * val;
+                    //ptr_blobs[j] = 0;
+                    norm += ptr_gray[j];
                     cnt++;
                 }
             }
-            if (norm > 0)
-            {
-                const double radius = std::sqrt(cnt / M_PI), N = double(norm);
-                if (radius > region_size_max || radius < region_size_min)
-                    continue;
 
-                blob b(radius, cv::Vec2d(m10 / N, m01 / N), N/std::sqrt(double(cnt)), rect);
-                blobs.push_back(b);
+            const double radius = std::sqrt(cnt / M_PI);
+            if (radius > region_size_max || radius < region_size_min)
+                continue;
 
-                {
-                    static const f offx = 10, offy = 7.5;
-                    const f cx = preview_frame.cols / f(frame.cols),
-                            cy = preview_frame.rows / f(frame.rows),
-                            c_ = (cx+cy)/2;
+            blob b(radius, vec2(rect.width/2., rect.height/2.), norm/cnt, rect);
+            blobs.push_back(b);
 
-                    static constexpr unsigned fract_bits = 16;
-                    static constexpr double c_fract(1 << fract_bits);
-
-                    cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
-
-                    cv::circle(preview_frame, p, iround((b.radius + 2) * c_ * c_fract), cv::Scalar(255, 255, 0), 1, cv::LINE_AA, fract_bits);
-
-                    char buf[16];
-                    std::snprintf(buf, sizeof(buf), "%.2fpx", radius);
-                    buf[sizeof(buf)-1] = '\0';
-
-                    cv::putText(preview_frame,
-                                buf,
-                                cv::Point(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy)),
-                                cv::FONT_HERSHEY_PLAIN,
-                                1,
-                                cv::Scalar(0, 0, 255),
-                                1);
-                }
-
-                if (idx >= max_blobs) goto end;
-            }
+            if (idx >= max_blobs)
+                goto end;
         }
     }
 end:
 
-    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) { return b2.brightness < b1.brightness; });
-
     const int W = frame.cols;
     const int H = frame.rows;
 
-    for (idx = 0; idx < std::min(PointModel::N_POINTS, unsigned(blobs.size())); ++idx)
+    const unsigned sz = blobs.size();
+
+    std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) { return b2.brightness < b1.brightness; });
+
+    for (idx = 0; idx < sz; ++idx)
     {
         blob &b = blobs[idx];
         cv::Rect rect = b.rect;
@@ -405,7 +372,7 @@ end:
         static constexpr f radius_c = f(1.75);
 
         const f kernel_radius = b.radius * radius_c;
-        vec2 pos(b.pos[0] - rect.x, b.pos[1] - rect.y); // position relative to ROI.
+        vec2 pos(rect.width/2., rect.height/2.); // position relative to ROI.
 
         for (int iter = 0; iter < 10; ++iter)
         {
@@ -418,6 +385,43 @@ end:
 
         b.pos[0] = pos[0] + rect.x;
         b.pos[1] = pos[1] + rect.y;
+    }
+
+    for (unsigned k = 0; k < blobs.size(); k++)
+    {
+        blob& b = blobs[k];
+
+        static const f offx = 10, offy = 7.5;
+        const f cx = preview_frame.cols / f(frame.cols),
+                cy = preview_frame.rows / f(frame.rows),
+                c_ = (cx+cy)/2;
+
+        static constexpr unsigned fract_bits = 16;
+        static constexpr double c_fract(1 << fract_bits);
+
+        cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
+
+        auto circle_color = k >= PointModel::N_POINTS
+                            ? cv::Scalar(192, 192, 192)
+                            : cv::Scalar(255, 255, 0);
+
+        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract), circle_color, 1, cv::LINE_AA, fract_bits);
+
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.2fpx", b.radius);
+        buf[sizeof(buf)-1] = '\0';
+
+        auto text_color = k >= PointModel::N_POINTS
+                          ? cv::Scalar(160, 160, 160)
+                          : cv::Scalar(0, 0, 255);
+
+        cv::putText(preview_frame,
+                    buf,
+                    cv::Point(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy)),
+                cv::FONT_HERSHEY_PLAIN,
+                1,
+                text_color,
+                1);
     }
 
     // End of mean shift code. At this point, blob positions are updated with hopefully less noisy less biased values.
