@@ -24,15 +24,15 @@
 struct OTR_DINPUT_EXPORT Key
 {
     QString guid;
-    int keycode;
-    bool shift;
-    bool ctrl;
-    bool alt;
-    bool held;
-    bool enabled;
+    int keycode = 0;
+    bool shift = false;
+    bool ctrl = false;
+    bool alt = false;
+    bool held = true;
+    bool enabled = true;
     Timer timer;
 public:
-    Key() : keycode(0), shift(false), ctrl(false), alt(false), held(true), enabled(true) {}
+    Key();
 
     bool should_process();
 };

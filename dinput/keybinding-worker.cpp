@@ -15,6 +15,8 @@
 #include <QDebug>
 #include <QMutexLocker>
 
+Key::Key() {}
+
 bool Key::should_process()
 {
     if (!enabled || (keycode == 0 && guid == ""))
