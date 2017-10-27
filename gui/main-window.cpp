@@ -31,6 +31,34 @@
 
 extern "C" const char* opentrack_version;
 
+#if !defined _WIN32 && !defined __APPLE__
+#   include <unistd.h>
+void MainWindow::annoy_if_root()
+{
+    if (geteuid() == 0)
+    {
+        for (unsigned k = 0; k < 2; k++)
+        {
+            portable::sleep(1 * 1000);
+            QMessageBox::critical(this,
+                                  tr("Running as root is bad"),
+                                  tr("Do not run as root. Set correct device node permissions."),
+                                  QMessageBox::Ok);
+            portable::sleep(1 * 1000);
+            QMessageBox::critical(this,
+                                  tr("Running as root is bad, seriously"),
+                                  tr("Do not run as root. I'll keep whining at every startup."),
+                                  QMessageBox::Ok);
+            portable::sleep(3 * 1000);
+            QMessageBox::critical(this,
+                                  tr("Running as root is really seriously bad"),
+                                  tr("Do not run as root. Be annoyed, comprehensively."),
+                                  QMessageBox::Ok);
+        }
+    }
+}
+#endif
+
 MainWindow::MainWindow() :
     State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
     pose_update_timer(this),
@@ -45,6 +73,10 @@ MainWindow::MainWindow() :
     menu_action_mappings(&tray_menu)
 {
     ui.setupUi(this);
+
+#if !defined _WIN32 && !defined __APPLE__
+    annoy_if_root();
+#endif
 
     {
         setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);

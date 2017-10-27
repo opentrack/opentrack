@@ -97,6 +97,9 @@ class MainWindow : public QMainWindow, private State
     void closeEvent(QCloseEvent*) override;
     bool event(QEvent *event) override;
     bool maybe_hide_to_tray(QEvent* e);
+#if !defined _WIN32 && !defined __APPLE__
+    void annoy_if_root();
+#endif
 
     // only use in impl file since no definition in header!
     template<typename t>
