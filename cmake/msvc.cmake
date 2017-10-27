@@ -72,7 +72,7 @@ set(_LDFLAGS_STATIC "-machine:X86 -WX")
 set(_LDFLAGS_STATIC_RELEASE "-LTCG:INCREMENTAL")
 set(_LDFLAGS_STATIC_DEBUG "")
 
-set(CMAKE_RC_FLAGS "-nologo -DWIN32")
+set(CMAKE_RC_FLAGS "/nologo -DWIN32")
 
 set(new-__otr_already_initialized "_${cc}_${base-cflags}_")
 if(NOT "${__otr_already_initialized}" STREQUAL "${new-__otr_already_initialized}")

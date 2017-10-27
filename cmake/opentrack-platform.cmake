@@ -67,7 +67,7 @@ if(MSVC)
 
     if(NOT CMAKE_COMPILER_IS_CLANG)
         if(MSVC_VERSION GREATER 1909) # visual studio 2017
-            set(__stuff "-permissive- -diagnostics:caret -Qvec-report:1")
+            set(__stuff "-permissive- -Qvec-report:1")
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${__stuff}")
             set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${__stuff}")
         endif()
