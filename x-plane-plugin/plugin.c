@@ -54,7 +54,6 @@ typedef struct WineSHM
 
 static shm_wrapper* lck_posix = NULL;
 static WineSHM* shm_posix = NULL;
-static WineSHM* data_last = NULL;
 static void *view_x, *view_y, *view_z, *view_heading, *view_pitch, *view_roll;
 static float offset_x, offset_y, offset_z;
 static XPLMCommandRef track_toggle = NULL, translation_disable_toggle = NULL;
@@ -113,29 +112,16 @@ float write_head_position(
         void *               unused(inRefcon) )
 {
     if (lck_posix != NULL && shm_posix != NULL) {
-        if(data_last == NULL){
-            data_last = calloc(1, sizeof(WineSHM));
+        shm_wrapper_lock(lck_posix);
+        if (!translation_disabled)
+        {
+            XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
+            XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
+            XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
         }
-
-        //only set the view if tracking is running
-        if(memcmp(shm_posix, data_last, sizeof(shm_posix->data)) != 0){
-            shm_wrapper_lock(lck_posix);
-            if (!translation_disabled)
-            {
-                XPLMSetDataf(view_x, shm_posix->data[TX] * 1e-3 + offset_x);
-                XPLMSetDataf(view_y, shm_posix->data[TY] * 1e-3 + offset_y);
-                XPLMSetDataf(view_z, shm_posix->data[TZ] * 1e-3 + offset_z);
-            }
-            XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / M_PI);
-            XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / M_PI);
-            XPLMSetDataf(view_roll, shm_posix->data[Roll] * 180 / M_PI);
-        } else {
-            //reset roll, otherwise it would be stuck at last angle
-            XPLMSetDataf(view_roll, 0);
-        }
-
-        memcpy(&data_last, &shm_posix, sizeof(WineSHM));
-
+        XPLMSetDataf(view_heading, shm_posix->data[Yaw] * 180 / M_PI);
+        XPLMSetDataf(view_pitch, shm_posix->data[Pitch] * 180 / M_PI);
+        XPLMSetDataf(view_roll, shm_posix->data[Roll] * 180 / M_PI);
         shm_wrapper_unlock(lck_posix);
     }
     return -1.0;
