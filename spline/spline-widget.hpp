@@ -90,6 +90,7 @@ private:
     QPixmap _background;
     QPixmap _function;
     QColor spline_color;
+    QColor widget_bg_color = palette().background().color();
 
     // bounds of the rectangle user can interact with
     QRect pixel_bounds;

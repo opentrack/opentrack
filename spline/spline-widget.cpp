@@ -101,7 +101,7 @@ void spline_widget::drawBackground()
 
     QPainter painter(&_background);
 
-    painter.fillRect(rect(), palette().background().color());
+    painter.fillRect(rect(), widget_bg_color);
 
     {
         QColor bg_color(112, 154, 209);
@@ -253,15 +253,13 @@ void spline_widget::drawFunction()
     }
 #endif
 
-    const QColor bg = palette().background().color();
-
     const QRect r1(pixel_bounds.left(), 0, width() - pixel_bounds.left(), pixel_bounds.top()),
                 r2(pixel_bounds.right(), 0, width() - pixel_bounds.right(), pixel_bounds.bottom());
 
     // prevent topward artifacts the lazy way
-    painter.fillRect(r1, bg);
+    painter.fillRect(r1, widget_bg_color);
     // same for rightward artifacts
-    painter.fillRect(r2, bg);
+    painter.fillRect(r2, widget_bg_color);
 
     const int alpha = !isEnabled() ? 64 : 120;
     if (!_preview_only)
