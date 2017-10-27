@@ -58,54 +58,54 @@ class Mat
 
 public:
     template<int Q = w_> std::enable_if_t<equals<Q, 1, 0>::value, num>
-    constexpr inline operator()(int i) const { return data[i][0]; }
+    constexpr inline operator()(int i) const& { return data[i][0]; }
 
     template<int P = h_> std::enable_if_t<equals<P, 1, 1>::value, num>
-    constexpr inline operator()(int i) const { return data[0][i]; }
+    constexpr inline operator()(int i) const& { return data[0][i]; }
 
     template<int Q = w_> std::enable_if_t<equals<Q, 1, 2>::value, num&>
-    constexpr inline operator()(int i) { return data[i][0]; }
+    constexpr inline operator()(int i) & { return data[i][0]; }
 
     template<int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
-    constexpr inline operator()(int i) { return data[0][i]; }
+    constexpr inline operator()(int i) & { return data[0][i]; }
 
     template<int Q = w_> std::enable_if_t<equals<Q, 1, 0>::value, num>
-    constexpr inline operator()(unsigned i) const { return data[i][0]; }
+    constexpr inline operator()(unsigned i) const& { return data[i][0]; }
 
     template<int P = h_> std::enable_if_t<equals<P, 1, 1>::value, num>
-    constexpr inline operator()(unsigned i) const { return data[0][i]; }
+    constexpr inline operator()(unsigned i) const& { return data[0][i]; }
 
     template<int Q = w_> std::enable_if_t<equals<Q, 1, 2>::value, num&>
-    constexpr inline operator()(unsigned i) { return data[i][0]; }
+    constexpr inline operator()(unsigned i) & { return data[i][0]; }
 
     template<int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
-    constexpr inline operator()(unsigned i) { return data[0][i]; }
+    constexpr inline operator()(unsigned i) & { return data[0][i]; }
 
 #define OPENTRACK_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_, "")
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1>::value, num>
-    constexpr inline x() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
+    constexpr inline x() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 2>::value, num>
-    constexpr inline y() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
+    constexpr inline y() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 3>::value, num>
-    constexpr inline z() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
+    constexpr inline z() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4>::value, num>
-    constexpr inline w() const { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
+    constexpr inline w() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1>::value, num&>
-    constexpr inline x() { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
+    constexpr inline x() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 2>::value, num&>
-    constexpr inline y() { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
+    constexpr inline y() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 3>::value, num&>
-    constexpr inline z() { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
+    constexpr inline z() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4>::value, num&>
-    constexpr inline w() { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
+    constexpr inline w() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
 
     // parameters w_ and h_ are rebound so that SFINAE occurs
     // removing them causes a compile-time error -sh 20150811
@@ -199,11 +199,11 @@ public:
         return ret;
     }
 
-    constexpr inline num operator()(int j, int i) const { return data[j][i]; }
-    constexpr inline num& operator()(int j, int i) { return data[j][i]; }
+    constexpr inline num operator()(int j, int i) const& { return data[j][i]; }
+    constexpr inline num& operator()(int j, int i) & { return data[j][i]; }
 
-    constexpr inline num operator()(unsigned j, unsigned i) const { return data[j][i]; }
-    constexpr inline num& operator()(unsigned j, unsigned i) { return data[j][i]; }
+    constexpr inline num operator()(unsigned j, unsigned i) const& { return data[j][i]; }
+    constexpr inline num& operator()(unsigned j, unsigned i) & { return data[j][i]; }
 
 #ifdef __GNUG__
 #   pragma GCC diagnostic push
