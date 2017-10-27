@@ -54,7 +54,6 @@ struct settings_pt : opts
         cam_res_x(b, "camera-res-width", 640),
         cam_res_y(b, "camera-res-height", 480),
         cam_fps(b, "camera-fps", 30),
-        threshold_slider(b, "threshold-slider", slider_value(128, 0, 255)),
         min_point_size(b, "min-point-size", 1),
         max_point_size(b, "max-point-size", 50),
         m01_x(b, "m_01-x", 0),
@@ -78,6 +77,7 @@ struct settings_pt : opts
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 250),
         auto_threshold(b, "automatic-threshold", true),
-        blob_color(b, "blob-color", pt_color_average)
+        blob_color(b, "blob-color", pt_color_average),
+        threshold_slider(b, "threshold-slider", slider_value(128, 0, 255))
     {}
 };
