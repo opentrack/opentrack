@@ -198,7 +198,7 @@ bool shm_wrapper::unlock()
 #include <limits.h>
 
 #pragma GCC diagnostic ignored "-Wunused-result"
-shm_wrapper::shm_wrapper(const char *shm_name, const char* /*mutex_name*/, int map_size) : size(mapSize)
+shm_wrapper::shm_wrapper(const char *shm_name, const char* /*mutex_name*/, int map_size) : size(map_size)
 {
     char filename[PATH_MAX+2] {};
     strcpy(filename, "/");
