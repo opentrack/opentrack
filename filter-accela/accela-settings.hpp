@@ -21,11 +21,11 @@ struct settings_accela : opts
 
     static constexpr gains rot_gains[16] =
     {
-        { 11, 500 },
         { 9, 300 },
-        { 6, 150 },
-        { 2.66, 35 },
-        { 1.66, 8 },
+        { 8, 200 },
+        { 5, 100 },
+        { 2.5, 35 },
+        { 1.5, 8 },
         { 1, 1.5 },
         { .5, .4 },
     };
@@ -54,7 +54,7 @@ struct settings_accela : opts
         opts("accela-sliders"),
         rot_sensitivity(b, "rotation-sensitivity", slider_value(1.5, .05, 2.5)),
         pos_sensitivity(b, "translation-sensitivity", slider_value(1., .05, 1.5)),
-        rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, .1)),
+        rot_deadzone(b, "rotation-deadzone", slider_value(.03, 0, .2)),
         pos_deadzone(b, "translation-deadzone", slider_value(.1, 0, 1)),
         ewma(b, "ewma", slider_value(0, 0, 200))
     {}
