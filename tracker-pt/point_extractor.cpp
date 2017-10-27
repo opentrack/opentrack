@@ -338,7 +338,7 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
             if (radius > region_size_max || radius < region_size_min)
                 continue;
 
-            blob b(radius, vec2(rect.width/2., rect.height/2.), norm/cnt, rect);
+            blob b(radius, vec2(rect.width/2., rect.height/2.), std::pow(f(norm), f(1.1))/cnt, rect);
             blobs.push_back(b);
 
             if (idx >= max_blobs)
