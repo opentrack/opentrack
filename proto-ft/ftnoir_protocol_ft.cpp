@@ -125,7 +125,7 @@ void freetrack::pose(const double* headpose)
         }
 
         store(ft->GameID2, id);
-        store(data->DataID, 0);
+        store((std::int32_t volatile&) data->DataID, 0);
 
         intGameID = id;
 

@@ -26,7 +26,7 @@
 
 /* only 6 headpose floats and the data id are filled -sh */
 typedef struct FTData__ {
-    int32_t DataID;
+    uint32_t DataID;
     int32_t CamWidth;
     int32_t CamHeight;
     /* virtual pose */
@@ -52,7 +52,7 @@ typedef struct FTData__ {
     float  Y3;
     float  X4;
     float  Y4;
-} FTData;
+} volatile FTData;
 
 /* we add some shit at the end for other legacy proto, sadly */
 
@@ -65,4 +65,4 @@ typedef struct FTHeap__ {
         int32_t table_ints[2];
     };
     int32_t GameID2;
-} FTHeap;
+} volatile FTHeap;
