@@ -46,7 +46,7 @@ function(otr_qt n)
     if(".${${n}-hh}" STREQUAL ".")
         message(FATAL_ERROR "project ${n} not globbed")
     endif()
-    qt5_wrap_cpp(${n}-moc ${${n}-hh} OPTIONS --no-notes)
+    qt5_wrap_cpp(${n}-moc ${${n}-hh} ${${n}-cc} OPTIONS --no-notes)
     qt5_wrap_ui(${n}-uih ${${n}-ui})
     qt5_add_resources(${n}-rcc ${${n}-rc})
 
