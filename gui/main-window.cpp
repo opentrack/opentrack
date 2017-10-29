@@ -150,22 +150,26 @@ MainWindow::MainWindow() :
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
                 this,
-                [&](const QString&) { if (pTrackerDialog) pTrackerDialog = nullptr; save_modules(); });
+                [&](const QString&) { if (pTrackerDialog) pTrackerDialog = nullptr; });
 
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
                 this,
-                [&](const QString&) { if (pProtocolDialog) pProtocolDialog = nullptr; save_modules(); });
+                [&](const QString&) { if (pProtocolDialog) pProtocolDialog = nullptr; });
 
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
                 this,
-                [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; save_modules(); });
+                [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
+
+        connect(&m.tracker_dll, base_value::signal_fun<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+        connect(&m.protocol_dll, base_value::signal_fun<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+        connect(&m.filter_dll, base_value::signal_fun<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+
+        tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
+        tie_setting(m.protocol_dll, ui.iconcomboProtocol);
+        tie_setting(m.filter_dll, ui.iconcomboFilter);
     }
-
-    tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
-    tie_setting(m.protocol_dll, ui.iconcomboProtocol);
-    tie_setting(m.filter_dll, ui.iconcomboFilter);
 
     connect(this, &MainWindow::start_tracker,
             this, [&]() -> void { qDebug() << "start tracker"; start_tracker_(); },
@@ -364,6 +368,7 @@ void MainWindow::set_working_directory()
 
 void MainWindow::save_modules()
 {
+    qDebug() << "save modules";
     m.b->save();
 }
 
