@@ -85,7 +85,7 @@ public:
     static auto with_global_settings_object(F&& fun)
     {
         QMutexLocker l(&global_ini_mtx);
-        saver_ saver { *cur_global_settings_object(), global_ini_refcount, ini_modifiedp };
+        saver_ saver { *cur_global_settings_object(), global_ini_refcount, global_ini_modifiedp };
         global_ini_modifiedp = true;
 
         return fun(saver.s);
