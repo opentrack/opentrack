@@ -43,8 +43,11 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
         QString guid, name;
-        bool pressed[128 + 4 * 4];
+        enum { num_pressed_keys = 128 + 4 * 4 };
+        //bool pressed[num_pressed_keys] {};
         Timer first_timer;
+
+        static DIDEVICEOBJECTDATA keystate_buffers[256];
 
         joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name);
         ~joy();

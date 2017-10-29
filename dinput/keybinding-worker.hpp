@@ -49,6 +49,9 @@ private:
     QMainWindow fake_main_window;
     dinput_handle::di_t din;
 
+    unsigned char keystate[256] {};
+    unsigned char old_keystate[256] {};
+
     void run() override;
     bool init();
     KeybindingWorker();
@@ -57,6 +60,9 @@ private:
     fun* _add_receiver(fun &receiver);
     void remove_receiver(fun* pos);
     ~KeybindingWorker();
+
+    static constexpr int num_keyboard_states = 128;
+    DIDEVICEOBJECTDATA keyboard_states[num_keyboard_states];
 
     KeybindingWorker(const KeybindingWorker&) = delete;
     KeybindingWorker& operator=(KeybindingWorker&) = delete;

@@ -11,6 +11,10 @@
 
 #include <QDebug>
 
+// XXX how many axis update events can we reasonably get in a short time frame?
+enum { num_buffers = 256 };
+DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[num_buffers];
+
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
 
@@ -163,59 +167,80 @@ bool win32_joy_ctx::joy::poll(fn f)
         return false;
     }
 
-    DIJOYSTATE2 js;
-    std::memset(&js, 0, sizeof(js));
-
-    if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
+    DWORD sz = num_buffers;
+    if (FAILED(hr = joy_handle->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keystate_buffers, &sz, 0)))
     {
         //qDebug() << "joy get state failed" << guid << hr;
         return false;
     }
 
-    for (unsigned i = 0; i < 4; i++)
+    for (unsigned k = 0; k < sz; k++)
     {
-        using std::round;
+        const DIDEVICEOBJECTDATA& event = keystate_buffers[k];
 
-        unsigned char pos;
-        unsigned pos_ = js.rgdwPOV[i];
-        if ((pos_ & 0xffff) == 0xffff)
-            pos = 0;
-        else if (pos_ == ~0u)
-            pos = 0;
-        else
+        bool is_pov = false;
+        int i = -1;
+
+        switch (event.dwOfs)
         {
-            using uc = unsigned char;
-            pos = uc(((pos_ / 9000u) % 4u) + 1u);
+        case DIJOFS_POV(0): i = 0, is_pov = true; break;
+        case DIJOFS_POV(2): i = 1, is_pov = true; break;
+        case DIJOFS_POV(3): i = 2, is_pov = true; break;
+        case DIJOFS_POV(4): i = 3, is_pov = true; break;
+        default:
+            if (event.dwOfs >= DIJOFS_BUTTON0 && event.dwOfs <= DIJOFS_BUTTON(127))
+            {
+                unsigned tmp = event.dwOfs;
+                tmp -= DIJOFS_BUTTON0;
+                tmp /= DIJOFS_BUTTON1 - DIJOFS_BUTTON0;
+                tmp &= 127;
+                i = tmp;
+            }
+            break;
         }
 
-        const bool state[] =
+        if (is_pov)
         {
-            pos == 1,
-            pos == 2,
-            pos == 3,
-            pos == 4
-        };
+            //qDebug() << "DBG: pov" << i << event.dwData;
 
-        unsigned idx = 128u + i * 4u;
+            using std::round;
 
-        for (unsigned j = 0; j < 4; j++, idx++)
-        {
-            if (state[j] != pressed[idx])
+            unsigned char pos;
+            unsigned pos_ = event.dwData;
+            if ((pos_ & 0xffff) == 0xffff)
+                pos = 0;
+            else if (pos_ == ~0u)
+                pos = 0;
+            else
             {
-                f(guid, int(idx), state[j]);
-                pressed[idx] = state[j];
+                using uc = unsigned char;
+                pos = uc(((pos_ / 9000u) % 4u) + 1u);
+            }
+
+            const bool state[] =
+            {
+                pos == 1,
+                pos == 2,
+                pos == 3,
+                pos == 4
+            };
+
+            i = 128u + i * 4u;
+
+            for (unsigned j = 0; j < 4; j++)
+            {
+                //pressed[i] = state[j];
+                f(guid, i, state[j]);
             }
         }
-    }
-
-    for (int i = 0; i < 128; i++)
-    {
-        const bool state = !!(js.rgbButtons[i] & 0x80);
-        if (state != pressed[i])
+        else if (i != -1)
         {
+            const bool state = !!(event.dwData & 0x80);
+            //qDebug() << "DBG: btn" << i << state;
+            //pressed[i] = state;
             f(guid, i, state);
         }
-        pressed[i] = state;
+
     }
 
     return true;
@@ -305,6 +330,23 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
             h->Release();
             goto end;
         }
+
+        {
+            DIPROPDWORD dipdw;
+            dipdw.dwData = 128;
+            dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
+            dipdw.diph.dwHow = DIPH_DEVICE;
+            dipdw.diph.dwObj = 0;
+            dipdw.diph.dwSize = sizeof(dipdw);
+
+            if (h->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph) != DI_OK)
+            {
+                qDebug() << "setup joystick buffer mode failed!";
+                h->Release();
+                goto end;
+            }
+        }
+
         if (FAILED(hr = h->EnumObjects(EnumObjectsCallback, h, DIDFT_ALL)))
         {
             qDebug() << "enum-objects";
@@ -347,7 +389,6 @@ win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString &guid, const 
     : joy_handle(handle), guid(guid), name(name)
 {
     //qDebug() << "make joy" << guid << name << joy_handle;
-    std::memset(pressed, 0, sizeof(pressed));
 }
 
 win32_joy_ctx::joy::~joy()
