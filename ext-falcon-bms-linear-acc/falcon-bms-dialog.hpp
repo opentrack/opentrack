@@ -2,10 +2,9 @@
 
 #include "falcon-bms-ext.hpp"
 
-class falcon_bms_acceleration_dialog : public IExtensionDialog
+struct falcon_bms_acceleration_dialog : IExtensionDialog
 {
-    Q_OBJECT
-
+public:
     void register_extension(IExtension& ext) override;
     void unregister_extension() override;
 };
