@@ -323,8 +323,8 @@ void hatire_thread::on_serial_read()
     {
         // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
         // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
-        static constexpr int hz = 90;
-        static constexpr int ms = 1000/hz;
+        constexpr int hz = 90;
+        constexpr int ms = 1000/hz;
         portable::sleep(ms);
     }
 

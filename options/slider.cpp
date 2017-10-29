@@ -46,7 +46,7 @@ bool slider_value::operator==(const slider_value& v) const
 {
     using std::fabs;
 
-    static constexpr double eps = 2e-3;
+    constexpr double eps = 2e-3;
 
 #if 1
     return (fabs(v.cur_ - cur_) < eps &&

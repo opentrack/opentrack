@@ -88,7 +88,7 @@ void tracker_freepie::run() {
 
             QMutexLocker foo(&mtx);
 
-            static constexpr double r2d = 180 / M_PI;
+            constexpr double r2d = 180 / M_PI;
 
             for (int i = 0; i < 3; i++)
             {

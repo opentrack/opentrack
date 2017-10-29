@@ -81,7 +81,7 @@ std::tuple<cv::Vec3f, cv::Vec3i> TranslationCalibrator::get_estimate()
 bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 {
     using namespace euler;
-    static constexpr double r2d = 180/M_PI;
+    constexpr double r2d = 180/M_PI;
 
     rmat r;
     for (unsigned j = 0; j < 3; j++)

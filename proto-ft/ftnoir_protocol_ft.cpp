@@ -118,7 +118,7 @@ void freetrack::pose(const double* headpose)
             if (addr != addr_)
                 assert(!"unaligned access");
 
-            static_assert(sizeof(char[8])/sizeof(LONG) == 2, "");
+            static_assert(sizeof(LONG) == 4, "");
 
             for (unsigned k = 0; k < 2; k++)
                 store(*(std::int32_t volatile*)&pMemData->table_ints[k], t.ints[k]);

@@ -8,8 +8,8 @@
 
 #include <windows.h>
 
-static constexpr int visible_timeout = 5000;
-static constexpr int invisible_timeout = 250;
+constexpr int visible_timeout = 5000;
+constexpr int invisible_timeout = 250;
 
 static Timer timer;
 static QMutex mtx;

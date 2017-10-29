@@ -74,8 +74,8 @@ int mouse::get_delta(int val, int prev)
 
 int mouse::get_value(double val, double sensitivity, bool is_rotation)
 {
-    static constexpr double c = 1e-1;
     static constexpr double sgn[] = { 1e-2, 1 };
+    constexpr double c = 1e-1;
 
     return iround(val * c * sensitivity * sgn[unsigned(is_rotation)]);
 }

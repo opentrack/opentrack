@@ -91,8 +91,8 @@ void rift_tracker_025::data(double *data)
     {
         Quatf rot = pSFusion->GetOrientation();
 
-        static constexpr float c_mult = 8;
-        static constexpr float c_div = 1/c_mult;
+        constexpr float c_mult = 8;
+        constexpr float c_div = 1/c_mult;
 
         Vector3f axis;
         float angle;
@@ -115,7 +115,7 @@ void rift_tracker_025::data(double *data)
             old_yaw = yaw_;
         }
 
-        static constexpr double r2d = 180 / M_PI;
+        constexpr double r2d = 180 / M_PI;
 
         data[Yaw] = yaw_ * r2d;
         data[Pitch] = double(pitch) * r2d;

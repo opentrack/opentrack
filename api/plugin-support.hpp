@@ -155,8 +155,8 @@ private:
             if (in.startsWith(OPENTRACK_SOLIB_PREFIX) &&
                 in.endsWith("." OPENTRACK_SOLIB_EXT))
             {
-                static constexpr unsigned pfx_len = sizeof(OPENTRACK_SOLIB_PREFIX) - 1;
-                static constexpr unsigned rst_len = sizeof("." OPENTRACK_SOLIB_EXT) - 1;
+                constexpr unsigned pfx_len = sizeof(OPENTRACK_SOLIB_PREFIX) - 1;
+                constexpr unsigned rst_len = sizeof("." OPENTRACK_SOLIB_EXT) - 1;
 
                 in = in.mid(pfx_len);
                 in = in.left(in.size() - rst_len);

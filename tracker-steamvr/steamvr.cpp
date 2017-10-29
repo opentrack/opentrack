@@ -54,7 +54,7 @@ void device_list::fill_device_specs(QList<device_spec>& list)
             v->GetDeviceToAbsoluteTrackingPose(origin::TrackingUniverseSeated, 0,
                                                device_states, vr::k_unMaxTrackedDeviceCount);
 
-            static constexpr unsigned bufsiz = vr::k_unTrackingStringSize;
+            constexpr unsigned bufsiz = vr::k_unTrackingStringSize;
             static char str[bufsiz+1] {}; // vr_lock prevents reentrancy
 
             for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
@@ -238,7 +238,7 @@ void steamvr::data(double* data)
         std::tie(ok, pose) = device_list::get_pose(device_index);
         if (ok)
         {
-            static constexpr int c = 10;
+            constexpr int c = 10;
 
             const auto& result = pose.mDeviceToAbsoluteTracking;
 
@@ -248,7 +248,7 @@ void steamvr::data(double* data)
 
             matrix_to_euler(data[Yaw], data[Pitch], data[Roll], result);
 
-            static constexpr double r2d = 180 / M_PI;
+            constexpr double r2d = 180 / M_PI;
             data[Yaw] *= r2d; data[Pitch] *= r2d; data[Roll] *= r2d;
         }
     }

@@ -99,7 +99,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     p[2] = project(model.M02, fx);
 
     const int diagonal = int(std::sqrt(f(info.res_x*info.res_x + info.res_y*info.res_y)));
-    static constexpr int div = 100;
+    constexpr int div = 100;
     const int max_dist = diagonal / div; // 8 pixels for 640x480
 
     // set correspondences by minimum distance to projected model point
@@ -140,7 +140,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
 
 bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamInfo& info)
 {
-    static constexpr f std_width = 640, std_height = 480;
+    constexpr f std_width = 640, std_height = 480;
 
     PointOrder scaled_order;
 
@@ -163,7 +163,7 @@ bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamI
     }
 
     // CAVEAT don't increase too much, it visibly loses precision
-    static constexpr f max_dist = f(.13);
+    constexpr f max_dist = f(.13);
 
     const bool validp = sum < max_dist;
 
@@ -278,7 +278,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
     mat33 R_1, R_2;
     mat33* R_current = &R_1;
 
-    static constexpr int max_iter = 100;
+    constexpr int max_iter = 100;
 
     int i=1;
     for (; i<max_iter; ++i)

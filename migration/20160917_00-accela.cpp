@@ -29,7 +29,7 @@ struct move_accela_to_sliders : migration
     static constexpr const char* new_bundle_name = "accela-sliders";
     static constexpr const char* slider_name = "rotation-nonlinearity";
 
-    using map_ = struct { map s[8]; };
+    struct map_ { map s[8]; };
 
     static map_ make_settings(settings_accela& s)
     {

@@ -33,7 +33,7 @@ struct max_pitch_output : migration
     bool should_run() const override
     {
         {
-            static constexpr char const* name = "pitch-max-output-value";
+            constexpr char const* name = "pitch-max-output-value";
 
             bundle b = make_bundle("opentrack-mappings");
 

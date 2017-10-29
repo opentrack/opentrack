@@ -203,7 +203,7 @@ void spline_widget::drawFunction()
 
 //#define DEBUG_SPLINE
 #ifndef DEBUG_SPLINE
-    static constexpr double step_ = 5;
+    constexpr double step_ = 5;
 
     const double maxx = _config->max_input();
     const double step = step_ / c.x();
@@ -563,8 +563,8 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 
 bool spline_widget::is_in_bounds(const QPoint& pos) const
 {
-    static constexpr int grace = point_size * 3;
-    static constexpr int bottom_grace = int(point_size * 1.5);
+    constexpr int grace = point_size * 3;
+    constexpr int bottom_grace = int(point_size * 1.5);
     return (pos.x() + grace        > pixel_bounds.left() &&
             pos.x() - grace        < pixel_bounds.right() &&
             pos.y() + grace        > pixel_bounds.top() &&
@@ -612,7 +612,7 @@ QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
     qreal x = (point.x() - pixel_bounds.x()) / c.x();
     qreal y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
 
-    static constexpr int c = 1000;
+    constexpr int c = 1000;
 
     if (snap_x > 0)
     {

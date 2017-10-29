@@ -106,7 +106,7 @@ void Tracker_PT::run()
                 vec3 p = X_GH.t; // head (center?) position in global space
                 vec2 p_((p[0] * fx) / p[2], (p[1] * fx) / p[2]);  // projected to screen
 
-                static constexpr int len = 9;
+                constexpr int len = 9;
 
                 cv::Point p2(iround(p_[0] * preview_frame.cols + preview_frame.cols/2),
                              iround(-p_[1] * preview_frame.cols + preview_frame.rows/2));

@@ -51,7 +51,7 @@ int fsuipc::scale2AnalogLimits(t x, t min_x, t max_x)
 template<typename t>
 static inline bool check_float_fresh(t x, t y)
 {
-    static constexpr t eps = t(1e-4);
+    constexpr t eps = t(1e-4);
     return std::fabs(x - y) >= eps;
 }
 

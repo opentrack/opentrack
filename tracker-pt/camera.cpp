@@ -53,7 +53,7 @@ DEFUN_WARN_UNUSED Camera::result Camera::get_frame(cv::Mat& frame)
         t.start();
 
         // measure fps of valid frames
-        static constexpr double RC = .1; // seconds
+        constexpr double RC = .1; // seconds
         const double alpha = dt/(dt + RC);
 
         if (dt_mean < dt_eps)

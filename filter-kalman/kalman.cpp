@@ -122,8 +122,8 @@ void kalman::fill_process_noise_cov_matrix(StateMatrix &target, double dt) const
     double sigma_angle = s.process_sigma_rot;
     double a_pos = sigma_pos * sigma_pos * dt;
     double a_ang = sigma_angle * sigma_angle * dt;
-    static constexpr double b = 20;
-    static constexpr double c = 1.;
+    constexpr double b = 20;
+    constexpr double c = 1.;
     for (int i = 0; i < 3; ++i)
     {
         target(i, i) = a_pos;

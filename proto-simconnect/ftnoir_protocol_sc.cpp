@@ -68,7 +68,7 @@ void simconnect::run()
                     {
                         const int idle_seconds = tm.elapsed_seconds();
 
-                        static constexpr int max_idle_seconds = 2;
+                        constexpr int max_idle_seconds = 2;
 
                         if (idle_seconds >= max_idle_seconds)
                         {

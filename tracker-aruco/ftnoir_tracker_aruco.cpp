@@ -241,7 +241,7 @@ void aruco_tracker::set_points()
     using f = float;
     const f hx = f(s.headpos_x), hy = f(s.headpos_y), hz = f(s.headpos_z);
 
-    static constexpr float size = 40;
+    constexpr float size = 40;
 
     const int x1=1, x2=2, x3=3, x4=0;
 
@@ -386,7 +386,7 @@ void aruco_tracker::run()
 
 #ifdef DEBUG_UNSHARP_MASKING
         {
-            static constexpr double strength = double(DEBUG_UNSHARP_MASKING);
+            constexpr double strength = double(DEBUG_UNSHARP_MASKING);
             cv::GaussianBlur(grayscale, blurred, cv::Size(0, 0), gauss_kernel_size);
             cv::addWeighted(grayscale, 1 + strength, blurred, -strength, 0, grayscale);
             cv::imshow("capture", grayscale);

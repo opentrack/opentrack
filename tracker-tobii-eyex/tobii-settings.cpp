@@ -85,7 +85,7 @@ rel_settings::rel_settings() :
 }
 
 // there's an underflow in spline code, can't use 1e0
-static constexpr const double spline_max = 1e2;
+constexpr double spline_max = 1e2;
 
 double rel_settings::gain(double value)
 {
@@ -102,7 +102,7 @@ void rel_settings::make_spline_(part* functors, unsigned len)
     {
         part& fun = functors[k];
 
-        static constexpr unsigned nparts = 7;
+        constexpr unsigned nparts = 7;
 
         for (unsigned i = 1; i <= nparts; i++)
         {

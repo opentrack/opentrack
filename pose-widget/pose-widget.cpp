@@ -107,7 +107,7 @@ void pose_transform::with_rotate(F&& fun, double xAngle, double yAngle, double z
     using std::sin;
     using std::cos;
 
-    static constexpr double d2r = M_PI / 180;
+    constexpr double d2r = M_PI / 180;
 
     euler::euler_t euler(-zAngle * d2r, xAngle * d2r, -yAngle * d2r);
     euler::rmat r = euler::euler_to_rmat(euler);
@@ -237,7 +237,7 @@ void pose_transform::project_quad_texture()
     vec2i min, max;
 
     {
-        static constexpr const double c = 85/100.;
+        constexpr double c = 85/100.;
 
         const int sx_ = (w - std::max(0, (w - h)/2)) * 5/9;
         const int sy_ = (h - std::max(0, (h - w)/2)) * 5/9;
@@ -382,7 +382,7 @@ void pose_transform::project_quad_texture()
 #if defined BILINEAR_FILTER
                 float a;
                 {
-                    static constexpr unsigned k = 3;
+                    constexpr unsigned k = 3;
                     const uc i = orig[orig_pos + k];
                     const uc i_ = orig[orig_pos_ + k];
                     const uc i__ = orig[orig_pos__ + k];

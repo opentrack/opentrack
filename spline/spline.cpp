@@ -471,7 +471,7 @@ std::shared_ptr<const settings> spline::get_settings() const
 
 double spline::bucket_size_coefficient(const QList<QPointF>& points) const
 {
-    static constexpr double eps = 1e-4;
+    constexpr double eps = 1e-4;
 
     const double maxx = max_input();
 
