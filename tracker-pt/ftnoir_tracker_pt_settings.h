@@ -17,10 +17,8 @@ enum pt_color_type
     // don't reuse when removing some of the modes
     pt_color_natural = 2,
     pt_color_red_only = 3,
-    pt_color_floppy_filter = 4,
     pt_color_average = 5,
     pt_color_blue_only = 6,
-    pt_color_smoothed_average = 7,
 };
 
 struct settings_pt : opts

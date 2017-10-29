@@ -144,6 +144,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
 {
     switch (s.blob_color)
     {
+#if 0
     case pt_color_floppy_filter:
     {
         // weight for blue color
@@ -162,6 +163,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
 
         break;
     }
+#endif
     case pt_color_blue_only:
     {
         extract_single_channel(frame, 0, output);
@@ -172,6 +174,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
         extract_single_channel(frame, 2, output);
         break;
     }
+#if 0
     case pt_color_smoothed_average:
     {
         extract_all_channels(frame);
@@ -203,6 +206,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
 
         break;
     }
+#endif
     default:
         once_only(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
         /*FALLTHROUGH*/

@@ -85,10 +85,8 @@ TrackerDialog_PT::TrackerDialog_PT()
     static constexpr pt_color_type color_types[] = {
         pt_color_average,
         pt_color_natural,
-        pt_color_floppy_filter,
         pt_color_red_only,
         pt_color_blue_only,
-        pt_color_smoothed_average,
     };
 
     for (unsigned k = 0; k < std::size(color_types); k++)
