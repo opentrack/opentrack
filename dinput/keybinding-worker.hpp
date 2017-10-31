@@ -49,8 +49,8 @@ private:
     QMainWindow fake_main_window;
     dinput_handle::di_t din;
 
-    unsigned char keystate[256] {};
-    unsigned char old_keystate[256] {};
+    bool keystate[256] {};
+    bool old_keystate[256] {};
 
     void run() override;
     bool init();
