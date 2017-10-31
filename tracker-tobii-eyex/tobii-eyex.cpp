@@ -1,12 +1,12 @@
 #include "tobii-eyex.hpp"
+#include "compat/math-imports.hpp"
+
 #include <cstdlib>
 #include <cstdio>
-#include <cmath>
+
 #include <QDebug>
 #include <QMutexLocker>
 #include <QMessageBox>
-
-// XXX TODO whole opentrack needs different debug levels -sh 20160801
 
 //#define TOBII_EYEX_DEBUG_PRINTF
 #define TOBII_EYEX_VERBOSE_PRINTF
@@ -236,7 +236,7 @@ void tobii_eyex_tracker::start_tracker(QFrame*)
         dbg_verbose("api initialized");
 }
 
-tobii_eyex_tracker::num tobii_eyex_tracker::gain(num /*x_*/)
+tobii_eyex_tracker::num tobii_eyex_tracker::gain(num x)
 {
     return 1;
 }
