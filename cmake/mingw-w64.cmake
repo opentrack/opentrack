@@ -6,23 +6,17 @@
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 1)
 
-set(CMAKE_BUILD_TYPE_INIT RELEASE)
-# for nmake/jom build directories
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
-endif()
-
-unset(c)
-unset(e)
 # specify the cross compiler
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     #set(p D:/cygwin64/opt/bin/)
     set(p "C:/msys64/mingw32/bin/")
     set(e .exe)
+    set(c "${p}")
+else()
+    set(p "/usr/bin/")
+    set(c "${p}i686-w64-mingw32-")
+    set(e "")
 endif()
-#set(c ${p}i686-w64-mingw32-)
-set(c "${p}")
-#set(CMAKE_MAKE_PROGRAM ${p}/mingw32-make.exe CACHE FILEPATH "" FORCE)
 
 SET(CMAKE_C_COMPILER    ${c}gcc${e})
 SET(CMAKE_CXX_COMPILER  ${c}g++${e})
@@ -45,11 +39,13 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-ffast-math -mfpmath=both -mstackrealign -falign-functions=16 -falign-loops=16")
-set(cpu "-O3 -march=native -frename-registers")
-set(lto "-fno-lto -fno-use-linker-plugin -flto-compression-level=9 -flto-partition=balanced -fno-ipa-pta -fno-lto-odr-type-merging")
+set(cpu "-O3 -march=core2 -mtune=skylake -frename-registers")
+#set(lto "-fno-lto -fno-use-linker-plugin -flto-compression-level=9 -flto-partition=balanced -fno-ipa-pta -fno-lto-odr-type-merging")
+set(lto "")
 set(sections "-ffunction-sections -fdata-sections")
 
-set(cc "-fdump-statistics-details -fdump-ipa-cgraph")
+set(cc "")
+#set(cc "-fdump-statistics-details -fdump-ipa-cgraph")
 
 set(clang-warns "")
 if(CMAKE_COMPILER_IS_CLANG)
@@ -90,7 +86,7 @@ set(_CFLAGS_DEBUG "-g -O0 -fstack-protector-strong")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE} ${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-Wl,--dynamicbase,--no-seh,--nxcompat,--as-needed,--pic-executable")
+set(_LDFLAGS "-Wl,--dynamicbase,--no-seh,--nxcompat,--as-needed,--pic-executable,--strip-all")
 set(_LDFLAGS_RELEASE "-Wl,--gc-sections,--exclude-libs,ALL")
 set(_LDFLAGS_DEBUG "")
 
@@ -117,6 +113,8 @@ foreach(j "" _DEBUG _RELEASE)
     endforeach()
 endforeach()
 
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+if(NOT __otr_toolchain_initialized)
+    set(__otr_toolchain_initialized 1 CACHE INTERNAL "" FORCE)
+    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
 endif()
