@@ -158,9 +158,9 @@ void KeybindingWorker::run()
                             default:
                             {
                                 Key k;
-                                k.shift = !!(keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT]);
-                                k.alt = !!(keystate[DIK_LALT] | keystate[DIK_RALT]);
-                                k.ctrl = !!(keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL]);
+                                k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
+                                k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
+                                k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
                                 k.keycode = idx;
                                 k.held = held;
 
@@ -180,9 +180,9 @@ void KeybindingWorker::run()
                     joy_fn f = [&](const QString& guid, int idx, bool held) {
                         Key k;
                         k.keycode = idx;
-                        k.shift = !!(keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT]);
-                        k.alt = !!(keystate[DIK_LALT] | keystate[DIK_RALT]);
-                        k.ctrl = !!(keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL]);
+                        k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
+                        k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
+                        k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
                         k.guid = guid;
                         k.held = held;
 
