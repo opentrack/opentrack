@@ -199,6 +199,17 @@ public:
         return ret;
     }
 
+    constexpr Mat<num, h_, w_> mult_elementwise(const Mat<num, h_, w_>& other) const&
+    {
+        Mat<num, h_, w_> ret;
+
+        for (unsigned j = 0; j < h_; j++)
+            for (unsigned i = 0; i < w_; i++)
+                ret(j, i) = data[j][i] * other.data[j][i];
+
+        return ret;
+    }
+
     constexpr inline num operator()(int j, int i) const& { return data[j][i]; }
     constexpr inline num& operator()(int j, int i) & { return data[j][i]; }
 
