@@ -50,7 +50,7 @@ public:
     using t_keys = std::vector<t_key>;
     std::vector<tt> keys;
 #ifdef _WIN32
-    KeybindingWorker::Token key_token = [this](const Key& k) { receiver(k); };
+    KeybindingWorker::Token key_token {[this](const Key& k) { receiver(k); }};
 #endif
 
     Shortcuts() {}
