@@ -134,36 +134,10 @@ void PointExtractor::extract_all_channels(const cv::Mat& orig_frame)
     cv::split(orig_frame, (cv::Mat*) ch);
 }
 
-void PointExtractor::channels_to_float(unsigned num_channels)
-{
-    for (unsigned k = 0; k < num_channels; k++)
-        ch[k].convertTo(ch_float[k], CV_32F);
-}
-
 void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
 {
     switch (s.blob_color)
     {
-#if 0
-    case pt_color_floppy_filter:
-    {
-        // weight for blue color
-        static constexpr float B = .667;
-
-        static constexpr int from_to[] = {
-            0, 0,
-            1, 1
-        };
-
-        extract_channels(frame, from_to, 2);
-        channels_to_float(2);
-
-        cv::addWeighted(ch_float[0], B, ch_float[1], 1-B, 0, ch_float[2]);
-        ch_float[2].convertTo(output, CV_8U);
-
-        break;
-    }
-#endif
     case pt_color_blue_only:
     {
         extract_single_channel(frame, 0, output);
@@ -174,48 +148,13 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
         extract_single_channel(frame, 2, output);
         break;
     }
-#if 0
-    case pt_color_smoothed_average:
-    {
-        extract_all_channels(frame);
-        channels_to_float(3);
-        ch_float[3] = (ch_float[0] + ch_float[1] + ch_float[2]) * (1./3);
-        ch_float[3].convertTo(ch[0], CV_8U);
-
-        const float diagonal = std::sqrt(frame.rows*frame.rows + frame.cols*frame.cols);
-        static constexpr float standard_diagonal = 800; // 640x480 diagonal. sqrt isn't constexpr.
-
-        const unsigned iters = diagonal / standard_diagonal;
-
-        if (iters > 0)
-        {
-            Timer t;
-
-            int i1 = ~0, i2 = ~0;
-
-            for (unsigned k = 0; k < iters; k++)
-            {
-                i1 = k&1;
-                i2 = 1 - i1;
-
-                cv::GaussianBlur(ch[i1], ch[i2], cv::Size(3, 3), 0, 0, cv::BORDER_REPLICATE);
-            }
-
-            ch[i2].copyTo(output);
-        }
-
-        break;
-    }
-#endif
     default:
         once_only(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
         /*FALLTHROUGH*/
     case pt_color_average:
     {
         extract_all_channels(frame);
-        channels_to_float(3);
-        ch_float[3] = (ch_float[0] + ch_float[1] + ch_float[2]) * (1./3);
-        ch_float[3].convertTo(output, CV_8U);
+        output = (ch[0] + ch[1] + ch[2]) / 3;
         break;
     }
     case pt_color_natural:
