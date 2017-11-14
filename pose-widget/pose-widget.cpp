@@ -29,9 +29,6 @@ pose_transform::pose_transform(QWidget* dst) :
     image2(w, h, QImage::Format_ARGB32),
     fresh(false)
 {
-    front = front.copy(front.rect());
-    back = back.copy(back.rect());
-
     image.fill(Qt::transparent);
     image2.fill(Qt::transparent);
 }
