@@ -238,10 +238,8 @@ void spline::update_interp_data()
                 const int x = int(.5 * c * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
                 const float y = float(.5 * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
-                if (x >= 0 && x < value_count)
-                {
+                if (unsigned(x) < value_count)
                     data[x] = y;
-                }
             }
         }
     }
