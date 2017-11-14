@@ -170,6 +170,8 @@ static tt numpad_keymap[] = {
     { Qt::Key_Minus, XK_KP_Subtract },
     { Qt::Key_Period, XK_KP_Decimal },
     { Qt::Key_Slash, XK_KP_Divide },
+
+    { Qt::Key_ScrollLock, XK_Scroll_Lock },
 };
 
 QXT_GUI_EXPORT
