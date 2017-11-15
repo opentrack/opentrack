@@ -4,7 +4,7 @@
 # -sh 20140922
 
 SET(CMAKE_SYSTEM_NAME Windows)
-SET(CMAKE_SYSTEM_VERSION 1)
+SET(CMAKE_SYSTEM_VERSION 5)
 
 # specify the cross compiler
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
@@ -13,7 +13,7 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(e .exe)
     set(c "${p}")
 else()
-    set(p "/usr/bin/")
+    set(p "")
     set(c "${p}i686-w64-mingw32-")
     set(e "")
 endif()
@@ -29,7 +29,6 @@ set(CMAKE_OBJCOPY       ${c}objcopy${e}     CACHE STRING "" FORCE)
 set(CMAKE_OBJDUMP       ${c}objdump${e}     CACHE STRING "" FORCE)
 set(CMAKE_STRIP         ${c}strip${e}       CACHE STRING "" FORCE)
 
-#SET(CMAKE_FIND_ROOT_PATH /usr/i686-w64-mingw32)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -38,8 +37,8 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(fpu "-ffast-math -mfpmath=both -mstackrealign -falign-functions=16 -falign-loops=16")
-set(cpu "-O3 -march=core2 -mtune=skylake -frename-registers")
+set(fpu "-ffast-math")
+set(cpu "-O3 -march=i686 -msse3")
 #set(lto "-fno-lto -fno-use-linker-plugin -flto-compression-level=9 -flto-partition=balanced -fno-ipa-pta -fno-lto-odr-type-merging")
 set(lto "")
 set(sections "-ffunction-sections -fdata-sections")
@@ -86,7 +85,7 @@ set(_CFLAGS_DEBUG "-g -O0 -fstack-protector-strong")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE} ${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-Wl,--dynamicbase,--no-seh,--nxcompat,--as-needed,--pic-executable,--strip-all")
+set(_LDFLAGS "-Wl,--dynamicbase,--nxcompat,--as-needed")
 set(_LDFLAGS_RELEASE "-Wl,--gc-sections,--exclude-libs,ALL")
 set(_LDFLAGS_DEBUG "")
 
