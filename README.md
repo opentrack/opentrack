@@ -24,7 +24,7 @@ For the latest releases visit: <<https://github.com/opentrack/opentrack/releases
 
 - PointTracker by Patrick Ruoff, freetrack-like light sources
 - Oculus Rift DK1, DK2, CV, and legacy/knockoff versions (Windows only)
-- Paper marker support via the ArUco library <<https://github.com/rmsalinas/aruco>>
+- Paper marker support via the ArUco library <<https://github.com/opentrack/aruco>>
 - Razer Hydra
 - Relaying via UDP from a different computer
 - Relaying UDP via FreePIE-specific Android app
