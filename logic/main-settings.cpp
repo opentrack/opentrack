@@ -20,7 +20,7 @@ main_settings::main_settings() :
     tray_enabled(b, "use-system-tray", false),
     tray_start(b, "start-in-tray", false),
     center_at_startup(b, "center-at-startup", true),
-    center_method(b, "centering-method", 1),
+    //center_method(b, "centering-method", 1),
     neck_z(b, "neck-depth", 0),
     neck_enable(b, "neck-enable", false),
     key_start_tracking1(b, "start-tracking"),

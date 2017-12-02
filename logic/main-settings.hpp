@@ -41,7 +41,7 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<bool> tcomp_disable_src_yaw, tcomp_disable_src_pitch, tcomp_disable_src_roll;
     value<bool> tray_enabled, tray_start;
     value<bool> center_at_startup;
-    value<int> center_method;
+    //value<int> center_method;
     value<int> neck_z;
     value<bool> neck_enable;
     key_opts key_start_tracking1, key_start_tracking2;

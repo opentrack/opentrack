@@ -215,7 +215,8 @@ void pipeline::logic()
         rmat rotation = scaled_rotation.rotation;
         euler_t pos = euler_t(&value[TX]) - t_center;
 
-        switch (s.center_method)
+        //switch (s.center_method)
+        switch (1)
         {
         // inertial
         case 0:
