@@ -3,7 +3,7 @@
 template <typename T>
 static inline constexpr auto signum(T x)
 {
-    return (T() < x) - (x < T());
+    return x < T(0) ? -1 : 1;
 }
 
 #include <cmath>
