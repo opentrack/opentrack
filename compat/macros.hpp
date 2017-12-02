@@ -39,11 +39,11 @@
 #endif
 
 #ifdef Q_CREATOR_RUN
-#   define DEFUN_WARN_UNUSED
+#   define warn_result_unused
 #elif defined(_MSC_VER)
-#   define DEFUN_WARN_UNUSED _Check_return_
+#   define warn_result_unused _Check_return_
 #else
-#   define DEFUN_WARN_UNUSED __attribute__((warn_unused_result))
+#   define warn_result_unused __attribute__((warn_unused_result))
 #endif
 
 #if defined(__GNUG__)

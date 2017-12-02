@@ -43,11 +43,11 @@ struct Camera final
 
     Camera() : dt_mean(0), fov(0) {}
 
-    DEFUN_WARN_UNUSED open_status start(int idx, int fps, int res_x, int res_y);
+    warn_result_unused open_status start(int idx, int fps, int res_x, int res_y);
     void stop();
 
-    DEFUN_WARN_UNUSED result get_frame(cv::Mat& frame);
-    DEFUN_WARN_UNUSED result get_info() const;
+    warn_result_unused result get_frame(cv::Mat& frame);
+    warn_result_unused result get_info() const;
 
     CamInfo get_desired() const { return cam_desired; }
     QString get_desired_name() const;
@@ -62,7 +62,7 @@ struct Camera final
     void set_fov(double value) { fov = value; }
 
 private:
-    DEFUN_WARN_UNUSED bool _get_frame(cv::Mat& frame);
+    warn_result_unused bool _get_frame(cv::Mat& frame);
 
     double dt_mean;
     double fov;

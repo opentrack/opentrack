@@ -99,7 +99,7 @@ float spline::get_value_no_save_internal(double x)
     return ret;
 }
 
-DEFUN_WARN_UNUSED bool spline::get_last_value(QPointF& point)
+warn_result_unused bool spline::get_last_value(QPointF& point)
 {
     QMutexLocker foo(&_mutex);
     point = last_input_value;

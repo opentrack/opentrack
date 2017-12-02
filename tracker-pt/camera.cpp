@@ -36,14 +36,14 @@ double CamInfo::get_focal_length() const
     //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
 }
 
-DEFUN_WARN_UNUSED Camera::result Camera::get_info() const
+warn_result_unused Camera::result Camera::get_info() const
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
         return result(false, CamInfo());
     return result(true, cam_info);
 }
 
-DEFUN_WARN_UNUSED Camera::result Camera::get_frame(cv::Mat& frame)
+warn_result_unused Camera::result Camera::get_frame(cv::Mat& frame)
 {
     const bool new_frame = _get_frame(frame);
 
@@ -72,7 +72,7 @@ DEFUN_WARN_UNUSED Camera::result Camera::get_frame(cv::Mat& frame)
         return result(false, CamInfo());
 }
 
-DEFUN_WARN_UNUSED Camera::open_status Camera::start(int idx, int fps, int res_x, int res_y)
+warn_result_unused Camera::open_status Camera::start(int idx, int fps, int res_x, int res_y)
 {
     if (idx >= 0 && fps >= 0 && res_x >= 0 && res_y >= 0)
     {
@@ -135,7 +135,7 @@ void Camera::stop()
     cam_desired = CamInfo();
 }
 
-DEFUN_WARN_UNUSED bool Camera::_get_frame(cv::Mat& frame)
+warn_result_unused bool Camera::_get_frame(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {

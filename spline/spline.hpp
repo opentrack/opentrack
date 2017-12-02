@@ -92,7 +92,7 @@ public:
 
     float get_value(double x);
     float get_value_no_save(double x) const;
-    DEFUN_WARN_UNUSED bool get_last_value(QPointF& point);
+    warn_result_unused bool get_last_value(QPointF& point);
     void remove_point(int i);
     void clear();
 
