@@ -88,24 +88,19 @@ PointExtractor::PointExtractor()
 void PointExtractor::ensure_channel_buffers(const cv::Mat& orig_frame)
 {
     if (ch[0].rows != orig_frame.rows || ch[0].cols != orig_frame.cols)
-    {
         for (unsigned k = 0; k < 3; k++)
-        {
             ch[k] = cv::Mat1b(orig_frame.rows, orig_frame.cols);
-            ch_float[k] = cv::Mat1f(orig_frame.rows, orig_frame.cols);
-        }
-        // extra channel is a scratch buffer
-        ch_float[3] = cv::Mat1f(orig_frame.rows, orig_frame.cols);
-    }
 }
 
 void PointExtractor::ensure_buffers(const cv::Mat& frame)
 {
-    if (frame_gray.rows != frame.rows || frame_gray.cols != frame.cols)
+    const int W = frame.cols, H = frame.rows;
+
+    if (frame_gray.rows != W || frame_gray.cols != H)
     {
-        frame_gray = cv::Mat1b(frame.rows, frame.cols);
-        frame_bin = cv::Mat1b(frame.rows, frame.cols);
-        frame_blobs = cv::Mat1b(frame.rows, frame.cols);
+        frame_gray = cv::Mat1b(H, W);
+        frame_bin = cv::Mat1b(H, W);
+        frame_blobs = cv::Mat1b(H, W);
     }
 }
 
@@ -127,14 +122,7 @@ void PointExtractor::extract_channels(const cv::Mat& orig_frame, const int* orde
     cv::mixChannels(&orig_frame, 1, (cv::Mat*) ch, order_npairs, order, order_npairs);
 }
 
-void PointExtractor::extract_all_channels(const cv::Mat& orig_frame)
-{
-    ensure_channel_buffers(orig_frame);
-
-    cv::split(orig_frame, (cv::Mat*) ch);
-}
-
-void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
+void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
 {
     switch (s.blob_color)
     {
@@ -153,8 +141,10 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
         /*FALLTHROUGH*/
     case pt_color_average:
     {
-        extract_all_channels(frame);
-        output = (ch[0] + ch[1] + ch[2]) / 3;
+        const int W = frame.cols, H = frame.rows;
+        const cv::Mat tmp = frame.reshape(1, W * H);
+        cv::Mat output_ = output.reshape(1, W * H);
+        cv::reduce(tmp, output_, 1, cv::REDUCE_AVG);
         break;
     }
     case pt_color_natural:
@@ -163,7 +153,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat& output)
     }
 }
 
-void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat& output)
+void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& output)
 {
     const int threshold_slider_value = s.threshold_slider.to<int>();
 
@@ -173,9 +163,9 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat& output)
     }
     else
     {
-        static const int hist_size = 256;
-        static const float ranges_[] = { 0, 256 };
-        static float const* ranges = (const float*) ranges_;
+        const int hist_size = 256;
+        const float ranges_[] = { 0, 256 };
+        float const* ranges = (const float*) ranges_;
 
         cv::calcHist(&frame_gray,
                      1,
@@ -221,7 +211,6 @@ double PointExtractor::threshold_radius_value(int w, int h, int threshold)
 void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
     ensure_buffers(frame);
-
     color_to_grayscale(frame, frame_gray);
 
 #if defined PREVIEW
@@ -290,8 +279,8 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
     }
 end:
 
-    const int W = frame.cols;
-    const int H = frame.rows;
+    const int W = frame_gray.cols;
+    const int H = frame_gray.rows;
 
     const unsigned sz = blobs.size();
 
@@ -311,7 +300,6 @@ end:
         cv::Mat frame_roi = frame_gray(rect);
 
         // smaller values mean more changes. 1 makes too many changes while 1.5 makes about .1
-        // seems values close to 1.3 reduce noise best with about .15->.2 changes
         static constexpr f radius_c = f(1.75);
 
         const f kernel_radius = b.radius * radius_c;
