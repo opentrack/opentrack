@@ -365,7 +365,7 @@ void aruco_tracker::cycle_detection_params()
 
 void aruco_tracker::run()
 {
-    cv::setNumThreads(0);
+    cv::setNumThreads(1);
 
     if (!open_camera())
         return;

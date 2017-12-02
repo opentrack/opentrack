@@ -51,7 +51,7 @@ void Tracker_PT::reset_command(Command command)
 
 void Tracker_PT::run()
 {
-    cv::setNumThreads(0);
+    cv::setNumThreads(1);
 
 #ifdef PT_PERF_LOG
     QFile log_file(OPENTRACK_BASE_PATH + "/PointTrackerPerformance.txt");
