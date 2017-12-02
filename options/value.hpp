@@ -69,17 +69,18 @@ public:
         return datum;
     }
 
-    static constexpr const Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
-    static constexpr const Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
+    static constexpr inline Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
+    static constexpr inline Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
     never_inline
     value(bundle b, const QString& name, t def) :
         base_value(b, name, &is_equal, std::type_index(typeid(element_type))),
         def(def)
     {
-        QObject::connect(b.get(), SIGNAL(reloading()),
-                         this, SLOT(reload()),
-                         DIRECT_CONNTYPE);
+        if (!self_name.isEmpty())
+            QObject::connect(b.get(), SIGNAL(reloading()),
+                             this, SLOT(reload()),
+                             DIRECT_CONNTYPE);
     }
 
     never_inline
