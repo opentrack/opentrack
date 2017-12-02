@@ -9,3 +9,4 @@
 *.exp
 *.pdb
 /.idea/
+/sdk-paths-*.cmake
