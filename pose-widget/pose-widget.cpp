@@ -322,11 +322,12 @@ void pose_transform::project_quad_texture()
         }
     };
 
-    for (int y_ = 0; y_ < dist.y(); y_++)
-        for (int x_ = 0; x_ < dist.x(); x_++)
+    for (int y_ = 0, dy = dist.y(); y_ < dy; y_++)
+    {
+        for (int x_ = 0, dx = dist.x(); x_ < dx; x_++)
         {
             const int y = y_ + min.y(), x = x_ + min.x();
-            uv_ const& restrict_ref uv__ = uv_vec[y_ * dist.x() + x_];
+            uv_ const& restrict_ref uv__ = uv_vec[y_ * dx + x_];
 
             if (uv__.i != -1)
             {
@@ -345,7 +346,7 @@ void pose_transform::project_quad_texture()
                 fx = clamp(fx, 0, ow - 1.95f);
                 fy = clamp(fy, 0, oh - 1.95f);
 
-#define BILINEAR_FILTER
+//#define BILINEAR_FILTER
 
 #if defined BILINEAR_FILTER
                 const unsigned px_ = fx + 1;
@@ -375,21 +376,7 @@ void pose_transform::project_quad_texture()
 #endif
 
                 const unsigned pos = y * dest_pitch + x * const_depth;
-
-#if defined BILINEAR_FILTER
-                float a;
-                {
-                    constexpr unsigned k = 3;
-                    const uc i = orig[orig_pos + k];
-                    const uc i_ = orig[orig_pos_ + k];
-                    const uc i__ = orig[orig_pos__ + k];
-                    const uc i___ = orig[orig_pos___ + k];
-
-                    unsigned c((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
-
-                    a = c/255.;
-                }
-#endif
+                const float a = orig[orig_pos + 3] * (1.f/255.f);
 
                 for (int k = 0; k < 3; k++)
                 {
@@ -401,13 +388,15 @@ void pose_transform::project_quad_texture()
 
                     unsigned c((i * ax + i__ * ax_) * ay + (i___ * ax + i_ * ax_) * ay_);
 
-                    dest[pos + k] = clamp(uround(bgcolor(k)*(1-a) + c*a), 0, 255);
+                    dest[pos + k] = (unsigned char) bgcolor(k)*(1-a) + c*a;
 #else
-                    dest[pos + k] = orig[orig_pos + k];
+                    const uc c = orig[orig_pos + k];
+                    dest[pos + k] = (unsigned char) bgcolor(k)*(1-a) + c*a;
 #endif
                 }
             }
         }
+    }
 
     {
         lock_guard l2(mtx2);
