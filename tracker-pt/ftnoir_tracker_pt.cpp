@@ -153,7 +153,7 @@ void Tracker_PT::set_fov(int value)
     camera.set_fov(value);
 }
 
-void Tracker_PT::start_tracker(QFrame* video_frame)
+module_status Tracker_PT::start_tracker(QFrame* video_frame)
 {
     //video_frame->setAttribute(Qt::WA_NativeWindow);
     preview_size = video_frame->size();
@@ -172,6 +172,8 @@ void Tracker_PT::start_tracker(QFrame* video_frame)
     maybe_reopen_camera();
 
     start(QThread::HighPriority);
+
+    return status_ok();
 }
 
 void Tracker_PT::data(double *data)

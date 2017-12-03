@@ -21,12 +21,14 @@ struct settings : opts {
     {}
 };
 
-class rift_tracker_025 : public ITracker
+class rift_tracker_025 : public QObject, public ITracker
 {
+    Q_OBJECT
+
 public:
     rift_tracker_025();
     virtual ~rift_tracker_025() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 private:
     double old_yaw;

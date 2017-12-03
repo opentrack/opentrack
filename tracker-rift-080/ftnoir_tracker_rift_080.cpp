@@ -35,7 +35,7 @@ rift_tracker_080::~rift_tracker_080()
     ovr_Shutdown();
 }
 
-void rift_tracker_080::start_tracker(QFrame*)
+module_status rift_tracker_080::start_tracker(QFrame*)
 {
     ovrResult code;
     ovrGraphicsLuid luid = {{0}};
@@ -52,7 +52,7 @@ void rift_tracker_080::start_tracker(QFrame*)
                           ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position,
                           ovrTrackingCap_Orientation);
 
-    return;
+    return status_ok();
 error:
     ovrErrorInfo err;
     err.Result = code;
@@ -63,11 +63,7 @@ error:
     if (strerror.size() == 0)
         strerror = "Unknown reason";
 
-    QMessageBox::warning(nullptr,
-                         "Error",
-                         QStringLiteral("Unable to start Rift tracker: %1").arg(strerror),
-                         QMessageBox::Ok,
-                         QMessageBox::NoButton);
+    return error(strerror);
 }
 
 void rift_tracker_080::data(double *data)

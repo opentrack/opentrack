@@ -33,7 +33,7 @@ class tracker_freepie : public ITracker, private QThread
 public:
     tracker_freepie();
     ~tracker_freepie() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 protected:
     void run() override;

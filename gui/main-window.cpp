@@ -506,10 +506,6 @@ void MainWindow::start_tracker_()
 
     if (!work->is_ok())
     {
-        QMessageBox::warning(this, tr("Library load error"),
-                             tr("One of libraries failed to load. Check installation."),
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
         work = nullptr;
         return;
     }

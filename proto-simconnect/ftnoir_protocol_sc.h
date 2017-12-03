@@ -39,7 +39,7 @@ class simconnect : public IProtocol, private QThread
 public:
     simconnect();
     ~simconnect() override;
-    bool correct();
+    module_status check_status() override;
     void pose(const double* headpose);
     void handle();
     QString game_name() {

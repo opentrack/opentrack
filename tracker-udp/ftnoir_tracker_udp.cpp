@@ -29,9 +29,6 @@ void udp::run()
     QByteArray datagram;
     datagram.resize(sizeof(last_recv_pose));
 
-    if (!sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
-        return;
-
     while (!isInterruptionRequested())
     {
         if (sock.hasPendingDatagrams())
@@ -69,10 +66,15 @@ void udp::run()
     }
 }
 
-void udp::start_tracker(QFrame*)
+module_status udp::start_tracker(QFrame*)
 {
-    start();
+    if (!sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+        return error(tr("Can't bind socket -- %1").arg(sock.errorString()));
+
     sock.moveToThread(this);
+    start();
+
+    return status_ok();
 }
 
 void udp::data(double *data)

@@ -20,9 +20,22 @@ IOKitProtocol::IOKitProtocol()
         qWarning("%s\n", qPrintable(joystick->errorMessage()));
 }
 
-bool IOKitProtocol::correct()
+module_status IOKitProtocol::check_status()
 {
-    return joystick && !joystick->hasError();
+    if (!joystick)
+        return QCoreApplication::translate("foohid", "Load failure");
+
+    if (joystick->hasError())
+    {
+        QString msg = joystick->errorMessage();
+
+        if (msg.isEmpty())
+            msg = QCoreApplication::translate("foohid", "Unknown error");
+
+        return error(msg);
+    }
+
+    return status_ok();
 }
 
 static uint8_t valueToStick(FooHIDJoystick *stick, double min, double value, double max)

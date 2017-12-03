@@ -30,9 +30,11 @@ test_tracker::~test_tracker()
 {
 }
 
-void test_tracker::start_tracker(QFrame*)
+module_status test_tracker::start_tracker(QFrame*)
 {
     t.start();
+
+    return status_ok();
 }
 
 #ifdef EMIT_NAN

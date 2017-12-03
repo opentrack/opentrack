@@ -85,11 +85,13 @@ void tracker_s2bot::run() {
     timer.stop();
 }
 
-void tracker_s2bot::start_tracker(QFrame*)
+module_status tracker_s2bot::start_tracker(QFrame*)
 {
     start();
     timer.moveToThread(this);
     m_nam->moveToThread(this);
+
+    return status_ok();
 }
 
 void tracker_s2bot::data(double *data)

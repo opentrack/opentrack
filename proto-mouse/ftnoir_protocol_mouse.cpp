@@ -82,9 +82,4 @@ int mouse::get_value(double val, double sensitivity, bool is_rotation)
 
 mouse::mouse() : last_x(0), last_y(0) {}
 
-bool mouse::correct()
-{
-    return true;
-}
-
 OPENTRACK_DECLARE_PROTOCOL(mouse, MOUSEControls, mouseDll)

@@ -14,21 +14,29 @@
 
 udp::udp()
 {
+    set_dest_address();
+    QObject::connect(s.b.get(), &bundle_::changed, this, &udp::set_dest_address);
 }
 
 void udp::pose(const double *headpose) {
-    int destPort = s.port;
-    QHostAddress destIP(QString("%1.%2.%3.%4").arg(
-                            QString::number(static_cast<int>(s.ip1)),
-                            QString::number(static_cast<int>(s.ip2)),
-                            QString::number(static_cast<int>(s.ip3)),
-                            QString::number(static_cast<int>(s.ip4))));
-    outSocket.writeDatagram((const char *) headpose, sizeof( double[6] ), destIP, destPort);
+    outSocket.writeDatagram((const char *) headpose, sizeof(double[6]), dest_ip, dest_port);
 }
 
-bool udp::correct()
-{   
-    return outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint);
+void udp::set_dest_address()
+{
+    dest_port = s.port;
+    dest_ip = QHostAddress((s.ip1.to<unsigned>() & 0xff) << 24 |
+                           (s.ip2.to<unsigned>() & 0xff) << 16 |
+                           (s.ip3.to<unsigned>() & 0xff) << 8  |
+                           (s.ip4.to<unsigned>() & 0xff) << 0  );
+}
+
+module_status udp::check_status()
+{
+    if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+        return status_ok();
+    else
+        return error(tr("Can't bind socket: %1").arg(outSocket.errorString()));
 }
 
 OPENTRACK_DECLARE_PROTOCOL(udp, FTNControls, udpDll)

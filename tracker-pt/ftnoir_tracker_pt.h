@@ -40,12 +40,13 @@ using namespace types;
 class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
+
     friend class camera_dialog;
     friend class ::TrackerDialog_PT;
 public:
     Tracker_PT();
     ~Tracker_PT() override;
-    void start_tracker(QFrame* parent_window) override;
+    module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
 
     Affine pose();

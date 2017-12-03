@@ -19,7 +19,7 @@ class fusion_tracker : public QObject, public ITracker
 {
     Q_OBJECT
 
-    double rot_tracker_data[6], pos_tracker_data[6];
+    double rot_tracker_data[6] {}, pos_tracker_data[6] {};
 
     std::unique_ptr<QFrame> other_frame;
     std::shared_ptr<dylib> rot_dylib, pos_dylib;
@@ -28,7 +28,7 @@ class fusion_tracker : public QObject, public ITracker
 public:
     fusion_tracker();
     ~fusion_tracker() override;
-    void start_tracker(QFrame*) override;
+    module_status start_tracker(QFrame*) override;
     void data(double* data) override;
 
     static const QString& caption();

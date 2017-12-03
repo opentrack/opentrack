@@ -50,12 +50,9 @@ class fsuipc : public IProtocol
 public:
     fsuipc();
     ~fsuipc() override;
-    bool correct();
+    module_status check_status() override;
     void pose(const double* headpose);
-    QString game_name()
-    {
-        return QCoreApplication::translate("fsuipc", "Microsoft Flight Simulator X");
-    }
+    QString game_name() { return QCoreApplication::translate("fsuipc", "Microsoft Flight Simulator X"); }
 private:
     QLibrary FSUIPCLib;
     double prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;

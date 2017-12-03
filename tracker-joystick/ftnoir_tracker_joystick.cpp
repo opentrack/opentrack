@@ -26,10 +26,6 @@ joystick::~joystick()
 {
 }
 
-void joystick::start_tracker(QFrame*)
-{
-}
-
 void joystick::data(double *data)
 {
     int map[6] = {

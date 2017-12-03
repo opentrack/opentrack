@@ -19,12 +19,12 @@ struct settings : opts {
     {}
 };
 
-class udp : public ITracker, protected QThread
+class udp : protected QThread, public ITracker
 {
 public:
     udp();
     ~udp() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 protected:
     void run() override;

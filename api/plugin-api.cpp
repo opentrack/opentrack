@@ -26,6 +26,16 @@ void BaseDialog::closeEvent(QCloseEvent*)
 
 bool ITracker::center() { return false; }
 
+module_status ITracker::status_ok()
+{
+    return module_status();
+}
+
+module_status ITracker::error(const QString& error)
+{
+    return module_status(error);
+}
+
 Metadata::Metadata() {}
 IFilter::IFilter() {}
 IFilterDialog::IFilterDialog() {}
@@ -46,3 +56,14 @@ void BaseDialog::done(int)
 IExtensionDialog::~IExtensionDialog()
 {
 }
+
+bool module_status::is_ok() const
+{
+    return error.isEmpty();
+}
+
+module_status::module_status(const QString& error) : error(error) {}
+
+module_status module_status_mixin::status_ok() { return module_status(); }
+
+module_status module_status_mixin::error(const QString& error) { return module_status(error); }

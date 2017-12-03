@@ -73,7 +73,7 @@ aruco_tracker::~aruco_tracker()
     camera.release();
 }
 
-void aruco_tracker::start_tracker(QFrame* videoframe)
+module_status aruco_tracker::start_tracker(QFrame* videoframe)
 {
     videoframe->show();
     videoWidget = std::make_unique<cv_video_widget>(videoframe);
@@ -83,6 +83,8 @@ void aruco_tracker::start_tracker(QFrame* videoframe)
     videoframe->setLayout(layout.get());
     videoWidget->show();
     start();
+
+    return status_ok();
 }
 
 void aruco_tracker::getRT(cv::Matx33d& r_, cv::Vec3d& t_)

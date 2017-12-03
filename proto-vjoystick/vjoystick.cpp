@@ -125,6 +125,21 @@ vjoystick_proto::~vjoystick_proto()
 {
 }
 
+module_status vjoystick_proto::check_status()
+{
+    switch (h.get_state())
+    {
+    case state_notent:
+        return error("vjoystick #1 doesn't exist");
+    case state_fail:
+        return error("can't initialize vjoystick");
+    case state_success:
+        return status_ok();
+    default:
+        return error("unknown error");
+    }
+}
+
 void vjoystick_proto::pose(const double *pose)
 {
     if (h.get_state() != state_success)

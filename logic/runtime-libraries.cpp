@@ -1,13 +1,13 @@
 #include "runtime-libraries.hpp"
 #include "options/scoped.hpp"
+#include <QMessageBox>
 #include <QDebug>
 
-runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f) :
-    pTracker(nullptr),
-    pFilter(nullptr),
-    pProtocol(nullptr),
-    correct(false)
+runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f)
 {
+    module_status status =
+            module_status_mixin::error(QCoreApplication::translate("module", "Library load failure"));
+
     using namespace options;
 
     with_tracker_teardown sentinel;
@@ -15,15 +15,12 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     pProtocol = make_dylib_instance<IProtocol>(p);
 
     if (!pProtocol)
-    {
-        qDebug() << "protocol dylib load failure";
         goto end;
-    }
 
-    if(!pProtocol->correct())
+    if(status = pProtocol->check_status(), !status.is_ok())
     {
-        qDebug() << "protocol load failure";
-        pProtocol = nullptr;
+        status = QCoreApplication::translate("module", "Error occured while loading protocol %1\n\n%2\n")
+                    .arg(p->name).arg(status.error);
         goto end;
     }
 
@@ -36,10 +33,30 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
         goto end;
     }
 
-    pTracker->start_tracker(frame);
+    if (pFilter)
+        if(status = pFilter->check_status(), !status.is_ok())
+        {
+            status = QCoreApplication::translate("module", "Error occured while loading filter %1\n\n%2\n")
+                     .arg(f->name).arg(status.error);
+            goto end;
+        }
+
+    if (status = pTracker->start_tracker(frame), !status.is_ok())
+    {
+        status = QCoreApplication::translate("module", "Error occured while loading tracker %1\n\n%2\n")
+                 .arg(t->name).arg(status.error);
+        goto end;
+    }
 
     correct = true;
+    return;
+
 end:
-    (void)0;
+    pTracker = nullptr;
+    pFilter = nullptr;
+    pProtocol = nullptr;
+
+    if (!status.is_ok())
+        QMessageBox::critical(nullptr, "Startup failure", status.error, QMessageBox::Cancel, QMessageBox::NoButton);
 }
 

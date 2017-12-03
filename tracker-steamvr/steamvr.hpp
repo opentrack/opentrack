@@ -76,7 +76,7 @@ class steamvr : public QObject, public ITracker
 public:
     steamvr();
     ~steamvr() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
     bool center() override;
 

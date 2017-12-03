@@ -49,7 +49,7 @@ class freetrack : public IProtocol
 public:
     freetrack();
     ~freetrack() override;
-    bool correct();
+    module_status check_status() override;
     void pose( const double *headpose );
     QString game_name() override {
         QMutexLocker foo(&game_name_mutex);

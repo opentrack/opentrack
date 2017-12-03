@@ -183,16 +183,16 @@ steamvr::~steamvr()
 {
 }
 
-void steamvr::start_tracker(QFrame*)
+module_status steamvr::start_tracker(QFrame*)
 {
-    with_vr_lock([this](vr_t v, error_t e)
+    return with_vr_lock([this](vr_t v, error_t e)
     {
+        QString err;
+
         if (!v)
         {
-            QMessageBox::warning(nullptr,
-                                 tr("SteamVR init error"), device_list::strerror(e),
-                                 QMessageBox::Close, QMessageBox::NoButton);
-            return;
+            err = device_list::strerror(e);
+            return error(err);
         }
 
         const QString serial = s.device_serial().toString();
@@ -201,13 +201,7 @@ void steamvr::start_tracker(QFrame*)
         const int sz = specs.count();
 
         if (sz == 0)
-        {
-            QMessageBox::warning(nullptr,
-                                 tr("SteamVR init error"),
-                                 tr("No HMD connected"),
-                                 QMessageBox::Close, QMessageBox::NoButton);
-            return;
-        }
+            err = tr("No HMD connected");
 
         device_index = -1;
 
@@ -220,13 +214,13 @@ void steamvr::start_tracker(QFrame*)
             }
         }
 
-        if (device_index == -1)
-        {
-            QMessageBox::warning(nullptr,
-                                 tr("SteamVR init error"),
-                                 tr("Can't find device with that serial"),
-                                 QMessageBox::Close, QMessageBox::NoButton);
-        }
+        if (device_index == -1 && err.isEmpty())
+            err = tr("Can't find device with that serial");
+
+        if (err.isEmpty())
+            return status_ok();
+        else
+            return error(err);
     });
 }
 

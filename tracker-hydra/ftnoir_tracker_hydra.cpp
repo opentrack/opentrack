@@ -33,9 +33,11 @@ Hydra_Tracker::~Hydra_Tracker()
     sixenseExit();
 }
 
-void Hydra_Tracker::start_tracker(QFrame*)
+module_status Hydra_Tracker::start_tracker(QFrame*)
 {
     sixenseInit();
+
+    return status_ok();
 }
 
 void Hydra_Tracker::data(double *data)

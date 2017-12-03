@@ -41,11 +41,9 @@ struct settings : opts {
 class flightgear : public IProtocol
 {
 public:
-    bool correct();
     void pose(const double *headpose);
-    QString game_name() {
-        return QCoreApplication::translate("flightgear", "FlightGear");
-    }
+    QString game_name() { return QCoreApplication::translate("flightgear", "FlightGear"); }
+    module_status check_status() override;
 private:
     settings s;
     flightgear_datagram FlightData;

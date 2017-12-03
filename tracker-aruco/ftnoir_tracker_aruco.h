@@ -65,7 +65,7 @@ struct settings : opts {
 
 class aruco_dialog;
 
-class aruco_tracker : protected QThread, public ITracker
+class aruco_tracker : protected virtual QThread, public ITracker
 {
     Q_OBJECT
     friend class aruco_dialog;
@@ -73,7 +73,7 @@ class aruco_tracker : protected QThread, public ITracker
 public:
     aruco_tracker();
     ~aruco_tracker() override;
-    void start_tracker(QFrame* frame) override;
+    module_status start_tracker(QFrame* frame) override;
     void data(double *data) override;
     void run() override;
     void getRT(cv::Matx33d &r, cv::Vec3d &t);

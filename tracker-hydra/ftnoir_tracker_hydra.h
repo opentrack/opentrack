@@ -16,8 +16,9 @@ class Hydra_Tracker : public ITracker
 public:
     Hydra_Tracker();
     ~Hydra_Tracker();
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
+
 private:
     settings s;
     QMutex mutex;

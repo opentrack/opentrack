@@ -30,12 +30,12 @@ struct settings : opts {
     {}
 };
 
-class tracker_s2bot : public ITracker, private QThread
+class tracker_s2bot : public ITracker, private virtual QThread
 {
 public:
     tracker_s2bot();
     ~tracker_s2bot() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 protected:
     void run() override;

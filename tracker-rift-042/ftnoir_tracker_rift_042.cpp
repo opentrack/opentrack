@@ -36,22 +36,17 @@ rift_tracker_042::~rift_tracker_042()
     ovr_Shutdown();
 }
 
-void rift_tracker_042::start_tracker(QFrame*)
+module_status rift_tracker_042::start_tracker(QFrame*)
 {
     ovr_Initialize();
     hmd = ovrHmd_Create(0);
     if (hmd)
     {
         ovrHmd_ConfigureTracking(hmd, ovrTrackingCap_Orientation | ovrTrackingCap_MagYawCorrection | ovrTrackingCap_Position, ovrTrackingCap_Orientation);
+        return status_ok();
     }
     else
-    {
-        QMessageBox::warning(nullptr,
-                             "Error",
-                             QCoreApplication::translate("rift_tracker_042", "Unable to start Rift tracker: %1").arg(ovrHmd_GetLastError(nullptr)),
-                             QMessageBox::Ok,
-                             QMessageBox::NoButton);
-    }
+        return error(tr("Unable to start Rift tracker: %1").arg(ovrHmd_GetLastError(nullptr)));
 }
 
 

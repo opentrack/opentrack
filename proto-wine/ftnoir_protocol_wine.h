@@ -18,9 +18,11 @@ public:
     wine();
     ~wine() override;
 
-    bool correct() override;
+    module_status check_status() override;
     void pose(const double* headpose) override;
-    QString game_name() override {
+
+    QString game_name() override
+    {
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
     }

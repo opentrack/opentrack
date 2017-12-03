@@ -28,7 +28,7 @@ class tobii_eyex_tracker : public ITracker
 public:
     tobii_eyex_tracker();
     ~tobii_eyex_tracker() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
     bool center() override
     {

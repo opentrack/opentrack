@@ -192,10 +192,10 @@ void freetrack::set_protocols(bool ft, bool npclient)
         settings_npclient.setValue("Path", "");
 }
 
-bool freetrack::correct()
+module_status freetrack::check_status()
 {
     if (!shm.success())
-        return false;
+        return error("Can't load freetrack memory mapping");
 
     bool use_ft = false, use_npclient = false;
 
@@ -241,7 +241,7 @@ bool freetrack::correct()
     if (use_npclient)
         start_dummy();
 
-    return true;
+    return status_ok();
 }
 
 OPENTRACK_DECLARE_PROTOCOL(freetrack, FTControls, freetrackDll)

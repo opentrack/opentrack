@@ -22,10 +22,7 @@ static auto get_modules()
     return Modules(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 }
 
-fusion_tracker::fusion_tracker() :
-    rot_tracker_data{},
-    pos_tracker_data{},
-    other_frame(new QFrame)
+fusion_tracker::fusion_tracker()
 {
 }
 
@@ -52,10 +49,13 @@ const QString& fusion_tracker::caption()
     return caption;
 }
 
-void fusion_tracker::start_tracker(QFrame* frame)
+module_status fusion_tracker::start_tracker(QFrame* frame)
 {
     assert(!rot_tracker && !pos_tracker);
     assert(!rot_dylib && !pos_dylib);
+
+    QString err;
+    module_status status;
 
     fusion_settings s;
     const QString rot_tracker_name = s.rot_tracker_name().toString();
@@ -65,14 +65,15 @@ void fusion_tracker::start_tracker(QFrame* frame)
     assert(pos_tracker_name != own_name);
 
     if (rot_tracker_name.isEmpty() || pos_tracker_name.isEmpty())
-        goto fail;
+    {
+        err = tr("Trackers not selected.");
+        goto end;
+    }
 
     if (rot_tracker_name == pos_tracker_name)
     {
-        QMessageBox::warning(nullptr, caption(),
-                            tr("Select different trackers for rotation and position."),
-                            QMessageBox::Close);
-        goto cleanup;
+        err = tr("Select different trackers for rotation and position.");
+        goto end;
     }
 
     {
@@ -95,17 +96,28 @@ void fusion_tracker::start_tracker(QFrame* frame)
     }
 
     if (!rot_dylib || !pos_dylib)
-        goto fail;
+        goto end;
 
     rot_tracker = make_dylib_instance<ITracker>(rot_dylib);
     pos_tracker = make_dylib_instance<ITracker>(pos_dylib);
 
-    pos_tracker->start_tracker(frame);
+    status = pos_tracker->start_tracker(frame);
+
+    if (!status.is_ok())
+    {
+        err = pos_dylib->name + QStringLiteral(":\n    ") + status.error;
+        goto end;
+    }
 
     if (frame->layout() == nullptr)
     {
-        rot_tracker->start_tracker(frame);
+        status = rot_tracker->start_tracker(frame);
         other_frame = nullptr;
+        if (!status.is_ok())
+        {
+            err = rot_dylib->name + QStringLiteral(":\n    ") + status.error;
+            goto end;
+        }
     }
     else
     {
@@ -121,14 +133,11 @@ void fusion_tracker::start_tracker(QFrame* frame)
 
     }
 
-    return;
-
-fail:
-    QMessageBox::warning(nullptr,
-                         caption(), tr("Select rotation and position trackers."),
-                         QMessageBox::Close);
-cleanup:
-    other_frame = nullptr;
+end:
+    if (!err.isEmpty())
+        return error(err);
+    else
+        return status_ok();
 }
 
 void fusion_tracker::data(double *data)

@@ -54,9 +54,12 @@ void wine::pose( const double *headpose )
     }
 }
 
-bool wine::correct()
+module_status wine::check_status()
 {
-    return lck_shm.success();
+    if (lck_shm.success())
+        return status_ok();
+    else
+        return error(QCoreApplication::translate("wine", "Can't open shared memory mapping"));
 }
 
 OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wineDll)

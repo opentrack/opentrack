@@ -25,7 +25,7 @@ class rift_tracker_080 : public ITracker
 public:
     rift_tracker_080();
     ~rift_tracker_080() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 private:
     double old_yaw;

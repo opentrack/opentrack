@@ -22,7 +22,7 @@ public:
     hatire();
     ~hatire();
 
-    void start_tracker(QFrame*);
+    module_status start_tracker(QFrame*);
     void data(double *data);
     //void center();
     //bool notifyZeroed();

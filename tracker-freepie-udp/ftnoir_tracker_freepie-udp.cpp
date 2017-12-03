@@ -104,10 +104,12 @@ void tracker_freepie::run() {
     }
 }
 
-void tracker_freepie::start_tracker(QFrame*)
+module_status tracker_freepie::start_tracker(QFrame*)
 {
     start();
     sock.moveToThread(this);
+
+    return status_ok();
 }
 
 void tracker_freepie::data(double *data)

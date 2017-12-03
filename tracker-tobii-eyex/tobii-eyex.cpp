@@ -217,10 +217,8 @@ void tobii_eyex_tracker::event_handler(TX_CONSTHANDLE async_data_handle, TX_USER
     txReleaseObject(&event_handle);
 }
 
-void tobii_eyex_tracker::start_tracker(QFrame*)
+module_status tobii_eyex_tracker::start_tracker(QFrame*)
 {
-    dbg_verbose("start tracker");
-
     bool status = true;
 
     status &= txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, nullptr, nullptr, nullptr, nullptr) == TX_RESULT_OK;
@@ -231,9 +229,9 @@ void tobii_eyex_tracker::start_tracker(QFrame*)
     status &= txEnableConnection(dev_ctx) == TX_RESULT_OK;
 
     if (!status)
-        dbg_verbose("connection can't be established. device missing?");
+        return error(QCoreApplication::translate("tobii", "Connection can't be established. device missing?"));
     else
-        dbg_verbose("api initialized");
+        return status_ok();
 }
 
 tobii_eyex_tracker::num tobii_eyex_tracker::gain(num x)

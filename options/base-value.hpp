@@ -28,6 +28,7 @@ class OTR_OPTIONS_EXPORT base_value : public QObject
     using comparator = bool(*)(const QVariant& val1, const QVariant& val2);
     template<typename t>
     using signal_sig = void(base_value::*)(cv_qualified<t>) const;
+
 public:
     bundle get_bundle() { return b; }
     QString name() const { return self_name; }

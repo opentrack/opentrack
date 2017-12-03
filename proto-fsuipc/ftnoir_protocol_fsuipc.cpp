@@ -144,23 +144,14 @@ void fsuipc::pose(const double *headpose ) {
     prevRotZ = virtRotZ;
 }
 
-bool fsuipc::correct()
+module_status fsuipc::check_status()
 {
-    qDebug() << "correct says: Starting Function";
-
-    //
-    // Load the DLL.
-    //
     FSUIPCLib.setFileName( s.LocationOfDLL );
-    if (FSUIPCLib.load() != true) {
-        qDebug() << "correct says: Error loading FSUIPC DLL";
-        return false;
-    }
-    else {
-        qDebug() << "correct says: FSUIPC DLL loaded.";
-    }
 
-    return true;
+    if (FSUIPCLib.load() != true)
+        return error(QCoreApplication::translate("fsuipc", "Can't load fsuipc at '%1'").arg(s.LocationOfDLL));
+    else
+        return status_ok();
 }
 
 OPENTRACK_DECLARE_PROTOCOL(fsuipc, FSUIPCControls, fsuipcDll)

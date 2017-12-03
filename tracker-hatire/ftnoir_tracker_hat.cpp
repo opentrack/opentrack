@@ -43,27 +43,27 @@ void hatire::get_info( int *tps )
         *tps=frame_cnt;
         frame_cnt=0;
 }
-void hatire::start_tracker(QFrame*)
+module_status hatire::start_tracker(QFrame*)
 {
-        CptError=0;
-        frame_cnt=0;
+    CptError=0;
+    frame_cnt=0;
     t.Log("Starting Tracker");
 
     serial_result ret = t.init_serial_port();
 
+    t.start();
+
     switch (ret.code)
     {
     case result_ok:
-        break;
+        return status_ok();
     case result_error:
-        QMessageBox::warning(0, tr("Error"), ret.error, QMessageBox::Ok,QMessageBox::NoButton);
-        break;
+        return error(ret.error);
     case result_open_error:
-        QMessageBox::warning(0, tr("Error"), tr("Unable to open ComPort: %1").arg(ret.error), QMessageBox::Ok,QMessageBox::NoButton);
-        break;
+        return error(tr("Unable to open ComPort: %1").arg(ret.error));
+    default:
+        return error("Unknown error");
     }
-
-    t.start();
 }
 
 void hatire::serial_info()

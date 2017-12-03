@@ -35,7 +35,7 @@ rift_tracker_140::~rift_tracker_140()
     }
 }
 
-void rift_tracker_140::start_tracker(QFrame*)
+module_status rift_tracker_140::start_tracker(QFrame*)
 {
     if (OVR_FAILURE(ovr_Initialize(nullptr)))
         goto error;
@@ -43,7 +43,7 @@ void rift_tracker_140::start_tracker(QFrame*)
     if(OVR_FAILURE(ovr_Create(&hmd, &luid)))
         goto error;
 
-    return;
+    return status_ok();
 error:
     hmd = nullptr;
 
@@ -56,11 +56,7 @@ error:
 
     ovr_Shutdown();
 
-    QMessageBox::warning(nullptr,
-                         "Error",
-                         QCoreApplication::translate("rift_tracker_140", "Unable to start Rift tracker: %1").arg(strerror),
-                         QMessageBox::Ok,
-                         QMessageBox::NoButton);
+    return error(strerror);
 }
 
 void rift_tracker_140::data(double *data)

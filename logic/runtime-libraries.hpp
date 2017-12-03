@@ -24,5 +24,5 @@ struct OTR_LOGIC_EXPORT runtime_libraries final
     runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
     runtime_libraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
 
-    bool correct;
+    bool correct = false;
 };

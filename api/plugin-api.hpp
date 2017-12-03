@@ -82,8 +82,24 @@ struct OTR_API_EXPORT Metadata
     virtual ~Metadata();
 };
 
+struct OTR_API_EXPORT module_status final
+{
+    QString error;
+
+    bool is_ok() const;
+    module_status(const QString& error = QString());
+};
+
+struct OTR_API_EXPORT module_status_mixin
+{
+    static module_status status_ok();
+    static module_status error(const QString& error);
+
+    virtual module_status check_status() = 0;
+};
+
 // implement this in filters
-struct OTR_API_EXPORT IFilter
+struct OTR_API_EXPORT IFilter : module_status_mixin
 {
     IFilter(const IFilter&) = delete;
     IFilter(IFilter&&) = delete;
@@ -116,7 +132,7 @@ struct OTR_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(filter_class, IFilter, metadata_class, dialog_class, IFilterDialog)
 
 // implement this in protocols
-struct OTR_API_EXPORT IProtocol
+struct OTR_API_EXPORT IProtocol : module_status_mixin
 {
     IProtocol();
 
@@ -126,10 +142,8 @@ struct OTR_API_EXPORT IProtocol
 
     // optional destructor
     virtual ~IProtocol();
-    // return true if protocol was properly initialized
-    virtual bool correct() = 0;
     // called 250 times a second with XYZ yaw pitch roll pose
-    // try not to perform intense computation here. if you must, use a thread.
+    // try not to perform intense computation here. use a thread.
     virtual void pose(const double* headpose) = 0;
     // return game name or placeholder text
     virtual QString game_name() = 0;
@@ -159,12 +173,15 @@ struct OTR_API_EXPORT ITracker
     // optional destructor
     virtual ~ITracker();
     // start tracking, and grab a frame to display webcam video in, optionally
-    virtual void start_tracker(QFrame* frame) = 0;
+    virtual module_status start_tracker(QFrame* frame) = 0;
     // return XYZ yaw pitch roll data. don't block here, use a separate thread for computation.
     virtual void data(double *data) = 0;
     // tracker notified of centering
     // returning true makes identity the center pose
     virtual bool center();
+
+    static module_status status_ok();
+    static module_status error(const QString& error);
 
     ITracker(const ITracker&) = delete;
     ITracker(ITracker&&) = delete;
@@ -187,7 +204,7 @@ struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
 #define OPENTRACK_DECLARE_TRACKER(tracker_class, dialog_class, metadata_class) \
     OPENTRACK_DECLARE_PLUGIN_INTERNAL(tracker_class, ITracker, metadata_class, dialog_class, ITrackerDialog)
 
-struct OTR_API_EXPORT IExtension
+struct OTR_API_EXPORT IExtension : module_status_mixin
 {
     enum event_mask : unsigned
     {

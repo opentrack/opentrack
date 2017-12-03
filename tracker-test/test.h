@@ -10,7 +10,7 @@ class test_tracker : public ITracker
 public:
     test_tracker();
     ~test_tracker() override;
-    void start_tracker(QFrame *) override;
+    module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 
 private:

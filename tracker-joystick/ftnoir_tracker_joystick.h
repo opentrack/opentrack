@@ -41,7 +41,7 @@ class joystick : public ITracker
 public:
     joystick();
     ~joystick();
-    void start_tracker(QFrame *);
+    module_status start_tracker(QFrame *) { return status_ok(); }
     void data(double *data);
     settings s;
     QString guid;

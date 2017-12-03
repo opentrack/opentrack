@@ -21,8 +21,8 @@ FTNControls::FTNControls()
     tie_setting(s.ip4, ui.spinIPFourthNibble);
     tie_setting(s.port, ui.spinPortNumber);
 
-    connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
-    connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &FTNControls::doOK);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &FTNControls::doCancel);
 }
 
 //

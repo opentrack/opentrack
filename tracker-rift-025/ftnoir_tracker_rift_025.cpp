@@ -41,8 +41,10 @@ rift_tracker_025::~rift_tracker_025()
     System::Destroy();
 }
 
-void rift_tracker_025::start_tracker(QFrame*)
+module_status rift_tracker_025::start_tracker(QFrame*)
 {
+    QString err;
+
     System::Init(Log::ConfigureDefaultLog(LogMask_All));
     pManager = DeviceManager::Create();
     if (pManager != NULL)
@@ -59,29 +61,19 @@ void rift_tracker_025::start_tracker(QFrame*)
                 pSFusion->AttachToSensor(pSensor);
             }
             else
-            {
-                QMessageBox::warning(nullptr,
-                                     QCoreApplication::translate("rift_tracker_025", "Error"),
-                                     QCoreApplication::translate("rift_tracker_025", "Unable to create Rift sensor"),
-                                     QMessageBox::Ok,QMessageBox::NoButton);
-            }
+                err = tr("Unable to create Rift sensor");
 
         }
         else
-        {
-            QMessageBox::warning(nullptr,
-                                 QCoreApplication::translate("rift_tracker_025", "Error"),
-                                 QCoreApplication::translate("rift_tracker_025", "Unable to enumerate Rift tracker"),
-                                 QMessageBox::Ok,QMessageBox::NoButton);
-        }
+            err = tr("Unable to enumerate Rift tracker");
     }
     else
-    {
-        QMessageBox::warning(nullptr,
-                             QCoreApplication::translate("rift_tracker_025", "Error"),
-                             QCoreApplication::translate("rift_tracker_025", "Unable to start Rift tracker"),
-                             QMessageBox::Ok,QMessageBox::NoButton);
-    }
+        err = tr("Unable to start Rift tracker");
+
+    if (err.isEmpty())
+        return status_ok();
+    else
+        return error(err);
 }
 
 

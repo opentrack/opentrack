@@ -29,7 +29,7 @@ class mouse : public IProtocol
 {
 public:
     mouse();
-    bool correct() override;
+    module_status check_status() override { return status_ok(); }
     void pose( const double *headpose) override;
     QString game_name() override;
 
