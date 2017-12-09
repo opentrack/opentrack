@@ -60,6 +60,11 @@ static FILE *debug_stream;
 #define dbg_report(...)
 #endif
 
+typedef enum npclient_status_ {
+    NPCLIENT_STATUS_OK,
+    NPCLIENT_STATUS_DISABLED
+} npclient_status;
+
 static HANDLE hFTMemMap = 0;
 static FTMemMap *pMemData = 0;
 static HANDLE hFTMutex = 0;
@@ -307,7 +312,10 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     }
 
     data->frame = frameno += 1;
-    data->status = 0;
+    bool running = y != 0 || p != 0 || r != 0 ||
+                   tx != 0 || ty != 0 || tz != 0;
+
+    data->status = running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
     data->cksum = 0;
 
     data->roll  = scale2AnalogLimits (r, -180.0, 180.0);
@@ -332,7 +340,7 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
         enhance((unsigned char*)data, sizeof(tir_data_t), table, sizeof(table));
     }
 
-    return 0;
+    return running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
 }
 /******************************************************************
  *              NP_GetParameter (NPCLIENT.9)
