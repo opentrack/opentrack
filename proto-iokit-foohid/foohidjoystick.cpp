@@ -7,7 +7,7 @@
 
 #include "foohidjoystick.h"
 
-#include <QCoreApplication>
+#include "compat/macros.hpp"
 
 const char FOOHID_SERVICE_NAME[] = "it_unbit_foohid";
 
@@ -51,7 +51,7 @@ static bool connectToService(io_connect_t *connection, QString *errorMessage)
                                                      IOServiceMatching(FOOHID_SERVICE_NAME),
                                                      &iterator);
     if (ret != KERN_SUCCESS) {
-        *errorMessage = QCoreApplication::translate("iokit-foohid", "Unable to find FooHID IOService.");
+        *errorMessage = otr_tr("Unable to find FooHID IOService.");
         return false;
     }
     // Iterate over services and try to open connection
@@ -66,7 +66,7 @@ static bool connectToService(io_connect_t *connection, QString *errorMessage)
     }
     IOObjectRelease(iterator);
     if (!found) {
-        *errorMessage = QCoreApplication::translate("iokit-foohid", "Unable to connect to FooHID IOService.");
+        *errorMessage = otr_tr("Unable to connect to FooHID IOService.");
         return false;
     }
     return true;
@@ -89,8 +89,7 @@ FooHIDJoystick::FooHIDJoystick(const QByteArray &name, const QByteArray &serialN
         deviceCreated = createDevice();
         _hasError = !deviceCreated;
         if (!deviceCreated)
-            _errorMessage = QCoreApplication::translate("iokit-foohid",
-                                                        "Failed to create virtual joystick");
+            _errorMessage = otr_tr("Failed to create virtual joystick");
     }
 }
 
@@ -117,8 +116,7 @@ void FooHIDJoystick::setValue(JoystickValues newValues)
     values = newValues;
     if (!sendToDevice()) {
         _hasError = true;
-        _errorMessage = QCoreApplication::translate("iokit-foohid",
-                                                    "Failed to send values to virtual joystick");
+        _errorMessage = otr_tr("Failed to send values to virtual joystick");
     }
 }
 

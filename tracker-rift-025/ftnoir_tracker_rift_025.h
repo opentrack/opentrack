@@ -59,7 +59,7 @@ private slots:
 class rift_025Dll : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("rift_025Dll", "Oculus Rift runtime 0.2.5 -- HMD")); }
+    QString name() { return otr_tr("Oculus Rift runtime 0.2.5 -- HMD"); }
     QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

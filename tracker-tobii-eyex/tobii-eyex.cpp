@@ -229,7 +229,7 @@ module_status tobii_eyex_tracker::start_tracker(QFrame*)
     status &= txEnableConnection(dev_ctx) == TX_RESULT_OK;
 
     if (!status)
-        return error(QCoreApplication::translate("tobii", "Connection can't be established. device missing?"));
+        return error(otr_tr("Connection can't be established. device missing?"));
     else
         return status_ok();
 }

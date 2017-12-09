@@ -10,6 +10,8 @@
 #include "foohidjoystick.h"
 #include "iokitprotocoldialog.h"
 
+#include "compat/macros.hpp"
+
 #include <QDebug>
 
 IOKitProtocol::IOKitProtocol()
@@ -23,14 +25,14 @@ IOKitProtocol::IOKitProtocol()
 module_status IOKitProtocol::check_status()
 {
     if (!joystick)
-        return QCoreApplication::translate("foohid", "Load failure");
+        return otr_tr("Load failure");
 
     if (joystick->hasError())
     {
         QString msg = joystick->errorMessage();
 
         if (msg.isEmpty())
-            msg = QCoreApplication::translate("foohid", "Unknown error");
+            msg = otr_tr("Unknown error");
 
         return error(msg);
     }

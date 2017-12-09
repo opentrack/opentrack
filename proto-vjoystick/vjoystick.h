@@ -8,6 +8,7 @@
 #pragma once
 #include "ui_vjoystick.h"
 #include "api/plugin-api.hpp"
+#include "compat/macros.hpp"
 
 #include <windows.h>
 
@@ -55,7 +56,7 @@ public:
     ~vjoystick_proto() override;
     module_status check_status() override;
     void pose( const double *headpose ) override;
-    QString game_name() override { return "Virtual joystick"; }
+    QString game_name() override { return otr_tr("Virtual joystick"); }
 private:
 };
 
@@ -74,6 +75,6 @@ private:
 class vjoystick_metadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("vjoystick_metadata", "Joystick emulation -- vjoystick")); }
+    QString name() { return otr_tr("Joystick emulation -- vjoystick"); }
     QIcon icon() { return QIcon(":/images/vjoystick.png"); }
 };

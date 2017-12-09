@@ -25,7 +25,7 @@ public:
     }
     void pose(const double *headpose);
     QString game_name() {
-        return "Virtual joystick for Linux";
+        return otr_tr("Virtual joystick for Linux");
     }
 private:
     struct libevdev* dev;

@@ -29,6 +29,6 @@ private:
 class IOKitProtocolMetadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("iokit-foohid", "Virtual joystick")); }
+    QString name() { return otr_tr("Virtual joystick"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };

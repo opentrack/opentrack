@@ -40,7 +40,7 @@ public:
     module_status check_status() override;
     void pose(const double *headpose);
     QString game_name() {
-        return QCoreApplication::translate("udp_proto", "UDP over network");
+        return otr_tr("UDP over network");
     }
 private:
     QUdpSocket outSocket;
@@ -73,6 +73,6 @@ private slots:
 class udpDll : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("udp_proto", "UDP over network")); }
+    QString name() { return otr_tr("UDP over network"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };

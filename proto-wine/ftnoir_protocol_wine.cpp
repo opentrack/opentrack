@@ -9,6 +9,7 @@
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
 #include "csv/csv.h"
+#include "compat/macros.hpp"
 
 wine::wine() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {
@@ -59,7 +60,7 @@ module_status wine::check_status()
     if (lck_shm.success())
         return status_ok();
     else
-        return error(QCoreApplication::translate("wine", "Can't open shared memory mapping"));
+        return error(otr_tr("Can't open shared memory mapping"));
 }
 
 OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wineDll)

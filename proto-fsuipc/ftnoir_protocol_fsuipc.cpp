@@ -149,7 +149,7 @@ module_status fsuipc::check_status()
     FSUIPCLib.setFileName( s.LocationOfDLL );
 
     if (FSUIPCLib.load() != true)
-        return error(QCoreApplication::translate("fsuipc", "Can't load fsuipc at '%1'").arg(s.LocationOfDLL));
+        return error(otr_tr("Can't load fsuipc at '%1'").arg(s.LocationOfDLL));
     else
         return status_ok();
 }

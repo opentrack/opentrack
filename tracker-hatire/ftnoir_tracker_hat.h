@@ -48,6 +48,6 @@ private:
 
 class hatire_metadata : public Metadata
 {
-    QString name() { return QString(QCoreApplication::translate("hatire_metadata", "Hatire Arduino")); }
+    QString name() { return otr_tr("Hatire Arduino"); }
     QIcon icon() { return QIcon(":/images/hat.png"); }
 };

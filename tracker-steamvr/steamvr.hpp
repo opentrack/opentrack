@@ -108,6 +108,6 @@ private slots:
 class steamvr_metadata : public Metadata
 {
 public:
-    QString name() override { return QString(QCoreApplication::translate("steamvr_metadata", "Valve SteamVR")); }
+    QString name() override { return otr_tr("Valve SteamVR"); }
     QIcon icon() override { return QIcon(":/images/rift_tiny.png"); }
 };

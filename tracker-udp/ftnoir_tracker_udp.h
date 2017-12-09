@@ -53,7 +53,7 @@ private slots:
 class udpDll : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("udp_tracker", "UDP over network")); }
+    QString name() { return otr_tr("UDP over network"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

@@ -36,7 +36,7 @@ private slots:
 class test_metadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("test_metadata", "Testing - sine wave")); }
+    QString name() { return otr_tr("Testing - sine wave"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

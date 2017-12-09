@@ -42,7 +42,7 @@ class flightgear : public IProtocol
 {
 public:
     void pose(const double *headpose);
-    QString game_name() { return QCoreApplication::translate("flightgear", "FlightGear"); }
+    QString game_name() { return otr_tr("FlightGear"); }
     module_status check_status() override;
 private:
     settings s;
@@ -69,6 +69,6 @@ private slots:
 class flightgearDll : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("flightgearDll", "FlightGear")); }
+    QString name() { return otr_tr("FlightGear"); }
     QIcon icon() { return QIcon(":/images/flightgear.png"); }
 };

@@ -12,6 +12,7 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "compat/variance.hpp"
+#include "compat/macros.hpp"
 
 #include <QMutex>
 #include <QTimer>
@@ -56,6 +57,6 @@ private slots:
 class accelaDll : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("accelaDll", "Accela")); }
+    QString name() { return otr_tr("Accela"); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

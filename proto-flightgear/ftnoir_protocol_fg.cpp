@@ -30,7 +30,7 @@ module_status flightgear::check_status()
     if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         return status_ok();
     else
-        return error(QCoreApplication::translate("flightgear", "Can't bind to [%1.%2.%3.%4]:%5")
+        return error(otr_tr("Can't bind to [%1.%2.%3.%4]:%5")
                     .arg(s.ip1).arg(s.ip2).arg(s.ip3).arg(s.ip4)
                     .arg(s.port));
 }

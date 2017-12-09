@@ -39,7 +39,7 @@ private slots:
 class gamepad_metadata : public Metadata
 {
 public:
-    QString name() { return QString(QCoreApplication::translate("gamepad_metadata", "Gamepad input")); }
+    QString name() { return otr_tr("Gamepad input"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 
