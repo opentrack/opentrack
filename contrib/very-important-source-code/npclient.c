@@ -295,7 +295,8 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
         ty = pMemData->data.Y;
         tz = pMemData->data.Z;
 
-        if (!bEncryptionChecked) {
+        if (pMemData->GameId == pMemData->GameId2 && !bEncryptionChecked)
+        {
             dbg_report("NP_GetData: game = %d\n", pMemData->GameId);
             memcpy(table, pMemData->table, 8);
             for (i = 0; i < 8; i++)
