@@ -17,28 +17,18 @@
 #include <cmath>
 #include <windows.h>
 
-check_for_first_run freetrack::runonce_check = check_for_first_run();
-
-freetrack::freetrack() :
-    shm(FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap)),
-    pMemData((FTHeap*) shm.ptr()),
-    viewsStart(nullptr),
-    viewsStop(nullptr),
-    intGameID(-1)
+freetrack::freetrack()
 {
-    runonce_check.set_enabled(s.close_protocols_on_exit);
-    QObject::connect(&s.close_protocols_on_exit,
-                     static_cast<void (base_value::*)(bool) const>(&value<bool>::valueChanged),
-                     [] (bool flag) -> void { runonce_check.set_enabled(flag); });
-    runonce_check.try_runonce();
 }
 
 freetrack::~freetrack()
 {
-    if (viewsStop != NULL) {
-        viewsStop();
-        FTIRViewsLib.unload();
+    if (shm.success())
+    {
+        const double tmp[6] {};
+        pose(tmp);
     }
+
     dummyTrackIR.close();
 }
 
@@ -81,7 +71,7 @@ void freetrack::pose(const double* headpose)
 
     // HACK: Falcon BMS makes a "bump" if pitch is over the value -sh 20170615
     const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < 1e-4;
-    const float pitch = -degrees_to_rads(is_crossing_90 ? 89.86 : headpose[Pitch]);
+    const float pitch = -degrees_to_rads(is_crossing_90 ? 89.85 : headpose[Pitch]);
 
     FTHeap volatile* ft = pMemData;
     FTData volatile* data = &ft->data;
@@ -112,14 +102,14 @@ void freetrack::pose(const double* headpose)
             const std::uintptr_t addr = (std::uintptr_t)(void*)&pMemData->table[0];
             const std::uintptr_t addr_ = addr & ~(sizeof(LONG)-1u);
 
+            static_assert(sizeof(LONG) == 4, "");
+
             // the data `happens' to be aligned by virtue of element ordering
             // inside FTHeap. there's no deeper reason behind it.
-
             if (addr != addr_)
                 assert(!"unaligned access");
 
-            static_assert(sizeof(LONG) == 4, "");
-
+            // no unaligned atomic access for `char'
             for (unsigned k = 0; k < 2; k++)
                 store(*(std::int32_t volatile*)&pMemData->table_ints[k], t.ints[k]);
         }
@@ -141,33 +131,8 @@ float freetrack::degrees_to_rads(double degrees)
     return float(degrees*M_PI/180);
 }
 
-void freetrack::start_tirviews()
+void freetrack::start_dummy()
 {
-    QString aFileName = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TIRViews.dll";
-    if ( QFile::exists( aFileName )) {
-        FTIRViewsLib.setFileName(aFileName);
-        FTIRViewsLib.load();
-
-        viewsStart = (importTIRViewsStart) FTIRViewsLib.resolve("TIRViewsStart");
-        if (viewsStart == NULL) {
-            qDebug() << "FTServer::run() says: TIRViewsStart function not found in DLL!";
-        }
-        else {
-            qDebug() << "FTServer::run() says: TIRViewsStart executed!";
-            viewsStart();
-        }
-
-        //
-        // Load the Stop function from TIRViews.dll. Call it when terminating the thread.
-        //
-        viewsStop = (importTIRViewsStop) FTIRViewsLib.resolve("TIRViewsStop");
-        if (viewsStop == NULL) {
-            qDebug() << "FTServer::run() says: TIRViewsStop function not found in DLL!";
-        }
-    }
-}
-
-void freetrack::start_dummy() {
     static const QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
@@ -215,9 +180,6 @@ module_status freetrack::check_status()
     }
 
     set_protocols(use_ft, use_npclient);
-
-    if (s.useTIRViews && use_npclient)
-        start_tirviews();
 
     pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;

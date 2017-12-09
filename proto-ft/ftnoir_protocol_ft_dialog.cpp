@@ -10,8 +10,9 @@
  */
 #include "ftnoir_protocol_ft.h"
 #include "opentrack-library-path.h"
-#include <QDebug>
+
 #include <QFileDialog>
+#include <QFileInfo>
 
 FTControls::FTControls()
 {
@@ -21,22 +22,11 @@ FTControls::FTControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
-    tie_setting(s.useTIRViews, ui.chkTIRViews);
-    tie_setting(s.close_protocols_on_exit, ui.close_on_exit);
-
     ui.cbxSelectInterface->addItem("Enable both");
     ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
     ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
 
     tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
-
-    static const QFile memhacks_pathname(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TIRViews.dll");
-    if (!memhacks_pathname.exists()) {
-        ui.chkTIRViews->setEnabled(false);
-    }
-    else {
-        ui.chkTIRViews->setEnabled(true);
-    }
 }
 
 void FTControls::doOK()
