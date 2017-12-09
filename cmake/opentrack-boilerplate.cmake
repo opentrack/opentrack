@@ -166,6 +166,7 @@ function(otr_module n_)
         target_link_libraries(${n} opentrack-api opentrack-options opentrack-compat)
     endif()
 
+    target_compile_definitions("${n}" PRIVATE "-DOTR_MODULE_NAME=\"${n_}\"")
     string(REPLACE "-" "_" build-n ${n_})
     string(TOUPPER "${build-n}" build-n)
     set_property(TARGET ${n} PROPERTY DEFINE_SYMBOL "BUILD_${build-n}")
