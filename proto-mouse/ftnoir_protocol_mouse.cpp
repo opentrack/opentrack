@@ -64,12 +64,11 @@ int mouse::get_delta(int val, int prev)
 {
     using std::abs;
 
-    const int a = abs(val - prev), b = abs(val + prev), c = abs(val);
-    if (c < a && c < b)
-        return val;
-    if (b < a && b < c)
+    const int a = abs(val - prev), b = abs(val + prev);
+    if (b < a)
         return val + prev;
-    return val - prev;
+    else
+        return val - prev;
 }
 
 int mouse::get_value(double val, double sensitivity, bool is_rotation)
