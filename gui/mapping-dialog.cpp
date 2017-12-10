@@ -123,23 +123,21 @@ void MapWidget::load()
             qfc.force_redraw();
         }
 
-        connect(&axis.opts.clamp_x_, base_value::signal_fun<int>(),
-                &qfc, [i, &conf, &qfc](int value) {
+        auto update_snap = [i, &conf, &qfc](int value) {
             //qfc.reload_spline();
             qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
 
             if (i >= 3)
                 qfc.set_snap(1, 2.5);
             else
-            {
-                const double x_snap = std::fmax(.5, conf.max_input() / 100.);
-                qfc.set_snap(x_snap, 1);
-            }
-        });
+                qfc.set_snap(.5, .5);
+        };
+
+        connect(&axis.opts.clamp_x_, base_value::value_changed<int>(), &qfc, update_snap);
 
         // force signal to avoid duplicating the slot's logic
         qfc.setConfig(&conf);
-        axis.opts.clamp_x_.valueChanged(axis.opts.clamp_x_);
+        update_snap(axis.opts.clamp_x_.to<int>());
 
         widgets[i % 6][altp ? 1 : 0] = &qfc;
     }
