@@ -360,9 +360,9 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
                                           s.get(), [&]() { invalidate_settings(); });
 
             // this isn't strictly necessary for the spline but helps the widget
-            conn_maxx = QObject::connect(&s->opts.clamp_x_, base_value::signal_fun<int>(),
+            conn_maxx = QObject::connect(&s->opts.clamp_x_, base_value::value_changed<int>(),
                                          ctx.get(), [&](double) { invalidate_settings(); });
-            conn_maxy = QObject::connect(&s->opts.clamp_y_, base_value::signal_fun<int>(),
+            conn_maxy = QObject::connect(&s->opts.clamp_y_, base_value::value_changed<int>(),
                                          ctx.get(), [&](double) { invalidate_settings(); });
         }
 

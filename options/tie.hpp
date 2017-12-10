@@ -47,7 +47,7 @@ tie_setting(value<t>& v, QComboBox* cb)
                                                });
                         },
                         v.DIRECT_CONNTYPE);
-    base_value::connect(&v, base_value::signal_fun<int>(),
+    base_value::connect(&v, base_value::value_changed<int>(),
                         cb, [cb](int x) {
                             run_in_thread_sync(cb, [&]() { cb->setCurrentIndex(cb->findData(x)); });
                         },
@@ -60,7 +60,7 @@ void tie_setting(value<t>& v, QLabel* lb, F&& fun)
     auto closure = [=](cv_qualified<t> x) { lb->setText(fun(x)); };
 
     closure(v());
-    base_value::connect(&v, base_value::signal_fun<t>(),
+    base_value::connect(&v, base_value::value_changed<t>(),
                         lb, closure,
                         v.SAFE_CONNTYPE);
 }
@@ -73,7 +73,7 @@ void tie_setting(value<t>& v, QObject* obj, F&& fun)
 
     fun(v());
 
-    base_value::connect(&v, base_value::signal_fun<t>(),
+    base_value::connect(&v, base_value::value_changed<t>(),
                         obj, fun,
                         v.DIRECT_CONNTYPE);
 }

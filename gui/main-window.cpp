@@ -162,9 +162,9 @@ MainWindow::MainWindow() :
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
 
-        connect(&m.tracker_dll, base_value::signal_fun<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
-        connect(&m.protocol_dll, base_value::signal_fun<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
-        connect(&m.filter_dll, base_value::signal_fun<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+        connect(&m.tracker_dll, base_value::value_changed<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+        connect(&m.protocol_dll, base_value::value_changed<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+        connect(&m.filter_dll, base_value::value_changed<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
 
         tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
         tie_setting(m.protocol_dll, ui.iconcomboProtocol);

@@ -116,7 +116,7 @@ void MapWidget::load()
         if (altp)
         {
             connect(&axis.opts.altp,
-                    base_value::signal_fun<bool>(),
+                    base_value::value_changed<bool>(),
                     this,
                     [&](bool f) -> void {qfc.setEnabled(f); qfc.force_redraw();});
             qfc.setEnabled(axis.opts.altp);

@@ -38,7 +38,7 @@ public:
     // MSVC has ODR problems in 15.4
     // no C++17 "constexpr inline" for data declarations in MSVC
     template<typename t>
-    constexpr static auto signal_fun()
+    constexpr static auto value_changed()
     {
         return static_cast<signal_sig<t>>(&base_value::valueChanged);
     }
