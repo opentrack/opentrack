@@ -123,14 +123,16 @@ void MapWidget::load()
             qfc.force_redraw();
         }
 
-        auto update_snap = [i, &conf, &qfc](int value) {
+        const int idx = qfcs[i].axis;
+
+        auto update_snap = [idx, &conf, &qfc](int value) {
             //qfc.reload_spline();
             qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
 
-            if (i >= 3)
+            if (idx >= 3)
                 qfc.set_snap(1, 2.5);
             else
-                qfc.set_snap(.5, .5);
+                qfc.set_snap(.5, 1);
         };
 
         connect(&axis.opts.clamp_x_, base_value::value_changed<int>(), &qfc, update_snap);
