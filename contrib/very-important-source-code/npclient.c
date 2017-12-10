@@ -56,8 +56,8 @@ static double r = 0, p = 0, y = 0, tx = 0, ty = 0, tz = 0;
 
 static bool FTCreateMapping(void);
 static void FTDestroyMapping(void);
-static __inline double clamp_rotation(double x);
 static __inline double clamp(double x, double xmin, double xmax);
+static __inline double clamp_(double x);
 
 #if DEBUG
 static FILE *debug_stream;
@@ -302,13 +302,13 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
 #if DEBUG
         recv = 1;
 #endif
-        y = pMemData->data.Yaw   * (NP_AXIS_MAX / M_PI);
-        p = pMemData->data.Pitch * (NP_AXIS_MAX / M_PI);
-        r = pMemData->data.Roll  * (NP_AXIS_MAX / M_PI);
+        y = pMemData->data.Yaw   * NP_AXIS_MAX / M_PI;
+        p = pMemData->data.Pitch * NP_AXIS_MAX / M_PI;
+        r = pMemData->data.Roll  * NP_AXIS_MAX / M_PI;
 
-        tx = pMemData->data.X;
-        ty = pMemData->data.Y;
-        tz = pMemData->data.Z;
+        tx = pMemData->data.X * NP_AXIS_MAX / 500.;
+        ty = pMemData->data.Y * NP_AXIS_MAX / 500.;
+        tz = pMemData->data.Z * NP_AXIS_MAX / 500.;
 
         if (pMemData->GameId == pMemData->GameId2 && !bEncryptionChecked)
         {
@@ -334,13 +334,13 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     data->status = running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
     data->cksum = 0;
 
-    data->roll  = clamp_rotation(r);
-    data->pitch = clamp_rotation(p);
-    data->yaw   = clamp_rotation(y);
+    data->roll  = clamp_(r);
+    data->pitch = clamp_(p);
+    data->yaw   = clamp_(y);
 
-    data->tx = clamp(tx, -500.0, 500.0);
-    data->ty = clamp(ty, -500.0, 500.0);
-    data->tz = clamp(tz, -500.0, 500.0);
+    data->tx = clamp_(tx);
+    data->ty = clamp_(ty);
+    data->tz = clamp_(tz);
 
     for(i = 0; i < 9; ++i)
         data->padding[i] = 0.0;
@@ -595,10 +595,7 @@ static __inline double clamp(double x, double xmin, double xmax)
     return x;
 }
 
-#define ROT_MAX (NP_AXIS_MAX)
-#define ROT_MIN (-ROT_MAX)
-
-static __inline double clamp_rotation(double x)
+static __inline double clamp_(double x)
 {
-    return clamp(x, ROT_MIN, ROT_MAX);
+    return clamp(x, -NP_AXIS_MAX, NP_AXIS_MAX);
 }
