@@ -12,6 +12,8 @@
 #define FREETRACK_MUTEX "FT_Mutext"
 #define FT_MM_DATA "FT_SharedMem"
 
+#define UNUSED(var) (void)var
+
 typedef struct TFreeTrackData
 {
     int DataID;
@@ -94,6 +96,8 @@ typedef struct tir_signature
 
 BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
+    UNUSED(lpvReserved);
+
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
@@ -258,7 +262,7 @@ static unsigned cksum(unsigned char buf[], unsigned size)
     return (unsigned)c;
 }
 
-static __inline void enhance(unsigned char buf[], unsigned size, unsigned char table[], int table_size)
+static __inline void enhance(unsigned char buf[], unsigned size, unsigned char table[], unsigned table_size)
 {
   unsigned table_ptr = 0;
   unsigned char var = 0x88;
@@ -362,6 +366,7 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
 
 NP_EXPORT(int) NP_GetParameter(int arg0, int arg1)
 {
+    UNUSED(arg0); UNUSED(arg1);
     dbg_report("GetParameter request: %d %d\n", arg0, arg1);
     return (int) 0;
 }
@@ -492,6 +497,7 @@ NP_EXPORT(int) NP_RegisterProgramProfileID(unsigned short id)
 
 NP_EXPORT(int) NP_RegisterWindowHandle(HWND hwnd)
 {
+    UNUSED(hwnd);
     dbg_report("RegisterWindowHandle request: %p\n", (void*) hwnd);
     return (int) 0;
 }
@@ -501,6 +507,7 @@ NP_EXPORT(int) NP_RegisterWindowHandle(HWND hwnd)
 
 NP_EXPORT(int) NP_RequestData(unsigned short req)
 {
+    UNUSED(req);
     dbg_report("RequestData request: %d\n", req);
     return (int) 0;
 }
@@ -510,6 +517,7 @@ NP_EXPORT(int) NP_RequestData(unsigned short req)
 
 NP_EXPORT(int) NP_SetParameter(int arg0, int arg1)
 {
+    UNUSED(arg0); UNUSED(arg1);
     dbg_report("SetParameter request: %d %d\n", arg0, arg1);
     return (int) 0;
 }
