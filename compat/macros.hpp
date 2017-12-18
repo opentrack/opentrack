@@ -34,12 +34,6 @@
 #   define force_inline inline
 #endif
 
-#if defined __GNUG__
-#   define flatten __attribute__((flatten, noinline))
-#else
-#   define flatten
-#endif
-
 #ifdef Q_CREATOR_RUN
 #   define warn_result_unused
 #elif defined(_MSC_VER)
@@ -52,12 +46,6 @@
 #   define unused(t, i) t __attribute__((unused)) i
 #else
 #   define unused(t, i) t
-#endif
-
-#if !defined(_WIN32)
-#   define unused_on_unix(t, i) unused(t, i)
-#else
-#   define unused_on_unix(t, i) t i
 #endif
 
 #if defined __GNUC__

@@ -66,18 +66,13 @@ static void reinit_offset() {
     offset_z = XPLMGetDataf(view_z);
 }
 
-#ifdef __GNUC__
-#   define unused(varname) varname __attribute__((__unused__))
-#else
-#   define unused(varname) varname
-#endif
-
-shm_wrapper* shm_wrapper_init(const char *shmName, const char *unused(mutexName), int mapSize)
+shm_wrapper* shm_wrapper_init(const char *shm_name, const char *mutex_name, int mapSize)
 {
+    (void)mutex_name;
     shm_wrapper* self = malloc(sizeof(shm_wrapper));
     char shm_filename[NAME_MAX];
     shm_filename[0] = '/';
-    strncpy(shm_filename+1, shmName, NAME_MAX-2);
+    strncpy(shm_filename+1, shm_name, NAME_MAX-2);
     shm_filename[NAME_MAX-1] = '\0';
     /* (void) shm_unlink(shm_filename); */
 
@@ -106,10 +101,10 @@ void shm_wrapper_unlock(shm_wrapper* self)
 }
 
 float write_head_position(
-        float                unused(inElapsedSinceLastCall),
-        float                unused(inElapsedTimeSinceLastFlightLoop),
-        int                  unused(inCounter),
-        void *               unused(inRefcon) )
+        float                inElapsedSinceLastCall,
+        float                inElapsedTimeSinceLastFlightLoop,
+        int                  inCounter,
+        void *               inRefcon )
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         shm_wrapper_lock(lck_posix);
@@ -221,9 +216,9 @@ PLUGIN_API OTR_COMPAT_EXPORT void XPluginDisable ( void ) {
 }
 
 PLUGIN_API OTR_COMPAT_EXPORT void XPluginReceiveMessage(
-        XPLMPluginID    unused(inFromWho),
-        int             unused(inMessage),
-        void *          unused(inParam))
+        XPLMPluginID    inFromWho,
+        int             inMessage,
+        void *          inParam)
 {
     if (inMessage == XPLM_MSG_AIRPORT_LOADED)
         reinit_offset();
