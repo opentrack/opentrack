@@ -83,9 +83,10 @@ public:
                              DIRECT_CONNTYPE);
     }
 
-    never_inline
-    value(bundle b, const char* name, t def) : value(b, QString(name), def)
+    template<unsigned k>
+    inline value(bundle b, const char (&name)[k], t def) : value(b, QLatin1String(name, k-1), def)
     {
+        static_assert(k > 0, "");
     }
 
     never_inline
