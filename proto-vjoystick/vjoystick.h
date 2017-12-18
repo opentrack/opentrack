@@ -54,7 +54,7 @@ class vjoystick_proto : public IProtocol
 public:
     vjoystick_proto();
     ~vjoystick_proto() override;
-    module_status check_status() override;
+    module_status initialize() override;
     void pose( const double *headpose ) override;
     QString game_name() override { return otr_tr("Virtual joystick"); }
 private:

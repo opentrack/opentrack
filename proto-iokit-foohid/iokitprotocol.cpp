@@ -22,7 +22,7 @@ IOKitProtocol::IOKitProtocol()
         qWarning("%s\n", qPrintable(joystick->errorMessage()));
 }
 
-module_status IOKitProtocol::check_status()
+module_status IOKitProtocol::initialize()
 {
     if (!joystick)
         return otr_tr("Load failure");

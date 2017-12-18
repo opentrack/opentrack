@@ -24,7 +24,7 @@ public:
     void filter(const double* input, double *output) override;
     void center() override { first_run = true; }
     spline spline_rot, spline_pos;
-    module_status check_status() override { return status_ok(); }
+    module_status initialize() override { return status_ok(); }
 private:
     settings_accela s;
     double last_output[6], deltas[6];

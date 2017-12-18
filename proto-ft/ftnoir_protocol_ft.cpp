@@ -157,7 +157,7 @@ void freetrack::set_protocols(bool ft, bool npclient)
         settings_npclient.setValue("Path", "");
 }
 
-module_status freetrack::check_status()
+module_status freetrack::initialize()
 {
     if (!shm.success())
         return error("Can't load freetrack memory mapping");

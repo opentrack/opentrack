@@ -43,7 +43,7 @@ class flightgear : public IProtocol
 public:
     void pose(const double *headpose);
     QString game_name() { return otr_tr("FlightGear"); }
-    module_status check_status() override;
+    module_status initialize() override;
 private:
     settings s;
     flightgear_datagram FlightData;

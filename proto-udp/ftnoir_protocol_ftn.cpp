@@ -31,7 +31,7 @@ void udp::set_dest_address()
                            (s.ip4.to<unsigned>() & 0xff) << 0  );
 }
 
-module_status udp::check_status()
+module_status udp::initialize()
 {
     if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         return status_ok();

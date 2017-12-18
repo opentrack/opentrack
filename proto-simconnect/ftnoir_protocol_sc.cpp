@@ -161,7 +161,7 @@ private:
     bool ok;
 };
 
-module_status simconnect::check_status()
+module_status simconnect::initialize()
 {
     if (!SCClientLib.isLoaded())
     {

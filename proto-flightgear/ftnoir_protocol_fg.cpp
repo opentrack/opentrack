@@ -25,7 +25,7 @@ void flightgear::pose(const double* headpose) {
     (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(s.port));
 }
 
-module_status flightgear::check_status()
+module_status flightgear::initialize()
 {   
     if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         return status_ok();

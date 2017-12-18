@@ -125,7 +125,7 @@ vjoystick_proto::~vjoystick_proto()
 {
 }
 
-module_status vjoystick_proto::check_status()
+module_status vjoystick_proto::initialize()
 {
     switch (h.get_state())
     {

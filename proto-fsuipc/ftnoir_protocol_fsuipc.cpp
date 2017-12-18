@@ -144,7 +144,7 @@ void fsuipc::pose(const double *headpose ) {
     prevRotZ = virtRotZ;
 }
 
-module_status fsuipc::check_status()
+module_status fsuipc::initialize()
 {
     FSUIPCLib.setFileName( s.LocationOfDLL );
 

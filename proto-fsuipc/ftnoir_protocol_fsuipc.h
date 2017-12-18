@@ -50,7 +50,7 @@ class fsuipc : public IProtocol
 public:
     fsuipc();
     ~fsuipc() override;
-    module_status check_status() override;
+    module_status initialize() override;
     void pose(const double* headpose);
     QString game_name() { return otr_tr("Microsoft Flight Simulator X"); }
 private:

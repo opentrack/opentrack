@@ -95,7 +95,7 @@ struct OTR_API_EXPORT module_status_mixin
     static module_status status_ok();
     static module_status error(const QString& error);
 
-    virtual module_status check_status() = 0;
+    virtual module_status initialize() = 0;
 };
 
 // implement this in filters

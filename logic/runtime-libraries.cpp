@@ -17,7 +17,7 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     if (!pProtocol)
         goto end;
 
-    if(status = pProtocol->check_status(), !status.is_ok())
+    if(status = pProtocol->initialize(), !status.is_ok())
     {
         status = otr_tr("Error occured while loading protocol %1\n\n%2\n")
                     .arg(p->name).arg(status.error);
@@ -34,7 +34,7 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     }
 
     if (pFilter)
-        if(status = pFilter->check_status(), !status.is_ok())
+        if(status = pFilter->initialize(), !status.is_ok())
         {
             status = otr_tr("Error occured while loading filter %1\n\n%2\n")
                      .arg(f->name).arg(status.error);

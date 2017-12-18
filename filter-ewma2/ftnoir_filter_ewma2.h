@@ -25,7 +25,7 @@ public:
     ewma();
     void filter(const double *input, double *output) override;
     void center() override { first_run = true; }
-    module_status check_status() override { return status_ok(); }
+    module_status initialize() override { return status_ok(); }
 private:
     // Deltas are smoothed over the last 1/60sec.
     const double delta_RC = 1./60;

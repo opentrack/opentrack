@@ -55,7 +55,7 @@ void wine::pose( const double *headpose )
     }
 }
 
-module_status wine::check_status()
+module_status wine::initialize()
 {
     if (lck_shm.success())
         return status_ok();

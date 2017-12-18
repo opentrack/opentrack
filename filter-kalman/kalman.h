@@ -141,6 +141,7 @@ public:
     void reset();
     void filter(const double *input, double *output) override;
     void center() override { reset(); }
+    module_status initialize() { return status_ok(); }
     PoseVector last_input;
     Timer timer;
     bool first_run;

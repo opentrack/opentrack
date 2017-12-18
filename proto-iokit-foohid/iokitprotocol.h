@@ -18,7 +18,7 @@ class IOKitProtocol : public IProtocol
 public:
     IOKitProtocol();
 
-    module_status check_status() override;
+    module_status initialize() override;
     void pose(const double *headpose) final;
     QString game_name() final;
 

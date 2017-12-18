@@ -11,10 +11,7 @@
 #pragma once
 
 #include "ui_ftnoir_ftncontrols.h"
-#include <QThread>
 #include <QUdpSocket>
-#include <QMessageBox>
-#include <cmath>
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"
 using namespace options;
@@ -37,7 +34,7 @@ class udp : public QObject, public IProtocol
 
 public:
     udp();
-    module_status check_status() override;
+    module_status initialize() override;
     void pose(const double *headpose);
     QString game_name() {
         return otr_tr("UDP over network");
