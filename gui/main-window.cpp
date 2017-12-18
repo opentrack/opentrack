@@ -29,7 +29,7 @@
 #   include <windows.h>
 #endif
 
-extern "C" const char* opentrack_version;
+extern "C" const char* const opentrack_version;
 
 #if !defined _WIN32 && !defined __APPLE__
 #   include <unistd.h>

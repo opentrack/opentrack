@@ -24,9 +24,9 @@ extern \"C\"
 extern
 #endif
 
-const char* opentrack_version;
+const char* const opentrack_version;
 
-const char* opentrack_version = \"${OPENTRACK_COMMIT}${_build_type}\";
+const char* const opentrack_version = \"${OPENTRACK_COMMIT}${_build_type}\";
 ")
 
 set(file "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
