@@ -37,20 +37,20 @@ inline unsigned uround(const t& val)
 namespace util_detail {
 
 template<typename n>
-inline auto clamp_float(n val, n min, n max)
+inline auto clamp_float(n val, n min_, n max_)
 {
-    return std::fmin(std::fmax(val, min), max);
+    return std::fmin(std::fmax(val, min_), max_);
 }
 
 template<typename t, typename n>
 struct clamp final
 {
-    static inline auto clamp_(const n& val, const n& min, const n& max)
+    static inline auto clamp_(const n& val, const n& min_, const n& max_)
     {
-        if (unlikely(val > max))
-            return max;
-        if (unlikely(val < min))
-            return min;
+        if (unlikely(val > max_))
+            return max_;
+        if (unlikely(val < min_))
+            return min_;
         return val;
     }
 };
@@ -58,18 +58,18 @@ struct clamp final
 template<typename t>
 struct clamp<float, t>
 {
-    static inline auto clamp_(float val, float min, float max)
+    static inline auto clamp_(float val, float min_, float max_)
     {
-        return clamp_float(val, min, max);
+        return clamp_float(val, min_, max_);
     }
 };
 
 template<typename t>
 struct clamp<double, t>
 {
-    static inline auto clamp_(double val, double min, double max)
+    static inline auto clamp_(double val, double min_, double max_)
     {
-        return clamp_float(val, min, max);
+        return clamp_float(val, min_, max_);
     }
 };
 
