@@ -40,7 +40,7 @@ public:
     spline_widget(QWidget *parent = 0);
     ~spline_widget();
 
-    void setConfig(spline* spl);
+    void setConfig(base_spline* spl);
 
     QColor colorBezier() const;
     void setColorBezier(QColor color);
@@ -85,7 +85,7 @@ private:
     QPoint point_to_pixel(const QPointF& point);
 
     QPointF c;
-    spline* _config;
+    base_spline* _config;
 
     QPixmap _background;
     QPixmap _function;

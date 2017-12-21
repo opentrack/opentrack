@@ -301,7 +301,7 @@ void spline::move_point(int idx, QPointF pt)
     }
 }
 
-QList<QPointF> spline::get_points() const
+spline::points_t spline::get_points() const
 {
     QMutexLocker foo(&_mutex);
     return s->points;
@@ -454,16 +454,16 @@ void spline::ensure_valid(QList<QPointF>& the_points)
 }
 
 // the return value is only safe to use with no spline::set_bundle calls
-std::shared_ptr<settings> spline::get_settings()
+std::shared_ptr<base_settings> spline::get_settings()
 {
     QMutexLocker foo(&_mutex);
-    return s;
+    return std::static_pointer_cast<base_settings>(s);
 }
 
-std::shared_ptr<const settings> spline::get_settings() const
+std::shared_ptr<const base_settings> spline::get_settings() const
 {
     QMutexLocker foo(&_mutex);
-    return s;
+    return std::static_pointer_cast<const base_settings>(s);
 }
 
 double spline::bucket_size_coefficient(const QList<QPointF>& points) const
@@ -497,3 +497,4 @@ settings::~settings()
 }
 
 }
+

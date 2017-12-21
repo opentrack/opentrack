@@ -47,7 +47,7 @@ spline_widget::~spline_widget()
         QObject::disconnect(connection);
 }
 
-void spline_widget::setConfig(spline* spl)
+void spline_widget::setConfig(base_spline* spl)
 {
     if (connection)
     {
@@ -61,8 +61,8 @@ void spline_widget::setConfig(spline* spl)
     {
         update_range();
 
-        std::shared_ptr<spline::settings> s = spl->get_settings();
-        connection = connect(s.get(), &spline::settings::recomputed,
+        std::shared_ptr<base_spline::base_settings> s = spl->get_settings();
+        connection = connect(s.get(), &spline::base_settings::recomputed,
                              this, [this]() { reload_spline(); },
                              Qt::QueuedConnection);
     }
@@ -516,11 +516,6 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 
 void spline_widget::reload_spline()
 {
-    if (_config)
-    {
-        QList<QPointF> pts = _config->get_points();
-        _config->ensure_valid(pts);
-    }
     // don't recompute here as the value's about to be recomputed in the callee
     update_range();
     update();
