@@ -136,9 +136,6 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         extract_single_channel(frame, 2, output);
         break;
     }
-    default:
-        once_only(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
-        /*FALLTHROUGH*/
     case pt_color_average:
     {
         const int W = frame.cols, H = frame.rows;
@@ -147,6 +144,9 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         cv::reduce(tmp, output_, 1, cv::REDUCE_AVG);
         break;
     }
+    default:
+        once_only(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
+        /*FALLTHROUGH*/
     case pt_color_natural:
         cv::cvtColor(frame, output, cv::COLOR_BGR2GRAY);
         break;

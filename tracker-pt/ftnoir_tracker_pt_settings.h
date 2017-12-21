@@ -75,7 +75,8 @@ struct settings_pt : opts
         dynamic_pose(b, "dynamic-pose-resolution", true),
         init_phase_timeout(b, "init-phase-timeout", 250),
         auto_threshold(b, "automatic-threshold", true),
-        blob_color(b, "blob-color", pt_color_average),
+        blob_color(b, "blob-color", pt_color_natural),
         threshold_slider(b, "threshold-slider", slider_value(128, 0, 255))
-    {}
+    {
+    }
 };
