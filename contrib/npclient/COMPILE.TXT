@@ -1,0 +1,7 @@
+# This makes small binaries:
+
+CC=clang
+CFLAGS='-Wall -Wextra -Wpedantic -Os -s -ffunction-sections -fdata-sections -Wl,--kill-at,--nxcompat,--dynamicbase,--as-needed,--gc-sections,--strip-all'
+
+PATH=/mingw32/bin:"$PATH" sh -c "$CC $CFLAGS -mdll -o NPClient.dll npclient.c" &&
+PATH=/mingw64/bin:"$PATH" sh -c "$CC $CFLAGS -mdll -o NPClient64.dll npclient.c"
