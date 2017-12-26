@@ -54,7 +54,7 @@ static double r = 0, p = 0, y = 0, tx = 0, ty = 0, tz = 0;
 
 #define NP_DECLSPEC __declspec(dllexport)
 #define NP_EXPORT(t) t NP_DECLSPEC __stdcall
-#define NP_AXIS_MAX 16384
+#define NP_AXIS_MAX 16383
 
 static bool FTCreateMapping(void);
 static void FTDestroyMapping(void);
