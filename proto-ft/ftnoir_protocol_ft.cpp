@@ -16,6 +16,14 @@
 #include <atomic>
 #include <cmath>
 #include <windows.h>
+#include <intrin.h>
+
+static int page_size()
+{
+  SYSTEM_INFO system_info;
+  GetSystemInfo(&system_info);
+  return system_info.dwPageSize;
+}
 
 freetrack::freetrack()
 {
@@ -51,12 +59,15 @@ never_inline void store(float volatile& place, const float value)
     (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
 }
 
-never_inline void store(std::int32_t volatile& place, std::int32_t value)
+template<typename t, typename u>
+force_inline
+std::enable_if_t<std::is_integral_v<t> && sizeof(t) == 4>
+store(t volatile& place, u value)
 {
     (void)InterlockedExchange((LONG volatile*) &place, value);
 }
 
-never_inline std::int32_t load(std::int32_t volatile& place)
+force_inline std::int32_t load(std::int32_t volatile& place)
 {
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }
@@ -103,19 +114,24 @@ void freetrack::pose(const double* headpose)
             const std::uintptr_t addr_ = addr & ~(sizeof(LONG)-1u);
 
             static_assert(sizeof(LONG) == 4, "");
+            static_assert(sizeof(int) == 4, "");
 
-            // the data `happens' to be aligned by virtue of element ordering
+            // memory mappings are page-aligned due to TLB
+            if (std::intptr_t(pMemData) & page_size() - 1)
+                assert(!"proto/freetrack: memory mapping not page aligned");
+
+            // the data happens to be aligned by virtue of element ordering
             // inside FTHeap. there's no deeper reason behind it.
             if (addr != addr_)
-                assert(!"unaligned access");
+                assert(!"proto/freetrack: unaligned access");
 
             // no unaligned atomic access for `char'
             for (unsigned k = 0; k < 2; k++)
-                store(*(std::int32_t volatile*)&pMemData->table_ints[k], t.ints[k]);
+                store(pMemData->table_ints[k], t.ints[k]);
         }
 
         store(ft->GameID2, id);
-        store((std::int32_t volatile&) data->DataID, 0);
+        store(data->DataID, 0);
 
         intGameID = id;
 
@@ -160,7 +176,7 @@ void freetrack::set_protocols(bool ft, bool npclient)
 module_status freetrack::initialize()
 {
     if (!shm.success())
-        return error("Can't load freetrack memory mapping");
+        return error(_("Can't load freetrack memory mapping"));
 
     bool use_ft = false, use_npclient = false;
 
