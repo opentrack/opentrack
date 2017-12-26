@@ -5,6 +5,13 @@
 #define _(x) otr_tr(x)
 
 #if defined _MSC_VER
+#
+#   define MEMORY_BARRIER _ReadWriteBarrier()
+#else
+#   define MEMORY_BARRIER asm volatile("" ::: "memory")
+#endif
+
+#if defined _MSC_VER
 #   define never_inline __declspec(noinline)
 #elif defined __GNUG__
 #   define never_inline __attribute__((noinline))
