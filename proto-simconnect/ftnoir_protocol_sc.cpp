@@ -174,30 +174,30 @@ module_status simconnect::initialize()
                 return error(tr("dll load failed -- %1").arg(SCClientLib.errorString()));
         }
         else
-            return error("can't load SDK -- check selected simconnect version");
+            return error(_("can't load SDK -- check selected simconnect version"));
     }
 
     simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
     if (simconnect_open == NULL) {
-        return error("simconnect: SimConnect_Open function not found in DLL!");
+        return error("Open function not found in DLL!");
     }
     simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
     if (simconnect_set6DOF == NULL) {
-        return error("simconnect: SimConnect_CameraSetRelative6DOF function not found in DLL!");
+        return error("CameraSetRelative6DOF function not found in DLL!");
     }
     simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
     if (simconnect_close == NULL) {
-        return error("simconnect: SimConnect_Close function not found in DLL!");
+        return error("Close function not found in DLL!");
     }
 
     simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
     if (simconnect_calldispatch == NULL) {
-        return error("simconnect: SimConnect_CallDispatch function not found in DLL!");
+        return error("CallDispatch function not found in DLL!");
     }
 
     simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
     if (simconnect_subscribetosystemevent == NULL) {
-        return error("simconnect: SimConnect_SubscribeToSystemEvent function not found in DLL!");
+        return error("SubscribeToSystemEvent function not found in DLL!");
     }
 
     start();

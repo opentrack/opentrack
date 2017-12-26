@@ -1,6 +1,8 @@
 #pragma once
 
+#include <QCoreApplication>
 #define otr_tr(str) (QCoreApplication::translate(OTR_MODULE_NAME, (str)))
+#define _(x) otr_tr(x)
 
 #if defined _MSC_VER
 #   define never_inline __declspec(noinline)

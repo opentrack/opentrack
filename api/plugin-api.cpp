@@ -1,4 +1,5 @@
 #include "plugin-api.hpp"
+#include "compat/macros.hpp"
 
 using namespace plugin_api::detail;
 
@@ -66,4 +67,7 @@ module_status::module_status(const QString& error) : error(error) {}
 
 module_status module_status_mixin::status_ok() { return module_status(); }
 
-module_status module_status_mixin::error(const QString& error) { return module_status(error); }
+module_status module_status_mixin::error(const QString& error)
+{
+    return module_status(error.isEmpty() ? QString(_("Unknown error")) : error);
+}

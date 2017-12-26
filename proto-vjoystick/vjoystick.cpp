@@ -95,6 +95,14 @@ LONG handle::to_axis_value(unsigned axis_id, double val)
 
 vjoystick_proto::vjoystick_proto()
 {
+}
+
+vjoystick_proto::~vjoystick_proto()
+{
+}
+
+module_status vjoystick_proto::initialize()
+{
     if (h.get_state() != state_success)
     {
         QMessageBox msgbox;
@@ -119,24 +127,17 @@ vjoystick_proto::vjoystick_proto()
             QDesktopServices::openUrl(QUrl(project_site_url, QUrl::StrictMode));
         }
     }
-}
 
-vjoystick_proto::~vjoystick_proto()
-{
-}
-
-module_status vjoystick_proto::initialize()
-{
     switch (h.get_state())
     {
     case state_notent:
-        return error("vjoystick #1 doesn't exist");
+        return error(_("vjoystick not installed or disabled"));
     case state_fail:
-        return error("can't initialize vjoystick");
+        return error(_("can't initialize vjoystick"));
     case state_success:
         return status_ok();
     default:
-        return error("unknown error");
+        return error(_("unknown error"));
     }
 }
 

@@ -90,12 +90,15 @@ struct OTR_API_EXPORT module_status final
     module_status(const QString& error = QString());
 };
 
+/*
+ * implement in all module types
+ */
 struct OTR_API_EXPORT module_status_mixin
 {
-    static module_status status_ok();
-    static module_status error(const QString& error);
+    static module_status status_ok(); // return from initialize() if ok
+    static module_status error(const QString& error); // return error message on init failure
 
-    virtual module_status initialize() = 0;
+    virtual module_status initialize() = 0; // where to return from
 };
 
 // implement this in filters

@@ -62,7 +62,7 @@ module_status hatire::start_tracker(QFrame*)
     case result_open_error:
         return error(tr("Unable to open ComPort: %1").arg(ret.error));
     default:
-        return error("Unknown error");
+        return error(tr("Unknown error"));
     }
 }
 
