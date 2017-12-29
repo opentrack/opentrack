@@ -288,7 +288,7 @@ void pose_transform::project_quad_texture()
 
     if (unlikely(orig_depth != const_depth || dest_depth != const_depth))
     {
-        qDebug() << "pose-widget: octopus must be saved as .png with 32 bits pixel";
+        qDebug() << "pose-widget: octopus must be saved as .png with 32 bits depth";
         qDebug() << "pose-widget: target texture must be ARGB32";
         return;
     }
@@ -312,13 +312,13 @@ void pose_transform::project_quad_texture()
     {
         {
             { 0, 0 },
-            { ow, 0 },
-            { 0, oh },
+            { ow-1, 0 },
+            { 0, oh-1 },
         },
         {
-            { ow, oh },
-            vec2(0, oh) - vec2(ow, oh),
-            vec2(ow, 0) - vec2(ow, oh),
+            { ow-1, oh-1 },
+            vec2(0, oh-1) - vec2(ow-1, oh-1),
+            vec2(ow-1, 0) - vec2(ow-1, oh-1),
         }
     };
 
@@ -342,9 +342,6 @@ void pose_transform::project_quad_texture()
                 float fy = origs[i][0].y()
                            + uv.x() * origs[i][2].y()
                            + uv.y() * origs[i][1].y();
-
-                fx = clamp(fx, 0, ow - 1.95f);
-                fy = clamp(fy, 0, oh - 1.95f);
 
 //#define BILINEAR_FILTER
 
