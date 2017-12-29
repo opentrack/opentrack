@@ -129,11 +129,13 @@ void pipeline::logic()
     }
 
     Pose value, raw;
+    bool disabled[6];
 
     for (int i = 0; i < 6; i++)
     {
         auto& axis = m(i);
         int k = axis.opts.src;
+        disabled[i] = k == 6;
         if (k < 0 || k >= 6)
             value(i) = 0;
         else
@@ -325,6 +327,11 @@ void pipeline::logic()
         // don't t_compensate existing compensated values
         for (int i = 0; i < 3; i++)
             value(i) += neck(i) + rel(i);
+
+        // relative translation can move it
+        for (unsigned k = 0; k < 6; k++)
+            if (disabled[k])
+                value(k) = 0;
 
         nanp |= is_nan(neck) | is_nan(rel) | is_nan(value);
     }
