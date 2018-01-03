@@ -46,6 +46,27 @@ struct settings_pt : opts
 
     value<slider_value> threshold_slider;
 
+#define XSTR(x) #x
+
+#define M(name, val) \
+    { b, "interconnect-m" XSTR(name), (val) }
+#define A(name) M(name, 0),
+#define B(name) M(name, 1),
+
+    value<double> interconnect[6][6] {
+        { B(00) A(01) A(02) A(03) A(04) A(05) },
+        { A(10) B(11) A(12) A(13) A(14) A(15) },
+        { A(20) A(21) B(22) A(23) A(24) A(25) },
+        { A(30) A(31) A(32) B(33) A(34) A(35) },
+        { A(40) A(41) A(42) A(43) B(44) A(45) },
+        { A(50) A(51) A(52) A(53) A(54) B(55) },
+    };
+
+#undef M
+#undef A
+#undef B
+#undef XSTR
+
     settings_pt() :
         opts("tracker-pt"),
         camera_name(b, "camera-name", ""),

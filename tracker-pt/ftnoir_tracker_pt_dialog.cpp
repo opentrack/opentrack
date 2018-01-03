@@ -131,6 +131,8 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
 
     if (start)
     {
+        c_calib = {};
+
         qDebug() << "pt: starting translation calibration";
         calib_timer.start();
         trans_calib.reset();
@@ -142,6 +144,9 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
     }
     else
     {
+        // XXX reenable after build
+        // (void) c_calib.get_coefficients();
+
         calib_timer.stop();
         qDebug() << "pt: stopping translation calibration";
         {
@@ -237,8 +242,18 @@ void TrackerDialog_PT::trans_calib_step()
 
     if (tracker)
     {
+        // XXX reenable after build
+        if (false)
+        {
+
+            Mat<double, 6, 1> m;
+            tracker->data(m);
+            c_calib.input(m);
+        }
+
         Affine X_CM = tracker->pose();
         trans_calib.update(X_CM.R, X_CM.t);
+
     }
     else
         startstop_trans_calib(false);
