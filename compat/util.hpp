@@ -3,6 +3,7 @@
 #include "opentrack-library-path.h"
 #include "ndebug-guard.hpp"
 #include "run-in-thread.hpp"
+#include "string-literal-operator.hpp"
 #include "meta.hpp"
 #include "functional.hpp"
 #include "macros.hpp"
