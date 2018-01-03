@@ -1,4 +1,4 @@
-set(Qt5_DIR "D:/dev/qt-5.6.2/lib/cmake/Qt5")
+set(Qt5_DIR "D:/dev/qt-5.10.0/lib/cmake/Qt5")
 set(__depdir "d:/dev/opentrack-depends/")
 set(OpenCV_DIR "${__depdir}/opencv/build-msvc15")
 
