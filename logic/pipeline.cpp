@@ -57,7 +57,7 @@ double pipeline::map(double pos, Map& axis)
 }
 
 void pipeline::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
-                           bool disable_tx, bool disable_ty, bool disable_tz)
+                            bool disable_tx, bool disable_ty, bool disable_tz)
 {
     enum { tb_Z, tb_X, tb_Y };
 
@@ -81,17 +81,6 @@ void pipeline::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& outpu
         output(TX) = -ret(tb_X);
 }
 
-static inline double elide_nan(double value, double def)
-{
-    if (nanp(value))
-    {
-        if (nanp(def))
-            return 0;
-        return def;
-    }
-    return value;
-}
-
 template<int u, int w>
 static bool is_nan(const dmat<u,w>& r)
 {
@@ -105,6 +94,32 @@ static bool is_nan(const dmat<u,w>& r)
 
 constexpr double pipeline::c_mult;
 constexpr double pipeline::c_div;
+template<typename x, typename y, typename... xs>
+static inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
+{
+    return !is_nan(datum) && nan_check_(next, rest...);
+}
+
+template<typename x>
+static inline bool nan_check_(const x& datum)
+{
+    return !is_nan(datum);
+}
+
+template<typename>
+static bool nan_check_() = delete;
+
+#define nan_check(...) \
+    do                                                      \
+    {                                                       \
+        if (!nan_check_(__VA_ARGS__))                       \
+        {                                                   \
+            once_only(qDebug()  << "nan check failed"       \
+                                << "line:" << __LINE__      \
+                                << "for:" << #__VA_ARGS__); \
+            goto nan;                                       \
+        }                                                   \
+    } while (false)
 
 void pipeline::logic()
 {
@@ -118,17 +133,19 @@ void pipeline::logic()
     set(f_center, false);
     const bool own_center_logic = center_ordered && libs.pTracker->center();
 
+    Pose value, raw;
+
     {
         Pose tmp;
         libs.pTracker->data(tmp);
+        nan_check(tmp);
         ev.run_events(EV::ev_raw, tmp);
 
         if (get(f_enabled_p) ^ !get(f_enabled_h))
             for (int i = 0; i < 6; i++)
-                newpose(i) = elide_nan(tmp(i), newpose(i));
+                newpose(i) = tmp(i);
     }
 
-    Pose value, raw;
     bool disabled[6];
 
     for (int i = 0; i < 6; i++)
@@ -161,8 +178,6 @@ void pipeline::logic()
 
     logger.write_pose(raw); // raw
 
-    bool nanp = is_nan(raw) | is_nan(value);
-
     // TODO split this function, it's too big
 
     {
@@ -170,8 +185,6 @@ void pipeline::logic()
         scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
         real_rotation.rotation = euler_to_rmat(tmp);
     }
-
-    nanp |= is_nan(value) || is_nan(scaled_rotation.rotation) || is_nan(real_rotation.rotation);
 
     if (!tracking_started)
     {
@@ -183,8 +196,6 @@ void pipeline::logic()
                 tracking_started = true;
                 break;
             }
-
-        tracking_started &= !nanp;
 
         if (tracking_started && s.center_at_startup)
         {
@@ -220,17 +231,17 @@ void pipeline::logic()
         //switch (s.center_method)
         switch (1)
         {
-        // inertial
         case 0:
+            // inertial
             rotation = scaled_rotation.rot_center * rotation;
-            break;
-        // camera
+        break;
+
         default:
         case 1:
+            // camera
             rotation = rotation * scaled_rotation.rot_center;
             t_compensate(real_rotation.rot_center, pos, pos, false, false, false);
-
-            break;
+        break;
         }
 
         euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
@@ -253,25 +264,23 @@ void pipeline::logic()
         }
     }
 
-    ev.run_events(EV::ev_before_filter, value);
-
     logger.write_pose(value); // "corrected" - after various transformations to account for camera position
 
-    nanp |= is_nan(value);
+    ev.run_events(EV::ev_before_filter, value);
 
     {
         {
             Pose tmp(value);
 
             // nan/inf values will corrupt filter internal state
-            if (!nanp && libs.pFilter)
+            if (libs.pFilter)
                 libs.pFilter->filter(tmp, value);
+
+            nan_check(value);
 
             logger.write_pose(value); // "filtered"
         }
     }
-
-    nanp |= is_nan(value);
 
     {
         ev.run_events(EV::ev_before_mapping, value);
@@ -293,12 +302,16 @@ void pipeline::logic()
                 neck(TX) = xyz(TX);
                 neck(TY) = xyz(TY);
                 neck(TZ) = xyz(TZ) - nz;
+
+                nan_check(Pose(0, 0, 0, neck(TX), neck(TY), neck(TZ)));
             }
         }
 
         // CAVEAT rotation only, due to tcomp
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
+
+        nan_check(value);
 
         if (s.tcomp_p)
         {
@@ -332,15 +345,17 @@ void pipeline::logic()
         for (unsigned k = 0; k < 6; k++)
             if (disabled[k])
                 value(k) = 0;
-
-        nanp |= is_nan(neck) | is_nan(rel) | is_nan(value);
     }
 
     // CAVEAT translation only, due to tcomp
     for (int i = 0; i < 3; i++)
         value(i) = map(value(i), m(i));
 
-    if (nanp)
+    nan_check(value);
+
+    goto ok;
+
+nan:
     {
         QMutexLocker foo(&mtx);
 
@@ -352,6 +367,8 @@ void pipeline::logic()
             (void) map(raw_6dof(i), m(i));
     }
 
+ok:
+
     if (get(f_zero))
         for (int i = 0; i < 6; i++)
             value(i) = 0;
@@ -362,8 +379,7 @@ void pipeline::logic()
 
     ev.run_events(EV::ev_finished, value);
 
-    if (!nanp)
-        libs.pProtocol->pose(value);
+    libs.pProtocol->pose(value);
 
     QMutexLocker foo(&mtx);
     output_pose = value;
