@@ -17,6 +17,9 @@
 #include <QPushButton>
 #include <QSettings>
 
+static constexpr inline auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
+static constexpr inline auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_
+
 void settings::set_game_list(const QString &game_list)
 {
     group::with_global_settings_object([&](QSettings& settings) {
@@ -49,11 +52,17 @@ QHash<QString, QString> settings::split_process_names()
 {
     QHash<QString, QString> ret;
     QString str = get_game_list();
-    QStringList pairs = str.split('|');
+    QStringList pairs = str.split(RECORD_SEPARATOR, QString::SkipEmptyParts);
     for (auto pair : pairs)
     {
-        QList<QString> tmp = pair.split(':');
+        QList<QString> tmp = pair.split(UNIT_SEPARATOR);
         if (tmp.count() != 2)
+            continue;
+        if (tmp[0].contains(UNIT_SEPARATOR) || tmp[0].contains(RECORD_SEPARATOR))
+            continue;
+        if (tmp[1].contains(UNIT_SEPARATOR) || tmp[1].contains(RECORD_SEPARATOR))
+            continue;
+        if (tmp[0] == QLatin1String("") || tmp[1] == QLatin1String(""))
             continue;
         ret[tmp[0]] = tmp[1];
     }
@@ -136,7 +145,7 @@ void process_detector::save()
     {
         auto exe = ui.tableWidget->item(i, 0)->text();
         auto profile = reinterpret_cast<QComboBox*>(ui.tableWidget->cellWidget(i, 1))->currentText();
-        str += "|" + exe + ":" + profile;
+        str += RECORD_SEPARATOR + exe + UNIT_SEPARATOR + profile;
     }
 
     s.set_game_list(str);
