@@ -279,8 +279,8 @@ void pose_transform::project_quad_texture()
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
 
-    const unsigned char* restrict_ptr orig = tex.constBits();
-    unsigned char* restrict_ptr dest = image.bits();
+    unsigned char const* const restrict_ptr orig = tex.constBits();
+    unsigned char* const restrict_ptr dest = image.bits();
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
