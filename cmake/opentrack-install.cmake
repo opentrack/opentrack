@@ -41,10 +41,6 @@ otr_inst_exec("${opentrack-hier-pfx}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe")
 
-if(WIN32)
-    otr_inst_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/amcap.exe")
-endif()
-
 otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
 otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
 otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")

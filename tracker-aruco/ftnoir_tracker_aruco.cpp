@@ -555,7 +555,7 @@ void aruco_dialog::camera_settings()
 
 void aruco_dialog::update_camera_settings_state(const QString& name)
 {
-    ui.camera_settings->setEnabled(video_property_page::should_show_dialog(name));
+    ui.camera_settings->setEnabled(true);
 }
 
 OPENTRACK_DECLARE_TRACKER(aruco_tracker, aruco_dialog, aruco_metadata)

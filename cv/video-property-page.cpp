@@ -10,177 +10,140 @@
 #ifdef _WIN32
 
 #include "compat/camera-names.hpp"
+#include "compat/sleep.hpp"
+#include "compat/run-in-thread.hpp"
 #include "opentrack-library-path.h"
 
 #include <cstring>
 
-#include <QRegularExpression>
+#include <opencv2/videoio.hpp>
+
+#include <QApplication>
 #include <QProcess>
+#include <QThread>
+#include <QMessageBox>
+
 #include <QDebug>
-#include <QFile>
 
 #include <dshow.h>
 
-#define CHECK(expr) if (FAILED(hr = (expr))) { qDebug() << QStringLiteral(#expr) << hr; goto done; }
-#define CHECK2(expr) if (!(expr)) { qDebug() << QStringLiteral(#expr); goto done; }
+#define CHECK(expr) if (FAILED(hr = (expr))) { qDebug() << QLatin1String(#expr) << hr; goto done; }
+#define CHECK2(expr) if (!(expr)) { qDebug() << QLatin1String(#expr); goto done; }
 
-bool video_property_page::show_from_capture(cv::VideoCapture& cap, int index)
+bool video_property_page::show_from_capture(cv::VideoCapture& cap, int /*index */)
 {
-    const QString name = get_camera_names().value(index, "");
+    cap.set(cv::CAP_PROP_SETTINGS, 0);
+    return true;
+}
 
-    if (name == "PS3Eye Camera")
-    {
-        return QProcess::startDetached(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "./amcap.exe");
-    }
+struct prop_settings_worker final : QThread
+{
+    prop_settings_worker(int idx);
+    ~prop_settings_worker() override;
+    void _open_prop_page();
+    void run() override;
+
+    cv::VideoCapture cap;
+    int _idx = -1;
+};
+
+prop_settings_worker::prop_settings_worker(int idx)
+{
+    if (cap.get(cv::CAP_PROP_SETTINGS) < 0 || 1)
+        run_in_thread_async(qApp, []() {
+            QMessageBox msg;
+            msg.setTextFormat(Qt::RichText);
+            msg.setWindowTitle("Camera properties");
+
+            static const char* uri = "https://github.com/opentrack/opencv/tree/fork";
+
+            msg.setText(QString("<p>Must use the opencv fork.</p>"
+                                "<p>See &lt;<a href='%1'>%1</a>&gt;</p>").arg(uri));
+            msg.setStandardButtons(QMessageBox::Cancel);
+            msg.setIcon(QMessageBox::Warning);
+            msg.exec();
+        });
+    else if (cap.get(cv::CAP_PROP_SETTINGS > 0))
+        run_in_thread_async(qApp, []() {
+            QMessageBox::warning(nullptr,
+                                 "Camera properties",
+                                 "Dialog already opened",
+                                 QMessageBox::Cancel,
+                                 QMessageBox::NoButton);
+        });
     else
     {
-        cap.set(cv::CAP_PROP_SETTINGS, 0);
-        return true;
+        _idx = idx;
+        // DON'T MOVE IT
+        // ps3 eye will reset to default settings if done from another thread
+        _open_prop_page();
     }
 }
 
-bool video_property_page::should_show_dialog(const QString& camera_name)
+void prop_settings_worker::_open_prop_page()
 {
-    using re = QRegularExpression;
-    static const re regexen[] =
+    cap.open(_idx);
+
+    if (cap.isOpened())
     {
-        //re("^PS3Eye Camera$"),
-        re("^A4 TECH "),
-    };
-    bool avail = true;
-    for (const re& r : regexen)
-    {
-        avail &= !r.match(camera_name).hasMatch();
-        if (!avail)
-            break;
-    }
-    return avail;
-}
+        cv::Mat tmp;
 
-bool video_property_page::show(int id)
-{
-    const QString name = get_camera_names().value(id, "");
-
-    if (name == "PS3Eye Camera")
-        return QProcess::startDetached(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "./amcap.exe");
-    else
-    {
-        IBaseFilter* filter = NULL;
-        bool ret = false;
-
-        CHECK2(filter = get_device(id));
-
-        ret = SUCCEEDED(ShowFilterPropertyPages(filter));
-
-done:
-        if (filter)
-            filter->Release();
-
-        return ret;
-    }
-}
-
-int video_property_page::ShowFilterPropertyPages(IBaseFilter* filter)
-{
-    ISpecifyPropertyPages* pProp = NULL;
-    IUnknown* unk = NULL;
-    CAUUID caGUID = { 0, NULL };
-    FILTER_INFO FilterInfo = { {0}, NULL };
-    HRESULT hr;
-
-    CHECK(filter->QueryInterface(IID_ISpecifyPropertyPages, (void**)&pProp));
-    CHECK(pProp->GetPages(&caGUID));
-    CHECK(filter->QueryFilterInfo(&FilterInfo));
-
-    filter->QueryInterface(IID_IUnknown, (void**)&unk);
-
-    // OleInitialize, CoCreateInstance et al. don't help with ps3 eye.
-
-    // cl-eye uses this
-    // perhaps more than IBaseFilter* -> IUnknown* needs be passed to lplpUnk
-    // and the OleCreatePropertyFrame equiv
-#if 0
-    OCPFIPARAMS params;
-    params.cbStructSize = sizeof(params);
-    params.hWndOwner = GetActiveWindow();
-    params.x = 0;
-    params.y = 0;
-    params.lpszCaption = L"camera props";
-    params.cObjects = 1;
-    params.lplpUnk = &unk;
-    params.cPages = 1;
-    //OleCreatePropertyFrameIndirect()
-#endif
-
-    OleCreatePropertyFrame(
-                NULL,                   // Parent window
-                0, 0,                   // Reserved
-                FilterInfo.achName,     // Caption for the dialog box
-                1,                      // Number of objects (just the filter)
-                &unk,            // Array of object pointers.
-                caGUID.cElems,          // Number of property pages
-                caGUID.pElems,          // Array of property page CLSIDs
-                0,                      // Locale identifier
-                0, NULL                 // Reserved
-                );
-
-done:
-    if (FilterInfo.pGraph)
-        FilterInfo.pGraph->Release();
-
-    if (caGUID.pElems)
-        CoTaskMemFree(caGUID.pElems);
-
-    if (pProp)
-       pProp->Release();
-
-    if (unk)
-        unk->Release();
-
-    return hr;
-}
-
-IBaseFilter* video_property_page::get_device(int id)
-{
-    ICreateDevEnum* pSysDevEnum = NULL;
-    IEnumMoniker* pEnumCat = NULL;
-    IMoniker* pMoniker = NULL;
-    IBaseFilter* filter = NULL;
-    HRESULT hr;
-
-    CHECK(CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)&pSysDevEnum));
-    CHECK(pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0));
-
-    for (int i = 0; !filter && SUCCEEDED(pEnumCat->Next(1, &pMoniker, NULL)); pMoniker->Release(), i++)
-    {
-        if (i == id)
+        for (unsigned k = 0; k < 2000/50; k++)
         {
-            CHECK(pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter, (void**)&filter));
-            break;
+            if (cap.read(tmp))
+                goto ok;
+            portable::sleep(50);
         }
     }
 
-done:
-    if (pMoniker)
-        pMoniker->Release();
+    qDebug() << "property-page: can't open camera";
+    _idx = -1;
 
-    if (pEnumCat)
-        pEnumCat->Release();
+    return;
 
-    if (pSysDevEnum)
-        pSysDevEnum->Release();
+ok:
+    portable::sleep(100);
 
-    return filter;
+    qDebug() << "property-page: opening for" << _idx;
+    cap.set(cv::CAP_PROP_SETTINGS, 0);
+}
+
+prop_settings_worker::~prop_settings_worker()
+{
+    if (_idx != -1)
+    {
+        // ax filter is race condition-prone
+        portable::sleep(250);
+        cap.release();
+        // idem
+        portable::sleep(250);
+
+        qDebug() << "property-page: closed" << _idx;
+    }
+}
+
+void prop_settings_worker::run()
+{
+    if (_idx != -1)
+    {
+        while (cap.get(cv::CAP_PROP_SETTINGS) > 0)
+            portable::sleep(1000);
+    }
+
+    connect(this, &QThread::finished, this, &QObject::deleteLater);
+}
+
+bool video_property_page::show(int idx)
+{
+    auto thread = new prop_settings_worker(idx);
+    thread->start();
+
+    return true;
 }
 
 #elif defined(__linux)
 #   include <QProcess>
 #   include "compat/camera-names.hpp"
-
-bool video_property_page::should_show_dialog(const QString&)
-{
-    return true;
-}
 
 bool video_property_page::show(int idx)
 {
@@ -199,8 +162,5 @@ bool video_property_page::show_from_capture(cv::VideoCapture&, int idx)
 #else
 bool video_property_page::show(int) { return false; }
 bool video_property_page::show_from_capture(cv::VideoCapture&, int) { return false; }
-bool video_property_page::should_show_dialog(const QString& camera_name)
-{
-    return false;
-}
 #endif
+
