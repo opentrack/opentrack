@@ -15,6 +15,13 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
+    <widget class="QCheckBox" name="enabled">
+     <property name="text">
+      <string>Start profiles from game executable names in this list</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="FancyTable" name="tableWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -121,13 +128,6 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="QCheckBox" name="enabled">
-     <property name="text">
-      <string>Start profiles from game executable names in this list</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>
@@ -138,10 +138,9 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>tableWidget</tabstop>
+  <tabstop>enabled</tabstop>
   <tabstop>add</tabstop>
   <tabstop>remove</tabstop>
-  <tabstop>enabled</tabstop>
  </tabstops>
  <resources/>
  <connections/>
