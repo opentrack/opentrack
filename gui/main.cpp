@@ -202,7 +202,8 @@ main(int argc, char** argv)
     while (false);
 
     // msvc crashes in Qt plugin system's dtor
-#if defined(_MSC_VER)
+    // Note: QLibrary::PreventUnloadHint seems to workaround it
+#if defined(_MSC_VER) && 0
     qDebug() << "exit: terminating";
     TerminateProcess(GetCurrentProcess(), 0);
 #endif

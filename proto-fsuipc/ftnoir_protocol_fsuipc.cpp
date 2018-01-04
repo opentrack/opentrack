@@ -147,6 +147,7 @@ void fsuipc::pose(const double *headpose ) {
 module_status fsuipc::initialize()
 {
     FSUIPCLib.setFileName( s.LocationOfDLL );
+    FSUIPCLib.setLoadHints(QLibrary::PreventUnloadHint);
 
     if (FSUIPCLib.load() != true)
         return error(_("Can't load fsuipc at '%1'").arg(s.LocationOfDLL));
