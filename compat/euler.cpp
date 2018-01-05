@@ -54,9 +54,9 @@ rmat OTR_COMPAT_EXPORT euler_to_rmat(const euler_t& input)
 
 // https://en.wikipedia.org/wiki/Davenport_chained_rotations#Tait.E2.80.93Bryan_chained_rotations
 void OTR_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
-                                                    rmat& r_roll,
-                                                    rmat& r_pitch,
-                                                    rmat& r_yaw)
+                                              rmat& r_roll,
+                                              rmat& r_pitch,
+                                              rmat& r_yaw)
 {
     {
         const double phi = -input(2);
@@ -94,5 +94,21 @@ void OTR_COMPAT_EXPORT tait_bryan_to_matrices(const euler_t& input,
         };
     }
 }
+
+template<int H, int W, typename f = double>
+rmat quaternion_to_mat_(const Mat<f, H, W>& q)
+{
+    const double w = q.w(), x = q.x(), y = q.y(), z = q.z();
+    const double ww = w*w, xx = x*x, yy = y*y, zz = z*z;
+
+    return rmat(
+                ww + xx - yy - zz,  2 * (x*y - w*z),    2 * (x*z + w*y),
+                2 * (x*z - w*y),    2 * (y*z + w*x),    ww - xx - yy + zz,
+                2 * (x*y + w*z),    ww - xx + yy - zz,  2 * (y*z - w*x)
+            );
+}
+
+rmat OTR_COMPAT_EXPORT quaternion_to_mat(const dmat<1, 4>& q) { return quaternion_to_mat_(q); }
+//rmat OTR_COMPAT_EXPORT quaternion_to_mat(const dmat<4, 1>& q) { return quaternion_to_mat_(q); }
 
 } // end ns euler
