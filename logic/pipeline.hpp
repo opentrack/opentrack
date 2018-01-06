@@ -32,6 +32,27 @@
 
 namespace gui_tracker_impl {
 
+using rmat = euler::rmat;
+using euler_t = euler::euler_t;
+
+class reltrans
+{
+    euler_t tcomp_interp_pos, tcomp_last_value;
+    Timer tcomp_interp_timer;
+    bool tcomp_state = false;
+    bool tcomp_in_zone = false;
+
+public:
+    reltrans();
+
+    warn_result_unused
+    euler_t rotate(const rmat& rmat, const euler_t& xyz,
+                   bool disable_tx, bool disable_ty, bool disable_tz) const;
+
+    warn_result_unused
+    Pose apply_pipeline(bool enable, const Pose& value, const Mat<bool, 6, 1>& disable);
+};
+
 using namespace time_units;
 
 struct OTR_LOGIC_EXPORT bits
@@ -55,9 +76,6 @@ class OTR_LOGIC_EXPORT pipeline : private QThread, private bits
 {
     Q_OBJECT
 private:
-    using rmat = euler::rmat;
-    using euler_t = euler::euler_t;
-
     QMutex mtx;
     main_settings s;
     Mappings& m;
@@ -82,6 +100,8 @@ private:
         {}
     };
 
+    reltrans rel;
+
     state real_rotation, scaled_rotation;
     euler_t t_center;
 
@@ -91,12 +111,7 @@ private:
 
     double map(double pos, Map& axis);
     void logic();
-    void t_compensate(const rmat& rmat, const euler_t& ypr, euler_t& output,
-                      bool disable_tx, bool disable_ty, bool disable_tz);
     void run() override;
-
-    static constexpr double r2d = 180. / M_PI;
-    static constexpr double d2r = M_PI / 180.;
 
     // note: float exponent base is 2
     static constexpr double c_mult = 16;

@@ -27,11 +27,123 @@
 #endif
 
 using namespace euler;
-using namespace gui_tracker_impl;
 using namespace time_units;
+using namespace gui_tracker_impl;
 
-constexpr double pipeline::r2d;
-constexpr double pipeline::d2r;
+static constexpr inline double r2d = 180. / M_PI;
+static constexpr inline double d2r = M_PI / 180.;
+
+reltrans::reltrans() {}
+
+euler_t reltrans::rotate(const rmat& rmat, const euler_t& xyz,
+                         bool disable_tx, bool disable_ty, bool disable_tz) const
+{
+    enum { tb_Z, tb_X, tb_Y };
+
+    // TY is really yaw axis. need swapping accordingly.
+    // sign changes are due to right-vs-left handedness of coordinate system used
+    const euler_t ret = rmat * euler_t(xyz(TZ), -xyz(TX), -xyz(TY));
+
+    euler_t output;
+
+    if (disable_tz)
+        output(TZ) = xyz(TZ);
+    else
+        output(TZ) = ret(tb_Z);
+
+    if (disable_ty)
+        output(TY) = xyz(TY);
+    else
+        output(TY) = -ret(tb_Y);
+
+    if (disable_tx)
+        output(TX) = xyz(TX);
+    else
+        output(TX) = -ret(tb_X);
+
+    return output;
+}
+
+Pose reltrans::apply_pipeline(bool enable, const Pose& value, const Mat<bool, 6, 1>& disable)
+{
+    if (enable)
+    {
+        euler_t rel { value(TX), value(TY), value(TZ) };
+
+        {
+            const bool yaw_in_zone = std::fabs(value(Yaw)) > 135;
+            const bool pitch_in_zone = value(Pitch) < -30;
+            const bool tcomp_in_zone_ = yaw_in_zone || pitch_in_zone;
+
+            if (!tcomp_state && tcomp_in_zone != tcomp_in_zone_)
+            {
+                //qDebug() << "tcomp-interp: START";
+                tcomp_state = true;
+                tcomp_interp_timer.start();
+            }
+
+            tcomp_in_zone = tcomp_in_zone_;
+        }
+
+        // only when looking behind or downward
+        if (tcomp_in_zone)
+        {
+            const double tcomp_c[] = {
+                double(!disable(Yaw)),
+                double(!disable(Pitch)),
+                double(!disable(Roll)),
+            };
+
+            const rmat R = euler_to_rmat(euler_t(value(Yaw)   * d2r * tcomp_c[0],
+                                                 value(Pitch) * d2r * tcomp_c[1],
+                                                 value(Roll)  * d2r * tcomp_c[2]));
+
+            rel = rotate(R,
+                         rel,
+                         disable(TX),
+                         disable(TY),
+                         disable(TZ));
+        }
+
+        if (tcomp_state)
+        {
+            const double dt = tcomp_interp_timer.elapsed_seconds();
+            tcomp_interp_timer.start();
+
+            constexpr double RC = .1;
+            const double alpha = dt/(dt+RC);
+
+            constexpr double eps = .05;
+
+            tcomp_interp_pos = tcomp_interp_pos * (1-alpha) + rel * alpha;
+
+            const euler_t tmp = rel - tcomp_interp_pos;
+            rel = tcomp_interp_pos;
+            const double delta = std::fabs(tmp(0)) + std::fabs(tmp(0)) + std::fabs(tmp(0));
+
+            //qDebug() << "tcomp-interp: delta" << delta;
+
+            if (delta < eps)
+            {
+                //qDebug() << "tcomp-interp: STOP";
+                tcomp_state = false;
+            }
+        }
+        else
+        {
+            tcomp_interp_pos = rel;
+        }
+
+        return { rel(0), rel(1), rel(2), value(Yaw), value(Pitch), value(Roll) };
+    }
+    else
+    {
+        tcomp_state = false;
+        tcomp_in_zone = false;
+
+        return value;
+    }
+}
 
 pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m),
@@ -54,31 +166,6 @@ double pipeline::map(double pos, Map& axis)
     axis.spline_alt.set_tracking_active( altp );
     auto& fc = altp ? axis.spline_alt : axis.spline_main;
     return double(fc.get_value(pos));
-}
-
-void pipeline::t_compensate(const rmat& rmat, const euler_t& xyz, euler_t& output,
-                            bool disable_tx, bool disable_ty, bool disable_tz)
-{
-    enum { tb_Z, tb_X, tb_Y };
-
-    // TY is really yaw axis. need swapping accordingly.
-    // sign changes are due to right-vs-left handedness of coordinate system used
-    const euler_t ret = rmat * euler_t(xyz(TZ), -xyz(TX), -xyz(TY));
-
-    if (disable_tz)
-        output(TZ) = xyz(TZ);
-    else
-        output(TZ) = ret(tb_Z);
-
-    if (disable_ty)
-        output(TY) = xyz(TY);
-    else
-        output(TY) = -ret(tb_Y);
-
-    if (disable_tx)
-        output(TX) = xyz(TX);
-    else
-        output(TX) = -ret(tb_X);
 }
 
 template<int u, int w>
@@ -109,14 +196,20 @@ static inline bool nan_check_(const x& datum)
 template<typename>
 static bool nan_check_() = delete;
 
+static never_inline
+void emit_nan_check_msg(const char* text, int line)
+{
+    once_only(qDebug()  << "nan check failed"
+                        << "line:" << text
+                        << "for:" << line);
+}
+
 #define nan_check(...) \
     do                                                      \
     {                                                       \
         if (!nan_check_(__VA_ARGS__))                       \
         {                                                   \
-            once_only(qDebug()  << "nan check failed"       \
-                                << "line:" << __LINE__      \
-                                << "for:" << #__VA_ARGS__); \
+            emit_nan_check_msg(#__VA_ARGS__, __LINE__);     \
             goto nan;                                       \
         }                                                   \
     } while (false)
@@ -129,6 +222,7 @@ void pipeline::logic()
     logger.write_dt();
     logger.reset_dt();
 
+    // we must center prior to getting data
     const bool center_ordered = get(f_center) && tracking_started;
     set(f_center, false);
     const bool own_center_logic = center_ordered && libs.pTracker->center();
@@ -167,7 +261,7 @@ void pipeline::logic()
         using std::copysign;
         using std::fabs;
 
-        value(i) = std::fmod(value(i), 360);
+        value(i) = fmod(value(i), 360);
 
         const double x = value(i);
         if (fabs(x) - 1e-2 > 180)
@@ -188,10 +282,8 @@ void pipeline::logic()
 
     if (!tracking_started)
     {
-        using std::fabs;
-
         for (int i = 0; i < 6; i++)
-            if (fabs(newpose(i)) != 0)
+            if (std::fabs(newpose(i)) != 0)
             {
                 tracking_started = true;
                 break;
@@ -240,7 +332,7 @@ void pipeline::logic()
         case 1:
             // camera
             rotation = rotation * scaled_rotation.rot_center;
-            t_compensate(real_rotation.rot_center, pos, pos, false, false, false);
+            pos = rel.rotate(real_rotation.rot_center, pos, false, false, false);
         break;
         }
 
@@ -285,61 +377,40 @@ void pipeline::logic()
     {
         ev.run_events(EV::ev_before_mapping, value);
 
-        euler_t neck, rel;
-
-        if (s.neck_enable)
         {
-            double nz = -s.neck_z;
+            euler_t neck;
 
-            if (nz != 0)
+            if (s.neck_enable)
             {
-                const rmat R = euler_to_rmat(
-                       euler_t(value(Yaw)   * d2r,
-                               value(Pitch) * d2r,
-                               value(Roll)  * d2r));
-                euler_t xyz(0, 0, nz);
-                t_compensate(R, xyz, xyz, false, false, false);
-                neck(TX) = xyz(TX);
-                neck(TY) = xyz(TY);
-                neck(TZ) = xyz(TZ) - nz;
+                double nz = -s.neck_z;
 
-                nan_check(Pose(0, 0, 0, neck(TX), neck(TY), neck(TZ)));
+                if (nz != 0)
+                {
+                    const rmat R = euler_to_rmat(
+                                       euler_t(value(Yaw)   * d2r,
+                                               value(Pitch) * d2r,
+                                               value(Roll)  * d2r));
+                    neck = rel.rotate(R, { 0, 0, nz }, false, false, false);
+                    neck(TZ) = neck(TZ) - nz;
+
+                    nan_check(neck);
+                }
             }
-        }
 
-        // CAVEAT rotation only, due to tcomp
-        for (int i = 3; i < 6; i++)
-            value(i) = map(value(i), m(i));
+            // CAVEAT rotation only, due to tcomp
+            for (int i = 3; i < 6; i++)
+                value(i) = map(value(i), m(i));
 
-        nan_check(value);
+            nan_check(value);
 
-        if (s.tcomp_p)
-        {
-            const double tcomp_c[] =
-            {
-                double(!s.tcomp_disable_src_yaw),
-                double(!s.tcomp_disable_src_pitch),
-                double(!s.tcomp_disable_src_roll),
-            };
-            const rmat R = euler_to_rmat(
-                       euler_t(value(Yaw)   * d2r * tcomp_c[0],
-                               value(Pitch) * d2r * tcomp_c[1],
-                               value(Roll)  * d2r * tcomp_c[2]));
-            euler_t ret;
-            t_compensate(R,
-                         euler_t(value(TX), value(TY), value(TZ)),
-                         ret,
-                         s.tcomp_disable_tx,
-                         s.tcomp_disable_ty,
-                         s.tcomp_disable_tz);
+            value = rel.apply_pipeline(s.tcomp_p, value, {
+                !!s.tcomp_disable_src_yaw, !!s.tcomp_disable_src_pitch, !!s.tcomp_disable_src_roll,
+                !!s.tcomp_disable_tx, !!s.tcomp_disable_ty, !!s.tcomp_disable_tz
+            });
 
             for (int i = 0; i < 3; i++)
-                rel(i) = ret(i) - value(i);
+                value(i) += neck(i);
         }
-
-        // don't t_compensate existing compensated values
-        for (int i = 0; i < 3; i++)
-            value(i) += neck(i) + rel(i);
 
         // relative translation can move it
         for (unsigned k = 0; k < 6; k++)
