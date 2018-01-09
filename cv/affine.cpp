@@ -7,6 +7,8 @@
 
 #include "affine.hpp"
 
+namespace affine_impl {
+
 Affine::Affine() : R(mat33::eye()), t(0,0,0) {}
 
 Affine::Affine(const mat33& R, const vec3& t) : R(R),t(t) {}
@@ -30,3 +32,5 @@ vec3 operator*(const Affine& X, const vec3& v)
 {
     return X.R*v + X.t;
 }
+
+} // ns affine_impl

@@ -10,11 +10,14 @@
 
 #include <QString>
 #include "options/options.hpp"
-using namespace options;
 #include "api/plugin-api.hpp"
 #include "spline/axis-opts.hpp"
 
 #include "export.hpp"
+
+namespace main_settings_impl {
+
+using namespace options;
 
 struct OTR_LOGIC_EXPORT key_opts
 {
@@ -58,3 +61,9 @@ struct OTR_LOGIC_EXPORT main_settings final
 
     main_settings();
 };
+
+} // ns main_settings_impl
+
+using main_settings_impl::key_opts;
+using main_settings_impl::module_settings;
+using main_settings_impl::main_settings;

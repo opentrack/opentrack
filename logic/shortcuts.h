@@ -25,6 +25,8 @@
 #include <vector>
 #include <functional>
 
+namespace shortcuts_impl {
+
 using namespace options;
 
 class OTR_LOGIC_EXPORT Shortcuts final : public QObject
@@ -61,3 +63,7 @@ private:
     void free_binding(K& key);
     void bind_shortcut(K &key, const key_opts& k, bool held);
 };
+
+} // ns shortcuts_impl
+
+using shortcuts_impl::Shortcuts;

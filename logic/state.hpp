@@ -9,7 +9,6 @@
 #pragma once
 
 #include "options/options.hpp"
-using namespace options;
 #include "api/plugin-support.hpp"
 #include "main-settings.hpp"
 #include "mappings.hpp"

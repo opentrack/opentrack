@@ -9,9 +9,10 @@
 
 #include <opencv2/core.hpp>
 #include "numeric.hpp"
+
+namespace affine_impl {
+
 using namespace types;
-
-
 
 class Affine final
 {
@@ -27,3 +28,8 @@ Affine operator*(const Affine& X, const Affine& Y);
 Affine operator*(const mat33& X, const Affine& Y);
 Affine operator*(const Affine& X, const mat33& Y);
 vec3 operator*(const Affine& X, const vec3& v);
+
+} // ns affine_impl
+
+using affine_impl::Affine;
+using affine_impl::operator *;
