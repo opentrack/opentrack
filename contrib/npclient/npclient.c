@@ -332,8 +332,26 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     frameno++;
     data->frame = frameno;
 
-    bool running = y != 0 || p != 0 || r != 0 ||
-                   tx != 0 || ty != 0 || tz != 0;
+    int data_id = InterlockedDecrement((LONG volatile*) &pMemData->data.DataID);
+
+    bool running;
+
+    if (data_id == 0)
+    {
+        running = true;
+        y = 0, r = 0, p = 0, tx = 0, ty = 0, tz = 0;
+        InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, 0);
+    }
+    else if (data_id > 0)
+    {
+        running = true;
+    }
+    else
+    {
+        running = false;
+        // clamp to zero
+        InterlockedExchange((LONG volatile*) &pMemData->data.DataID, -1);
+    }
 
     data->status = running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
     data->cksum = 0;
@@ -377,7 +395,7 @@ NP_EXPORT(int) NP_GetParameter(int arg0, int arg1)
  *
  */
 
-static volatile unsigned char part2_2[200] = {
+static unsigned char volatile const part2_2[200] = {
     0xe3, 0xe5, 0x8e, 0xe8, 0x06, 0xd4, 0xab,
     0xcf, 0xfa, 0x51, 0xa6, 0x84, 0x69, 0x52,
     0x21, 0xde, 0x6b, 0x71, 0xe6, 0xac, 0xaa,
@@ -396,7 +414,7 @@ static volatile unsigned char part2_2[200] = {
 };
 
 
-static volatile unsigned char part1_2[200] = {
+static unsigned char volatile const part1_2[200] = {
     0x6d, 0x0b, 0xab, 0x56, 0x74, 0xe6, 0x1c,
     0xff, 0x24, 0xe8, 0x34, 0x8f, 0x00, 0x63,
     0xed, 0x47, 0x5d, 0x9b, 0xe1, 0xe0, 0x1d,
@@ -579,6 +597,8 @@ static bool FTCreateMapping(void)
 
     hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(FTMemMap), (LPCSTR) FT_MM_DATA);
     pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTMemMap));
+    if (pMemData != NULL)
+        pMemData->data.DataID = 0;
     return pMemData != NULL;
 }
 

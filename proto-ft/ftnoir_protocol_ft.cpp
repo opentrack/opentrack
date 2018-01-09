@@ -13,8 +13,10 @@
 #include "csv/csv.h"
 #include "opentrack-library-path.h"
 
+#include <cstddef>
 #include <atomic>
 #include <cmath>
+#include <cstdlib>
 #include <windows.h>
 #include <intrin.h>
 
@@ -25,22 +27,6 @@ static int page_size()
   return system_info.dwPageSize;
 }
 
-freetrack::freetrack()
-{
-}
-
-freetrack::~freetrack()
-{
-    if (shm.success())
-    {
-        const double tmp[6] {};
-        pose(tmp);
-    }
-
-    dummyTrackIR.close();
-}
-
-static_assert(sizeof(LONG) == sizeof(std::int32_t), "");
 static_assert(sizeof(LONG) == 4u, "");
 
 never_inline void store(float volatile& place, const float value)
@@ -61,7 +47,7 @@ never_inline void store(float volatile& place, const float value)
 
 template<typename t, typename u>
 force_inline
-std::enable_if_t<std::is_integral_v<t> && sizeof(t) == 4>
+std::enable_if_t<(std::is_integral_v<t>) && sizeof(t) == 4>
 store(t volatile& place, u value)
 {
     (void)InterlockedExchange((LONG volatile*) &place, value);
@@ -70,6 +56,23 @@ store(t volatile& place, u value)
 force_inline std::int32_t load(std::int32_t volatile& place)
 {
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
+}
+
+freetrack::freetrack()
+{
+}
+
+freetrack::~freetrack()
+{
+    if (shm.success())
+    {
+        const double tmp[6] {};
+        pose(tmp);
+        store(pMemData->data.DataID, 0);
+        store(pMemData->GameID2, -1);
+    }
+
+    dummyTrackIR.close();
 }
 
 void freetrack::pose(const double* headpose)
@@ -95,6 +98,8 @@ void freetrack::pose(const double* headpose)
     store(data->Pitch, pitch);
     store(data->Roll, roll);
 
+    store(data->DataID, 60 * 30 + (rand() % 120));
+
     const std::int32_t id = load(ft->GameID);
 
     if (intGameID != id)
@@ -109,37 +114,28 @@ void freetrack::pose(const double* headpose)
 
         (void)CSV::getGameData(id, t.table, gamename);
 
-        {
-            const std::uintptr_t addr = (std::uintptr_t)(void*)&pMemData->table[0];
-            const std::uintptr_t addr_ = addr & ~(sizeof(LONG)-1u);
+        static_assert(sizeof(LONG) == 4, "");
+        static_assert(sizeof(int) == 4, "");
 
-            static_assert(sizeof(LONG) == 4, "");
-            static_assert(sizeof(int) == 4, "");
+        // memory mappings are page-aligned due to TLB
+        if ((std::intptr_t(pMemData) & page_size() - 1) != 0)
+            assert(!"proto/freetrack: memory mapping not page aligned");
 
-            // memory mappings are page-aligned due to TLB
-            if (std::intptr_t(pMemData) & page_size() - 1)
-                assert(!"proto/freetrack: memory mapping not page aligned");
+        // the data happens to be aligned by virtue of element ordering
+        // inside `FTHeap'. there's no deeper reason behind it.
+        static_assert((offsetof(FTHeap, table) & sizeof(int) - 1) == 0, "");
 
-            // the data happens to be aligned by virtue of element ordering
-            // inside FTHeap. there's no deeper reason behind it.
-            if (addr != addr_)
-                assert(!"proto/freetrack: unaligned access");
-
-            // no unaligned atomic access for `char'
-            for (unsigned k = 0; k < 2; k++)
-                store(pMemData->table_ints[k], t.ints[k]);
-        }
+        // no atomic access for `char'
+        for (unsigned k = 0; k < 2; k++)
+            store(pMemData->table_ints[k], t.ints[k]);
 
         store(ft->GameID2, id);
-        store(data->DataID, 0);
 
         intGameID = id;
 
         QMutexLocker foo(&game_name_mutex);
         connected_game = gamename;
     }
-    else
-        (void)InterlockedAdd((LONG volatile*)&data->DataID, 1);
 }
 
 float freetrack::degrees_to_rads(double degrees)
@@ -181,6 +177,7 @@ module_status freetrack::initialize()
     bool use_ft = false, use_npclient = false;
 
     switch (s.intUsedInterface) {
+    default:
     case 0:
         use_ft = true;
         use_npclient = true;
@@ -191,17 +188,14 @@ module_status freetrack::initialize()
     case 2:
         use_npclient = true;
         break;
-    default:
-        break;
     }
 
     set_protocols(use_ft, use_npclient);
 
-    pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
     pMemData->data.CamHeight = 250;
 
-#if 0
+#if 1
     store(pMemData->data.X1, float(100));
     store(pMemData->data.Y1, float(200));
     store(pMemData->data.X2, float(300));
@@ -210,7 +204,7 @@ module_status freetrack::initialize()
     store(pMemData->data.Y3, float(100));
 #endif
 
-    store(pMemData->GameID2, 0);
+    store(pMemData->GameID2, -1);
 
     for (unsigned k = 0; k < 2; k++)
         store(*(std::int32_t volatile*)&pMemData->table_ints[k], 0);
