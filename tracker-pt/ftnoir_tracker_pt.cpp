@@ -223,6 +223,12 @@ void Tracker_PT::data(double *data)
     }
 }
 
+bool Tracker_PT::center()
+{
+    point_tracker.reset_state();
+    return false;
+}
+
 Affine Tracker_PT::pose()
 {
     QMutexLocker l(&data_mtx);

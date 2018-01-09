@@ -62,6 +62,7 @@ public:
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
+    void reset_state();
 
 private:
     // the points in model order
@@ -77,7 +78,7 @@ private:
     Affine X_CM; // transform from model to camera
 
     Timer t;
-    bool init_phase, prev_order_valid;
+    bool init_phase = true, prev_order_valid = false;
 };
 
 } // ns types

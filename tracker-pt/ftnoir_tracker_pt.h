@@ -43,11 +43,13 @@ class Tracker_PT : public QThread, public ITracker
 
     friend class camera_dialog;
     friend class ::TrackerDialog_PT;
+
 public:
     Tracker_PT();
     ~Tracker_PT() override;
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
+    bool center() override;
 
     Affine pose();
     int  get_n_points();

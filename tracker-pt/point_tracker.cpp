@@ -84,7 +84,7 @@ void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& 
 }
 
 
-PointTracker::PointTracker() : init_phase(true), prev_order_valid(false)
+PointTracker::PointTracker()
 {
 }
 
@@ -405,5 +405,11 @@ vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
 {
     vec3 v_C = X_CM * v_M;
     return vec2(focal_length*v_C[0]/v_C[2], focal_length*v_C[1]/v_C[2]);
+}
+
+void PointTracker::reset_state()
+{
+    prev_order_valid = false;
+    init_phase = true;
 }
 
