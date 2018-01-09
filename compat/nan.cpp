@@ -1,14 +1,16 @@
 #include "export.hpp"
 
+#include "compat/macros.hpp"
+
 #if defined(_MSC_VER)
-#   include <cmath>
-#   define my_isnan std::isnan
-#   define my_isinf std::isinf
-OTR_COMPAT_EXPORT __declspec(noinline) bool nanp(double x)
+#   include <float.h>
+#   include <math.h>
+#   define my_isnan ::_isnan
+#   define my_isinf ::isinf
 #elif defined __MINGW32__
 
-int __cdecl my_isnan(double)__asm__("__isnan");
-int __cdecl my_fpclassify(double)__asm__("___fpclassify");
+static int __cdecl my_isnan(double)__asm__("__isnan");
+static int __cdecl my_fpclassify(double)__asm__("___fpclassify");
 
 #define FP_NAN          0x0100
 #define FP_NORMAL       0x0400
@@ -18,18 +20,16 @@ int __cdecl my_fpclassify(double)__asm__("___fpclassify");
 
 #define my_isinf(x) (my_fpclassify(x) == FP_INFINITE)
 
-OTR_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
 #elif defined __APPLE__
 #   include <math.h>
 #   define my_isnan(x) isnan(x)
 #   define my_isinf(x) isinf(x)
-OTR_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
 #else
 int my_isnan(double)__asm__("isnan");
 int my_isinf(double)__asm__("isinf");
 
-OTR_COMPAT_EXPORT bool __attribute__ ((noinline)) nanp(double x)
 #endif
+OTR_COMPAT_EXPORT never_inline bool nanp(double x)
 {
     return my_isnan(x) || my_isinf(x);
 }

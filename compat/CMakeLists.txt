@@ -5,7 +5,7 @@ if(NOT WIN32 AND NOT APPLE)
 endif()
 
 if(WIN32)
-    target_link_libraries(opentrack-compat winmm)
+    target_link_libraries(opentrack-compat winmm strmiids)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)

@@ -9,7 +9,7 @@ SET(CMAKE_SYSTEM_VERSION 5)
 # specify the cross compiler
 if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     #set(p D:/cygwin64/opt/bin/)
-    set(p "C:/msys64/mingw32/bin/")
+    set(p "/mingw32/bin/")
     set(e .exe)
     set(c "${p}")
 else()
