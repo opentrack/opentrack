@@ -6,11 +6,9 @@
 namespace types {
     using f = double;
 
-    struct constants final
-    {
-        constants() = delete;
-        static constexpr f eps = f(1e-8);
-    };
+    namespace constants {
+        static constexpr inline f eps = f(1e-8);
+    }
 
     template<int n> using vec = cv::Vec<f, n>;
     using vec2 = vec<2>;

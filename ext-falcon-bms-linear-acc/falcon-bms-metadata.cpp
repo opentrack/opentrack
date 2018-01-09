@@ -2,7 +2,7 @@
 
 QString falcon_bms_acceleration_metadata::name()
 {
-    return QStringLiteral("Falcon BMS linaer acceleration display");
+    return "Falcon BMS linaer acceleration display"_qstr;
 }
 
 QIcon falcon_bms_acceleration_metadata::icon()

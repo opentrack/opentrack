@@ -2,13 +2,9 @@
 
 #ifdef _WIN32
 
+#include <Qt>
 #include <QKeySequence>
 #include "shortcuts.h"
-
-struct win_key;
-
-extern QList<win_key> windows_key_mods;
-extern QList<win_key> windows_key_sequences;
 
 #include "export.hpp"
 

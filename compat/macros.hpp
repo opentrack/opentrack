@@ -45,16 +45,22 @@
 
 #ifdef Q_CREATOR_RUN
 #   define warn_result_unused
-#elif defined(_MSC_VER)
+#elif defined _MSC_VER
 #   define warn_result_unused _Check_return_
 #else
 #   define warn_result_unused __attribute__((warn_unused_result))
 #endif
 
-#if defined(__GNUG__)
+#if defined __GNUG__
 #   define unused(t, i) t __attribute__((unused)) i
 #else
 #   define unused(t, i) t
+#endif
+
+#if defined _MSC_VER
+#   define aligned_struct(x) struct __declspec(align(x))
+#else
+#   define aligned_struct(x) struct __attribute__((__aligned__(x)))
 #endif
 
 #if defined __GNUC__

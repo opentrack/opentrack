@@ -10,21 +10,16 @@
 #include "api/plugin-api.hpp"
 #include "compat/euler.hpp"
 
+#include "export.hpp"
+
 #include <tuple>
 #include <mutex>
 #include <atomic>
 #include <vector>
 
-#include <QtGlobal>
 #include <QWidget>
 #include <QThread>
-#include <QPixmap>
-
-#ifdef BUILD_POSE_WIDGET
-#   define POSE_WIDGET_EXPORT Q_DECL_EXPORT
-#else
-#   define POSE_WIDGET_EXPORT Q_DECL_IMPORT
-#endif
+#include <QImage>
 
 namespace pose_widget_impl {
 
@@ -94,7 +89,7 @@ struct pose_transform final : QThread
     static constexpr int w = 320, h = 240;
 };
 
-class POSE_WIDGET_EXPORT pose_widget final : public QWidget
+class OTR_POSE_WIDGET_EXPORT pose_widget final : public QWidget
 {
 public:
     pose_widget(QWidget *parent = nullptr);

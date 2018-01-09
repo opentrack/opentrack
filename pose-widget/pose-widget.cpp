@@ -12,12 +12,14 @@
 #include "compat/check-visible.hpp"
 #include <cmath>
 #include <algorithm>
+
 #include <QPainter>
 #include <QPaintEvent>
-#include <QPalette>
-#include <QGroupBox>
 
 #include <QDebug>
+
+// XXX this needs rewriting in terms of scanline rendering -sh 20180105
+// see: <https://mikro.naprvyraz.sk/docs/Coding/2/TEXTURE4.TXT>
 
 using namespace pose_widget_impl;
 
@@ -279,8 +281,8 @@ void pose_transform::project_quad_texture()
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
 
-    unsigned char const* const restrict_ptr orig = tex.constBits();
-    unsigned char* const restrict_ptr dest = image.bits();
+    unsigned char const* restrict_ptr orig = tex.constBits();
+    unsigned char* restrict_ptr dest = image.bits();
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;

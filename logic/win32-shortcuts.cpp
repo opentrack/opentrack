@@ -12,11 +12,10 @@
 #   include <dinput.h>
 
 #include "win32-shortcuts.h"
-#include <QList>
 #include <QVariant>
 #include <QDebug>
 
-QList<win_key> windows_key_mods {
+win_key const windows_key_mods[] {
         {DIK_LCONTROL, Qt::Key_Control},
         {DIK_RCONTROL, Qt::Key_Control},
         {DIK_LALT, Qt::Key_Alt},
@@ -27,7 +26,7 @@ QList<win_key> windows_key_mods {
         {DIK_RWIN, Qt::Key_Super_R},
 };
 
-QList<win_key> windows_key_sequences {
+static const win_key windows_key_sequences[] {
        { DIK_F1, Qt::Key_F1 },
        { DIK_F2, Qt::Key_F2 },
        { DIK_F3, Qt::Key_F3 },
