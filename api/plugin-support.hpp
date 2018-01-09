@@ -29,11 +29,7 @@
 #   define OPENTRACK_SOLIB_EXT "so"
 #endif
 
-#ifdef _MSC_VER
-#   define OPENTRACK_SOLIB_PREFIX ""
-#else
-#   define OPENTRACK_SOLIB_PREFIX "lib"
-#endif
+#define OPENTRACK_SOLIB_PREFIX "lib"
 
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
@@ -93,14 +89,16 @@ struct dylib final
         QDir module_directory(library_path);
         QList<std::shared_ptr<dylib>> ret;
 
+        using str = QLatin1String;
+
         static const struct filter_ {
             Type type;
-            QString glob;
+            QLatin1String glob;
         } filters[] = {
-            { Filter, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT), },
-            { Tracker, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT), },
-            { Protocol, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT), },
-            { Extension, QStringLiteral(OPENTRACK_SOLIB_PREFIX "opentrack-ext-*." OPENTRACK_SOLIB_EXT), },
+            { Filter, str(OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT), },
+            { Tracker, str(OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT), },
+            { Protocol, str(OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT), },
+            { Extension, str(OPENTRACK_SOLIB_PREFIX "opentrack-ext-*." OPENTRACK_SOLIB_EXT), },
         };
 
         for (const filter_& filter : filters)
