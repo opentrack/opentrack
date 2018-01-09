@@ -7,8 +7,6 @@
 #   include <QString>
 #   include <QSysInfo>
 #   include <QtGlobal>
-#else
-#   include <unistd.h>
 #endif
 
 #include "migration/migration.hpp"
@@ -25,6 +23,32 @@ using namespace options;
 #include <QDebug>
 #include <memory>
 #include <cstring>
+
+#if /* denormal control */ \
+    /* GNU */   defined __x86_64__  || defined __SSE2__ || \
+    /* MSVC */  defined _M_AMD64    || (defined _M_IX86_FP && _M_IX86_FP >= 2)
+#   include <xmmintrin.h>
+#   include <pmmintrin.h>
+#   include <float.h>
+
+#define OTR_HAS_DENORM_CONTROL
+void set_fp_mask()
+{
+    unsigned old_mask = _mm_getcsr();
+    (void) old_mask;
+
+    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+    _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
+    _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
+    _MM_SET_EXCEPTION_MASK(_MM_MASK_MASK);
+
+#if 0
+    unsigned new_mask = _mm_getcsr();
+
+    qDebug() << "old" << (void*) old_mask << "new" << (void*) new_mask;
+#endif
+}
+#endif
 
 void set_qt_style()
 {
@@ -142,6 +166,10 @@ main(int argc, char** argv)
 {
 #ifdef _WIN32
     attach_parent_console();
+#endif
+
+#if defined OTR_HAS_DENORM_CONTROL
+    set_fp_mask();
 #endif
 
 #if QT_VERSION >= 0x050600 // flag introduced in QT 5.6. It is non-essential so might as well allow compilation on older systems.
