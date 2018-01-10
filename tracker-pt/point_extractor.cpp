@@ -268,11 +268,17 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
             if (radius > region_size_max || radius < region_size_min)
                 continue;
 
-            blob b(radius, vec2(rect.width/2., rect.height/2.), std::pow(f(norm), f(1.1))/cnt, rect);
-            blobs.push_back(b);
+            blobs.emplace_back(radius, vec2(rect.width/2., rect.height/2.), std::pow(f(norm), f(1.1))/cnt, rect);
 
             if (idx >= max_blobs)
                 goto end;
+
+            // XXX we could go to the next scanline unless the points are really small.
+            // i'd expect each point being present on at least one unique scanline
+            // but it turns out some people are using 2px points -sh 20180110
+#if BROKEN && 0
+            break;
+#endif
         }
     }
 end:
