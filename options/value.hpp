@@ -48,10 +48,12 @@ class value final : public base_value
         if (self_name.isEmpty())
             return def;
 
-        if (!b->contains(self_name) || b->get<QVariant>(self_name).type() == QVariant::Invalid)
+        QVariant variant = b->get<QVariant>(self_name);
+
+        if (!b->contains(self_name) || variant.type() == QVariant::Invalid)
             return def;
 
-        const element_type x(b->get<element_type>(self_name));
+        const element_type x(variant.value<element_type>());
 
         return traits::from_value(traits::from_storage(x), def);
     }
