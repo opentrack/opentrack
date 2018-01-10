@@ -598,7 +598,7 @@ static bool FTCreateMapping(void)
     hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(FTMemMap), (LPCSTR) FT_MM_DATA);
     pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTMemMap));
     if (pMemData != NULL)
-        pMemData->data.DataID = 0;
+        pMemData->data.DataID = 1;
     return pMemData != NULL;
 }
 
