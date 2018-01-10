@@ -1,4 +1,4 @@
-find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
+find_package(OpenCV 3.0 QUIET)
 if(OpenCV_FOUND)
     otr_module(cv STATIC)
     target_include_directories(opentrack-cv SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})

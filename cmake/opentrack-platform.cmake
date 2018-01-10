@@ -154,5 +154,3 @@ endif()
 if(UNIX AND NOT APPLE)
     include(FindPkgConfig)
 endif()
-
-set(opencv-modules opencv_calib3d opencv_core opencv_features2d opencv_imgcodecs opencv_imgproc opencv_objdetect opencv_videoio)

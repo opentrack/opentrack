@@ -1,4 +1,4 @@
-find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
+find_package(OpenCV 3.0 QUIET)
 if(OpenCV_FOUND)
     otr_module(tracker-pt)
     set(modules opencv_core opencv_videoio opencv_imgproc)
