@@ -349,8 +349,8 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     else
     {
         running = false;
-        // clamp to zero
-        InterlockedExchange((LONG volatile*) &pMemData->data.DataID, -1);
+        // clamp to (-1) if still negative
+        (void)InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, data_id);
     }
 
     data->status = running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;

@@ -66,9 +66,7 @@ freetrack::~freetrack()
 {
     if (shm.success())
     {
-        const double tmp[6] {};
-        pose(tmp);
-        store(pMemData->data.DataID, 0);
+        store(pMemData->data.DataID, 1);
         store(pMemData->GameID2, -1);
     }
 
@@ -98,9 +96,9 @@ void freetrack::pose(const double* headpose)
     store(data->Pitch, pitch);
     store(data->Roll, roll);
 
-    store(data->DataID, 60 * 30 + (rand() % 120));
-
     const std::int32_t id = load(ft->GameID);
+
+    store(data->DataID, 60 * 10 + (rand() % 64));
 
     if (intGameID != id)
     {
