@@ -9,17 +9,16 @@
 #include "ftnoir_tracker_pt.h"
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
-#include <QHBoxLayout>
+
 #include <cmath>
+#include <functional>
+
+#include <QHBoxLayout>
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
-#include <functional>
 
-Tracker_PT::Tracker_PT() :
-      point_count(0),
-      commands(0),
-      ever_success(false)
+Tracker_PT::Tracker_PT()
 {
     cv::setBreakOnError(true);
 
@@ -30,23 +29,11 @@ Tracker_PT::Tracker_PT() :
 
 Tracker_PT::~Tracker_PT()
 {
-    set_command(ABORT);
+    requestInterruption();
     wait();
 
     QMutexLocker l(&camera_mtx);
     camera.stop();
-}
-
-void Tracker_PT::set_command(Command command)
-{
-    //QMutexLocker lock(&mutex);
-    commands |= command;
-}
-
-void Tracker_PT::reset_command(Command command)
-{
-    //QMutexLocker lock(&mutex);
-    commands &= ~command;
 }
 
 void Tracker_PT::run()
@@ -59,7 +46,7 @@ void Tracker_PT::run()
     QTextStream log_stream(&log_file);
 #endif
 
-    while((commands & ABORT) == 0)
+    while(!isInterruptionRequested())
     {
         CamInfo cam_info;
         bool new_frame = false;

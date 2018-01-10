@@ -23,6 +23,8 @@
 #include <memory>
 #include <vector>
 
+#include <opencv2/core.hpp>
+
 #include <QCoreApplication>
 #include <QThread>
 #include <QMutex>
@@ -60,17 +62,10 @@ public slots:
 protected:
     void run() override;
 private:
-    // thread commands
-    enum Command : unsigned char
-    {
-        ABORT = 1<<0
-    };
-    void set_command(Command command);
-    void reset_command(Command command);
-
     QMutex camera_mtx;
     QMutex data_mtx;
-    Camera       camera;
+    Camera camera;
+
     PointExtractor point_extractor;
     PointTracker   point_tracker;
 
@@ -83,9 +78,8 @@ private:
 
     QSize preview_size;
 
-    std::atomic<unsigned> point_count;
-    std::atomic<unsigned char> commands;
-    std::atomic<bool> ever_success;
+    std::atomic<unsigned> point_count = 0;
+    std::atomic<bool> ever_success = false;
 
     static constexpr f rad2deg = f(180/M_PI);
     //static constexpr float deg2rad = float(M_PI/180);
