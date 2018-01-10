@@ -15,7 +15,7 @@
 #include "compat/util.hpp"
 #include "compat/timer.hpp"
 
-#include <opencv2/core/core.hpp>
+#include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
 #include <memory>

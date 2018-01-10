@@ -8,8 +8,10 @@
 
 #pragma once
 
-#include <opencv2/core/core.hpp>
 #include <memory>
+
+#include <opencv2/core.hpp>
+
 #include <QObject>
 #include <QWidget>
 #include <QPainter>

@@ -6,7 +6,7 @@
 #   include <windows.h>
 #endif
 
-#include "opencv2/videoio.hpp"
+#include <opencv2/videoio.hpp>
 
 struct IBaseFilter;
 

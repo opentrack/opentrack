@@ -1,6 +1,7 @@
 find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
 if(OpenCV_FOUND)
     otr_module(tracker-pt)
-    target_link_libraries(opentrack-tracker-pt opentrack-cv ${OpenCV_LIBS})
+    set(modules opencv_core opencv_videoio opencv_imgproc)
+    target_link_libraries(opentrack-tracker-pt opentrack-cv ${modules})
     target_include_directories(opentrack-tracker-pt SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 endif()
