@@ -49,7 +49,9 @@ struct prop_settings_worker final : QThread
 
 prop_settings_worker::prop_settings_worker(int idx)
 {
-    if (cap.get(cv::CAP_PROP_SETTINGS) < 0)
+    int ret = cap.get(cv::CAP_PROP_SETTINGS);
+
+    if (ret < 0)
         run_in_thread_async(qApp, []() {
             QMessageBox msg;
             msg.setTextFormat(Qt::RichText);
@@ -63,7 +65,7 @@ prop_settings_worker::prop_settings_worker(int idx)
             msg.setIcon(QMessageBox::Warning);
             msg.exec();
         });
-    else if (cap.get(cv::CAP_PROP_SETTINGS > 0))
+    else if (ret > 0)
         run_in_thread_async(qApp, []() {
             QMessageBox::warning(nullptr,
                                  "Camera properties",
