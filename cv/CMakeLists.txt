@@ -1,7 +1,5 @@
 find_package(OpenCV 3.0 QUIET COMPONENTS ${opencv-modules})
 if(OpenCV_FOUND)
     otr_module(cv STATIC)
-    #set(modules opencv_core opencv_videoio)
-    #target_link_libraries(opentrack-cv ${modules})
-    target_include_directories(opentrack-cv SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+    target_include_directories(opentrack-cv SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
 endif()
