@@ -15,9 +15,9 @@ set(cc "")
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(cc "${cc} -O2 -O2it -Oy- -Ob2 -fp:fast -GS- -GF -GL -Gw -Gy -Gm")
 set(cc "${cc} -Zo -FS -Zc:threadSafeInit -arch:SSE2 -D_HAS_EXCEPTIONS=0")
-set(cc "${cc} -bigobj")
+set(cc "${cc} -bigobj -cgthreads1")
 set(cc "${cc} -Zc:inline -Zc:rvalueCast -Zc:sizedDealloc -Zc:throwingNew")
-set(cc "${cc} -Qvec-report:1")
+#set(cc "${cc} -Qvec-report:1")
 
 set(warns_ "")
 
@@ -53,9 +53,8 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(cc "${cc} -GR-")
 endif()
 
-set(base-cflags "${warns_} -MT -Zi -cgthreads8 -W4")
+set(base-cflags "${warns_} -MT -Zi -W4")
 #set(base-cflags "${base-cflags} -d2cgsummary")
-#set(base-cflags "${base-cflags} -Bt")
 
 set(_CFLAGS "${base-cflags}")
 set(_CXXFLAGS "${base-cflags}")
@@ -69,36 +68,36 @@ set(_LDFLAGS "-machine:X86 -DEBUG")
 set(_ltcg "-LTCG")
 #set(_ltcg "-LTCG:INCREMENTAL")
 
-set(_LDFLAGS_RELEASE "-OPT:REF,ICF ${_ltcg}")
+set(_LDFLAGS_RELEASE "-OPT:REF,ICF -cgthreads:1 ${_ltcg}")
 set(_LDFLAGS_DEBUG "")
 
 set(_LDFLAGS_STATIC "-machine:X86 -WX")
 set(_LDFLAGS_STATIC_RELEASE "${_ltcg}")
 set(_LDFLAGS_STATIC_DEBUG "")
 
+# debugging build times
+#set(_CXXFLAGS "${_CXXFLAGS} -Bt+")
+set(_LDFLAGS "${_LDFLAGS} -time")
+
 set(CMAKE_RC_FLAGS "/nologo -DWIN32")
 
-set(new-__otr_already_initialized "_${cc}_${base-cflags}_")
-if(NOT "${__otr_already_initialized}" STREQUAL "${new-__otr_already_initialized}")
-    set(__otr_already_initialized "${cc}__${base-cflags}" CACHE INTERNAL "" FORCE)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
-    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
+set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 
-    set(CMAKE_STATIC_LINKER_FLAGS "${_LDFLAGS_STATIC}" CACHE STRING "" FORCE)
-    set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${_LDFLAGS_STATIC_RELEASE}" CACHE STRING "" FORCE)
-    set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${_LDFLAGS_STATIC_DEBUG}" CACHE STRING "" FORCE)
+set(CMAKE_STATIC_LINKER_FLAGS "${_LDFLAGS_STATIC}" CACHE STRING "" FORCE)
+set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${_LDFLAGS_STATIC_RELEASE}" CACHE STRING "" FORCE)
+set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${_LDFLAGS_STATIC_DEBUG}" CACHE STRING "" FORCE)
 
-    foreach(j C CXX)
-        foreach(i "" _DEBUG _RELEASE)
-            set(CMAKE_${j}_FLAGS${i} "${_${j}FLAGS${i}}" CACHE STRING "" FORCE)
-        endforeach()
+foreach(j C CXX)
+    foreach(i "" _DEBUG _RELEASE)
+        set(CMAKE_${j}_FLAGS${i} "${_${j}FLAGS${i}}" CACHE STRING "" FORCE)
     endforeach()
+endforeach()
 
-    foreach(j "" _DEBUG _RELEASE)
-        foreach(i MODULE EXE SHARED)
-            set(CMAKE_${i}_LINKER_FLAGS${j} "${_LDFLAGS${j}}" CACHE STRING "" FORCE)
-        endforeach()
+foreach(j "" _DEBUG _RELEASE)
+    foreach(i MODULE EXE SHARED)
+        set(CMAKE_${i}_LINKER_FLAGS${j} "${_LDFLAGS${j}}" CACHE STRING "" FORCE)
     endforeach()
-endif()
+endforeach()
 
 include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
