@@ -32,8 +32,7 @@
 
 bool video_property_page::show_from_capture(cv::VideoCapture& cap, int /*index */)
 {
-    cap.set(cv::CAP_PROP_SETTINGS, 0);
-    return true;
+    return cap.set(cv::CAP_PROP_SETTINGS, 0);
 }
 
 struct prop_settings_worker final : QThread
@@ -69,7 +68,7 @@ prop_settings_worker::prop_settings_worker(int idx)
         run_in_thread_async(qApp, []() {
             QMessageBox::warning(nullptr,
                                  "Camera properties",
-                                 "Dialog already opened",
+                                 "Camera dialog already opened",
                                  QMessageBox::Cancel,
                                  QMessageBox::NoButton);
         });
@@ -93,7 +92,10 @@ void prop_settings_worker::_open_prop_page()
         for (unsigned k = 0; k < 2000/50; k++)
         {
             if (cap.read(tmp))
+            {
+                qDebug() << "got frame" << tmp.rows << tmp.cols;
                 goto ok;
+            }
             portable::sleep(50);
         }
     }
@@ -107,7 +109,17 @@ ok:
     portable::sleep(100);
 
     qDebug() << "property-page: opening for" << _idx;
-    cap.set(cv::CAP_PROP_SETTINGS, 0);
+
+    if (!cap.set(cv::CAP_PROP_SETTINGS, 0))
+    {
+        run_in_thread_async(qApp, []() {
+            QMessageBox::warning(nullptr,
+                                 "Camera properties",
+                                 "Can't open camera dialog",
+                                 QMessageBox::Cancel,
+                                 QMessageBox::NoButton);
+        });
+    }
 }
 
 prop_settings_worker::~prop_settings_worker()
@@ -131,13 +143,16 @@ void prop_settings_worker::run()
         while (cap.get(cv::CAP_PROP_SETTINGS) > 0)
             portable::sleep(1000);
     }
-
-    connect(this, &QThread::finished, this, &QObject::deleteLater);
 }
 
 bool video_property_page::show(int idx)
 {
     auto thread = new prop_settings_worker(idx);
+
+    // XXX is this a race condition?
+    thread->moveToThread(qApp->thread());
+    QObject::connect(thread, &QThread::finished, qApp, [thread]() { thread->deleteLater(); }, Qt::DirectConnection);
+
     thread->start();
 
     return true;
