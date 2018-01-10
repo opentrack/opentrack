@@ -29,10 +29,10 @@ dialog_ewma::dialog_ewma()
                 [](double x) { return QStringLiteral("%1%").arg(x * 100, 0, 'f', 2);});
 
     connect(ui.minSmooth, &QSlider::valueChanged, this,
-            [&](int v) -> void { if (ui.maxSmooth->value() < v) ui.maxSmooth->setValue(v); });
+            [&](int v) { if (ui.maxSmooth->value() < v) ui.maxSmooth->setValue(v); });
 
     connect(ui.maxSmooth, &QSlider::valueChanged, this,
-            [&](int v) -> void { if (ui.minSmooth->value() > v) ui.minSmooth->setValue(v); });
+            [&](int v) { if (ui.minSmooth->value() > v) ui.minSmooth->setValue(v); });
 }
 
 void dialog_ewma::doOK()

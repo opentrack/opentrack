@@ -111,7 +111,7 @@ std::vector<win32_joy_ctx::joy_info> win32_joy_ctx::get_joy_info()
     for (auto& j : joys)
         ret.push_back(joy_info { j.second->name, j.first });
 
-    std::sort(ret.begin(), ret.end(), [&](const joy_info& fst, const joy_info& snd) -> bool { return fst.name < snd.name; });
+    std::sort(ret.begin(), ret.end(), [&](const joy_info& fst, const joy_info& snd) { return fst.name < snd.name; });
 
     return ret;
 }
@@ -280,7 +280,7 @@ void win32_joy_ctx::enum_state::refresh()
 
     for (auto it = joys.begin(); it != joys.end(); )
     {
-        if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) -> bool { return it->second->guid == guid2; }) == all.end())
+        if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) { return it->second->guid == guid2; }) == all.end())
         {
             it = joys.erase(it);
         }

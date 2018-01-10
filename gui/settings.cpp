@@ -138,9 +138,9 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
         connect(&val.opt.keycode,
                 static_cast<void (base_value::*)(const QString&) const>(&base_value::valueChanged),
                 val.label,
-                [=](const QString&) -> void { val.label->setText(kopts_to_string(val.opt)); });
+                [=](const QString&) { val.label->setText(kopts_to_string(val.opt)); });
         {
-            connect(val.button, &QPushButton::clicked, this, [=]() -> void { bind_key(val.opt, val.label); });
+            connect(val.button, &QPushButton::clicked, this, [=]() { bind_key(val.opt, val.label); });
         }
     }
 }

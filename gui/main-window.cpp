@@ -172,19 +172,19 @@ MainWindow::MainWindow() :
     }
 
     connect(this, &MainWindow::start_tracker,
-            this, [&]() -> void { qDebug() << "start tracker"; start_tracker_(); },
+            this, [&]() { qDebug() << "start tracker"; start_tracker_(); },
             Qt::QueuedConnection);
 
     connect(this, &MainWindow::stop_tracker,
-            this, [&]() -> void { qDebug() << "stop tracker"; stop_tracker_(); },
+            this, [&]() { qDebug() << "stop tracker"; stop_tracker_(); },
             Qt::QueuedConnection);
 
     connect(this, &MainWindow::toggle_tracker,
-            this, [&]() -> void { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
+            this, [&]() { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
             Qt::QueuedConnection);
 
     connect(this, &MainWindow::restart_tracker,
-            this, [&]() -> void { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
+            this, [&]() { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
             Qt::QueuedConnection);
 
     // tray
@@ -270,17 +270,17 @@ void MainWindow::register_shortcuts()
 
     t_keys keys
     {
-        t_key(s.key_start_tracking1, [&](bool) -> void { start_tracker(); }, true),
-        t_key(s.key_start_tracking2, [&](bool) -> void { start_tracker(); }, true),
+        t_key(s.key_start_tracking1, [&](bool) { start_tracker(); }, true),
+        t_key(s.key_start_tracking2, [&](bool) { start_tracker(); }, true),
 
-        t_key(s.key_stop_tracking1, [&](bool) -> void { stop_tracker(); }, true),
-        t_key(s.key_stop_tracking2, [&](bool) -> void { stop_tracker(); }, true),
+        t_key(s.key_stop_tracking1, [&](bool) { stop_tracker(); }, true),
+        t_key(s.key_stop_tracking2, [&](bool) { stop_tracker(); }, true),
 
-        t_key(s.key_toggle_tracking1, [&](bool) -> void { toggle_tracker(); }, true),
-        t_key(s.key_toggle_tracking2, [&](bool) -> void { toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking1, [&](bool) { toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking2, [&](bool) { toggle_tracker(); }, true),
 
-        t_key(s.key_restart_tracking1, [&](bool) -> void { restart_tracker(); }, true),
-        t_key(s.key_restart_tracking2, [&](bool) -> void { restart_tracker(); }, true),
+        t_key(s.key_restart_tracking1, [&](bool) { restart_tracker(); }, true),
+        t_key(s.key_restart_tracking2, [&](bool) { restart_tracker(); }, true),
     };
 
     global_shortcuts.reload(keys);
@@ -654,7 +654,7 @@ bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
         if (lib && lib->Dialog)
-            return reinterpret_cast<t*>(lib->Dialog());
+            return (t*) lib->Dialog();
         return nullptr;
     });
 
@@ -690,7 +690,7 @@ void MainWindow::show_filter_settings()
 
 void MainWindow::show_options_dialog()
 {
-    if (mk_window(options_widget, [&](bool flag) -> void { set_keys_enabled(!flag); }))
+    if (mk_window(options_widget, [&](bool flag) { set_keys_enabled(!flag); }))
     {
         connect(options_widget.get(), &OptionsDialog::closing, this, &MainWindow::register_shortcuts);
     }
