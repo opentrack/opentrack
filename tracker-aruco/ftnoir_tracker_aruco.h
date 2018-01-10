@@ -155,13 +155,13 @@ private:
     static constexpr double gauss_kernel_size = 3;
 #endif
 
-    static constexpr double timeout = 1;
-    static constexpr double timeout_backoff_c = 4./11;
+    static constexpr inline double timeout = 1;
+    static constexpr inline double timeout_backoff_c = 4./11;
 
-    static constexpr const float size_min = 0.05;
-    static constexpr const float size_max = 0.5;
+    static constexpr inline float size_min = 0.05;
+    static constexpr inline float size_max = 0.5;
 
-    static constexpr const double RC = .25;
+    static constexpr inline double RC = .25;
 };
 
 class aruco_dialog : public ITrackerDialog
