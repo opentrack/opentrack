@@ -33,7 +33,7 @@ static void set_row(mat33& m, int i, const vec3& v)
     m(i,2) = v[2];
 }
 
-PointModel::PointModel(const settings_pt& s)
+PointModel::PointModel(const pt_settings& s)
 {
     set_model(s);
     // calculate u
@@ -47,7 +47,7 @@ PointModel::PointModel(const settings_pt& s)
     P = 1/(s11*s22-s12*s12) * mat22(s22, -s12, -s12,  s11);
 }
 
-void PointModel::set_model(const settings_pt& s)
+void PointModel::set_model(const pt_settings& s)
 {
     switch (s.active_model_panel)
     {
@@ -90,7 +90,7 @@ PointTracker::PointTracker()
 
 PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2* points,
                                                                      const PointModel& model,
-                                                                     const CamInfo& info)
+                                                                     const pt_camera_info& info)
 {
     const double fx = info.get_focal_length();
     PointTracker::PointOrder p;
@@ -138,7 +138,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     return p;
 }
 
-bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamInfo& info)
+bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const pt_camera_info& info)
 {
     constexpr f std_width = 640, std_height = 480;
 
@@ -202,7 +202,7 @@ bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const CamI
 
 void PointTracker::track(const std::vector<vec2>& points,
                          const PointModel& model,
-                         const CamInfo& info,
+                         const pt_camera_info& info,
                          int init_phase_timeout)
 {
     const double fx = info.get_focal_length();

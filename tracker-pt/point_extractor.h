@@ -8,9 +8,7 @@
 
 #pragma once
 
-#include "ftnoir_tracker_pt_settings.h"
-#include "camera.h"
-#include "cv/numeric.hpp"
+#include "pt-api.hpp"
 
 #include <vector>
 
@@ -27,22 +25,20 @@ struct blob
     vec2 pos;
     cv::Rect rect;
 
-    blob(f radius, const vec2& pos, f brightness, cv::Rect &rect);
+    blob(f radius, const vec2& pos, f brightness, const cv::Rect& rect);
 };
 
-class PointExtractor final
+class PointExtractor final : public pt_point_extractor
 {
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
-    void extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points);
-    PointExtractor();
-
-    settings_pt s;
-
-    static double threshold_radius_value(int w, int h, int threshold);
+    void extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points) override;
+    PointExtractor(const QString& module_name);
 private:
     static constexpr int max_blobs = 16;
+
+    pt_settings s;
 
     cv::Mat1b frame_gray, frame_bin, frame_blobs;
     cv::Mat1f hist;

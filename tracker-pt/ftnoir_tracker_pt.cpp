@@ -10,15 +10,24 @@
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
+#include "pt-api.hpp"
+
 #include <cmath>
-#include <functional>
+#include <utility>
+
+#include <opencv2/imgproc.hpp>
 
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QFile>
 #include <QCoreApplication>
 
-Tracker_PT::Tracker_PT()
+using namespace types;
+
+Tracker_PT::Tracker_PT(const pt_runtime_traits& traits) :
+    s(traits.get_module_name()),
+    point_extractor(std::move(traits.make_point_extractor())),
+    camera(std::move(traits.make_camera()))
 {
     cv::setBreakOnError(true);
 
@@ -33,7 +42,7 @@ Tracker_PT::~Tracker_PT()
     wait();
 
     QMutexLocker l(&camera_mtx);
-    camera.stop();
+    camera->stop();
 }
 
 void Tracker_PT::run()
@@ -48,14 +57,14 @@ void Tracker_PT::run()
 
     while(!isInterruptionRequested())
     {
-        CamInfo cam_info;
+        pt_camera_info cam_info;
         bool new_frame = false;
 
         {
             QMutexLocker l(&camera_mtx);
 
             if (camera)
-                std::tie(new_frame, cam_info) = camera.get_frame(frame);
+                std::tie(new_frame, cam_info) = camera->get_frame(frame);
         }
 
         if (new_frame)
@@ -64,7 +73,7 @@ void Tracker_PT::run()
                        cv::Size(preview_size.width(), preview_size.height()),
                        0, 0, cv::INTER_NEAREST);
 
-            point_extractor.extract_points(frame, preview_frame, points);
+            point_extractor->extract_points(frame, preview_frame, points);
             point_count = points.size();
 
             const double fx = cam_info.get_focal_length();
@@ -120,16 +129,17 @@ void Tracker_PT::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
-    Camera::open_status status = camera.start(camera_name_to_index(s.camera_name), s.cam_fps, s.cam_res_x, s.cam_res_y);
+    pt_camera_open_status status = camera->start(camera_name_to_index(s.camera_name),
+                                                 s.cam_fps, s.cam_res_x, s.cam_res_y);
 
     switch (status)
     {
-    case Camera::open_error:
+    case cam_open_error:
         break;
-    case Camera::open_ok_change:
+    case cam_open_ok_change:
         frame = cv::Mat();
         break;
-    case Camera::open_ok_no_change:
+    case cam_open_ok_no_change:
         break;
     }
 }
@@ -137,7 +147,7 @@ void Tracker_PT::maybe_reopen_camera()
 void Tracker_PT::set_fov(int value)
 {
     QMutexLocker l(&camera_mtx);
-    camera.set_fov(value);
+    camera->set_fov(value);
 }
 
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
@@ -228,15 +238,13 @@ int Tracker_PT::get_n_points()
     return int(point_count);
 }
 
-bool Tracker_PT::get_cam_info(CamInfo* info)
+bool Tracker_PT::get_cam_info(pt_camera_info* info)
 {
     QMutexLocker lock(&camera_mtx);
     bool ret;
 
-    std::tie(ret, *info) = camera.get_info();
+    std::tie(ret, *info) = camera->get_info();
     return ret;
 }
 
-#include "ftnoir_tracker_pt_dialog.h"
-OPENTRACK_DECLARE_TRACKER(Tracker_PT, TrackerDialog_PT, PT_metadata)
 

@@ -8,10 +8,9 @@
 #pragma once
 
 #include "compat/timer.hpp"
-#include "ftnoir_tracker_pt_settings.h"
 #include "cv/affine.hpp"
 #include "cv/numeric.hpp"
-#include "camera.h"
+#include "pt-api.hpp"
 
 #include <opencv2/core.hpp>
 #include <cstddef>
@@ -20,7 +19,7 @@
 #include <array>
 #include <QObject>
 
-namespace impl {
+namespace pt_impl {
 
 // ----------------------------------------------------------------------------
 // Describes a 3-point model
@@ -42,8 +41,9 @@ struct PointModel final
 
     enum Model { Clip, Cap, Custom };
 
-    PointModel(const settings_pt& s);
-    void set_model(const settings_pt& s);
+    PointModel(const pt_settings& s);
+    void set_model(const pt_settings& s);
+
     void get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const;
 };
 
@@ -58,7 +58,7 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<vec2>& projected_points, const PointModel& model, const CamInfo& info, int init_phase_timeout);
+    void track(const std::vector<vec2>& projected_points, const PointModel& model, const pt_camera_info& info, int init_phase_timeout);
     Affine pose() { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
@@ -68,20 +68,19 @@ private:
     // the points in model order
     using PointOrder = std::array<vec2, 3>;
 
-    bool maybe_use_old_point_order(const PointOrder& order, const CamInfo& info);
-    PointOrder prev_order, prev_scaled_order;
+    bool maybe_use_old_point_order(const PointOrder& order, const pt_camera_info& info);
 
     PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
-    PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const CamInfo& info);
+    PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const pt_camera_info& info);
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
 
     Affine X_CM; // transform from model to camera
-
+    PointOrder prev_order, prev_scaled_order;
     Timer t;
     bool init_phase = true, prev_order_valid = false;
 };
 
-} // ns types
+} // ns pt_impl
 
-using impl::PointTracker;
-using impl::PointModel;
+using pt_impl::PointTracker;
+using pt_impl::PointModel;

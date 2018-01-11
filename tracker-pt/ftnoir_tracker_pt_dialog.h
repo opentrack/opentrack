@@ -5,11 +5,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef FTNOIR_TRACKER_PT_DIALOG_H
-#define FTNOIR_TRACKER_PT_DIALOG_H
+#pragma once
 
-#include "api/plugin-api.hpp"
-#include "ftnoir_tracker_pt_settings.h"
+#include "pt-api.hpp"
+
 #include "ftnoir_tracker_pt.h"
 #include "ui_FTNoIR_PT_Controls.h"
 #include "cv/translation-calibrator.hpp"
@@ -23,7 +22,7 @@ class TrackerDialog_PT : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerDialog_PT();
+    TrackerDialog_PT(const QString& module_name);
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;
     void save();
@@ -41,7 +40,7 @@ signals:
 private:
     QString threshold_display_text(int threshold_value);
 
-    settings_pt s;
+    pt_settings s;
     Tracker_PT* tracker;
     QTimer timer, calib_timer;
     TranslationCalibrator trans_calib;
@@ -50,5 +49,3 @@ private:
 
     Ui::UICPTClientControls ui;
 };
-
-#endif //FTNOIR_TRACKER_PT_DIALOG_H

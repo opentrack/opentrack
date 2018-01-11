@@ -8,9 +8,7 @@
 #pragma once
 
 #include "compat/ndebug-guard.hpp"
-
-#undef NDEBUG
-#include <cassert>
+#include "pt-api.hpp"
 
 #include "compat/util.hpp"
 #include "compat/timer.hpp"
@@ -22,55 +20,35 @@
 #include <tuple>
 #include <QString>
 
-struct CamInfo final
+struct Camera final : pt_camera
 {
-    CamInfo() : fov(0), fps(0), res_x(0), res_y(0), idx(-1) {}
-    double get_focal_length() const;
+    Camera();
 
-    double fov;
-    double fps;
+    pt_camera_open_status start(int idx, int fps, int res_x, int res_y) override;
+    void stop() override;
 
-    int res_x;
-    int res_y;
-    int idx;
-};
+    result get_frame(cv::Mat& frame) override;
+    result get_info() const override;
 
-struct Camera final
-{
-    enum open_status : unsigned { open_error, open_ok_no_change, open_ok_change };
+    pt_camera_info get_desired() const override { return cam_desired; }
+    QString get_desired_name() const override;
+    QString get_active_name() const override;
 
-    using result = std::tuple<bool, CamInfo>;
+    operator bool() const override { return cap && cap->isOpened(); }
 
-    Camera() : dt_mean(0), fov(0) {}
+    void set_fov(double value) override { fov = value; }
 
-    warn_result_unused open_status start(int idx, int fps, int res_x, int res_y);
-    void stop();
-
-    warn_result_unused result get_frame(cv::Mat& frame);
-    warn_result_unused result get_info() const;
-
-    CamInfo get_desired() const { return cam_desired; }
-    QString get_desired_name() const;
-    QString get_active_name() const;
-
-    cv::VideoCapture& operator*() { assert(cap); return *cap; }
-    const cv::VideoCapture& operator*() const { assert(cap); return *cap; }
-    cv::VideoCapture* operator->() { assert(cap); return cap.get(); }
-    const cv::VideoCapture* operator->() const { return cap.get(); }
-    operator bool() const { return cap && cap->isOpened(); }
-
-    void set_fov(double value) { fov = value; }
+    void show_camera_settings() override;
 
 private:
     warn_result_unused bool _get_frame(cv::Mat& frame);
 
-    double dt_mean;
-    double fov;
+    double dt_mean, fov;
 
     Timer t;
 
-    CamInfo cam_info;
-    CamInfo cam_desired;
+    pt_camera_info cam_info;
+    pt_camera_info cam_desired;
     QString desired_name, active_name;
 
     struct camera_deleter final
@@ -81,6 +59,8 @@ private:
     using camera_ptr = std::unique_ptr<cv::VideoCapture, camera_deleter>;
 
     camera_ptr cap;
+
+    pt_settings s;
 
     static constexpr double dt_eps = 1./384;
 };

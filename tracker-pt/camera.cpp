@@ -10,7 +10,11 @@
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
+#include "cv/video-property-page.hpp"
+
 constexpr double Camera::dt_eps;
+
+Camera::Camera() : dt_mean(0), fov(0), s("tracker-pt") {}
 
 QString Camera::get_desired_name() const
 {
@@ -22,28 +26,26 @@ QString Camera::get_active_name() const
     return active_name;
 }
 
-double CamInfo::get_focal_length() const
+void Camera::show_camera_settings()
 {
-    const double diag_len = sqrt(double(res_x*res_x + res_y*res_y));
-    const double aspect_x = res_x / diag_len;
-    //const double aspect_y = res_y / diag_len;
-    const double diag_fov = fov * M_PI/180;
-    const double fov_x = 2*atan(tan(diag_fov*.5) * aspect_x);
-    //const double fov_y = 2*atan(tan(diag_fov*.5) * aspect_y);
-    const double fx = .5 / tan(fov_x * .5);
-    return fx;
-    //fy = .5 / tan(fov_y * .5);
-    //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
+    const int idx = camera_name_to_index(s.camera_name);
+
+    if (bool(*this))
+        video_property_page::show_from_capture(*cap, idx);
+    else
+    {
+        video_property_page::show(idx);
+    }
 }
 
-warn_result_unused Camera::result Camera::get_info() const
+Camera::result Camera::get_info() const
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
-        return result(false, CamInfo());
+        return result(false, pt_camera_info());
     return result(true, cam_info);
 }
 
-warn_result_unused Camera::result Camera::get_frame(cv::Mat& frame)
+Camera::result Camera::get_frame(cv::Mat& frame)
 {
     const bool new_frame = _get_frame(frame);
 
@@ -69,10 +71,10 @@ warn_result_unused Camera::result Camera::get_frame(cv::Mat& frame)
         return result(true, cam_info);
     }
     else
-        return result(false, CamInfo());
+        return result(false, pt_camera_info());
 }
 
-warn_result_unused Camera::open_status Camera::start(int idx, int fps, int res_x, int res_y)
+pt_camera_open_status Camera::start(int idx, int fps, int res_x, int res_y)
 {
     if (idx >= 0 && fps >= 0 && res_x >= 0 && res_y >= 0)
     {
@@ -102,7 +104,7 @@ warn_result_unused Camera::open_status Camera::start(int idx, int fps, int res_x
 
             if (cap->isOpened() && cap->grab())
             {
-                cam_info = CamInfo();
+                cam_info = pt_camera_info();
                 active_name = QString();
                 cam_info.idx = idx;
                 dt_mean = 0;
@@ -110,20 +112,20 @@ warn_result_unused Camera::open_status Camera::start(int idx, int fps, int res_x
 
                 t.start();
 
-                return open_ok_change;
+                return cam_open_ok_change;
             }
             else
             {
                 stop();
-                return open_error;
+                return cam_open_error;
             }
         }
 
-        return open_ok_no_change;
+        return cam_open_ok_no_change;
     }
 
     stop();
-    return open_error;
+    return cam_open_error;
 }
 
 void Camera::stop()
@@ -131,11 +133,11 @@ void Camera::stop()
     cap = nullptr;
     desired_name = QString();
     active_name = QString();
-    cam_info = CamInfo();
-    cam_desired = CamInfo();
+    cam_info = pt_camera_info();
+    cam_desired = pt_camera_info();
 }
 
-warn_result_unused bool Camera::_get_frame(cv::Mat& frame)
+bool Camera::_get_frame(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {

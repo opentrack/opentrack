@@ -11,6 +11,7 @@
 #include "point_tracker.h"
 #include <QDebug>
 
+#include "cv/numeric.hpp"
 #include <opencv2/videoio.hpp>
 
 #undef PREVIEW
@@ -80,7 +81,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
         return current_center;
 }
 
-PointExtractor::PointExtractor()
+PointExtractor::PointExtractor(const QString& module_name) : s(module_name)
 {
     blobs.reserve(max_blobs);
 }
@@ -194,18 +195,6 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
     }
 }
 
-double PointExtractor::threshold_radius_value(int w, int h, int threshold)
-{
-    double cx = w / 640., cy = h / 480.;
-
-    const double min_radius = 1.75 * cx;
-    const double max_radius = 15 * cy;
-
-    const double radius = std::fmax(0., (max_radius-min_radius) * threshold / f(255) + min_radius);
-
-    return radius;
-}
-
 void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
 {
     ensure_buffers(frame);
@@ -268,7 +257,10 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
             if (radius > region_size_max || radius < region_size_min)
                 continue;
 
-            blobs.emplace_back(radius, vec2(rect.width/2., rect.height/2.), std::pow(f(norm), f(1.1))/cnt, rect);
+            blobs.emplace_back(radius,
+                               vec2(rect.width/2., rect.height/2.),
+                               std::pow(f(norm), f(1.1))/cnt,
+                               rect);
 
             if (idx >= max_blobs)
                 goto end;
@@ -372,7 +364,7 @@ end:
     }
 }
 
-blob::blob(f radius, const vec2& pos, f brightness, cv::Rect& rect) :
+blob::blob(f radius, const vec2& pos, f brightness, const cv::Rect& rect) :
     radius(radius), brightness(brightness), pos(pos), rect(rect)
 {
     //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];

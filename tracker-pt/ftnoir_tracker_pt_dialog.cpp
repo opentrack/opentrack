@@ -7,17 +7,19 @@
  */
 
 #include "ftnoir_tracker_pt_dialog.h"
-#include "cv/video-property-page.hpp"
 
 #include "compat/camera-names.hpp"
 #include <opencv2/core.hpp>
 #include <QString>
 #include <QDebug>
 
-TrackerDialog_PT::TrackerDialog_PT()
-    : tracker(nullptr),
-      timer(this),
-      trans_calib(1, 2, 0)
+using namespace options;
+
+TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
+    s(module_name),
+    tracker(nullptr),
+    timer(this),
+    trans_calib(1, 2, 0)
 {
     ui.setupUi(this);
 
@@ -110,7 +112,7 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
         return tr("Brightness %1/255").arg(threshold_value);
     else
     {
-        CamInfo info;
+        pt_camera_info info;
         int w = s.cam_res_x, h = s.cam_res_y;
 
         if (w * h <= 0)
@@ -119,7 +121,7 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
         if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
             w = info.res_x, h = info.res_y;
 
-        double value = PointExtractor::threshold_radius_value(w, h, threshold_value);
+        double value = pt_point_extractor::threshold_radius_value(w, h, threshold_value);
 
         return tr("LED radius %1 pixels").arg(value, 0, 'f', 2);
     }
@@ -193,7 +195,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
 
 void TrackerDialog_PT::poll_tracker_info_impl()
 {
-    CamInfo info;
+    pt_camera_info info;
     if (tracker && tracker->get_cam_info(&info))
     {
         ui.caminfo_label->setText(tr("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(iround(info.fps)));
@@ -216,23 +218,11 @@ void TrackerDialog_PT::set_camera_settings_available(const QString& /* camera_na
 
 void TrackerDialog_PT::show_camera_settings()
 {
-    const int idx = ui.camdevice_combo->currentIndex();
-
     if (tracker)
     {
-        if (tracker->camera)
-        {
-            cv::VideoCapture& cap = *tracker->camera;
-
-            CamInfo info;
-            bool status;
-            std::tie(status, info) = tracker->camera.get_info();
-            if (status)
-                video_property_page::show_from_capture(cap, info.idx);
-        }
+        QMutexLocker l(&tracker->camera_mtx);
+        tracker->camera->show_camera_settings();
     }
-    else
-        video_property_page::show(idx);
 }
 
 void TrackerDialog_PT::trans_calib_step()
