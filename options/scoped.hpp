@@ -1,6 +1,7 @@
 #pragma once
 
 #include "bundle.hpp"
+#include "value.hpp"
 #include <QString>
 
 #include "export.hpp"
@@ -20,11 +21,16 @@ private:
 
 struct OTR_OPTIONS_EXPORT opts
 {
+    template<typename t> using value = options::value<t>;
+    using bundle = options::bundle;
+
     bundle b;
+
+    virtual ~opts();
     opts(const QString& name);
+
     opts& operator=(const opts&) = delete;
     opts(const opts&) = delete;
-    virtual ~opts();
 };
 
 }
