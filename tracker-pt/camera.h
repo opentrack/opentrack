@@ -22,7 +22,7 @@
 
 struct Camera final : pt_camera
 {
-    Camera();
+    Camera(const QString& module_name);
 
     pt_camera_open_status start(int idx, int fps, int res_x, int res_y) override;
     void stop() override;

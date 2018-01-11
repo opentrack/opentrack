@@ -14,7 +14,7 @@
 
 constexpr double Camera::dt_eps;
 
-Camera::Camera() : dt_mean(0), fov(0), s("tracker-pt") {}
+Camera::Camera(const QString& module_name) : dt_mean(0), fov(0), s(module_name) {}
 
 QString Camera::get_desired_name() const
 {

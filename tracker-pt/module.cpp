@@ -15,7 +15,7 @@ struct pt_module_traits final : pt_runtime_traits
 {
     std::unique_ptr<pt_camera> make_camera() const override
     {
-        return std::unique_ptr<pt_camera>(new Camera);
+        return std::unique_ptr<pt_camera>(new Camera(module_name));
     }
 
     std::unique_ptr<pt_point_extractor> make_point_extractor() const override
