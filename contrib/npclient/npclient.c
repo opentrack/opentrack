@@ -332,19 +332,19 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     frameno++;
     data->frame = frameno;
 
-    int data_id = InterlockedDecrement((LONG volatile*) &pMemData->data.DataID);
-
+    int data_id = InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, -1);
     bool running;
 
     if (data_id == 0)
     {
         running = true;
         y = 0, r = 0, p = 0, tx = 0, ty = 0, tz = 0;
-        InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, 0);
+        (void)InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, 0);
     }
     else if (data_id > 0)
     {
         running = true;
+        (void)InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, data_id - 1, data_id);
     }
     else
     {
