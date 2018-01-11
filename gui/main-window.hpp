@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "export.hpp"
+
 #include "api/plugin-support.hpp"
 #include "mapping-dialog.hpp"
 #include "settings.hpp"
@@ -37,11 +39,11 @@
 #include <tuple>
 #include <memory>
 
-#include "ui_main-window.h"
+#include "gui/ui_main-window.h"
 
 using namespace options;
 
-class MainWindow : public QMainWindow, private State
+class OTR_GUI_EXPORT main_window : public QMainWindow, private State
 {
     Q_OBJECT
 
@@ -54,8 +56,8 @@ class MainWindow : public QMainWindow, private State
     QTimer pose_update_timer;
     QTimer det_timer;
     QTimer config_list_timer;
-    std::unique_ptr<OptionsDialog> options_widget;
-    std::unique_ptr<MapWidget> mapping_widget;
+    std::unique_ptr<options_dialog> options_widget;
+    std::unique_ptr<mapping_dialog> mapping_widget;
     QShortcut kbd_quit;
     std::unique_ptr<IFilterDialog> pFilterDialog;
     std::unique_ptr<IProtocolDialog> pProtocolDialog;
@@ -143,8 +145,8 @@ signals:
     void toggle_tracker();
     void restart_tracker();
 public:
-    MainWindow();
-    ~MainWindow();
+    main_window();
+    ~main_window();
     static void set_working_directory();
     bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
     void die_on_config_not_writable();

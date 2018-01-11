@@ -1,9 +1,4 @@
-otr_module(user-interface EXECUTABLE BIN)
-
-set_target_properties(opentrack-user-interface PROPERTIES
-    SUFFIX "${opentrack-binary-suffix}"
-    OUTPUT_NAME "opentrack"
-    )
+otr_module(user-interface BIN)
 
 target_link_libraries(opentrack-user-interface
     opentrack-migration

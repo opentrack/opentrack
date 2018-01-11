@@ -10,7 +10,7 @@
 #include "logic/main-settings.hpp"
 #include "spline/spline-widget.hpp"
 
-MapWidget::MapWidget(Mappings& m) : m(m), widgets{}
+mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);
 
@@ -66,7 +66,7 @@ MapWidget::MapWidget(Mappings& m) : m(m), widgets{}
     tie_setting(s.a_pitch.clamp_y_, ui.max_pitch_output);
 }
 
-void MapWidget::load()
+void mapping_dialog::load()
 {
     struct {
         spline_widget* qfc;
@@ -145,12 +145,12 @@ void MapWidget::load()
     }
 }
 
-void MapWidget::closeEvent(QCloseEvent*)
+void mapping_dialog::closeEvent(QCloseEvent*)
 {
     invalidate_dialog();
 }
 
-void MapWidget::refresh_tab()
+void mapping_dialog::refresh_tab()
 {
     if (!isVisible())
         return;
@@ -166,7 +166,7 @@ void MapWidget::refresh_tab()
         qDebug() << "map-widget: bad index" << idx;
 }
 
-void MapWidget::save_dialog()
+void mapping_dialog::save_dialog()
 {
     s.b_map->save();
 
@@ -181,7 +181,7 @@ void MapWidget::save_dialog()
     }
 }
 
-void MapWidget::invalidate_dialog()
+void mapping_dialog::invalidate_dialog()
 {
     s.b_map->reload();
 
@@ -193,13 +193,13 @@ void MapWidget::invalidate_dialog()
     });
 }
 
-void MapWidget::doOK()
+void mapping_dialog::doOK()
 {
     save_dialog();
     close();
 }
 
-void MapWidget::doCancel()
+void mapping_dialog::doCancel()
 {
     invalidate_dialog();
     close();

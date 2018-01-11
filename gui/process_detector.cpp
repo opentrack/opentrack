@@ -20,35 +20,35 @@
 static constexpr inline auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
 static constexpr inline auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_
 
-void settings::set_game_list(const QString &game_list)
+void proc_detector_settings::set_game_list(const QString &game_list)
 {
     group::with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-list", game_list);
     });
 }
 
-QString settings::get_game_list()
+QString proc_detector_settings::get_game_list()
 {
     return group::with_global_settings_object([&](QSettings& settings) {
         return settings.value("executable-list").toString();
     });
 }
 
-bool settings::is_enabled()
+bool proc_detector_settings::is_enabled()
 {
     return group::with_global_settings_object([&](QSettings& settings) {
         return settings.value("executable-detector-enabled", false).toBool();
     });
 }
 
-void settings::set_is_enabled(bool enabled)
+void proc_detector_settings::set_is_enabled(bool enabled)
 {
     group::with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-detector-enabled", enabled);
     });
 }
 
-QHash<QString, QString> settings::split_process_names()
+QHash<QString, QString> proc_detector_settings::split_process_names()
 {
     QHash<QString, QString> ret;
     QString str = get_game_list();
@@ -79,7 +79,7 @@ void BrowseButton::browse()
                 tr("Set executable name"),
                 dir_path,
                 tr("Executable (*.exe);;All Files (*)"));
-    MainWindow::set_working_directory();
+    main_window::set_working_directory();
     filename = QFileInfo(filename).fileName();
     if (!filename.isNull())
         twi->setText(filename);
@@ -132,7 +132,7 @@ process_detector::process_detector(QWidget* parent) : QWidget(parent)
     QResizeEvent e(ui.tableWidget->size(), ui.tableWidget->size());
     ui.tableWidget->resizeEvent(&e);
 
-    settings s;
+    proc_detector_settings s;
 
     ui.enabled->setChecked(s.is_enabled());
 }
@@ -173,7 +173,7 @@ bool process_detector_worker::should_stop()
     if (last_exe_name == "")
         return false;
 
-    settings s;
+    proc_detector_settings s;
 
     if (!s.is_enabled())
     {
@@ -193,7 +193,7 @@ bool process_detector_worker::should_stop()
 
 bool process_detector_worker::config_to_start(QString& str)
 {
-    settings s;
+    proc_detector_settings s;
     if (!s.is_enabled())
     {
         last_exe_name = "";

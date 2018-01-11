@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-KeyboardListener::KeyboardListener(QWidget* parent) :
+keyboard_listener::keyboard_listener(QWidget* parent) :
     QDialog(parent)
 #if defined _WIN32
   , token([&](const Key& k) {

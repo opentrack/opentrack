@@ -59,7 +59,7 @@ void MainWindow::annoy_if_root()
 }
 #endif
 
-MainWindow::MainWindow() :
+main_window::main_window() :
     State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
     pose_update_timer(this),
     kbd_quit(QKeySequence("Ctrl+Q"), this),
@@ -162,28 +162,28 @@ MainWindow::MainWindow() :
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
 
-        connect(&m.tracker_dll, base_value::value_changed<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
-        connect(&m.protocol_dll, base_value::value_changed<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
-        connect(&m.filter_dll, base_value::value_changed<QString>(), this, &MainWindow::save_modules, Qt::QueuedConnection);
+        connect(&m.tracker_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::QueuedConnection);
+        connect(&m.protocol_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::QueuedConnection);
+        connect(&m.filter_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::QueuedConnection);
 
         tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
         tie_setting(m.protocol_dll, ui.iconcomboProtocol);
         tie_setting(m.filter_dll, ui.iconcomboFilter);
     }
 
-    connect(this, &MainWindow::start_tracker,
+    connect(this, &main_window::start_tracker,
             this, [&]() { qDebug() << "start tracker"; start_tracker_(); },
             Qt::QueuedConnection);
 
-    connect(this, &MainWindow::stop_tracker,
+    connect(this, &main_window::stop_tracker,
             this, [&]() { qDebug() << "stop tracker"; stop_tracker_(); },
             Qt::QueuedConnection);
 
-    connect(this, &MainWindow::toggle_tracker,
+    connect(this, &main_window::toggle_tracker,
             this, [&]() { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
             Qt::QueuedConnection);
 
-    connect(this, &MainWindow::restart_tracker,
+    connect(this, &main_window::restart_tracker,
             this, [&]() { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
             Qt::QueuedConnection);
 
@@ -204,7 +204,7 @@ MainWindow::MainWindow() :
     kbd_quit.setEnabled(true);
 }
 
-void MainWindow::init_tray_menu()
+void main_window::init_tray_menu()
 {
     tray_menu.clear();
 
@@ -231,39 +231,39 @@ void MainWindow::init_tray_menu()
 
     menu_action_tracker.setText(tr("Tracker settings"));
     menu_action_tracker.setIcon(QIcon(":/images/tools.png"));
-    QObject::connect(&menu_action_tracker, &QAction::triggered, this, &MainWindow::show_tracker_settings);
+    QObject::connect(&menu_action_tracker, &QAction::triggered, this, &main_window::show_tracker_settings);
     tray_menu.addAction(&menu_action_tracker);
 
     menu_action_filter.setText(tr("Filter settings"));
     menu_action_filter.setIcon(QIcon(":/images/filter-16.png"));
-    QObject::connect(&menu_action_filter, &QAction::triggered, this, &MainWindow::show_filter_settings);
+    QObject::connect(&menu_action_filter, &QAction::triggered, this, &main_window::show_filter_settings);
     tray_menu.addAction(&menu_action_filter);
 
     menu_action_proto.setText(tr("Protocol settings"));
     menu_action_proto.setIcon(QIcon(":/images/settings16.png"));
-    QObject::connect(&menu_action_proto, &QAction::triggered, this, &MainWindow::show_proto_settings);
+    QObject::connect(&menu_action_proto, &QAction::triggered, this, &main_window::show_proto_settings);
     tray_menu.addAction(&menu_action_proto);
 
     tray_menu.addSeparator();
 
     menu_action_mappings.setIcon(QIcon(":/images/curves.png"));
     menu_action_mappings.setText(tr("Mappings"));
-    QObject::connect(&menu_action_mappings, &QAction::triggered, this, &MainWindow::show_mapping_window);
+    QObject::connect(&menu_action_mappings, &QAction::triggered, this, &main_window::show_mapping_window);
     tray_menu.addAction(&menu_action_mappings);
 
     menu_action_options.setIcon(QIcon(":/images/tools.png"));
     menu_action_options.setText(tr("Options"));
-    QObject::connect(&menu_action_options, &QAction::triggered, this, &MainWindow::show_options_dialog);
+    QObject::connect(&menu_action_options, &QAction::triggered, this, &main_window::show_options_dialog);
     tray_menu.addAction(&menu_action_options);
 
     tray_menu.addSeparator();
 
     menu_action_exit.setText(tr("Exit"));
-    QObject::connect(&menu_action_exit, &QAction::triggered, this, &MainWindow::exit);
+    QObject::connect(&menu_action_exit, &QAction::triggered, this, &main_window::exit);
     tray_menu.addAction(&menu_action_exit);
 }
 
-void MainWindow::register_shortcuts()
+void main_window::register_shortcuts()
 {
     using t_key = Shortcuts::t_key;
     using t_keys = Shortcuts::t_keys;
@@ -289,7 +289,7 @@ void MainWindow::register_shortcuts()
         work->reload_shortcuts();
 }
 
-void MainWindow::die_on_config_not_writable()
+void main_window::die_on_config_not_writable()
 {
     stop_tracker_();
 
@@ -312,7 +312,7 @@ void MainWindow::die_on_config_not_writable()
     close();
 }
 
-bool MainWindow::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
+bool main_window::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
 {
     const bool writable =
         group::with_settings_object([&](QSettings& s) {
@@ -337,14 +337,14 @@ bool MainWindow::maybe_die_on_config_not_writable(const QString& current, QStrin
     return false;
 }
 
-bool MainWindow::get_new_config_name_from_dialog(QString& ret)
+bool main_window::get_new_config_name_from_dialog(QString& ret)
 {
     new_file_dialog dlg;
     dlg.exec();
     return dlg.is_ok(ret);
 }
 
-MainWindow::~MainWindow()
+main_window::~main_window()
 {
     if (tray)
         tray->hide();
@@ -361,18 +361,18 @@ MainWindow::~MainWindow()
     }
 }
 
-void MainWindow::set_working_directory()
+void main_window::set_working_directory()
 {
     QDir::setCurrent(OPENTRACK_BASE_PATH);
 }
 
-void MainWindow::save_modules()
+void main_window::save_modules()
 {
     qDebug() << "save modules";
     m.b->save();
 }
 
-void MainWindow::make_empty_config()
+void main_window::make_empty_config()
 {
     QString name;
     if (get_new_config_name_from_dialog(name))
@@ -393,7 +393,7 @@ void MainWindow::make_empty_config()
     }
 }
 
-void MainWindow::make_copied_config()
+void main_window::make_copied_config()
 {
     const QString cur = group::ini_pathname();
     QString name;
@@ -418,12 +418,12 @@ void MainWindow::make_copied_config()
 
 }
 
-void MainWindow::open_config_directory()
+void main_window::open_config_directory()
 {
     QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(group::ini_directory()));
 }
 
-bool MainWindow::refresh_config_list()
+bool main_window::refresh_config_list()
 {
     if (work)
         return true;
@@ -472,7 +472,7 @@ bool MainWindow::refresh_config_list()
     return true;
 }
 
-void MainWindow::update_button_state(bool running, bool inertialp)
+void main_window::update_button_state(bool running, bool inertialp)
 {
     bool not_running = !running;
     ui.iconcomboProfile->setEnabled(not_running);
@@ -492,7 +492,7 @@ void MainWindow::update_button_state(bool running, bool inertialp)
     }
 }
 
-void MainWindow::start_tracker_()
+void main_window::start_tracker_()
 {
     if (work)
         return;
@@ -529,7 +529,7 @@ void MainWindow::start_tracker_()
     ui.btnStopTracker->setFocus();
 }
 
-void MainWindow::stop_tracker_()
+void main_window::stop_tracker_()
 {
     if (!work)
         return;
@@ -560,7 +560,7 @@ void MainWindow::stop_tracker_()
     ui.btnStartTracker->setFocus();
 }
 
-void MainWindow::display_pose(const double *mapped, const double *raw)
+void main_window::display_pose(const double *mapped, const double *raw)
 {
     ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                                   mapped[TX], mapped[TY], mapped[TZ]);
@@ -587,7 +587,7 @@ void MainWindow::display_pose(const double *mapped, const double *raw)
     set_title(game_title);
 }
 
-void MainWindow::set_title(const QString& game_title_)
+void main_window::set_title(const QString& game_title_)
 {
     QString game_title;
     if (game_title_ != "")
@@ -598,7 +598,7 @@ void MainWindow::set_title(const QString& game_title_)
     setWindowTitle(version + tr(" :: ") + current + game_title);
 }
 
-void MainWindow::show_pose()
+void main_window::show_pose()
 {
     set_is_visible(*this);
 
@@ -616,7 +616,7 @@ void MainWindow::show_pose()
 }
 
 template<typename t, typename F>
-bool MainWindow::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
+bool main_window::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
 {
     if (d)
     {
@@ -644,13 +644,13 @@ bool MainWindow::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
 }
 
 template<typename t, typename... Args>
-inline bool MainWindow::mk_window(std::unique_ptr<t>& place, Args&&... params)
+inline bool main_window::mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
     return mk_window_common(place, [&]() { return new t(std::forward<Args>(params)...); });
 }
 
 template<typename t>
-bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d)
+bool main_window::mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
         if (lib && lib->Dialog)
@@ -661,7 +661,7 @@ bool MainWindow::mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d)
     return just_created;
 }
 
-void MainWindow::show_tracker_settings()
+void main_window::show_tracker_settings()
 {
     if (mk_dialog(current_tracker(), pTrackerDialog) && work && work->libs.pTracker)
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
@@ -670,7 +670,7 @@ void MainWindow::show_tracker_settings()
         QObject::connect(pTrackerDialog.get(), &ITrackerDialog::closing, this, [this]() { pTrackerDialog = nullptr; });
 }
 
-void MainWindow::show_proto_settings()
+void main_window::show_proto_settings()
 {
     if (mk_dialog(current_protocol(), pProtocolDialog) && work && work->libs.pProtocol)
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
@@ -679,7 +679,7 @@ void MainWindow::show_proto_settings()
         QObject::connect(pProtocolDialog.get(), &IProtocolDialog::closing, this, [this]() { pProtocolDialog = nullptr; });
 }
 
-void MainWindow::show_filter_settings()
+void main_window::show_filter_settings()
 {
     if (mk_dialog(current_filter(), pFilterDialog) && work && work->libs.pFilter)
         pFilterDialog->register_filter(work->libs.pFilter.get());
@@ -688,25 +688,25 @@ void MainWindow::show_filter_settings()
         QObject::connect(pFilterDialog.get(), &IFilterDialog::closing, this, [this]() { pFilterDialog = nullptr; });
 }
 
-void MainWindow::show_options_dialog()
+void main_window::show_options_dialog()
 {
     if (mk_window(options_widget, [&](bool flag) { set_keys_enabled(!flag); }))
     {
-        connect(options_widget.get(), &OptionsDialog::closing, this, &MainWindow::register_shortcuts);
+        connect(options_widget.get(), &options_dialog::closing, this, &main_window::register_shortcuts);
     }
 }
 
-void MainWindow::show_mapping_window()
+void main_window::show_mapping_window()
 {
     mk_window(mapping_widget, pose);
 }
 
-void MainWindow::exit()
+void main_window::exit()
 {
     QCoreApplication::exit(0);
 }
 
-bool MainWindow::set_profile(const QString& new_name_)
+bool main_window::set_profile(const QString& new_name_)
 {
     if (!refresh_config_list())
         return false;
@@ -732,7 +732,7 @@ bool MainWindow::set_profile(const QString& new_name_)
     return true;
 }
 
-void MainWindow::ensure_tray()
+void main_window::ensure_tray()
 {
     if (!QSystemTrayIcon::isSystemTrayAvailable())
         return;
@@ -749,7 +749,7 @@ void MainWindow::ensure_tray()
             connect(tray.get(),
                     &QSystemTrayIcon::activated,
                     this,
-                    &MainWindow::toggle_restore_from_tray);
+                    &main_window::toggle_restore_from_tray);
         }
     }
     else
@@ -771,7 +771,7 @@ void MainWindow::ensure_tray()
     }
 }
 
-void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
+void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 {
     if (progn(
         switch (e)
@@ -818,7 +818,7 @@ void MainWindow::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
     }
 }
 
-bool MainWindow::maybe_hide_to_tray(QEvent* e)
+bool main_window::maybe_hide_to_tray(QEvent* e)
 {
     if (e->type() == QEvent::WindowStateChange &&
         (windowState() & Qt::WindowMinimized) &&
@@ -834,7 +834,7 @@ bool MainWindow::maybe_hide_to_tray(QEvent* e)
     return false;
 }
 
-void MainWindow::maybe_start_profile_from_executable()
+void main_window::maybe_start_profile_from_executable()
 {
     if (!work)
     {
@@ -852,7 +852,7 @@ void MainWindow::maybe_start_profile_from_executable()
     }
 }
 
-void MainWindow::set_keys_enabled(bool flag)
+void main_window::set_keys_enabled(bool flag)
 {
     if (!flag)
     {
@@ -866,7 +866,7 @@ void MainWindow::set_keys_enabled(bool flag)
     }
 }
 
-bool MainWindow::is_config_listed(const QString& name)
+bool main_window::is_config_listed(const QString& name)
 {
     const int sz = ui.iconcomboProfile->count();
     for (int i = 0; i < sz; i++)
@@ -875,7 +875,7 @@ bool MainWindow::is_config_listed(const QString& name)
     return false;
 }
 
-void MainWindow::changeEvent(QEvent* e)
+void main_window::changeEvent(QEvent* e)
 {
     if (maybe_hide_to_tray(e))
         e->accept();
@@ -885,12 +885,12 @@ void MainWindow::changeEvent(QEvent* e)
     }
 }
 
-void MainWindow::closeEvent(QCloseEvent*)
+void main_window::closeEvent(QCloseEvent*)
 {
     exit();
 }
 
-bool MainWindow::event(QEvent* event)
+bool main_window::event(QEvent* event)
 {
     using t = QEvent::Type;
 
@@ -912,17 +912,17 @@ bool MainWindow::event(QEvent* event)
     return QMainWindow::event(event);
 }
 
-bool MainWindow::is_tray_enabled()
+bool main_window::is_tray_enabled()
 {
     return s.tray_enabled && QSystemTrayIcon::isSystemTrayAvailable();
 }
 
-bool MainWindow::start_in_tray()
+bool main_window::start_in_tray()
 {
     return s.tray_enabled && s.tray_start && QSystemTrayIcon::isSystemTrayAvailable();
 }
 
-void MainWindow::set_profile_in_registry(const QString &profile)
+void main_window::set_profile_in_registry(const QString &profile)
 {
     group::with_global_settings_object([&](QSettings& s) {
         s.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);

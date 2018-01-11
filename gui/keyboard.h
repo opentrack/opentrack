@@ -1,5 +1,7 @@
 #pragma once
 
+#include "export.hpp"
+
 #ifdef _WIN32
 #   include "logic/win32-shortcuts.h"
 #   include "dinput/keybinding-worker.hpp"
@@ -10,7 +12,7 @@
 #include <QDialog>
 #include <QKeyEvent>
 
-class KeyboardListener : public QDialog
+class OTR_GUI_EXPORT keyboard_listener : public QDialog
 {
     Q_OBJECT
     Ui_keyboard_listener ui;
@@ -18,7 +20,7 @@ class KeyboardListener : public QDialog
     KeybindingWorker::Token token;
 #endif
 public:
-    KeyboardListener(QWidget* parent = nullptr);
+    keyboard_listener(QWidget* parent = nullptr);
 #ifndef _WIN32
     void keyPressEvent(QKeyEvent* event) override;
 #endif

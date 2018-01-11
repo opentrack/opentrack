@@ -1,7 +1,9 @@
 #pragma once
 
+#include "export.hpp"
+
 #include "logic/mappings.hpp"
-#include "ui_mapping-dialog.h"
+#include "gui/ui_mapping-dialog.h"
 
 #include <QWidget>
 #include <QDialog>
@@ -9,14 +11,14 @@
 #include <QCloseEvent>
 #include <QCheckBox>
 
-class MapWidget final : public QDialog
+class OTR_GUI_EXPORT mapping_dialog final : public QDialog
 {
     Q_OBJECT
 public:
-    MapWidget(Mappings& m);
+    mapping_dialog(Mappings& m);
     void refresh_tab();
 private:
-    Ui::mapping_window ui;
+    Ui::mapping_dialog ui;
     Mappings& m;
     main_settings s;
 

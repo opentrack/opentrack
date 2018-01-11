@@ -14,7 +14,7 @@
 #include <QDialog>
 #include <QFileDialog>
 
-QString OptionsDialog::kopts_to_string(const key_opts& kopts)
+QString options_dialog::kopts_to_string(const key_opts& kopts)
 {
     if (static_cast<QString>(kopts.guid) != "")
     {
@@ -31,7 +31,7 @@ QString OptionsDialog::kopts_to_string(const key_opts& kopts)
     return kopts.keycode;
 }
 
-void OptionsDialog::set_disable_translation_state(bool value)
+void options_dialog::set_disable_translation_state(bool value)
 {
     group::with_global_settings_object([&](QSettings& s)
     {
@@ -39,7 +39,7 @@ void OptionsDialog::set_disable_translation_state(bool value)
     });
 }
 
-OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
+options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
     pause_keybindings(pause_keybindings)
 {
     ui.setupUi(this);
@@ -145,22 +145,22 @@ OptionsDialog::OptionsDialog(std::function<void(bool)> pause_keybindings) :
     }
 }
 
-void OptionsDialog::closeEvent(QCloseEvent *)
+void options_dialog::closeEvent(QCloseEvent *)
 {
     done(result());
 }
 
-void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
+void options_dialog::bind_key(key_opts& kopts, QLabel* label)
 {
     kopts.button = -1;
     kopts.guid = "";
     kopts.keycode = "";
-    auto k = new KeyboardListener;
+    auto k = new keyboard_listener;
     k->setWindowModality(Qt::ApplicationModal);
     k->deleteLater();
 
     connect(k,
-            &KeyboardListener::key_pressed,
+            &keyboard_listener::key_pressed,
             this,
             [&](const QKeySequence& s)
             {
@@ -169,7 +169,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
                 kopts.button = -1;
                 k->close();
             });
-    connect(k, &KeyboardListener::joystick_button_pressed,
+    connect(k, &keyboard_listener::joystick_button_pressed,
             this,
             [&](const QString& guid, int idx, bool held)
             {
@@ -202,7 +202,7 @@ void OptionsDialog::bind_key(key_opts& kopts, QLabel* label)
         label->setText(kopts_to_string(kopts));
 }
 
-void OptionsDialog::doOK()
+void options_dialog::doOK()
 {
     if (isHidden()) // close() can return true twice in a row it seems
         return;
@@ -216,7 +216,7 @@ void OptionsDialog::doOK()
     emit closing();
 }
 
-void OptionsDialog::doCancel()
+void options_dialog::doCancel()
 {
     if (isHidden()) // close() can return true twice in a row it seems
         return;
@@ -229,7 +229,7 @@ void OptionsDialog::doCancel()
     emit closing();
 }
 
-void OptionsDialog::done(int res)
+void options_dialog::done(int res)
 {
     if (isVisible())
     {

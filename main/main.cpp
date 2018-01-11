@@ -10,7 +10,7 @@
 #endif
 
 #include "migration/migration.hpp"
-#include "main-window.hpp"
+#include "gui/main-window.hpp"
 #include "options/options.hpp"
 using namespace options;
 #include "opentrack-library-path.h"
@@ -183,7 +183,7 @@ main(int argc, char** argv)
     add_win32_path();
 #endif
 
-    MainWindow::set_working_directory();
+    main_window::set_working_directory();
 
 #if !defined(__linux) && !defined _WIN32
     // workaround QTBUG-38598
@@ -205,7 +205,7 @@ main(int argc, char** argv)
 
     do
     {
-       std::shared_ptr<MainWindow> w = std::make_shared<MainWindow>();
+       std::shared_ptr<main_window> w = std::make_shared<main_window>();
 
        if (!w->isEnabled())
            break;

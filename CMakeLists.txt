@@ -68,6 +68,7 @@ otr_add_target_dirs(opentrack-subprojects
     "logic"
     "dinput"
     "gui"
+    "main"
     "x-plane-plugin"
     "csv"
     "pose-widget"

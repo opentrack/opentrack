@@ -1,19 +1,21 @@
 #pragma once
 
-#include "ui_settings-dialog.h"
+#include "export.hpp"
+
+#include "gui/ui_settings-dialog.h"
 #include "logic/shortcuts.h"
 #include <QObject>
 #include <QDialog>
 #include <QWidget>
 #include <functional>
 
-class OptionsDialog : public QDialog
+class OTR_GUI_EXPORT options_dialog : public QDialog
 {
     Q_OBJECT
 signals:
     void closing();
 public:
-    OptionsDialog(std::function<void(bool)> pause_keybindings);
+    options_dialog(std::function<void(bool)> pause_keybindings);
 private:
     main_settings main;
     std::function<void(bool)> pause_keybindings;
