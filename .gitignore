@@ -10,3 +10,4 @@
 *.pdb
 /.idea/
 /sdk-paths-*.cmake
+/.vs/
