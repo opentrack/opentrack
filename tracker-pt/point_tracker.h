@@ -19,7 +19,7 @@
 #include <array>
 #include <QObject>
 
-namespace pt_impl {
+namespace pt_module {
 
 // ----------------------------------------------------------------------------
 // Describes a 3-point model
@@ -82,5 +82,5 @@ private:
 
 } // ns pt_impl
 
-using pt_impl::PointTracker;
-using pt_impl::PointModel;
+using pt_module::PointTracker;
+using pt_module::PointModel;

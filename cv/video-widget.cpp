@@ -9,11 +9,13 @@
 #include "video-widget.hpp"
 #include "compat/check-visible.hpp"
 
+#include "compat/util.hpp"
+
+#include <cstring>
+
 #include <opencv2/imgproc.hpp>
 
-cv_video_widget::cv_video_widget(QWidget* parent) : QWidget(parent),
-    mtx(QMutex::Recursive),
-    freshp(false)
+cv_video_widget::cv_video_widget(QWidget* parent) : QWidget(parent)
 {
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()), Qt::DirectConnection);
     timer.start(65);
@@ -25,9 +27,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
     if (!freshp)
     {
-        const int w = preview_size.width(), h = preview_size.height();
-
-        if (w < 1 || h < 1)
+        if (width < 1 || height < 1)
             return;
 
         if (_frame.cols != frame.cols || _frame.rows != frame.rows)
@@ -38,26 +38,48 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         if (_frame2.cols != _frame.cols || _frame2.rows != _frame.rows)
             _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC4);
 
-        if (_frame3.cols != w || _frame3.rows != h)
-            _frame3 = cv::Mat(h, w, CV_8UC4);
+        if (_frame3.cols != width || _frame3.rows != height)
+            _frame3 = cv::Mat(height, width, CV_8UC4);
 
         cv::cvtColor(_frame, _frame2, cv::COLOR_BGR2BGRA);
 
-        const cv::Mat* img_;
+        const cv::Mat* img;
 
-        if (_frame.cols != w || _frame.rows != h)
+        if (_frame.cols != width || _frame.rows != height)
         {
-            cv::resize(_frame2, _frame3, cv::Size(w, h), 0, 0, cv::INTER_NEAREST);
+            cv::resize(_frame2, _frame3, cv::Size(width, height), 0, 0, cv::INTER_NEAREST);
 
-            img_ = &_frame3;
+            img = &_frame3;
         }
         else
-            img_ = &_frame2;
+            img = &_frame2;
 
-        const cv::Mat& img = *img_;
+        const unsigned nbytes = 4 * img->rows * img->cols;
 
-        texture = QImage((const unsigned char*) img.data, w, h, QImage::Format_ARGB32);
+        vec.resize(nbytes);
+
+        std::memcpy(vec.data(), img->data, nbytes);
+
+        texture = QImage((const unsigned char*) vec.data(), width, height, QImage::Format_ARGB32);
     }
+}
+
+void cv_video_widget::update_image(const QImage& img)
+{
+    QMutexLocker l(&mtx);
+
+    if (freshp)
+        return;
+
+    const unsigned nbytes = img.sizeInBytes();
+
+    vec.resize(nbytes);
+
+    std::memcpy(vec.data(), img.constBits(), nbytes);
+
+    texture = QImage((const unsigned char*) vec.data(), img.width(), img.height(), img.format());
+
+    freshp = true;
 }
 
 void cv_video_widget::paintEvent(QPaintEvent*)
@@ -73,8 +95,6 @@ void cv_video_widget::update_and_repaint()
         return;
 
     QMutexLocker l(&mtx);
-
-    preview_size = size();
 
     if (freshp)
     {

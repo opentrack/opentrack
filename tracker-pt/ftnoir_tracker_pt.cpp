@@ -24,10 +24,14 @@
 
 using namespace types;
 
+static constexpr inline int preview_width = 320, preview_height = 240;
+
 Tracker_PT::Tracker_PT(const pt_runtime_traits& traits) :
     s(traits.get_module_name()),
     point_extractor(std::move(traits.make_point_extractor())),
-    camera(std::move(traits.make_camera()))
+    camera(std::move(traits.make_camera())),
+    frame(std::move(traits.make_frame())),
+    preview_frame(std::move(traits.make_preview(preview_width, preview_height)))
 {
     cv::setBreakOnError(true);
 
@@ -64,16 +68,14 @@ void Tracker_PT::run()
             QMutexLocker l(&camera_mtx);
 
             if (camera)
-                std::tie(new_frame, cam_info) = camera->get_frame(frame);
+                std::tie(new_frame, cam_info) = camera->get_frame(*frame);
         }
 
         if (new_frame)
         {
-            cv::resize(frame, preview_frame,
-                       cv::Size(preview_size.width(), preview_size.height()),
-                       0, 0, cv::INTER_NEAREST);
+            *preview_frame = *frame;
 
-            point_extractor->extract_points(frame, preview_frame, points);
+            point_extractor->extract_points(*frame, *preview_frame, points);
             point_count = points.size();
 
             const double fx = cam_info.get_focal_length();
@@ -100,26 +102,11 @@ void Tracker_PT::run()
                 Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
                 Affine X_GH = X_CM * X_MH;
                 vec3 p = X_GH.t; // head (center?) position in global space
-                vec2 p_((p[0] * fx) / p[2], (p[1] * fx) / p[2]);  // projected to screen
 
-                constexpr int len = 9;
-
-                cv::Point p2(iround(p_[0] * preview_frame.cols + preview_frame.cols/2),
-                             iround(-p_[1] * preview_frame.cols + preview_frame.rows/2));
-                static const cv::Scalar color(0, 255, 255);
-                cv::line(preview_frame,
-                         cv::Point(p2.x - len, p2.y),
-                         cv::Point(p2.x + len, p2.y),
-                         color,
-                         1);
-                cv::line(preview_frame,
-                         cv::Point(p2.x, p2.y - len),
-                         cv::Point(p2.x, p2.y + len),
-                         color,
-                         1);
+                preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
             }
 
-            video_widget->update_image(preview_frame);
+            video_widget->update_image(preview_frame->get_bitmap());
         }
     }
     qDebug() << "pt: thread stopped";
@@ -137,7 +124,6 @@ void Tracker_PT::maybe_reopen_camera()
     case cam_open_error:
         break;
     case cam_open_ok_change:
-        frame = cv::Mat();
         break;
     case cam_open_ok_no_change:
         break;
@@ -154,9 +140,6 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
 {
     //video_frame->setAttribute(Qt::WA_NativeWindow);
     preview_size = video_frame->size();
-
-    preview_frame = cv::Mat(video_frame->height(), video_frame->width(), CV_8UC3);
-    preview_frame.setTo(cv::Scalar(0, 0, 0));
 
     video_widget = std::make_unique<cv_video_widget>(video_frame);
     layout = std::make_unique<QHBoxLayout>(video_frame);

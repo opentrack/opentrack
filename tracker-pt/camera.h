@@ -13,12 +13,16 @@
 #include "compat/util.hpp"
 #include "compat/timer.hpp"
 
+#include <functional>
+#include <memory>
+#include <tuple>
+
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
-#include <memory>
-#include <tuple>
 #include <QString>
+
+namespace pt_module {
 
 struct Camera final : pt_camera
 {
@@ -27,7 +31,7 @@ struct Camera final : pt_camera
     pt_camera_open_status start(int idx, int fps, int res_x, int res_y) override;
     void stop() override;
 
-    result get_frame(cv::Mat& frame) override;
+    result get_frame(pt_frame& Frame) override;
     result get_info() const override;
 
     pt_camera_info get_desired() const override { return cam_desired; }
@@ -37,11 +41,10 @@ struct Camera final : pt_camera
     operator bool() const override { return cap && cap->isOpened(); }
 
     void set_fov(double value) override { fov = value; }
-
     void show_camera_settings() override;
 
 private:
-    warn_result_unused bool _get_frame(cv::Mat& frame);
+    warn_result_unused bool _get_frame(cv::Mat& Frame);
 
     double dt_mean, fov;
 
@@ -62,5 +65,7 @@ private:
 
     pt_settings s;
 
-    static constexpr double dt_eps = 1./384;
+    static constexpr inline double dt_eps = 1./384;
 };
+
+} // ns pt_module

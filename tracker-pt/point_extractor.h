@@ -15,7 +15,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
-namespace pt_impl {
+namespace pt_module {
 
 using namespace types;
 
@@ -33,7 +33,7 @@ class PointExtractor final : public pt_point_extractor
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
-    void extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points) override;
+    void extract_points(const pt_frame& frame, pt_preview& preview_frame, std::vector<vec2>& points) override;
     PointExtractor(const QString& module_name);
 private:
     static constexpr int max_blobs = 16;
@@ -57,4 +57,3 @@ private:
 
 } // ns impl
 
-using pt_impl::PointExtractor;

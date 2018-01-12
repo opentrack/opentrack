@@ -2,6 +2,7 @@
 #include "api/plugin-api.hpp"
 
 #include "camera.h"
+#include "frame.hpp"
 #include "point_extractor.h"
 #include "ftnoir_tracker_pt_dialog.h"
 
@@ -10,6 +11,8 @@
 #include <memory>
 
 static const QString module_name = "tracker-pt";
+
+using namespace pt_module;
 
 struct pt_module_traits final : pt_runtime_traits
 {
@@ -27,24 +30,38 @@ struct pt_module_traits final : pt_runtime_traits
     {
         return module_name;
     }
+
+    std::unique_ptr<pt_frame> make_frame() const override
+    {
+        return std::unique_ptr<pt_frame>(new Frame);
+    }
+
+    std::unique_ptr<pt_preview> make_preview(int w, int h) const override
+    {
+        return std::unique_ptr<pt_preview>(new Preview(w, h));
+    }
 };
 
-struct pt_tracker_module : Tracker_PT
+struct tracker_pt : Tracker_PT
 {
-    pt_tracker_module() : Tracker_PT(pt_module_traits())
+    tracker_pt() : Tracker_PT(pt_module_traits())
     {
     }
 };
 
-struct pt_tracker_dialog_module : TrackerDialog_PT
+struct dialog_pt : TrackerDialog_PT
 {
-    pt_tracker_dialog_module() : TrackerDialog_PT(module_name) {}
+    dialog_pt() : TrackerDialog_PT(module_name) {}
 };
 
-class pt_module_metadata : public Metadata
+class metadata_pt : public Metadata
 {
     QString name() { return _("PointTracker 1.1"); }
     QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }
 };
 
-OPENTRACK_DECLARE_TRACKER(pt_tracker_module, pt_tracker_dialog_module, pt_module_metadata)
+// ns pt_module
+
+using namespace pt_module;
+
+OPENTRACK_DECLARE_TRACKER(tracker_pt, dialog_pt, metadata_pt)

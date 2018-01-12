@@ -9,6 +9,7 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include <opencv2/core.hpp>
 
@@ -25,17 +26,21 @@
 class cv_video_widget final : public QWidget
 {
     Q_OBJECT
+
 public:
     cv_video_widget(QWidget *parent);
-    void update_image(const cv::Mat &frame);
+    void update_image(const cv::Mat& frame);
+    void update_image(const QImage& image);
+
+    static constexpr inline int width = 320, height = 240;
 protected slots:
     void paintEvent(QPaintEvent*) override;
     void update_and_repaint();
 private:
-    QMutex mtx;
+    QMutex mtx { QMutex::Recursive };
     QImage texture;
+    std::vector<unsigned char> vec;
     QTimer timer;
-    QSize preview_size;
     cv::Mat _frame, _frame2, _frame3;
-    bool freshp;
+    bool freshp = false;
 };

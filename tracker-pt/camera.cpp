@@ -6,13 +6,17 @@
  */
 
 #include "camera.h"
+#include "frame.hpp"
+
 #include "compat/sleep.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
+#include <opencv2/imgproc.hpp>
+
 #include "cv/video-property-page.hpp"
 
-constexpr double Camera::dt_eps;
+using namespace pt_module;
 
 Camera::Camera(const QString& module_name) : dt_mean(0), fov(0), s(module_name) {}
 
@@ -45,8 +49,10 @@ Camera::result Camera::get_info() const
     return result(true, cam_info);
 }
 
-Camera::result Camera::get_frame(cv::Mat& frame)
+Camera::result Camera::get_frame(pt_frame& frame_)
 {
+    cv::Mat& frame = frame_.as<Frame>()->mat;
+
     const bool new_frame = _get_frame(frame);
 
     if (new_frame)
@@ -160,3 +166,4 @@ void Camera::camera_deleter::operator()(cv::VideoCapture* cap)
         delete cap;
     }
 }
+

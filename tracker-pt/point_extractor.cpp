@@ -9,6 +9,8 @@
 #include "point_extractor.h"
 #include "compat/util.hpp"
 #include "point_tracker.h"
+#include "frame.hpp"
+
 #include <QDebug>
 
 #include "cv/numeric.hpp"
@@ -29,7 +31,7 @@
 #include <QDebug>
 
 using namespace types;
-using namespace pt_impl;
+using namespace pt_module;
 
 /*
 http://en.wikipedia.org/wiki/Mean-shift
@@ -195,8 +197,11 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
     }
 }
 
-void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points)
+void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
 {
+    const cv::Mat& frame = frame_.as_const<Frame>()->mat;
+    cv::Mat& preview_frame = *preview_frame_.as<Preview>();
+
     ensure_buffers(frame);
     color_to_grayscale(frame, frame_gray);
 
@@ -335,20 +340,17 @@ end:
         cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract), circle_color, 1, cv::LINE_AA, fract_bits);
 
         char buf[16];
-        std::snprintf(buf, sizeof(buf), "%.2fpx", b.radius);
         buf[sizeof(buf)-1] = '\0';
+        std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", b.radius);
 
         auto text_color = k >= PointModel::N_POINTS
                           ? cv::Scalar(160, 160, 160)
                           : cv::Scalar(0, 0, 255);
 
-        cv::putText(preview_frame,
-                    buf,
-                    cv::Point(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy)),
-                cv::FONT_HERSHEY_PLAIN,
-                1,
-                text_color,
-                1);
+        cv::Point pos(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy));
+        cv::putText(preview_frame, buf, pos,
+                    cv::FONT_HERSHEY_PLAIN,
+                    1, text_color, 1);
     }
 
     // End of mean shift code. At this point, blob positions are updated with hopefully less noisy less biased values.
@@ -359,7 +361,8 @@ end:
     {
         // note: H/W is equal to fx/fy
 
-        vec2 p((b.pos[0] - W/2)/W, -(b.pos[1] - H/2)/W);
+        vec2 p;
+        std::tie(p[0], p[1]) = to_screen_pos(b.pos[0], b.pos[1], W, H);
         points.push_back(p);
     }
 }

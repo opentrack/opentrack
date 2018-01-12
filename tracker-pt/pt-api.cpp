@@ -60,3 +60,22 @@ double pt_point_extractor::threshold_radius_value(int w, int h, int threshold)
 
     return radius;
 }
+
+
+std::tuple<double, double> pt_pixel_pos_mixin::to_pixel_pos(double x, double y, int w, int h)
+{
+    return std::make_tuple(w*(x+.5), .5*(h - 2*y*w));
+}
+
+std::tuple<double, double> pt_pixel_pos_mixin::to_screen_pos(double px, double py, int w, int h)
+{
+    return std::make_tuple((px - w/2.)/w, -(py - h/2.)/w);
+}
+
+pt_frame::pt_frame()
+{
+}
+
+pt_frame::~pt_frame()
+{
+}

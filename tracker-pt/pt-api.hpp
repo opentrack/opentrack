@@ -5,9 +5,13 @@
 #include "cv/numeric.hpp"
 #include "options/options.hpp"
 
+#include <tuple>
+#include <type_traits>
 #include <memory>
 
 #include <opencv2/core.hpp>
+
+#include <QImage>
 
 struct OTR_PT_EXPORT pt_camera_info final
 {
@@ -34,6 +38,40 @@ enum pt_color_type
     pt_color_blue_only = 6,
 };
 
+struct OTR_PT_EXPORT pt_frame
+{
+    pt_frame();
+    virtual ~pt_frame();
+
+    template<typename t>
+    t* as() &
+    {
+        using u = std::decay_t<t>;
+        static_assert(std::is_convertible_v<u*, pt_frame*>, "must be derived from pt_image");
+
+        return static_cast<t*>(this);
+    }
+
+    template<typename t>
+    t const* as_const() const&
+    {
+        return const_cast<pt_frame*>(this)->as<const t>();
+    }
+};
+
+struct OTR_PT_EXPORT pt_pixel_pos_mixin
+{
+    static std::tuple<double, double> to_pixel_pos(double x, double y, int w, int h);
+    static std::tuple<double, double> to_screen_pos(double px, double py, int w, int h);
+};
+
+struct OTR_PT_EXPORT pt_preview : pt_frame, pt_pixel_pos_mixin
+{
+    virtual pt_preview& operator=(const pt_frame&) = 0;
+    virtual QImage get_bitmap() = 0;
+    virtual void draw_head_center(double x, double y) = 0;
+};
+
 struct OTR_PT_EXPORT pt_camera
 {
     using result = std::tuple<bool, pt_camera_info>;
@@ -43,7 +81,7 @@ struct OTR_PT_EXPORT pt_camera
 
     virtual warn_result_unused pt_camera_open_status start(int idx, int fps, int res_x, int res_y) = 0;
     virtual void stop() = 0;
-    virtual warn_result_unused result get_frame(cv::Mat& frame) = 0;
+    virtual warn_result_unused result get_frame(pt_frame& frame) = 0;
 
     virtual warn_result_unused result get_info() const = 0;
     virtual pt_camera_info get_desired() const = 0;
@@ -57,13 +95,13 @@ struct OTR_PT_EXPORT pt_camera
     virtual void show_camera_settings() = 0;
 };
 
-struct OTR_PT_EXPORT pt_point_extractor
+struct OTR_PT_EXPORT pt_point_extractor : pt_pixel_pos_mixin
 {
     using vec2 = types::vec2;
 
     pt_point_extractor();
     virtual ~pt_point_extractor();
-    virtual void extract_points(const cv::Mat& frame, cv::Mat& preview_frame, std::vector<vec2>& points) = 0;
+    virtual void extract_points(const pt_frame& image, pt_preview& preview_frame, std::vector<vec2>& points) = 0;
 
     static double threshold_radius_value(int w, int h, int threshold);
 };
@@ -115,5 +153,7 @@ struct OTR_PT_EXPORT pt_runtime_traits
 
     virtual std::unique_ptr<pt_camera> make_camera() const = 0;
     virtual std::unique_ptr<pt_point_extractor> make_point_extractor() const = 0;
+    virtual std::unique_ptr<pt_frame> make_frame() const = 0;
+    virtual std::unique_ptr<pt_preview> make_preview(int w, int h) const = 0;
     virtual QString get_module_name() const = 0;
 };

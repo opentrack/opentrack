@@ -26,10 +26,11 @@
 #include <QThread>
 #include <QMutex>
 #include <QLayout>
+#include <QTimer>
 
 class TrackerDialog_PT;
 
-namespace pt_impl {
+namespace pt_module {
 
 using namespace types;
 
@@ -67,8 +68,9 @@ private:
     std::unique_ptr<cv_video_widget> video_widget;
     std::unique_ptr<QLayout> layout;
 
-    cv::Mat frame, preview_frame;
     std::vector<vec2> points;
+    std::unique_ptr<pt_frame> frame;
+    std::unique_ptr<pt_preview> preview_frame;
 
     QSize preview_size;
 
@@ -81,4 +83,4 @@ private:
 
 } // ns pt_impl
 
-using pt_impl::Tracker_PT;
+using pt_module::Tracker_PT;
