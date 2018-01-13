@@ -30,7 +30,7 @@ keyboard_listener::keyboard_listener(QWidget* parent) :
 }
 
 #if !defined _WIN32
-void KeyboardListener::keyPressEvent(QKeyEvent* event)
+void keyboard_listener::keyPressEvent(QKeyEvent* event)
 {
     switch (event->key())
     {
