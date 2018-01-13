@@ -16,14 +16,14 @@ using namespace pt_module;
 
 struct pt_module_traits final : pt_runtime_traits
 {
-    std::unique_ptr<pt_camera> make_camera() const override
+    pointer<pt_camera> make_camera() const override
     {
-        return std::unique_ptr<pt_camera>(new Camera(module_name));
+        return pointer<pt_camera>(new Camera(module_name));
     }
 
-    std::unique_ptr<pt_point_extractor> make_point_extractor() const override
+    pointer<pt_point_extractor> make_point_extractor() const override
     {
-        return std::unique_ptr<pt_point_extractor>(new PointExtractor(module_name));
+        return pointer<pt_point_extractor>(new PointExtractor(module_name));
     }
 
     QString get_module_name() const override
@@ -31,14 +31,14 @@ struct pt_module_traits final : pt_runtime_traits
         return module_name;
     }
 
-    std::unique_ptr<pt_frame> make_frame() const override
+    pointer<pt_frame> make_frame() const override
     {
-        return std::unique_ptr<pt_frame>(new Frame);
+        return pointer<pt_frame>(new Frame);
     }
 
-    std::unique_ptr<pt_preview> make_preview(int w, int h) const override
+    pointer<pt_preview> make_preview(int w, int h) const override
     {
-        return std::unique_ptr<pt_preview>(new Preview(w, h));
+        return pointer<pt_preview>(new Preview(w, h));
     }
 };
 
@@ -51,7 +51,7 @@ struct tracker_pt : Tracker_PT
 
 struct dialog_pt : TrackerDialog_PT
 {
-    dialog_pt() : TrackerDialog_PT(module_name) {}
+    dialog_pt();
 };
 
 class metadata_pt : public Metadata
@@ -63,5 +63,9 @@ class metadata_pt : public Metadata
 // ns pt_module
 
 using namespace pt_module;
+
+
+
+dialog_pt::dialog_pt() : TrackerDialog_PT(module_name) {}
 
 OPENTRACK_DECLARE_TRACKER(tracker_pt, dialog_pt, metadata_pt)

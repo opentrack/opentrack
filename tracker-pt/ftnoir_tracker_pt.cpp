@@ -13,7 +13,6 @@
 #include "pt-api.hpp"
 
 #include <cmath>
-#include <utility>
 
 #include <opencv2/imgproc.hpp>
 
@@ -27,11 +26,11 @@ using namespace types;
 static constexpr inline int preview_width = 320, preview_height = 240;
 
 Tracker_PT::Tracker_PT(const pt_runtime_traits& traits) :
-    s(traits.get_module_name()),
-    point_extractor(std::move(traits.make_point_extractor())),
-    camera(std::move(traits.make_camera())),
-    frame(std::move(traits.make_frame())),
-    preview_frame(std::move(traits.make_preview(preview_width, preview_height)))
+    s { traits.get_module_name() },
+    point_extractor { traits.make_point_extractor() },
+    camera { traits.make_camera() },
+    frame { traits.make_frame() },
+    preview_frame { traits.make_preview(preview_width, preview_height) }
 {
     cv::setBreakOnError(true);
 
@@ -139,7 +138,6 @@ void Tracker_PT::set_fov(int value)
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
 {
     //video_frame->setAttribute(Qt::WA_NativeWindow);
-    preview_size = video_frame->size();
 
     video_widget = std::make_unique<cv_video_widget>(video_frame);
     layout = std::make_unique<QHBoxLayout>(video_frame);

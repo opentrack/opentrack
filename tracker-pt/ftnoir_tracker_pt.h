@@ -59,20 +59,21 @@ private:
     QMutex camera_mtx;
     QMutex data_mtx;
 
-    std::unique_ptr<pt_point_extractor> point_extractor;
-    std::unique_ptr<pt_camera> camera;
+    template<typename t>
+    using pointer = typename pt_runtime_traits::pointer<t>;
+
     PointTracker point_tracker;
 
     pt_settings s;
 
-    std::unique_ptr<cv_video_widget> video_widget;
     std::unique_ptr<QLayout> layout;
-
     std::vector<vec2> points;
-    std::unique_ptr<pt_frame> frame;
-    std::unique_ptr<pt_preview> preview_frame;
 
-    QSize preview_size;
+    pointer<pt_point_extractor> point_extractor;
+    pointer<pt_camera> camera;
+    pointer<cv_video_widget> video_widget;
+    pointer<pt_frame> frame;
+    pointer<pt_preview> preview_frame;
 
     std::atomic<unsigned> point_count = 0;
     std::atomic<bool> ever_success = false;

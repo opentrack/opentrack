@@ -148,12 +148,14 @@ struct OTR_PT_EXPORT pt_settings final : options::opts
 
 struct OTR_PT_EXPORT pt_runtime_traits
 {
+    template<typename t> using pointer = std::shared_ptr<t>;
+
     pt_runtime_traits();
     virtual ~pt_runtime_traits();
 
-    virtual std::unique_ptr<pt_camera> make_camera() const = 0;
-    virtual std::unique_ptr<pt_point_extractor> make_point_extractor() const = 0;
-    virtual std::unique_ptr<pt_frame> make_frame() const = 0;
-    virtual std::unique_ptr<pt_preview> make_preview(int w, int h) const = 0;
+    virtual pointer<pt_camera> make_camera() const = 0;
+    virtual pointer<pt_point_extractor> make_point_extractor() const = 0;
+    virtual pointer<pt_frame> make_frame() const = 0;
+    virtual pointer<pt_preview> make_preview(int w, int h) const = 0;
     virtual QString get_module_name() const = 0;
 };

@@ -46,7 +46,7 @@ struct Camera final : pt_camera
 private:
     warn_result_unused bool _get_frame(cv::Mat& Frame);
 
-    double dt_mean, fov;
+    double dt_mean = 0, fov = 30;
 
     Timer t;
 
