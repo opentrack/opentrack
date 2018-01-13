@@ -1,7 +1,7 @@
-# set these as cache variables manually
-
 set(opentrack_variant "default" CACHE STRING "")
 set_property(CACHE opentrack_variant PROPERTY STRINGS "default;trackmouse")
+
+# XXX that belongs in each variant's directory!
 
 function(otr_dist_select_variant)
     if(opentrack_variant STREQUAL "trackmouse")
@@ -17,6 +17,7 @@ function(otr_dist_select_variant)
             "logic"
             "dinput"
             "gui"
+            "pose-widget"
             "spline"
             "cv"
             "migration")

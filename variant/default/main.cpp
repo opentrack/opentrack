@@ -16,5 +16,3 @@ int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int /* nCmdShow */)
     return main(__argc, __argv);
 }
 #endif
-
-

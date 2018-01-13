@@ -1,4 +1,11 @@
 function(otr_i18n_for_target_directory n)
+    get_property(variant GLOBAL PROPERTY opentrack-variant)
+    if(NOT ".${variant}" STREQUAL "default")
+        set(force-skip-update TRUE)
+    else()
+        set(force-skip-update FALSE)
+    endif()
+
     set(k "opentrack-${n}")
 
     get_property(lupdate-binary TARGET "${Qt5_LUPDATE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
@@ -6,7 +13,7 @@ function(otr_i18n_for_target_directory n)
     foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
         set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" PROPERTY CLEAN_NO_CUSTOM 1)
-        if(NOT opentrack_disable-i18n-update)
+        if(maybe-skip-update OR NOT opentrack_disable-i18n-update)
             add_custom_command(OUTPUT "${t}"
                 COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
                 COMMAND "${lupdate-binary}" -silent -recursive -no-obsolete -locations relative . -ts "${t}"
