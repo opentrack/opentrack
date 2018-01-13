@@ -47,6 +47,7 @@ include(opentrack-boilerplate)
 include(opentrack-qt)
 include(opentrack-version)
 include(opentrack-install)
+include(opentrack-variant)
 
 if(WIN32)
     enable_language(RC)
@@ -57,31 +58,20 @@ add_custom_target(mrproper COMMAND
     "${CMAKE_SOURCE_DIR}/cmake/opentrack-clean-build-directory.cmake"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
-otr_add_target_dirs(opentrack-subprojects
-    "tracker-*"
-    "proto-*"
-    "filter-*"
-    "ext-*"
-    "options"
-    "api"
-    "compat"
-    "logic"
-    "dinput"
-    "gui"
-    "main"
-    "x-plane-plugin"
-    "csv"
-    "pose-widget"
-    "spline"
-    "qxt-mini"
-    "macosx"
-    "cv"
-    "migration")
+function(otr_add_subdirs)
+    otr_dist_select_variant()
+    get_property(_globs GLOBAL PROPERTY opentrack-subprojects)
+    otr_add_target_dirs(_globbed ${_globs})
 
-foreach(k ${opentrack-subprojects})
-    get_filename_component(k "${k}" DIRECTORY)
-    add_subdirectory("${k}")
-endforeach()
+    get_property(_variant GLOBAL PROPERTY opentrack-variant)
+    add_subdirectory("variant/${_variant}")
 
+    foreach(k ${_globbed})
+        get_filename_component(k "${k}" DIRECTORY)
+        add_subdirectory("${k}")
+    endforeach()
+endfunction()
+
+otr_add_subdirs()
 otr_merge_translations()
 install_sources()

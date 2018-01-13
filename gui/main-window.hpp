@@ -21,8 +21,7 @@
 #include "logic/state.hpp"
 #include "options/options.hpp"
 
-#include <QObject>
-#include <QWidget>
+#include <QApplication>
 #include <QMainWindow>
 #include <QKeySequence>
 #include <QShortcut>
@@ -53,12 +52,12 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
     module_settings m;
     std::unique_ptr<QSystemTrayIcon> tray;
     QMenu tray_menu;
-    QTimer pose_update_timer;
+    QTimer pose_update_timer { this };
     QTimer det_timer;
     QTimer config_list_timer;
     std::unique_ptr<options_dialog> options_widget;
     std::unique_ptr<mapping_dialog> mapping_widget;
-    QShortcut kbd_quit;
+    QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
     std::unique_ptr<IFilterDialog> pFilterDialog;
     std::unique_ptr<IProtocolDialog> pProtocolDialog;
     std::unique_ptr<ITrackerDialog> pTrackerDialog;
@@ -66,9 +65,14 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
     process_detector_worker det;
     QMenu profile_menu;
 
-    QAction menu_action_header, menu_action_show, menu_action_exit,
-            menu_action_tracker, menu_action_filter, menu_action_proto,
-            menu_action_options, menu_action_mappings;
+    QAction menu_action_header   { &tray_menu },
+            menu_action_show     { &tray_menu },
+            menu_action_exit     { &tray_menu },
+            menu_action_tracker  { &tray_menu },
+            menu_action_filter   { &tray_menu },
+            menu_action_proto    { &tray_menu },
+            menu_action_options  { &tray_menu },
+            menu_action_mappings { &tray_menu };
 
     std::shared_ptr<dylib> current_tracker()
     {
@@ -96,7 +100,7 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
     void init_tray_menu();
 
     void changeEvent(QEvent* e) override;
-    void closeEvent(QCloseEvent*) override;
+    void closeEvent(QCloseEvent* ev) override;
     bool event(QEvent *event) override;
     bool maybe_hide_to_tray(QEvent* e);
 #if !defined _WIN32 && !defined __APPLE__
@@ -117,7 +121,7 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
 
 private slots:
     void save_modules();
-    void exit();
+    void exit(int status = 0);
     bool set_profile(const QString& new_name);
 
     void show_tracker_settings();

@@ -15,21 +15,32 @@
 #include "compat/check-visible.hpp"
 #include "compat/sleep.hpp"
 
-#include <QFile>
-#include <QFileDialog>
+#include <QMessageBox>
 #include <QDesktopServices>
-#include <QCoreApplication>
-#include <QApplication>
-#include <QIcon>
-#include <QString>
-#include <QChar>
-#include <QSignalBlocker>
-
-#ifdef _WIN32
-#   include <windows.h>
-#endif
+#include <QDir>
 
 extern "C" const char* const opentrack_version;
+
+#if !defined EXIT_SUCCESS
+#   define EXIT_SUCCESS 0
+#endif
+
+#if !defined EXIT_FAILURE
+#   define EXIT_FAILURE 1
+#endif
+
+//
+
+/* FreeBSD sysexits(3)
+ *
+ * The input data was incorrect	in some	way.  This
+ * should only be used for user's data and not system
+ * files.
+ */
+
+#if !defined EX_DATAERR
+#   define EX_DATAERR 65
+#endif
 
 #if !defined _WIN32 && !defined __APPLE__
 #   include <unistd.h>
@@ -37,51 +48,38 @@ void MainWindow::annoy_if_root()
 {
     if (geteuid() == 0)
     {
-        for (unsigned k = 0; k < 2; k++)
-        {
-            portable::sleep(1 * 1000);
-            QMessageBox::critical(this,
-                                  tr("Running as root is bad"),
-                                  tr("Do not run as root. Set correct device node permissions."),
-                                  QMessageBox::Ok);
-            portable::sleep(1 * 1000);
-            QMessageBox::critical(this,
-                                  tr("Running as root is bad, seriously"),
-                                  tr("Do not run as root. I'll keep whining at every startup."),
-                                  QMessageBox::Ok);
-            portable::sleep(3 * 1000);
-            QMessageBox::critical(this,
-                                  tr("Running as root is really seriously bad"),
-                                  tr("Do not run as root. Be annoyed, comprehensively."),
-                                  QMessageBox::Ok);
-        }
+        portable::sleep(4000);
+        QMessageBox::critical(this,
+                              tr("Running as root is bad"),
+                              tr("Do not run as root. Set correct device node permissions."),
+                              QMessageBox::Ok);
+        portable::sleep(4000);
+        QMessageBox::critical(this,
+                              tr("Running as root is bad, seriously"),
+                              tr("Do not run as root. I'll keep whining at every startup."),
+                              QMessageBox::Ok);
+        portable::sleep(4000);
+        QMessageBox::critical(this,
+                              tr("Running as root is really seriously bad"),
+                              tr("Do not run as root. Be annoyed, comprehensively."),
+                              QMessageBox::Ok);
     }
 }
 #endif
 
 main_window::main_window() :
-    State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
-    pose_update_timer(this),
-    kbd_quit(QKeySequence("Ctrl+Q"), this),
-    menu_action_header(&tray_menu),
-    menu_action_show(&tray_menu),
-    menu_action_exit(&tray_menu),
-    menu_action_tracker(&tray_menu),
-    menu_action_filter(&tray_menu),
-    menu_action_proto(&tray_menu),
-    menu_action_options(&tray_menu),
-    menu_action_mappings(&tray_menu)
+    State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
+
+    setAttribute(Qt::WA_QuitOnClose, true);
 
 #if !defined _WIN32 && !defined __APPLE__
     annoy_if_root();
 #endif
 
-    {
-        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
-    }
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
 
     update_button_state(false, false);
 
@@ -92,7 +90,10 @@ main_window::main_window() :
     }
 
     if (!refresh_config_list())
+    {
+        exit(EX_DATAERR);
         return;
+    }
 
     connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(show_mapping_window()));
     connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
@@ -133,14 +134,15 @@ main_window::main_window() :
         ui.profile_button->setMenu(&profile_menu);
     }
 
-    if (!progn(
+    {
         const QString cur = group::ini_filename();
-        if (is_config_listed(cur))
-            return set_profile(cur);
-        else
-            return set_profile(OPENTRACK_DEFAULT_CONFIG);
-    ))
-        return;
+        bool ok = is_config_listed(cur) ? set_profile(cur) : set_profile(OPENTRACK_DEFAULT_CONFIG);
+        if (!ok)
+        {
+            exit(EX_DATAERR);
+            return;
+        }
+    }
 
     // only tie and connect main screen options after migrations are done
     // below is fine, set_profile() is called already
@@ -162,9 +164,9 @@ main_window::main_window() :
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
 
-        connect(&m.tracker_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::QueuedConnection);
-        connect(&m.protocol_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::QueuedConnection);
-        connect(&m.filter_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::QueuedConnection);
+        connect(&m.tracker_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::DirectConnection);
+        connect(&m.protocol_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::DirectConnection);
+        connect(&m.filter_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::DirectConnection);
 
         tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
         tie_setting(m.protocol_dll, ui.iconcomboProtocol);
@@ -202,6 +204,17 @@ main_window::main_window() :
     det_timer.start(1000);
     config_list_timer.start(1000 * 5);
     kbd_quit.setEnabled(true);
+
+    adjustSize();
+    setFixedSize(size());
+
+    if (!start_in_tray())
+    {
+        setVisible(true);
+        show();
+    }
+    else
+        setVisible(false);
 }
 
 void main_window::init_tray_menu()
@@ -301,15 +314,15 @@ void main_window::die_on_config_not_writable()
                           QMessageBox::Close, QMessageBox::NoButton);
 
     // signals main() to short-circuit
-    if (!isVisible())
-        setEnabled(false);
+    //if (!isVisible())
+    //    setEnabled(false);
 
-    setVisible(false);
+    //setVisible(false);
 
     // tray related
-    qApp->setQuitOnLastWindowClosed(true);
+    //qApp->setQuitOnLastWindowClosed(true);
 
-    close();
+    exit(EX_DATAERR);
 }
 
 bool main_window::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
@@ -701,9 +714,11 @@ void main_window::show_mapping_window()
     mk_window(mapping_widget, pose);
 }
 
-void main_window::exit()
+void main_window::exit(int status)
 {
-    QCoreApplication::exit(0);
+    setEnabled(false);
+    close();
+    QCoreApplication::exit(status);
 }
 
 bool main_window::set_profile(const QString& new_name_)
@@ -885,8 +900,9 @@ void main_window::changeEvent(QEvent* e)
     }
 }
 
-void main_window::closeEvent(QCloseEvent*)
+void main_window::closeEvent(QCloseEvent* ev)
 {
+    ev->accept();
     exit();
 }
 

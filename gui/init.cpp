@@ -1,12 +1,7 @@
-#ifdef _WIN32
-#   include <cstdio>
-#   include <stdlib.h>
-#   include <vector>
-#   include <QCoreApplication>
-#   include <QFile>
-#   include <QString>
-#   include <QSysInfo>
-#   include <QtGlobal>
+#include "init.hpp"
+
+#if defined(Q_CREATOR_RUN)
+#   pragma clang diagnostic ignored "-Wmain"
 #endif
 
 #include "migration/migration.hpp"
@@ -14,39 +9,39 @@
 #include "options/options.hpp"
 using namespace options;
 #include "opentrack-library-path.h"
-#include <QApplication>
-#include <QCommandLineParser>
-#include <QStyleFactory>
-#include <QStringList>
-#include <QLocale>
-#include <QTranslator>
-#include <QDebug>
+
 #include <memory>
 #include <cstring>
+#include <cstdio>
+#include <cstdlib>
+
+#include <QApplication>
+#include <QStyleFactory>
+#include <QLocale>
+#include <QTranslator>
+#include <QApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileDialog>
+#include <QString>
+#include <QSysInfo>
+
+#include <QDebug>
 
 #if /* denormal control */ \
     /* GNU */   defined __x86_64__  || defined __SSE2__ || \
     /* MSVC */  defined _M_AMD64    || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #   include <xmmintrin.h>
 #   include <pmmintrin.h>
-#   include <float.h>
+#   include <cfloat>
 
 #define OTR_HAS_DENORM_CONTROL
 void set_fp_mask()
 {
-    unsigned old_mask = _mm_getcsr();
-    (void) old_mask;
-
     _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
     _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
     _MM_SET_EXCEPTION_MASK(_MM_MASK_MASK);
-
-#if 0
-    unsigned new_mask = _mm_getcsr();
-
-    qDebug() << "old" << (void*) old_mask << "new" << (void*) new_mask;
-#endif
 }
 #endif
 
@@ -57,11 +52,11 @@ void set_qt_style()
         return;
 #endif
 
-#if defined(_WIN32) || defined(__APPLE__)
+#if defined _WIN32 || defined __APPLE__
     // our layouts on OSX make some control wrongly sized -sh 20160908
     {
-        const QStringList preferred { "fusion", "windowsvista", "macintosh" };
-        for (const auto& style_name : preferred)
+        const char* preferred[] { "fusion", "windowsvista", "macintosh" };
+        for (const char* style_name : preferred)
         {
             QStyle* s = QStyleFactory::create(style_name);
             if (s)
@@ -84,7 +79,7 @@ void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &
 
     std::fflush(stderr);
     if (ctx.function)
-        std::fprintf(stderr, "[%s]: %ls\n", ctx.function, str);
+        std::fprintf(stderr, "[%s:%d%s]: %ls\n", ctx.file, ctx.line, ctx.function, str);
     else if (ctx.file)
         std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, str);
     else
@@ -101,8 +96,8 @@ void attach_parent_console()
         _wfreopen(L"CON", L"w", stdout);
         _wfreopen(L"CON", L"w", stderr);
         _wfreopen(L"CON", L"r", stdin);
-        qInstallMessageHandler(qdebug_to_console);
     }
+    (void)qInstallMessageHandler(qdebug_to_console);
 }
 
 void add_win32_path()
@@ -118,8 +113,7 @@ void add_win32_path()
         mod_path.replace("/", "\\");
         const QByteArray mod_path_ = QFile::encodeName(mod_path);
 
-        std::vector<const char*> contents
-        {
+        const char* contents[] {
             "PATH=",
             lib_path_.constData(),
             ";",
@@ -158,11 +152,23 @@ void add_win32_path()
 
 #endif
 
-int
-#ifdef _MSC_VER
-WINAPI
-#endif
-main(int argc, char** argv)
+int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
+{
+    if (!main_window->isEnabled())
+    {
+        qDebug() << "exit before window created";
+        return 2;
+    }
+
+    app.setQuitOnLastWindowClosed(false);
+
+    int ret = app.exec();
+    qDebug() << "exit" << ret;
+
+    return ret;
+}
+
+int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
 {
 #ifdef _WIN32
     attach_parent_console();
@@ -172,10 +178,8 @@ main(int argc, char** argv)
     set_fp_mask();
 #endif
 
-#if QT_VERSION >= 0x050600 // flag introduced in QT 5.6. It is non-essential so might as well allow compilation on older systems.
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-    QApplication::setAttribute(Qt::AA_X11InitThreads, true);
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_X11InitThreads, true);
 
     QApplication app(argc, argv);
 
@@ -183,11 +187,13 @@ main(int argc, char** argv)
     add_win32_path();
 #endif
 
-    main_window::set_working_directory();
+    QDir::setCurrent(OPENTRACK_BASE_PATH);
 
+#if 0
 #if !defined(__linux) && !defined _WIN32
     // workaround QTBUG-38598
     QCoreApplication::addLibraryPath(".");
+#endif
 #endif
 
     set_qt_style();
@@ -203,31 +209,7 @@ main(int argc, char** argv)
         (void) QCoreApplication::installTranslator(&t);
     }
 
-    do
-    {
-       std::shared_ptr<main_window> w = std::make_shared<main_window>();
-
-       if (!w->isEnabled())
-           break;
-
-       if (!w->start_in_tray())
-       {
-           w->setVisible(true);
-           w->show();
-           w->adjustSize();
-           w->setFixedSize(w->size());
-       }
-       else
-           w->setVisible(false);
-
-       app.setQuitOnLastWindowClosed(false);
-       app.exec();
-
-       app.exit(0);
-
-       qDebug() << "exit: window";
-    }
-    while (false);
+    int ret = run_window(app, std::unique_ptr<QWidget>(make_main_window()));
 
     // msvc crashes in Qt plugin system's dtor
     // Note: QLibrary::PreventUnloadHint seems to workaround it
@@ -236,20 +218,5 @@ main(int argc, char** argv)
     TerminateProcess(GetCurrentProcess(), 0);
 #endif
 
-    qDebug() << "exit: main()";
-
-    return 0;
+    return ret;
 }
-
-#if defined(Q_CREATOR_RUN)
-#   pragma clang diagnostic ignored "-Wmain"
-#endif
-
-#ifdef _MSC_VER
-int WINAPI
-WinMain (struct HINSTANCE__*, struct HINSTANCE__*, char*, int)
-{
-  return main (__argc, __argv);
-}
-
-#endif

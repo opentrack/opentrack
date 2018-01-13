@@ -27,19 +27,22 @@ if(NOT (orig-hier-path STREQUAL new-hier-path))
 endif()
 
 function(otr_glob_sources var)
-    set(dir "${CMAKE_CURRENT_SOURCE_DIR}")
-    file(GLOB ${var}-cxx ${dir}/*.cpp)
-    file(GLOB ${var}-cc ${dir}/*.c)
-    file(GLOB ${var}-hh ${dir}/*.h ${dir}/*.hpp)
-    file(GLOB ${var}-res ${dir}/*.rc)
-    foreach(f ${var}-res)
-        set_source_files_properties(${f} PROPERTIES LANGUAGE RC)
-    endforeach()
-    file(GLOB ${var}-ui ${dir}/*.ui)
-    file(GLOB ${var}-rc ${dir}/*.qrc)
-    set(${var}-all ${${var}-cc} ${${var}-cxx} ${${var}-hh} ${${var}-rc} ${${var}-res})
-    foreach(i ui rc res cc cxx hh all)
-        set(${var}-${i} "${${var}-${i}}" PARENT_SCOPE)
+    set(basedir "${CMAKE_CURRENT_SOURCE_DIR}")
+    foreach(dir . ${ARGN})
+        set(dir "${basedir}/${dir}")
+        file(GLOB ${var}-cxx ${dir}/*.cpp)
+        file(GLOB ${var}-cc ${dir}/*.c)
+        file(GLOB ${var}-hh ${dir}/*.h ${dir}/*.hpp)
+        file(GLOB ${var}-res ${dir}/*.rc)
+        foreach(f ${var}-res)
+            set_source_files_properties(${f} PROPERTIES LANGUAGE RC)
+        endforeach()
+        file(GLOB ${var}-ui ${dir}/*.ui)
+        file(GLOB ${var}-rc ${dir}/*.qrc)
+        set(${var}-all ${${var}-cc} ${${var}-cxx} ${${var}-hh} ${${var}-rc} ${${var}-res})
+        foreach(i ui rc res cc cxx hh all)
+            set(${var}-${i} "${${var}-${i}}" PARENT_SCOPE)
+        endforeach()
     endforeach()
 endfunction()
 
@@ -124,7 +127,7 @@ function(otr_module n_)
     cmake_parse_arguments(arg
         "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL;RELINK"
         "LINK;COMPILE"
-        "SOURCES"
+        "SOURCES;SUBDIRS"
         ${ARGN}
     )
 
@@ -134,7 +137,7 @@ function(otr_module n_)
 
     set(n "opentrack-${n_}")
 
-    otr_glob_sources(${n})
+    otr_glob_sources(${n} ${arg_SUBDIRS})
     list(APPEND ${n}-all ${arg_SOURCES})
 
     if(NOT arg_NO-QT)
@@ -182,6 +185,12 @@ function(otr_module n_)
     string(REPLACE "-" "_" build-n ${n_})
     string(TOUPPER "${build-n}" build-n)
     set_property(TARGET ${n} PROPERTY DEFINE_SYMBOL "BUILD_${build-n}")
+
+    get_property(ident GLOBAL PROPERTY opentrack-ident)
+    if (".${ident}" STREQUAL ".")
+        message(FATAL_ERROR "must set global property `opentrack-ident' in `opentrack-variant.cmake'")
+    endif()
+    set_property(TARGET ${n} APPEND PROPERTY COMPILE_DEFINITIONS "OPENTRACK_ORG=\"${ident}\"")
 
     if(arg_STATIC)
         set(arg_NO-INSTALL TRUE)
