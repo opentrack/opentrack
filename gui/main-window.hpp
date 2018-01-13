@@ -89,7 +89,6 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
 
     void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
-    void ensure_tray();
     void set_title(const QString& game_title = QStringLiteral(""));
     static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile_in_registry(const QString& profile);
@@ -97,7 +96,7 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
     void set_keys_enabled(bool flag);
     bool is_config_listed(const QString& name);
 
-    void init_tray_menu();
+    void init_tray();
 
     void changeEvent(QEvent* e) override;
     void closeEvent(QCloseEvent* ev) override;
@@ -121,7 +120,7 @@ class OTR_GUI_EXPORT main_window : public QMainWindow, private State
 
 private slots:
     void save_modules();
-    void exit(int status = 0);
+    void exit(int status = EXIT_SUCCESS);
     bool set_profile(const QString& new_name);
 
     void show_tracker_settings();
@@ -140,6 +139,8 @@ private slots:
 
     void start_tracker_();
     void stop_tracker_();
+
+    void ensure_tray();
 
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
 

@@ -72,8 +72,6 @@ main_window::main_window() :
 {
     ui.setupUi(this);
 
-    setAttribute(Qt::WA_QuitOnClose, true);
-
 #if !defined _WIN32 && !defined __APPLE__
     annoy_if_root();
 #endif
@@ -189,16 +187,7 @@ main_window::main_window() :
             this, [&]() { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
             Qt::QueuedConnection);
 
-    // tray
-    {
-        init_tray_menu();
-
-        connect(&s.tray_enabled,
-                static_cast<void (base_value::*)(bool) const>(&base_value::valueChanged),
-                this,
-                [&](bool) { ensure_tray(); });
-        ensure_tray();
-    }
+    init_tray();
 
     register_shortcuts();
     det_timer.start(1000);
@@ -217,7 +206,7 @@ main_window::main_window() :
         setVisible(false);
 }
 
-void main_window::init_tray_menu()
+void main_window::init_tray()
 {
     tray_menu.clear();
 
@@ -274,6 +263,11 @@ void main_window::init_tray_menu()
     menu_action_exit.setText(tr("Exit"));
     QObject::connect(&menu_action_exit, &QAction::triggered, this, &main_window::exit);
     tray_menu.addAction(&menu_action_exit);
+
+    connect(&s.tray_enabled,
+            static_cast<void (base_value::*)(bool) const>(&base_value::valueChanged),
+            this,
+            &main_window::ensure_tray);
 }
 
 void main_window::register_shortcuts()
@@ -312,15 +306,6 @@ void main_window::die_on_config_not_writable()
                           tr("The Octopus is sad"),
                           tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
                           QMessageBox::Close, QMessageBox::NoButton);
-
-    // signals main() to short-circuit
-    //if (!isVisible())
-    //    setEnabled(false);
-
-    //setVisible(false);
-
-    // tray related
-    //qApp->setQuitOnLastWindowClosed(true);
 
     exit(EX_DATAERR);
 }
@@ -361,12 +346,14 @@ main_window::~main_window()
 {
     if (tray)
         tray->hide();
+    tray = nullptr;
+
     const bool just_stopping = bool(work);
-    stop_tracker_();
 
     // stupid ps3 eye has LED issues
     if (just_stopping)
     {
+        stop_tracker_();
         close();
         QEventLoop ev;
         ev.processEvents();
@@ -716,9 +703,11 @@ void main_window::show_mapping_window()
 
 void main_window::exit(int status)
 {
-    setEnabled(false);
+    QApplication::setQuitOnLastWindowClosed(true);
+    tray->hide();
+    tray = nullptr;
     close();
-    QCoreApplication::exit(status);
+    QApplication::exit(status);
 }
 
 bool main_window::set_profile(const QString& new_name_)
@@ -748,9 +737,12 @@ bool main_window::set_profile(const QString& new_name_)
 }
 
 void main_window::ensure_tray()
-{
+{    
     if (!QSystemTrayIcon::isSystemTrayAvailable())
+    {
+        QApplication::setQuitOnLastWindowClosed(true);
         return;
+    }
 
     if (s.tray_enabled)
     {
@@ -766,6 +758,8 @@ void main_window::ensure_tray()
                     this,
                     &main_window::toggle_restore_from_tray);
         }
+
+        QApplication::setQuitOnLastWindowClosed(false);
     }
     else
     {
@@ -783,6 +777,8 @@ void main_window::ensure_tray()
         if (tray)
             tray->hide();
         tray = nullptr;
+
+        QApplication::setQuitOnLastWindowClosed(true);
     }
 }
 
@@ -892,18 +888,21 @@ bool main_window::is_config_listed(const QString& name)
 
 void main_window::changeEvent(QEvent* e)
 {
-    if (maybe_hide_to_tray(e))
-        e->accept();
-    else
-    {
-        QMainWindow::changeEvent(e);
-    }
+    if (!maybe_hide_to_tray(e))
+        e->ignore();
 }
 
 void main_window::closeEvent(QCloseEvent* ev)
 {
-    ev->accept();
-    exit();
+    if (tray && tray->isVisible())
+    {
+        ev->ignore();
+        setVisible(false);
+    }
+    else
+    {
+        ev->accept();
+    }
 }
 
 bool main_window::event(QEvent* event)

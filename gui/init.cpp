@@ -160,12 +160,11 @@ int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
         return 2;
     }
 
-    app.setQuitOnLastWindowClosed(false);
+    app.setQuitOnLastWindowClosed(true);
+    int status = app.exec();
 
-    int ret = app.exec();
-    qDebug() << "exit" << ret;
-
-    return ret;
+    qDebug() << "exit status:" << status;
+    return status;
 }
 
 int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
