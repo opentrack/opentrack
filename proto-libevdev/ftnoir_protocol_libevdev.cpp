@@ -1,10 +1,18 @@
 #include "ftnoir_protocol_libevdev.h"
 #include "api/plugin-api.hpp"
-#include <cstdio>
-#include <algorithm>
 
+#include <stdio.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
+
+#include <errno.h>
+#include <string.h>
+
+#include "compat/util.hpp"
+
+#include <algorithm>
 
 #define CHECK_LIBEVDEV(expr) if ((error = (expr)) != 0) goto error;
 
@@ -87,11 +95,23 @@ void evdev::pose(const double* headpose) {
     for (int i = 0; i < 6; i++)
     {
         int value = headpose[i] * mid_input / max_value[i] + mid_input;
-        int normalized = std::max(std::min(max_input, value), min_input);
+        int normalized = clamp(value, min_input, max_input);
         (void) libevdev_uinput_write_event(uidev, EV_ABS, axes[i], normalized);
     }
 
     (void) libevdev_uinput_write_event(uidev, EV_SYN, SYN_REPORT, 0);
+}
+
+module_status evdev::initialize()
+{
+    if (access("/dev/uinput", R_OK | W_OK))
+    {
+        char buf[128] {};
+        (void) strerror_r(errno, buf, sizeof(buf));
+        return error(tr("Can't open /dev/uinput: %1").arg(buf));
+    }
+
+    return status_ok();
 }
 
 OPENTRACK_DECLARE_PROTOCOL(evdev, LibevdevControls, evdevDll)

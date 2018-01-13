@@ -7,13 +7,12 @@
 #pragma once
 #include "ui_ftnoir_libevdev_controls.h"
 
-#include <QMessageBox>
+#include "compat/macros.hpp"
 #include "api/plugin-api.hpp"
+#include <libevdev/libevdev.h>
+#include <libevdev/libevdev-uinput.h>
 
-extern "C" {
-#   include <libevdev/libevdev.h>
-#   include <libevdev/libevdev-uinput.h>
-}
+#include <QMessageBox>
 
 class evdev : public IProtocol
 {
@@ -25,8 +24,11 @@ public:
     }
     void pose(const double *headpose);
     QString game_name() {
-        return otr_tr("Virtual joystick for Linux");
+        return _("Virtual joystick for Linux");
     }
+
+    module_status initialize() override;
+
 private:
     struct libevdev* dev;
     struct libevdev_uinput* uidev;
@@ -52,6 +54,6 @@ private slots:
 class evdevDll : public Metadata
 {
 public:
-    QString name() { return QString("libevdev joystick receiver"); }
+    QString name() { return _("libevdev joystick receiver"); }
     QIcon icon() { return QIcon(":/images/linux.png"); }
 };
