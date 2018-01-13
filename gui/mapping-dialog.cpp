@@ -130,7 +130,7 @@ void mapping_dialog::load()
             qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
 
             if (idx >= 3)
-                qfc.set_snap(1, 2.5);
+                qfc.set_snap(.5, 1);
             else
                 qfc.set_snap(.5, 1);
         };
