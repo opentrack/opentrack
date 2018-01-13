@@ -49,8 +49,8 @@ public:
     void set_preview_only(bool val);
     bool is_preview_only() const;
 
-    double x_step() { return _x_step; }
-    double y_step() { return _y_step; }
+    double x_step() const { return _x_step; }
+    double y_step() const { return _y_step; }
     void set_x_step(double val) { _x_step = std::fmax(1., val); }
     void set_y_step(double val) { _y_step = std::fmax(1., val); }
 
@@ -85,7 +85,7 @@ private:
     QPoint point_to_pixel(const QPointF& point);
 
     QPointF c;
-    base_spline* _config;
+    base_spline* _config = nullptr;
 
     QPixmap _background;
     QPixmap _function;
@@ -97,10 +97,10 @@ private:
 
     QMetaObject::Connection connection;
 
-    double snap_x, snap_y;
-    double _x_step, _y_step;
-    int moving_control_point_idx;
-    bool _draw_function, _preview_only;
+    double snap_x = 0, snap_y = 0;
+    double _x_step = 10, _y_step = 10;
+    int moving_control_point_idx = -1;
+    bool _draw_function = true, _preview_only = false;
 
-    static constexpr int point_size = 4;
+    static constexpr inline int point_size = 4;
 };

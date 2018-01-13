@@ -125,21 +125,49 @@ void mapping_dialog::load()
 
         const int idx = qfcs[i].axis;
 
-        auto update_snap = [idx, &conf, &qfc](int value) {
-            //qfc.reload_spline();
-            qfc.set_x_step(value + 1e-2 >= 90 ? 10 : 5);
+        using c = axis_opts::max_clamp;
 
-            if (idx >= 3)
-                qfc.set_snap(.5, 1);
+        auto update_xstep = [idx, &conf, &qfc](int clamp_x) {
+            int value;
+
+            if (clamp_x <= c::r20)
+                value = 1;
+            else if (clamp_x <= c::r30)
+                value = 5;
             else
-                qfc.set_snap(.5, 1);
+                value = 10;
+
+            qfc.set_x_step(value);
         };
 
-        connect(&axis.opts.clamp_x_, base_value::value_changed<int>(), &qfc, update_snap);
+        auto update_ystep = [idx, &conf, &qfc](int clamp_y) {
+            int value;
+            switch (clamp_y)
+            {
+            default:
+            case c::o_r180:
+                value = 15; break;
+            case c::o_r90:
+                value = 10; break;
+            case c::o_t75:
+                value = 5; break;
+            }
+            qfc.set_y_step(value);
+        };
+
+        if (idx >= Yaw)
+            qfc.set_snap(.5, 1);
+        else
+            qfc.set_snap(.5, 1);
+
+        connect(&axis.opts.clamp_x_, base_value::value_changed<int>(), &qfc, update_xstep);
+        connect(&axis.opts.clamp_y_, base_value::value_changed<int>(), &qfc, update_ystep);
 
         // force signal to avoid duplicating the slot's logic
         qfc.setConfig(&conf);
-        update_snap(axis.opts.clamp_x_.to<int>());
+
+        update_xstep(axis.opts.clamp_x_);
+        update_ystep(axis.opts.clamp_y_);
 
         widgets[i % 6][altp ? 1 : 0] = &qfc;
     }

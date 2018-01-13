@@ -25,16 +25,7 @@
 #include <cmath>
 #include <algorithm>
 
-spline_widget::spline_widget(QWidget *parent) :
-    QWidget(parent),
-    _config(nullptr),
-    snap_x(0),
-    snap_y(0),
-    _x_step(10),
-    _y_step(10),
-    moving_control_point_idx(-1),
-    _draw_function(true),
-    _preview_only(false)
+spline_widget::spline_widget(QWidget *parent) : QWidget(parent)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::ClickFocus);
