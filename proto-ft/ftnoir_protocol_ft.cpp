@@ -66,7 +66,7 @@ freetrack::~freetrack()
 {
     if (shm.success())
     {
-        store(pMemData->data.DataID, 1);
+        store(pMemData->data.DataID, 0);
         store(pMemData->GameID2, -1);
     }
 
@@ -203,6 +203,7 @@ module_status freetrack::initialize()
 #endif
 
     store(pMemData->GameID2, -1);
+    store(pMemData->data.DataID, 0);
 
     for (unsigned k = 0; k < 2; k++)
         store(*(std::int32_t volatile*)&pMemData->table_ints[k], 0);
