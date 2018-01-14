@@ -704,7 +704,8 @@ void main_window::show_mapping_window()
 void main_window::exit(int status)
 {
     QApplication::setQuitOnLastWindowClosed(true);
-    tray->hide();
+    if (tray)
+        tray->hide();
     tray = nullptr;
     close();
     QApplication::exit(status);
