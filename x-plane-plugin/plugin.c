@@ -205,9 +205,10 @@ PLUGIN_API OTR_COMPAT_EXPORT void XPluginStop ( void ) {
     }
 }
 
-PLUGIN_API OTR_COMPAT_EXPORT void XPluginEnable ( void ) {
+PLUGIN_API OTR_COMPAT_EXPORT int XPluginEnable ( void ) {
     XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
     track_disabled = 0;
+    return 1;
 }
 
 PLUGIN_API OTR_COMPAT_EXPORT void XPluginDisable ( void ) {
