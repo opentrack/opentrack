@@ -47,7 +47,7 @@ public:
 private:
     settings s;
     shm_wrapper shm { FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap) };
-    FTHeap volatile *pMemData { (FTHeap*) shm.ptr() };
+    FTHeap *pMemData { (FTHeap*) shm.ptr() };
 
     QProcess dummyTrackIR;
 

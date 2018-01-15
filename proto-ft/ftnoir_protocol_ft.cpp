@@ -85,8 +85,8 @@ void freetrack::pose(const double* headpose)
     const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < 1e-4;
     const float pitch = -degrees_to_rads(is_crossing_90 ? 89.85 : headpose[Pitch]);
 
-    FTHeap volatile* ft = pMemData;
-    FTData volatile* data = &ft->data;
+    FTHeap* ft = pMemData;
+    FTData* data = &ft->data;
 
     store(data->X, tx);
     store(data->Y, ty);
@@ -206,7 +206,7 @@ module_status freetrack::initialize()
     store(pMemData->data.DataID, 0);
 
     for (unsigned k = 0; k < 2; k++)
-        store(*(std::int32_t volatile*)&pMemData->table_ints[k], 0);
+        store(pMemData->table_ints[k], 0);
 
     // more games need the dummy executable than previously thought
     if (use_npclient)
