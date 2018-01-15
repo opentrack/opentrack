@@ -1,0 +1,6 @@
+find_package(OpenCV 3.0 QUIET)
+if(OpenCV_FOUND)
+    otr_module(tracker-wii)
+    target_link_libraries(opentrack-tracker-wii opentrack-tracker-pt-base opentrack-tracker-wii-pt-wiiyourself)
+	target_include_directories(opentrack-tracker-wii PRIVATE "${CMAKE_SOURCE_DIR}/tracker-pt")
+endif()
