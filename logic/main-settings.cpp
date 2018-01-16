@@ -1,5 +1,7 @@
 #include "main-settings.hpp"
 
+using namespace options;
+
 main_settings::main_settings() :
     b(make_bundle("opentrack-ui")),
     b_map(make_bundle("opentrack-mappings")),

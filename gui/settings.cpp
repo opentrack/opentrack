@@ -14,6 +14,8 @@
 #include <QDialog>
 #include <QFileDialog>
 
+using namespace options;
+
 QString options_dialog::kopts_to_string(const key_opts& kopts)
 {
     if (static_cast<QString>(kopts.guid) != "")

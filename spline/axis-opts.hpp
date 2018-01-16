@@ -1,10 +1,13 @@
 #pragma once
 
 #include "options/options.hpp"
-using namespace options;
 #include "api/plugin-api.hpp"
 
 #include "export.hpp"
+
+namespace axis_opts_impl {
+
+using namespace options;
 
 struct OTR_SPLINE_EXPORT axis_opts final
 {
@@ -52,3 +55,7 @@ private:
     QString prefix_;
     Axis axis_;
 };
+
+} // ns axis_opts_impl
+
+using axis_opts_impl::axis_opts;
