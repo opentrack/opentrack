@@ -270,8 +270,8 @@ void spline_widget::paintEvent(QPaintEvent *e)
     QPainter p(this);
 
     const double dpr = devicePixelRatioF();
-    const int W = int(width() * dpr + .75);
-    const int H = int(height() * dpr + .75);
+    const int W = int(width() * dpr);
+    const int H = int(height() * dpr);
 
     if (_background.size() != QSize(W, H))
     {
