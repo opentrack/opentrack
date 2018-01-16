@@ -46,7 +46,7 @@ event_handler::event_handler(Modules::dylib_list const& extensions) : ext_bundle
         if (!is_enabled(lib->module_name))
             continue;
 
-#if 1
+#if 0
         qDebug() << "extension" << lib->module_name << "mask" << (void*)mask;
 #endif
 
