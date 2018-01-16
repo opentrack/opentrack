@@ -42,7 +42,7 @@
 
 using namespace options;
 
-class OTR_GUI_EXPORT main_window : public QMainWindow, private State
+class main_window : public QMainWindow, private State
 {
     Q_OBJECT
 
