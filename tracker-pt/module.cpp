@@ -44,7 +44,7 @@ struct pt_module_traits final : pt_runtime_traits
 
 struct tracker_pt : Tracker_PT
 {
-    tracker_pt() : Tracker_PT(pt_module_traits())
+    tracker_pt() : Tracker_PT(pointer<pt_runtime_traits>(new pt_module_traits))
     {
     }
 };
@@ -63,8 +63,6 @@ class metadata_pt : public Metadata
 // ns pt_module
 
 using namespace pt_module;
-
-
 
 dialog_pt::dialog_pt() : TrackerDialog_PT(module_name) {}
 

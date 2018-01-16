@@ -23,14 +23,13 @@
 
 using namespace types;
 
-static constexpr inline int preview_width = 320, preview_height = 240;
-
-Tracker_PT::Tracker_PT(const pt_runtime_traits& traits) :
-    s { traits.get_module_name() },
-    point_extractor { traits.make_point_extractor() },
-    camera { traits.make_camera() },
-    frame { traits.make_frame() },
-    preview_frame { traits.make_preview(preview_width, preview_height) }
+Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> traits) :
+    traits { traits },
+    s { traits->get_module_name() },
+    point_extractor { traits->make_point_extractor() },
+    camera { traits->make_camera() },
+    frame { traits->make_frame() },
+    preview_frame { traits->make_preview(preview_width, preview_height) }
 {
     cv::setBreakOnError(true);
 
@@ -106,6 +105,16 @@ void Tracker_PT::run()
             }
 
             video_widget->update_image(preview_frame->get_bitmap());
+
+            {
+                int w = -1, h = -1;
+                video_widget->get_preview_size(w, h);
+                if (w != preview_width || h != preview_height)
+                {
+                    preview_width = w, preview_height = h;
+                    preview_frame = traits->make_preview(w, h);
+                }
+            }
         }
     }
     qDebug() << "pt: thread stopped";

@@ -323,7 +323,9 @@ end:
     {
         blob& b = blobs[k];
 
-        static const f offx = 10, offy = 7.5;
+        const f dpi = preview_frame.cols / f(320);
+        const f offx = 10 * dpi, offy = 7.5 * dpi;
+
         const f cx = preview_frame.cols / f(frame.cols),
                 cy = preview_frame.rows / f(frame.rows),
                 c_ = (cx+cy)/2;
@@ -337,7 +339,9 @@ end:
                             ? cv::Scalar(192, 192, 192)
                             : cv::Scalar(255, 255, 0);
 
-        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract), circle_color, 1, cv::LINE_AA, fract_bits);
+        const f overlay_size = dpi > 1.5 ? 2 : 1;
+
+        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract), circle_color, overlay_size, cv::LINE_AA, fract_bits);
 
         char buf[16];
         buf[sizeof(buf)-1] = '\0';
@@ -349,8 +353,8 @@ end:
 
         cv::Point pos(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy));
         cv::putText(preview_frame, buf, pos,
-                    cv::FONT_HERSHEY_PLAIN,
-                    1, text_color, 1);
+                    cv::FONT_HERSHEY_PLAIN, overlay_size, text_color,
+                    1);
     }
 
     // End of mean shift code. At this point, blob positions are updated with hopefully less noisy less biased values.

@@ -40,8 +40,11 @@ class Tracker_PT : public QThread, public ITracker
 
     friend class ::TrackerDialog_PT;
 
+    template<typename t>
+    using pointer = typename pt_runtime_traits::pointer<t>;
+
 public:
-    Tracker_PT(const pt_runtime_traits& pt_runtime_traits);
+    Tracker_PT(pointer<pt_runtime_traits> pt_runtime_traits);
     ~Tracker_PT() override;
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
@@ -56,11 +59,10 @@ public slots:
 protected:
     void run() override;
 private:
+    pointer<pt_runtime_traits> traits;
+
     QMutex camera_mtx;
     QMutex data_mtx;
-
-    template<typename t>
-    using pointer = typename pt_runtime_traits::pointer<t>;
 
     PointTracker point_tracker;
 
@@ -68,6 +70,8 @@ private:
 
     std::unique_ptr<QLayout> layout;
     std::vector<vec2> points;
+
+    int preview_width = 320, preview_height = 240;
 
     pointer<pt_point_extractor> point_extractor;
     pointer<pt_camera> camera;

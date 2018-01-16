@@ -30,7 +30,7 @@ private:
     static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
     bool fresh = true;
-    cv::Mat frame_copy, frame_color, frame_resize, frame_out;
+    cv::Mat frame_copy, frame_color, frame_out;
 };
 
 } // ns pt_module

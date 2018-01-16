@@ -12,8 +12,7 @@ using namespace pt_module;
 Preview& Preview::operator=(const pt_frame& frame_)
 {
     const cv::Mat& frame = frame_.as_const<const Frame>()->mat;
-    const int w = frame.cols, h = frame.rows;
-    ensure_size(frame_copy, w, h, CV_8UC3);
+    ensure_size(frame_copy, frame_out.cols, frame_out.rows, CV_8UC3);
 
     if (frame.channels() != 3)
     {
@@ -21,9 +20,9 @@ Preview& Preview::operator=(const pt_frame& frame_)
         return *this;
     }
 
-    const bool need_resize = w != frame_out.cols || h != frame_out.rows;
+    const bool need_resize = frame.cols != frame_out.cols || frame.rows != frame_out.rows;
     if (need_resize)
-        cv::resize(frame, frame_copy, cv::Size(frame_resize.cols, frame_resize.rows), 0, 0, cv::INTER_NEAREST);
+        cv::resize(frame, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
     else
         frame.copyTo(frame_copy);
 
@@ -32,7 +31,6 @@ Preview& Preview::operator=(const pt_frame& frame_)
 
 Preview::Preview(int w, int h)
 {
-    ensure_size(frame_resize, w, h, CV_8UC4);
     ensure_size(frame_out, w, h, CV_8UC4);
 
     frame_out.setTo(cv::Scalar(0, 0, 0, 0));

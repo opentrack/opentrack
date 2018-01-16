@@ -85,8 +85,27 @@ void cv_video_widget::update_image(const QImage& img)
 void cv_video_widget::paintEvent(QPaintEvent*)
 {
     QMutexLocker foo(&mtx);
+
     QPainter painter(this);
+
+    double dpr = devicePixelRatioF();
+
+    int W = int(QWidget::width() * dpr);
+    int H = int(QWidget::height() * dpr);
+
     painter.drawImage(rect(), texture);
+
+    if (texture.width() != W || texture.height() != H)
+    {
+        texture = QImage(W, H, QImage::Format_ARGB32);
+        texture.setDevicePixelRatio(dpr);
+
+        width = W, height = H;
+
+        _frame = cv::Mat();
+        _frame2 = cv::Mat();
+        _frame3 = cv::Mat();
+    }
 }
 
 void cv_video_widget::update_and_repaint()
@@ -101,4 +120,11 @@ void cv_video_widget::update_and_repaint()
         freshp = false;
         repaint();
     }
+}
+
+void cv_video_widget::get_preview_size(int& w, int& h)
+{
+    QMutexLocker l(&mtx);
+
+    w = width, h = height;
 }

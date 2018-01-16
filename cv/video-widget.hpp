@@ -31,9 +31,8 @@ public:
     cv_video_widget(QWidget *parent);
     void update_image(const cv::Mat& frame);
     void update_image(const QImage& image);
-
-    static constexpr inline int width = 320, height = 240;
-protected slots:
+    void get_preview_size(int& w, int& h);
+private slots:
     void paintEvent(QPaintEvent*) override;
     void update_and_repaint();
 private:
@@ -42,5 +41,6 @@ private:
     std::vector<unsigned char> vec;
     QTimer timer;
     cv::Mat _frame, _frame2, _frame3;
+    int width = 320, height = 240;
     bool freshp = false;
 };
