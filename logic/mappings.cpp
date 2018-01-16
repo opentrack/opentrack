@@ -23,3 +23,14 @@ void Map::load()
     spline_alt.reload();
 }
 
+
+Mappings::Mappings(axis_opts_impl::axis_opts** opts) :
+    axes {
+        { "spline-X",       "alt-spline-X",    *opts[TX] },
+        { "spline-Y",       "alt-spline-Y",    *opts[TY] },
+        { "spline-Z",       "alt-spline-Z",    *opts[TZ] },
+        { "spline-yaw",     "alt-spline-yaw",  *opts[Yaw] },
+        { "spline-pitch",   "alt-spline-pitch",*opts[Pitch] },
+        { "spline-roll",    "alt-spline-roll", *opts[Roll] }
+    }
+{}

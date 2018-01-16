@@ -39,7 +39,7 @@ struct OTR_LOGIC_EXPORT main_settings final
     bundle b, b_map;
     axis_opts a_x, a_y, a_z;
     axis_opts a_yaw, a_pitch, a_roll;
-    std::vector<axis_opts*> all_axis_opts;
+    axis_opts* all_axis_opts[6];
     value<bool> tcomp_p, tcomp_disable_tx, tcomp_disable_ty, tcomp_disable_tz;
     value<bool> tcomp_disable_src_yaw, tcomp_disable_src_pitch, tcomp_disable_src_roll;
     value<bool> tray_enabled, tray_start;
