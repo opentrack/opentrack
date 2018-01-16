@@ -8,22 +8,12 @@
 #pragma once
 
 #include "ui_ftnoir_mousecontrols.h"
+
+#include "mouse-settings.hpp"
+
 #include <QDebug>
 #include "api/plugin-api.hpp"
-#include "options/options.hpp"
 using namespace options;
-
-struct settings : opts {
-    value<int> Mouse_X, Mouse_Y;
-    value<slider_value> sensitivity_x, sensitivity_y;
-    settings() :
-        opts("mouse-proto"),
-        Mouse_X(b, "mouse-x", 0),
-        Mouse_Y(b, "mouse-y", 0),
-        sensitivity_x(b, "mouse-sensitivity-x", slider_value(200, 25, 500)),
-        sensitivity_y(b, "mouse-sensitivity-y", slider_value(200, 25, 500))
-    {}
-};
 
 class mouse : public IProtocol
 {
@@ -38,7 +28,7 @@ private:
     static int get_delta(int val, int prev);
     static int get_value(double val, double sensitivity, bool is_rotation);
 
-    struct settings s;
+    struct mouse_settings s;
 };
 
 class MOUSEControls: public IProtocolDialog
@@ -50,7 +40,7 @@ public:
     void unregister_protocol() {}
 private:
     Ui::UICMOUSEControls ui;
-    settings s;
+    mouse_settings s;
 private slots:
     void doOK();
     void doCancel();
