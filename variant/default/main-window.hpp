@@ -36,7 +36,7 @@
 #include <tuple>
 #include <memory>
 
-#include "gui/ui_main-window.h"
+#include "ui_main-window.h"
 
 using namespace options;
 
