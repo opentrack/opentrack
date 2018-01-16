@@ -1,5 +1,5 @@
 #include "gui/init.hpp"
-#include "gui/main-window.hpp"
+#include "main-window.hpp"
 
 #if defined _WIN32
 #   include <windows.h>

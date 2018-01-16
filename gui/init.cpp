@@ -12,15 +12,14 @@
 #endif
 
 #include "migration/migration.hpp"
-#include "gui/main-window.hpp"
 #include "options/options.hpp"
 using namespace options;
 #include "opentrack-library-path.h"
 
 #include <memory>
+#include <cstdlib>
 #include <cstring>
 #include <cstdio>
-#include <cstdlib>
 
 #include <QApplication>
 #include <QStyleFactory>
@@ -94,19 +93,6 @@ void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &
     std::fflush(stderr);
 }
 
-void attach_parent_console()
-{
-    if (AttachConsole(ATTACH_PARENT_PROCESS))
-    {
-        // XXX c++ iostreams aren't reopened
-
-        _wfreopen(L"CON", L"w", stdout);
-        _wfreopen(L"CON", L"w", stderr);
-        _wfreopen(L"CON", L"r", stdin);
-    }
-    (void)qInstallMessageHandler(qdebug_to_console);
-}
-
 void add_win32_path()
 {
     // see https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
@@ -156,6 +142,8 @@ void add_win32_path()
             qDebug() << "can't set win32 path";
     }
 }
+
+void attach_parent_console();
 
 #endif
 
@@ -226,3 +214,20 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
 
     return ret;
 }
+
+#if defined _WIN32
+#include <windows.h>
+
+void attach_parent_console()
+{
+    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        // XXX c++ iostreams aren't reopened
+
+        _wfreopen(L"CON", L"w", stdout);
+        _wfreopen(L"CON", L"w", stderr);
+        _wfreopen(L"CON", L"r", stdin);
+    }
+    (void)qInstallMessageHandler(qdebug_to_console);
+}
+#endif

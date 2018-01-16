@@ -8,8 +8,6 @@
 
 #pragma once
 
-#include "export.hpp"
-
 #include "api/plugin-support.hpp"
 #include "gui/mapping-dialog.hpp"
 #include "gui/settings.hpp"
