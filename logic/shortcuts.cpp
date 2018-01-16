@@ -144,7 +144,7 @@ void Shortcuts::reload(const t_keys& keys_)
         const int idx = keys.size() - 1;
         tt& kk_ = keys[idx];
         auto fn = std::get<1>(kk_);
-        connect(k, &QxtGlobalShortcut::activated, [=, fn = std::move(fn)](bool keydown) {
+        connect(k, &QxtGlobalShortcut::activated, [fn, held](bool keydown) {
             if (keydown || !held)
                 fn(keydown);
         });
