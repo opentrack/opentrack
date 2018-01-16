@@ -88,8 +88,6 @@ bool spline_widget::is_preview_only() const
 
 void spline_widget::drawBackground()
 {
-    _background = QPixmap(width(), height());
-
     QPainter painter(&_background);
 
     painter.fillRect(rect(), widget_bg_color);
@@ -151,7 +149,6 @@ void spline_widget::drawBackground()
 
 void spline_widget::drawFunction()
 {
-    _function = _background;
     QPainter painter(&_function);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -272,16 +269,14 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     QPainter p(this);
 
-    if (!_background.isNull())
+    const double dpr = devicePixelRatioF();
+    const int W = int(width() * dpr + .75);
+    const int H = int(height() * dpr + .75);
+
+    if (_background.size() != QSize(W, H))
     {
-        if (_background.size() != size())
-        {
-            _background = QPixmap();
-            _function = QPixmap();
-        }
-    }
-    else
-    {
+        _background = QPixmap(W, H);
+        _background.setDevicePixelRatio(dpr);
         _draw_function = true;
         drawBackground();
     }
@@ -289,6 +284,7 @@ void spline_widget::paintEvent(QPaintEvent *e)
     if (_draw_function)
     {
         _draw_function = false;
+        _function = _background;
         drawFunction();
     }
 
