@@ -63,9 +63,6 @@ function(otr_add_subdirs)
     get_property(_globs GLOBAL PROPERTY opentrack-subprojects)
     otr_add_target_dirs(_globbed ${_globs})
 
-    get_property(_variant GLOBAL PROPERTY opentrack-variant)
-    add_subdirectory("variant/${_variant}")
-
     foreach(k ${_globbed})
         get_filename_component(k "${k}" DIRECTORY)
         add_subdirectory("${k}")

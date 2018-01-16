@@ -1,51 +1,31 @@
-set(opentrack_variant "default" CACHE STRING "")
-set_property(CACHE opentrack_variant PROPERTY STRINGS "default;trackmouse")
-
 # XXX that belongs in each variant's directory!
 
 function(otr_dist_select_variant)
-    if(opentrack_variant STREQUAL "trackmouse")
-        set_property(GLOBAL PROPERTY opentrack-variant "trackmouse")
-        set_property(GLOBAL PROPERTY opentrack-ident "trackmouse-prototype")
-        set(subprojects
-            "tracker-pt"
-            "proto-mouse"
-            "filter-accela"
-            "options"
-            "api"
-            "compat"
-            "logic"
-            "dinput"
-            "gui"
-            "pose-widget"
-            "spline"
-            "cv"
-            "migration")
-        set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
-    else()
-        set_property(GLOBAL PROPERTY opentrack-variant "default")
-        set_property(GLOBAL PROPERTY opentrack-ident "opentrack-2.3")
-        set(subprojects
-            "tracker-*"
-            "proto-*"
-            "filter-*"
-            "ext-*"
-            "options"
-            "api"
-            "compat"
-            "logic"
-            "dinput"
-            "gui"
-            "main"
-            "x-plane-plugin"
-            "csv"
-            "pose-widget"
-            "spline"
-            "qxt-mini"
-            "macosx"
-            "cv"
-            "migration")
-        set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
-    endif()
-endfunction()
+    file(GLOB variants "variant/*")
 
+    set(variant-list "")
+
+    foreach(k ${variants})
+        get_filename_component(name "${k}" NAME)
+        if(EXISTS "${k}/_variant.cmake" AND EXISTS "${k}/CMakeLists.txt")
+            list(APPEND variant-list "${name}")
+        else()
+            message(FATAL_ERROR "Stray item in variant dir '${name}'")
+        endif()
+    endforeach()
+
+    set(opentrack_variant "default" CACHE STRING "")
+    set(dir "${CMAKE_SOURCE_DIR}/variant/${opentrack_variant}")
+
+    if(NOT EXISTS "${dir}/_variant.cmake" OR NOT EXISTS "${dir}/CMakeLists.txt")
+        set(opentrack_variant "default" CACHE STRING "" FORCE)
+        set(dir "${CMAKE_SOURCE_DIR}/variant/${opentrack_variant}")
+    endif()
+
+    set_property(CACHE opentrack_variant PROPERTY STRINGS "${variant-list}")
+
+    include("${dir}/_variant.cmake")
+    otr_init_variant()
+
+    add_subdirectory("${dir}")
+endfunction()
