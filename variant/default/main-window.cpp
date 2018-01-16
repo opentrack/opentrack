@@ -39,7 +39,7 @@ extern "C" const char* const opentrack_version;
 
 #if !defined _WIN32 && !defined __APPLE__
 #   include <unistd.h>
-void MainWindow::annoy_if_root()
+void main_window::annoy_if_root()
 {
     if (geteuid() == 0)
     {
