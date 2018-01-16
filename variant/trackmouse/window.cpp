@@ -2,6 +2,8 @@
 
 #include <QApplication>
 
+void force_trackmouse_settings();
+
 void window::closeEvent(QCloseEvent* e)
 {
     e->accept();
@@ -12,6 +14,8 @@ window::window() : QMainWindow()
 {
     ui.setupUi(this);
     setAttribute(Qt::WA_QuitOnClose);
+
+    force_trackmouse_settings();
 
     show();
 }
