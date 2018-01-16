@@ -1,5 +1,12 @@
 #include "init.hpp"
 
+/* Copyright (c) 2013-2017 Stanislaw Halik
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
 #if defined(Q_CREATOR_RUN)
 #   pragma clang diagnostic ignored "-Wmain"
 #endif
