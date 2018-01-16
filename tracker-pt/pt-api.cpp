@@ -21,10 +21,6 @@ double pt_camera_info::get_focal_length() const
     //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
 }
 
-pt_settings::pt_settings(const QString& name) : opts(name)
-{
-}
-
 pt_camera::pt_camera()
 {
 }
