@@ -7,8 +7,9 @@
  */
 
 #include "process_detector.h"
-#include "main-window.hpp"
 #include "compat/process-list.hpp"
+#include "options/options.hpp"
+
 #include <QList>
 #include <QFileDialog>
 #include <QComboBox>
@@ -19,6 +20,8 @@
 
 static constexpr inline auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
 static constexpr inline auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_
+
+using namespace options;
 
 void proc_detector_settings::set_game_list(const QString &game_list)
 {
@@ -79,7 +82,7 @@ void BrowseButton::browse()
                 tr("Set executable name"),
                 dir_path,
                 tr("Executable (*.exe);;All Files (*)"));
-    main_window::set_working_directory();
+    QDir::setCurrent(OPENTRACK_BASE_PATH);
     filename = QFileInfo(filename).fileName();
     if (!filename.isNull())
         twi->setText(filename);

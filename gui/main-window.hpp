@@ -11,9 +11,9 @@
 #include "export.hpp"
 
 #include "api/plugin-support.hpp"
-#include "mapping-dialog.hpp"
-#include "settings.hpp"
-#include "process_detector.h"
+#include "gui/mapping-dialog.hpp"
+#include "gui/settings.hpp"
+#include "gui/process_detector.h"
 #include "logic/main-settings.hpp"
 #include "logic/pipeline.hpp"
 #include "logic/shortcuts.h"
