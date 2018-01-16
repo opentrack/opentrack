@@ -30,18 +30,12 @@ extern "C" const char* const opentrack_version;
 #   define EXIT_FAILURE 1
 #endif
 
-//
-
 /* FreeBSD sysexits(3)
  *
  * The input data was incorrect	in some	way.  This
  * should only be used for user's data and not system
  * files.
  */
-
-#if !defined EX_DATAERR
-#   define EX_DATAERR 65
-#endif
 
 #if !defined _WIN32 && !defined __APPLE__
 #   include <unistd.h>
@@ -90,7 +84,7 @@ main_window::main_window() :
 
     if (!refresh_config_list())
     {
-        exit(EX_DATAERR);
+        exit(64);
         return;
     }
 
@@ -138,7 +132,7 @@ main_window::main_window() :
         bool ok = is_config_listed(cur) ? set_profile(cur) : set_profile(OPENTRACK_DEFAULT_CONFIG);
         if (!ok)
         {
-            exit(EX_DATAERR);
+            exit(64);
             return;
         }
     }
@@ -308,7 +302,7 @@ void main_window::die_on_config_not_writable()
                           tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
                           QMessageBox::Close, QMessageBox::NoButton);
 
-    exit(EX_DATAERR);
+    exit(64);
 }
 
 bool main_window::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
