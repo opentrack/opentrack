@@ -14,6 +14,7 @@
 #include "migration/migration.hpp"
 #include "compat/check-visible.hpp"
 #include "compat/sleep.hpp"
+#include "compat/macros.hpp"
 
 #include <QMessageBox>
 #include <QDesktopServices>
