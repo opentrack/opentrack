@@ -2107,7 +2107,7 @@
   <customwidget>
    <class>process_detector</class>
    <extends>QWidget</extends>
-   <header>process_detector.h</header>
+   <header>gui/process_detector.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
