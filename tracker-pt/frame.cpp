@@ -5,8 +5,6 @@
 
 #include <opencv2/imgproc.hpp>
 
-#pragma strict_gs_check(on)
-
 using namespace pt_module;
 
 Preview& Preview::operator=(const pt_frame& frame_)
