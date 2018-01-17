@@ -5,5 +5,5 @@
 
 static inline constexpr auto operator"" _qstr(const char* str, std::size_t N)
 {
-    return QLatin1String(str, str + N);
+    return QLatin1String(str, int(N));
 }
