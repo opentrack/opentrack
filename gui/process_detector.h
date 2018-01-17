@@ -15,7 +15,7 @@
 #include <QTableWidget>
 #include <QResizeEvent>
 
-#include "ui_process_widget.h"
+#include "gui/ui_process_widget.h"
 #include "process-detector-fancy-table.hpp"
 #include "options/options.hpp"
 

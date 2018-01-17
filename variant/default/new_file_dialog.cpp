@@ -1,5 +1,3 @@
-#pragma once
-
 #include "new_file_dialog.h"
 
 new_file_dialog::new_file_dialog(QWidget* parent) : QDialog(parent)
