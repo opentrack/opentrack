@@ -10,7 +10,7 @@ static constexpr auto OLD_UNIT_SEPARATOR    = QChar(':');
 static constexpr auto NEW_RECORD_SEPARATOR  = QChar(0x1e);
 static constexpr auto NEW_UNIT_SEPARATOR    = QChar(0x1f);
 
-static constexpr QLatin1String KEY_NAME = "executable-list"_qstr;
+static const QString KEY_NAME = "executable-list";
 
 struct process_detector_record_separator : migration
 {

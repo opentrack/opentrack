@@ -8,7 +8,6 @@
 
 #include "shortcuts.h"
 #include "win32-shortcuts.h"
-#include "compat/string-literal-operator.hpp"
 
 #include <QString>
 
@@ -73,7 +72,7 @@ void Shortcuts::bind_shortcut(K &key, const key_opts& k, bool held)
         if (code != Qt::Key_unknown)
             win_key::from_qt(code, idx, mods);
 
-        key.guid = ""_qstr;
+        key.guid = "";
         key.keycode = idx;
         key.held = held;
         key.ctrl = !!(mods & Qt::ControlModifier);
