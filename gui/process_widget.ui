@@ -134,7 +134,7 @@
   <customwidget>
    <class>FancyTable</class>
    <extends>QTableWidget</extends>
-   <header>process-detector-fancy-table.hpp</header>
+   <header>gui/process-detector-fancy-table.hpp</header>
   </customwidget>
  </customwidgets>
  <tabstops>
