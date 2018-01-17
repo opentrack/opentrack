@@ -158,7 +158,6 @@ int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
     app.setQuitOnLastWindowClosed(true);
     int status = app.exec();
 
-    qDebug() << "exit status:" << status;
     return status;
 }
 
