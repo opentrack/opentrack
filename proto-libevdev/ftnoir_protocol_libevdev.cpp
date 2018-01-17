@@ -108,7 +108,7 @@ module_status evdev::initialize()
     {
         char buf[128] {};
         (void) strerror_r(errno, buf, sizeof(buf));
-        return error(tr("Can't open /dev/uinput: %1").arg(buf));
+        return error(_("Can't open /dev/uinput: %1").arg(buf));
     }
 
     return status_ok();
