@@ -21,6 +21,7 @@ struct settings : opts {
 
 class udp : protected QThread, public ITracker
 {
+    Q_OBJECT
 public:
     udp();
     ~udp() override;

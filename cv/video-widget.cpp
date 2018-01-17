@@ -71,7 +71,7 @@ void cv_video_widget::update_image(const QImage& img)
     if (freshp)
         return;
 
-    const unsigned nbytes = img.sizeInBytes();
+    const unsigned nbytes = img.bytesPerLine() * img.height();
 
     vec.resize(nbytes);
 
