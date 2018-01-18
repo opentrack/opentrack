@@ -6,17 +6,18 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "compat/ndebug-guard.hpp"
 #include "compat/util.hpp"
 
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 #include "opentrack-library-path.h"
 
+#include <cassert>
 #include <cstddef>
 #include <atomic>
 #include <cmath>
 #include <cstdlib>
+
 #include <windows.h>
 #include <intrin.h>
 

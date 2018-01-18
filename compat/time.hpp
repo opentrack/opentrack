@@ -1,7 +1,5 @@
 #pragma once
 
-#include "compat/functional.hpp"
-
 #include <chrono>
 
 namespace time_units {

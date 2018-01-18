@@ -8,6 +8,12 @@
  */
 
 #include <type_traits>
+
+template<typename t>
+using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>, std::decay_t<t>, const t&>;
+
+#if 0
+
 #include <tuple>
 #include <cstddef>
 
@@ -76,3 +82,5 @@ template<std::size_t max>
 using index_sequence = typename detail::index_sequence_<std::size_t, max, std::size_t(0)>::type;
 
 } // ns meta
+
+#endif

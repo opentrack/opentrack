@@ -1,5 +1,4 @@
 if(LINUX)
-    include(FindPkgConfig)
     pkg_check_modules(libevdev QUIET libevdev)
     if(libevdev_FOUND)
         otr_module(proto-libevdev)

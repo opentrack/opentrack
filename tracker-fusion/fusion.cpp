@@ -6,7 +6,6 @@
  * notice appear in all copies.
  */
 
-#include "compat/ndebug-guard.hpp"
 #include "fusion.h"
 
 #include "opentrack-library-path.h"

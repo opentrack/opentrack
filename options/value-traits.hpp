@@ -1,6 +1,5 @@
 #include "export.hpp"
 
-#include "compat/functional.hpp"
 #include "slider.hpp"
 
 #include <QString>
@@ -37,7 +36,7 @@ struct value_traits<slider_value> : default_value_traits<slider_value>
 
 // Qt uses int a lot in slots so use it for all enums
 template<typename t>
-struct value_traits<t, t, std::enable_if_t<is_enum_v<t>>> : public default_value_traits<int, t>
+struct value_traits<t, t, std::enable_if_t<std::is_enum_v<t>>> : public default_value_traits<int, t>
 {
 };
 

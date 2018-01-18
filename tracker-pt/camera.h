@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "compat/ndebug-guard.hpp"
 #include "pt-api.hpp"
 
 #include "compat/util.hpp"
