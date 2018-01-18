@@ -23,6 +23,7 @@ static constexpr struct event_type_mapping
 
 bool event_handler::is_enabled(const QString& name)
 {
+    (void)name;
 #if 1
     return true;
 #else

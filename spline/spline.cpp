@@ -188,8 +188,8 @@ void spline::update_interp_data()
         {
             const double x = points[0].x();
             const double y = points[0].y();
-            const int max = clamp(iround(x * c), 1, value_count-1);
-            for (int k = 0; k <= max; k++)
+            const unsigned max = (unsigned)clamp(iround(x * c), 1, value_count-1);
+            for (unsigned k = 0; k <= max; k++)
             {
                 if (k < value_count)
                     data[unsigned(k)] = float(y * k / max);

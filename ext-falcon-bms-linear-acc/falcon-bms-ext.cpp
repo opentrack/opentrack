@@ -11,4 +11,5 @@ falcon_bms_acceleration_ext::falcon_bms_acceleration_ext()
 
 void falcon_bms_acceleration_ext::process_finished(Pose& p)
 {
+    (void)p;
 }
