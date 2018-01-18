@@ -13,7 +13,6 @@
 #include "tracker-pt/ui_FTNoIR_PT_Controls.h"
 #include "cv/translation-calibrator.hpp"
 #include "cv/video-widget.hpp"
-#include "compat/correlation-calibrator.hpp"
 
 #include <QTimer>
 #include <QMutex>
@@ -44,7 +43,6 @@ private:
     Tracker_PT* tracker;
     QTimer timer, calib_timer;
     TranslationCalibrator trans_calib;
-    correlation_calibrator c_calib;
     QMutex calibrator_mutex;
 
     Ui::UICPTClientControls ui;
