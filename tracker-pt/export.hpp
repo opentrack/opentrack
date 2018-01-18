@@ -2,10 +2,14 @@
 
 #pragma once
 
-#include "compat/linkage-macros.hpp"
-
-#ifdef BUILD_TRACKER_PT
-#   define OTR_PT_EXPORT OTR_GENERIC_EXPORT
+#if 0
+#   include "compat/linkage-macros.hpp"
+#   ifdef BUILD_TRACKER_PT
+#      define OTR_PT_EXPORT OTR_GENERIC_EXPORT
+#   else
+#      define OTR_PT_EXPORT OTR_GENERIC_IMPORT
+#   endif
 #else
-#   define OTR_PT_EXPORT OTR_GENERIC_IMPORT
+// static link
+#   define OTR_PT_EXPORT
 #endif

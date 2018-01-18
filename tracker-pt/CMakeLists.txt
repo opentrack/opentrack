@@ -1,7 +1,10 @@
 find_package(OpenCV 3.0 QUIET)
 if(OpenCV_FOUND)
-    otr_module(tracker-pt)
+    otr_module(tracker-pt-base STATIC)
+    target_include_directories(opentrack-tracker-pt-base SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+
     set(modules opencv_core opencv_videoio opencv_imgproc)
+    otr_module(tracker-pt SOURCES module.cxx)
     target_link_libraries(opentrack-tracker-pt opentrack-cv ${modules})
     target_include_directories(opentrack-tracker-pt SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
 endif()
