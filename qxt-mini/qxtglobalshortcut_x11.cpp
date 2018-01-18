@@ -45,7 +45,7 @@
 #include <X11/XKBlib.h>
 #include <xcb/xcb.h>
 
-#include "compat/powerset.hpp"
+#include "powerset.hpp"
 #include "compat/util.hpp"
 
 #include <iterator>
