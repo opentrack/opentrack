@@ -7,7 +7,6 @@ set(new-hier-path "#pragma once
 #   include <QCoreApplication>
 #   include <QString>
 #   include \"compat/base-path.hpp\"
-#   define OPENTRACK_BASE_PATH (application_base_path())
 #endif
 #define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
 #define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"
@@ -17,7 +16,7 @@ set(new-hier-path "#pragma once
 
 include_directories("${CMAKE_BINARY_DIR}")
 
-set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.h")
+set(hier-path-filename "${CMAKE_BINARY_DIR}/__opentrack-library-path.h")
 set(orig-hier-path "")
 if(EXISTS "${hier-path-filename}")
     file(READ ${hier-path-filename} orig-hier-path)
