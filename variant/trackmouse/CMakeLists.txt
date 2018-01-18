@@ -2,7 +2,7 @@ otr_module(executable EXECUTABLE BIN)
 
 set_target_properties(opentrack-executable PROPERTIES
     SUFFIX "${opentrack-binary-suffix}"
-    OUTPUT_NAME "trackmouse-opentrack"
+    OUTPUT_NAME "trackmouse"
     PREFIX ""
 )
 
