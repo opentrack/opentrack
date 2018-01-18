@@ -8,7 +8,6 @@
 
 #include "migration.hpp"
 #include "options/options.hpp"
-#include "logic/main-settings.hpp"
 
 #include <QString>
 #include <QVariant>

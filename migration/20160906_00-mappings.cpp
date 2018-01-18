@@ -20,88 +20,94 @@
 
 using namespace migrations;
 
-struct mappings_from_2_3_0_rc11 : migration
+static const char* old_names[] =
 {
-    static QList<QList<QPointF>> get_old_splines()
-    {
-        QList<QList<QPointF>> ret;
+    "tx", "tx_alt",
+    "ty", "ty_alt",
+    "tz", "tz_alt",
+    "rx", "rx_alt",
+    "ry", "ry_alt",
+    "rz", "rz_alt",
+};
 
-        static const char* names[] =
+static const char* new_names[] = {
+    "spline-X",       "alt-spline-X",
+    "spline-Y",       "alt-spline-Y",
+    "spline-Z",       "alt-spline-Z",
+    "spline-yaw",     "alt-spline-yaw",
+    "spline-pitch",   "alt-spline-pitch",
+    "spline-roll",    "alt-spline-roll",
+};
+
+static QList<QList<QPointF>> get_old_splines()
+{
+    QList<QList<QPointF>> ret;
+
+    return group::with_settings_object([&](QSettings& settings) {
+        for (const char* name : old_names)
         {
-            "tx", "tx_alt",
-            "ty", "ty_alt",
-            "tz", "tz_alt",
-            "rx", "rx_alt",
-            "ry", "ry_alt",
-            "rz", "rz_alt",
-        };
+            QList<QPointF> points;
 
-        return group::with_settings_object([&](QSettings& settings) {
-            for (const char* name : names)
+            settings.beginGroup(QString("Curves-%1").arg(name));
+
+            const int max = settings.value("point-count", 0).toInt();
+
+            for (int i = 0; i < max; i++)
             {
-                QList<QPointF> points;
+                QPointF new_point(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
+                                  settings.value(QString("point-%1-y").arg(i), 0).toDouble());
 
-                settings.beginGroup(QString("Curves-%1").arg(name));
-
-                const int max = settings.value("point-count", 0).toInt();
-
-                for (int i = 0; i < max; i++)
-                {
-                    QPointF new_point(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
-                                      settings.value(QString("point-%1-y").arg(i), 0).toDouble());
-
-                    points.append(new_point);
-                }
-
-                settings.endGroup();
-
-                ret.append(points);
+                points.append(new_point);
             }
 
-            return ret;
-        });
-    }
+            settings.endGroup();
 
+            ret.append(points);
+        }
+
+        return ret;
+    });
+};
+
+struct mappings_from_2_3_0_rc11 : migration
+{
     QString unique_date() const override { return "20160909_00"; }
     QString name() const override { return "mappings to new layout"; }
 
-    static Mappings get_new_mappings()
-    {
-        main_settings s;
-        return Mappings(s.all_axis_opts);
-    }
-
     bool should_run() const override
-    {
-        Mappings m = get_new_mappings();
-
-        // run only if no new splines were set
-        for (int i = 0; i < 6; i++)
-            if (m(i).spline_main.get_point_count() || m(i).spline_alt.get_point_count())
+    {        
+        for (const char* name : new_names)
+        {
+            // run only if no new splines were set
+            auto b = make_bundle(name);
+            if (b->contains("points"))
                 return false;
 
-        // run only if old splines exist
-        for (const QList<QPointF>& points : get_old_splines())
-            if (points.size())
-                return true;
+            // run only if old splines exist
+            for (const QList<QPointF>& points : get_old_splines())
+                if (points.size())
+                    return true;
+        }
 
         // no splines exit at all
         return false;
     }
-    void run() override
-    {
-        const QList<QList<QPointF>> old_mappings = get_old_splines();
-        Mappings m = get_new_mappings();
 
-        for (int i = 0; i < 12; i++)
-        {
-            spline& spl = (i % 2) == 0 ? m(i / 2).spline_main : m(i / 2).spline_alt;
-            spl.clear();
-            const QList<QPointF>& points = old_mappings[i];
-            for (const QPointF& pt : points)
-                spl.add_point(pt);
-            spl.save();
-        }
+    void run() override
+    {        
+        group::with_settings_object([this](QSettings&) {
+            const QList<QList<QPointF>> old_mappings = get_old_splines();
+
+            for (int i = 0; i < 12; i++)
+            {
+                auto b = make_bundle(new_names[i]);
+                if (b->contains("points"))
+                    continue;
+                value<QList<QPointF>> new_value { b, "points", {} };
+                new_value = old_mappings[i];
+                b->save();
+            }
+        });
     }
 };
 
