@@ -1,9 +1,9 @@
 #pragma once
 
+#include "macros.hpp"
+
 #include <cmath>
 #include <type_traits>
-
-#include "macros.hpp"
 
 namespace util_detail {
 
@@ -51,4 +51,24 @@ inline auto clamp(const t& val, const u& min, const w& max)
 {
     using tp = decltype(val + min + max);
     return ::util_detail::clamp<std::decay_t<tp>, tp>::clamp_(val, min, max);
+}
+
+template<typename t>
+inline int iround(const t& val)
+{
+    return int(std::round(val));
+}
+
+template<typename t>
+inline unsigned uround(const t& val)
+{
+    return std::round(std::fmax(t(0), val));
+}
+
+#include "macros.hpp"
+
+template <typename T>
+static force_inline constexpr auto signum(T x)
+{
+    return x < T(0) ? -1 : 1;
 }

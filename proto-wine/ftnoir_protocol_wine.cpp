@@ -1,5 +1,4 @@
 #include "ftnoir_protocol_wine.h"
-#include "opentrack-library-path.h"
 #include <QString>
 #include <QStringList>
 #include <QCoreApplication>
@@ -10,6 +9,7 @@
 #include <fcntl.h>           /* For O_* constants */
 #include "csv/csv.h"
 #include "compat/macros.hpp"
+#include "compat/library-path.hpp"
 
 wine::wine() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
 {

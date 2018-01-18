@@ -7,8 +7,9 @@
  */
 
 #include "process_detector.h"
-#include "compat/process-list.hpp"
 #include "options/options.hpp"
+#include "compat/process-list.hpp"
+#include "compat/base-path.hpp"
 
 #include <QList>
 #include <QFileDialog>

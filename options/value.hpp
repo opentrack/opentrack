@@ -10,12 +10,11 @@
 
 #include "export.hpp"
 
-#include "compat/util.hpp"
-
 #include "bundle.hpp"
 #include "slider.hpp"
 #include "base-value.hpp"
 #include "value-traits.hpp"
+#include "compat/macros.hpp"
 
 #include <cstdio>
 #include <type_traits>

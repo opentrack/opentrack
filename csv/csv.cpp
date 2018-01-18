@@ -10,7 +10,7 @@
  */
 
 #include "csv.h"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 #include <QTextDecoder>
 #include <QFile>
 #include <QString>

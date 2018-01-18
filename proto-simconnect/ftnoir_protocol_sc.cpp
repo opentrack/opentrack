@@ -11,8 +11,8 @@
  */
 #include "ftnoir_protocol_sc.h"
 #include "api/plugin-api.hpp"
-#include "opentrack-library-path.h"
 #include "compat/timer.hpp"
+#include "compat/library-path.hpp"
 
 simconnect::simconnect() : hSimConnect(nullptr), should_reconnect(false)
 {

@@ -7,8 +7,7 @@
  */
 
 #include "fusion.h"
-
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <QDebug>
 #include <QMessageBox>

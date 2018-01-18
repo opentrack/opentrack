@@ -8,8 +8,7 @@
 #pragma once
 
 #include "export.hpp"
-
-#include "compat/util.hpp"
+#include "compat/macros.hpp"
 
 #include <QMetaType>
 #include <QDataStream>

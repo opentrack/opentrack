@@ -7,9 +7,11 @@
 
 #include "translation-calibrator.hpp"
 #include "compat/euler.hpp"
-#include "compat/util.hpp"
+#include "compat/math.hpp"
 
 #include <tuple>
+
+#include <QDebug>
 
 constexpr double TranslationCalibrator::pitch_spacing_in_degrees;
 constexpr double TranslationCalibrator::yaw_spacing_in_degrees;

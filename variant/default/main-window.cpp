@@ -9,12 +9,13 @@
 #include "main-window.hpp"
 #include "logic/pipeline.hpp"
 #include "options/options.hpp"
-#include "opentrack-library-path.h"
 #include "new_file_dialog.h"
 #include "migration/migration.hpp"
 #include "compat/check-visible.hpp"
 #include "compat/sleep.hpp"
 #include "compat/macros.hpp"
+#include "compat/library-path.hpp"
+#include "compat/math.hpp"
 
 #include <QMessageBox>
 #include <QDesktopServices>

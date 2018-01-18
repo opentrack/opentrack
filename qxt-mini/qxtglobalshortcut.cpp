@@ -31,8 +31,6 @@
 
 #include "qxtglobalshortcut_p.h"
 
-#include "compat/util.hpp"
-
 #include <QAbstractEventDispatcher>
 #include <QApplication>
 #include <QtDebug>

@@ -8,7 +8,6 @@
 
 #include "migration.hpp"
 #include "options/options.hpp"
-#include "compat/util.hpp"
 #include "logic/main-settings.hpp"
 
 using namespace migrations;

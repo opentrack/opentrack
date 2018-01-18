@@ -5,8 +5,8 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "compat/util.hpp"
 #include "spline-widget.hpp"
+#include "compat/math.hpp"
 #include <QPainter>
 #include <QPainterPath>
 #include <QPaintEvent>

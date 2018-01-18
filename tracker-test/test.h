@@ -2,6 +2,7 @@
 #include "ui_test.h"
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
+#include "compat/macros.hpp"
 
 #include <cmath>
 
@@ -36,7 +37,7 @@ private slots:
 class test_metadata : public Metadata
 {
 public:
-    QString name() { return otr_tr("Testing - sine wave"); }
+    QString name() { return _("Testing - sine wave"); }
     QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
 };
 

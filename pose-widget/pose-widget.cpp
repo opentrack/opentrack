@@ -6,10 +6,11 @@
  */
 
 #include "pose-widget.hpp"
-#include "compat/util.hpp"
 #include "compat/timer.hpp"
 #include "compat/sleep.hpp"
 #include "compat/check-visible.hpp"
+#include "compat/math.hpp"
+
 #include <cmath>
 #include <algorithm>
 

@@ -1,6 +1,6 @@
 #include "correlation-calibrator.hpp"
 #include "variance.hpp"
-#include "util.hpp"
+#include "compat/math.hpp"
 
 #include <cmath>
 #include <iterator>

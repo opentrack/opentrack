@@ -11,7 +11,6 @@
 
 #include "options/options.hpp"
 #include "main-settings.hpp"
-#include "compat/util.hpp"
 
 #ifdef _WIN32
 #   include "dinput/keybinding-worker.hpp"

@@ -8,6 +8,7 @@
 
 #include "ftnoir_tracker_pt_dialog.h"
 
+#include "compat/math.hpp"
 #include "compat/camera-names.hpp"
 #include <opencv2/core.hpp>
 #include <QString>

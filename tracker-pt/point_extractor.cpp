@@ -7,13 +7,12 @@
  */
 
 #include "point_extractor.h"
-#include "compat/util.hpp"
 #include "point_tracker.h"
 #include "frame.hpp"
 
-#include <QDebug>
-
 #include "cv/numeric.hpp"
+#include "compat/math.hpp"
+
 #include <opencv2/videoio.hpp>
 
 #undef PREVIEW

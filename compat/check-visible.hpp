@@ -1,7 +1,7 @@
 #pragma once
 
 #include "export.hpp"
-#include "util.hpp"
+#include "macros.hpp"
 
 #include <QWidget>
 

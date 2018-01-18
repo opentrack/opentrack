@@ -9,7 +9,7 @@
  * copyright notice and this permission notice appear in all copies.             *
  */
 #include "ftnoir_protocol_ft.h"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <QFileDialog>
 #include <QFileInfo>

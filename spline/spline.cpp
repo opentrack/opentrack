@@ -7,6 +7,7 @@
  */
 
 #include "spline.hpp"
+#include "compat/math.hpp"
 
 #include <algorithm>
 #include <cstdlib>
@@ -103,12 +104,6 @@ warn_result_unused bool spline::get_last_value(QPointF& point)
     QMutexLocker foo(&_mutex);
     point = last_input_value;
     return activep;
-}
-
-template <typename T>
-static T signum(T val)
-{
-    return (T(0) < val) - (val < T(0));
 }
 
 float spline::get_value_internal(int x)

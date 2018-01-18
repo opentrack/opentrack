@@ -10,7 +10,6 @@
 
 #include "compat/copyable-mutex.hpp"
 #include "options/options.hpp"
-#include "compat/util.hpp"
 using namespace options;
 
 #include "axis-opts.hpp"

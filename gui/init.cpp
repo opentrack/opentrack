@@ -14,7 +14,7 @@
 #include "migration/migration.hpp"
 #include "options/options.hpp"
 using namespace options;
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <memory>
 #include <cstdlib>

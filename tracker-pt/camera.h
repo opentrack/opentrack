@@ -9,7 +9,6 @@
 
 #include "pt-api.hpp"
 
-#include "compat/util.hpp"
 #include "compat/timer.hpp"
 
 #include <functional>

@@ -1,7 +1,6 @@
 #pragma once
 #include "api/plugin-api.hpp"
 #include "ui_dialog.h"
-#include "compat/util.hpp"
 #include "options/options.hpp"
 
 #include "compat/euler.hpp"

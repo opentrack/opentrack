@@ -1,7 +1,6 @@
 #pragma once
 
 #include "api/plugin-api.hpp"
-#include "compat/util.hpp"
 
 struct falcon_bms_acceleration_ext : IExtension
 {

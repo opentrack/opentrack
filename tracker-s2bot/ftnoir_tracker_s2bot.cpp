@@ -1,6 +1,6 @@
 #include "ftnoir_tracker_s2bot.h"
 #include "api/plugin-api.hpp"
-#include "compat/util.hpp"
+#include "compat/math.hpp"
 
 #include <cinttypes>
 #include <algorithm>

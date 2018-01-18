@@ -8,7 +8,7 @@
 
 #include "settings.hpp"
 #include "keyboard.h"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 #include <QPushButton>
 #include <QLayout>
 #include <QDialog>

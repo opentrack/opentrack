@@ -19,7 +19,6 @@
 #include "steamvr.hpp"
 
 #include "api/plugin-api.hpp"
-#include "compat/util.hpp"
 
 #include <cstdlib>
 #include <cmath>

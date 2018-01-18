@@ -5,8 +5,8 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_tracker_joystick.h"
-#include "compat/util.hpp"
 #include "api/plugin-api.hpp"
+#include "compat/math.hpp"
 #include <QMutexLocker>
 
 joystick::joystick()

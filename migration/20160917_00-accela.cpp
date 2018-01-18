@@ -8,7 +8,6 @@
 
 #include "migration.hpp"
 #include "options/options.hpp"
-#include "compat/util.hpp"
 
 #include "filter-accela/accela-settings.hpp"
 

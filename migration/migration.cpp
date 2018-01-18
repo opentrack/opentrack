@@ -11,7 +11,6 @@
 #include "migration.hpp"
 
 #include "options/options.hpp"
-#include "compat/util.hpp"
 
 #include <QString>
 #include <QSettings>

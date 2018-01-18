@@ -25,7 +25,6 @@
 
 #include <QDebug>
 
-#include "compat/util.hpp"
 #include "export.hpp"
 
 namespace options {

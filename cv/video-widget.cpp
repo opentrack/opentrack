@@ -9,8 +9,6 @@
 #include "video-widget.hpp"
 #include "compat/check-visible.hpp"
 
-#include "compat/util.hpp"
-
 #include <cstring>
 
 #include <opencv2/imgproc.hpp>

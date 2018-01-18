@@ -8,9 +8,8 @@
 
 #ifdef _WIN32
 
-#include "compat/sleep.hpp"
-#include "compat/util.hpp"
 #include "keybinding-worker.hpp"
+#include "compat/meta.hpp"
 
 #include <QDebug>
 #include <QMutexLocker>
@@ -195,7 +194,7 @@ void KeybindingWorker::run()
             }
         }
 
-        portable::sleep(100);
+        Sleep(100);
     }
 }
 

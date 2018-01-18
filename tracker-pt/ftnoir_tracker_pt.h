@@ -15,7 +15,6 @@
 #include "pt-api.hpp"
 #include "point_tracker.h"
 #include "cv/video-widget.hpp"
-#include "compat/util.hpp"
 
 #include <atomic>
 #include <memory>

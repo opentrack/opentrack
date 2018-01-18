@@ -12,6 +12,11 @@
 template<typename t>
 using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>, std::decay_t<t>, const t&>;
 
+#define progn(...) (([&]() { __VA_ARGS__ })())
+#define prog1(x, ...) (([&]() { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
+
+#define once_only(...) do { static bool once__ = false; if (!once__) { once__ = true; __VA_ARGS__; } } while(false)
+
 #if 0
 
 #include <tuple>

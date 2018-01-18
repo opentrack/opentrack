@@ -5,10 +5,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "ftnoir_filter_accela.h"
+#include "compat/math.hpp"
+#include "api/plugin-api.hpp"
+
 #include <algorithm>
 #include <QDebug>
 #include <QMutexLocker>
-#include "api/plugin-api.hpp"
 
 #include "compat/math-imports.hpp"
 

@@ -9,6 +9,9 @@
 #pragma once
 
 #include "export.hpp"
+#include "time.hpp"
+
+#include <ctime>
 
 #if defined (_WIN32)
 #   include <windows.h>
@@ -16,11 +19,6 @@
 #   include <inttypes.h>
 #   include <mach/mach_time.h>
 #endif
-
-#include <ctime>
-
-#include "time.hpp"
-#include "util.hpp"
 
 class OTR_COMPAT_EXPORT Timer final
 {

@@ -1,7 +1,6 @@
 #include "extensions.hpp"
 
 #include <functional>
-#include "compat/util.hpp"
 
 using namespace options;
 

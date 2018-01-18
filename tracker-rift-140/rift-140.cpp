@@ -15,7 +15,6 @@
 
 #include "rift-140.hpp"
 #include "api/plugin-api.hpp"
-#include "compat/util.hpp"
 #include <Extras/OVR_Math.h>
 
 #include <QString>

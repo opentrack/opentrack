@@ -10,7 +10,7 @@
 #include "defs.hpp"
 
 #include "compat/timer.hpp"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <cmath>
 

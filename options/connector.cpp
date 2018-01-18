@@ -6,7 +6,6 @@
  * notice appear in all copies.
  */
 
-#include "compat/util.hpp"
 #include "connector.hpp"
 #include "value.hpp"
 

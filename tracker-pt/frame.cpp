@@ -1,5 +1,7 @@
 #include "frame.hpp"
 
+#include "compat/math.hpp"
+
 #include <cstring>
 #include <tuple>
 

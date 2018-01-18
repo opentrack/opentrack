@@ -14,7 +14,7 @@
 
 #include "compat/nan.hpp"
 #include "compat/sleep.hpp"
-#include "compat/util.hpp"
+#include "compat/math.hpp"
 
 #include "pipeline.hpp"
 

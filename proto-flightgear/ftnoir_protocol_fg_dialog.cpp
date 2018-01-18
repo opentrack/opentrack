@@ -10,7 +10,7 @@
  */
 #include "ftnoir_protocol_fg.h"
 #include "api/plugin-api.hpp"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <QString>
 #include <QUrl>

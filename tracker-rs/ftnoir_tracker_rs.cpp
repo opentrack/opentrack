@@ -9,7 +9,7 @@
 #include "ftnoir_tracker_rs_controls.h"
 #include "imagewidget.h"
 #include "api/plugin-api.hpp"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 #include <QMessageBox>
 #include <QProcess>
 #include <QStackedLayout>

@@ -4,8 +4,11 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
+
 #include "ftnoir_protocol_mouse.h"
+
 #include "api/plugin-api.hpp"
+#include "compat/math.hpp"
 #include <cmath>
 #include <algorithm>
 #include <windows.h>

@@ -6,11 +6,9 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "compat/util.hpp"
-
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <cassert>
 #include <cstddef>

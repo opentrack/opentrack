@@ -7,6 +7,7 @@
  */
 
 #include "tie.hpp"
+#include "compat/run-in-thread.hpp"
 
 namespace options {
 

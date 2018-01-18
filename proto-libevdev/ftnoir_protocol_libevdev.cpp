@@ -10,8 +10,6 @@
 #include <errno.h>
 #include <string.h>
 
-#include "compat/util.hpp"
-
 #include <algorithm>
 
 #define CHECK_LIBEVDEV(expr) if ((error = (expr)) != 0) goto error;

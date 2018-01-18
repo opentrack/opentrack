@@ -12,11 +12,13 @@
 #include "cv/numeric.hpp"
 #include "pt-api.hpp"
 
-#include <opencv2/core.hpp>
 #include <cstddef>
 #include <memory>
 #include <vector>
 #include <array>
+
+#include <opencv2/core.hpp>
+
 #include <QObject>
 
 namespace pt_module {

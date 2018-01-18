@@ -12,7 +12,7 @@
 #include "compat/camera-names.hpp"
 #include "compat/sleep.hpp"
 #include "compat/run-in-thread.hpp"
-#include "opentrack-library-path.h"
+#include "compat/library-path.hpp"
 
 #include <cstring>
 

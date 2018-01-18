@@ -5,6 +5,7 @@
 #include "connector.hpp"
 
 #include "export.hpp"
+#include "compat/meta.hpp"
 
 #include <QObject>
 #include <QString>

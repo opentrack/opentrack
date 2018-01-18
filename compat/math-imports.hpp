@@ -1,11 +1,5 @@
 #pragma once
 
-template <typename T>
-static inline constexpr auto signum(T x)
-{
-    return x < T(0) ? -1 : 1;
-}
-
 #include <cmath>
 
 using std::copysign;
@@ -51,3 +45,5 @@ using std::uint8_t;
 
 using std::min;
 using std::max;
+
+#include "math.hpp"

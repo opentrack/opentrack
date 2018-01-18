@@ -7,7 +7,7 @@
  */
 #include "vjoystick.h"
 #include "api/plugin-api.hpp"
-#include "compat/util.hpp"
+#include "compat/math.hpp"
 
 #include <cstring>
 #include <QDebug>

@@ -9,7 +9,6 @@
 #include "ftnoir_tracker_udp.h"
 #include "api/plugin-api.hpp"
 #include "compat/nan.hpp"
-#include "compat/util.hpp"
 
 #include <iterator>
 

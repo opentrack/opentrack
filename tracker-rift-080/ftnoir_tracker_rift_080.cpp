@@ -15,7 +15,6 @@
 
 #include "ftnoir_tracker_rift_080.h"
 #include "api/plugin-api.hpp"
-#include "compat/util.hpp"
 
 #include <QString>
 

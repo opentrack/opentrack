@@ -2,8 +2,6 @@
 
 #include "export.hpp"
 
-#include "compat/util.hpp"
-
 // included here to propagate into callers of options::group
 #include "metatype.hpp"
 

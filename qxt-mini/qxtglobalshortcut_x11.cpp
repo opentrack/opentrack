@@ -46,7 +46,6 @@
 #include <xcb/xcb.h>
 
 #include "powerset.hpp"
-#include "compat/util.hpp"
 
 #include <iterator>
 #include <vector>
