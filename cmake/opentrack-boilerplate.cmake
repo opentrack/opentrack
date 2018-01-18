@@ -136,7 +136,12 @@ function(otr_module n_)
 
     set(n "opentrack-${n_}")
 
-    otr_glob_sources(${n} ${arg_SUBDIRS})
+    if(NOT arg_SUBDIRS)
+        otr_glob_sources(${n} .)
+    else()
+        otr_glob_sources(${n} ${arg_SUBDIRS})
+    endif()
+
     list(APPEND ${n}-all ${arg_SOURCES})
 
     if(NOT arg_NO-QT)
