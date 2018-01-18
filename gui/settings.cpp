@@ -54,15 +54,24 @@ options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
 
     tie_setting(main.center_at_startup, ui.center_at_startup);
 
-    tie_setting(main.tcomp_p, ui.tcomp_enable);
+    const reltrans_state reltrans_modes[] = {
+        reltrans_disabled,
+        reltrans_enabled,
+        reltrans_non_center,
+    };
 
-    tie_setting(main.tcomp_disable_tx, ui.tcomp_tx_disable);
-    tie_setting(main.tcomp_disable_ty, ui.tcomp_ty_disable);
-    tie_setting(main.tcomp_disable_tz, ui.tcomp_tz_disable);
+    for (unsigned k = 0; k < 3; k++)
+        ui.reltrans_mode->setItemData(k, int(reltrans_modes[k]));
 
-    tie_setting(main.tcomp_disable_src_yaw, ui.tcomp_src_yaw_disable);
-    tie_setting(main.tcomp_disable_src_pitch, ui.tcomp_src_pitch_disable);
-    tie_setting(main.tcomp_disable_src_roll, ui.tcomp_src_roll_disable);
+    tie_setting(main.reltrans_mode, ui.reltrans_mode);
+
+    tie_setting(main.reltrans_disable_tx, ui.tcomp_tx_disable);
+    tie_setting(main.reltrans_disable_ty, ui.tcomp_ty_disable);
+    tie_setting(main.reltrans_disable_tz, ui.tcomp_tz_disable);
+
+    tie_setting(main.reltrans_disable_src_yaw, ui.tcomp_src_yaw_disable);
+    tie_setting(main.reltrans_disable_src_pitch, ui.tcomp_src_pitch_disable);
+    tie_setting(main.reltrans_disable_src_roll, ui.tcomp_src_roll_disable);
 
     tie_setting(main.neck_z, ui.neck_z);
 

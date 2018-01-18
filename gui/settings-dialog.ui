@@ -1785,13 +1785,47 @@
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="tcomp_enable">
-            <property name="styleSheet">
-             <string notr="true"/>
-            </property>
-            <property name="text">
-             <string>Enable</string>
-            </property>
+           <widget class="QWidget" name="widget" native="true">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QLabel" name="label_17">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>10</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Mode</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="reltrans_mode">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <horstretch>4</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <item>
+                <property name="text">
+                 <string>Disabled</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Enabled</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Enabled when not aiming</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
            </widget>
           </item>
           <item>
@@ -1825,22 +1859,6 @@
               <number>0</number>
              </property>
              <item row="2" column="0">
-              <widget class="QCheckBox" name="tcomp_tx_disable">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                 <horstretch>3</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="styleSheet">
-                <string notr="true"/>
-               </property>
-               <property name="text">
-                <string>Disable for X</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="0">
               <widget class="QCheckBox" name="tcomp_ty_disable">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -1856,7 +1874,36 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="tcomp_tx_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>3</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Disable for X</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="tcomp_src_roll_disable">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+                 <horstretch>2</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Disable effect by roll</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
               <widget class="QCheckBox" name="tcomp_tz_disable">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -1873,19 +1920,6 @@
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="QCheckBox" name="tcomp_src_yaw_disable">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                 <horstretch>2</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>Disable effect by yaw</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
               <widget class="QCheckBox" name="tcomp_src_pitch_disable">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -1898,8 +1932,8 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
-              <widget class="QCheckBox" name="tcomp_src_roll_disable">
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="tcomp_src_yaw_disable">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
                  <horstretch>2</horstretch>
@@ -1907,7 +1941,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>Disable effect by roll</string>
+                <string>Disable effect by yaw</string>
                </property>
               </widget>
              </item>
@@ -2147,7 +2181,6 @@
   <tabstop>src_z</tabstop>
   <tabstop>invert_z</tabstop>
   <tabstop>tracklogging_enabled</tabstop>
-  <tabstop>tcomp_enable</tabstop>
   <tabstop>tcomp_tx_disable</tabstop>
   <tabstop>tcomp_ty_disable</tabstop>
   <tabstop>tcomp_tz_disable</tabstop>

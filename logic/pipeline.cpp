@@ -15,6 +15,7 @@
 #include "compat/nan.hpp"
 #include "compat/sleep.hpp"
 #include "compat/math.hpp"
+#include "compat/meta.hpp"
 
 #include "pipeline.hpp"
 
@@ -64,29 +65,38 @@ euler_t reltrans::rotate(const rmat& rmat, const euler_t& xyz,
     return output;
 }
 
-Pose reltrans::apply_pipeline(bool enable, const Pose& value, const Mat<bool, 6, 1>& disable)
+Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const Mat<bool, 6, 1>& disable)
 {
-    if (enable)
+    if (state != reltrans_disabled)
     {
         euler_t rel { value(TX), value(TY), value(TZ) };
 
         {
-            const bool yaw_in_zone = std::fabs(value(Yaw)) > 135;
-            const bool pitch_in_zone = value(Pitch) < -30;
-            const bool tcomp_in_zone_ = yaw_in_zone || pitch_in_zone;
+            bool tcomp_in_zone_ = progn(
+                if (state == reltrans_non_center)
+                {
+                    const bool yaw_in_zone = std::fabs(value(Yaw)) < 12;
+                    const bool pitch_in_zone = std::fabs(value(Pitch)) < 15;
+                    const bool roll_in_zone = std::fabs(value(Roll)) < 7;
 
-            if (!tcomp_state && tcomp_in_zone != tcomp_in_zone_)
+                    return !(yaw_in_zone && pitch_in_zone && roll_in_zone);
+                }
+                else
+                    return true;
+            );
+
+            if (!cur && in_zone != tcomp_in_zone_)
             {
-                //qDebug() << "tcomp-interp: START";
-                tcomp_state = true;
-                tcomp_interp_timer.start();
+                //qDebug() << "reltrans-interp: START" << tcomp_in_zone_;
+                cur = true;
+                interp_timer.start();
             }
 
-            tcomp_in_zone = tcomp_in_zone_;
+            in_zone = tcomp_in_zone_;
         }
 
         // only when looking behind or downward
-        if (tcomp_in_zone)
+        if (in_zone)
         {
             const double tcomp_c[] = {
                 double(!disable(Yaw)),
@@ -105,41 +115,41 @@ Pose reltrans::apply_pipeline(bool enable, const Pose& value, const Mat<bool, 6,
                          disable(TZ));
         }
 
-        if (tcomp_state)
+        if (cur)
         {
-            const double dt = tcomp_interp_timer.elapsed_seconds();
-            tcomp_interp_timer.start();
+            const double dt = interp_timer.elapsed_seconds();
+            interp_timer.start();
 
             constexpr double RC = .1;
             const double alpha = dt/(dt+RC);
 
             constexpr double eps = .05;
 
-            tcomp_interp_pos = tcomp_interp_pos * (1-alpha) + rel * alpha;
+            interp_pos = interp_pos * (1-alpha) + rel * alpha;
 
-            const euler_t tmp = rel - tcomp_interp_pos;
-            rel = tcomp_interp_pos;
+            const euler_t tmp = rel - interp_pos;
+            rel = interp_pos;
             const double delta = std::fabs(tmp(0)) + std::fabs(tmp(0)) + std::fabs(tmp(0));
 
-            //qDebug() << "tcomp-interp: delta" << delta;
+            //qDebug() << "reltrans-interp: delta" << delta;
 
             if (delta < eps)
             {
-                //qDebug() << "tcomp-interp: STOP";
-                tcomp_state = false;
+                //qDebug() << "reltrans-interp: STOP";
+                cur = false;
             }
         }
         else
         {
-            tcomp_interp_pos = rel;
+            interp_pos = rel;
         }
 
         return { rel(0), rel(1), rel(2), value(Yaw), value(Pitch), value(Roll) };
     }
     else
     {
-        tcomp_state = false;
-        tcomp_in_zone = false;
+        cur = false;
+        in_zone = false;
 
         return value;
     }
@@ -403,9 +413,9 @@ void pipeline::logic()
 
             nan_check(value);
 
-            value = rel.apply_pipeline(s.tcomp_p, value, {
-                !!s.tcomp_disable_src_yaw, !!s.tcomp_disable_src_pitch, !!s.tcomp_disable_src_roll,
-                !!s.tcomp_disable_tx, !!s.tcomp_disable_ty, !!s.tcomp_disable_tz
+            value = rel.apply_pipeline(s.reltrans_mode, value, {
+                !!s.reltrans_disable_src_yaw, !!s.reltrans_disable_src_pitch, !!s.reltrans_disable_src_roll,
+                !!s.reltrans_disable_tx, !!s.reltrans_disable_ty, !!s.reltrans_disable_tz
             });
 
             for (int i = 0; i < 3; i++)

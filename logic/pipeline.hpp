@@ -37,10 +37,10 @@ using euler_t = euler::euler_t;
 
 class reltrans
 {
-    euler_t tcomp_interp_pos, tcomp_last_value;
-    Timer tcomp_interp_timer;
-    bool tcomp_state = false;
-    bool tcomp_in_zone = false;
+    euler_t interp_pos, last_value;
+    Timer interp_timer;
+    bool cur = false;
+    bool in_zone = false;
 
 public:
     reltrans();
@@ -50,7 +50,7 @@ public:
                    bool disable_tx, bool disable_ty, bool disable_tz) const;
 
     warn_result_unused
-    Pose apply_pipeline(bool enable, const Pose& value, const Mat<bool, 6, 1>& disable);
+    Pose apply_pipeline(reltrans_state cur, const Pose& value, const Mat<bool, 6, 1>& disable);
 };
 
 using namespace time_units;

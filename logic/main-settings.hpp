@@ -15,6 +15,13 @@
 
 #include "export.hpp"
 
+enum reltrans_state
+{
+    reltrans_disabled   = 0,
+    reltrans_enabled    = 1,
+    reltrans_non_center = 2,
+};
+
 namespace main_settings_impl {
 
 using namespace options;
@@ -40,8 +47,9 @@ struct OTR_LOGIC_EXPORT main_settings final
     axis_opts a_x, a_y, a_z;
     axis_opts a_yaw, a_pitch, a_roll;
     axis_opts* all_axis_opts[6];
-    value<bool> tcomp_p, tcomp_disable_tx, tcomp_disable_ty, tcomp_disable_tz;
-    value<bool> tcomp_disable_src_yaw, tcomp_disable_src_pitch, tcomp_disable_src_roll;
+    value<reltrans_state> reltrans_mode { b, "relative-translation-mode", reltrans_disabled };
+    value<bool> reltrans_disable_tx, reltrans_disable_ty, reltrans_disable_tz;
+    value<bool> reltrans_disable_src_yaw, reltrans_disable_src_pitch, reltrans_disable_src_roll;
     value<bool> tray_enabled, tray_start;
     value<bool> center_at_startup;
     //value<int> center_method;
