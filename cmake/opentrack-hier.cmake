@@ -10,8 +10,8 @@
 set(opentrack-install-rpath "")
 if(APPLE)
     set(opentrack-hier-pfx ".")
-    set(opentrack-hier-path "/")
-    set(opentrack-hier-doc "/")
+    set(opentrack-hier-path "/")                        # MUST HAVE A TRAILING BACKSLASH
+    set(opentrack-hier-doc "/")                         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-hier-str RUNTIME DESTINATION . LIBRARY DESTINATION .)
     set(opentrack-doc-pfx "./doc")
     set(opentrack-doc-src-pfx "./source-code")
@@ -19,8 +19,8 @@ if(APPLE)
     set(opentrack-i18n-path "./i18n")
 elseif(WIN32)
     set(opentrack-hier-pfx "./modules")
-    set(opentrack-hier-path "/modules/")
-    set(opentrack-hier-doc "/doc/")
+    set(opentrack-hier-path "/modules/")                # MUST HAVE A TRAILING BACKSLASH
+    set(opentrack-hier-doc "/doc/")                     # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-doc-pfx "./doc")
     set(opentrack-doc-src-pfx "./source-code")
     set(opentrack-hier-str RUNTIME DESTINATION ./modules/ LIBRARY DESTINATION ./modules/)
@@ -29,8 +29,8 @@ elseif(WIN32)
     set(opentrack-hier-debug "./debug")
 else()
     set(opentrack-hier-pfx "libexec/opentrack")
-    set(opentrack-hier-path "/../libexec/opentrack/")
-    set(opentrack-hier-doc "/share/doc/opentrack/")
+    set(opentrack-hier-path "/../libexec/opentrack/")   # MUST HAVE A TRAILING BACKSLASH
+    set(opentrack-hier-doc "/share/doc/opentrack/")     # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-doc-pfx "./share/doc/opentrack")
     set(opentrack-doc-src-pfx "./share/doc/opentrack/source-code")
     set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/${opentrack-hier-pfx}")
