@@ -42,7 +42,7 @@ static void force_main_settings()
 {
     main_settings s;
     s.center_at_startup = true;
-    s.tcomp_p = false;
+    s.reltrans_mode = reltrans_disabled;
     s.neck_enable = false;
 
     module_settings m;
