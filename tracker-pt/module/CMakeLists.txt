@@ -1,0 +1,6 @@
+find_package(OpenCV 3.0 QUIET)
+if(OpenCV_FOUND)
+    otr_module(tracker-pt)
+    target_link_libraries(opentrack-tracker-pt opentrack-tracker-pt-base)
+    target_include_directories(opentrack-tracker-pt PRIVATE "${CMAKE_SOURCE_DIR}/tracker-pt")
+endif()

@@ -10,7 +10,7 @@
 #include "pt-api.hpp"
 
 #include "ftnoir_tracker_pt.h"
-#include "ui_FTNoIR_PT_Controls.h"
+#include "tracker-pt/ui_FTNoIR_PT_Controls.h"
 #include "cv/translation-calibrator.hpp"
 #include "cv/video-widget.hpp"
 #include "compat/correlation-calibrator.hpp"
