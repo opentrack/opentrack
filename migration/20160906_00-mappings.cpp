@@ -67,7 +67,7 @@ static QList<QList<QPointF>> get_old_splines()
 
         return ret;
     });
-};
+}
 
 struct mappings_from_2_3_0_rc11 : migration
 {
