@@ -184,6 +184,7 @@ main_window::main_window() :
             Qt::QueuedConnection);
 
     init_tray();
+    ensure_tray();
 
     register_shortcuts();
     det_timer.start(1000);
