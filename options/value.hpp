@@ -103,7 +103,7 @@ public:
     }
 
     never_inline
-    operator t() const { return std::forward<t>(get()); }
+    operator t() const { return get(); }
 
     never_inline
     t operator->() const
@@ -135,7 +135,7 @@ public:
     never_inline
     u to() const
     {
-        return static_cast<u>(std::forward<t>(get()));
+        return static_cast<u>(get());
     }
 
 private:

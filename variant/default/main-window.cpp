@@ -643,7 +643,7 @@ bool main_window::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
 template<typename t, typename... Args>
 inline bool main_window::mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
-    return mk_window_common(place, [&]() { return new t(std::forward<Args>(params)...); });
+    return mk_window_common(place, [&]() { return new t(params...); });
 }
 
 template<typename t>
