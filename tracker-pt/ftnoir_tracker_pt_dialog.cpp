@@ -11,7 +11,9 @@
 #include "compat/math.hpp"
 #include "compat/camera-names.hpp"
 #include <opencv2/core.hpp>
+
 #include <QString>
+#include <QtGlobal>
 #include <QDebug>
 
 using namespace options;
@@ -22,6 +24,8 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     timer(this),
     trans_calib(1, 2, 0)
 {
+    Q_INIT_RESOURCE(tracker_pt_base);
+
     ui.setupUi(this);
 
     ui.camdevice_combo->addItems(get_camera_names());

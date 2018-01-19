@@ -23,7 +23,7 @@
    <string>PointTracker Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="ftnoir_tracker_pt.qrc">
+   <iconset resource="tracker_pt_base.qrc">
     <normaloff>:/Resources/Logo_IR.png</normaloff>:/Resources/Logo_IR.png</iconset>
   </property>
   <property name="layoutDirection">
