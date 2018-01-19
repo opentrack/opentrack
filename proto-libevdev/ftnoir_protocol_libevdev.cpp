@@ -1,5 +1,6 @@
 #include "ftnoir_protocol_libevdev.h"
 #include "api/plugin-api.hpp"
+#include "compat/math.hpp"
 
 #include <stdio.h>
 #include <fcntl.h>
