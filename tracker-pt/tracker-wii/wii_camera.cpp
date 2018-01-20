@@ -77,8 +77,8 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 
 pt_camera_open_status WIICamera::start(int idx, int fps, int res_x, int res_y)
 {
-	m_pDev = new wiimote;
-	if (m_pDev == NULL)
+	m_pDev = std::make_unique<wiimote>();
+	if (!m_pDev)
 	{
 		stop();
 		return cam_open_error;
@@ -97,7 +97,7 @@ void WIICamera::stop()
 	m_pDev->Disconnect();
 	Beep(1000, 200);
 	if (m_pDev) {
-		delete m_pDev;
+		m_pDev=nullptr;
 		m_pDev = NULL;
 	}
 
@@ -140,6 +140,7 @@ bool WIICamera::_get_points(struct wii_info& wii)
 {
 	bool dot_sizes = (m_pDev->IR.Mode == wiimote_state::ir::EXTENDED);
 	bool ret = false;
+	int point_count = 0;
 
 	for (unsigned index = 0; index < 4; index++)
 	{
@@ -153,6 +154,7 @@ bool WIICamera::_get_points(struct wii_info& wii)
 				wii.Points[index].isize = 1;
 			}
 			wii.Points[index].bvis = dot.bVisible;
+			point_count++;
 			ret = true;
 		} else {
 			wii.Points[index].ux = 0;
@@ -161,6 +163,7 @@ bool WIICamera::_get_points(struct wii_info& wii)
 			wii.Points[index].bvis = dot.bVisible;
 		}
 	}
+	m_pDev->SetLEDs(3 - point_count);
 	return ret;
 }
 
