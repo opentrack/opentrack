@@ -1,0 +1,281 @@
+____________________________________________________________
+
+  - WiiYourself! - native C++ Wiimote library  v1.15
+    (c) gl.tter 2007-10 - http://gl.tter.org
+____________________________________________________________
+
+History:
+
+What's new since 1.01a? - Main Features (see ReadMe & full history for details)
+
+    + Balance Board support with automatic offset removal.
+
+    + Seemingly solid MotionPlus support.
+
+    + Library no longer includes project files - just add wiimote.cpp &
+      header to your project (avoids all build-settings releated issues)
+    
+    + better MinGW support:  (thanks Elmo)
+      adds functional _ASSERT/TRACE/WARN/DEEP_TRACE macros
+          non-MSYS dependent build option via 'make_mingw.bat'.
+          Demo builds & works under MinGW.
+    
+    + new Python wrapper (by Robert Xiao, see 'Python' folder for details)
+    
+    + library now compiles on Borland (thanks Griff - demo not tested).
+    
+    + many fixes, connections should be more reliable.
+    
+    + join my mailing list to give feedback, share ideas & stay informed:
+        http://gl.tter.org/mailman/listinfo/wiiyourself_gl.tter.org
+
+1.15 Final:
+    + fixed MotionPlus detection on stacks that require HID writes!
+    + Balance Board corner weight values have been quartered (.Total remains
+       unchanged).  The non-raw corner weight incorrectly reported 4x their
+       real value.
+    + Wiimote calibration info is more reliably received (it may not have
+       arrived in many instances)
+    + exposed a partially-unique device ID (wiimote::UniqueID).  This 64bit
+       number is set during the Connect() call, and is derived from the
+       device-specific calibration values.  It's therefore not guaranteed to
+       be truly unique (several devices may conceivably hold the same calibration
+       values).  However in practice it is likely to be unique between a
+       few wiimotes, so it can be used to eg. assign a particular wiimote to the
+       same player every time.
+    + internal: made the HID report output queue fixed-size to remove any
+                 glitches from frequent dynamic memory allocation (thanks
+                 Steve).  The old STL-queue based code can still be reenabled
+                 by defining USE_DYNAMIC_HIDQUEUE.
+
+1.15 RC2:
+    + added Python wrapper by Robert Xiao - you can now use WiiYourself! with
+       Python! (thanks Robert)
+    + hopefully fixed MotionPlus connection problems! (send report to my
+       mailing list)
+
+    + added virtual event-change notifier to the wiimote object (thanks Robert
+       Xio) - works the same as external callbacks.  To use, derive your own
+       class from the wiimote object and override ChangedNotifier()
+
+    + changed the way callbacks work:
+    
+      in previous versions, it was OK to access the wiimote object's state
+        from callbacks.  This required an internal RefreshState() call just
+        before the callback function is executed - but this could then change
+        the internal state unexpectedly, so values could change in polling
+        loops even between the app's own RefreshState() calls.
+        
+      to correct this, the callback functions now get a read-only copy
+       of the newest state passed in, you should only access this copy as
+       state in the wiimote object is likely out-of-date.
+       
+      In short, the wiimote object's exposed state is now _only_ refreshed
+       by the application, not by callbacks.
+       
+      (this also solved Motion+ connection and disabling failures).
+      
+    + added new change event 'CONNECTED'
+    
+      the demo previously used callbacks to set most of its report types, but
+       it also set them once shortly after connecting the wiimote, and this could
+       cause it to set the wrong one, breaking extension data.  Instead it now
+       uses the CONNECTED event in the callback.  It's best to only set these
+       in one place.
+       
+1.15 RC:
+    + fixed missing Balance Board calibration values for the 34kg category
+       (thanks Benjamin Lassort).
+    
+    + fixed Wiimote disconnecting in certain scenarios (ReportType wasn't
+       initialised, and this could sometimes be sent to the 'mote, causing
+       it to disconnect - thanks Robert Xiao).
+       
+    + minor changes to support Robert Xiao's WiiYourself! Python Wrapper!
+      (next release).
+
+1.14 BETA:
+	  - added new state & callback event: bBatteryDrained / BATTERY_DRAINED
+	     this is sent went the wiimote signals that the batteries are nearly
+	     empty.
+	  - added MotionPlus extension events (ie. for extensions plugged into it):
+	  	  MOTIONPLUS_EXTENSION_CONNECTED
+	  	  MOTIONPLUS_EXTENSION_DISCONNECTED
+	  	 wiimote::MotionPlusHasExtension()
+	  	 wiimote::DisableMotionPlus()
+	  	 wiimote::EnableMotionPlus()
+         
+         (apps can now decide if they want to disable the MotionPlus to read the
+         extension instead, see demo for an example)
+         
+         ** however **, MotionPlus disabling isn't reliable at the moment (it
+         rarely works), and so extension connected to an already enabled plus
+         rarely are activated.  Could use some help on this one.
+	     
+1.13 BETA:
+      + ** BALANCE BOARDS no longer require setting a report type! **
+        there is only one type for it, and this is now set automatically.
+        
+      + 'At Rest' offset removal added (currently only for Balance Boards).
+         this reads the current analogue sensor values after a Connect() call,
+         and then subtracts them from future values, to remove any unwanted
+         offsets (currently ~ +- 0-2.5kg with Balance Boards).  'raw' values
+         are not affected.
+         
+         If the device was not at rest during Connect(), then the app can
+          remove the current offsets manually via CalibrateAtRest().
+          
+      + ** PRELIMINARY MOTION PLUS SUPPORT! **
+      
+        Motion Plus does not report itself until queried, so it's currently
+        queried every second.  If detected, it is activated and is reported
+        like any other extension.  Note that extensions plugged into the
+        MotionPlus itself can't currently be used at the same time (it's not
+        known if this is even possible).  Right now you need to unplug the
+        MotionPlus to use another extension (I will add some way to toggle
+        the MotionPlus so that another extensions becomes available again)
+        in the next release.
+        
+        According to this interview with the MotionPlus designers
+        
+        there are two gyro sensitivity modes, but this has not been reverse
+        engineered yet.  Also I'm not 100% certain of the correctness of the
+        values (although they seem right), or their actual scale (ie. how many
+        degrees rotations per second do the float values actually represent)?
+        
+      + the Demo has been updated for both devices.
+      + ReadMe has been updated with new relevant info.
+        
+1.12 BETA:
+      + ** REMOVED ALL LIBRARY PROJECTS **
+         instead just add wiimote.cpp to your application and include the header
+         as before (this removes all build/project related-problems, like matching
+         the runtime/Unicode settings etc).
+      
+      + Balance Board is now working (thanks to Akihiko's donation of a board!)
+      + added wiimote::IsBalanceBoard() (Balance Boards are detected as wiimotes
+         with a permanent BALANCE_BOARD extension).
+         NOTE: Balance Boards require the IN_BUTTONS_BALANCE_BOARD report type
+               (see demo).
+      + changed some of the wiimote_state extension enums to ID a wider variety.
+      + no more invalid acceleration values from devices that don't support it.
+      + fixed some project settings.
+      
+1.11 BETA:
+      + new way to detect extensions (supposedly works on all of them, including
+         wireless Nunchuks) - only tested on stock Nunchuk.
+      + longer sleep after SetReportType (may help data not being reported).
+
+1.1 BETA:
+      + beta Balance Board support!
+      + better MinGW support:  (thanks Elmo)
+          adds functional _ASSERT/TRACE/WARN/DEEP_TRACE macros
+          non-MSYS dependent build option via 'make_mingw.bat'.
+          Demo builds & works under MinGW.
+      + directory reorganisation:
+            - Each compiler has own project dir (VC2005/VC2005/MinGW),
+              and equivialent lib/ sudir.
+      + now ships with working VC2005 SP1 / VC2008 / MinGW libraries
+         (and MinGW DLL).
+      + library now compiles on Borland (thanks Griff) - demo may not.
+
+1.01a: (1.01 had incorrect version defines)
+      + extensions now work when already connected before Connect(),
+         & also when an EXT SetReportType() is used initially.
+      + ** renamed wiimote_state::IR::dot::bVisible to 'bVisible'. **
+      + Disconnect() now waits for its threads to exit.
+      +  made TRACE/WARN macros VC2005+ specific (as earlier VC versions don't
+         support variable arg macros).
+      + corrected wiimote.h Connect() comments (wiimote selection is 1-based,
+         not 0-based)
+
+1.00:
+    + ** major bug fix, write buffer was abused. ** might have caused various
+         problems.
+    + ** added delay to EnableIR(), fixed IR init problems for those that
+         had them (thanks Cameron) **.  if you had to use your own delays
+         to get things to work, try removing them now.
+    + wiimote_state::classic_controller::buttons::TriggerL() / R were reversed
+       (thanks Vico).
+    + patch & Makefile for MSYS / MinGW (thanks Dario).
+    + updated ReadMe.
+
+0.99b:
+    + added support for the Guitar Hero controller (thanks Morgan).
+       It's just a Classic Controller with a different ID and is read the same,
+       but can be differentiated via wiimote_state::extension_type::CLASSIC_GUITAR.
+
+0.96b:
+    + fix ClassicButtonNameFromBit[]
+    + fix WIIYOURSELF_VERSION_MINOR2
+
+0.95b:
+    + Classic Controller button fixes (thanks Farshid).
+    + sightly longer Sleep() in Reset() - hopefully fixes some reports of
+       wiimote acceleration values not working.
+    
+0.94b:
+    + deadzones weren't working.
+    
+0.93b:
+    + ** compiled libs are now stored in /libs **
+    + ** up to 4 dots are now available in every IR mode **
+    + some 'state_change_flags' weren't quite generated correctly.
+    - removed 'wiimote_state::polling' flags (redundant, flags are already
+       returned via RefreshState()).
+    + various internal improvements
+    
+0.92b:
+    ** Polling changes **
+      - now need to call RefreshState() once before each polling pass (see
+         header comments & demo). this was done to synchronise the threaded
+         state updates, so that data integrity is guaranteed.
+    ** Callback changes **
+      - combined 'wiimote_state_changed' and 'extension_state_changed' flags
+         into 'state_change_flags
+      - removed 'ExtensionChangedCallback' (only a single callback is used now)
+      - added 'CallbackTriggerFlags' to minimize callback overhead
+       (see header comments & demo)
+    + added Reset() (see header comments)
+    + button mask TRIGGER is now _B
+    
+    Demo: removed 'wiimote2' line (debug leftover)
+
+0.82b:
+    ** code/demo failed pre-XP (HID writes require XP+).  code now detects
+        HID write support dynamically. **
+    + tidied code & surpressed redundant warning (or just enable C++ exceptions).
+    + Improved debug output (mainly DEEP_TRACE)
+    + Connect() can now take (and defaults to) 'FIRST_AVAILABLE' as the wiimote
+      index (see header comments).
+    + 'wiimote_sample' is now auto-cleared on construction
+    + Adjusted max 'theoretical' raw IR coord values (1023x767) to largest
+       actually observed, to output full 0-1 float range.
+    + **Inverted** IR X float coord to match traditional 'left = 0' convention
+       (raw coords unaffected for now).
+    + Added state recording ability to aid state/motion analysis.  See RecordState();
+    - removed RequestBatteryUpdate() (battery level is now periodically refreshed)
+    - disabled ...CALIBRATION_CHANGED flags (not useful)
+    
+    Demo  : should now work pre-XP.
+    ReadMe: added Wiimote/PC installation notes (MS stack is especially tricky).
+
+0.81b:
+    + connection loss is now detected (via failed writes)
+      + ConnectionWasLost() added
+    + report modes renamed for clarity.
+    + Connect(): added 'force_hidwrites' (for testing only).
+    + Extension connections now seem to be reliable.
+    + Battery is now periodically refreshed (also used for loss detection)
+    + 'BatteryRaw' was set incorrectly
+    + added 'wiimote::ClassicButtonNameFromBit[]'
+
+    + Demo   : Classic Controller data shown.
+    + Demo   : IR dot sizes now reported when possible (only if extension 
+               data isn't requested as they're not available then).
+            
+    + License: 'no harm' clause added.
+    + ReadMe : added build notes etc.
+
+0.1b:
+    First release.
