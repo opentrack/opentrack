@@ -217,12 +217,12 @@ void main_window::init_tray()
 
     menu_action_header.setEnabled(false);
     menu_action_header.setText(display_name);
-    menu_action_header.setIcon(QIcon(":/images/facetracknoir.png"));
+    menu_action_header.setIcon(QIcon(":/images/opentrack.png"));
     tray_menu.addAction(&menu_action_header);
 
     menu_action_show.setIconVisibleInMenu(true);
     menu_action_show.setText(isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
-    menu_action_show.setIcon(QIcon(":/images/facetracknoir.png"));
+    menu_action_show.setIcon(QIcon(":/images/opentrack.png"));
     QObject::connect(&menu_action_show, &QAction::triggered, this, [&]() { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
     tray_menu.addAction(&menu_action_show);
 
@@ -748,7 +748,7 @@ void main_window::ensure_tray()
         if (!tray)
         {
             tray = std::make_unique<QSystemTrayIcon>(this);
-            tray->setIcon(QIcon(":/images/facetracknoir.png"));
+            tray->setIcon(QIcon(":/images/opentrack.png"));
             tray->setContextMenu(&tray_menu);
             tray->show();
 

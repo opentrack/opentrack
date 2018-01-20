@@ -43,6 +43,6 @@ class hydraDll : public Metadata
 {
 public:
     QString name() { return QString("Razer Hydra -- inertial device"); }
-    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
+    QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
 

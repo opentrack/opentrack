@@ -13,7 +13,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../gui/opentrack-res.qrc">
-    <normaloff>:/images/facetracknoir.png</normaloff>:/images/facetracknoir.png</iconset>
+    <normaloff>:/images/opentrack.png</normaloff>:/images/opentrack.png</iconset>
   </property>
   <property name="styleSheet">
    <string notr="true">#video_feed { border: 0; }

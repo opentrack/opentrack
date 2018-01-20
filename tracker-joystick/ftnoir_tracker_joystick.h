@@ -73,6 +73,6 @@ class joystickDll : public Metadata
 {
 public:
     QString name() { return otr_tr("Joystick input"); }
-    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
+    QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
 

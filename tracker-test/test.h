@@ -38,6 +38,6 @@ class test_metadata : public Metadata
 {
 public:
     QString name() { return _("Testing - sine wave"); }
-    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
+    QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
 

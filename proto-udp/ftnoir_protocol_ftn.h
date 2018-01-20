@@ -71,5 +71,5 @@ class udpDll : public Metadata
 {
 public:
     QString name() { return otr_tr("UDP over network"); }
-    QIcon icon() { return QIcon(":/images/facetracknoir.png"); }
+    QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
