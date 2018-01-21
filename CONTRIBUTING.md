@@ -2,8 +2,6 @@
 
 Please report issues rather than using old software versions. Unless problems are identified they'll never get corrected in new versions.
 
-Please set an informative title when creating a new issue and specify the software's component (tracker, filter, protocol, or the main executable) you're having issues with. If you're unable to, please **create an issue anyway** as it's important that problems are identified.
-
 Don't worry about your own English, it's not a problem since we'll be able to communicate anyway. If you're very concerned, please note that in the issue, and you'll receive responses in very plain English.
 
 # Contributing code to opentrack
