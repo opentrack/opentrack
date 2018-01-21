@@ -7,5 +7,6 @@ chronological order:
 - Xavier Hallade <<xavier.hallade@intel.com>>
 - Michael Welter <<mw.pub@welter-4d.de>>
 - Attila Csipa <<git@csipa.net>>
+- Wei Shuai <<cpuwolf@gmail.com>>
 
 See OPENTRACK-LICENSING.txt for licensing information.

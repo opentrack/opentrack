@@ -33,6 +33,7 @@ For the latest releases visit: <<https://github.com/opentrack/opentrack/releases
 - Arduino with custom firmware
 - Intel RealSense 3D cameras (Windows)
 - BBC micro:bit, LEGO, sensortag support via [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
+- Wiimote (Windows)
 
 # Output
 
@@ -67,6 +68,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - furax49 (hatire tracker author)
 - Michael Welter (contributor)
 - Attila Csipa (Micro:Bit author)
+- Wei Shuai (Wiimote tracker)
 
 # Thanks
 
