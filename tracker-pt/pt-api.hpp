@@ -17,8 +17,10 @@
 
 struct OTR_PT_EXPORT pt_camera_info final
 {
+    using f = typename types::f;
+
     pt_camera_info();
-    virtual double get_focal_length() const;
+    static double get_focal_length(f fov, int res_x, int res_y);
 
     double fov = 0;
     double fps = 0;
@@ -30,7 +32,13 @@ struct OTR_PT_EXPORT pt_camera_info final
 
 enum pt_camera_open_status : unsigned { cam_open_error, cam_open_ok_no_change, cam_open_ok_change };
 
-struct OTR_PT_EXPORT pt_frame
+struct OTR_PT_EXPORT pt_pixel_pos_mixin
+{
+    static std::tuple<double, double> to_pixel_pos(double x, double y, int w, int h);
+    static std::tuple<double, double> to_screen_pos(double px, double py, int w, int h);
+};
+
+struct OTR_PT_EXPORT pt_frame : pt_pixel_pos_mixin
 {
     pt_frame();
     virtual ~pt_frame();
@@ -51,13 +59,7 @@ struct OTR_PT_EXPORT pt_frame
     }
 };
 
-struct OTR_PT_EXPORT pt_pixel_pos_mixin
-{
-    static std::tuple<double, double> to_pixel_pos(double x, double y, int w, int h);
-    static std::tuple<double, double> to_screen_pos(double px, double py, int w, int h);
-};
-
-struct OTR_PT_EXPORT pt_preview : pt_frame, pt_pixel_pos_mixin
+struct OTR_PT_EXPORT pt_preview : pt_frame
 {
     virtual pt_preview& operator=(const pt_frame&) = 0;
     virtual QImage get_bitmap() = 0;

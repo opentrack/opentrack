@@ -59,14 +59,14 @@ void Tracker_PT::run()
 
     while(!isInterruptionRequested())
     {
-        pt_camera_info cam_info;
+        pt_camera_info info;
         bool new_frame = false;
 
         {
             QMutexLocker l(&camera_mtx);
 
             if (camera)
-                std::tie(new_frame, cam_info) = camera->get_frame(*frame);
+                std::tie(new_frame, info) = camera->get_frame(*frame);
         }
 
         if (new_frame)
@@ -76,7 +76,7 @@ void Tracker_PT::run()
             point_extractor->extract_points(*frame, *preview_frame, points);
             point_count = points.size();
 
-            const double fx = cam_info.get_focal_length();
+            const double fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
 
             const bool success = points.size() >= PointModel::N_POINTS;
 
@@ -84,7 +84,7 @@ void Tracker_PT::run()
             {
                 point_tracker.track(points,
                                     PointModel(s),
-                                    cam_info,
+                                    info,
                                     s.dynamic_pose ? s.init_phase_timeout : 0);
                 ever_success = true;
             }

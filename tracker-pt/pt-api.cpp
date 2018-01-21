@@ -7,7 +7,7 @@ pt_camera_info::pt_camera_info()
 {
 }
 
-double pt_camera_info::get_focal_length() const
+double pt_camera_info::get_focal_length(f fov, int res_x, int res_y)
 {
     const double diag_len = std::sqrt(double(res_x*res_x + res_y*res_y));
     const double aspect_x = res_x / diag_len;
