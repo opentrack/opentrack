@@ -1,11 +1,10 @@
-/* Copyright (c) 2012 Patrick Ruoff
- * Copyright (c) 2015-2017 Stanislaw Halik <sthalik@misaki.pl>
- * Copyright (c) 2017-2018 Wei Shuai <cpuwolf@gmail.com>
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- */
+/*
+* Copyright (c) 2017-2018 Wei Shuai <cpuwolf@gmail.com>
+*
+* Permission to use, copy, modify, and/or distribute this software for any
+* purpose with or without fee is hereby granted, provided that the above
+* copyright notice and this permission notice appear in all copies.
+*/
 
 #include "wii_point_extractor.h"
 
@@ -62,6 +61,8 @@ void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const
 
 bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_info &wii, std::vector<vec2>& points)
 {
+	const float W = 1024.0f;
+	const float H = 768.0f;
 	points.reserve(4);
 	points.clear();
 
@@ -70,14 +71,14 @@ bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_in
 		const struct wii_info_points &dot = wii.Points[index];
 		if (dot.bvis) {
 			//qDebug() << "wii:" << dot.RawX << "+" << dot.RawY;
-
-			const float W = 1024.0f;
-			const float H = 768.0f;
+			//anti-clockwise rotate the 2D point
 			const float RX = W - dot.ux;
 			const float RY = H - dot.uy;
 			//vec2 dt((dot.RawX - W / 2.0f) / W, -(dot.RawY - H / 2.0f) / W);
-			//anti-clockwise rotate 2D point
-			vec2 dt((RX - W / 2.0f) / W, -(RY - H / 2.0f) / W);
+			//vec2 dt((RX - W / 2.0f) / W, -(RY - H / 2.0f) / W);
+			//vec2 dt((2.0f*RX - W) / W, -(2.0f*RY - H ) / W);
+			vec2 dt;
+			std::tie(dt[0], dt[1]) = to_screen_pos(RX, RY, W, H);
 
 			points.push_back(dt);
 			_draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), dot.isize);
@@ -98,7 +99,7 @@ void WIIPointExtractor::_draw_bg(cv::Mat& preview_frame, const struct wii_info &
 		2);
 
 	//draw horizon
-	int pdelta = iround((preview_frame.rows / 2) * tan((wii.Pitch)* M_PI / 180.0f));
+	int pdelta = iround((preview_frame.rows / 4) * tan((wii.Pitch)* M_PI / 180.0f));
 	int rdelta = iround((preview_frame.cols / 4) * tan((wii.Roll)* M_PI / 180.0f));
 
 	cv::line(preview_frame,

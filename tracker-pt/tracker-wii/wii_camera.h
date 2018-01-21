@@ -1,5 +1,4 @@
-/* Copyright (c) 2012 Patrick Ruoff
- * Copyright (c) 2015-2016 Stanislaw Halik <sthalik@misaki.pl>
+/*
  * Copyright (c) 2017-2018 Wei Shuai <cpuwolf@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -26,7 +25,13 @@
 #include "wii_frame.hpp"
 
 namespace pt_module {
-
+#if 0
+struct WIICameraInfo final : pt_camera_info
+{
+	WIICameraInfo() {}
+	double get_focal_length() const { return 42.; }
+};
+#endif
 struct WIICamera final : pt_camera
 {
     WIICamera(const QString& module_name);
@@ -41,14 +46,14 @@ struct WIICamera final : pt_camera
     QString get_desired_name() const override;
     QString get_active_name() const override;
 
-    operator bool() const override { return (m_pDev); }
+    operator bool() const override { return m_pDev && (!m_pDev->ConnectionLost()); }
 
     void set_fov(double value) override { fov = value; }
     void show_camera_settings() override;
 
 
 private:
-	wiimote * m_pDev;
+	std::unique_ptr<wiimote> m_pDev;
 	static void on_state_change(wiimote &remote,
 		state_change_flags changed,
 		const wiimote_state &new_state);
