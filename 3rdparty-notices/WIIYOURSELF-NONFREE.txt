@@ -1,0 +1,76 @@
+IMPORTANT:
+
+This license has some dubious provisions and is nonfree. In
+particular, the nonviolence provision, despite good
+intentions is bad news for a permissive or free license.
+Vaguely worded in the copyright legal sense.  The "bruising
+egos" note doesn't have legal value and doesn't belong in a
+license to begin with.
+
+The "competing library" clause is just bad news for an
+non-viral implicit grant...
+
+In case you want to get rid of it as dependency, delete
+`libopentrack-tracker-wii' from your `modules` directory.
+That'll get rid of all uses of this library, and the license
+will no longer be in force.
+
+When building opentrack from source, you can also add
+add `if(FALSE) as the first line of
+`tracker-wii/CMakeLists.txt` and `endif()` as the last line.
+That will prevent building the library altogether, making the
+license also not apply.
+
+In plain terms, deleting `libopentrack-tracker-wii` will get
+rid of ALL references to the WiiYourself library.  The terms
+will be null and void in that build.
+
+I hope the license only applies when the code is actually
+used, not merely linked into a process.
+
+-- Stanislaw Halik
+
+License text follows:
+
+____________________________________________________________
+
+  - WiiYourself! - native C++ Wiimote library  v1.15
+    (c) gl.tter 2007-10 - http://gl.tter.org
+____________________________________________________________
+
+ LICENSE:  My Wiimote library is free for any use (including
+            commercial), with the following conditions:
+
+1) You may not use it to harm anyone, directly or
+    indirectly. * this includes, but is not limited to, any
+    kind of direct or indirect MILITARY use or related
+    research *
+
+   (but bruising egos is fine ;).
+
+2) Any distribution in binary form (ie. linked with your
+   program) must include the following text in your
+   distribiutions's documentation (ReadMe file, help file,
+   About box and/or splash screen):
+
+   "contains WiiYourself! wiimote code by gl.tter
+    http://gl.tter.org"
+
+3) Any distribution in source code form must keep all my
+   copyright notices intact unmodified (you can add to
+   them if you've made changes), and must include this
+   license text (either include this file in your
+   distribution, or paste its contents into your
+   distribution's own licence file).
+
+4) You may not use the code to produce a competing
+    library, unless you rewrite all of it considerably
+    (for example to convert it to another language, but
+    you need to contact me for written permission first).
+
+   Instead please contribute new features, fixes and ideas
+    to my mailining list (see ReadMe.txt).
+__
+
+gl.tter  (http://gl.tter.org | glATr-i-lDOTnet)
+
