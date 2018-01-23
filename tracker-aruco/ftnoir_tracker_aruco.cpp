@@ -312,8 +312,12 @@ void aruco_tracker::set_detector_params()
         detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
     else
         detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
+
+    detector.setThresholdParams(adaptive_sizes[adaptive_size_pos], adaptive_thres);
 #else
         detector._thresMethod = aruco::MarkerDetector::CANNY;
+        int value = adaptive_sizes[adaptive_size_pos];
+        detector.setThresholdParams(value, value * 3);
 #endif
 }
 

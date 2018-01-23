@@ -133,9 +133,9 @@ private:
     static constexpr inline const int adaptive_sizes[] =
     {
 #if defined USE_EXPERIMENTAL_CANNY
-        3,
-        5,
-        7,
+        10,
+        30,
+        80,
 #else
         7,
         9,
