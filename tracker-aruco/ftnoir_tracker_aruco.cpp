@@ -33,31 +33,7 @@
 #include <algorithm>
 #include <iterator>
 
-constexpr double aruco_tracker::timeout;
-constexpr double aruco_tracker::timeout_backoff_c;
-constexpr const int aruco_tracker::adaptive_sizes[];
-
-constexpr const aruco_tracker::resolution_tuple aruco_tracker::resolution_choices[];
-
-constexpr const double aruco_tracker::RC;
-constexpr const float aruco_tracker::size_min;
-constexpr const float aruco_tracker::size_max;
-
-#ifdef DEBUG_UNSHARP_MASKING
-constexpr double aruco_tracker::gauss_kernel_size;
-#endif
-
-aruco_tracker::aruco_tracker() :
-    pose{0,0,0, 0,0,0},
-    fps(0),
-    no_detection_timeout(0),
-    obj_points(4),
-    intrinsics(cv::Matx33d::eye()),
-    rmat(cv::Matx33d::eye()),
-    roi_points(4),
-    last_roi(65535, 65535, 0, 0),
-    adaptive_size_pos(0),
-    use_otsu(false)
+aruco_tracker::aruco_tracker()
 {
     cv::setBreakOnError(true);
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
@@ -331,7 +307,6 @@ void aruco_tracker::set_roi_from_projection()
 void aruco_tracker::set_detector_params()
 {
     detector.setDesiredSpeed(3);
-    detector.setThresholdParams(adaptive_sizes[adaptive_size_pos], adaptive_thres);
 #if !defined USE_EXPERIMENTAL_CANNY
     if (use_otsu)
         detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
@@ -487,7 +462,7 @@ aruco_dialog::aruco_dialog() :
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
     connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
 
-    connect(&s.camera_name, SIGNAL(valueChanged(const QString&)), this, SLOT(update_camera_settings_state(const QString&)));
+    connect(&s.camera_name, base_value::value_changed<QString>(), this, &aruco_dialog::update_camera_settings_state);
 
     update_camera_settings_state(s.camera_name);
 }

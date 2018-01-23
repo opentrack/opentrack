@@ -101,27 +101,28 @@ private:
     std::unique_ptr<cv_video_widget> videoWidget;
     std::unique_ptr<QHBoxLayout> layout;
     settings s;
-    double pose[6], fps, no_detection_timeout;
+    double pose[6] {}, fps = 0;
+    double no_detection_timeout = 0;
     cv::Mat frame, grayscale, color;
     cv::Matx33d r;
 #ifdef DEBUG_UNSHARP_MASKING
     cv::Mat blurred;
 #endif
-    std::vector<cv::Point3f> obj_points;
-    cv::Matx33d intrinsics;
+    std::vector<cv::Point3f> obj_points {4};
+    cv::Matx33d intrinsics = cv::Matx33d::eye();
     aruco::MarkerDetector detector;
     std::vector<aruco::Marker> markers;
     cv::Vec3d t;
     cv::Vec3d rvec, tvec;
     std::vector<cv::Point2f> roi_projection;
     std::vector<cv::Point2f> repr2;
-    cv::Matx33d m_r, m_q, rmat;
+    cv::Matx33d m_r, m_q, rmat = cv::Matx33d::eye();
     cv::Vec3d euler;
-    std::vector<cv::Point3f> roi_points;
-    cv::Rect last_roi;
+    std::vector<cv::Point3f> roi_points {4};
+    cv::Rect last_roi { 65535, 65535, 0, 0 };
     Timer fps_timer, last_detection_timer;
-    unsigned adaptive_size_pos;
-    bool use_otsu;
+    unsigned adaptive_size_pos = 0;
+    bool use_otsu = false;
 
     struct resolution_tuple
     {
@@ -129,7 +130,7 @@ private:
         int height;
     };
 
-    static constexpr const int adaptive_sizes[] =
+    static constexpr inline const int adaptive_sizes[] =
     {
 #if defined USE_EXPERIMENTAL_CANNY
         3,
@@ -142,9 +143,13 @@ private:
 #endif
     };
 
-    static constexpr int adaptive_thres = 6;
+#if !defined USE_EXPERIMENTAL_CANNY
+    static constexpr inline int adaptive_thres = 6;
+#else
+    static constexpr inline int adaptive_thres = 3;
+#endif
 
-    static constexpr const resolution_tuple resolution_choices[] =
+    static constexpr inline const resolution_tuple resolution_choices[] =
     {
         { 640, 480 },
         { 320, 240 },
@@ -152,10 +157,11 @@ private:
     };
 
 #ifdef DEBUG_UNSHARP_MASKING
-    static constexpr double gauss_kernel_size = 3;
+    static constexpr inline double gauss_kernel_size = 3;
 #endif
 
     static constexpr inline double timeout = 1;
+
     static constexpr inline double timeout_backoff_c = 4./11;
 
     static constexpr inline float size_min = 0.05;
@@ -177,7 +183,7 @@ private:
     settings s;
     TranslationCalibrator calibrator;
     QTimer calib_timer;
-private slots:
+private Q_SLOTS:
     void doOK();
     void doCancel();
     void toggleCalibrate();
