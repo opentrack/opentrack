@@ -36,7 +36,7 @@ public slots:
     void show_camera_settings();
 signals:
     void poll_tracker_info();
-private:
+protected:
     QString threshold_display_text(int threshold_value);
 
     pt_settings s;
