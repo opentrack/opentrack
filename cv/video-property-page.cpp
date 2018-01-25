@@ -50,21 +50,7 @@ prop_settings_worker::prop_settings_worker(int idx)
 {
     int ret = cap.get(cv::CAP_PROP_SETTINGS);
 
-    if (ret < 0)
-        run_in_thread_async(qApp, []() {
-            QMessageBox msg;
-            msg.setTextFormat(Qt::RichText);
-            msg.setWindowTitle("Camera properties");
-
-            static const char* uri = "https://github.com/opentrack/opencv/tree/fork";
-
-            msg.setText(QString("<p>Must use the opencv fork.</p>"
-                                "<p>See &lt;<a href='%1'>%1</a>&gt;</p>").arg(uri));
-            msg.setStandardButtons(QMessageBox::Cancel);
-            msg.setIcon(QMessageBox::Warning);
-            msg.exec();
-        });
-    else if (ret > 0)
+    if (ret != 0)
         run_in_thread_async(qApp, []() {
             QMessageBox::warning(nullptr,
                                  "Camera properties",
