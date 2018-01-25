@@ -6,9 +6,10 @@
 
 set(Qt5_DIR "D:/dev/qt-5.10.0/lib/cmake/Qt5")
 set(__depdir "d:/dev/opentrack-depends/")
-set(OpenCV_DIR "${__depdir}/opencv/build-msvc15")
+set(OpenCV_DIR "${__depdir}/opencv/build")
 
 set(opentrack_disable-i18n-update TRUE CACHE BOOL "" FORCE)
+set(opentrack_install-debug-info TRUE CACHE BOOL "" FORCE)
 
 set(SDK_ARUCO_LIBPATH "${__depdir}/aruco/build-msvc/src/aruco.lib" CACHE FILEPATH "")
 set(EIGEN3_INCLUDE_DIR "${__depdir}/eigen" CACHE PATH "")
