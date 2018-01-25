@@ -4,6 +4,7 @@
 
 #include "logic/mappings.hpp"
 #include "gui/ui_mapping-dialog.h"
+#include "spline/spline-widget.hpp"
 
 #include <QWidget>
 #include <QDialog>
