@@ -10,6 +10,7 @@
 
 #include "compat/math.hpp"
 #include "compat/camera-names.hpp"
+#include "cv/video-property-page.hpp"
 #include <opencv2/core.hpp>
 
 #include <QString>
@@ -222,6 +223,11 @@ void TrackerDialog_PT::show_camera_settings()
     {
         QMutexLocker l(&tracker->camera_mtx);
         tracker->camera->show_camera_settings();
+    }
+    else
+    {
+        const int idx = camera_name_to_index(s.camera_name);
+        video_property_page::show(idx);
     }
 }
 
