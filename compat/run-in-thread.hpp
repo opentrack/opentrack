@@ -55,11 +55,11 @@ struct run_in_thread_traits<void>
 template<typename F>
 auto never_inline
 run_in_thread_sync(QObject* obj, F&& fun)
-    -> typename qt_impl_detail::run_in_thread_traits<decltype(std::forward<F>(fun)())>::ret_type
+    -> typename qt_impl_detail::run_in_thread_traits<decltype(fun())>::ret_type
 {
     using lock_guard = std::unique_lock<std::mutex>;
 
-    using traits = qt_impl_detail::run_in_thread_traits<decltype(std::forward<F>(fun)())>;
+    using traits = qt_impl_detail::run_in_thread_traits<decltype(fun())>;
 
     typename traits::type ret;
 
