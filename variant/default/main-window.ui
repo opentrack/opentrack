@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>651</width>
-    <height>499</height>
+    <width>646</width>
+    <height>517</height>
    </rect>
   </property>
   <property name="windowIcon">
@@ -69,16 +69,13 @@
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item>
-        <widget class="QFrame" name="top">
+       <item alignment="Qt::AlignLeft|Qt::AlignTop">
+        <widget class="QWidget" name="top" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="spacing">
@@ -96,7 +93,7 @@
           <property name="bottomMargin">
            <number>4</number>
           </property>
-          <item>
+          <item alignment="Qt::AlignLeft|Qt::AlignTop">
            <widget class="QFrame" name="video_feed">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -115,6 +112,9 @@
               <width>320</width>
               <height>240</height>
              </size>
+            </property>
+            <property name="lineWidth">
+             <number>0</number>
             </property>
             <widget class="QFrame" name="video_frame">
              <property name="geometry">
