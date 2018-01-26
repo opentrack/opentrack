@@ -16,8 +16,4 @@ struct video_property_page final
     static bool show(int id);
     static bool show_from_capture(cv::VideoCapture& cap, int index);
 private:
-#ifdef _WIN32
-    static IBaseFilter* get_device(int id);
-    static cv::VideoCapture last_capture;
-#endif
 };

@@ -175,7 +175,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
                     return tr("%1 pitch samples. Pitch more to %2 samples for stable calibration.")
                         .arg(nsamples[1]).arg(min_pitch_samples);
 
-                const unsigned nsamples_total = nsamples[0] + nsamples[1];
+                const int nsamples_total = nsamples[0] + nsamples[1];
 
                 return tr("%1 samples. Over %2, good!").arg(nsamples_total).arg(min_samples);
             );

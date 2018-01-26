@@ -34,7 +34,7 @@ public:
     Map& operator()(int i) { return axes[i]; }
     const Map& operator()(int i) const { return axes[i]; }
     Map& operator()(unsigned i) { return axes[i]; }
-    const Map& operator()(unsigned  i) const { return axes[i]; }
+    const Map& operator()(unsigned i) const { return axes[i]; }
 
     template<typename f> void forall(f&& fun)
     {

@@ -534,7 +534,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     const bool is_fusion = QStringLiteral("fusion") == QApplication::style()->objectName();
     const int add_x = (is_fusion ? 25 : 0), add_y = (is_fusion ? 15 : 0);
 
-    const QPoint pix(int(pos.x()) + add_x, int(pos.y()) + add_y);
+    const QPoint pix(pos.x() + add_x, pos.y() + add_y);
 
     QToolTip::showText(mapToGlobal(pix),
                        QStringLiteral("value: %1x%2").arg(x, 0, 'f', 2).arg(y, 0, 'f', 2),
