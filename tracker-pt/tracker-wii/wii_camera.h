@@ -25,13 +25,7 @@
 #include "wii_frame.hpp"
 
 namespace pt_module {
-#if 0
-struct WIICameraInfo final : pt_camera_info
-{
-	WIICameraInfo() {}
-	double get_focal_length() const { return 42.; }
-};
-#endif
+
 struct WIICamera final : pt_camera
 {
     WIICamera(const QString& module_name);
@@ -48,7 +42,7 @@ struct WIICamera final : pt_camera
 
     operator bool() const override { return m_pDev && (!m_pDev->ConnectionLost()); }
 
-    void set_fov(double value) override { fov = value; }
+    void set_fov(double value) override {}
     void show_camera_settings() override;
 
 
@@ -64,7 +58,7 @@ private:
 	bool _get_points(struct wii_info&);
 	void _get_status(struct wii_info&);
 
-    double dt_mean = 0, fov = 42.;
+    double dt_mean = 0;
 
     Timer t;
 
