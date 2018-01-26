@@ -6,6 +6,5 @@ if(OpenCV_FOUND)
     target_link_libraries(opentrack-tracker-pt-base opentrack-cv ${modules})
 endif()
 add_subdirectory(module)
-add_subdirectory(wiiyourself)
 add_subdirectory(tracker-wii)
 
