@@ -15,7 +15,10 @@
 udp::udp()
 {
     set_dest_address();
-    QObject::connect(s.b.get(), &bundle_::changed, this, &udp::set_dest_address);
+
+    QObject::connect(s.b.get(), &bundle_::changed,
+                     this, &udp::set_dest_address,
+                     Qt::QueuedConnection);
 }
 
 void udp::pose(const double *headpose) {
@@ -33,7 +36,7 @@ void udp::set_dest_address()
 
 module_status udp::initialize()
 {
-    if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+    if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::DontShareAddress))
         return status_ok();
     else
         return error(tr("Can't bind socket: %1").arg(outSocket.errorString()));

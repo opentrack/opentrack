@@ -67,7 +67,7 @@ void udp::run()
 
 module_status udp::start_tracker(QFrame*)
 {
-    if (!sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
+    if (!sock.bind(QHostAddress::Any, quint16(s.port), QUdpSocket::DontShareAddress))
         return error(tr("Can't bind socket -- %1").arg(sock.errorString()));
 
     sock.moveToThread(this);
