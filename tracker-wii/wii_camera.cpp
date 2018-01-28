@@ -115,7 +115,7 @@ wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 	}
 
 	if (m_pDev->RefreshState() == NO_CHANGE) {
-		Sleep(1); // don't hog the CPU if nothing changed
+		Sleep(14); // don't hog the CPU if nothing changed
 		ret = wii_cam_data_no_change;
 		goto goodbye;
 	}
