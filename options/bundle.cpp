@@ -100,7 +100,10 @@ void bundle::save()
     }
 
     if (modified_)
+    {
+        qDebug() << "saving" << name();
         emit saving();
+    }
 }
 
 bool bundle::is_modified() const

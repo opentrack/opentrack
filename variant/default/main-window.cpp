@@ -365,7 +365,6 @@ void main_window::set_working_directory()
 
 void main_window::save_modules()
 {
-    qDebug() << "save modules";
     m.b->save();
 }
 
@@ -851,7 +850,7 @@ void main_window::maybe_start_profile_from_executable()
         QString prof;
         if (det.config_to_start(prof))
         {
-            ui.iconcomboProfile->setCurrentText(prof);
+            set_profile(prof);
             start_tracker_();
         }
     }
