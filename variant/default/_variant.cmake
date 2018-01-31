@@ -21,8 +21,7 @@ function(otr_init_variant)
         "qxt-mini"
         "macosx"
         "cv"
-        "migration"
-        "wiiyourself")
+        "migration")
 
     set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
 endfunction()
