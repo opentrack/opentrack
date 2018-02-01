@@ -13,23 +13,10 @@
 
 #include <ctime>
 
-#if defined (_WIN32)
-#   include <windows.h>
-#elif defined(__MACH__)
-#   include <inttypes.h>
-#   include <mach/mach_time.h>
-#endif
-
 class OTR_COMPAT_EXPORT Timer final
 {
     struct timespec state;
     long long conv_nsecs(const struct timespec& cur) const;
-    static void otr_clock_gettime(struct timespec* ts);
-#ifdef _WIN32
-    static LARGE_INTEGER otr_get_clock_frequency();
-#elif defined(__MACH__)
-    static mach_timebase_info_data_t otr_get_mach_frequency();
-#endif
 
     static void gettime(struct timespec* state);
 

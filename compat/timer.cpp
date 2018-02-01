@@ -21,20 +21,6 @@ void Timer::start()
     gettime(&state);
 }
 
-// common
-
-void Timer::gettime(timespec* state)
-{
-#if defined(_WIN32) || defined(__MACH__)
-    otr_clock_gettime(state);
-#elif defined CLOCK_MONOTONIC
-    const int res = clock_gettime(CLOCK_MONOTONIC, state);
-    assert(res == 0 && "must support CLOCK_MONOTONIC");
-#else
-#   error "timer query method not known"
-#endif
-}
-
 // nanoseconds
 
 long long Timer::elapsed_nsecs() const
@@ -75,15 +61,18 @@ double Timer::elapsed_seconds() const
 // platform-specific code starts here
 // --
 
-#if defined _WIN32
-LARGE_INTEGER Timer::otr_get_clock_frequency()
+#if defined (_WIN32)
+#   include <windows.h>
+
+static LARGE_INTEGER otr_get_clock_frequency()
 {
     LARGE_INTEGER freq{};
-    (void) QueryPerformanceFrequency(&freq);
+    const BOOL ret = QueryPerformanceFrequency(&freq);
+    assert(ret && "QueryPerformanceFrequency failed");
     return freq;
 }
 
-void Timer::otr_clock_gettime(timespec* ts)
+static void otr_clock_gettime(timespec* ts)
 {
     static const LARGE_INTEGER freq = otr_get_clock_frequency();
 
@@ -101,14 +90,17 @@ void Timer::otr_clock_gettime(timespec* ts)
 }
 
 #elif defined __MACH__
-mach_timebase_info_data_t Timer::otr_get_mach_frequency()
+#   include <inttypes.h>
+#   include <mach/mach_time.h>
+
+static mach_timebase_info_data_t otr_get_mach_frequency()
 {
     mach_timebase_info_data_t timebase_info;
     (void) mach_timebase_info(&timebase_info);
     return timebase_info;
 }
 
-void Timer::otr_clock_gettime(timespec* ts)
+static void otr_clock_gettime(timespec* ts)
 {
     static const mach_timebase_info_data_t timebase_info = otr_get_mach_frequency();
     uint64_t state, nsec;
@@ -119,3 +111,17 @@ void Timer::otr_clock_gettime(timespec* ts)
 }
 
 #endif
+
+// common
+
+void Timer::gettime(timespec* state)
+{
+#if defined(_WIN32) || defined(__MACH__)
+    otr_clock_gettime(state);
+#elif defined CLOCK_MONOTONIC
+    const int res = clock_gettime(CLOCK_MONOTONIC, state);
+    assert(res == 0 && "must support CLOCK_MONOTONIC");
+#else
+#   error "timer query method not known"
+#endif
+}
