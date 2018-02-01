@@ -118,10 +118,6 @@ void freetrack::pose(const double* headpose)
         if ((std::intptr_t(pMemData) & page_size() - 1) != 0)
             assert(!"proto/freetrack: memory mapping not page aligned");
 
-        // the data happens to be aligned by virtue of element ordering
-        // inside `FTHeap'. there's no deeper reason behind it.
-        static_assert((offsetof(FTHeap, table) & sizeof(int) - 1) == 0, "");
-
         // no atomic access for `char'
         for (unsigned k = 0; k < 2; k++)
             store(pMemData->table_ints[k], t.ints[k]);
