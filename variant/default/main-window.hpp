@@ -87,7 +87,7 @@ class main_window : public QMainWindow, private State
 
     void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
-    void set_title(const QString& game_title = QStringLiteral(""));
+    void set_title(const QString& game_title = QString());
     static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile_in_registry(const QString& profile);
     void register_shortcuts();
