@@ -112,7 +112,7 @@ void WIIPointExtractor::_draw_bg(cv::Mat& preview_frame, const struct wii_info &
 
 void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
 {
-	const cv::Mat& frame = frame_.as_const<WIIFrame>()->mat;
+        //const cv::Mat& frame = frame_.as_const<WIIFrame>()->mat;
 	const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
 	cv::Mat& preview_frame = *preview_frame_.as<WIIPreview>();
 
