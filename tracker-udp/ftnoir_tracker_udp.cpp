@@ -8,8 +8,8 @@
 
 #include "ftnoir_tracker_udp.h"
 #include "api/plugin-api.hpp"
-#include "compat/nan.hpp"
 
+#include <cmath>
 #include <iterator>
 
 udp::udp() :
@@ -48,10 +48,9 @@ void udp::run()
                 progn(
                     for (unsigned i = 0; i < 6; i++)
                     {
-                        if (nanp(last_recv_pose2[i]))
-                        {
+                        int val = std::fpclassify(last_recv_pose2[i]);
+                        if (val == FP_NAN || val == FP_INFINITE)
                             return false;
-                        }
                     }
                     return true;
                ))

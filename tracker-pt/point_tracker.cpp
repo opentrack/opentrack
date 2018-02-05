@@ -6,7 +6,6 @@
  */
 
 #include "point_tracker.h"
-#include "compat/nan.hpp"
 #include "compat/math-imports.hpp"
 
 using namespace types;
@@ -372,18 +371,24 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     for (int i = 0; i < 3; i++)
         for (int j = 0; j < 3; j++)
-            if (nanp(r(i, j)))
+        {
+            int ret = std::fpclassify(r(i, j));
+            if (ret == FP_NAN || ret == FP_INFINITE)
             {
-                qDebug() << "posit nan";
+                qDebug() << "posit nan -- R";
                 return -1;
             }
+        }
 
     for (unsigned i = 0; i < 3; i++)
-        if (nanp(t[i]))
+    {
+        int ret = std::fpclassify(t[i]);
+        if (ret == FP_NAN || ret == FP_INFINITE)
         {
-            qDebug() << "posit nan";
+            qDebug() << "posit nan -- T";
             return -1;
         }
+    }
 
     // apply results
     X_CM.R = r;
