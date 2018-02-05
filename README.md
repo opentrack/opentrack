@@ -2,7 +2,8 @@
 
 opentrack project home at <<http://github.com/opentrack/opentrack>>.
 
-For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>>. Currently installers and portable versions for Windows are available for each release. Create `portable.txt` in the software directory for a truly "portable" installation that can be carried on an USB stick.
+For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>>. Currently installers and portable versions for Windows are available for each release. Create `portable.txt` in the software directory for a [truly "portable" installation](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
+that can be carried on an USB stick.
 
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for [new user guide](https://github.com/opentrack/opentrack/wiki/Quick-Start-Guide-(WIP)), [frequent answers](https://github.com/opentrack/opentrack/wiki/common-issues), specific tracker/filter
@@ -20,7 +21,7 @@ software.
 
 `opentrack` allows for output shaping, filtering, and operating with many input and output devices and protocols; the codebase runs Microsoft Windows, Apple OSX (currently unmaintained), and GNU/Linux.
 
-Don't be afraid to submit an **issue/feature request** if need arises.
+Don't be afraid to submit an **issue/feature request** if you have any problems! We're a friendly bunch.
 
 ## Tracking input
 
@@ -31,11 +32,12 @@ Don't be afraid to submit an **issue/feature request** if need arises.
 - Razer Hydra
 - Relaying via UDP from a different computer
 - Relaying UDP via FreePIE-specific Android app
-- Joystick analog axes (Windows, Linux)
+- Joystick analog axes (Windows)
 - Windows Phone [tracker](https://github.com/ZanderAdam/OpenTrack.WindowsPhone/wiki) over opentrack UDP protocol
 - Arduino with custom firmware
 - Intel RealSense 3D cameras (Windows)
-- BBC micro:bit, LEGO, sensortag support via [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
+- BBC micro:bit, LEGO, sensortag support via Smalltalk<sup>[(1)](https://en.wikipedia.org/wiki/Smalltalk)[(2)](https://en.wikipedia.org/wiki/Alan_Kay)</sup>
+  [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
 - Wiimote (Windows)
 
 ## Output protocols
@@ -43,7 +45,7 @@ Don't be afraid to submit an **issue/feature request** if need arises.
 - SimConnect for newer Microsoft Flight Simulator (Windows)
 - freetrack implementation (Windows)
 - Relaying UDP to another computer
-- Virtual joystick output (Linux, Windows)
+- Virtual joystick output (Windows, Linux, OSX)
 - Wine freetrack glue protocol (Linux, OSX)
 - X-Plane plugin (Linux)
 - Tablet-like mouse output (Windows)
@@ -68,7 +70,9 @@ Don't be afraid to submit an **issue/feature request** if need arises.
 ## Thanks
 
 - uglyDwarf (high CON)
-- Andrzej Czarnowski (FreePIE tracker and Google Cardboard assistance, testing)
+- Andrzej Czarnowski (FreePIE tracker and
+  [Google Cardboard](https://github.com/opentrack/opentrack/wiki/VR-HMD-goggles-setup-----google-cardboard,-colorcross,-opendive)
+  assistance, testing)
 - Wim Vriend (original codebase author and maintainer)
 - Ryan Spicer (OSX tester, contributor)
 - Donovan Baarda (filtering/control theory expert)
