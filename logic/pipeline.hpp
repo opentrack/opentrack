@@ -35,6 +35,9 @@ namespace gui_tracker_impl {
 using rmat = euler::rmat;
 using euler_t = euler::euler_t;
 
+using vec6_bool = Mat<bool, 6, 1>;
+using vec3_bool = Mat<bool, 6, 1>;
+
 class reltrans
 {
     euler_t interp_pos, last_value;
@@ -46,11 +49,13 @@ public:
     reltrans();
 
     warn_result_unused
-    euler_t rotate(const rmat& rmat, const euler_t& xyz,
-                   bool disable_tx, bool disable_ty, bool disable_tz) const;
+    euler_t rotate(const rmat& rmat, const euler_t& in, vec3_bool disable) const;
 
     warn_result_unused
-    Pose apply_pipeline(reltrans_state cur, const Pose& value, const Mat<bool, 6, 1>& disable);
+    Pose apply_pipeline(reltrans_state cur, const Pose& value, const vec6_bool& disable);
+
+    warn_result_unused
+    euler_t apply_neck(const Pose& value, bool enable, int nz) const;
 };
 
 using namespace time_units;
@@ -112,6 +117,14 @@ private:
     double map(double pos, Map& axis);
     void logic();
     void run() override;
+    void maybe_enable_center_on_tracking_started();
+    void maybe_set_center_pose(const Pose& value, bool own_center_logic);
+    Pose clamp_value(Pose value) const;
+    Pose apply_center(Pose value) const;
+    std::tuple<Pose, Pose, vec6_bool> get_selected_axis_value(const Pose& newpose) const;
+    Pose maybe_apply_filter(const Pose& value) const;
+    Pose apply_reltrans(Pose value, vec6_bool disabled);
+    Pose apply_zero_pos(Pose value) const;
 
     // note: float exponent base is 2
     static constexpr inline double c_mult = 16;
@@ -123,11 +136,12 @@ public:
     void raw_and_mapped_pose(double* mapped, double* raw) const;
     void start() { QThread::start(QThread::HighPriority); }
 
-    void center();
-    void set_toggle(bool value);
-    void set_zero(bool value);
-    void zero();
+    void toggle_zero();
     void toggle_enabled();
+
+    void set_center();
+    void set_enabled(bool value);
+    void set_zero(bool value);
 };
 
 } // ns impl

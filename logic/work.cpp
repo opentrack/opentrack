@@ -65,17 +65,17 @@ Work::Work(Mappings& m, event_handler& ev,  QFrame* frame, std::shared_ptr<dylib
     tracker(std::make_shared<pipeline>(m, libs, ev, *logger)),
     sc(std::make_shared<Shortcuts>()),
     keys {
-        key_tuple(s.key_center1, [&](bool) { tracker->center(); }, true),
-        key_tuple(s.key_center2, [&](bool) { tracker->center(); }, true),
+        key_tuple(s.key_center1, [&](bool) { tracker->set_center(); }, true),
+        key_tuple(s.key_center2, [&](bool) { tracker->set_center(); }, true),
 
         key_tuple(s.key_toggle1, [&](bool) { tracker->toggle_enabled(); }, true),
         key_tuple(s.key_toggle2, [&](bool) { tracker->toggle_enabled(); }, true),
 
-        key_tuple(s.key_zero1, [&](bool) { tracker->zero(); }, true),
-        key_tuple(s.key_zero2, [&](bool) { tracker->zero(); }, true),
+        key_tuple(s.key_zero1, [&](bool) { tracker->toggle_zero(); }, true),
+        key_tuple(s.key_zero2, [&](bool) { tracker->toggle_zero(); }, true),
 
-        key_tuple(s.key_toggle_press1, [&](bool x) { tracker->set_toggle(!x); }, false),
-        key_tuple(s.key_toggle_press2, [&](bool x) { tracker->set_toggle(!x); }, false),
+        key_tuple(s.key_toggle_press1, [&](bool x) { tracker->set_enabled(!x); }, false),
+        key_tuple(s.key_toggle_press2, [&](bool x) { tracker->set_enabled(!x); }, false),
 
         key_tuple(s.key_zero_press1, [&](bool x) { tracker->set_zero(x); }, false),
         key_tuple(s.key_zero_press2, [&](bool x) { tracker->set_zero(x); }, false),
