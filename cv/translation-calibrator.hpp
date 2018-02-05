@@ -43,9 +43,9 @@ private:
     vec used_pitch_poses;
     vec used_roll_poses;
 
-    static constexpr double yaw_spacing_in_degrees = 2.5;
-    static constexpr double pitch_spacing_in_degrees = 1.5;
-    static constexpr double roll_spacing_in_degrees = 3.5;
+    static constexpr inline double yaw_spacing_in_degrees = 2.5;
+    static constexpr inline double pitch_spacing_in_degrees = 1.5;
+    static constexpr inline double roll_spacing_in_degrees = 3.5;
 
     unsigned yaw_rdof, pitch_rdof, roll_rdof, nsamples;
 };

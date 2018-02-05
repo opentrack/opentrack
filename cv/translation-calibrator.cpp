@@ -13,10 +13,6 @@
 
 #include <QDebug>
 
-constexpr double TranslationCalibrator::pitch_spacing_in_degrees;
-constexpr double TranslationCalibrator::yaw_spacing_in_degrees;
-constexpr double TranslationCalibrator::roll_spacing_in_degrees;
-
 TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof, unsigned roll_rdof) :
     yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof), roll_rdof(roll_rdof)
 {
