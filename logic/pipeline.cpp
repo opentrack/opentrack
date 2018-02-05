@@ -12,7 +12,6 @@
  * originally written by Wim Vriend.
  */
 
-#include "compat/nan.hpp"
 #include "compat/sleep.hpp"
 #include "compat/math.hpp"
 #include "compat/meta.hpp"
@@ -182,8 +181,11 @@ static bool is_nan(const dmat<u,w>& r)
 {
     for (int i = 0; i < u; i++)
         for (int j = 0; j < w; j++)
-            if (nanp(r(i, j)))
+        {
+            int val = std::fpclassify(r(i, j));
+            if (val == FP_NAN || val == FP_INFINITE)
                 return true;
+        }
 
     return false;
 }
