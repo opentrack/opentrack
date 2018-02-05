@@ -2,8 +2,7 @@
 
 opentrack project home at <<http://github.com/opentrack/opentrack>>.
 
-For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>>. Currently installers and portable versions for Windows are available for each release. Create `portable.txt` in the software directory for a [truly "portable" installation](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
-that can be carried on an USB stick.
+For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>> Download an `.exe` installer or a `.7z` archive. Currently installers and portable versions for Windows are available for each release. It supports [USB stick truly "portable" installations](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
 
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for [new user guide](https://github.com/opentrack/opentrack/wiki/Quick-Start-Guide-(WIP)), [frequent answers](https://github.com/opentrack/opentrack/wiki/common-issues), specific tracker/filter
@@ -79,6 +78,12 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - Mathijs Groothuis (@MathijsG, dozens of bugs and other issues reported; NL translation)
 - The Russian community from the [IL-2 Sturmovik forums](https://forum.il2sturmovik.ru/) (reporting bugs, requesting important features)
 - OpenCV authors and maintainers <<https://github.com/opencv/opencv/>>.
+
+## Contributing
+
+Code, translations, 
+
+Please see [basic rules for contributing](https://github.com/opentrack/opentrack/blob/unstable/CONTRIBUTING.md). There's also a guide for [working with core code](https://github.com/opentrack/opentrack/wiki/Hacking-opentrack). For writing input and output modules you don't need this guide except for 
 
 ## License and warranty
 
