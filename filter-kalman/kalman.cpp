@@ -8,12 +8,6 @@
 #include <QDebug>
 #include <cmath>
 
-constexpr double settings::adaptivity_window_length;
-constexpr double settings::deadzone_scale;
-constexpr double settings::deadzone_exponent;
-constexpr double settings::process_sigma_pos;
-constexpr double settings::process_sigma_rot;
-
 void KalmanFilter::init()
 {
     // allocate and initialize matrices
