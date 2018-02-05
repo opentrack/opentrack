@@ -59,7 +59,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 
 ***
 
-# Credits
+# Credits, in chronological order
 
 - Stanisław Halik (maintainer)
 - Chris Thompson (aka mm0zct, Rift and Razer Hydra author and maintainer)
@@ -68,6 +68,7 @@ Don't be afraid to submit an issue/feature request if need arises.
 - furax49 (hatire tracker author)
 - Michael Welter (contributor)
 - Attila Csipa (Micro:Bit author)
+- Eike @e4z9 (OSX joystick output driver)
 - Wei Shuai (Wiimote tracker)
 
 # Thanks
