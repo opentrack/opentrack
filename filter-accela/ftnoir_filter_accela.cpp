@@ -113,7 +113,7 @@ void accela::filter(const double* input, double *output)
         if (fabs(d) > rot_dz)
             d -= copysign(rot_dz, d);
         else
-            d = 0;
+            d /= 2;
 
         deltas[i] = d / rot_thres;
     }
@@ -146,7 +146,7 @@ void accela::filter(const double* input, double *output)
         if (fabs(d) > pos_dz)
             d -= copysign(pos_dz, d);
         else
-            d = 0;
+            d /= 2;
 
         deltas[i] = d / pos_thres;
     }
