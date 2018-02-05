@@ -17,7 +17,7 @@
 
 struct OTR_PT_EXPORT pt_camera_info final
 {
-    using f = typename types::f;
+    typedef typename types::f f;
 
     pt_camera_info();
     static double get_focal_length(f fov, int res_x, int res_y);
