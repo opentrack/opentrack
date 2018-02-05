@@ -10,6 +10,7 @@
  */
 #include <QDebug>
 #include "ftnoir_tracker_hat.h"
+#include "compat/math.hpp"
 #include <algorithm>
 
 hatire::hatire()
@@ -128,6 +129,9 @@ void hatire::data(double *data)
         CptError=0;
     }
 
+    for (unsigned k = 0; k < 3; k++)
+        HAT.Rot[k] = clamp(HAT.Rot[k], -180, 180);
+
     const struct
     {
         bool enable;
@@ -147,7 +151,7 @@ void hatire::data(double *data)
     for (unsigned i = 0; i < std::size(spec); i++)
     {
         auto& k = spec[i];
-        k.place = (k.sign ? -1.f : 1.f) * (k.enable ? k.input : 0.f);
+        k.place = (k.sign ? -1 : 1) * (k.enable ? k.input : 0);
     }
 }
 
