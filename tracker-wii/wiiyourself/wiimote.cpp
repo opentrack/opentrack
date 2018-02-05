@@ -1685,6 +1685,7 @@ int wiimote::ParseReadAddress (BYTE* buff)
 	// decode the address that was queried:
 	int address = buff[4]<<8 | buff[5];
 	int size    = buff[3] >> 4;
+        (void)size;
 	int changed	= 0;
 
 	if((buff[3] & 0x08) != 0) {
@@ -2689,7 +2690,7 @@ bool wiimote::PlaySample (const wiimote_sample &sample, BYTE volume,
 	// Write 0x08 to register 0x04a20001 
 	WriteData(0x04a20001, 0x08);
 	// Write 7-byte configuration to registers 0x04a20001-0x04a20008 
-	BYTE bytes[7] = { 0x00, 0x00, 0x00, 10+(BYTE)freq, volume, 0x00, 0x00 };
+	BYTE bytes[7] = { '\0', '\0', '\0', BYTE(10 + freq), volume, '\0', '\0' };
 	WriteData(0x04a20001, sizeof(bytes), bytes);
 	// + Write 0x01 to register 0x04a20008 
 	WriteData(0x04a20008, 0x01);
@@ -2754,7 +2755,7 @@ bool wiimote::PlaySquareWave (speaker_freq freq, BYTE volume)
 	WriteData(0x04a20001, 0x08);
 	// write default sound mode (4bit ADPCM, we assume) 7-byte configuration
 	//  to registers 0xa20001-0xa20008 
-	BYTE bytes[7] = { 0x00, 0x00, 0x00, 10+(BYTE)freq, volume, 0x00, 0x00 };
+	BYTE bytes[7] = { '\0', '\0', '\0', BYTE(10+freq), volume, '\0', '\0' };
 	WriteData(0x04a20001, sizeof(bytes), bytes);
 	// write 0x01 to register 0xa20008 
 	WriteData(0x04a20008, 0x01);
