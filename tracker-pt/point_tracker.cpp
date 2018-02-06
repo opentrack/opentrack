@@ -46,7 +46,7 @@ void PointModel::get_d_order(const std::vector<cv::Vec2d>& points, int* d_order,
               d_vals_sort
               );
 
-    for (unsigned i = 0; i<points.size(); ++i)
+    for (unsigned i = 0; i<N_POINTS; ++i)
         d_order[i] = d_vals[i].second;
 }
 
