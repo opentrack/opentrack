@@ -95,9 +95,9 @@ public:
         case ClipLeft:
         case ClipRight:
         {
-            const double a = 27, b = 43, c = 62, d = 74;
-            M01 = cv::Vec3d(0, b, -a);
-            M02 = cv::Vec3d(0, -c, -d);
+            const double by = 75, bz = 35, ty = 40, tz = 18;
+            M01 = cv::Vec3d(0, by, -bz);
+            M02 = cv::Vec3d(0, -ty, -tz);
             break;
         }
         }
