@@ -18,6 +18,7 @@
 
 #include "cv/video-property-page.hpp"
 
+#include <BluetoothAPIs.h>
 
 using namespace pt_module;
 
@@ -102,12 +103,92 @@ void WIICamera::stop()
     cam_desired = pt_camera_info();
 }
 
+
+wii_camera_status WIICamera::_pair()
+{
+	wii_camera_status ret = wii_cam_wait_for_connect;
+	HBLUETOOTH_RADIO_FIND hbt;
+	BLUETOOTH_FIND_RADIO_PARAMS bt_param;
+	HANDLE hbtlist[10];
+	int ibtidx = 0;
+
+	bt_param.dwSize = sizeof(bt_param);
+	hbt = BluetoothFindFirstRadio(&bt_param, hbtlist + ibtidx);
+	if (!hbt) { return ret; }
+	do
+	{
+		ibtidx++;
+	} while (BluetoothFindNextRadio(&bt_param, hbtlist + ibtidx));
+	BluetoothFindRadioClose(hbt);
+
+
+	int i;
+	for (i = 0; i < ibtidx; i++)
+	{
+		BLUETOOTH_RADIO_INFO btinfo;
+		btinfo.dwSize = sizeof(btinfo);
+
+		if (ERROR_SUCCESS != BluetoothGetRadioInfo(hbtlist[i], &btinfo)) {break;}
+
+		HBLUETOOTH_DEVICE_FIND hbtdevfd;
+		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam;
+		BLUETOOTH_DEVICE_INFO btdevinfo;
+
+		btdevinfo.dwSize = sizeof(btdevinfo);
+		btdevparam.dwSize = sizeof(btdevparam);
+		btdevparam.fReturnAuthenticated = TRUE;
+		btdevparam.fReturnConnected = TRUE;
+		btdevparam.fReturnRemembered = TRUE;
+		btdevparam.fIssueInquiry = TRUE;
+		btdevparam.cTimeoutMultiplier = 2;
+		btdevparam.hRadio = hbtlist[i];
+		hbtdevfd=BluetoothFindFirstDevice(&btdevparam, &btdevinfo);
+		if (!hbtdevfd) {
+			int error= GetLastError();
+			qDebug() << error;
+			break;
+		}
+		do
+		{
+			if (wcscmp(btdevinfo.szName, L"Nintendo RVL-CNT-01-TR") && wcscmp(btdevinfo.szName, L"Nintendo RVL-CNT-01"))
+			{
+				continue;
+			}
+			if (btdevinfo.fRemembered) {
+				//BluetoothRemoveDevice(&btdevinfo.Address);
+			}
+			WCHAR pwd[6];
+			pwd[0] = btinfo.address.rgBytes[0];
+			pwd[1] = btinfo.address.rgBytes[1];
+			pwd[2] = btinfo.address.rgBytes[2];
+			pwd[3] = btinfo.address.rgBytes[3];
+			pwd[4] = btinfo.address.rgBytes[4];
+			pwd[5] = btinfo.address.rgBytes[5];
+
+			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(NULL, hbtlist[i],&btdevinfo, pwd, 6)) { continue; }
+			DWORD servicecount = 32;
+			GUID guids[32];
+			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { continue; }
+			if (ERROR_SUCCESS != BluetoothSetServiceState(hbtlist[i], &btdevinfo, &HumanInterfaceDeviceServiceClass_UUID, BLUETOOTH_SERVICE_ENABLE)) { continue; }
+		} while (BluetoothFindNextDevice(hbtdevfd, &btdevinfo));
+		BluetoothFindDeviceClose(hbtdevfd);
+	}
+
+	for (i = 0; i < ibtidx; i++)
+	{
+		CloseHandle(hbtlist[i]);
+	}
+
+	return ret;
+}
+
 wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 {
 	wii_camera_status ret = wii_cam_wait_for_connect;
 
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
+		_pair();
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {
 			Beep(500, 30); Sleep(1000);
 			goto goodbye;
