@@ -69,12 +69,12 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<cv::Vec2d>& poin
         const double radius = max(0., (max_radius-min_radius) * s.threshold / 256);
         const int area = int(round(3 * M_PI * (min_radius + radius)*(min_radius+radius)));
         auto ptr = reinterpret_cast<const float*>(hist.ptr(0));
-        for (int i = sz-1; i > 0; i--)
+        for (int i = sz-1; i > 32; i--)
         {
             cnt += ptr[i];
             if (cnt >= area)
             {
-                thres = i;
+                thres = std::min(255, i+1);
                 break;
             }
         }
