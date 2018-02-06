@@ -157,6 +157,9 @@ wii_camera_status WIICamera::_pair()
 			if (btdevinfo.fRemembered) {
 				//BluetoothRemoveDevice(&btdevinfo.Address);
 			}
+			if (btdevinfo.fConnected) {
+				break;
+			}
 			WCHAR pwd[6];
 			pwd[0] = btinfo.address.rgBytes[0];
 			pwd[1] = btinfo.address.rgBytes[1];
@@ -170,6 +173,7 @@ wii_camera_status WIICamera::_pair()
 			GUID guids[32];
 			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { continue; }
 			if (ERROR_SUCCESS != BluetoothSetServiceState(hbtlist[i], &btdevinfo, &HumanInterfaceDeviceServiceClass_UUID, BLUETOOTH_SERVICE_ENABLE)) { continue; }
+			break;
 		} while (BluetoothFindNextDevice(hbtdevfd, &btdevinfo));
 		BluetoothFindDeviceClose(hbtdevfd);
 	}
