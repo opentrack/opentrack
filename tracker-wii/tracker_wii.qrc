@@ -3,5 +3,6 @@
         <file>Resources/wii.png</file>
         <file>Resources/sync.png</file>
         <file>Resources/on.png</file>
+        <file>Resources/usb.png</file>
     </qresource>
 </RCC>
