@@ -109,34 +109,15 @@ void WIIPointExtractor::_draw_bg(cv::Mat& preview_frame, const struct wii_info &
 		1);
 }
 
-
 void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
 {
-        //const cv::Mat& frame = frame_.as_const<WIIFrame>()->mat;
 	const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
 	cv::Mat& preview_frame = *preview_frame_.as<WIIPreview>();
-
-	//create a blank frame
-	//cv::Mat blank_frame(preview_frame.cols, preview_frame.rows, CV_8UC3, cv::Scalar(0, 0, 0));
-	//cv::cvtColor(_frame, _frame2, cv::COLOR_BGR2BGRA);
-	//cv::resize(blank_frame, preview_frame, cv::Size(preview_frame.cols, preview_frame.rows), 0, 0, cv::INTER_NEAREST);
 
 	switch (wii.status) {
 	case wii_cam_data_change:
 		_draw_bg(preview_frame, wii);
 		_draw_points(preview_frame, wii, points);
-		break;
-	case wii_cam_wait_for_connect:
-		char txtbuf[64];
-		sprintf(txtbuf, "%s", "wait for WIImote");
-		//draw wait text
-		cv::putText(preview_frame,
-			txtbuf,
-			cv::Point(preview_frame.cols / 10, preview_frame.rows / 2),
-			cv::FONT_HERSHEY_SIMPLEX,
-			1,
-			cv::Scalar(255, 255, 255),
-			1);
 		break;
 	}
 }

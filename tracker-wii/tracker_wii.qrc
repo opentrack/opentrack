@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>Resources/wii.png</file>
+        <file>Resources/sync.png</file>
+        <file>Resources/on.png</file>
     </qresource>
 </RCC>

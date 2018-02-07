@@ -106,11 +106,12 @@ void WIICamera::stop()
 
 wii_camera_status WIICamera::_pair()
 {
-	wii_camera_status ret = wii_cam_wait_for_connect;
+	wii_camera_status ret = wii_cam_wait_for_sync;
 	HBLUETOOTH_RADIO_FIND hbt;
 	BLUETOOTH_FIND_RADIO_PARAMS bt_param;
 	HANDLE hbtlist[10];
 	int ibtidx = 0;
+	bool wiifound = false;
 
 	bt_param.dwSize = sizeof(bt_param);
 	hbt = BluetoothFindFirstRadio(&bt_param, hbtlist + ibtidx);
@@ -123,6 +124,7 @@ wii_camera_status WIICamera::_pair()
 
 
 	int i;
+	bool error = false;
 	for (i = 0; i < ibtidx; i++)
 	{
 		BLUETOOTH_RADIO_INFO btinfo;
@@ -154,9 +156,12 @@ wii_camera_status WIICamera::_pair()
 			{
 				continue;
 			}
-			if (btdevinfo.fRemembered) {
-				//BluetoothRemoveDevice(&btdevinfo.Address);
+
+			if ((btdevinfo.fRemembered)&&error) {
+				BluetoothRemoveDevice(&btdevinfo.Address);
 			}
+
+			wiifound = true;
 			if (btdevinfo.fConnected) {
 				break;
 			}
@@ -168,11 +173,11 @@ wii_camera_status WIICamera::_pair()
 			pwd[4] = btinfo.address.rgBytes[4];
 			pwd[5] = btinfo.address.rgBytes[5];
 
-			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(NULL, hbtlist[i],&btdevinfo, pwd, 6)) { continue; }
+			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(NULL, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
 			DWORD servicecount = 32;
 			GUID guids[32];
-			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { continue; }
-			if (ERROR_SUCCESS != BluetoothSetServiceState(hbtlist[i], &btdevinfo, &HumanInterfaceDeviceServiceClass_UUID, BLUETOOTH_SERVICE_ENABLE)) { continue; }
+			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { error = true; continue; }
+			if (ERROR_SUCCESS != BluetoothSetServiceState(hbtlist[i], &btdevinfo, &HumanInterfaceDeviceServiceClass_UUID, BLUETOOTH_SERVICE_ENABLE)) { error = true; continue; }
 			break;
 		} while (BluetoothFindNextDevice(hbtdevfd, &btdevinfo));
 		BluetoothFindDeviceClose(hbtdevfd);
@@ -182,7 +187,7 @@ wii_camera_status WIICamera::_pair()
 	{
 		CloseHandle(hbtlist[i]);
 	}
-
+	if (wiifound) { ret = wii_cam_wait_for_connect; }
 	return ret;
 }
 
@@ -192,7 +197,7 @@ wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
-		_pair();
+		ret = _pair();
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {
 			Beep(500, 30); Sleep(1000);
 			goto goodbye;
