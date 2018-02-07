@@ -115,7 +115,7 @@ wii_camera_status WIICamera::_pair()
 
 	bt_param.dwSize = sizeof(bt_param);
 	hbt = BluetoothFindFirstRadio(&bt_param, hbtlist + ibtidx);
-	if (!hbt) { return ret; }
+	if (!hbt) { ret = wii_cam_wait_for_dongle; return ret; }
 	do
 	{
 		ibtidx++;

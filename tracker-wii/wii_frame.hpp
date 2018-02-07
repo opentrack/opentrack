@@ -16,7 +16,7 @@
 
 namespace pt_module {
 
-enum wii_camera_status : unsigned { wii_cam_wait_for_sync, wii_cam_wait_for_connect, wii_cam_data_no_change, wii_cam_data_change };
+enum wii_camera_status : unsigned { wii_cam_wait_for_dongle, wii_cam_wait_for_sync, wii_cam_wait_for_connect, wii_cam_data_no_change, wii_cam_data_change };
 
 struct wii_info_points {
 	unsigned ux;

@@ -50,6 +50,8 @@ WIIPreview::WIIPreview(int w, int h)
 QImage WIIPreview::get_bitmap()
 {
 	switch (status) {
+	case wii_cam_wait_for_dongle:
+		return QImage(":/Resources/usb.png");
 	case wii_cam_wait_for_sync:
 		return QImage(":/Resources/sync.png");
 	case wii_cam_wait_for_connect:
