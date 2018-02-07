@@ -198,6 +198,14 @@ wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
 		ret = _pair();
+		switch(ret){
+		case wii_cam_wait_for_sync:
+			m_pDev->Disconnect();
+			goto goodbye;
+		case wii_cam_wait_for_connect:
+			m_pDev->Disconnect();
+			break;
+		}
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {
 			Beep(500, 30); Sleep(1000);
 			goto goodbye;
@@ -248,7 +256,7 @@ bool WIICamera::_get_points(struct wii_info& wii)
 			wii.Points[index].bvis = dot.bVisible;
 		}
 	}
-	m_pDev->SetLEDs(3 - point_count);
+	m_pDev->SetLEDs(0);
 	return ret;
 }
 
