@@ -203,7 +203,6 @@ wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 			m_pDev->Disconnect();
 			goto goodbye;
 		case wii_cam_wait_for_connect:
-			m_pDev->Disconnect();
 			break;
 		}
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {
