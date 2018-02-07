@@ -19,8 +19,11 @@ using namespace pt_module;
 
 WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
 {
+    const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
     const cv::Mat& frame = frame_.as_const<const WIIFrame>()->mat;
     ensure_size(frame_copy, frame_out.cols, frame_out.rows, CV_8UC3);
+
+    status = wii.status;
 
     if (frame.channels() != 3)
     {
@@ -46,6 +49,14 @@ WIIPreview::WIIPreview(int w, int h)
 
 QImage WIIPreview::get_bitmap()
 {
+	switch (status) {
+	case wii_cam_wait_for_dongle:
+		return QImage(":/Resources/usb.png");
+	case wii_cam_wait_for_sync:
+		return QImage(":/Resources/sync.png");
+	case wii_cam_wait_for_connect:
+		return QImage(":/Resources/on.png");
+	}
     int stride = frame_out.step.p[0];
 
     if (stride < 64 || stride < frame_out.cols * 4)

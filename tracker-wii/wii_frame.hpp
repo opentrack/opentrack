@@ -16,7 +16,7 @@
 
 namespace pt_module {
 
-enum wii_camera_status : unsigned { wii_cam_wait_for_connect, wii_cam_data_no_change, wii_cam_data_change };
+enum wii_camera_status : unsigned { wii_cam_wait_for_dongle, wii_cam_wait_for_sync, wii_cam_wait_for_connect, wii_cam_data_no_change, wii_cam_data_change };
 
 struct wii_info_points {
 	unsigned ux;
@@ -59,6 +59,7 @@ private:
 
     bool fresh = true;
     cv::Mat frame_copy, frame_color, frame_resize, frame_out;
+	wii_camera_status status;
 };
 
 } // ns pt_module

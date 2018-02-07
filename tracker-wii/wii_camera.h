@@ -54,6 +54,7 @@ private:
 	bool onExit = false;
 	pt_frame internalframe;
 	
+	wii_camera_status _pair();
 	wii_camera_status _get_frame(cv::Mat& Frame);
 	bool _get_points(struct wii_info&);
 	void _get_status(struct wii_info&);
