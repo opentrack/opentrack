@@ -6,7 +6,7 @@
     <message>
         <location filename="../ftnoir_tracker_pt.h" line="+95"/>
         <source>PointTracker 1.1</source>
-        <translation type="unfinished"></translation>
+        <translation>PointTracker 1.1</translation>
     </message>
 </context>
 <context>
@@ -14,42 +14,42 @@
     <message>
         <location filename="../FTNoIR_PT_Controls.ui" line="+23"/>
         <source>PointTracker Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>PointTracker-instellingen</translation>
     </message>
     <message>
         <location line="+38"/>
         <source>Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>Camera</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Camera settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Camera-instellingen</translation>
     </message>
     <message>
         <location line="+19"/>
         <source>°</source>
-        <translation type="unfinished"></translation>
+        <translation>°</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Diagonal field of view</source>
-        <translation type="unfinished"></translation>
+        <translation>Diagonaal gezichtsveld</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Width</source>
-        <translation type="unfinished"></translation>
+        <translation>Breedte</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Desired capture height</source>
-        <translation type="unfinished"></translation>
+        <translation>Gewenste hoogte van de tracking</translation>
     </message>
     <message>
         <location line="+3"/>
@@ -57,37 +57,37 @@
         <location line="+175"/>
         <location line="+16"/>
         <source> px</source>
-        <translation type="unfinished"></translation>
+        <translation> px</translation>
     </message>
     <message>
         <location line="-233"/>
         <source>Dynamic pose timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>Dynamic pose timeout</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Desired capture framerate</source>
-        <translation type="unfinished"></translation>
+        <translation>Gewenste framesnelheid van de tracking</translation>
     </message>
     <message>
         <location line="+3"/>
         <source> Hz</source>
-        <translation type="unfinished"></translation>
+        <translation> Hz</translation>
     </message>
     <message>
         <location line="+23"/>
         <source>Desired capture width</source>
-        <translation type="unfinished"></translation>
+        <translation>Gewenste breedte van de tracking</translation>
     </message>
     <message>
         <location line="+22"/>
         <source>Height</source>
-        <translation type="unfinished"></translation>
+        <translation>Hoogte</translation>
     </message>
     <message>
         <location line="+7"/>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> ms</translation>
     </message>
     <message>
         <location line="+19"/>
@@ -97,79 +97,79 @@
     <message>
         <location line="+13"/>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Apparaat</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Openen</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Camera settings (when available)</source>
-        <translation type="unfinished"></translation>
+        <translation>Camera-instellingen (indien beschikbaar)</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Point extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>Lichtpunt-extractie</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Max size</source>
-        <translation type="unfinished"></translation>
+        <translation>Max. grootte</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Drempelwaarde</translation>
     </message>
     <message>
         <location line="+10"/>
         <source>Min size</source>
-        <translation type="unfinished"></translation>
+        <translation>Min. grootte</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Intensity threshold for point extraction</source>
-        <translation type="unfinished"></translation>
+        <translation>Drempelwaarde van de intensiteit voor het detecteren van lichtpunten</translation>
     </message>
     <message>
         <location line="+25"/>
         <source>Automatic threshold</source>
-        <translation type="unfinished"></translation>
+        <translation>Automatische drempelwaarde</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Enable, slider sets point size</source>
-        <translation type="unfinished"></translation>
+        <translation>Inschakelen, de slider stelt de lichtpruntgrootte in</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Maximum point diameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Maximale diameter van een lichtpunt</translation>
     </message>
     <message>
         <location line="+16"/>
         <source>Minimum point diameter</source>
-        <translation type="unfinished"></translation>
+        <translation>Minimale diameter van een lichtpunt</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Model</source>
-        <translation type="unfinished"></translation>
+        <translation>Model</translation>
     </message>
     <message>
         <location line="+28"/>
         <source>Clip</source>
-        <translation type="unfinished"></translation>
+        <translation>Koptelefoon-clip</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+154"/>
         <location line="+129"/>
         <source>Model Dimensions</source>
-        <translation type="unfinished"></translation>
+        <translation>Afmetingen van model</translation>
     </message>
     <message>
         <location line="-271"/>
@@ -189,105 +189,105 @@
         <location line="+26"/>
         <location line="+26"/>
         <source> mm</source>
-        <translation type="unfinished"></translation>
+        <translation> mm</translation>
     </message>
     <message>
         <location line="-511"/>
         <location line="+116"/>
         <source>Side</source>
-        <translation type="unfinished"></translation>
+        <translation>Zij-aanzicht</translation>
     </message>
     <message>
         <location line="-65"/>
         <location line="+132"/>
         <source>Front</source>
-        <translation type="unfinished"></translation>
+        <translation>Voor-aanzicht</translation>
     </message>
     <message>
         <location line="-107"/>
         <source>Cap</source>
-        <translation type="unfinished"></translation>
+        <translation>Pet</translation>
     </message>
     <message>
         <location line="+135"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>Aangepaste maten</translation>
     </message>
     <message>
         <location line="+18"/>
         <location line="+169"/>
         <location line="+106"/>
         <source>z:</source>
-        <translation type="unfinished"></translation>
+        <translation>z:</translation>
     </message>
     <message>
         <location line="-249"/>
         <location line="+104"/>
         <location line="+93"/>
         <source>x:</source>
-        <translation type="unfinished"></translation>
+        <translation>x:</translation>
     </message>
     <message>
         <location line="-132"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Location of the two remaining model points&lt;br/&gt;with respect to the reference point in default pose&lt;/p&gt;&lt;p&gt;Use any units you want, not necessarily centimeters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Locatie van de twee overgebleven lichtpunten van het model&lt;br/&gt;uitgaande van het referentiepunt in het standaardaanzicht&lt;/p&gt;&lt;p&gt;Gebruik elke gewenste eenheid, het gaat om de onderlinge verhouding.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+26"/>
         <location line="+65"/>
         <location line="+67"/>
         <source>y:</source>
-        <translation type="unfinished"></translation>
+        <translation>y:</translation>
     </message>
     <message>
         <location line="-106"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+46"/>
         <source>Model position</source>
-        <translation type="unfinished"></translation>
+        <translation>Positie van model</translation>
     </message>
     <message>
         <location line="+105"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/model-calibration-for-PT-and-Aruco-trackers&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Instructions on the opentrack wiki&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/model-calibration-for-PT-and-Aruco-trackers&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Verdere (Engelstalige) instructies op de Wiki-pagina van Opentrack&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+13"/>
         <source>Start calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Kalibratie starten</translation>
     </message>
     <message>
         <location line="+17"/>
         <source>About</source>
-        <translation type="unfinished"></translation>
+        <translation>Over</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker-plugin&lt;br/&gt;Versie 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;door Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Engelstalige handleiding (extern)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+36"/>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Status</translation>
     </message>
     <message>
         <location line="+6"/>
         <source>Extracted Points:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gedetecteerde lichtpunten:</translation>
     </message>
     <message>
         <location line="+7"/>
         <source>Camera Info:</source>
-        <translation type="unfinished"></translation>
+        <translation>Camera-informatie:</translation>
     </message>
 </context>
 </TS>
