@@ -2114,6 +2114,14 @@ bool wiimote::WriteReport (BYTE *buff)
 
 	if(bUseHIDwrite)
 		{
+		/* no where to release handle, I have to do it myself */
+		if (HIDwriteThread)
+		{
+			if (WaitForSingleObject(HIDwriteThread, 0) == WAIT_OBJECT_0) {
+				CloseHandle(HIDwriteThread);
+				HIDwriteThread = NULL;
+			}
+		}
 		// HidD_SetOutputReport: +: works on MS Bluetooth stacks (WriteFile doesn't).
 		//						 -: is synchronous, so make it async
 		if(!HIDwriteThread)
