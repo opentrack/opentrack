@@ -34,12 +34,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>kalmanDll</name>
-    <message>
-        <location filename="../kalman.h" line="+159"/>
-        <source>Kalman</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

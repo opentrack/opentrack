@@ -48,20 +48,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>fsuipc</name>
-    <message>
-        <location filename="../ftnoir_protocol_fsuipc.h" line="+57"/>
-        <source>Microsoft Flight Simulator X</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>fsuipcDll</name>
-    <message>
-        <location line="+30"/>
-        <source>FSUIPC -- Microsoft FS2002/FS2004</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

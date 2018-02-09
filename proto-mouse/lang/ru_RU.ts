@@ -77,12 +77,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>mouseDll</name>
-    <message>
-        <location filename="../ftnoir_protocol_mouse.h" line="+62"/>
-        <source>mouse emulation</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

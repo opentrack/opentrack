@@ -35,17 +35,9 @@
     </message>
 </context>
 <context>
-    <name>rift_042Dll</name>
-    <message>
-        <location filename="../ftnoir_tracker_rift_042.h" line="+57"/>
-        <source>Oculus Rift runtime 0.4.2 -- HMD</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>rift_tracker_042</name>
     <message>
-        <location filename="../ftnoir_tracker_rift_042.cpp" line="+51"/>
+        <location filename="../ftnoir_tracker_rift_042.cpp" line="+49"/>
         <source>Unable to start Rift tracker: %1</source>
         <translation type="unfinished"></translation>
     </message>

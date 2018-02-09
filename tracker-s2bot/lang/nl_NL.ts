@@ -117,12 +117,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>meta_s2bot</name>
-    <message>
-        <location filename="../ftnoir_tracker_s2bot.h" line="+69"/>
-        <source>S2Bot receiver</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

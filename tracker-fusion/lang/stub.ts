@@ -4,34 +4,26 @@
 <context>
     <name>fusion_dialog</name>
     <message>
-        <location filename="../fusion.cpp" line="+185"/>
+        <location filename="../fusion.cpp" line="+192"/>
         <source>Fusion tracker only works when distinct trackers are selected for rotation and position.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>fusion_metadata</name>
-    <message>
-        <location filename="../fusion.h" line="+55"/>
-        <source>Fusion</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>fusion_tracker</name>
     <message>
-        <location filename="../fusion.cpp" line="-134"/>
+        <location line="-146"/>
         <source>Fusion tracker</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
-        <source>Select different trackers for rotation and position.</source>
+        <location line="+21"/>
+        <source>Trackers not selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+55"/>
-        <source>Select rotation and position trackers.</source>
+        <location line="+6"/>
+        <source>Select different trackers for rotation and position.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

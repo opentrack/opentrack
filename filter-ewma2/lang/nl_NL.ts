@@ -53,12 +53,4 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>ewmaDll</name>
-    <message>
-        <location filename="../ftnoir_filter_ewma2.h" line="+62"/>
-        <source>EWMA</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

@@ -4,7 +4,7 @@
 <context>
     <name>RSTracker</name>
     <message>
-        <location filename="../ftnoir_tracker_rs.cpp" line="+91"/>
+        <location filename="../ftnoir_tracker_rs.cpp" line="+93"/>
         <source>Intel® RealSense™ Runtime Installation</source>
         <translation type="unfinished"></translation>
     </message>
@@ -31,14 +31,6 @@
     <message>
         <location line="+6"/>
         <source>Install Runtime</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>RSTrackerMetaData</name>
-    <message>
-        <location line="+30"/>
-        <source>Intel® RealSense™ Technology</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

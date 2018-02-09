@@ -264,7 +264,7 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location line="+19"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate at OpenTrack speed sketch  FPS to adjust CPU &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Indicate at opentrack speed sketch  FPS to adjust CPU &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -389,31 +389,9 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
-    <name>hatire</name>
-    <message>
-        <location filename="../ftnoir_tracker_hat.cpp" line="+59"/>
-        <location line="+3"/>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+0"/>
-        <source>Unable to open ComPort: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>hatire_metadata</name>
-    <message>
-        <location filename="../ftnoir_tracker_hat.h" line="+51"/>
-        <source>Hatire Arduino</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>hatire_thread</name>
     <message>
-        <location filename="../thread.cpp" line="+27"/>
+        <location filename="../thread.cpp" line="+29"/>
         <source>Timeout during writing command</source>
         <translation type="unfinished"></translation>
     </message>
@@ -423,7 +401,7 @@ p, li { white-space: pre-wrap; }
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+111"/>
+        <location line="+128"/>
         <source>Setting serial port name</source>
         <translation type="unfinished"></translation>
     </message>

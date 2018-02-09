@@ -9,29 +9,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+12"/>
-        <source>IP-address remote PC</source>
+        <location line="+33"/>
+        <source>IP address</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+71"/>
-        <source>Port-number</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>flightgear</name>
-    <message>
-        <location filename="../ftnoir_protocol_fg.h" line="+40"/>
-        <source>FlightGear</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>flightgearDll</name>
-    <message>
-        <location line="+27"/>
-        <source>FlightGear</source>
+        <location line="+113"/>
+        <source>Port</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

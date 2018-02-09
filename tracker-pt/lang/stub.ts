@@ -2,10 +2,60 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>PT_metadata</name>
+    <name>TrackerDialog_PT</name>
     <message>
-        <location filename="../ftnoir_tracker_pt.h" line="+95"/>
-        <source>PointTracker 1.1</source>
+        <location filename="../ftnoir_tracker_pt_dialog.cpp" line="+118"/>
+        <source>Brightness %1/255</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>LED radius %1 pixels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+40"/>
+        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>%1 samples. Over %2, good!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
+        <source>Stop calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+2"/>
+        <source>Start calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>%1x%2 @ %3 FPS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>%1 OK!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+0"/>
+        <source>%1 BAD!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+4"/>
+        <source>Tracker offline</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -17,17 +67,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+99"/>
         <source>Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+12"/>
         <source>Camera settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>°</source>
         <translation type="unfinished"></translation>
     </message>
@@ -53,14 +103,14 @@
     </message>
     <message>
         <location line="+3"/>
-        <location line="+55"/>
-        <location line="+175"/>
-        <location line="+16"/>
+        <location line="+67"/>
+        <location line="+272"/>
+        <location line="+22"/>
         <source> px</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-233"/>
+        <location line="-342"/>
         <source>Dynamic pose timeout</source>
         <translation type="unfinished"></translation>
     </message>
@@ -75,7 +125,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+29"/>
         <source>Desired capture width</source>
         <translation type="unfinished"></translation>
     </message>
@@ -85,17 +135,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source> ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+19"/>
-        <source>Dynamic pose resolution</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
         <source>Device</source>
         <translation type="unfinished"></translation>
     </message>
@@ -105,57 +150,92 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Camera settings (when available)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+72"/>
         <source>Point extraction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+44"/>
         <source>Max size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-32"/>
         <source>Threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+16"/>
         <source>Min size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+32"/>
         <source>Intensity threshold for point extraction</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+44"/>
         <source>Automatic threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-13"/>
         <source>Enable, slider sets point size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-150"/>
+        <source>Color channels used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Average</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Natural</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Red only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Blue only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Dynamic pose (for caps only, never clips)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+133"/>
         <source>Maximum point diameter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+22"/>
         <source>Minimum point diameter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+29"/>
+        <source>Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Model</source>
         <translation type="unfinished"></translation>
     </message>
@@ -185,14 +265,14 @@
         <location line="+13"/>
         <location line="+13"/>
         <location line="+26"/>
-        <location line="+132"/>
+        <location line="+119"/>
         <location line="+26"/>
         <location line="+26"/>
         <source> mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-511"/>
+        <location line="-498"/>
         <location line="+116"/>
         <source>Side</source>
         <translation type="unfinished"></translation>
@@ -216,31 +296,31 @@
     <message>
         <location line="+18"/>
         <location line="+169"/>
-        <location line="+106"/>
+        <location line="+67"/>
         <source>z:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-249"/>
+        <location line="-210"/>
         <location line="+104"/>
-        <location line="+93"/>
+        <location line="+132"/>
         <source>x:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-132"/>
+        <location line="-171"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Location of the two remaining model points&lt;br/&gt;with respect to the reference point in default pose&lt;/p&gt;&lt;p&gt;Use any units you want, not necessarily centimeters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+26"/>
         <location line="+65"/>
-        <location line="+67"/>
+        <location line="+106"/>
         <source>y:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-106"/>
+        <location line="-145"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -256,11 +336,12 @@
     </message>
     <message>
         <location line="+105"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/model-calibration-for-PT-and-Aruco-trackers&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Instructions on the opentrack wiki&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Use only yaw and pitch while calibrating.
+Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+36"/>
         <source>Start calibration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -275,17 +356,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="-1283"/>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+12"/>
         <source>Extracted Points:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Camera Info:</source>
         <translation type="unfinished"></translation>
     </message>

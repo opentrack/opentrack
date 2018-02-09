@@ -2,17 +2,9 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>PT_metadata</name>
-    <message>
-        <location filename="../ftnoir_tracker_pt.h" line="+96"/>
-        <source>PointTracker 1.1</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
     <name>TrackerDialog_PT</name>
     <message>
-        <location filename="../ftnoir_tracker_pt_dialog.cpp" line="+130"/>
+        <location filename="../ftnoir_tracker_pt_dialog.cpp" line="+180"/>
         <source>%1 samples. Over %2, good!</source>
         <translation>Получено %1 образца(-ов). Больше %2, отлично!!</translation>
     </message>
@@ -22,7 +14,17 @@
         <translation>По оси YAW выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
     </message>
     <message>
-        <location line="+3"/>
+        <location line="-54"/>
+        <source>Brightness %1/255</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>LED radius %1 pixels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+43"/>
         <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
         <translation>По оси Pitch выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
     </message>
@@ -65,17 +67,17 @@
         <translation>Настройки PointTracker</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+99"/>
         <source>Camera</source>
         <translation>Камера</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+12"/>
         <source>Camera settings</source>
         <translation>Настройка камеры</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+25"/>
         <source>°</source>
         <translation></translation>
     </message>
@@ -101,14 +103,14 @@
     </message>
     <message>
         <location line="+3"/>
-        <location line="+55"/>
-        <location line="+175"/>
-        <location line="+16"/>
+        <location line="+67"/>
+        <location line="+272"/>
+        <location line="+22"/>
         <source> px</source>
         <translation></translation>
     </message>
     <message>
-        <location line="-233"/>
+        <location line="-342"/>
         <source>Dynamic pose timeout</source>
         <translation>Динамическая поза (время ожидания)</translation>
     </message>
@@ -123,7 +125,7 @@
         <translation> Гц</translation>
     </message>
     <message>
-        <location line="+23"/>
+        <location line="+29"/>
         <source>Desired capture width</source>
         <translation>Желаемая ширина захвата</translation>
     </message>
@@ -133,17 +135,17 @@
         <translation>Высота</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source> ms</source>
         <translation> мс</translation>
     </message>
     <message>
-        <location line="+19"/>
+        <location line="+104"/>
         <source>Dynamic pose (for caps only, never clips)</source>
         <translation>Динамическая поза (Только для модели &quot;Кепка&quot;)</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-85"/>
         <source>Device</source>
         <translation>Устройство</translation>
     </message>
@@ -153,57 +155,87 @@
         <translation>Открыть</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Camera settings (when available)</source>
         <translation>Параметры камеры (если доступно)</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+72"/>
         <source>Point extraction</source>
         <translation>Извлечение точек</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+44"/>
         <source>Max size</source>
         <translation>Макс.размер</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-32"/>
         <source>Threshold</source>
         <translation>Порог</translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="+16"/>
         <source>Min size</source>
         <translation>Мин.размер</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+32"/>
         <source>Intensity threshold for point extraction</source>
         <translation>Порог интенсивности для извлечения точки</translation>
     </message>
     <message>
-        <location line="+25"/>
+        <location line="+44"/>
         <source>Automatic threshold</source>
         <translation>Автоматич. порог</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-13"/>
         <source>Enable, slider sets point size</source>
         <translation>Полузнок устанавливает размер точек</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="-150"/>
+        <source>Color channels used</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+14"/>
+        <source>Average</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Natural</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Red only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Blue only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+147"/>
         <source>Maximum point diameter</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+22"/>
         <source>Minimum point diameter</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+20"/>
+        <location line="+29"/>
+        <source>Value</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+11"/>
         <source>Model</source>
         <translation>Модель</translation>
     </message>
@@ -329,17 +361,17 @@ ROLL или X/Y-смещения.</translation>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Руководство (PointTracker)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="-1283"/>
         <source>Status</source>
         <translation>Статус</translation>
     </message>
     <message>
-        <location line="+6"/>
+        <location line="+12"/>
         <source>Extracted Points:</source>
         <translation>Извлечено точек:</translation>
     </message>
     <message>
-        <location line="+7"/>
+        <location line="+13"/>
         <source>Camera Info:</source>
         <translation>Параметры камеры:</translation>
     </message>

@@ -139,12 +139,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>joystickDll</name>
-    <message>
-        <location filename="../ftnoir_tracker_joystick.h" line="+75"/>
-        <source>Joystick input</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

@@ -110,12 +110,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>meta_freepie</name>
-    <message>
-        <location filename="../ftnoir_tracker_freepie-udp.h" line="+66"/>
-        <source>FreePIE UDP receiver</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

@@ -34,20 +34,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>rift_140Dll</name>
-    <message>
-        <location filename="../rift-140.hpp" line="+57"/>
-        <source>Oculus Rift runtime 1.4.0 -- HMD</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>rift_tracker_140</name>
-    <message>
-        <location filename="../impl.cpp" line="+61"/>
-        <source>Unable to start Rift tracker: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>

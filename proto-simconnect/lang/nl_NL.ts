@@ -15,17 +15,32 @@
     </message>
     <message>
         <location line="+14"/>
+        <source>RTM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
         <source>SP1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>SP2</source>
+        <source>SP2 -- Acceleration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location line="+5"/>
-        <source>Acceleration</source>
+        <source>Prepar3d SP2 XPACK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Steam FSX (older)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Steam FSX (new)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -35,10 +50,10 @@
     </message>
 </context>
 <context>
-    <name>simconnectDll</name>
+    <name>simconnect</name>
     <message>
-        <location filename="../ftnoir_protocol_sc.h" line="+106"/>
-        <source>Microsoft FSX SimConnect</source>
+        <location filename="../ftnoir_protocol_sc.cpp" line="+175"/>
+        <source>dll load failed -- %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

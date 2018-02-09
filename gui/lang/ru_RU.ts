@@ -4,7 +4,7 @@
 <context>
     <name>BrowseButton</name>
     <message>
-        <location filename="../process_detector.cpp" line="+66"/>
+        <location filename="../process_detector.cpp" line="+83"/>
         <source>Set executable name</source>
         <translation>Укажите исполняемый файл</translation>
     </message>
@@ -12,146 +12,6 @@
         <location line="+2"/>
         <source>Executable (*.exe);;All Files (*)</source>
         <translation></translation>
-    </message>
-</context>
-<context>
-    <name>MainWindow</name>
-    <message>
-        <location filename="../main-window.cpp" line="+97"/>
-        <source>Create new empty config</source>
-        <translation>Создать новый пустой профиль</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Create new copied config</source>
-        <translation>Создать новый профиль на основе текущего</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Open configuration directory</source>
-        <translation>Открыть каталог с профилями</translation>
-    </message>
-    <message>
-        <location line="+78"/>
-        <location line="+381"/>
-        <source>opentrack</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-378"/>
-        <source> (debug)</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <location line="+558"/>
-        <source>Show the Octopus</source>
-        <translation>Показать осьминожка</translation>
-    </message>
-    <message>
-        <location line="-558"/>
-        <location line="+558"/>
-        <source>Hide the Octopus</source>
-        <translation>Спрятать осьминожка</translation>
-    </message>
-    <message>
-        <location line="-551"/>
-        <source>Tracker settings</source>
-        <translation>Настройка источника данных</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Filter settings</source>
-        <translation>Настройка фильтрации/сглаживания</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Protocol settings</source>
-        <translation>Настройка выходного интерфейса</translation>
-    </message>
-    <message>
-        <location line="+8"/>
-        <source>Mappings</source>
-        <translation>Настройка кривых</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Options</source>
-        <translation>Настройки</translation>
-    </message>
-    <message>
-        <location line="+6"/>
-        <source>Exit</source>
-        <translation>Закрыть</translation>
-    </message>
-    <message>
-        <location line="+38"/>
-        <source>The Octopus is sad</source>
-        <translation>Осьминожек опечален</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>Check permissions for your .ini directory:
-
-&quot;%1&quot;%2
-
-Exiting now.</source>
-        <translation>Проверьте права доступа на Вашу .ini папку:
-
-&quot;%1&quot;%2
-
-Закрытие программы.</translation>
-    </message>
-    <message>
-        <location line="+198"/>
-        <source>Library load error</source>
-        <translation>Ошибка загрузки библиотеки</translation>
-    </message>
-    <message>
-        <location line="+1"/>
-        <source>One of libraries failed to load. Check installation.</source>
-        <translation>Одна из библиотек загрузилась неудачно. Проверьте инсталлятор.</translation>
-    </message>
-    <message>
-        <location line="+93"/>
-        <location line="+4"/>
-        <source> :: </source>
-        <translation> :: </translation>
-    </message>
-</context>
-<context>
-    <name>MapWidget</name>
-    <message>
-        <location filename="../mapping-window.cpp" line="+65"/>
-        <source>%1°</source>
-        <translation></translation>
-    </message>
-</context>
-<context>
-    <name>OptionsDialog</name>
-    <message>
-        <location filename="../options-dialog.cpp" line="+27"/>
-        <source>Joy button %1</source>
-        <translation>Джойстик #%1</translation>
-    </message>
-    <message>
-        <location line="+3"/>
-        <location line="+163"/>
-        <source>None</source>
-        <translation>Не назначена</translation>
-    </message>
-</context>
-<context>
-    <name>UI_new_config</name>
-    <message>
-        <location filename="../new_config.ui" line="+17"/>
-        <source>Config filename</source>
-        <translation>Создание профиля</translation>
-    </message>
-    <message>
-        <location line="+10"/>
-        <source>New file name:</source>
-        <translation>Новое имя профиля:</translation>
     </message>
 </context>
 <context>
@@ -168,206 +28,108 @@ Exiting now.</source>
     </message>
 </context>
 <context>
-    <name>main_window</name>
+    <name>mapping_dialog</name>
     <message>
-        <location filename="../main-window.ui" line="+296"/>
-        <source>Raw tracker data</source>
-        <translation>Исходные данные</translation>
-    </message>
-    <message>
-        <location line="+67"/>
-        <location line="+479"/>
-        <source>Z</source>
-        <translation>Z</translation>
-    </message>
-    <message>
-        <location line="-463"/>
-        <location line="+409"/>
-        <source>Pitch</source>
-        <translation>Pitch</translation>
-    </message>
-    <message>
-        <location line="-356"/>
-        <location line="+315"/>
-        <source>Y</source>
-        <translation>Y</translation>
-    </message>
-    <message>
-        <location line="-299"/>
-        <location line="+277"/>
-        <source>X</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <location line="-230"/>
-        <location line="+309"/>
-        <source>Roll</source>
-        <translation>Roll</translation>
-    </message>
-    <message>
-        <location line="-293"/>
-        <location line="+309"/>
-        <source>Yaw</source>
-        <translation>Yaw</translation>
-    </message>
-    <message>
-        <location line="-200"/>
-        <source>Game data</source>
-        <translation>Игровые данные</translation>
-    </message>
-    <message>
-        <location line="+366"/>
-        <source>Profile</source>
-        <translation>Профиль</translation>
-    </message>
-    <message>
-        <location line="+32"/>
-        <source>Options</source>
-        <translation>Настройки</translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Mapping</source>
-        <translation> Кривые</translation>
-    </message>
-    <message>
-        <location line="+23"/>
-        <source>Tracking</source>
-        <translation>Статус работы трекера</translation>
-    </message>
-    <message>
-        <location line="+36"/>
-        <source>Start</source>
-        <translation>Запустить</translation>
-    </message>
-    <message>
-        <location line="+22"/>
-        <source>Stop</source>
-        <translation>Остановить</translation>
-    </message>
-    <message>
-        <location line="+43"/>
-        <source>Input</source>
-        <translation>Источник данных</translation>
-    </message>
-    <message>
-        <location line="+49"/>
-        <location line="+62"/>
-        <location line="+62"/>
-        <source>🔨</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location line="-111"/>
-        <source>Output</source>
-        <translation>Выходной интерфейс</translation>
-    </message>
-    <message>
-        <location line="+62"/>
-        <source>Filter</source>
-        <translation>Фильтрация/сглаживание</translation>
-    </message>
-</context>
-<context>
-    <name>mapping_window</name>
-    <message>
-        <location filename="../mapping-window.ui" line="+26"/>
+        <location filename="../mapping-dialog.ui" line="+26"/>
         <source>Mapping properties</source>
-        <translation>Настройка кривых</translation>
+        <translation type="unfinished">Настройка кривых</translation>
     </message>
     <message>
         <location line="+20"/>
         <source>Yaw</source>
-        <translation>Yaw</translation>
+        <translation type="unfinished">Yaw</translation>
     </message>
     <message>
         <location line="+24"/>
-        <location line="+88"/>
-        <location line="+88"/>
-        <source>Max rotation</source>
-        <translation>Максимальный угол</translation>
+        <location line="+74"/>
+        <location line="+95"/>
+        <location line="+78"/>
+        <location line="+74"/>
+        <location line="+74"/>
+        <source>Max input</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="-138"/>
-        <location line="+88"/>
-        <location line="+88"/>
-        <location line="+92"/>
-        <location line="+88"/>
-        <location line="+88"/>
+        <location line="-364"/>
+        <location line="+95"/>
+        <location line="+74"/>
+        <location line="+78"/>
+        <location line="+74"/>
+        <location line="+74"/>
         <source>Asymmetric mapping below</source>
-        <translation>Ассиметричная настройка кривых</translation>
+        <translation type="unfinished">Ассиметричная настройка кривых</translation>
     </message>
     <message>
-        <location line="-418"/>
+        <location line="-376"/>
         <source>Pitch</source>
-        <translation>Pitch</translation>
+        <translation type="unfinished">Pitch</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+41"/>
+        <source>Max output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+8"/>
+        <source>180°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>90°</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+41"/>
         <source>Roll</source>
-        <translation>Roll</translation>
+        <translation type="unfinished">Roll</translation>
     </message>
     <message>
-        <location line="+92"/>
+        <location line="+78"/>
         <source>X</source>
-        <translation>X</translation>
+        <translation type="unfinished">X</translation>
     </message>
     <message>
-        <location line="+24"/>
-        <location line="+88"/>
-        <location line="+88"/>
-        <source>Max translation</source>
-        <translation>Максимальное смещение</translation>
-    </message>
-    <message>
-        <location line="-112"/>
+        <location line="+74"/>
         <source>Y</source>
-        <translation>Y</translation>
+        <translation type="unfinished">Y</translation>
     </message>
     <message>
-        <location line="+88"/>
+        <location line="+74"/>
         <source>Z</source>
-        <translation>Z</translation>
-    </message>
-</context>
-<context>
-    <name>new_file_dialog</name>
-    <message>
-        <location filename="../new_file_dialog.h" line="+42"/>
-        <source>File exists</source>
-        <translation>Файл создан</translation>
+        <translation type="unfinished">Z</translation>
     </message>
     <message>
-        <location line="+1"/>
-        <source>This file already exists. Pick another name.</source>
-        <translation>Данный файл уже создан. Пожалуйста выберите другое имя.</translation>
+        <location filename="../mapping-dialog.cpp" line="+100"/>
+        <source>%1°</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>options_dialog</name>
     <message>
-        <location filename="../options-dialog.ui" line="+20"/>
+        <location filename="../settings-dialog.ui" line="+14"/>
         <source>Options</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location line="+38"/>
+        <location line="+26"/>
         <source>Shortcuts</source>
         <translation>Горячие клавиши</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+12"/>
         <source>Global shortcuts</source>
         <translation>Глобальные горячие клавиши</translation>
     </message>
     <message>
-        <location line="+21"/>
+        <location line="+15"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translatorcomment>использовать текущую позу как позу вперед</translatorcomment>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центрирование&lt;/span&gt; - использовать текущую позу в качестве центра.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Фиксация обзора&lt;/span&gt; - фиксация обзора до следующего нажатия клавиши.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центр&lt;/span&gt; - фиксирует взгляд в нулевой точке до следующего нажатия клавиши.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location line="+66"/>
+        <location line="+57"/>
         <location line="+32"/>
         <location line="+29"/>
         <location line="+131"/>
@@ -434,12 +196,12 @@ Exiting now.</source>
         <translation>Фиксация обзора</translation>
     </message>
     <message>
-        <location line="+522"/>
+        <location line="+537"/>
         <source>Center at startup</source>
         <translation>Центрирование при запуске</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+13"/>
         <source>Never translate the application interface</source>
         <translation></translation>
     </message>
@@ -449,20 +211,19 @@ Exiting now.</source>
         <translation>Настройка трея</translation>
     </message>
     <message>
-        <location line="+114"/>
+        <location line="+672"/>
         <location line="+87"/>
         <location line="+65"/>
         <source>°</source>
         <translation>°</translation>
     </message>
     <message>
-        <location line="+812"/>
-        <location line="+191"/>
+        <location line="+331"/>
         <source>Enable</source>
         <translation>Включить</translation>
     </message>
     <message>
-        <location line="-1232"/>
+        <location line="-1124"/>
         <source>Minimize to tray on startup when enabled</source>
         <translation>Сворачивать в трей при запуске</translation>
     </message>
@@ -472,96 +233,61 @@ Exiting now.</source>
         <translation>Добавлять opentrack в трей</translation>
     </message>
     <message>
-        <location line="+30"/>
-        <source>Camera</source>
-        <translation>Камера</translation>
-    </message>
-    <message>
-        <location line="+170"/>
-        <location line="+259"/>
-        <location line="+65"/>
+        <location line="+112"/>
+        <location line="+37"/>
+        <location line="+104"/>
         <location line="+58"/>
-        <location line="+45"/>
-        <location line="+136"/>
-        <location line="+58"/>
-        <location line="+58"/>
+        <location line="+71"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+261"/>
         <source>Roll</source>
         <translation>Roll</translation>
     </message>
     <message>
-        <location line="-722"/>
-        <location line="+362"/>
-        <location line="+24"/>
-        <location line="+34"/>
-        <location line="+45"/>
-        <location line="+136"/>
+        <location line="-657"/>
+        <location line="+141"/>
         <location line="+58"/>
-        <location line="+58"/>
+        <location line="+71"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+55"/>
+        <location line="+168"/>
         <source>Pitch</source>
         <translation>Pitch</translation>
     </message>
     <message>
-        <location line="-645"/>
-        <location line="+285"/>
-        <location line="+58"/>
-        <location line="+45"/>
-        <location line="+81"/>
+        <location line="-619"/>
+        <location line="+86"/>
         <location line="+55"/>
         <location line="+58"/>
-        <location line="+58"/>
+        <location line="+71"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+300"/>
         <source>Yaw</source>
         <translation>Yaw</translation>
     </message>
     <message>
-        <location line="-827"/>
+        <location line="-187"/>
         <source>Custom center pose</source>
         <translation>Пользовательское положение центральной позиции</translation>
     </message>
     <message>
-        <location line="+9"/>
-        <source>Alter the centered position sent to games.</source>
-        <translation>Данная настройка позволяет изменить изначальную точку нахождения в вашей любимой игре. Например: если вам хочется сидеть подальше от лобового стекла внесите поправку в ось Z. И каждый раз при центрировании Вы будете находиться в данном позиции.</translation>
-    </message>
-    <message>
-        <location line="+61"/>
+        <location line="+70"/>
         <location line="+29"/>
         <location line="+72"/>
-        <location line="+1048"/>
+        <location line="+376"/>
         <source> cm</source>
         <translation> см</translation>
     </message>
     <message>
-        <location line="-991"/>
-        <source>Centering method</source>
-        <translation>Режим центрирования</translation>
-    </message>
-    <message>
-        <location line="+15"/>
-        <source>Try changing this if centering doesn&apos;t perform correctly for your input device.</source>
-        <translation>Если для Вашего трекера текущий режим центрирования отрабатывает некорректно, то попробуйте изменить его на другой.</translation>
-    </message>
-    <message>
-        <location line="+34"/>
-        <source>Method</source>
-        <translation>Метод центрирования</translation>
-    </message>
-    <message>
-        <location line="+14"/>
-        <source>Relative (inertial device)</source>
-        <translation>Относительный (инерционники)</translation>
-    </message>
-    <message>
-        <location line="+5"/>
-        <source>Absolute (camera device)</source>
-        <translation>Абсолютный (камеры)</translation>
-    </message>
-    <message>
-        <location line="+37"/>
+        <location line="-1129"/>
         <source>Output</source>
         <translation>Выходной интерфейс</translation>
     </message>
     <message>
-        <location line="+630"/>
+        <location line="+839"/>
         <location line="+15"/>
         <source>Relative translation</source>
         <translation>Относительный сдвиг</translation>
@@ -574,123 +300,151 @@ Exiting now.</source>
 При активированном режиме смещения по осям применяются после поворота. Важно! В этом режиме сначала выполняется поворот по оси YAW и только потом смещение по осям X, Y, Z, в противном случае у вас будут неверно интерпритироваться движения. Например: при повороте на 180 градусов по оси YAW и движении вперед, камера будет приближаться, а пилот &quot;отдаляться в спинку кресла&quot;.</translation>
     </message>
     <message>
-        <location line="+65"/>
+        <location line="+115"/>
         <source>Disable for X</source>
         <translation>Откл. по оси X</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="-16"/>
         <source>Disable for Y</source>
         <translation>Откл. по оси Y</translation>
     </message>
     <message>
-        <location line="+16"/>
+        <location line="+45"/>
         <source>Disable for Z (for zoom on Z axis)</source>
         <translation>Откл. по оси Z (Ось приближения)</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+26"/>
         <source>Disable effect by yaw</source>
         <translation>Откл. по оси Yaw</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-13"/>
         <source>Disable effect by pitch</source>
         <translation>Откл. по оси Pitch</translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="-29"/>
         <source>Disable effect by roll</source>
         <translation>Откл. по оси Roll</translation>
     </message>
     <message>
-        <location line="+31"/>
+        <location line="+73"/>
         <source>Eyes will be offset from the pivot of rotation, assumed to be the neck. It also works with relative translation disabled.</source>
         <translation>Смещение точки взгляда относительно оси вращения. Работает вместе с относительным сдвигом</translation>
     </message>
     <message>
-        <location line="-810"/>
+        <location line="-1050"/>
         <source>Output remap</source>
         <translation>Переназначение осей</translation>
     </message>
     <message>
-        <location line="+537"/>
+        <location line="+540"/>
         <source>Assign input axis to output axis.</source>
         <translation>Сопоставление исходных и игровых осей.</translation>
     </message>
     <message>
-        <location line="-801"/>
-        <location line="+344"/>
-        <location line="+27"/>
+        <location line="-497"/>
+        <location line="+49"/>
+        <location line="+92"/>
         <location line="+58"/>
-        <location line="+45"/>
-        <location line="+136"/>
-        <location line="+58"/>
-        <location line="+58"/>
+        <location line="+71"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+214"/>
         <source>X</source>
         <translation>X</translation>
     </message>
     <message>
-        <location line="-369"/>
+        <location line="-228"/>
         <source>Invert</source>
         <translation>Инвертировать</translation>
     </message>
     <message>
-        <location line="-321"/>
-        <location line="+340"/>
+        <location line="-372"/>
+        <location line="+141"/>
         <location line="+58"/>
-        <location line="+45"/>
-        <location line="+52"/>
-        <location line="+84"/>
-        <location line="+58"/>
-        <location line="+58"/>
+        <location line="+71"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+57"/>
+        <location line="+188"/>
         <source>Y</source>
         <translation>Y</translation>
     </message>
     <message>
-        <location line="-666"/>
-        <location line="+316"/>
-        <location line="+58"/>
-        <location line="+45"/>
-        <location line="+136"/>
+        <location line="-631"/>
+        <location line="+141"/>
         <location line="+58"/>
         <location line="+34"/>
-        <location line="+24"/>
+        <location line="+37"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+269"/>
         <source>Z</source>
         <translation>Z</translation>
     </message>
     <message>
-        <location line="-335"/>
+        <location line="-640"/>
+        <location line="+141"/>
         <location line="+58"/>
-        <location line="+45"/>
-        <location line="+136"/>
-        <location line="+58"/>
-        <location line="+58"/>
+        <location line="+71"/>
+        <location line="+50"/>
+        <location line="+71"/>
+        <location line="+424"/>
         <source>Disabled</source>
         <translation>Отключена</translation>
     </message>
     <message>
-        <location line="-212"/>
+        <location line="-405"/>
         <source>Destination</source>
         <translation>Игровая ось</translation>
     </message>
     <message>
-        <location line="+52"/>
+        <location line="-313"/>
         <source>Source</source>
         <translation>Исходная ось</translation>
     </message>
     <message>
-        <location line="+249"/>
+        <location line="-92"/>
+        <location line="+270"/>
+        <location line="+121"/>
+        <source>Relative translation only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+102"/>
+        <source>Alter the centered position sent to games. Useful if the default position is too much downward or upward.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+225"/>
         <source>CSV Data Logging</source>
         <translation>Логирование в формат CSV</translation>
     </message>
     <message>
-        <location line="+15"/>
+        <location line="+12"/>
         <source>Enable - You will be asked for a filename whenever tracking starts</source>
         <translation>Включить - необходимо будет указать имя файла при запуске трекера</translation>
     </message>
     <message>
-        <location line="+202"/>
+        <location line="+66"/>
+        <source>Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+19"/>
+        <source>Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+5"/>
+        <source>Enabled when not aiming</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+140"/>
         <source>Neck displacement</source>
         <translation>Настройка смещения шеи, как смещения оси поворота</translation>
     </message>
@@ -700,7 +454,7 @@ Exiting now.</source>
         <translation>Вперед/назад</translation>
     </message>
     <message>
-        <location line="+36"/>
+        <location line="+27"/>
         <location line="+12"/>
         <source>Game detection</source>
         <translation>Захват игр</translation>
@@ -709,6 +463,17 @@ Exiting now.</source>
         <location line="+15"/>
         <source>Start tracking automatically when a game starts with selected profile, and stop when the game exits.</source>
         <translation>Данное меню позволяет автоматизировать запуск opentrack&apos;а. Как только программа определит Вашу игру - opentrack начнет отслеживать Ваши движения с выбранным профилем, а по закрытию игры - остановит его. На практике это нажатие кнопки &quot;Запустить&quot; и &quot;Остановить&quot; в автоматическом режиме.</translation>
+    </message>
+    <message>
+        <location filename="../settings.cpp" line="+29"/>
+        <source>Joy button %1</source>
+        <translation type="unfinished">Джойстик #%1</translation>
+    </message>
+    <message>
+        <location line="+3"/>
+        <location line="+178"/>
+        <source>None</source>
+        <translation type="unfinished">Не назначена</translation>
     </message>
 </context>
 <context>
@@ -719,7 +484,7 @@ Exiting now.</source>
         <translation>Захват игр</translation>
     </message>
     <message>
-        <location line="+34"/>
+        <location line="+41"/>
         <source>Executable</source>
         <translation>Файл</translation>
     </message>
@@ -739,7 +504,7 @@ Exiting now.</source>
         <translation></translation>
     </message>
     <message>
-        <location line="+10"/>
+        <location line="-104"/>
         <source>Start profiles from game executable names in this list</source>
         <translation>Включить захват игр</translation>
     </message>

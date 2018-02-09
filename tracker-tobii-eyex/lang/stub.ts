@@ -9,68 +9,65 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+13"/>
+        <location line="+19"/>
         <source>Tracking settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+6"/>
-        <source>Relative mode shifts the view toward a target that may be offscreen then fixes upon it.The absolute mode is not gradual.</source>
+        <location line="+18"/>
+        <source>Accumulative mode shifts the view toward a target that may be offscreen then fixes upon it.
+On the other hand, the snap mode allows for a quick glance outside the field of vision.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+37"/>
+        <location line="+89"/>
+        <source>Accumulative mode settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+12"/>
+        <location line="+280"/>
+        <source>Screen edge length</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-219"/>
+        <location line="+129"/>
+        <source>Max yaw</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-97"/>
+        <location line="+84"/>
+        <source>Max pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-51"/>
+        <location line="+180"/>
+        <source>Position output</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-167"/>
+        <location line="+154"/>
+        <source>Enabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-138"/>
+        <source>Snap mode settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="-209"/>
         <source>Tracking mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+36"/>
-        <source>Relative tracking mode gain</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+18"/>
-        <source>Adjust the gain mapping and speed to suit your preference, game type, display size, and distance from the screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+150"/>
+        <location line="+102"/>
+        <location line="+155"/>
         <source>Speed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+90"/>
-        <source>Exponent segment length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+67"/>
-        <source>Exponent norm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-208"/>
-        <location line="+35"/>
-        <location line="+29"/>
-        <location line="+42"/>
-        <location line="+67"/>
-        <location line="+67"/>
-        <source>0</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="-272"/>
-        <source>Deadzone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+112"/>
-        <source>Log segment length</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+13"/>
-        <source>Exponent</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

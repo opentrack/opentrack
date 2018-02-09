@@ -70,10 +70,10 @@
     </message>
 </context>
 <context>
-    <name>udpDll</name>
+    <name>udp</name>
     <message>
-        <location filename="../ftnoir_tracker_udp.h" line="+57"/>
-        <source>UDP sender</source>
+        <location filename="../ftnoir_tracker_udp.cpp" line="+70"/>
+        <source>Can&apos;t bind socket -- %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

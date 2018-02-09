@@ -8,30 +8,22 @@
         <source>Valve SteamVR</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location line="+28"/>
+        <source>Device</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>steamvr</name>
     <message>
-        <location filename="../steamvr.cpp" line="+57"/>
-        <source>Valve SteamVR init error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+17"/>
-        <source>Valve SteamVR init warning</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location line="+1"/>
+        <location filename="../steamvr.cpp" line="+203"/>
         <source>No HMD connected</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>steamvr_metadata</name>
     <message>
-        <location filename="../steamvr.hpp" line="+74"/>
-        <source>Valve SteamVR</source>
+        <location line="+14"/>
+        <source>Can&apos;t find device with that serial</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

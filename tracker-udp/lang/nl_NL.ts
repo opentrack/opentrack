@@ -70,11 +70,11 @@
     </message>
 </context>
 <context>
-    <name>udp_tracker</name>
+    <name>udp</name>
     <message>
-        <location filename="../ftnoir_tracker_udp.h" line="+57"/>
-        <source>UDP over network</source>
-        <translation>UDP-zender</translation>
+        <location filename="../ftnoir_tracker_udp.cpp" line="+70"/>
+        <source>Can&apos;t bind socket -- %1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -34,12 +34,4 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
-<context>
-    <name>rift_080Dll</name>
-    <message>
-        <location filename="../ftnoir_tracker_rift_080.h" line="+56"/>
-        <source>Oculus Rift runtime 0.8.0 -- HMD</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
 </TS>
