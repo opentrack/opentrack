@@ -355,7 +355,7 @@ Programma wordt afgesloten.</translation>
     <message>
         <location line="+21"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Centreren&lt;/span&gt; - gebruik de huidige kijkrichting als ijkpunt voor het centreren.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Центр&lt;/span&gt; - фиксирует взгляд в нулевой точке до следующего нажатия клавиши.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Centreren&lt;/span&gt; - gebruik de huidige kijkrichting als ijkpunt voor het centreren.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wisselen&lt;/span&gt; - kijkrichting blijft op dezelfde plek staan, totdat de ingestelde knop opnieuw wordt ingedrukt.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - Kijkrichting blijft recht vooruit, totdat er op de ingestelde toets gedrukt wordt.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location line="+66"/>
