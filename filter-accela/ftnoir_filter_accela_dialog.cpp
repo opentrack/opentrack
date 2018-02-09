@@ -20,15 +20,13 @@ dialog_accela::dialog_accela()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    tie_setting(s.rot_sensitivity, ui.rotation_slider);
-    tie_setting(s.pos_sensitivity, ui.translation_slider);
-    tie_setting(s.ewma, ui.ewma_slider);
+    tie_setting(s.rot_smoothing, ui.rotation_slider);
+    tie_setting(s.pos_smoothing, ui.translation_slider);
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.pos_deadzone, ui.trans_dz_slider);
 
-    tie_setting(s.rot_sensitivity, ui.rot_gain, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
-    tie_setting(s.pos_sensitivity, ui.trans_gain, [](const slider_value& s) { return tr("%1mm").arg(s, 0, 'g', 4); });
-    tie_setting(s.ewma, ui.ewma_label, [](const slider_value& s) { return tr("%1ms").arg(s); });
+    tie_setting(s.rot_smoothing, ui.rot_gain, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
+    tie_setting(s.pos_smoothing, ui.trans_gain, [](const slider_value& s) { return tr("%1mm").arg(s, 0, 'g', 4); });
     tie_setting(s.rot_deadzone, ui.rot_dz, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
     tie_setting(s.pos_deadzone, ui.trans_dz, [](const slider_value& s) { return tr("%1mm").arg(s); });
 
@@ -78,6 +76,3 @@ void dialog_accela::save()
 {
     s.b->save();
 }
-
-
-

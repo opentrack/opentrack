@@ -24,19 +24,17 @@ accela::accela() : first_run(true)
 
 template<int N = 3, typename F>
 never_inline
-static void do_deltas(const double* deltas, double* output, double alpha, double& smoothed, F&& fun)
+static void do_deltas(const double* deltas, double* output, double& smoothed, F&& fun)
 {
     double norm[N];
 
-    const double dist_ = progn(
+    const double dist = progn(
         double ret = 0;
         for (unsigned k = 0; k < N; k++)
             ret += deltas[k]*deltas[k];
         return sqrt(ret);
     );
 
-    const double dist = fmin(dist_, alpha*dist_ + (1-alpha)*smoothed);
-    smoothed = dist;
     const double value = double(fun(dist));
 
     for (unsigned k = 0; k < N; k++)
@@ -93,14 +91,12 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_thres = s.rot_sensitivity.to<double>();
-    const double pos_thres = s.pos_sensitivity.to<double>();
+    const double rot_thres = s.rot_smoothing.to<double>();
+    const double pos_thres = s.pos_smoothing.to<double>();
 
     const double dt = t.elapsed_seconds();
     t.start();
 
-    const double RC = s.ewma.to<double>() / 1000.; // seconds
-    const double alpha = dt/(dt+RC);
     const double rot_dz = s.rot_deadzone.to<double>();
     const double pos_dz = s.pos_deadzone.to<double>();
 
@@ -118,7 +114,9 @@ void accela::filter(const double* input, double *output)
         deltas[i] = d / rot_thres;
     }
 
-    do_deltas(&deltas[Yaw], &output[Yaw], alpha, smoothed_input[0], [this](double x) { return spline_rot.get_value_no_save(x); });
+    do_deltas(&deltas[Yaw], &output[Yaw], smoothed_input[0], [this](double x) {
+        return spline_rot.get_value_no_save(x);
+    });
 
 #if defined DEBUG_ACCELA
     var.input(fabs(smoothed_input[0]) + fabs(smoothed_input[1]) + fabs(smoothed_input[2]));
@@ -151,7 +149,9 @@ void accela::filter(const double* input, double *output)
         deltas[i] = d / pos_thres;
     }
 
-    do_deltas(&deltas[TX], &output[TX], alpha, smoothed_input[1], [this](double x) { return spline_pos.get_value_no_save(x); });
+    do_deltas(&deltas[TX], &output[TX], smoothed_input[1], [this](double x) {
+        return spline_pos.get_value_no_save(x);
+    });
 
     // end
 
