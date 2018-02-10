@@ -142,7 +142,7 @@ wii_camera_status WIICamera::_pair()
 		btdevparam.fReturnConnected = TRUE;
 		btdevparam.fReturnRemembered = TRUE;
 		btdevparam.fIssueInquiry = TRUE;
-		btdevparam.cTimeoutMultiplier = 2;
+		btdevparam.cTimeoutMultiplier = 1;
 		btdevparam.hRadio = hbtlist[i];
 		hbtdevfd=BluetoothFindFirstDevice(&btdevparam, &btdevinfo);
 		if (!hbtdevfd) {
