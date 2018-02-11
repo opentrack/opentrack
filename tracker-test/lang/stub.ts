@@ -4,12 +4,10 @@
 <context>
     <name>test_ui</name>
     <message>
-        <location filename="../test.ui" line="+17"/>
         <source>Sine wave</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location line="+22"/>
         <source>Pressing &quot;Abort&quot; will immediately crash the application.</source>
         <translation type="unfinished"></translation>
     </message>
