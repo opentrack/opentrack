@@ -35,7 +35,7 @@ set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
 set(opentrack_all-translations "" CACHE STRING "Leave empty for default")
 
 if(".${opentrack_all-translations}" STREQUAL ".")
-    set(opentrack_all-translations "nl_NL;ru_RU;stub")
+    set(opentrack_all-translations "nl_NL;ru_RU;stub;zh_CN")
 endif()
 
 include(opentrack-word-size)
