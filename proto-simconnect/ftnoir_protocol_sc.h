@@ -34,8 +34,9 @@ struct settings : opts {
     {}
 };
 
-class simconnect : public IProtocol, private QThread
+class simconnect : private QThread, public IProtocol
 {
+    Q_OBJECT
 public:
     simconnect();
     ~simconnect() override;
