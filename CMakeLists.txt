@@ -71,4 +71,4 @@ endfunction()
 
 otr_add_subdirs()
 otr_merge_translations()
-install_sources()
+#install_sources()

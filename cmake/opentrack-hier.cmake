@@ -51,8 +51,6 @@ function(otr_setup_refresh_install_dir)
     endif()
 endfunction()
 
-otr_setup_refresh_install_dir()
-
 set(opentrack-contrib-pfx "${opentrack-doc-pfx}/contrib")
 
 set(opentrack-binary-suffix "")
