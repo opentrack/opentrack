@@ -55,7 +55,6 @@ function(otr_merge_translations)
         otr_escape_string(esc-qm-output "${qm-output}")
         otr_escape_string(esc-i18n-pfx "${opentrack-i18n-pfx}")
         otr_escape_string(esc-perms "${opentrack-perms-file}")
-        otr_escape_string(esc-name "${i}")
 
         # this is because with i18n update disabled,
         # the file may not exist when running `make i18n-lang-foo_FOO'
