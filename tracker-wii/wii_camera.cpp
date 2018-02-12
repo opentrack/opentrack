@@ -6,6 +6,11 @@
 * copyright notice and this permission notice appear in all copies.
 */
 
+// silence #pragma deprecated in bluetoothapis.h
+#undef _WIN32_WINNT
+#define _WIN32_WINNT _WIN32_WINNT_VISTA
+#undef NTDDI_VERSION
+#define NTDDI_VERSION NTDDI_VISTASP1
 
 #include "wii_camera.h"
 #include "wii_frame.hpp"
@@ -18,7 +23,7 @@
 
 #include "cv/video-property-page.hpp"
 
-#include <BluetoothAPIs.h>
+#include <bluetoothapis.h>
 
 using namespace pt_module;
 
