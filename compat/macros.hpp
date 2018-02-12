@@ -2,8 +2,8 @@
 
 #if !defined __WINE__
 #   include <QCoreApplication>
-#   define otr_tr(str) (QCoreApplication::translate(OTR_MODULE_NAME, (str)))
-#   define _(x) otr_tr((x))
+#   define otr_tr(str, ...) (QCoreApplication::translate(OTR_MODULE_NAME, (str), __VA_ARGS__))
+#   define _(x, ...) otr_tr((x), __VA_ARGS__)
 #endif
 
 #if defined _MSC_VER
