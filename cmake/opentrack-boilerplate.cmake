@@ -61,7 +61,7 @@ endfunction()
 
 function(otr_compat target)
     if(NOT MSVC)
-        otr_prop(SOURCE ${${target}-moc} COMPILE_FLAGS "-w -Wno-error")
+        set_property(SOURCE ${${target}-moc} APPEND_STRING PROPERTY COMPILE_FLAGS "-w -Wno-error ")
     endif()
 
     get_property(type TARGET "${n}" PROPERTY TYPE)
@@ -70,17 +70,17 @@ function(otr_compat target)
     endif()
 
     if(CMAKE_COMPILER_IS_GNUCXX AND NOT MSVC)
-        otr_prop(TARGET ${target} COMPILE_FLAGS "-fvisibility=hidden")
-
         # gives incorrect result
         #get_property(linker-lang TARGET ${target} PROPERTY LINKER_LANGUAGE)
 
+        set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fvisibility=hidden ")
+
         if (NOT ".${${target}-cxx}" STREQUAL ".") # not a C only target
-            otr_prop(TARGET ${target} COMPILE_FLAGS "-fuse-cxa-atexit")
+            set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fuse-cxa-atexit ")
         endif()
 
         if(NOT APPLE)
-            otr_prop(TARGET ${target} LINK_FLAGS "-Wl,--as-needed")
+            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--as-needed ")
         endif()
     endif()
 endfunction()
@@ -221,78 +221,6 @@ function(otr_module n_)
 
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
     set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
-endfunction()
-
-function(otr_prop type)
-    set(files "")
-    set(opts ${ARGN})
-    # only SOURCE allows for multiple files
-    if(".${type}" STREQUAL ".SOURCE")
-        while(TRUE)
-            # keep popping first element off `opts' and adding to `files`
-            list(LENGTH opts len)
-            if(NOT "${len}" GREATER 0)
-                break()
-            endif()
-            list(GET opts 0 k)
-            string(FIND "${k}" "." idx1)
-            string(FIND "${k}" "/" idx2)
-            if("${idx1}" GREATER -1 AND "${idx2}" GREATER -1)
-                list(REMOVE_AT opts 0)
-                list(APPEND files "${k}")
-            else()
-                # not a pathname
-                break()
-            endif()
-        endwhile()
-        # no files, break early
-        # happens a few in the codebase
-        list(LENGTH files len)
-        if(len EQUAL 0)
-            return()
-        endif()
-    else()
-        # single file argument
-        set(opts "${ARGN}")
-        list(GET opts 0 files)
-        list(REMOVE_AT opts 0)
-    endif()
-    # must pass some properties at least
-    list(LENGTH opts len)
-    if(NOT "${len}" GREATER 0)
-        message(FATAL_ERROR "no properties given")
-    endif()
-
-    # prop name but no value
-    list(LENGTH opts len)
-    math(EXPR mod "${len} % 2")
-    if(NOT "${mod}" EQUAL 0)
-        message(FATAL_ERROR "must specify parameter for each property")
-    endif()
-
-    foreach(f ${files})
-        set(opts-copy "${opts}")
-
-        while(TRUE)
-            list(LENGTH opts-copy len)
-            if ("${len}" LESS 2)
-                break()
-            endif()
-
-            # pop off two elements, set property
-            list(GET opts-copy 0 name)
-            list(GET opts-copy 1 value)
-            list(REMOVE_AT opts-copy 1 0)
-
-            get_property(old "${type}" "${f}" PROPERTY "${name}")
-            if(".${old}" STREQUAL ".")
-                set(spc "")
-            else()
-                set(spc " ")
-            endif()
-            set_property("${type}" "${f}" APPEND_STRING PROPERTY "${name}" "${spc}${value}")
-        endwhile()
-    endforeach()
 endfunction()
 
 function(otr_add_target_dirs var)

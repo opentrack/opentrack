@@ -1,4 +1,4 @@
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     otr_module(proto-iokit-foohid)
-    otr_prop(TARGET opentrack-proto-iokit-foohid LINK_FLAGS "-framework IOKit")
+    set_property(TARGET opentrack-proto-iokit-foohid APPEND_STRING PROPERTY LINK_FLAGS "-framework IOKit ")
 endif()

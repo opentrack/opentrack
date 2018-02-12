@@ -9,5 +9,6 @@ if(WIN32)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    otr_prop(SOURCE nan.cpp COMPILE_FLAGS "-fno-lto -fno-fast-math -fno-finite-math-only -O0")
+    set_property(SOURCE nan.cpp APPEND_STRING PROPERTY
+                 COMPILE_FLAGS "-fno-lto -fno-fast-math -fno-finite-math-only -O0 ")
 endif()

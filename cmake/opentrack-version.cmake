@@ -42,5 +42,5 @@ endif()
 add_library(opentrack-version STATIC "${file}")
 
 if(NOT MSVC)
-    otr_prop(TARGET opentrack-version COMPILE_FLAGS "-fno-lto")
+    set_property(TARGET opentrack-version APPEND_STRING PROPERTY COMPILE_FLAGS "-fno-lto ")
 endif()

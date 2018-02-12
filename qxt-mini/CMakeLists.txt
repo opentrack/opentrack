@@ -6,6 +6,8 @@ if(UNIX OR APPLE)
         target_link_libraries(opentrack-qxt-mini X11)
         add_definitions(-DQXT_BUILD)
     else()
-        otr_prop(TARGET opentrack-qxt-mini LINK_FLAGS "-framework Carbon -framework CoreFoundation")
+        set_property(TARGET opentrack-qxt-mini
+                     APPEND_STRING PROPERTY
+                     LINK_FLAGS "-framework Carbon -framework CoreFoundation ")
     endif()
 endif()
