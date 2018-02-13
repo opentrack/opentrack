@@ -217,6 +217,11 @@ function(otr_module n_)
     otr_compat(${n})
     if(NOT arg_NO-QT)
         otr_i18n_for_target_directory(${n_})
+
+        foreach(k ${opentrack_all-translations})
+            set(i18n-target "i18n-lang-${k}-module-${n_}")
+            add_dependencies("${n}" "${i18n-target}")
+        endforeach()
     endif()
 
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n}")
