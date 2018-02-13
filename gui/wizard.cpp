@@ -51,6 +51,10 @@ void Wizard::set_data()
         m = ClipRight;
     else if (ui.clip_model_left->isChecked())
         m = ClipLeft;
+    else if (ui.new_clip_right->isChecked())
+        m = New_ClipRight;
+    else if (ui.new_clip_right->isChecked())
+        m = New_ClipLeft;
     else // ui.cap_model
         m = Cap;
 

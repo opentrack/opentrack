@@ -55,7 +55,7 @@ class PointModel
 {
     friend class PointTracker;
 public:
-    enum { Cap = 0, ClipRight = 1, ClipLeft = 2 };
+    enum { Cap = 0, ClipRight = 1, ClipLeft = 2, New_ClipRight = 3, New_ClipLeft = 4, };
 
     static constexpr int N_POINTS = 3;
 
@@ -94,6 +94,14 @@ public:
         }
         case ClipLeft:
         case ClipRight:
+        {
+            const double a = 27, b = 43, c = 62, d = 74;
+            M01 = cv::Vec3d(0, b, -a);
+            M02 = cv::Vec3d(0, -c, -d);
+            break;
+        }
+        case New_ClipLeft:
+        case New_ClipRight:
         {
             const double by = 75, bz = 35, ty = 40, tz = 18;
             M01 = cv::Vec3d(0, ty, -tz);

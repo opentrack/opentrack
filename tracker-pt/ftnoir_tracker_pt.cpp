@@ -184,8 +184,11 @@ cv::Vec3d Tracker_PT::get_model_offset()
         // cap
         case 0: offset[0] = 0; offset[1] = 0; offset[2] = 0; break;
         // clip
+        // new clip
+        case 3:
         case 1: offset[0] = 135; offset[1] = 0; offset[2] = 0; break;
         // left clip
+        case 4:
         case 2: offset[0] = -135; offset[1] = 0; offset[2] = 0; break;
         }
     }
