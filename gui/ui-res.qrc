@@ -9,5 +9,7 @@
         <file>images/trackhat-clip-left.png</file>
         <file>images/trackhat-clip-right.png</file>
         <file>images/trackhat-hat.png</file>
+        <file>images/new-clip-right.png</file>
+        <file>images/new-clip-left.png</file>
     </qresource>
 </RCC>

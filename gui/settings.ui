@@ -27,7 +27,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -665,6 +665,24 @@
              <property name="icon">
               <iconset resource="ui-res.qrc">
                <normaloff>:/images/trackhat-clip-left.png</normaloff>:/images/trackhat-clip-left.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>New clip</string>
+             </property>
+             <property name="icon">
+              <iconset resource="ui-res.qrc">
+               <normaloff>:/images/new-clip-right.png</normaloff>:/images/new-clip-right.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>New clip left-handed</string>
+             </property>
+             <property name="icon">
+              <iconset resource="ui-res.qrc">
+               <normaloff>:/images/new-clip-left.png</normaloff>:/images/new-clip-left.png</iconset>
              </property>
             </item>
            </widget>

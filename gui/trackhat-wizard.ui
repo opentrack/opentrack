@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
-    <height>698</height>
+    <width>500</width>
+    <height>805</height>
    </rect>
   </property>
   <property name="modal">
@@ -42,7 +42,21 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <item row="0" column="1">
+       <item row="0" column="0">
+        <widget class="QRadioButton" name="new_clip_right">
+         <property name="text">
+          <string>New clip, right-handed</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QRadioButton" name="new_clip_left">
+         <property name="text">
+          <string>New clip, left-handed</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" alignment="Qt::AlignLeft">
         <widget class="QLabel" name="label_12">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -52,14 +66,14 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>192</width>
-           <height>192</height>
+           <width>128</width>
+           <height>128</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>192</width>
-           <height>192</height>
+           <width>128</width>
+           <height>128</height>
           </size>
          </property>
          <property name="text">
@@ -69,42 +83,21 @@
           <pixmap resource="ui-res.qrc">:/images/trackhat-hat.png</pixmap>
          </property>
          <property name="scaledContents">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QLabel" name="label_46">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>192</width>
-           <height>192</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>192</width>
-           <height>192</height>
-          </size>
-         </property>
+       <item row="4" column="0">
+        <widget class="QRadioButton" name="cap_model">
          <property name="text">
-          <string/>
+          <string>Cap</string>
          </property>
-         <property name="pixmap">
-          <pixmap resource="ui-res.qrc">:/images/trackhat-clip-right.png</pixmap>
-         </property>
-         <property name="scaledContents">
-          <bool>false</bool>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="6" column="1">
         <widget class="QLabel" name="label_48">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -114,8 +107,8 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>192</width>
-           <height>192</height>
+           <width>124</width>
+           <height>124</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -135,17 +128,45 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="cap_model">
-         <property name="text">
-          <string>Cap</string>
+       <item row="5" column="1" alignment="Qt::AlignLeft">
+        <widget class="QLabel" name="label_46">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="minimumSize">
+          <size>
+           <width>128</width>
+           <height>128</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>128</width>
+           <height>128</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="ui-res.qrc">:/images/trackhat-clip-right.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>false</bool>
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="6" column="0">
+        <widget class="QRadioButton" name="clip_model_left">
+         <property name="text">
+          <string>Clip, left-handed</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
         <widget class="QRadioButton" name="clip_model">
          <property name="text">
           <string>Clip, right-handed</string>
@@ -155,10 +176,65 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QRadioButton" name="clip_model_left">
+       <item row="0" column="1" alignment="Qt::AlignLeft">
+        <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>124</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>124</height>
+          </size>
+         </property>
          <property name="text">
-          <string>Clip, left-handed</string>
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="ui-res.qrc">:/images/new-clip-right.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>80</width>
+           <height>124</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>80</width>
+           <height>124</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="pixmap">
+          <pixmap resource="ui-res.qrc">:/images/new-clip-left.png</pixmap>
+         </property>
+         <property name="scaledContents">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
