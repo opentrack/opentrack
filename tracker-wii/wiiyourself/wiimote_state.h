@@ -11,15 +11,9 @@
 // the 'wiimote_state' struct contains all the Wiimote and Extension state data
 //  (buttons etc) - the wiimote class inherits from this and the app can poll
 //  the data there at any time.
-#ifdef _MSC_VER // VC
-# pragma once
-#endif
-
-#ifndef _WIIMOTE_STATE_H
-# define _WIIMOTE_STATE_H
+#pragma once
 
 #include "wiimote_common.h"
-
 
 // wiimote_state (contains the Wiimote and Extension data and settings)
 struct wiimote_state
@@ -354,9 +348,9 @@ struct wiimote_state
 
 		void Clear (bool including_deadzones)
 			{
-			joystick::deadzone nunchuk_deadzone,
-							   classic_joyl_deadzone,
-							   classic_joyr_deadzone;
+			joystick::deadzone nunchuk_deadzone {},
+							   classic_joyl_deadzone {},
+							   classic_joyr_deadzone {};
 		
 			// preserve the deadzone settings?
 			if(!including_deadzones) {
@@ -375,5 +369,3 @@ struct wiimote_state
 				}
 			}
 	};
-
-#endif // _WIIMOTE_STATE_H
