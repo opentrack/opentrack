@@ -72,9 +72,6 @@ main_window::main_window() :
     annoy_if_root();
 #endif
 
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
-
     update_button_state(false, false);
 
     if (group::ini_directory().size() == 0)
@@ -191,8 +188,9 @@ main_window::main_window() :
     config_list_timer.start(1000 * 5);
     kbd_quit.setEnabled(true);
 
+    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     adjustSize();
-    setFixedSize(size());
 
     if (!start_in_tray())
     {
@@ -626,12 +624,10 @@ bool main_window::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
         QWidget& w = *d;
 
         w.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | w.windowFlags());
-
         w.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         w.show();
         w.adjustSize();
-        w.setFixedSize(w.size());
 
         return true;
     }
