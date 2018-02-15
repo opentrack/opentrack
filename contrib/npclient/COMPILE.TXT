@@ -3,9 +3,19 @@
 # This makes small binaries:
 
 CC=clang
-CFLAGS='-Wall -Wextra -Wpedantic -Os -s -ffunction-sections -fdata-sections -Wl,--kill-at,--nxcompat,--dynamicbase,--as-needed,--gc-sections,--strip-all'
+
+CFLAGS='                                                                \
+-Wall -Wextra -Wpedantic -Os -fomit-frame-pointer -mtune=generic        \
+-ffunction-sections -fdata-sections -fvisibility=hidden                 \
+-Wl,--kill-at,--nxcompat,--dynamicbase,--as-needed,--gc-sections        \
+-Wl,--no-insert-timestamp                                               \
+-fno-math-errno -fno-trapping-math -fmerge-all-constants                \
+-fno-stack-protector                                                    \
+'
+
+STRIP='strip --strip-all --remove-section=.eh_frame'
 
 cd -- "$(dirname -- "$0")" &&
-PATH=/mingw32/bin:"$PATH" sh -c "$CC -m32 $CFLAGS -mdll -o NPClient.dll npclient.c" &&
-PATH=/mingw64/bin:"$PATH" sh -c "$CC -m64 $CFLAGS -mdll -o NPClient64.dll npclient.c" &&
-ls -l NPClient{64,}.dll && mv NPClient{64,}.dll ../../bin/
+PATH=/mingw32/bin:"$PATH" sh -c "$CC -m32 -march=pentium4 $CFLAGS -mdll -o NPClient.dll npclient.c && $STRIP NPClient.dll" &&
+PATH=/mingw64/bin:"$PATH" sh -c "$CC -m64 -Wl,--high-entropy-va $CFLAGS -mdll -o NPClient64.dll npclient.c && $STRIP NPClient64.dll" &&
+ls -l NPClient{,64}.dll && openssl md5 NPClient{,64}.dll && mv NPClient{,64}.dll ../../bin/
