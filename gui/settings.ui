@@ -27,7 +27,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -651,7 +651,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Clip</string>
+              <string>Right Clip</string>
              </property>
              <property name="icon">
               <iconset resource="ui-res.qrc">
@@ -660,7 +660,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Clip left-handed</string>
+              <string>Left Clip</string>
              </property>
              <property name="icon">
               <iconset resource="ui-res.qrc">
@@ -669,7 +669,7 @@
             </item>
             <item>
              <property name="text">
-              <string>New clip</string>
+              <string>Right Mini Clip</string>
              </property>
              <property name="icon">
               <iconset resource="ui-res.qrc">
@@ -678,7 +678,7 @@
             </item>
             <item>
              <property name="text">
-              <string>New clip left-handed</string>
+              <string>Left Mini Clip</string>
              </property>
              <property name="icon">
               <iconset resource="ui-res.qrc">
