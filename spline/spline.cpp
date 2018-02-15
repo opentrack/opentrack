@@ -27,8 +27,6 @@
 
 using namespace spline_detail;
 
-constexpr std::size_t spline::value_count;
-
 spline::spline(const QString& name, const QString& axis_name, Axis axis) :
     axis(axis)
 {

@@ -114,13 +114,13 @@ const unsigned wiimote::FreqLookup [TOTAL_FREQUENCIES] =
 								{    0, 4200, 3920, 3640, 3360,
 								  3130,	2940, 2760, 2610, 2470 };
 
-const TCHAR*   wiimote::ButtonNameFromBit		 [TOTAL_BUTTON_BITS] =
+const TCHAR* const wiimote::ButtonNameFromBit		 [TOTAL_BUTTON_BITS] =
 								{ _T("Left") , _T("Right"), _T("Down"), _T("Up"),
 								  _T("Plus") , _T("??")   , _T("??")  , _T("??") ,
 								  _T("Two")  , _T("One")  , _T("B")   , _T("A") ,
 								  _T("Minus"), _T("??")   , _T("??")  , _T("Home") };
 
-const TCHAR*   wiimote::ClassicButtonNameFromBit [TOTAL_BUTTON_BITS] =
+const TCHAR* const wiimote::ClassicButtonNameFromBit [TOTAL_BUTTON_BITS] =
 								{ _T("??")   , _T("TrigR")  , _T("Plus") , _T("Home"),
 								  _T("Minus"), _T("TrigL") , _T("Down") , _T("Right") ,
 								  _T("Up")   , _T("Left")   , _T("ZR")   , _T("X") ,

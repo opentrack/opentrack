@@ -61,7 +61,7 @@ void set_qt_style()
 #if defined _WIN32 || defined __APPLE__
     // our layouts on OSX make some control wrongly sized -sh 20160908
     {
-        const char* preferred[] { "fusion", "windowsvista", "macintosh" };
+        const char* const preferred[] { "fusion", "windowsvista", "macintosh" };
         for (const char* style_name : preferred)
         {
             QStyle* s = QStyleFactory::create(style_name);

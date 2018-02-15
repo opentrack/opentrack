@@ -114,8 +114,8 @@ private:
     void run() override;
 
     // note: float exponent base is 2
-    static constexpr double c_mult = 16;
-    static constexpr double c_div = 1./c_mult;
+    static constexpr inline double c_mult = 16;
+    static constexpr inline double c_div = 1./c_mult;
 public:
     pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
     ~pipeline();

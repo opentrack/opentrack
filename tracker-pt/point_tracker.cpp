@@ -16,8 +16,6 @@ using namespace types;
 
 #include <QDebug>
 
-constexpr unsigned PointModel::N_POINTS;
-
 static void get_row(const mat33& m, int i, vec3& v)
 {
     v[0] = m(i,0);

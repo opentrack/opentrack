@@ -81,7 +81,7 @@ private:
     std::atomic<unsigned> point_count = 0;
     std::atomic<bool> ever_success = false;
 
-    static constexpr f rad2deg = f(180/M_PI);
+    static constexpr inline f rad2deg = f(180/M_PI);
     //static constexpr float deg2rad = float(M_PI/180);
 };
 

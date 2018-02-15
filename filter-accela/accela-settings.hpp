@@ -19,7 +19,7 @@ struct settings_accela : opts
         double x, y;
     };
 
-    static constexpr gains rot_gains[16] =
+    static constexpr inline gains const rot_gains[16] =
     {
         { 9, 300 },
         { 8, 200 },
@@ -30,7 +30,7 @@ struct settings_accela : opts
         { .5, .4 },
     };
 
-    static constexpr gains pos_gains[16] =
+    static constexpr inline gains const pos_gains[16] =
     {
         { 9, 200 },
         { 8, 150 },

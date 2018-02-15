@@ -18,6 +18,15 @@ tracker_s2bot::~tracker_s2bot()
     wait();
 }
 
+static constexpr int add_cbx[] =
+{
+    0,
+    90,
+    -90,
+    180,
+    -180,
+};
+
 void tracker_s2bot::run() {
     if (s.freq == 0) s.freq = 10;
     timer.setInterval(1000.0/s.freq);
@@ -42,15 +51,6 @@ void tracker_s2bot::run() {
                 clamp(s.idx_x, 0, 3),
                 clamp(s.idx_y, 0, 3),
                 clamp(s.idx_z, 0, 3),
-            };
-
-            static constexpr int add_cbx[] =
-            {
-                0,
-                90,
-                -90,
-                180,
-                -180,
             };
 
             int add_indices[] = { s.add_yaw, s.add_pitch, s.add_roll, };

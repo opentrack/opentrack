@@ -19,7 +19,7 @@
 #include <utility>
 #include <algorithm>
 
-const QTextCodec* CSV::m_codec = QTextCodec::codecForName("System");
+const QTextCodec* const CSV::m_codec = QTextCodec::codecForName("System");
 const QRegExp CSV::m_rx = QRegExp(QString("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)?\\n?"));
 const QRegExp CSV::m_rx2 = QRegExp(QString("(?:\"([^\"]*)\";?)|(?:([^;]*);?)?"));
 
@@ -45,7 +45,7 @@ QString CSV::readLine()
     }
     else
     {
-        static const QChar lf(QChar::LineFeed);
+        const QChar lf(QChar::LineFeed);
 
         while (m_pos < m_string.length())
             if (m_string[m_pos++] == lf)

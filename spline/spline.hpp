@@ -16,6 +16,7 @@ using namespace options;
 
 #include "export.hpp"
 
+#include <cstddef>
 #include <vector>
 #include <limits>
 #include <memory>
@@ -102,7 +103,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection connection, conn_maxx, conn_maxy;
 
-    static constexpr std::size_t value_count = 4096;
+    static constexpr inline std::size_t value_count = 4096;
 
     std::vector<float> data = std::vector<float>(value_count, float(-16));
 

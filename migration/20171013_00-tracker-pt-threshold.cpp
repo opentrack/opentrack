@@ -13,9 +13,9 @@
 using namespace options;
 using namespace migrations;
 
-static constexpr const char* old_name = "threshold-primary";
-static constexpr const char* new_name = "threshold-slider";
-static constexpr const char* bundle_name = "tracker-pt";
+static const char* const old_name = "threshold-primary";
+static const char* const new_name = "threshold-slider";
+static const char* const bundle_name = "tracker-pt";
 
 struct move_int_to_slider : migration
 {

@@ -14,9 +14,6 @@
 
 #include "compat/math-imports.hpp"
 
-constexpr settings_accela::gains settings_accela::rot_gains[16];
-constexpr settings_accela::gains settings_accela::pos_gains[16];
-
 accela::accela() : first_run(true)
 {
     s.make_splines(spline_rot, spline_pos);
