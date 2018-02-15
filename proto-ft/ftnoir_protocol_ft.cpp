@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2015, 2017 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013-2018 Stanislaw Halik <sthalik@misaki.pl>
  * Copyright (c) 2015 Wim Vriend
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -97,7 +97,7 @@ void freetrack::pose(const double* headpose)
 
     const std::int32_t id = load(ft->GameID);
 
-    store(data->DataID, 60 * 10 + (rand() % 64));
+    store(data->DataID, 60 * 5);
 
     if (intGameID != id)
     {
