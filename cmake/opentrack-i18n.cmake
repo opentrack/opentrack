@@ -11,13 +11,13 @@ function(otr_i18n_for_target_directory n)
         add_custom_command(OUTPUT "${t2}"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/lang"
-            COMMAND "${lupdate-binary}" .
+            COMMAND "${lupdate-binary}"
                 -I "${CMAKE_SOURCE_DIR}"
                 -silent
                 -recursive
                 -no-obsolete
                 -locations none
-                -no-ui-lines
+                .
                 -ts "${t}"
             COMMAND "${CMAKE_COMMAND}" -E copy "${t}" "${t2}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
