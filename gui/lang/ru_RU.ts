@@ -27,55 +27,55 @@
     <name>mapping_dialog</name>
     <message>
         <source>Mapping properties</source>
-        <translation type="unfinished">Настройка кривых</translation>
+        <translation>Настройка кривых</translation>
     </message>
     <message>
         <source>Yaw</source>
-        <translation type="unfinished">Yaw</translation>
+        <translation>Yaw</translation>
     </message>
     <message>
         <source>Max input</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр исходной оси</translation>
     </message>
     <message>
         <source>Asymmetric mapping below</source>
-        <translation type="unfinished">Ассиметричная настройка кривых</translation>
+        <translation>Ассиметричная настройка кривых</translation>
     </message>
     <message>
         <source>Pitch</source>
-        <translation type="unfinished">Pitch</translation>
+        <translation>Pitch</translation>
     </message>
     <message>
         <source>Max output</source>
-        <translation type="unfinished"></translation>
+        <translation>Фильтр выходной оси</translation>
     </message>
     <message>
         <source>180°</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>90°</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Roll</source>
-        <translation type="unfinished">Roll</translation>
+        <translation>Roll</translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished">X</translation>
+        <translation>X</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished">Y</translation>
+        <translation>Y</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation type="unfinished">Z</translation>
+        <translation>Z</translation>
     </message>
     <message>
         <source>%1°</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -265,11 +265,11 @@
     </message>
     <message>
         <source>Relative translation only</source>
-        <translation type="unfinished"></translation>
+        <translation>Только относительный сдвиг</translation>
     </message>
     <message>
         <source>Alter the centered position sent to games. Useful if the default position is too much downward or upward.</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменение центрального положения камеры в игре. Полезно, если Вам необходимо чтобы взгляд персонажа в игре по умолчанию был смещен в нужную сторону. Например, можно пилот или водитель может сидеть правей, ниже или выше исходного положения камеры.</translation>
     </message>
     <message>
         <source>CSV Data Logging</source>
@@ -281,15 +281,15 @@
     </message>
     <message>
         <source>Mode</source>
-        <translation type="unfinished"></translation>
+        <translation> Статус опции</translation>
     </message>
     <message>
         <source>Enabled</source>
-        <translation type="unfinished"></translation>
+        <translation>Включена</translation>
     </message>
     <message>
         <source>Enabled when not aiming</source>
-        <translation type="unfinished"></translation>
+        <translation>Включена, если не прицеливаться</translation>
     </message>
     <message>
         <source>Neck displacement</source>
@@ -309,11 +309,11 @@
     </message>
     <message>
         <source>Joy button %1</source>
-        <translation type="unfinished">Джойстик #%1</translation>
+        <translation>Джойстик #%1</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">Не назначена</translation>
+        <translation>Не назначена</translation>
     </message>
 </context>
 <context>
