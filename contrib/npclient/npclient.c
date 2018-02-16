@@ -14,6 +14,8 @@
 
 #define UNUSED(var) (void)var
 
+//#define DEBUG
+
 typedef struct TFreeTrackData
 {
     int DataID;
@@ -64,7 +66,7 @@ static FTMemMap* pMemData = 0;
 
 #ifdef DEBUG
 #   include <stdio.h>
-#   define dbg_report(fmt, ...) do { if (debug_stream) { fprintf(debug_stream, fmt "\n", __VA_ARGS__); fflush(debug_stream); } } while (0)
+#   define dbg_report(...) do { if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fprintf(debug_stream, "\n"); fflush(debug_stream); } } while (0)
 static FILE *debug_stream;
 #else
 #   define dbg_report(...) do { (void)0; } while (0)
@@ -82,8 +84,6 @@ static bool FTCreateMapping(void)
 
     hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(FTMemMap), FT_MM_DATA);
     pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTMemMap));
-    if (pMemData != NULL)
-        pMemData->data.DataID = -1;
     return pMemData != NULL;
 }
 
@@ -134,7 +134,7 @@ typedef struct tir_signature
 
 BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-    UNUSED(lpvReserved); UNUSED(hinstDLL);
+    UNUSED(lpvReserved);
 
     switch (fdwReason)
     {
@@ -150,8 +150,8 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 #endif
         dbg_report("DllMain: (%p, %ld, %p)", (void*) hinstDLL, (long) fdwReason, lpvReserved);
         dbg_report("DllMain: Attach request");
-#if 0
         DisableThreadLibraryCalls(hinstDLL);
+#if 0
         timeBeginPeriod(1);
 #endif
         break;
@@ -337,7 +337,7 @@ NP_EXPORT(int) NP_GetData(tir_data* data)
 {
     static double r = 0, p = 0, y = 0, tx = 0, ty = 0, tz = 0;
     static unsigned frameno = 0;
-    static unsigned char table[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static unsigned char table[8] = {0};
     static bool bEncryption = false;
     static bool bEncryptionChecked = false;
     int i, data_id = -1;
@@ -375,9 +375,7 @@ NP_EXPORT(int) NP_GetData(tir_data* data)
         data_id = InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, -1);
     }
 
-    frameno++;
-    frameno %= 1u << 16;
-    data->frame = frameno;
+    data->frame = ++frameno;
 
     bool running = false;
 
@@ -393,7 +391,7 @@ NP_EXPORT(int) NP_GetData(tir_data* data)
         (void)InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, data_id - 1, data_id);
     }
 
-    data->status = running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
+    data->status = NPCLIENT_STATUS_OK;
     data->cksum = 0;
 
     data->roll  = clamp_(r);
@@ -409,12 +407,13 @@ NP_EXPORT(int) NP_GetData(tir_data* data)
 
 #ifdef DEBUG
     dbg_report("GetData: rotation: %f %f %f", data->yaw, data->pitch, data->roll);
+    dbg_report("GetData: status:%d dataid:%d enc:%d id1:%d id2:%d\n", (int) running, data_id, (int)bEncryption, (int)pMemData->GameId, (int)pMemData->GameId2);
 #endif
 
-    data->cksum = cksum((unsigned char*)data, sizeof(data));
+    data->cksum = cksum((unsigned char*)data, sizeof(*data));
 
     if (bEncryption)
-        enhance((unsigned char*)data, sizeof(data), table, sizeof(table));
+        enhance((unsigned char*)data, sizeof(*data), table, sizeof(table));
 
     return running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
 }
