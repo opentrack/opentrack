@@ -143,7 +143,26 @@ void add_win32_path()
     }
 }
 
-void attach_parent_console();
+#include <windows.h>
+
+void attach_parent_console()
+{
+    std::fflush(stdin);
+    std::fflush(stderr);
+
+    (void)qInstallMessageHandler(qdebug_to_console);
+
+    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        _wfreopen(L"CON", L"w", stdout);
+        _wfreopen(L"CON", L"w", stderr);
+        _wfreopen(L"CON", L"r", stdin);
+
+        freopen("CON", "w", stdout);
+        freopen("CON", "w", stderr);
+        freopen("CON", "w", stderr);
+    }
+}
 
 #endif
 
@@ -214,19 +233,3 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
     return ret;
 }
 
-#if defined _WIN32
-#include <windows.h>
-
-void attach_parent_console()
-{
-    if (AttachConsole(ATTACH_PARENT_PROCESS))
-    {
-        // XXX c++ iostreams aren't reopened
-
-        _wfreopen(L"CON", L"w", stdout);
-        _wfreopen(L"CON", L"w", stderr);
-        _wfreopen(L"CON", L"r", stdin);
-    }
-    (void)qInstallMessageHandler(qdebug_to_console);
-}
-#endif
