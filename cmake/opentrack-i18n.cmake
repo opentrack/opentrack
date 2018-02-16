@@ -48,23 +48,15 @@ function(otr_merge_translations)
 
         set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
         list(APPEND all-qm-files "${qm-output}")
+
         add_custom_command(OUTPUT "${qm-output}"
             COMMAND "${lrelease-binary}" -nounfinished -silent ${ts-files} -qm "${qm-output}"
             DEPENDS ${ts-files}
             COMMENT "Running lrelease for ${i}")
-        otr_escape_string(esc-qm-output "${qm-output}")
-        otr_escape_string(esc-i18n-pfx "${opentrack-i18n-pfx}")
-        otr_escape_string(esc-perms "${opentrack-perms-file}")
 
-        # this is because with i18n update disabled,
-        # the file may not exist when running `make i18n-lang-foo_FOO'
-        install(CODE "
-            if(EXISTS \"${esc-qm-output}\")
-                file(INSTALL \"${esc-qm-output}\"
-                     DESTINATION \"${esc-i18n-pfx}\"
-                     FILE_PERMISSIONS ${esc-perms})
-             endif()
-        ")
+        install(FILES "${qm-output}"
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/${opentrack-i18n-pfx}"
+                PERMISSIONS ${opentrack-perms-file})
     endforeach()
 
     add_custom_target(i18n ALL DEPENDS ${all-qm-files})
