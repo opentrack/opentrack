@@ -97,7 +97,10 @@ void freetrack::pose(const double* headpose)
 
     const std::int32_t id = load(ft->GameID);
 
-    store(data->DataID, 60 * 5);
+    data_id++;
+    data_id %= 128;
+
+    store(data->DataID, 60 * 5 + data_id);
 
     if (intGameID != id)
     {

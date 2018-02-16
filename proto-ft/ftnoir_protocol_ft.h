@@ -54,6 +54,7 @@ private:
     int intGameID = -1;
     QString connected_game;
     QMutex game_name_mutex;
+    unsigned data_id = 0;
 
     void start_dummy();
     static float degrees_to_rads(double degrees);
