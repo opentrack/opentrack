@@ -214,7 +214,7 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
         }
 
         const bool no_i18n = group::with_global_settings_object([](QSettings& s) {
-            return !s.value("disable-translation", false).toBool();
+            return s.value("disable-translation", false).toBool();
         });
 
         if (forced_locale || !no_i18n)
