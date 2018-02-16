@@ -205,7 +205,7 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
     QTranslator t;
 
     {
-        const char* forced_locale = getenv("OTR_FORCE_LOCALE");
+        const char* forced_locale = getenv("OTR_FORCE_LANG");
 
         if (forced_locale)
         {
