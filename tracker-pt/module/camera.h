@@ -26,7 +26,7 @@ struct Camera final : pt_camera
 {
     Camera(const QString& module_name);
 
-    pt_camera_open_status start(int idx, int fps, int res_x, int res_y) override;
+    bool start(int idx, int fps, int res_x, int res_y) override;
     void stop() override;
 
     result get_frame(pt_frame& Frame) override;
@@ -36,8 +36,6 @@ struct Camera final : pt_camera
     QString get_desired_name() const override;
     QString get_active_name() const override;
 
-    operator bool() const override { return cap && cap->isOpened(); }
-
     void set_fov(double value) override { fov = value; }
     void show_camera_settings() override;
 
@@ -45,9 +43,7 @@ private:
     warn_result_unused bool _get_frame(cv::Mat& Frame);
 
     double dt_mean = 0, fov = 30;
-
     Timer t;
-
     pt_camera_info cam_info;
     pt_camera_info cam_desired;
     QString desired_name, active_name;

@@ -33,7 +33,12 @@ WIICamera::WIICamera(const QString& module_name) : s { module_name }
 	cam_info.res_x = 1024;
 	cam_info.res_y = 768;
 	cam_info.fov = 42.0f;
-	cam_info.idx = 0;
+        cam_info.idx = 0;
+}
+
+WIICamera::~WIICamera()
+{
+    stop();
 }
 
 QString WIICamera::get_desired_name() const
@@ -81,14 +86,14 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 	return result(true, cam_info);
 }
 
-pt_camera_open_status WIICamera::start(int idx, int fps, int res_x, int res_y)
+bool WIICamera::start(int idx, int fps, int res_x, int res_y)
 {
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;
 	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED |
 		EXTENSION_CHANGED |
 		MOTIONPLUS_CHANGED);
-    return cam_open_ok_no_change;
+        return true;
 }
 
 void WIICamera::stop()
