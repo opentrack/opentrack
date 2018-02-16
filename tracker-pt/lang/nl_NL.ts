@@ -276,4 +276,11 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>pt_module::Tracker_PT</name>
+    <message>
+        <source>Can&apos;t open camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
