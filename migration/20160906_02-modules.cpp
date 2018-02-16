@@ -15,11 +15,16 @@
 using namespace options;
 using namespace migrations;
 
+static const char* const module_names[3] =
+{
+    "tracker-dll",
+    "protocol-dll",
+    "filter-dll",
+};
+
 struct split_modules_rc11 : migration
 {
     split_modules_rc11() = default;
-
-    static const char* names[3];
 
     QString unique_date() const override
     {
@@ -36,11 +41,11 @@ struct split_modules_rc11 : migration
         bundle new_bundle = make_bundle("modules");
         bundle old_bundle = make_bundle("opentrack-ui");
 
-        for (const char* name : names)
+        for (const char* name : module_names)
             if (new_bundle->contains(name))
                 return false;
 
-        for (const char* name : names)
+        for (const char* name : module_names)
             if (old_bundle->contains(name))
                 return true;
 
@@ -52,18 +57,11 @@ struct split_modules_rc11 : migration
         bundle new_bundle = make_bundle("modules");
         bundle old_bundle = make_bundle("opentrack-ui");
 
-        for (const char* name : names)
+        for (const char* name : module_names)
             new_bundle->store_kv(name, QVariant(old_bundle->get<QString>(name)));
 
         new_bundle->save();
     }
-};
-
-const char* split_modules_rc11::names[3] =
-{
-    "tracker-dll",
-    "protocol-dll",
-    "filter-dll",
 };
 
 OPENTRACK_MIGRATION(split_modules_rc11);

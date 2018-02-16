@@ -61,7 +61,7 @@ void set_qt_style()
 #if defined _WIN32 || defined __APPLE__
     // our layouts on OSX make some control wrongly sized -sh 20160908
     {
-        const char* preferred[] { "fusion", "windowsvista", "macintosh" };
+        const char* const preferred[] { "fusion", "windowsvista", "macintosh" };
         for (const char* style_name : preferred)
         {
             QStyle* s = QStyleFactory::create(style_name);
@@ -143,7 +143,29 @@ void add_win32_path()
     }
 }
 
-void attach_parent_console();
+#include <windows.h>
+
+void attach_parent_console()
+{
+    std::fflush(stdin);
+    std::fflush(stderr);
+
+    (void)qInstallMessageHandler(qdebug_to_console);
+
+    if (AttachConsole(ATTACH_PARENT_PROCESS))
+    {
+        _wfreopen(L"CON", L"w", stdout);
+        _wfreopen(L"CON", L"w", stderr);
+        _wfreopen(L"CON", L"r", stdin);
+        freopen("CON", "w", stdout);
+        freopen("CON", "w", stderr);
+        freopen("CON", "w", stderr);
+
+        // skip prompt in cmd.exe window
+        fprintf(stderr, "\n");
+        fflush(stderr);
+    }
+}
 
 #endif
 
@@ -163,10 +185,6 @@ int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
 
 int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
 {
-#ifdef _WIN32
-    attach_parent_console();
-#endif
-
 #if defined OTR_HAS_DENORM_CONTROL
     set_fp_mask();
 #endif
@@ -178,55 +196,44 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window)
 
 #ifdef _WIN32
     add_win32_path();
+    attach_parent_console();
 #endif
 
     QDir::setCurrent(OPENTRACK_BASE_PATH);
 
-#if 0
-#if !defined(__linux) && !defined _WIN32
-    // workaround QTBUG-38598
-    QCoreApplication::addLibraryPath(".");
-#endif
-#endif
-
     set_qt_style();
     QTranslator t;
 
-    // QLocale::setDefault(QLocale("ru_RU")); // force i18n for testing
-
-    if (group::with_global_settings_object([&](QSettings& s) {
-        return !s.value("disable-translation", false).toBool();
-    }))
     {
-        (void) t.load(QLocale(), "", "", OPENTRACK_BASE_PATH + "/" OPENTRACK_I18N_PATH, ".qm");
-        (void) QCoreApplication::installTranslator(&t);
+        const char* forced_locale = getenv("OTR_FORCE_LANG");
+
+        if (forced_locale)
+        {
+            QLocale::setDefault(QLocale(forced_locale)); // force i18n for testing
+            qDebug() << "locale:" << forced_locale;
+        }
+
+        const bool no_i18n = group::with_global_settings_object([](QSettings& s) {
+            return !s.value("disable-translation", false).toBool();
+        });
+
+        if (forced_locale || !no_i18n)
+        {
+            (void) t.load(QLocale(), "", "", OPENTRACK_BASE_PATH + "/" OPENTRACK_I18N_PATH, ".qm");
+            (void) QCoreApplication::installTranslator(&t);
+        }
     }
 
     int ret = run_window(app, std::unique_ptr<QWidget>(make_main_window()));
 
+#if 0
     // msvc crashes in Qt plugin system's dtor
     // Note: QLibrary::PreventUnloadHint seems to workaround it
-#if defined(_MSC_VER) && 0
-    qDebug() << "exit: terminating";
+#if defined _MSC_VER
     TerminateProcess(GetCurrentProcess(), 0);
+#endif
 #endif
 
     return ret;
 }
 
-#if defined _WIN32
-#include <windows.h>
-
-void attach_parent_console()
-{
-    if (AttachConsole(ATTACH_PARENT_PROCESS))
-    {
-        // XXX c++ iostreams aren't reopened
-
-        _wfreopen(L"CON", L"w", stdout);
-        _wfreopen(L"CON", L"w", stderr);
-        _wfreopen(L"CON", L"r", stdin);
-    }
-    (void)qInstallMessageHandler(qdebug_to_console);
-}
-#endif

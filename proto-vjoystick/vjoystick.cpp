@@ -39,7 +39,15 @@ const unsigned char handle::axis_ids[6] =
 //    HID_USAGE_WHL,
 };
 
-constexpr double handle::val_minmax[6];
+static const double val_minmax[6] =
+{
+    50,
+    50,
+    50,
+    180,
+    180,
+    180
+};
 
 void handle::init()
 {

@@ -159,7 +159,7 @@ private:
                 in = in.mid(pfx_len);
                 in = in.left(in.size() - rst_len);
 
-                static const char* names[] =
+                static constexpr const char* const names[] =
                 {
                     "opentrack-tracker-",
                     "opentrack-proto-",

@@ -36,7 +36,7 @@ public:
         return true;
     }
 private:
-    static constexpr const char* client_id = "opentrack-tobii-eyex";
+    static constexpr inline const char* const client_id = "opentrack-tobii-eyex";
 
     static void call_tx_deinit();
 

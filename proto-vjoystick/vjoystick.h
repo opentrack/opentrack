@@ -30,16 +30,6 @@ private:
     LONG axis_min[6];
     LONG axis_max[6];
 
-    static constexpr double val_minmax[6] =
-    {
-        50,
-        50,
-        50,
-        180,
-        180,
-        180
-    };
-
     void init();
 public:
     handle();

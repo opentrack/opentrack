@@ -36,19 +36,18 @@ void Camera::show_camera_settings()
 {
     const int idx = camera_name_to_index(s.camera_name);
 
-    if (bool(*this))
+    if (cap && cap->isOpened())
         video_property_page::show_from_capture(*cap, idx);
     else
-    {
         video_property_page::show(idx);
-    }
 }
 
 Camera::result Camera::get_info() const
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
-        return result(false, pt_camera_info());
-    return result(true, cam_info);
+        return { false, pt_camera_info() };
+    else
+        return { true, cam_info };
 }
 
 Camera::result Camera::get_frame(pt_frame& frame_)
@@ -82,7 +81,7 @@ Camera::result Camera::get_frame(pt_frame& frame_)
         return result(false, pt_camera_info());
 }
 
-pt_camera_open_status Camera::start(int idx, int fps, int res_x, int res_y)
+bool Camera::start(int idx, int fps, int res_x, int res_y)
 {
     if (idx >= 0 && fps >= 0 && res_x >= 0 && res_y >= 0)
     {
@@ -110,7 +109,7 @@ pt_camera_open_status Camera::start(int idx, int fps, int res_x, int res_y)
             if (cam_desired.fps)
                 cap->set(cv::CAP_PROP_FPS, cam_desired.fps);
 
-            if (cap->isOpened() && cap->grab())
+            if (cap->isOpened())
             {
                 cam_info = pt_camera_info();
                 active_name = QString();
@@ -118,22 +117,24 @@ pt_camera_open_status Camera::start(int idx, int fps, int res_x, int res_y)
                 dt_mean = 0;
                 active_name = desired_name;
 
-                t.start();
+                cv::Mat tmp;
 
-                return cam_open_ok_change;
+                if (_get_frame(tmp))
+                {
+                    t.start();
+                    return true;
+                }
             }
-            else
-            {
-                stop();
-                return cam_open_error;
-            }
+
+            cap = nullptr;
+            return false;
         }
 
-        return cam_open_ok_no_change;
+        return true;
     }
 
     stop();
-    return cam_open_error;
+    return false;
 }
 
 void Camera::stop()

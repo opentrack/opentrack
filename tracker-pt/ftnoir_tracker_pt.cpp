@@ -120,22 +120,12 @@ void Tracker_PT::run()
     qDebug() << "pt: thread stopped";
 }
 
-void Tracker_PT::maybe_reopen_camera()
+bool Tracker_PT::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
-    pt_camera_open_status status = camera->start(camera_name_to_index(s.camera_name),
-                                                 s.cam_fps, s.cam_res_x, s.cam_res_y);
-
-    switch (status)
-    {
-    case cam_open_error:
-        break;
-    case cam_open_ok_change:
-        break;
-    case cam_open_ok_no_change:
-        break;
-    }
+    return camera->start(camera_name_to_index(s.camera_name),
+                         s.cam_fps, s.cam_res_x, s.cam_res_y);
 }
 
 void Tracker_PT::set_fov(int value)
@@ -156,11 +146,12 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
 
-    maybe_reopen_camera();
+    if (!maybe_reopen_camera())
+        return { tr("Can't open camera") };
 
     start(QThread::HighPriority);
 
-    return status_ok();
+    return {};
 }
 
 void Tracker_PT::data(double *data)

@@ -29,8 +29,9 @@ namespace pt_module {
 struct WIICamera final : pt_camera
 {
     WIICamera(const QString& module_name);
+    ~WIICamera() override;
 
-    pt_camera_open_status start(int idx, int fps, int res_x, int res_y) override;
+    bool start(int idx, int fps, int res_x, int res_y) override;
     void stop() override;
 
     result get_frame(pt_frame& Frame) override;
@@ -40,11 +41,8 @@ struct WIICamera final : pt_camera
     QString get_desired_name() const override;
     QString get_active_name() const override;
 
-    operator bool() const override { return m_pDev && (!m_pDev->ConnectionLost()); }
-
     void set_fov(double value) override {}
     void show_camera_settings() override;
-
 
 private:
 	std::unique_ptr<wiimote> m_pDev;

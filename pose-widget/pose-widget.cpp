@@ -287,7 +287,7 @@ void pose_transform::project_quad_texture()
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
-    static constexpr int const_depth = 4;
+    constexpr int const_depth = 4;
 
     if (unlikely(orig_depth != const_depth || dest_depth != const_depth))
     {
@@ -304,9 +304,9 @@ void pose_transform::project_quad_texture()
     for (int y = 0; y < dist.y(); y++)
         for (int x = 0; x < dist.x(); x++)
         {
-            uv_& restrict_ref uv = uv_vec[y * dist.x() + x];
-            if (!t.barycentric_coords(vec2(x + min.x(), y + min.y()), uv.coords, uv.i))
-                uv.i = -1;
+            uv_* restrict_ptr uv = &uv_vec[y * dist.x() + x];
+            if (!t.barycentric_coords(vec2(x + min.x(), y + min.y()), uv->coords, uv->i))
+                uv->i = -1;
         }
 
     const int ow = tex.width(), oh = tex.height();
@@ -330,14 +330,14 @@ void pose_transform::project_quad_texture()
         for (int x_ = 0, dx = dist.x(); x_ < dx; x_++)
         {
             const int y = y_ + min.y(), x = x_ + min.x();
-            uv_ const& restrict_ref uv__ = uv_vec[y_ * dx + x_];
+            const uv_* restrict_ptr uv__ = &uv_vec[y_ * dx + x_];
 
-            if (uv__.i != -1)
+            if (uv__->i != -1)
             {
                 using uc = unsigned char;
 
-                vec2 const& uv = uv__.coords;
-                int const i = uv__.i;
+                vec2 const& uv = uv__->coords;
+                int const i = uv__->i;
 
                 float fx = origs[i][0].x()
                            + uv.x() * origs[i][2].x()

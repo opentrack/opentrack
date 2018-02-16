@@ -15,12 +15,17 @@
 using namespace options;
 using namespace migrations;
 
+const char* const axis_names[] =
+{
+    "yaw", "pitch", "roll",
+    "x", "y", "z",
+};
+
+const QString alt_sign_fmt = QStringLiteral("%1-alt-axis-sign");
+
 struct axis_signs_split_rc11 : migration
 {
     axis_signs_split_rc11() = default;
-
-    static const char* axis_names[6];
-    static const QString fmt;
 
     QString unique_date() const override
     {
@@ -32,47 +37,43 @@ struct axis_signs_split_rc11 : migration
         return "asymmetric axis option to other section";
     }
 
-    bool should_run() const override
-    {
-        bundle new_bundle = make_bundle("opentrack-mappings");
-        bundle old_bundle = make_bundle("opentrack-ui");
-
-        for (const char* name : axis_names)
-        {
-            // new present, already applied
-            if (new_bundle->contains(fmt.arg(name)))
-                return false;
-        }
-
-        for (const char* name : axis_names)
-        {
-            // old present
-            if (old_bundle->contains(fmt.arg(name)))
-                return true;
-        }
-
-        // nothing to copy
-        return false;
-    }
-
-    void run() override
-    {
-        bundle new_bundle = make_bundle("opentrack-mappings");
-        bundle old_bundle = make_bundle("opentrack-ui");
-
-        for (const char* name : axis_names)
-            new_bundle->store_kv(fmt.arg(name), QVariant(old_bundle->get<bool>(fmt.arg(name))));
-
-        new_bundle->save();
-    }
+    bool should_run() const override;
+    void run() override;
 };
-
-const char* axis_signs_split_rc11::axis_names[] =
-{
-    "yaw", "pitch", "roll",
-    "x", "y", "z",
-};
-
-const QString axis_signs_split_rc11::fmt = QStringLiteral("%1-alt-axis-sign");
 
 OPENTRACK_MIGRATION(axis_signs_split_rc11);
+
+bool axis_signs_split_rc11::should_run() const
+{
+    bundle new_bundle = make_bundle("opentrack-mappings");
+    bundle old_bundle = make_bundle("opentrack-ui");
+
+    for (const char* name : axis_names)
+    {
+        // new present, already applied
+        if (new_bundle->contains(alt_sign_fmt.arg(name)))
+            return false;
+    }
+
+    for (const char* name : axis_names)
+    {
+        // old present
+        if (old_bundle->contains(alt_sign_fmt.arg(name)))
+            return true;
+    }
+
+    // nothing to copy
+    return false;
+}
+
+void axis_signs_split_rc11::run()
+{
+    bundle new_bundle = make_bundle("opentrack-mappings");
+    bundle old_bundle = make_bundle("opentrack-ui");
+
+    for (const char* name : axis_names)
+        new_bundle->store_kv(alt_sign_fmt.arg(name),
+                             QVariant(old_bundle->get<bool>(alt_sign_fmt.arg(name))));
+
+    new_bundle->save();
+}

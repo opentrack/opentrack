@@ -53,7 +53,7 @@ public:
     int  get_n_points();
     bool get_cam_info(pt_camera_info* info);
 public slots:
-    void maybe_reopen_camera();
+    bool maybe_reopen_camera();
     void set_fov(int value);
 protected:
     void run() override;
@@ -81,7 +81,7 @@ private:
     std::atomic<unsigned> point_count = 0;
     std::atomic<bool> ever_success = false;
 
-    static constexpr f rad2deg = f(180/M_PI);
+    static constexpr inline f rad2deg = f(180/M_PI);
     //static constexpr float deg2rad = float(M_PI/180);
 };
 

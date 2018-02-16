@@ -223,7 +223,7 @@ void spline_widget::drawFunction()
 
     painter.drawPath(path);
 #else
-    static constexpr int line_length_pixels = 3;
+    constexpr int line_length_pixels = 3;
     const qreal max = _config->maxInput();
     const qreal step = clamp(line_length_pixels / c.x(), 5e-2, max);
     QPointF prev = point_to_pixel(QPoint(0, 0));

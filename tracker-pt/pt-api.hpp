@@ -30,8 +30,6 @@ struct OTR_PT_EXPORT pt_camera_info final
     int idx = -1;
 };
 
-enum pt_camera_open_status : unsigned { cam_open_error, cam_open_ok_no_change, cam_open_ok_change };
-
 struct OTR_PT_EXPORT pt_pixel_pos_mixin
 {
     static std::tuple<double, double> to_pixel_pos(double x, double y, int w, int h);
@@ -73,7 +71,7 @@ struct OTR_PT_EXPORT pt_camera
     pt_camera();
     virtual ~pt_camera();
 
-    virtual warn_result_unused pt_camera_open_status start(int idx, int fps, int res_x, int res_y) = 0;
+    virtual warn_result_unused bool start(int idx, int fps, int res_x, int res_y) = 0;
     virtual void stop() = 0;
     virtual warn_result_unused result get_frame(pt_frame& frame) = 0;
 
@@ -84,8 +82,6 @@ struct OTR_PT_EXPORT pt_camera
     virtual QString get_active_name() const = 0;
 
     virtual void set_fov(double value) = 0;
-    virtual operator bool() const = 0;
-
     virtual void show_camera_settings() = 0;
 };
 

@@ -60,7 +60,7 @@ IExtensionDialog::~IExtensionDialog()
 
 bool module_status::is_ok() const
 {
-    return error.isEmpty();
+    return error.isNull();
 }
 
 module_status::module_status(const QString& error) : error(error) {}

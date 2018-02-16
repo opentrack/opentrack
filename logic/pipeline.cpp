@@ -190,8 +190,6 @@ static bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-constexpr double pipeline::c_mult;
-constexpr double pipeline::c_div;
 template<typename x, typename y, typename... xs>
 static inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
 {
@@ -480,8 +478,9 @@ void pipeline::run()
 #endif
 
     {
-        static constexpr const char* posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
-        static constexpr const char* datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        static const char* const posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        static const char* const datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+
         logger.write(datachannels[0]);
         char buffer[128];
         for (unsigned j = 1; j < 5; ++j)

@@ -69,7 +69,7 @@ class aruco_tracker : protected virtual QThread, public ITracker
 {
     Q_OBJECT
     friend class aruco_dialog;
-    static constexpr float c_search_window = 1.3f;
+    static constexpr inline float c_search_window = 1.3f;
 public:
     aruco_tracker();
     ~aruco_tracker() override;
@@ -124,44 +124,17 @@ private:
     unsigned adaptive_size_pos = 0;
     bool use_otsu = false;
 
-    struct resolution_tuple
-    {
-        int width;
-        int height;
-    };
-
-    static constexpr inline const int adaptive_sizes[] =
-    {
-#if defined USE_EXPERIMENTAL_CANNY
-        10,
-        30,
-        80,
-#else
-        7,
-        9,
-        13,
-#endif
-    };
-
 #if !defined USE_EXPERIMENTAL_CANNY
     static constexpr inline int adaptive_thres = 6;
 #else
     static constexpr inline int adaptive_thres = 3;
 #endif
 
-    static constexpr inline const resolution_tuple resolution_choices[] =
-    {
-        { 640, 480 },
-        { 320, 240 },
-        { 0, 0 }
-    };
-
 #ifdef DEBUG_UNSHARP_MASKING
     static constexpr inline double gauss_kernel_size = 3;
 #endif
 
     static constexpr inline double timeout = 1;
-
     static constexpr inline double timeout_backoff_c = 4./11;
 
     static constexpr inline float size_min = 0.05;

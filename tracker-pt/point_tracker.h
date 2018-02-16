@@ -32,7 +32,7 @@ using namespace types;
 
 struct PointModel final
 {
-    static constexpr unsigned N_POINTS = 3;
+    static constexpr inline unsigned N_POINTS = 3;
 
     vec3 M01;      // M01 in model frame
     vec3 M02;      // M02 in model frame

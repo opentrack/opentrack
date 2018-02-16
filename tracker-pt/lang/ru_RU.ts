@@ -281,4 +281,11 @@ ROLL или X/Y-смещения.</translation>
         <translation>Параметры камеры:</translation>
     </message>
 </context>
+<context>
+    <name>pt_module::Tracker_PT</name>
+    <message>
+        <source>Can&apos;t open camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

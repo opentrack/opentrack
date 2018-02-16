@@ -75,7 +75,7 @@ void tracker_freepie::run() {
 
         if (filled)
         {
-            static constexpr int add_cbx[] =
+            constexpr int add_cbx[] =
             {
                 0,
                 90,

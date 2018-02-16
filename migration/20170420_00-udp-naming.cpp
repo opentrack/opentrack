@@ -13,11 +13,11 @@
 using namespace migrations;
 using namespace options;
 
-static constexpr const char* old_tracker_name = "UDP sender";
-static constexpr const char* old_proto_name = "UDP Tracker";
+static const char* const old_tracker_name = "UDP sender";
+static const char* const old_proto_name = "UDP Tracker";
 
-static constexpr const char* new_tracker_name = "UDP over network";
-static constexpr const char* new_proto_name = "UDP over network";
+static const char* const new_tracker_name = "UDP over network";
+static const char* const new_proto_name = "UDP over network";
 
 struct rename_udp_stuff : migration
 {

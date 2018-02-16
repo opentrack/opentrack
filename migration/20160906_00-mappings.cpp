@@ -20,7 +20,7 @@
 
 using namespace migrations;
 
-static const char* old_names[] =
+static const char* const old_names[] =
 {
     "tx", "tx_alt",
     "ty", "ty_alt",
@@ -30,7 +30,7 @@ static const char* old_names[] =
     "rz", "rz_alt",
 };
 
-static const char* new_names[] = {
+static const char* const new_names[] = {
     "spline-X",       "alt-spline-X",
     "spline-Y",       "alt-spline-Y",
     "spline-Z",       "alt-spline-Z",

@@ -17,18 +17,18 @@
 #   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000
 #endif
 
+static const double invert[] =
+{
+    1.,  1., 1.,
+    1., -1., 1.
+};
+
 void mouse::pose(const double *headpose)
 {
     const int axis_x = s.Mouse_X - 1;
     const int axis_y = s.Mouse_Y - 1;
 
     int mouse_x = 0, mouse_y = 0;
-
-    static constexpr double invert[] =
-    {
-        1.,  1., 1.,
-        1., -1., 1.
-    };
 
     if (axis_x >= 0 && axis_x < 6)
     {
@@ -76,7 +76,7 @@ int mouse::get_delta(int val, int prev)
 
 int mouse::get_value(double val, double sensitivity, bool is_rotation)
 {
-    static constexpr double sgn[] = { 1e-2, 1 };
+    constexpr double sgn[] = { 1e-2, 1 };
     constexpr double c = 1e-1;
 
     return iround(val * c * sensitivity * sgn[unsigned(is_rotation)]);

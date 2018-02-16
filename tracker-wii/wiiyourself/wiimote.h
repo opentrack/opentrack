@@ -8,12 +8,7 @@
 //
 //  wiimote.h  (tab = 4 spaces)
 
-#ifdef _MSC_VER // VC
-# pragma once
-#endif
-
-#ifndef _WIIMOTE_H
-# define _WIIMOTE_H
+#pragma once
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -165,7 +160,7 @@ class wiimote : public wiimote_state
 												 const wiimote_state &new_state) {};
 
 		// get the button name from its bit index (some bits are unused)
-		static const TCHAR*		   ButtonNameFromBit [TOTAL_BUTTON_BITS];
+                static const TCHAR* const	   ButtonNameFromBit [TOTAL_BUTTON_BITS];
 		static const TCHAR*		GetButtonNameFromBit (unsigned index)
 			{
 			_ASSERT(index < TOTAL_BUTTON_BITS);
@@ -175,8 +170,8 @@ class wiimote : public wiimote_state
 			}
 
 		// same for the Classic Controller
-		static const TCHAR*		   ClassicButtonNameFromBit [TOTAL_BUTTON_BITS];
-		static const TCHAR*		GetClassicButtonNameFromBit (unsigned index)
+                static const TCHAR* const   ClassicButtonNameFromBit [TOTAL_BUTTON_BITS];
+                static const TCHAR*         GetClassicButtonNameFromBit (unsigned index)
 			{
 			_ASSERT(index < TOTAL_BUTTON_BITS);
 			if(index >= TOTAL_BUTTON_BITS)
@@ -491,5 +486,3 @@ volatile int	 MotionPlusDetectCount;		  // waiting for the result
 			unsigned		ExtTriggerFlags;// extension changes "
 			} Recording;
 	};
-
-#endif // _WIIMOTE_H

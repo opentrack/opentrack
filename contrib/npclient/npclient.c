@@ -3,9 +3,9 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <math.h>
 #include <string.h>
-#include <stdio.h>
 
 #include <windows.h>
 
@@ -39,44 +39,82 @@ typedef struct TFreeTrackData
     float Y3;
     float X4;
     float Y4;
-} TFreeTrackData;
+} volatile TFreeTrackData;
 
 typedef struct FTMemMap
 {
     TFreeTrackData data;
-    __int32 GameId;
+    uint32_t GameId;
     unsigned char table[8];
-    __int32 GameId2;
-} FTMemMap;
-
-static bool bEncryptionChecked = false;
-static double r = 0, p = 0, y = 0, tx = 0, ty = 0, tz = 0;
+    uint32_t GameId2;
+} volatile FTMemMap;
 
 #define NP_DECLSPEC __declspec(dllexport)
 #define NP_EXPORT(t) t NP_DECLSPEC __stdcall
 #define NP_AXIS_MAX 16383
 
-static bool FTCreateMapping(void);
-static void FTDestroyMapping(void);
-static __inline double clamp(double x, double xmin, double xmax);
-static __inline double clamp_(double x);
+static HANDLE hFTMemMap = 0;
+static FTMemMap* pMemData = 0;
 
-#if DEBUG
-static FILE *debug_stream;
-#define dbg_report(...) do { if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fflush(debug_stream); } } while(0);
+#if defined _MSC_VER
+#   define force_inline __forceinline
 #else
-#define dbg_report(...)
+#   define force_inline __attribute__((always_inline, gnu_inline)) inline
 #endif
 
-typedef enum npclient_status_ {
-    NPCLIENT_STATUS_OK,
-    NPCLIENT_STATUS_DISABLED
-} npclient_status;
+#ifdef DEBUG
+#   include <stdio.h>
+#   define dbg_report(fmt, ...) do { if (debug_stream) { fprintf(debug_stream, fmt "\n", __VA_ARGS__); fflush(debug_stream); } } while (0)
+static FILE *debug_stream;
+#else
+#   define dbg_report(...) do { (void)0; } while (0)
+#endif
 
-static HANDLE hFTMemMap = 0;
-static FTMemMap volatile * pMemData = 0;
-static bool bEncryption = false;
-static unsigned char table[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+static bool FTCreateMapping(void)
+{
+    if (pMemData)
+        return true;
+
+    dbg_report("FTCreateMapping request (pMemData == NULL)");
+
+    HANDLE hFTMutex = CreateMutexA(NULL, FALSE, FREETRACK_MUTEX);
+    CloseHandle(hFTMutex);
+
+    hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(FTMemMap), FT_MM_DATA);
+    pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTMemMap));
+    if (pMemData != NULL)
+        pMemData->data.DataID = -1;
+    return pMemData != NULL;
+}
+
+static void FTDestroyMapping(void)
+{
+    if (pMemData != NULL)
+    {
+        InterlockedExchange((LONG volatile*) &pMemData->data.DataID, -1);
+        UnmapViewOfFile((void*)pMemData);
+    }
+
+    CloseHandle(hFTMemMap);
+    pMemData = 0;
+    hFTMemMap = 0;
+}
+
+static force_inline double clamp(double x, double xmin, double xmax)
+{
+    if (x > xmax)
+        return xmax;
+
+    if (x < xmin)
+        return xmin;
+
+    return x;
+}
+
+static force_inline double clamp_(double x)
+{
+    return clamp(x, -NP_AXIS_MAX, NP_AXIS_MAX);
+}
 
 typedef struct tir_data
 {
@@ -86,44 +124,46 @@ typedef struct tir_data
     float roll, pitch, yaw;
     float tx, ty, tz;
     float padding[9];
-} tir_data_t;
+} tir_data;
 
 typedef struct tir_signature
 {
     char DllSignature[200];
     char AppSignature[200];
-} tir_signature_t;
+} tir_signature;
 
 BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 {
-    UNUSED(lpvReserved);
+    UNUSED(lpvReserved); UNUSED(hinstDLL);
 
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
-#if DEBUG
+#ifdef DEBUG
         debug_stream = fopen("c:\\NPClient.log", "a");
 #endif
+
 #ifdef _WIN64
-        dbg_report("\n= WIN64 =========================================================================================\n");
+        dbg_report("\n= WIN64 =========================================================================================");
 #else
-        dbg_report("\n= WIN32 =========================================================================================\n");
+        dbg_report("\n= WIN32 =========================================================================================");
 #endif
-        dbg_report("DllMain: (%p, %ld, %p)\n", (void*) hinstDLL, (long) fdwReason, lpvReserved);
-        dbg_report("DllMain: Attach request\n");
-        DisableThreadLibraryCalls(hinstDLL);
+        dbg_report("DllMain: (%p, %ld, %p)", (void*) hinstDLL, (long) fdwReason, lpvReserved);
+        dbg_report("DllMain: Attach request");
 #if 0
+        DisableThreadLibraryCalls(hinstDLL);
         timeBeginPeriod(1);
 #endif
         break;
 
     case DLL_PROCESS_DETACH:
-        dbg_report("DllMain: Detach\n");
+        dbg_report("DllMain: Detach");
         dbg_report("DllMain: (%p, %ld, %p)\n", (void*) hinstDLL, (long) fdwReason, lpvReserved);
-        dbg_report("==========================================================================================\n");
+        dbg_report("==========================================================================================");
 #if 0
         timeEndPeriod(1);
 #endif
+
         FTDestroyMapping();
         break;
     }
@@ -135,7 +175,7 @@ BOOL DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved)
 
 NP_EXPORT(int) NPPriv_ClientNotify(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -145,7 +185,7 @@ NP_EXPORT(int) NPPriv_ClientNotify(void)
 
 NP_EXPORT(int) NPPriv_GetLastError(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -155,7 +195,7 @@ NP_EXPORT(int) NPPriv_GetLastError(void)
 
 NP_EXPORT(int) NPPriv_SetData(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -165,7 +205,7 @@ NP_EXPORT(int) NPPriv_SetData(void)
 
 NP_EXPORT(int) NPPriv_SetLastError(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -175,7 +215,7 @@ NP_EXPORT(int) NPPriv_SetLastError(void)
 
 NP_EXPORT(int) NPPriv_SetParameter(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -185,7 +225,7 @@ NP_EXPORT(int) NPPriv_SetParameter(void)
 
 NP_EXPORT(int) NPPriv_SetSignature(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -195,7 +235,7 @@ NP_EXPORT(int) NPPriv_SetSignature(void)
 
 NP_EXPORT(int) NPPriv_SetVersion(void)
 {
-    dbg_report("stub\n");
+    dbg_report("stub");
     /* @stub in .spec */
     return 0;
 }
@@ -262,7 +302,7 @@ static unsigned cksum(unsigned char buf[], unsigned size)
     return (unsigned)c;
 }
 
-static __inline void enhance(unsigned char buf[], unsigned size, unsigned char table[], unsigned table_size)
+static inline void enhance(unsigned char buf[], unsigned size, unsigned char table[], unsigned table_size)
 {
   unsigned table_ptr = 0;
   unsigned char var = 0x88;
@@ -288,24 +328,28 @@ static __inline void enhance(unsigned char buf[], unsigned size, unsigned char t
  *              NP_GetData (NPCLIENT.8)
  */
 
-NP_EXPORT(int) NP_GetData(tir_data_t * data)
+typedef enum npclient_status_ {
+    NPCLIENT_STATUS_OK,
+    NPCLIENT_STATUS_DISABLED
+} npclient_status;
+
+NP_EXPORT(int) NP_GetData(tir_data* data)
 {
-    static int frameno = 0;
-    int i;
-#if DEBUG
-    int recv = 0;
-#endif
+    static double r = 0, p = 0, y = 0, tx = 0, ty = 0, tz = 0;
+    static unsigned frameno = 0;
+    static unsigned char table[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    static bool bEncryption = false;
+    static bool bEncryptionChecked = false;
+    int i, data_id = -1;
+
     if (!FTCreateMapping())
     {
-        dbg_report("Can't open mapping\n");
-        return 0;
+        dbg_report("Can't open mapping");
+        return NPCLIENT_STATUS_DISABLED;
     }
 
-    if (pMemData)
+    if (pMemData->GameId > 0 && pMemData->GameId == pMemData->GameId2)
     {
-#if DEBUG
-        recv = 1;
-#endif
         y = pMemData->data.Yaw   * NP_AXIS_MAX / M_PI;
         p = pMemData->data.Pitch * NP_AXIS_MAX / M_PI;
         r = pMemData->data.Roll  * NP_AXIS_MAX / M_PI;
@@ -314,9 +358,9 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
         ty = pMemData->data.Y * NP_AXIS_MAX / 500.;
         tz = pMemData->data.Z * NP_AXIS_MAX / 500.;
 
-        if (pMemData->GameId == pMemData->GameId2 && !bEncryptionChecked)
+        if (!bEncryptionChecked)
         {
-            dbg_report("NP_GetData: game = %d\n", pMemData->GameId);
+            dbg_report("NP_GetData: game = %d", pMemData->GameId);
             bEncryptionChecked = true;
             memcpy(table, (void*)pMemData->table, 8);
             for (i = 0; i < 8; i++)
@@ -325,15 +369,17 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
                     bEncryption = true;
                     break;
                 }
-            dbg_report("NP_GetData: Table = %02d %02d %02d %02d %02d %02d %02d %02d\n", table[0],table[1],table[2],table[3],table[4],table[5], table[6], table[7]);
+            dbg_report("NP_GetData: Table = %02d %02d %02d %02d %02d %02d %02d %02d", table[0],table[1],table[2],table[3],table[4],table[5], table[6], table[7]);
         }
+
+        data_id = InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, -1);
     }
 
     frameno++;
+    frameno %= 1u << 16;
     data->frame = frameno;
 
-    int data_id = InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, -1);
-    bool running;
+    bool running = false;
 
     if (data_id == 0)
     {
@@ -345,12 +391,6 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     {
         running = true;
         (void)InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, data_id - 1, data_id);
-    }
-    else
-    {
-        running = false;
-        // clamp to (-1) if still negative
-        (void)InterlockedCompareExchange((LONG volatile*) &pMemData->data.DataID, -1, data_id);
     }
 
     data->status = running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
@@ -364,17 +404,17 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
     data->ty = clamp_(ty);
     data->tz = clamp_(tz);
 
-    for(i = 0; i < 9; ++i)
-        data->padding[i] = 0.0;
+    for (i = 0; i < 9; ++i)
+        data->padding[i] = 0;
 
-#if DEBUG
-    dbg_report("GetData: rotation: %d %f %f %f\n", recv, data->yaw, data->pitch, data->roll);
+#ifdef DEBUG
+    dbg_report("GetData: rotation: %f %f %f", data->yaw, data->pitch, data->roll);
 #endif
 
-    data->cksum = cksum((unsigned char*)data, sizeof(tir_data_t));
+    data->cksum = cksum((unsigned char*)data, sizeof(data));
 
     if (bEncryption)
-        enhance((unsigned char*)data, sizeof(tir_data_t), table, sizeof(table));
+        enhance((unsigned char*)data, sizeof(data), table, sizeof(table));
 
     return running ? NPCLIENT_STATUS_OK : NPCLIENT_STATUS_DISABLED;
 }
@@ -385,8 +425,8 @@ NP_EXPORT(int) NP_GetData(tir_data_t * data)
 NP_EXPORT(int) NP_GetParameter(int arg0, int arg1)
 {
     UNUSED(arg0); UNUSED(arg1);
-    dbg_report("GetParameter request: %d %d\n", arg0, arg1);
-    return (int) 0;
+    dbg_report("GetParameter request: %d %d", arg0, arg1);
+    return 0;
 }
 
 /******************************************************************
@@ -395,7 +435,7 @@ NP_EXPORT(int) NP_GetParameter(int arg0, int arg1)
  *
  */
 
-static unsigned char volatile const part2_2[200] = {
+static unsigned char volatile const part2_2[] = {
     0xe3, 0xe5, 0x8e, 0xe8, 0x06, 0xd4, 0xab,
     0xcf, 0xfa, 0x51, 0xa6, 0x84, 0x69, 0x52,
     0x21, 0xde, 0x6b, 0x71, 0xe6, 0xac, 0xaa,
@@ -410,11 +450,10 @@ static unsigned char volatile const part2_2[200] = {
     0xe4, 0xc0, 0xf1, 0x7f, 0x87, 0xd0, 0x70,
     0xa4, 0x04, 0x07, 0x05, 0x69, 0x2a, 0x16,
     0x15, 0x55, 0x85, 0xa6, 0x30, 0xc8, 0xb6,
-    0x00
 };
 
 
-static unsigned char volatile const part1_2[200] = {
+static unsigned char volatile const part1_2[] = {
     0x6d, 0x0b, 0xab, 0x56, 0x74, 0xe6, 0x1c,
     0xff, 0x24, 0xe8, 0x34, 0x8f, 0x00, 0x63,
     0xed, 0x47, 0x5d, 0x9b, 0xe1, 0xe0, 0x1d,
@@ -430,10 +469,10 @@ static unsigned char volatile const part1_2[200] = {
     0x5d, 0x1a, 0xb4, 0x84, 0x9c, 0x29, 0xf0,
     0xe6, 0x69, 0x73, 0x66, 0x0e, 0x4b, 0x3c,
     0x7d, 0x99, 0x8b, 0x4e, 0x7d, 0xaf, 0x86,
-    0x92, 0xff
+    0x92
 };
 
-static volatile unsigned char part2_1[200] = {
+static unsigned char volatile const part2_1[] = {
     0x8b, 0x84, 0xfc, 0x8c, 0x71, 0xb5, 0xd9,
     0xaa, 0xda, 0x32, 0xc7, 0xe9, 0x0c, 0x20,
     0x40, 0xd4, 0x4b, 0x02, 0x89, 0xca, 0xde,
@@ -448,10 +487,9 @@ static volatile unsigned char part2_1[200] = {
     0x81, 0x83, 0x9e, 0x11, 0xf3, 0xa2, 0x1f,
     0xc8, 0x24, 0x53, 0x60, 0x0a, 0x42, 0x78,
     0x7a, 0x39, 0xea, 0xc1, 0x59, 0xad, 0xc5,
-    0x00
 };
 
-static volatile unsigned char part1_1[200] = {
+static unsigned char volatile const part1_1[] = {
     0x1d, 0x79, 0xce, 0x35, 0x1d, 0x95, 0x79,
     0xdf, 0x4c, 0x8d, 0x55, 0xeb, 0x20, 0x17,
     0x9f, 0x26, 0x3e, 0xf0, 0x88, 0x8e, 0x7a,
@@ -467,24 +505,30 @@ static volatile unsigned char part1_1[200] = {
     0x24, 0x7f, 0xf7, 0xeb, 0xf2, 0x5d, 0x82,
     0x89, 0x05, 0x53, 0x32, 0x6b, 0x28, 0x54,
     0x13, 0xf6, 0xe7, 0x21, 0x1a, 0xc6, 0xe3,
-    0xe1, 0xff
+    0xe1
 };
 
-NP_EXPORT(int) NP_GetSignature(tir_signature_t * sig)
+NP_EXPORT(int) NP_GetSignature(tir_signature* sig)
 {
-    int i;
-    dbg_report("GetSignature request\n");
+    unsigned i;
+    dbg_report("GetSignature request");
 
-    for (i = 0; i < 200; i++)
+    for (i = 0; i < sizeof(part1_1); i++)
         sig->DllSignature[i] = part1_2[i] ^ part1_1[i];
-    for (i = 0; i < 200; i++)
+    for (; i < 200; i++)
+        sig->DllSignature[i] = '\0';
+
+    for (i = 0; i < sizeof(part2_1); i++)
         sig->AppSignature[i] = part2_1[i] ^ part2_2[i];
+    for (; i < 200; i++)
+        sig->AppSignature[i] = '\0';
+
     return 0;
 }
 
-NP_EXPORT(int) NP_QueryVersion(unsigned short * version)
+NP_EXPORT(int) NP_QueryVersion(unsigned short* version)
 {
-    dbg_report("QueryVersion request\n");
+    dbg_report("QueryVersion request");
     *version=0x0500;
     return 0;
 }
@@ -517,7 +561,7 @@ NP_EXPORT(int) NP_RegisterWindowHandle(HWND hwnd)
 {
     UNUSED(hwnd);
     dbg_report("RegisterWindowHandle request: %p\n", (void*) hwnd);
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_RequestData (NPCLIENT.15)
@@ -527,7 +571,7 @@ NP_EXPORT(int) NP_RequestData(unsigned short req)
 {
     UNUSED(req);
     dbg_report("RequestData request: %d\n", req);
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_SetParameter (NPCLIENT.16)
@@ -537,7 +581,7 @@ NP_EXPORT(int) NP_SetParameter(int arg0, int arg1)
 {
     UNUSED(arg0); UNUSED(arg1);
     dbg_report("SetParameter request: %d %d\n", arg0, arg1);
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_StartCursor (NPCLIENT.17)
@@ -546,7 +590,7 @@ NP_EXPORT(int) NP_SetParameter(int arg0, int arg1)
 NP_EXPORT(int) NP_StartCursor(void)
 {
     dbg_report("StartCursor request\n");
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_StartDataTransmission (NPCLIENT.18)
@@ -556,7 +600,7 @@ NP_EXPORT(int) NP_StartDataTransmission(void)
 {
     dbg_report("StartDataTransmission request.\n");
 
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_StopCursor (NPCLIENT.19)
@@ -565,7 +609,7 @@ NP_EXPORT(int) NP_StartDataTransmission(void)
 NP_EXPORT(int) NP_StopCursor(void)
 {
     dbg_report("StopCursor request\n");
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_StopDataTransmission (NPCLIENT.20)
@@ -573,7 +617,7 @@ NP_EXPORT(int) NP_StopCursor(void)
 
 NP_EXPORT(int) NP_StopDataTransmission(void)
 {
-    return (int) 0;
+    return 0;
 }
 /******************************************************************
  *              NP_UnregisterWindowHandle (NPCLIENT.21)
@@ -582,48 +626,6 @@ NP_EXPORT(int) NP_StopDataTransmission(void)
 NP_EXPORT(int) NP_UnregisterWindowHandle(void)
 {
     dbg_report("UnregisterWindowHandle request\n");
-    return (int) 0;
+    return 0;
 }
 
-static bool FTCreateMapping(void)
-{
-    if (pMemData)
-        return true;
-
-    dbg_report("FTCreateMapping request (pMemData == NULL).\n");
-
-    HANDLE hFTMutex = CreateMutexA(NULL, FALSE, FREETRACK_MUTEX);
-    CloseHandle(hFTMutex);
-
-    hFTMemMap = CreateFileMappingA(INVALID_HANDLE_VALUE, 0, PAGE_READWRITE, 0, sizeof(FTMemMap), (LPCSTR) FT_MM_DATA);
-    pMemData = (FTMemMap *) MapViewOfFile(hFTMemMap, FILE_MAP_WRITE, 0, 0, sizeof(FTMemMap));
-    if (pMemData != NULL)
-        pMemData->data.DataID = 1;
-    return pMemData != NULL;
-}
-
-static void FTDestroyMapping(void)
-{
-    if (pMemData != NULL)
-        UnmapViewOfFile((void*)pMemData);
-
-    CloseHandle(hFTMemMap);
-    pMemData = 0;
-    hFTMemMap = 0;
-}
-
-static __inline double clamp(double x, double xmin, double xmax)
-{
-    if (x > xmax)
-        return xmax;
-
-    if (x < xmin)
-        return xmin;
-
-    return x;
-}
-
-static __inline double clamp_(double x)
-{
-    return clamp(x, -NP_AXIS_MAX, NP_AXIS_MAX);
-}

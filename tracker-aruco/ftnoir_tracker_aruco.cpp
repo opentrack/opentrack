@@ -33,6 +33,32 @@
 #include <algorithm>
 #include <iterator>
 
+static const int adaptive_sizes[] =
+{
+#if defined USE_EXPERIMENTAL_CANNY
+    10,
+    30,
+    80,
+#else
+    7,
+    9,
+    13,
+#endif
+};
+
+struct resolution_tuple
+{
+    int width;
+    int height;
+};
+
+static const resolution_tuple resolution_choices[] =
+{
+    { 640, 480 },
+    { 320, 240 },
+    { 0, 0 }
+};
+
 aruco_tracker::aruco_tracker()
 {
     cv::setBreakOnError(true);
