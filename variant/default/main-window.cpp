@@ -886,19 +886,6 @@ void main_window::changeEvent(QEvent* e)
         e->ignore();
 }
 
-void main_window::closeEvent(QCloseEvent* ev)
-{
-    if (tray && tray->isVisible())
-    {
-        ev->ignore();
-        setVisible(false);
-    }
-    else
-    {
-        ev->accept();
-    }
-}
-
 bool main_window::event(QEvent* event)
 {
     using t = QEvent::Type;
