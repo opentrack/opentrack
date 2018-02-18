@@ -684,6 +684,9 @@ void main_window::show_options_dialog()
 {
     if (mk_window(options_widget, [&](bool flag) { set_keys_enabled(!flag); }))
     {
+        // XXX this should logically connect to a bundle
+        // also doesn't work when switching profiles with options dialog open
+        // move shortcuts to a separate bundle and add a migration -sh 20180218
         connect(options_widget.get(), &options_dialog::closing,
                   this, &main_window::register_shortcuts);
     }
