@@ -30,7 +30,7 @@ long long Timer::elapsed_nsecs() const
     return conv_nsecs(cur);
 }
 
-long long Timer::conv_nsecs(const timespec& cur) const
+long long Timer::conv_nsecs(const struct timespec& cur) const
 {
     return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
 }
