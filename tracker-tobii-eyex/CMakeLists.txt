@@ -1,4 +1,4 @@
-if(WIN32)
+if(WIN32 AND FALSE)
     set(SDK_TOBII_EYEX "" CACHE PATH "")
     if(SDK_TOBII_EYEX)
         otr_module(tracker-tobii)
