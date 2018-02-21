@@ -208,7 +208,7 @@ void QxtGlobalShortcutPrivate::activateShortcut(quint32 nativeKey, quint32 nativ
  */
 
 /*!
-    \fn void QxtGlobalShortcut::activated(bool keydown=true)
+    \fn QxtGlobalShortcut::activated()
 
     This signal is emitted when the user types the shortcut's key sequence.
 
