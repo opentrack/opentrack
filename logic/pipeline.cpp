@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2018 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2012-2015 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -35,39 +35,40 @@ static constexpr inline double d2r = M_PI / 180.;
 
 reltrans::reltrans() {}
 
-euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) const
+euler_t reltrans::rotate(const rmat& rmat, const euler_t& xyz,
+                         bool disable_tx, bool disable_ty, bool disable_tz) const
 {
     enum { tb_Z, tb_X, tb_Y };
 
     // TY is really yaw axis. need swapping accordingly.
     // sign changes are due to right-vs-left handedness of coordinate system used
-    const euler_t ret = R * euler_t(in(TZ), -in(TX), -in(TY));
+    const euler_t ret = rmat * euler_t(xyz(TZ), -xyz(TX), -xyz(TY));
 
     euler_t output;
 
-    if (disable(TZ))
-        output(TZ) = in(TZ);
+    if (disable_tz)
+        output(TZ) = xyz(TZ);
     else
         output(TZ) = ret(tb_Z);
 
-    if (disable(TY))
-        output(TY) = in(TY);
+    if (disable_ty)
+        output(TY) = xyz(TY);
     else
         output(TY) = -ret(tb_Y);
 
-    if (disable(TX))
-        output(TX) = in(TX);
+    if (disable_tx)
+        output(TX) = xyz(TX);
     else
         output(TX) = -ret(tb_X);
 
     return output;
 }
 
-Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec6_bool& disable)
+Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const Mat<bool, 6, 1>& disable)
 {
     if (state != reltrans_disabled)
     {
-        euler_t rel { &value[0] };
+        euler_t rel { value(TX), value(TY), value(TZ) };
 
         {
             bool tcomp_in_zone_ = progn(
@@ -95,11 +96,21 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec
         // only when looking behind or downward
         if (in_zone)
         {
-            const rmat R = euler_to_rmat(euler_t(value(Yaw)   * d2r * !disable(Yaw),
-                                                 value(Pitch) * d2r * !disable(Pitch),
-                                                 value(Roll)  * d2r * !disable(Roll)));
+            const double tcomp_c[] = {
+                double(!disable(Yaw)),
+                double(!disable(Pitch)),
+                double(!disable(Roll)),
+            };
 
-            rel = rotate(R, rel, &disable[TX]);
+            const rmat R = euler_to_rmat(euler_t(value(Yaw)   * d2r * tcomp_c[0],
+                                                 value(Pitch) * d2r * tcomp_c[1],
+                                                 value(Roll)  * d2r * tcomp_c[2]));
+
+            rel = rotate(R,
+                         rel,
+                         disable(TX),
+                         disable(TY),
+                         disable(TZ));
         }
 
         if (cur)
@@ -142,23 +153,6 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec
     }
 }
 
-euler_t reltrans::apply_neck(const Pose& value, bool enable, int nz) const
-{
-    if (!enable)
-        return {};
-
-    euler_t neck;
-
-    if (nz != 0)
-    {
-        const rmat R = euler_to_rmat(euler_t(&value[Yaw]) * d2r);
-        neck = rotate(R, { 0, 0, nz }, vec3_bool());
-        neck(TZ) = neck(TZ) - nz;
-    }
-
-    return neck;
-}
-
 pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m),
     ev(ev),
@@ -197,104 +191,78 @@ static bool is_nan(const dmat<u,w>& r)
 }
 
 template<typename x, typename y, typename... xs>
-static force_inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
+static inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
 {
-    return is_nan(datum) || nan_check_(next, rest...);
+    return !is_nan(datum) && nan_check_(next, rest...);
 }
 
 template<typename x>
-static force_inline bool nan_check_(const x& datum)
+static inline bool nan_check_(const x& datum)
 {
-    return is_nan(datum);
+    return !is_nan(datum);
 }
 
 template<typename>
 static bool nan_check_() = delete;
 
 static never_inline
-void emit_nan_check_msg(const char* text, const char* fun, int line)
+void emit_nan_check_msg(const char* text, int line)
 {
-    once_only(
-        qDebug()  << "nan check failed"
-                  << "for:" << text
-                  << "function:" << fun
-                  << "line:" << line;
-    );
+    once_only(qDebug()  << "nan check failed"
+                        << "line:" << text
+                        << "for:" << line);
 }
 
-template<typename... xs>
-static never_inline
-bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
-{
-    if (nan_check_(vals...))
-    {
-        emit_nan_check_msg(text, fun, line);
-        return true;
-    }
-    return false;
-}
-
-#if defined _MSC_VER
-#   define OTR_FUNNAME2 (__FUNCSIG__)
-#else
-#   define OTR_FUNNAME2 (__PRETTY_FUNCTION__)
-#endif
-// don't expand
-#   define OTR_FUNNAME (OTR_FUNNAME2)
-
-#define nan_check(...)                                                      \
-    do                                                                      \
-    {                                                                       \
-        if (maybe_nan(#__VA_ARGS__, OTR_FUNNAME, __LINE__, __VA_ARGS__))    \
-            goto nan;                                                       \
+#define nan_check(...) \
+    do                                                      \
+    {                                                       \
+        if (!nan_check_(__VA_ARGS__))                       \
+        {                                                   \
+            emit_nan_check_msg(#__VA_ARGS__, __LINE__);     \
+            goto nan;                                       \
+        }                                                   \
     } while (false)
 
-void pipeline::maybe_enable_center_on_tracking_started()
+void pipeline::logic()
 {
-    if (!tracking_started)
-    {
-        for (int i = 0; i < 6; i++)
-            if (std::fabs(newpose(i)) != 0)
-            {
-                tracking_started = true;
-                break;
-            }
+    using namespace euler;
+    using EV = event_handler::event_ordinal;
 
-        if (tracking_started && s.center_at_startup)
-            set(f_center, true);
+    logger.write_dt();
+    logger.reset_dt();
+
+    // we must center prior to getting data
+    const bool center_ordered = get(f_center) && tracking_started;
+    set(f_center, false);
+    const bool own_center_logic = center_ordered && libs.pTracker->center();
+
+    Pose value, raw;
+
+    {
+        Pose tmp;
+        libs.pTracker->data(tmp);
+        nan_check(tmp);
+        ev.run_events(EV::ev_raw, tmp);
+
+        if (get(f_enabled_p) ^ !get(f_enabled_h))
+            for (int i = 0; i < 6; i++)
+                newpose(i) = tmp(i);
     }
-}
 
-void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
-{
-    euler_t tmp = d2r * euler_t(&value[Yaw]);
-    scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
-    real_rotation.rotation = euler_to_rmat(tmp);
+    bool disabled[6];
 
-    if (get(f_center))
+    for (int i = 0; i < 6; i++)
     {
-        if (libs.pFilter)
-            libs.pFilter->center();
-
-        if (own_center_logic)
-        {
-            scaled_rotation.rot_center = rmat::eye();
-            real_rotation.rot_center = rmat::eye();
-
-            t_center = euler_t();
-        }
+        auto& axis = m(i);
+        int k = axis.opts.src;
+        disabled[i] = k == 6;
+        if (k < 0 || k >= 6)
+            value(i) = 0;
         else
-        {
-            real_rotation.rot_center = real_rotation.rotation.t();
-            scaled_rotation.rot_center = scaled_rotation.rotation.t();
-
-            t_center = euler_t(static_cast<const double*>(value));
-        }
+            value(i) = newpose(k);
+        raw(i) = newpose(i);
     }
-}
 
-Pose pipeline::clamp_value(Pose value) const
-{
     // hatire, udp, and freepie trackers can mess up here
     for (unsigned i = 3; i < 6; i++)
     {
@@ -311,162 +279,159 @@ Pose pipeline::clamp_value(Pose value) const
             value(i) = clamp(x, -180, 180);
     }
 
-    return value;
-}
-
-Pose pipeline::apply_center(Pose value) const
-{
-    rmat rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
-    euler_t pos = euler_t(value) - t_center;
-    euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
-
-    pos = rel.rotate(real_rotation.rot_center, pos, vec3_bool());
-
-    for (int i = 0; i < 3; i++)
-    {
-        // don't invert after t_compensate
-        // inverting here doesn't break centering
-
-        if (m(i+3).opts.invert)
-            rot(i) = -rot(i);
-        if (m(i).opts.invert)
-            pos(i) = -pos(i);
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        value(i) = pos(i);
-        value(i+3) = rot(i);
-    }
-
-    return value;
-}
-
-std::tuple<Pose, Pose, vec6_bool>
-pipeline::get_selected_axis_value(const Pose& newpose) const
-{
-    Pose value;
-    vec6_bool disabled;
-
-    for (int i = 0; i < 6; i++)
-    {
-        const Map& axis = m(i);
-        const int k = axis.opts.src;
-
-        disabled(i) = k == 6;
-
-        if (k < 0 || k >= 6)
-            value(i) = 0;
-        else
-            value(i) = newpose(k);
-    }
-
-    return { newpose, value, disabled };
-}
-
-Pose pipeline::maybe_apply_filter(const Pose& value) const
-{
-    Pose tmp(value);
-
-    // nan/inf values will corrupt filter internal state
-    if (libs.pFilter)
-        libs.pFilter->filter(value, tmp);
-
-    return tmp;
-}
-
-Pose pipeline::apply_zero_pos(Pose value) const
-{
-    // custom zero position
-    for (int i = 0; i < 6; i++)
-        value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
-
-    return value;
-}
-
-Pose pipeline::apply_reltrans(Pose value, vec6_bool disabled)
-{
-    const euler_t neck = rel.apply_neck(value, s.neck_enable, -s.neck_z);
-
-    value = rel.apply_pipeline(s.reltrans_mode, value,
-                               { !!s.reltrans_disable_src_yaw,
-                                 !!s.reltrans_disable_src_pitch,
-                                 !!s.reltrans_disable_src_roll,
-                                 !!s.reltrans_disable_tx,
-                                 !!s.reltrans_disable_ty,
-                                 !!s.reltrans_disable_tz });
-
-    for (int i = 0; i < 3; i++)
-        value(i) += neck(i);
-
-    // reltrans will move it
-    for (unsigned k = 0; k < 6; k++)
-        if (disabled(k))
-            value(k) = 0;
-
-    return value;
-}
-
-void pipeline::logic()
-{
-    using namespace euler;
-    using EV = event_handler::event_ordinal;
-
-    logger.write_dt();
-    logger.reset_dt();
-
-    // we must center prior to getting data from the tracker
-    const bool center_ordered = get(f_center) && tracking_started;
-    const bool own_center_logic = center_ordered && libs.pTracker->center();
-
-    Pose value, raw;
-    vec6_bool disabled;
-
-    {
-        Pose tmp;
-        libs.pTracker->data(tmp);
-        nan_check(tmp);
-        ev.run_events(EV::ev_raw, tmp);
-
-        if (get(f_enabled_p) ^ !get(f_enabled_h))
-            for (int i = 0; i < 6; i++)
-                newpose(i) = tmp(i);
-    }
-
-    std::tie(raw, value, disabled) = get_selected_axis_value(newpose);
     logger.write_pose(raw); // raw
 
-    value = clamp_value(value);
+    // TODO split this function, it's too big
 
     {
-        maybe_enable_center_on_tracking_started();
-        maybe_set_center_pose(value, own_center_logic);
-        value = apply_center(value);
-        logger.write_pose(value); // "corrected" - after various transformations to account for camera position
+        euler_t tmp = d2r * euler_t(&value[Yaw]);
+        scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
+        real_rotation.rotation = euler_to_rmat(tmp);
+    }
+
+    if (!tracking_started)
+    {
+        for (int i = 0; i < 6; i++)
+            if (std::fabs(newpose(i)) != 0)
+            {
+                tracking_started = true;
+                break;
+            }
+
+        if (tracking_started && s.center_at_startup)
+        {
+            set(f_center, true);
+        }
+    }
+
+    if (center_ordered)
+    {
+        if (libs.pFilter)
+            libs.pFilter->center();
+
+        if (own_center_logic)
+        {
+            scaled_rotation.rot_center = rmat::eye();
+            real_rotation.rot_center = rmat::eye();
+
+            t_center = euler_t();
+        }
+        else
+        {
+            real_rotation.rot_center = real_rotation.rotation.t();
+            scaled_rotation.rot_center = scaled_rotation.rotation.t();
+
+            t_center = euler_t(&value(TX));
+        }
     }
 
     {
-        ev.run_events(EV::ev_before_filter, value);
-        value = maybe_apply_filter(value);
-        nan_check(value);
-        logger.write_pose(value); // "filtered"
+        rmat rotation = scaled_rotation.rotation;
+        euler_t pos = euler_t(&value[TX]) - t_center;
+
+        //switch (s.center_method)
+        switch (1)
+        {
+        case 0:
+            // inertial
+            rotation = scaled_rotation.rot_center * rotation;
+        break;
+
+        default:
+        case 1:
+            // camera
+            rotation = rotation * scaled_rotation.rot_center;
+            pos = rel.rotate(real_rotation.rot_center, pos, false, false, false);
+        break;
+        }
+
+        euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
+
+        for (int i = 0; i < 3; i++)
+        {
+            // don't invert after t_compensate
+            // inverting here doesn't break centering
+
+            if (m(i+3).opts.invert)
+                rot(i) = -rot(i);
+            if (m(i).opts.invert)
+                pos(i) = -pos(i);
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            value(i) = pos(i);
+            value(i+3) = rot(i);
+        }
+    }
+
+    logger.write_pose(value); // "corrected" - after various transformations to account for camera position
+
+    ev.run_events(EV::ev_before_filter, value);
+
+    {
+        {
+            Pose tmp(value);
+
+            // nan/inf values will corrupt filter internal state
+            if (libs.pFilter)
+                libs.pFilter->filter(tmp, value);
+
+            nan_check(value);
+
+            logger.write_pose(value); // "filtered"
+        }
     }
 
     {
         ev.run_events(EV::ev_before_mapping, value);
-        // CAVEAT rotation only, due to tcomp
-        for (int i = 3; i < 6; i++)
-            value(i) = map(value(i), m(i));
+
+        {
+            euler_t neck;
+
+            if (s.neck_enable)
+            {
+                double nz = -s.neck_z;
+
+                if (nz != 0)
+                {
+                    const rmat R = euler_to_rmat(
+                                       euler_t(value(Yaw)   * d2r,
+                                               value(Pitch) * d2r,
+                                               value(Roll)  * d2r));
+                    neck = rel.rotate(R, { 0, 0, nz }, false, false, false);
+                    neck(TZ) = neck(TZ) - nz;
+
+                    nan_check(neck);
+                }
+            }
+
+            // CAVEAT rotation only, due to tcomp
+            for (int i = 3; i < 6; i++)
+                value(i) = map(value(i), m(i));
+
+            nan_check(value);
+
+            value = rel.apply_pipeline(s.reltrans_mode, value, {
+                !!s.reltrans_disable_src_yaw, !!s.reltrans_disable_src_pitch, !!s.reltrans_disable_src_roll,
+                !!s.reltrans_disable_tx, !!s.reltrans_disable_ty, !!s.reltrans_disable_tz
+            });
+
+            for (int i = 0; i < 3; i++)
+                value(i) += neck(i);
+        }
+
+        // relative translation can move it
+        for (unsigned k = 0; k < 6; k++)
+            if (disabled[k])
+                value(k) = 0;
     }
 
-    value = apply_reltrans(value, disabled);
+    // CAVEAT translation only, due to tcomp
+    for (int i = 0; i < 3; i++)
+        value(i) = map(value(i), m(i));
 
-    {
-        // CAVEAT translation only, due to tcomp
-        for (int i = 0; i < 3; i++)
-            value(i) = map(value(i), m(i));
-        nan_check(value);
-    }
+    nan_check(value);
 
     goto ok;
 
@@ -479,20 +444,21 @@ nan:
 
         // for widget last value display
         for (int i = 0; i < 6; i++)
-            (void)map(raw_6dof(i), m(i));
+            (void) map(raw_6dof(i), m(i));
     }
 
 ok:
-
-    set(f_center, false);
 
     if (get(f_zero))
         for (int i = 0; i < 6; i++)
             value(i) = 0;
 
-    value = apply_zero_pos(value);
+    // custom zero position
+    for (int i = 0; i < 6; i++)
+        value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
 
     ev.run_events(EV::ev_finished, value);
+
     libs.pProtocol->pose(value);
 
     QMutexLocker foo(&mtx);
@@ -587,15 +553,16 @@ void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
     }
 }
 
-void pipeline::set_center() { set(f_center, true); }
+void pipeline::center() { set(f_center, true); }
 
-void pipeline::set_enabled(bool value) { set(f_enabled_h, value); }
+void pipeline::set_toggle(bool value) { set(f_enabled_h, value); }
 void pipeline::set_zero(bool value) { set(f_zero, value); }
 
-void pipeline::toggle_zero() { negate(f_zero); }
+void pipeline::zero() { negate(f_zero); }
 void pipeline::toggle_enabled() { negate(f_enabled_p); }
 
-void bits::set(flags flag_, bool val_)
+
+void bits::set(bits::flags flag_, bool val_)
 {
     const unsigned flag = unsigned(flag_);
     const unsigned val = unsigned(val_);
@@ -611,7 +578,7 @@ void bits::set(flags flag_, bool val_)
     }
 }
 
-void bits::negate(flags flag_)
+void bits::negate(bits::flags flag_)
 {
     const unsigned flag = unsigned(flag_);
 
@@ -627,7 +594,7 @@ void bits::negate(flags flag_)
     }
 }
 
-bool bits::get(flags flag)
+bool bits::get(bits::flags flag)
 {
     return !!(b & flag);
 }
