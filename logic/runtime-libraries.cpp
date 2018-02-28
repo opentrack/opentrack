@@ -19,7 +19,7 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 
     if(status = pProtocol->initialize(), !status.is_ok())
     {
-        status = _("Error occured while loading protocol %1\n\n%2\n")
+        status = _("Error occurred while loading protocol %1\n\n%2\n")
                     .arg(p->name).arg(status.error);
         goto end;
     }
@@ -36,14 +36,14 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     if (pFilter)
         if(status = pFilter->initialize(), !status.is_ok())
         {
-            status = _("Error occured while loading filter %1\n\n%2\n")
+            status = _("Error occurred while loading filter %1\n\n%2\n")
                      .arg(f->name).arg(status.error);
             goto end;
         }
 
     if (status = pTracker->start_tracker(frame), !status.is_ok())
     {
-        status = _("Error occured while loading tracker %1\n\n%2\n")
+        status = _("Error occurred while loading tracker %1\n\n%2\n")
                  .arg(t->name).arg(status.error);
         goto end;
     }

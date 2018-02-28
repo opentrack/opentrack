@@ -92,7 +92,7 @@ private:
     Pose newpose;
     runtime_libraries const& libs;
     // The owner of the reference is the main window.
-    // This design might be usefull if we decide later on to swap out
+    // This design might be useful if we decide later on to swap out
     // the logger while the tracker is running.
     TrackLogger& logger;
 
