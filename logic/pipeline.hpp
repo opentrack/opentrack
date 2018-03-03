@@ -98,16 +98,16 @@ private:
 
     struct state
     {
-        rmat rot_center;
+        rmat inv_rot_center;
         rmat rotation;
 
-        state() : rot_center(rmat::eye())
+        state() : inv_rot_center(rmat::eye())
         {}
     };
 
     reltrans rel;
 
-    state real_rotation, scaled_rotation;
+    state rotation;
     euler_t t_center;
 
     ns backlog_time = ns(0);
@@ -117,7 +117,7 @@ private:
     double map(double pos, Map& axis);
     void logic();
     void run() override;
-    void maybe_enable_center_on_tracking_started();
+    bool maybe_enable_center_on_tracking_started();
     void maybe_set_center_pose(const Pose& value, bool own_center_logic);
     Pose clamp_value(Pose value) const;
     Pose apply_center(Pose value) const;
@@ -126,9 +126,9 @@ private:
     Pose apply_reltrans(Pose value, vec6_bool disabled);
     Pose apply_zero_pos(Pose value) const;
 
-    // note: float exponent base is 2
-    static constexpr inline double c_mult = 16;
-    static constexpr inline double c_div = 1./c_mult;
+    // reminder: float exponent base is 2
+    //static constexpr inline double c_mult = 16;
+    //static constexpr inline double c_div = 1./c_mult;
 public:
     pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
     ~pipeline();

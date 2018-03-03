@@ -17,6 +17,7 @@
 #include "compat/meta.hpp"
 
 #include "pipeline.hpp"
+#include "logic/shortcuts.h"
 
 #include <cmath>
 #include <algorithm>
@@ -246,10 +247,10 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
     do                                                                      \
     {                                                                       \
         if (maybe_nan(#__VA_ARGS__, OTR_FUNNAME, __LINE__, __VA_ARGS__))    \
-            goto nan;                                                       \
+            goto error;                                                     \
     } while (false)
 
-void pipeline::maybe_enable_center_on_tracking_started()
+bool pipeline::maybe_enable_center_on_tracking_started()
 {
     if (!tracking_started)
     {
@@ -261,15 +262,20 @@ void pipeline::maybe_enable_center_on_tracking_started()
             }
 
         if (tracking_started && s.center_at_startup)
+        {
             set(f_center, true);
+            return true;
+        }
     }
+
+    return false;
 }
 
 void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 {
     euler_t tmp = d2r * euler_t(&value[Yaw]);
-    scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
-    real_rotation.rotation = euler_to_rmat(tmp);
+    //scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
+    rotation.rotation = euler_to_rmat(tmp);
 
     if (get(f_center))
     {
@@ -278,15 +284,15 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 
         if (own_center_logic)
         {
-            scaled_rotation.rot_center = rmat::eye();
-            real_rotation.rot_center = rmat::eye();
+            //scaled_rotation.rot_center = rmat::eye();
+            rotation.inv_rot_center = rmat::eye();
 
             t_center = euler_t();
         }
         else
         {
-            real_rotation.rot_center = real_rotation.rotation.t();
-            scaled_rotation.rot_center = scaled_rotation.rotation.t();
+            rotation.inv_rot_center = rotation.rotation.t();
+            //scaled_rotation.rot_center = scaled_rotation.rotation.t();
 
             t_center = euler_t(static_cast<const double*>(value));
         }
@@ -316,27 +322,26 @@ Pose pipeline::clamp_value(Pose value) const
 
 Pose pipeline::apply_center(Pose value) const
 {
-    rmat rotation = scaled_rotation.rotation * scaled_rotation.rot_center;
-    euler_t pos = euler_t(value) - t_center;
-    euler_t rot = r2d * c_mult * rmat_to_euler(rotation);
+    euler_t T = euler_t(value) - t_center;
+    euler_t R = r2d * rmat_to_euler(rotation.rotation * rotation.inv_rot_center);
 
-    pos = rel.rotate(real_rotation.rot_center, pos, vec3_bool());
+    T = rel.rotate(rotation.inv_rot_center, T, vec3_bool());
 
     for (int i = 0; i < 3; i++)
     {
-        // don't invert after t_compensate
+        // don't invert after reltrans
         // inverting here doesn't break centering
 
         if (m(i+3).opts.invert)
-            rot(i) = -rot(i);
+            R(i) = -R(i);
         if (m(i).opts.invert)
-            pos(i) = -pos(i);
+            T(i) = -T(i);
     }
 
     for (int i = 0; i < 3; i++)
     {
-        value(i) = pos(i);
-        value(i+3) = rot(i);
+        value(i) = T(i);
+        value(i+3) = R(i);
     }
 
     return value;
@@ -442,7 +447,8 @@ void pipeline::logic()
         maybe_enable_center_on_tracking_started();
         maybe_set_center_pose(value, own_center_logic);
         value = apply_center(value);
-        logger.write_pose(value); // "corrected" - after various transformations to account for camera position
+        // "corrected" - after various transformations to account for camera position
+        logger.write_pose(value);
     }
 
     {
@@ -470,7 +476,7 @@ void pipeline::logic()
 
     goto ok;
 
-nan:
+error:
     {
         QMutexLocker foo(&mtx);
 
