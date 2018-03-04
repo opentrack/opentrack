@@ -47,3 +47,8 @@
 #   define unlikely(x) (x)
 #endif
 
+#if defined _MSC_VER
+#   define OTR_FUNNAME (__FUNCSIG__)
+#else
+#   define OTR_FUNNAME (__PRETTY_FUNCTION__)
+#endif

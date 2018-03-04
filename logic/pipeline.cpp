@@ -15,6 +15,7 @@
 #include "compat/sleep.hpp"
 #include "compat/math.hpp"
 #include "compat/meta.hpp"
+#include "compat/macros.hpp"
 
 #include "pipeline.hpp"
 #include "logic/shortcuts.h"
@@ -235,13 +236,6 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
     return false;
 }
 
-#if defined _MSC_VER
-#   define OTR_FUNNAME2 (__FUNCSIG__)
-#else
-#   define OTR_FUNNAME2 (__PRETTY_FUNCTION__)
-#endif
-// don't expand
-#   define OTR_FUNNAME (OTR_FUNNAME2)
 
 #define nan_check(...)                                                      \
     do                                                                      \
