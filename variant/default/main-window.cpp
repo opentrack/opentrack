@@ -339,21 +339,16 @@ bool main_window::get_new_config_name_from_dialog(QString& ret)
 
 main_window::~main_window()
 {
-    if (tray)
-        tray->hide();
-    tray = nullptr;
-
-    const bool just_stopping = bool(work);
-
     // stupid ps3 eye has LED issues
-    if (just_stopping)
+    if (work)
     {
         stop_tracker_();
-        close();
         QEventLoop ev;
         ev.processEvents();
         portable::sleep(2000);
     }
+
+    exit();
 }
 
 void main_window::set_working_directory()
@@ -840,6 +835,11 @@ bool main_window::maybe_hide_to_tray(QEvent* e)
     }
 
     return false;
+}
+
+void main_window::closeEvent(QCloseEvent*)
+{
+    exit();
 }
 
 void main_window::maybe_start_profile_from_executable()

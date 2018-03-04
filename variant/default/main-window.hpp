@@ -115,6 +115,8 @@ class main_window : public QMainWindow, private State
     template<typename t, typename F>
     bool mk_window_common(std::unique_ptr<t>& d, F&& ctor);
 
+    void closeEvent(QCloseEvent *event) override;
+
 private slots:
     void save_modules();
     void exit(int status = EXIT_SUCCESS);
