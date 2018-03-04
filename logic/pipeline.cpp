@@ -236,12 +236,15 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
     return false;
 }
 
+// for MSVC `else' is like `unlikely' for GNU
 
-#define nan_check(...)                                                      \
-    do                                                                      \
-    {                                                                       \
-        if (maybe_nan(#__VA_ARGS__, OTR_FUNNAME, __LINE__, __VA_ARGS__))    \
-            goto error;                                                     \
+#define nan_check(...)                                                              \
+    do                                                                              \
+    {                                                                               \
+        if (likely(!maybe_nan(#__VA_ARGS__, OTR_FUNNAME, __LINE__, __VA_ARGS__)))   \
+            (void)0;                                                                \
+        else                                                                        \
+            goto error;                                                             \
     } while (false)
 
 bool pipeline::maybe_enable_center_on_tracking_started()
