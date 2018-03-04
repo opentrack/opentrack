@@ -14,14 +14,14 @@ euler_t OTR_COMPAT_EXPORT rmat_to_euler(const rmat& R)
     alpha = atan2( R(1,0), R(0,0));
     gamma = atan2( R(2,1), R(2,2));
 
-    return { alpha, beta, gamma };
+    return { alpha, -beta, gamma };
 }
 
 rmat OTR_COMPAT_EXPORT euler_to_rmat(const euler_t& e)
 {
-    const double X = -e(2);
+    const double X = e(2);
     const double Y = -e(1);
-    const double Z = -e(0);
+    const double Z = e(0);
 
     const double cx = cos(X);
     const double sx = sin(X);
