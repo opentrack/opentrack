@@ -76,8 +76,7 @@ using namespace pt_module;
 
 wii_dialog_pt::wii_dialog_pt() : TrackerDialog_PT(module_name)
 {
-	ui.camera_settings_groupbox->hide();
-	ui.groupBox_2->hide();
+	ui.tabWidget->removeTab(0);
 }
 
 OPENTRACK_DECLARE_TRACKER(wii_tracker_pt, wii_dialog_pt, wii_metadata_pt)
