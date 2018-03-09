@@ -103,7 +103,7 @@ public:
         case New_ClipLeft:
         case New_ClipRight:
         {
-            const double by = 75, bz = 35, ty = 40, tz = 18;
+            const double by = 60, bz = 38.2, ty = 42.2, tz = 12.6;
             M01 = cv::Vec3d(0, ty, -tz);
             M02 = cv::Vec3d(0, -by, -bz);
             break;
