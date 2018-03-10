@@ -1,6 +1,7 @@
 #include "correlation-calibrator.hpp"
 #include "variance.hpp"
 #include "compat/math.hpp"
+#include "compat/meta.hpp"
 
 #include <cmath>
 #include <iterator>
@@ -60,22 +61,19 @@ bool correlation_calibrator::check_buckets(const vec6 &data)
 
         if (pos[k] >= nbuckets[k])
         {
-            qDebug() << "idx" << k
-                     << "bucket" << (int)pos[k]
-                     << "outside bounds" << nbuckets[k];
+            once_only(qDebug() << "idx" << k
+                               << "bucket" << (int)pos[k]
+                               << "outside bounds" << nbuckets[k]);;
 
             return false;
         }
 
         if (!buckets[k][pos[k]])
+        {
             ret = true;
-
-        buckets[k][pos[k]] = true;
-    }
-
-    if (ret)
-        for (unsigned k = 0; k < 6; k++)
             buckets[k][pos[k]] = true;
+        }
+    }
 
     return ret;
 }
