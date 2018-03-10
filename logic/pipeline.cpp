@@ -75,10 +75,8 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec
             bool tcomp_in_zone_ = progn(
                 if (state == reltrans_non_center)
                 {
-                    const bool yaw_in_zone = std::fabs(value(Yaw)) < 50;
-                    const bool pitch_in_zone = std::fabs(value(Pitch)) < 40;
-
-                    return !(yaw_in_zone && pitch_in_zone);
+                    const bool look_up = value(Pitch) < 15;
+                    return look_up ? std::fabs(value(Yaw)) > 85 : std::fabs(value(Yaw)) < 50;
                 }
                 else
                     return true;
