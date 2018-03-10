@@ -52,7 +52,7 @@ struct device_list final
 
     static never_inline maybe_pose get_pose(int k);
     static QString strerror(error_t error);
-    static constexpr int max_devices = int(vr::k_unMaxTrackedDeviceCount);
+    static constexpr inline unsigned max_devices = vr::k_unMaxTrackedDeviceCount;
 
     template<typename F>
     friend auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()));

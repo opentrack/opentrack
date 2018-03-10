@@ -44,7 +44,6 @@ void device_list::fill_device_specs(QList<device_spec>& list)
     with_vr_lock([&](vr_t v, error_t)
     {
         list.clear();
-        list.reserve(max_devices);
 
         pose_t device_states[max_devices];
 
@@ -120,6 +119,8 @@ device_list::device_list()
 
 void device_list::refresh_device_list()
 {
+    device_specs.clear();
+    device_specs.reserve(max_devices);
     fill_device_specs(device_specs);
 }
 
