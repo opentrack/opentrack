@@ -53,7 +53,7 @@ void device_list::fill_device_specs(QList<device_spec>& list)
             v->GetDeviceToAbsoluteTrackingPose(origin::TrackingUniverseSeated, 0,
                                                device_states, vr::k_unMaxTrackedDeviceCount);
 
-            constexpr unsigned bufsiz = vr::k_unTrackingStringSize;
+            constexpr unsigned bufsiz = vr::k_unMaxPropertyStringSize;
             static char str[bufsiz+1] {}; // vr_lock prevents reentrancy
 
             for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
