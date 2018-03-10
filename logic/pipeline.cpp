@@ -88,6 +88,8 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
                 //qDebug() << "reltrans-interp: START" << tcomp_in_zone_;
                 cur = true;
                 interp_timer.start();
+                interp_phase_timer.start();
+                RC_phase = 0;
             }
 
             in_zone = tcomp_in_zone_;
@@ -114,10 +116,20 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
         if (cur)
         {
+            static constexpr double RC_phases[] = { 2, 1, .5, .1, };
+            static constexpr double RC_time_deltas[] = { 1, .25, 25., };
+
             const double dt = interp_timer.elapsed_seconds();
             interp_timer.start();
 
-            constexpr double RC = .1;
+            if (RC_phase + 1 != std::size(RC_phases) &&
+                interp_phase_timer.elapsed_seconds() > RC_time_deltas[RC_phase])
+            {
+                RC_phase++;
+                interp_phase_timer.start();
+            }
+
+            const double RC = RC_phases[RC_phase];
             const double alpha = dt/(dt+RC);
 
             constexpr double eps = .05;

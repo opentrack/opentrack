@@ -42,6 +42,12 @@ class reltrans
 {
     euler_t interp_pos, last_value;
     Timer interp_timer;
+
+    // this implements smooth transition into reltrans mode
+    // once not aiming anymore. see `apply_pipeline()'.
+    Timer interp_phase_timer;
+    unsigned RC_phase;
+
     bool cur = false;
     bool in_zone = false;
 
