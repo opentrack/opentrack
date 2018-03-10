@@ -24,6 +24,10 @@
 #include <vector>
 #include <functional>
 
+#if !defined __APPLE__
+#   define OTR_HAS_KEY_UP_SUPPORT
+#endif
+
 namespace shortcuts_impl {
 
 using namespace options;

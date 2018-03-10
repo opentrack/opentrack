@@ -65,8 +65,13 @@ Work::Work(Mappings& m, event_handler& ev,  QFrame* frame, std::shared_ptr<dylib
     tracker(std::make_shared<pipeline>(m, libs, ev, *logger)),
     sc(std::make_shared<Shortcuts>()),
     keys {
+#if defined OTR_HAS_KEY_UP_SUPPORT
+        key_tuple(s.key_center1, [&](bool x) { tracker->set_held_center(x); }, false),
+        key_tuple(s.key_center2, [&](bool x) { tracker->set_held_center(x); }, false),
+#else
         key_tuple(s.key_center1, [&](bool) { tracker->set_center(); }, true),
         key_tuple(s.key_center2, [&](bool) { tracker->set_center(); }, true),
+#endif
 
         key_tuple(s.key_toggle1, [&](bool) { tracker->toggle_enabled(); }, true),
         key_tuple(s.key_toggle2, [&](bool) { tracker->toggle_enabled(); }, true),

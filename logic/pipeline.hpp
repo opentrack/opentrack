@@ -73,9 +73,10 @@ struct OTR_LOGIC_EXPORT bits
 {
     enum flags : unsigned {
         f_center         = 1 << 0,
-        f_enabled_h      = 1 << 1,
-        f_enabled_p      = 1 << 2,
-        f_zero           = 1 << 3,
+        f_held_center    = 1 << 1,
+        f_enabled_h      = 1 << 2,
+        f_enabled_p      = 1 << 3,
+        f_zero           = 1 << 4,
     };
 
     std::atomic<unsigned> b;
@@ -149,6 +150,7 @@ public:
     void toggle_enabled();
 
     void set_center();
+    void set_held_center(bool value);
     void set_enabled(bool value);
     void set_zero(bool value);
 };

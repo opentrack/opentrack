@@ -305,7 +305,7 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
     //scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
     rotation.rotation = euler_to_rmat(tmp);
 
-    if (get(f_center))
+    if (get(f_center | f_held_center))
     {
         if (libs.pFilter)
             libs.pFilter->center();
@@ -449,7 +449,7 @@ void pipeline::logic()
     logger.reset_dt();
 
     // we must center prior to getting data from the tracker
-    const bool center_ordered = get(f_center) && tracking_started;
+    const bool center_ordered = get(f_center | f_held_center) && tracking_started;
     const bool own_center_logic = center_ordered && libs.pTracker->center();
 
     Pose value, raw;
@@ -623,6 +623,11 @@ void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
 
 void pipeline::set_center() { set(f_center, true); }
 
+void pipeline::set_held_center(bool value)
+{
+    set(f_held_center, value);
+}
+
 void pipeline::set_enabled(bool value) { set(f_enabled_h, value); }
 void pipeline::set_zero(bool value) { set(f_zero, value); }
 
@@ -661,7 +666,7 @@ void bits::negate(flags flag_)
     }
 }
 
-bool bits::get(flags flag)
+bool bits::get(unsigned flag)
 {
     return !!(b & flag);
 }
@@ -669,6 +674,7 @@ bool bits::get(flags flag)
 bits::bits() : b(0u)
 {
     set(f_center, true);
+    set(f_held_center, false);
     set(f_enabled_p, true);
     set(f_enabled_h, true);
     set(f_zero, false);
