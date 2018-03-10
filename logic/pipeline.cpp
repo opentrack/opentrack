@@ -37,6 +37,13 @@ static constexpr inline double d2r = M_PI / 180.;
 
 reltrans::reltrans() {}
 
+void reltrans::on_center()
+{
+    interp_pos = { 0, 0, 0 };
+    in_zone = false;
+    cur = false;
+}
+
 euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) const
 {
     enum { tb_Z, tb_X, tb_Y };
@@ -410,8 +417,11 @@ Pose pipeline::apply_zero_pos(Pose value) const
     return value;
 }
 
-Pose pipeline::apply_reltrans(Pose value, vec6_bool disabled)
+Pose pipeline::apply_reltrans(Pose value, vec6_bool disabled, bool centerp)
 {
+    if (centerp)
+        rel.on_center();
+
     value = rel.apply_pipeline(s.reltrans_mode, value,
                                { !!s.reltrans_disable_src_yaw,
                                  !!s.reltrans_disable_src_pitch,
@@ -483,7 +493,7 @@ void pipeline::logic()
             value(i) = map(value(i), m(i));
     }
 
-    value = apply_reltrans(value, disabled);
+    value = apply_reltrans(value, disabled, center_ordered);
 
     {
         // CAVEAT translation only, due to tcomp

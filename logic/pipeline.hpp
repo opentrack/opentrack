@@ -40,7 +40,7 @@ using vec3_bool = Mat<bool, 6, 1>;
 
 class reltrans
 {
-    euler_t interp_pos, last_value;
+    euler_t interp_pos;
     Timer interp_timer;
 
     // this implements smooth transition into reltrans mode
@@ -53,6 +53,8 @@ class reltrans
 
 public:
     reltrans();
+
+    void on_center();
 
     warn_result_unused
     euler_t rotate(const rmat& rmat, const euler_t& in, vec3_bool disable) const;
@@ -80,7 +82,7 @@ struct OTR_LOGIC_EXPORT bits
 
     void set(flags flag_, bool val_);
     void negate(flags flag_);
-    bool get(flags flag);
+    bool get(unsigned flag);
     bits();
 };
 
@@ -130,7 +132,7 @@ private:
     Pose apply_center(Pose value) const;
     std::tuple<Pose, Pose, vec6_bool> get_selected_axis_value(const Pose& newpose) const;
     Pose maybe_apply_filter(const Pose& value) const;
-    Pose apply_reltrans(Pose value, vec6_bool disabled);
+    Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);
     Pose apply_zero_pos(Pose value) const;
 
     // reminder: float exponent base is 2
