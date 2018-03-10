@@ -58,7 +58,7 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx
 
     using joys_t = std::unordered_map<QString, std::shared_ptr<joy>>;
 
-    static constexpr int joy_axis_size = 65536;
+    static constexpr inline int joy_axis_size = 65536;
 
     struct joy_info
     {

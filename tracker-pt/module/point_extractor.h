@@ -36,7 +36,7 @@ public:
     void extract_points(const pt_frame& frame, pt_preview& preview_frame, std::vector<vec2>& points) override;
     PointExtractor(const QString& module_name);
 private:
-    static constexpr int max_blobs = 16;
+    static constexpr inline int max_blobs = 16;
 
     pt_settings s;
 

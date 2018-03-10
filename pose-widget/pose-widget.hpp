@@ -86,7 +86,7 @@ struct pose_transform final : QThread
 
     std::atomic<bool> fresh;
 
-    static constexpr int w = 320, h = 240;
+    static constexpr inline int w = 320, h = 240;
 };
 
 class OTR_POSE_WIDGET_EXPORT pose_widget final : public QWidget
