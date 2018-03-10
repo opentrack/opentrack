@@ -48,67 +48,67 @@ void device_list::fill_device_specs(QList<device_spec>& list)
 
         pose_t device_states[max_devices];
 
-        if (v)
+        if (!v)
+            return;
+
+        v->GetDeviceToAbsoluteTrackingPose(origin::TrackingUniverseSeated, 0,
+                                           device_states, vr::k_unMaxTrackedDeviceCount);
+
+        constexpr unsigned bufsiz = vr::k_unMaxPropertyStringSize;
+        static char str[bufsiz+1] {}; // vr_lock prevents reentrancy
+
+        for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
         {
-            v->GetDeviceToAbsoluteTrackingPose(origin::TrackingUniverseSeated, 0,
-                                               device_states, vr::k_unMaxTrackedDeviceCount);
-
-            constexpr unsigned bufsiz = vr::k_unMaxPropertyStringSize;
-            static char str[bufsiz+1] {}; // vr_lock prevents reentrancy
-
-            for (unsigned k = 0; k < vr::k_unMaxTrackedDeviceCount; k++)
+            if (v->GetTrackedDeviceClass(k) == vr::ETrackedDeviceClass::TrackedDeviceClass_Invalid)
             {
-               if (v->GetTrackedDeviceClass(k) == vr::ETrackedDeviceClass::TrackedDeviceClass_Invalid)
-               {
-                   qDebug() << "no device with index";
-                   continue;
-               }
-
-               if (!device_states[k].bDeviceIsConnected)
-               {
-                   qDebug() << "device not connected but proceeding";
-                   continue;
-               }
-
-               unsigned len;
-
-               len = v->GetStringTrackedDeviceProperty(k, vr::ETrackedDeviceProperty::Prop_SerialNumber_String, str, bufsiz);
-               if (!len)
-               {
-                   qDebug() << "steamvr: getting serial number failed for" << k;
-                   continue;
-               }
-
-               device_spec dev;
-
-               dev.serial = str;
-
-               len = v->GetStringTrackedDeviceProperty(k, vr::ETrackedDeviceProperty::Prop_ModelNumber_String, str, bufsiz);
-               if (!len)
-               {
-                   qDebug() << "steamvr: getting model number failed for" << k;
-                   continue;
-               }
-
-               switch (v->GetTrackedDeviceClass(k))
-               {
-               case vr::ETrackedDeviceClass::TrackedDeviceClass_HMD:
-                   dev.type = "HMD"; break;
-               case vr::ETrackedDeviceClass::TrackedDeviceClass_Controller:
-                   dev.type = "Controller"; break;
-               case vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference:
-                   dev.type = "Tracker"; break;
-               default:
-                   dev.type = "Unknown"; break;
-               }
-
-               dev.model = str;
-               dev.pose = device_states[k];
-               dev.k = k;
-               dev.is_connected = device_states[k].bDeviceIsConnected;
-
-               list.push_back(dev);
+                qDebug() << "no device with index";
+                continue;
             }
+
+            if (!device_states[k].bDeviceIsConnected)
+            {
+                qDebug() << "device not connected but proceeding";
+                continue;
+            }
+
+            unsigned len;
+
+            len = v->GetStringTrackedDeviceProperty(k, vr::ETrackedDeviceProperty::Prop_SerialNumber_String, str, bufsiz);
+            if (!len)
+            {
+                qDebug() << "steamvr: getting serial number failed for" << k;
+                continue;
+            }
+
+            device_spec dev;
+
+            dev.serial = str;
+
+            len = v->GetStringTrackedDeviceProperty(k, vr::ETrackedDeviceProperty::Prop_ModelNumber_String, str, bufsiz);
+            if (!len)
+            {
+                qDebug() << "steamvr: getting model number failed for" << k;
+                continue;
+            }
+
+            switch (v->GetTrackedDeviceClass(k))
+            {
+            case vr::ETrackedDeviceClass::TrackedDeviceClass_HMD:
+                dev.type = "HMD"; break;
+            case vr::ETrackedDeviceClass::TrackedDeviceClass_Controller:
+                dev.type = "Controller"; break;
+            case vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference:
+                dev.type = "Tracker"; break;
+            default:
+                dev.type = "Unknown"; break;
+            }
+
+            dev.model = str;
+            dev.pose = device_states[k];
+            dev.k = k;
+            dev.is_connected = device_states[k].bDeviceIsConnected;
+
+            list.push_back(dev);
         }
     });
 }
