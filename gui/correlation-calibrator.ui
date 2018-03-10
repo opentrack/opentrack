@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>722</width>
+    <height>209</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Press &quot;calibrate&quot; in given row to calibrate that axis. Follow instructions in the next window.
+Press &quot;clear calibration&quot; to remove any calibration data pertaining to that axis of position change or rotation.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="value_table">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="verticalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="horizontalScrollBarPolicy">
+      <enum>Qt::ScrollBarAlwaysOff</enum>
+     </property>
+     <property name="sizeAdjustPolicy">
+      <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+     </property>
+     <property name="autoScroll">
+      <bool>true</bool>
+     </property>
+     <property name="editTriggers">
+      <set>QAbstractItemView::NoEditTriggers</set>
+     </property>
+     <property name="tabKeyNavigation">
+      <bool>false</bool>
+     </property>
+     <property name="dragDropOverwriteMode">
+      <bool>false</bool>
+     </property>
+     <property name="showGrid">
+      <bool>true</bool>
+     </property>
+     <property name="wordWrap">
+      <bool>false</bool>
+     </property>
+     <property name="cornerButtonEnabled">
+      <bool>false</bool>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="horizontalHeaderHighlightSections">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>true</bool>
+     </attribute>
+     <attribute name="verticalHeaderHighlightSections">
+      <bool>false</bool>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>X</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Y</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Z</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Yaw</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Pitch</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>Roll</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>X</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Y</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Z</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Yaw</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Pitch</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Roll</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Calibrate</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Clear calibration</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="0" column="3">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="0" column="4">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="0" column="5">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="0" column="6">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="0" column="7">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="1" column="1">
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="1" column="2">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="1" column="3">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="1" column="4">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="1" column="5">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="1" column="6">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="1" column="7">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="2" column="1">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="2" column="2">
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="2" column="3">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="2" column="4">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="2" column="5">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="2" column="6">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="2" column="7">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="3" column="1">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="3" column="2">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="3" column="3">
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="3" column="4">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="3" column="5">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="3" column="6">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="3" column="7">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="4" column="1">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="4" column="2">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="4" column="3">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="4" column="4">
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="4" column="5">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="4" column="6">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="4" column="7">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="5" column="1">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="5" column="2">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="5" column="3">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="5" column="4">
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="5" column="5">
+      <property name="text">
+       <string>1</string>
+      </property>
+      <property name="flags">
+       <set>NoItemFlags</set>
+      </property>
+     </item>
+     <item row="5" column="6">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+     <item row="5" column="7">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="flags">
+       <set>ItemIsEnabled</set>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
