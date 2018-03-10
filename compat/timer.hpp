@@ -33,7 +33,7 @@ public:
     }
 
     template<typename t>
-    bool is_elapsed(const t& time_value)
+    bool is_elapsed(t&& time_value)
     {
         using namespace time_units;
 
