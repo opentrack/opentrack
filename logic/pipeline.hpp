@@ -1,11 +1,3 @@
-/* Copyright (c) 2014-2015, Stanislaw Halik <sthalik@misaki.pl>
-
- * Permission to use, copy, modify, and/or distribute this
- * software for any purpose with or without fee is hereby granted,
- * provided that the above copyright notice and this permission
- * notice appear in all copies.
- */
-
 #pragma once
 
 #include <vector>
@@ -30,7 +22,7 @@
 
 #include "export.hpp"
 
-namespace gui_tracker_impl {
+namespace pipeline_impl {
 
 using rmat = euler::rmat;
 using euler_t = euler::euler_t;
@@ -136,9 +128,6 @@ private:
     Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);
     Pose apply_zero_pos(Pose value) const;
 
-    // reminder: float exponent base is 2
-    //static constexpr inline double c_mult = 16;
-    //static constexpr inline double c_div = 1./c_mult;
 public:
     pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
     ~pipeline();
@@ -155,6 +144,6 @@ public:
     void set_zero(bool value);
 };
 
-} // ns impl
+} // ns pipeine_impl
 
-using gui_tracker_impl::pipeline;
+using pipeline_impl::pipeline;
