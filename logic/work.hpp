@@ -24,7 +24,7 @@
 #include <tuple>
 #include <functional>
 
-struct OTR_LOGIC_EXPORT Work
+struct OTR_LOGIC_EXPORT Work final
 {
     using fn_t = std::function<void(bool)>;
     using key_tuple = std::tuple<key_opts&, fn_t, bool>;
