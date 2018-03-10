@@ -14,7 +14,7 @@
 
 #define UNUSED(var) (void)var
 
-//#define DEBUG
+#define DEBUG
 
 typedef struct TFreeTrackData
 {
@@ -55,6 +55,7 @@ typedef struct FTMemMap
 #define NP_EXPORT(t) t NP_DECLSPEC __stdcall
 #define NP_AXIS_MAX 16383
 
+static uint32_t volatile game_id_local;
 static HANDLE hFTMemMap = 0;
 static FTMemMap* pMemData = 0;
 
@@ -66,7 +67,17 @@ static FTMemMap* pMemData = 0;
 
 #ifdef DEBUG
 #   include <stdio.h>
-#   define dbg_report(...) do { if (debug_stream) { fprintf(debug_stream, __VA_ARGS__); fprintf(debug_stream, "\n"); fflush(debug_stream); } } while (0)
+#   define dbg_report(...)                          \
+    do                                              \
+    {                                               \
+        if (debug_stream)                           \
+        {                                           \
+            fprintf(debug_stream, __VA_ARGS__);     \
+            fprintf(debug_stream, "\n");            \
+            fflush(debug_stream);                   \
+        }                                           \
+    } while (0)
+
 static FILE *debug_stream;
 #else
 #   define dbg_report(...) do { (void)0; } while (0)
@@ -348,7 +359,9 @@ NP_EXPORT(int) NP_GetData(tir_data* data)
         return NPCLIENT_STATUS_DISABLED;
     }
 
-    if (pMemData->GameId > 0 && pMemData->GameId == pMemData->GameId2)
+    if (game_id_local > 0 &&
+        pMemData->GameId == game_id_local &&
+        pMemData->GameId == pMemData->GameId2)
     {
         y = pMemData->data.Yaw   * NP_AXIS_MAX / M_PI;
         p = pMemData->data.Pitch * NP_AXIS_MAX / M_PI;
@@ -548,7 +561,10 @@ NP_EXPORT(int) NP_ReCenter(void)
 NP_EXPORT(int) NP_RegisterProgramProfileID(unsigned short id)
 {
     if (FTCreateMapping())
+    {
         pMemData->GameId = id;
+        game_id_local = id;
+    }
     dbg_report("RegisterProgramProfileID request: %d\n", id);
     return 0;
 }
