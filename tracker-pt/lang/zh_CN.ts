@@ -5,11 +5,11 @@
     <name>TrackerDialog_PT</name>
     <message>
         <source>Brightness %1/255</source>
-        <translation type="unfinished"></translation>
+        <translation>亮度 %1/255</translation>
     </message>
     <message>
         <source>LED radius %1 pixels</source>
-        <translation type="unfinished"></translation>
+        <translation>光源半径 %1 像素</translation>
     </message>
     <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
@@ -21,31 +21,31 @@
     </message>
     <message>
         <source>%1 samples. Over %2, good!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 样本。%2 正常</translation>
     </message>
     <message>
         <source>Stop calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>停止校准</translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation type="unfinished">开始校准</translation>
+        <translation>开始校准</translation>
     </message>
     <message>
         <source>%1x%2 @ %3 FPS</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2 @ %3 帧</translation>
     </message>
     <message>
         <source>%1 OK!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 正常</translation>
     </message>
     <message>
         <source>%1 BAD!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 异常</translation>
     </message>
     <message>
         <source>Tracker offline</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪器脱机</translation>
     </message>
 </context>
 <context>
@@ -72,7 +72,7 @@
     </message>
     <message>
         <source>Width</source>
-        <translation></translation>
+        <translation>宽度</translation>
     </message>
     <message>
         <source>FPS</source>
@@ -273,14 +273,14 @@
     <message>
         <source>Use only yaw and pitch while calibrating.
 Don&apos;t roll or change position.</source>
-        <translation type="unfinished"></translation>
+        <translation>用pitch和yaw校准。不要roll或者变换位置</translation>
     </message>
 </context>
 <context>
     <name>pt_module::Tracker_PT</name>
     <message>
         <source>Can&apos;t open camera</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">无法打开摄像头</translation>
     </message>
 </context>
 </TS>

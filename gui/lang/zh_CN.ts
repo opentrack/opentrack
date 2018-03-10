@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>BrowseButton</name>
     <message>
@@ -106,15 +106,15 @@
     </message>
     <message>
         <source>Start tracking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">开始跟踪</translation>
     </message>
     <message>
         <source>Stop tracking</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">停止跟踪</translation>
     </message>
     <message>
         <source>Zero</source>
-        <translation type="unfinished"></translation>
+        <translation>初始位置</translation>
     </message>
     <message>
         <source>Toggle</source>

@@ -1,166 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>UI_new_config</name>
     <message>
         <source>Config filename</source>
-        <translation type="unfinished"></translation>
+        <translation>配置文件名字：</translation>
     </message>
     <message>
         <source>New file name:</source>
-        <translation type="unfinished"></translation>
+        <translation>新文件名字：</translation>
     </message>
 </context>
 <context>
     <name>main_window</name>
     <message>
         <source>Raw tracker data</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪器原始数据</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>仰俯</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Roll</source>
-        <translation type="unfinished"></translation>
+        <translation>横滚</translation>
     </message>
     <message>
         <source>Yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>偏航</translation>
     </message>
     <message>
         <source>Game data</source>
-        <translation type="unfinished"></translation>
+        <translation>游戏得到的数据</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation type="unfinished"></translation>
+        <translation>配置文件</translation>
     </message>
     <message>
         <source>Options</source>
-        <translation type="unfinished"></translation>
+        <translation>选项</translation>
     </message>
     <message>
         <source>Mapping</source>
-        <translation type="unfinished"></translation>
+        <translation>映射</translation>
     </message>
     <message>
         <source>Tracking</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪</translation>
     </message>
     <message>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>开始</translation>
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
+        <translation>停止</translation>
     </message>
     <message>
         <source>Input</source>
-        <translation type="unfinished"></translation>
+        <translation>输入</translation>
     </message>
     <message>
         <source>🔨</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>Output</source>
-        <translation type="unfinished"></translation>
+        <translation>输出</translation>
     </message>
     <message>
         <source>Filter</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器</translation>
     </message>
     <message>
         <source>Running as root is bad</source>
-        <translation type="unfinished"></translation>
+        <translation>以管理员运行不是什么好主意</translation>
     </message>
     <message>
         <source>Do not run as root. Set correct device node permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>请不要以管理员运行。可以设置何时的设备访问权限来解决。</translation>
     </message>
     <message>
         <source>Running as root is bad, seriously</source>
-        <translation type="unfinished"></translation>
+        <translation>再说一遍，以管理员运行不是什么好主意</translation>
     </message>
     <message>
         <source>Do not run as root. I&apos;ll keep whining at every startup.</source>
-        <translation type="unfinished"></translation>
+        <translation>请不要以管理员运行。这话每次启动我都会强调一遍。</translation>
     </message>
     <message>
         <source>Running as root is really seriously bad</source>
-        <translation type="unfinished"></translation>
+        <translation>以管理员运行真的非常不好</translation>
     </message>
     <message>
         <source>Do not run as root. Be annoyed, comprehensively.</source>
-        <translation type="unfinished"></translation>
+        <translation>请不要以管理员运行。烦了吧？赶紧动作起来</translation>
     </message>
     <message>
         <source>Create new empty config</source>
-        <translation type="unfinished"></translation>
+        <translation>新建一个空的配置</translation>
     </message>
     <message>
         <source>Create new copied config</source>
-        <translation type="unfinished"></translation>
+        <translation>新建一个复制配置</translation>
     </message>
     <message>
         <source>Open configuration directory</source>
-        <translation type="unfinished"></translation>
+        <translation>打开配置目录</translation>
     </message>
     <message>
         <source>opentrack</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source> (debug)</source>
-        <translation type="unfinished"></translation>
+        <translation> （调试）</translation>
     </message>
     <message>
         <source>Show the Octopus</source>
-        <translation type="unfinished"></translation>
+        <translation>显示八爪鱼</translation>
     </message>
     <message>
         <source>Hide the Octopus</source>
-        <translation type="unfinished"></translation>
+        <translation>隐藏八爪鱼</translation>
     </message>
     <message>
         <source>Tracker settings</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪器设置</translation>
     </message>
     <message>
         <source>Filter settings</source>
-        <translation type="unfinished"></translation>
+        <translation>过滤器设置</translation>
     </message>
     <message>
         <source>Protocol settings</source>
-        <translation type="unfinished"></translation>
+        <translation>协议设置</translation>
     </message>
     <message>
         <source>Mappings</source>
-        <translation type="unfinished"></translation>
+        <translation>影射</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation>退出</translation>
     </message>
     <message>
         <source>The Octopus is sad</source>
-        <translation type="unfinished"></translation>
+        <translation>八爪鱼不开心了</translation>
     </message>
     <message>
         <source>Check permissions for your .ini directory:
@@ -168,22 +168,26 @@
 &quot;%1&quot;%2
 
 Exiting now.</source>
-        <translation type="unfinished"></translation>
+        <translation>检查一下你的 .ini 目录权限:
+
+&quot;%1&quot;%2
+
+退出先.</translation>
     </message>
     <message>
         <source> :: </source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>new_file_dialog</name>
     <message>
         <source>File exists</source>
-        <translation type="unfinished"></translation>
+        <translation>文件已经存在</translation>
     </message>
     <message>
         <source>This file already exists. Pick another name.</source>
-        <translation type="unfinished"></translation>
+        <translation>文件重名了，换个其他名字</translation>
     </message>
 </context>
 </TS>
