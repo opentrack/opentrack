@@ -52,10 +52,11 @@ public:
     euler_t rotate(const rmat& rmat, const euler_t& in, vec3_bool disable) const;
 
     warn_result_unused
-    Pose apply_pipeline(reltrans_state cur, const Pose& value, const vec6_bool& disable);
+    Pose apply_pipeline(reltrans_state state, const Pose& value,
+                        const vec6_bool& disable, bool neck_enable, int neck_z);
 
     warn_result_unused
-    euler_t apply_neck(const Pose& value, bool enable, int nz) const;
+    euler_t apply_neck(const Pose& value, int nz) const;
 };
 
 using namespace time_units;

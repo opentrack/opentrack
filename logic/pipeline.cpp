@@ -65,12 +65,13 @@ euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) co
     return output;
 }
 
-Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec6_bool& disable)
+Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
+                              const vec6_bool& disable, bool neck_enable, int neck_z)
 {
+    euler_t rel(static_cast<const double*>(value));
+
     if (state != reltrans_disabled)
     {
-        euler_t rel { &value[0] };
-
         {
             bool tcomp_in_zone_ = progn(
                 if (state == reltrans_non_center)
@@ -100,6 +101,15 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec
                                                  value(Roll)  * d2r * !disable(Roll)));
 
             rel = rotate(R, rel, &disable[TX]);
+
+            // dynamic neck
+            if (neck_enable)
+            {
+                const euler_t neck = apply_neck(value, -neck_z);
+
+                for (unsigned k = 0; k < 3; k++)
+                    rel(k) += neck(k);
+            }
         }
 
         if (cur)
@@ -130,31 +140,35 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value, const vec
         {
             interp_pos = rel;
         }
-
-        return { rel(0), rel(1), rel(2), value(Yaw), value(Pitch), value(Roll) };
     }
     else
     {
         cur = false;
         in_zone = false;
 
-        return value;
+        // dynamic neck
+        if (neck_enable)
+        {
+            const euler_t neck = apply_neck(value, -neck_z);
+
+            for (unsigned k = 0; k < 3; k++)
+                rel(k) += neck(k);
+        }
     }
+
+    return {
+        rel(TX), rel(TY), rel(TZ),
+        value(Yaw), value(Pitch), value(Roll),
+    };
 }
 
-euler_t reltrans::apply_neck(const Pose& value, bool enable, int nz) const
+euler_t reltrans::apply_neck(const Pose& value, int nz) const
 {
-    if (!enable)
-        return {};
-
     euler_t neck;
 
-    if (nz != 0)
-    {
-        const rmat R = euler_to_rmat(euler_t(&value[Yaw]) * d2r);
-        neck = rotate(R, { 0, 0, nz }, vec3_bool());
-        neck(TZ) = neck(TZ) - nz;
-    }
+    const rmat R = euler_to_rmat(euler_t(&value[Yaw]) * d2r);
+    neck = rotate(R, { 0, 0, nz }, vec3_bool());
+    neck(TZ) = neck(TZ) - nz;
 
     return neck;
 }
@@ -386,18 +400,15 @@ Pose pipeline::apply_zero_pos(Pose value) const
 
 Pose pipeline::apply_reltrans(Pose value, vec6_bool disabled)
 {
-    const euler_t neck = rel.apply_neck(value, s.neck_enable, -s.neck_z);
-
     value = rel.apply_pipeline(s.reltrans_mode, value,
                                { !!s.reltrans_disable_src_yaw,
                                  !!s.reltrans_disable_src_pitch,
                                  !!s.reltrans_disable_src_roll,
                                  !!s.reltrans_disable_tx,
                                  !!s.reltrans_disable_ty,
-                                 !!s.reltrans_disable_tz });
-
-    for (int i = 0; i < 3; i++)
-        value(i) += neck(i);
+                                 !!s.reltrans_disable_tz },
+                               s.neck_enable,
+                               s.neck_z);
 
     // reltrans will move it
     for (unsigned k = 0; k < 6; k++)
