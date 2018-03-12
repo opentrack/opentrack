@@ -13,6 +13,54 @@
     </message>
 </context>
 <context>
+    <name>Form</name>
+    <message>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Press &quot;calibrate&quot; in given row to calibrate that axis. Follow instructions in the next window.
+Press &quot;clear calibration&quot; to remove any calibration data pertaining to that axis of position change or rotation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yaw</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Calibrate</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>keyboard_listener</name>
     <message>
         <source>Dialog</source>
