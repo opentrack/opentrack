@@ -83,7 +83,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             bool tcomp_in_zone_ = progn(
                 if (state == reltrans_non_center)
                 {
-                    const bool looking_down = value(Pitch) < 15;
+                    const bool looking_down = value(Pitch) < 20;
                     return looking_down ? std::fabs(value(Yaw)) > 35 : std::fabs(value(Yaw)) > 65;
                 }
                 else
@@ -123,10 +123,11 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
         if (cur)
         {
-            static constexpr double RC_phases[] = { 2, 1, .5, .1, };
-            static constexpr double RC_time_deltas[] = { 1, .25, 25., };
-
             const double dt = interp_timer.elapsed_seconds();
+
+            static constexpr float RC_phases[] = { 2, 1, .5, .1, .025 };
+            static constexpr float RC_time_deltas[] = { 1, .25, .25, 2 };
+
             interp_timer.start();
 
             if (RC_phase + 1 != std::size(RC_phases) &&
@@ -139,7 +140,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             const double RC = RC_phases[RC_phase];
             const double alpha = dt/(dt+RC);
 
-            constexpr double eps = .05;
+            constexpr double eps = .01;
 
             interp_pos = interp_pos * (1-alpha) + rel * alpha;
 
@@ -147,7 +148,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             rel = interp_pos;
             const double delta = std::fabs(tmp(0)) + std::fabs(tmp(1)) + std::fabs(tmp(2));
 
-            //qDebug() << "reltrans-interp: delta" << delta;
+            //qDebug() << "reltrans-interp: delta" << delta << "phase" << RC_phase;
 
             if (delta < eps)
             {
