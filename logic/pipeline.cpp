@@ -83,8 +83,8 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             bool tcomp_in_zone_ = progn(
                 if (state == reltrans_non_center)
                 {
-                    const bool look_up = value(Pitch) < 15;
-                    return look_up ? std::fabs(value(Yaw)) > 85 : std::fabs(value(Yaw)) < 50;
+                    const bool looking_down = value(Pitch) < 15;
+                    return looking_down ? std::fabs(value(Yaw)) > 35 : std::fabs(value(Yaw)) > 65;
                 }
                 else
                     return true;
@@ -145,7 +145,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
             const euler_t tmp = rel - interp_pos;
             rel = interp_pos;
-            const double delta = std::fabs(tmp(0)) + std::fabs(tmp(0)) + std::fabs(tmp(0));
+            const double delta = std::fabs(tmp(0)) + std::fabs(tmp(1)) + std::fabs(tmp(2));
 
             //qDebug() << "reltrans-interp: delta" << delta;
 
