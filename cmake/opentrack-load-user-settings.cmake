@@ -22,7 +22,13 @@ endif()
 include(CMakeDetermineCCompiler)
 include(CMakeDetermineCXXCompiler)
 
-set(__sdk_paths_filename "${CMAKE_SOURCE_DIR}/sdk-paths-${__sdk_username}@${CMAKE_CXX_COMPILER_ID}-${__sdk_os}.cmake")
+if(NOT CMAKE_SYSTEM_NAME STREQUAL CMAKE_HOST_SYSTEM_NAME)
+    set(__sdk_os_maybe_target "${CMAKE_HOST_SYSTEM_NAME}-")
+else()
+    set(__sdk_os_maybe_target "")
+endif()
+
+set(__sdk_paths_filename "${CMAKE_SOURCE_DIR}/sdk-paths-${__sdk_username}@${CMAKE_CXX_COMPILER_ID}-${__sdk_os_maybe_target}${__sdk_os}.cmake")
 
 if(EXISTS "${__sdk_paths_filename}")
     include("${__sdk_paths_filename}")
