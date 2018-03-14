@@ -15,10 +15,6 @@
 <context>
     <name>Form</name>
     <message>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Press &quot;calibrate&quot; in given row to calibrate that axis. Follow instructions in the next window.
 Press &quot;clear calibration&quot; to remove any calibration data pertaining to that axis of position change or rotation.</source>
         <translation type="unfinished"></translation>
@@ -57,6 +53,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>correlation_calibrator</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
