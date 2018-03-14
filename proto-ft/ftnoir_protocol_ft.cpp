@@ -105,7 +105,7 @@ void freetrack::pose(const double* headpose)
     if (intGameID != id)
     {
         QString gamename;
-        union  {
+        union {
             unsigned char table[8];
             std::int32_t ints[2];
         } t;
@@ -113,6 +113,9 @@ void freetrack::pose(const double* headpose)
         t.ints[0] = 0; t.ints[1] = 0;
 
         (void)CSV::getGameData(id, t.table, gamename);
+
+        if (gamename.isEmpty())
+            gamename = _("Unknown game");
 
         static_assert(sizeof(LONG) == 4, "");
         static_assert(sizeof(int) == 4, "");
