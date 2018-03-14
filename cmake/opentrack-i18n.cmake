@@ -27,6 +27,7 @@ function(otr_i18n_for_target_directory n)
         set(target-name "i18n-lang-${i}-module-${n}")
         add_custom_target(${target-name} DEPENDS "${t2}")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${i}" "${t2}")
+        set_property(GLOBAL APPEND PROPERTY "opentrack-ts-module-${n}" "${target-name}")
     endforeach()
 endfunction()
 
@@ -42,6 +43,15 @@ function(otr_merge_translations)
 
     set(all-qm-files "")
 
+    get_property(all-modules GLOBAL PROPERTY opentrack-all-modules)
+
+    set(all-ts-targets "")
+
+    foreach(target ${all-modules})
+        get_property(ts-targets GLOBAL PROPERTY "opentrack-ts-module-${target}")
+        list(APPEND all-ts-targets "${ts-targets}")
+    endforeach()
+
     foreach(i ${opentrack_all-translations})
         get_property(ts-files GLOBAL PROPERTY "opentrack-ts-files-${i}")
         get_property(lrelease-binary TARGET "${Qt5_LRELEASE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
@@ -51,7 +61,7 @@ function(otr_merge_translations)
 
         add_custom_command(OUTPUT "${qm-output}"
             COMMAND "${lrelease-binary}" -nounfinished -silent ${ts-files} -qm "${qm-output}"
-            DEPENDS ${ts-files}
+            DEPENDS ${all-ts-targets}
             COMMENT "Running lrelease for ${i}")
 
         install(FILES "${qm-output}"
