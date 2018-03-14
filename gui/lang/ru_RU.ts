@@ -55,10 +55,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>1</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>correlation_calibrator</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>keyboard_listener</name>
