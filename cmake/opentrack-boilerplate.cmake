@@ -96,20 +96,10 @@ endfunction()
 
 function(otr_find_msvc_editbin varname)
     if(MSVC)
-        # on .sln generator we have no editbin in path
-        is_sln_generator(is-msvc)
-        if(is-msvc)
-            # this is bad but what can we do? searching for vcvarsall.bat
-            # would be easier, but then we'd have to differentiate x86/amd64
-            # cross tools, etc. which is a can of worms and if/else branches.
-            get_filename_component(linker-dir "${CMAKE_LINKER}" DIRECTORY)
-            find_file(opentrack_editbin-executable "editbin.exe" "${linker-dir}" "${linker-dir}/.." "${linker-dir}/../..")
-            otr_escape_string("${editbin-executable}" editbin-executable)
-        else()
-            set(opentrack_editbin-executable "editbin")
-        endif()
-        mark_as_advanced(FORCE opentrack_editbin-executable)
-        set("${varname}" "${opentrack_editbin-executable}" PARENT_SCOPE)
+        get_filename_component(linker-dir "${CMAKE_LINKER}" DIRECTORY)
+        set("${varname}" "${linker-dir}/editbin.exe" PARENT_SCOPE)
+    else()
+        set("${varname}" "editbin" PARENT_SCOPE)
     endif()
 endfunction()
 
