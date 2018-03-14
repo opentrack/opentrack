@@ -32,11 +32,8 @@ include(opentrack-load-user-settings)
 
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
-set(opentrack_all-translations "" CACHE STRING "Leave empty for default")
 
-if(".${opentrack_all-translations}" STREQUAL ".")
-    set(opentrack_all-translations "nl_NL;ru_RU;stub;zh_CN")
-endif()
+set(opentrack_all-translations "nl_NL;ru_RU;stub;zh_CN")
 
 include(opentrack-word-size)
 include(opentrack-hier)
