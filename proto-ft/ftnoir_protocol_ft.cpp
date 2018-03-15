@@ -114,7 +114,7 @@ void freetrack::pose(const double* headpose)
 
         (void)CSV::getGameData(id, t.table, gamename);
 
-        if (gamename.isEmpty())
+        if (gamename.isEmpty() && id > 0)
             gamename = _("Unknown game");
 
         static_assert(sizeof(LONG) == 4, "");
