@@ -121,13 +121,8 @@ public:
         actx.cbSize = sizeof(actx);
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
         actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
-#ifdef _MSC_VER
-#	define PREFIX ""
-#else
-#	define PREFIX "lib"
-#endif
         static const QString prefix = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
-        QString path = prefix + PREFIX "opentrack-proto-simconnect.dll";
+        QString path = prefix + "lib" "opentrack-proto-simconnect.dll";
         QByteArray name = QFile::encodeName(path);
         actx.lpSource = name.constData();
         hactctx = CreateActCtxA(&actx);
