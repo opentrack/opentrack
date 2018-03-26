@@ -13,7 +13,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 set(cc "")
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
-set(cc "${cc} -O2 -O2it -Oy- -Ob2 -fp:fast -GS- -GF -GL -Gw -Gy -Gm")
+set(cc "${cc} -O2 -O2it -Oy- -Ob2 -fp:fast -GS- -GF -GL -Gw -Gy -Gm -Gs9999999")
 set(cc "${cc} -Zo -FS -arch:SSE2 -D_HAS_EXCEPTIONS=0")
 set(cc "${cc} -bigobj -cgthreads1")
 set(cc "${cc} -Zc:inline -Zc:rvalueCast")
