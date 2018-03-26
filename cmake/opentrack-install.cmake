@@ -1,12 +1,12 @@
-macro(otr_inst2 path)
+macro(otr_install_misc path)
     install(${ARGN} DESTINATION "${path}" PERMISSIONS ${opentrack-perms-file})
 endmacro()
 
-macro(otr_inst_exec path)
+macro(otr_install_exec path)
     install(${ARGN} DESTINATION "${path}" PERMISSIONS ${opentrack-perms-file})
 endmacro()
 
-macro(otr_inst_dir path)
+macro(otr_install_dir path)
     install(
         DIRECTORY ${ARGN} DESTINATION "${path}"
         FILE_PERMISSIONS ${opentrack-perms-file}
@@ -20,39 +20,44 @@ function(install_sources)
         get_property(source-dirs GLOBAL PROPERTY opentrack-all-source-dirs)
         foreach(k ${source-dirs})
             file(RELATIVE_PATH dest "${CMAKE_SOURCE_DIR}" "${k}")
-            otr_inst_dir("${opentrack-doc-src-pfx}" "${dest}")
+            otr_install_dir("${opentrack-doc-src-pfx}" "${dest}")
         endforeach()
-        otr_inst_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/cmake")
-        otr_inst_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/bin")
-        otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
-        otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
-        otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")
-        otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
-        otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
-        otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
+
+        otr_install_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/cmake")
+        otr_install_dir("${opentrack-doc-src-pfx}" "${CMAKE_SOURCE_DIR}/bin")
+
+        otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
+        otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
+        otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")
+        otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
+        otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
+        otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
     endif()
 endfunction()
 
-otr_inst_dir("${opentrack-doc-pfx}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
-otr_inst_dir("${opentrack-doc-pfx}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
+otr_install_dir("${opentrack-doc-pfx}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
+otr_install_dir("${opentrack-doc-pfx}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
 
 if(WIN32)
-    otr_inst2(. FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf")
-    otr_inst2(. FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
-    otr_inst2(${opentrack-hier-pfx} FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
+    otr_install_misc(. FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf")
+    otr_install_misc(. FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
+    otr_install_misc(${opentrack-hier-pfx} FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
 endif()
 
-otr_inst2("${opentrack-doc-pfx}" FILES ${CMAKE_SOURCE_DIR}/README.md)
+otr_install_misc("${opentrack-doc-pfx}" FILES ${CMAKE_SOURCE_DIR}/README.md)
 
-otr_inst_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
-otr_inst_exec("${opentrack-hier-pfx}" FILES
+otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
+otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
+otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")
+otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
+otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
+otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
+
+# this must be done last because the files may be in use already
+# do it last so in case of file-in-use failure, the rest is installed
+
+otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
+otr_install_exec("${opentrack-hier-pfx}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient.dll"
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe")
-
-otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CMakeLists.txt")
-otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/README.md")
-otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/CONTRIBUTING.md")
-otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/WARRANTY.txt")
-otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/OPENTRACK-LICENSING.txt")
-otr_inst2("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.md")
