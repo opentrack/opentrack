@@ -43,7 +43,6 @@ include(opentrack-boilerplate)
 
 include(opentrack-qt)
 include(opentrack-version)
-include(opentrack-install)
 include(opentrack-variant)
 
 if(WIN32)
@@ -68,4 +67,7 @@ endfunction()
 
 otr_add_subdirs()
 otr_merge_translations()
+
 #install_sources()
+
+include(opentrack-install)
