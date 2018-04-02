@@ -194,7 +194,7 @@ void KeybindingWorker::run()
             }
         }
 
-        Sleep(100);
+        Sleep(25);
     }
 }
 

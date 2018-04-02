@@ -12,8 +12,7 @@
 #include <QDebug>
 
 // XXX how many axis update events can we reasonably get in a short time frame?
-enum { num_buffers = 256 };
-DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[num_buffers];
+DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[win32_joy_ctx::joy::num_buffers];
 
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
