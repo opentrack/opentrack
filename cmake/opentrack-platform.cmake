@@ -60,6 +60,8 @@ if(MSVC)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING -D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
+
+    add_definitions(-D_USE_MATH_DEFINES=1)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zi")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zi")
 
@@ -94,7 +96,6 @@ if(WIN32)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> --use-temp-file -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
   endif()
   enable_language(RC)
-  add_definitions(-D_USE_MATH_DEFINES=1)
 endif(WIN32)
 
 if(opentrack-install-rpath)
