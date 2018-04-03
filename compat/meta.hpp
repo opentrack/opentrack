@@ -10,7 +10,9 @@
 #include <type_traits>
 
 template<typename t>
-using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>, std::decay_t<t>, const t&>;
+using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>,
+                                        std::decay_t<t>,
+                                        std::add_lvalue_reference_t<std::add_const_t<std::remove_reference_t<t>>>>;
 
 #define progn(...) (([&]() { __VA_ARGS__ })())
 #define prog1(x, ...) (([&]() { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
