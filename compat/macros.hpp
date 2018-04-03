@@ -1,16 +1,9 @@
 #pragma once
 
-#if !defined __WINE__
-#   include <QCoreApplication>
-#   define otr_tr(...) (QCoreApplication::translate(OTR_MODULE_NAME, __VA_ARGS__))
-#   define _(...) (otr_tr(__VA_ARGS__))
-#endif
-
 #if defined _MSC_VER
-#
-#   define MEMORY_BARRIER _ReadWriteBarrier()
+#   define MEMORY_BARRIER() _ReadWriteBarrier()
 #else
-#   define MEMORY_BARRIER asm volatile("" ::: "memory")
+#   define MEMORY_BARRIER() asm volatile("" ::: "memory")
 #endif
 
 #if defined _MSC_VER
@@ -51,4 +44,8 @@
 #   define OTR_FUNNAME (__FUNCSIG__)
 #else
 #   define OTR_FUNNAME (__PRETTY_FUNCTION__)
+#endif
+
+#if defined __cplusplus
+#   define thunk(...) ([&]() { __VA_ARGS__; })
 #endif

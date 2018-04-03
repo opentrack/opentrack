@@ -23,7 +23,7 @@ struct OTR_LOGIC_EXPORT event_handler final
     {
         using ext = std::shared_ptr<IExtension>;
         using dlg = std::shared_ptr<IExtensionDialog>;
-        using m = std::shared_ptr<Metadata>;
+        using m = std::shared_ptr<Metadata_>;
 
         ext logic;
         dlg dialog;

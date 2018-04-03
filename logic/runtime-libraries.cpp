@@ -6,7 +6,7 @@
 runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f)
 {
     module_status status =
-            module_status_mixin::error(otr_tr("Library load failure"));
+            module_status_mixin::error(tr("Library load failure"));
 
     using namespace options;
 
@@ -19,8 +19,8 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 
     if(status = pProtocol->initialize(), !status.is_ok())
     {
-        status = _("Error occurred while loading protocol %1\n\n%2\n")
-                    .arg(p->name).arg(status.error);
+        status = tr("Error occurred while loading protocol %1\n\n%2\n")
+                 .arg(p->name).arg(status.error);
         goto end;
     }
 
@@ -36,14 +36,14 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     if (pFilter)
         if(status = pFilter->initialize(), !status.is_ok())
         {
-            status = _("Error occurred while loading filter %1\n\n%2\n")
+            status = tr("Error occurred while loading filter %1\n\n%2\n")
                      .arg(f->name).arg(status.error);
             goto end;
         }
 
     if (status = pTracker->start_tracker(frame), !status.is_ok())
     {
-        status = _("Error occurred while loading tracker %1\n\n%2\n")
+        status = tr("Error occurred while loading tracker %1\n\n%2\n")
                  .arg(t->name).arg(status.error);
         goto end;
     }
@@ -57,6 +57,6 @@ end:
     pProtocol = nullptr;
 
     if (!status.is_ok())
-        QMessageBox::critical(nullptr, "Startup failure", status.error, QMessageBox::Cancel, QMessageBox::NoButton);
+        QMessageBox::critical(nullptr, tr("Startup failure"), status.error, QMessageBox::Cancel, QMessageBox::NoButton);
 }
 

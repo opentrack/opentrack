@@ -32,7 +32,7 @@
 #define OPENTRACK_SOLIB_PREFIX "lib"
 
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
-extern "C" typedef Metadata* (*OPENTRACK_METADATA_FUNPTR)(void);
+extern "C" typedef Metadata_* (*OPENTRACK_METADATA_FUNPTR)(void);
 
 struct dylib final
 {
@@ -72,7 +72,7 @@ struct dylib final
         if (check((Meta = (OPENTRACK_METADATA_FUNPTR) handle.resolve("GetMetadata"), !Meta)))
             return;
 
-        auto m = std::unique_ptr<Metadata>(Meta());
+        auto m = std::unique_ptr<Metadata_>(Meta());
 
         icon = m->icon();
         name = m->name();

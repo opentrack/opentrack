@@ -35,6 +35,11 @@ function(install_sources)
     endif()
 endfunction()
 
+function(cleanup_visual_studio_debug)
+    otr_escape_string(pfx "${CMAKE_INSTALL_PREFIX}")
+    install(CODE "file(REMOVE_RECURSE \"${pfx}/.vs\")")
+endfunction()
+
 otr_install_dir("${opentrack-doc-pfx}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
 otr_install_dir("${opentrack-doc-pfx}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
 
@@ -55,6 +60,10 @@ otr_install_misc("${opentrack-doc-src-pfx}" FILES "${CMAKE_SOURCE_DIR}/AUTHORS.m
 
 # this must be done last because the files may be in use already
 # do it last so in case of file-in-use failure, the rest is installed
+
+if(MSVC AND CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+    cleanup_visual_studio_debug()
+endif()
 
 otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
 otr_install_exec("${opentrack-hier-pfx}" FILES

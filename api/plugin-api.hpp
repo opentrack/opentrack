@@ -16,6 +16,7 @@
 #include <QDialog>
 
 #include "compat/simple-mat.hpp"
+#include "compat/tr.hpp"
 #include "export.hpp"
 
 using Pose = Mat<double, 6, 1>;
@@ -49,14 +50,14 @@ private slots:
 
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
     extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor(); \
-    extern "C" OTR_PLUGIN_EXPORT Metadata* GetMetadata(); \
+    extern "C" OTR_PLUGIN_EXPORT Metadata_* GetMetadata(); \
     extern "C" OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog(); \
     \
     extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor() \
     { \
         return new ctor_class; \
     } \
-    extern "C" OTR_PLUGIN_EXPORT Metadata* GetMetadata() \
+    extern "C" OTR_PLUGIN_EXPORT Metadata_* GetMetadata() \
     { \
         return new metadata_class; \
     } \
@@ -67,19 +68,26 @@ private slots:
 
 // implement this in all plugins
 // also you must link against "opentrack-api" in CMakeLists.txt to avoid vtable link errors
-struct OTR_API_EXPORT Metadata
+class OTR_API_EXPORT Metadata_
 {
-    Metadata(const Metadata&) = delete;
-    Metadata(Metadata&&) = delete;
-    Metadata& operator=(const Metadata&) = delete;
-    Metadata();
+public:
+    Metadata_();
 
     // plugin name to be displayed in the interface
     virtual QString name() = 0;
     // plugin icon, you can return an empty QIcon()
     virtual QIcon icon() = 0;
     // optional destructor
-    virtual ~Metadata();
+    virtual ~Metadata_();
+};
+
+class OTR_API_EXPORT Metadata : public TR, public Metadata_
+{
+    Q_OBJECT
+
+public:
+    Metadata() {}
+    ~Metadata() {}
 };
 
 struct OTR_API_EXPORT module_status final

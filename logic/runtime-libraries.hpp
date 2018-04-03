@@ -9,12 +9,16 @@
 #pragma once
 
 #include "api/plugin-support.hpp"
+#include "compat/tr.hpp"
 #include "export.hpp"
 
 #include <QFrame>
 
-struct OTR_LOGIC_EXPORT runtime_libraries final
+class OTR_LOGIC_EXPORT runtime_libraries final : public TR
 {
+    Q_OBJECT
+
+public:
     using dylibptr = std::shared_ptr<dylib>;
 
     std::shared_ptr<ITracker> pTracker;

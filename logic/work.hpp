@@ -16,6 +16,7 @@
 #include "tracklogger.hpp"
 #include "logic/runtime-libraries.hpp"
 #include "api/plugin-support.hpp"
+#include "compat/tr.hpp"
 
 #include <QObject>
 #include <QFrame>
@@ -24,8 +25,11 @@
 #include <tuple>
 #include <functional>
 
-struct OTR_LOGIC_EXPORT Work final
+class OTR_LOGIC_EXPORT Work final : public TR
 {
+    Q_OBJECT
+
+public:
     using fn_t = std::function<void(bool)>;
     using key_tuple = std::tuple<key_opts&, fn_t, bool>;
     main_settings s; // tracker needs settings, so settings must come before it

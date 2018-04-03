@@ -5,7 +5,7 @@ using namespace plugin_api::detail;
 
 // these exist so that vtable is emitted in a single compilation unit, not all of them.
 
-Metadata::~Metadata() {}
+Metadata_::~Metadata_() {}
 IFilter::~IFilter() {}
 IProtocol::~IProtocol() {}
 ITracker::~ITracker() {}
@@ -37,7 +37,7 @@ module_status ITracker::error(const QString& error)
     return module_status(error);
 }
 
-Metadata::Metadata() {}
+Metadata_::Metadata_() {}
 IFilter::IFilter() {}
 IFilterDialog::IFilterDialog() {}
 IProtocol::IProtocol() {}
@@ -69,5 +69,6 @@ module_status module_status_mixin::status_ok() { return module_status(); }
 
 module_status module_status_mixin::error(const QString& error)
 {
-    return module_status(error.isEmpty() ? _("Unknown error") : error);
+    return module_status(error.isEmpty() ? "Unknown error" : error);
 }
+

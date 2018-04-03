@@ -16,9 +16,9 @@ QString Work::browse_datalogging_file(main_settings &s)
        Since the freeze is apparently random, I'm not sure it helped.
     */
     QString newfilename = QFileDialog::getSaveFileName(nullptr,
-                                                       otr_tr("Select filename"),
+                                                       tr("Select filename"),
                                                        filename,
-                                                       otr_tr("CSV File (*.csv)"),
+                                                       tr("CSV File (*.csv)"),
                                                        nullptr);
     if (!newfilename.isEmpty())
     {
@@ -45,8 +45,8 @@ std::shared_ptr<TrackLogger> Work::make_logger(main_settings &s)
             {
                 logger = nullptr;
                 QMessageBox::warning(nullptr,
-                    otr_tr("Logging error"),
-                    otr_tr("Unable to open file '%1'. Proceeding without logging.").arg(s.tracklogging_filename),
+                    tr("Logging error"),
+                    tr("Unable to open file '%1'. Proceeding without logging.").arg(s.tracklogging_filename),
                     QMessageBox::Ok, QMessageBox::NoButton);
             }
             else
