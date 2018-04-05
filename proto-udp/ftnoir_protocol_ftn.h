@@ -36,8 +36,9 @@ public:
     udp();
     module_status initialize() override;
     void pose(const double *headpose);
-    QString game_name() {
-        return otr_tr("UDP over network");
+    QString game_name()
+    {
+        return tr("UDP over network");
     }
 private:
     QUdpSocket outSocket;
@@ -69,7 +70,8 @@ private slots:
 
 class udpDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("UDP over network"); }
+    Q_OBJECT
+
+    QString name() { return tr("UDP over network"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };

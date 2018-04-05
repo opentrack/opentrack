@@ -14,8 +14,10 @@
 
 #include <QMessageBox>
 
-class evdev : public IProtocol
+class evdev : public TR, public IProtocol
 {
+    Q_OBJECT
+
 public:
     evdev();
     ~evdev() override;
@@ -23,8 +25,10 @@ public:
         return dev != NULL;
     }
     void pose(const double *headpose);
-    QString game_name() {
-        return _("Virtual joystick for Linux");
+
+    QString game_name()
+    {
+        return tr("Virtual joystick for Linux");
     }
 
     module_status initialize() override;
@@ -37,6 +41,7 @@ private:
 class LibevdevControls: public IProtocolDialog
 {
     Q_OBJECT
+
 public:
     LibevdevControls();
     void register_protocol(IProtocol *) {}
@@ -53,7 +58,8 @@ private slots:
 
 class evdevDll : public Metadata
 {
-public:
-    QString name() { return _("libevdev joystick receiver"); }
+    Q_OBJECT
+
+    QString name() { return tr("libevdev joystick receiver"); }
     QIcon icon() { return QIcon(":/images/linux.png"); }
 };

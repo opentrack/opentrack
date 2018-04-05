@@ -53,8 +53,9 @@ private slots:
 
 class udpDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("UDP over network"); }
+    Q_OBJECT
+
+    QString name() { return tr("UDP over network"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
 

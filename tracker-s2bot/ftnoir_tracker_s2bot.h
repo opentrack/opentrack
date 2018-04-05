@@ -65,8 +65,9 @@ private slots:
 
 class meta_s2bot : public Metadata
 {
-public:
-    QString name() { return otr_tr("S2Bot receiver"); }
+    Q_OBJECT
+
+    QString name() { return tr("S2Bot receiver"); }
     QIcon icon() { return QIcon(":/s2bot.png"); }
 };
 

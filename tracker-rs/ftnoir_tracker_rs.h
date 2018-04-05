@@ -48,7 +48,8 @@ private slots:
 
 class RSTrackerMetaData : public Metadata
 {
-public:
+    Q_OBJECT
+
     QString name();
     QIcon icon();
 };

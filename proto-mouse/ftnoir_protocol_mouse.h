@@ -10,13 +10,16 @@
 #include "ui_ftnoir_mousecontrols.h"
 
 #include "mouse-settings.hpp"
+#include "compat/tr.hpp"
 
 #include <QDebug>
 #include "api/plugin-api.hpp"
 using namespace options;
 
-class mouse : public IProtocol
+class mouse : public TR, public IProtocol
 {
+    Q_OBJECT
+
 public:
     mouse();
     module_status initialize() override { return status_ok(); }
@@ -48,7 +51,8 @@ private slots:
 
 class mouseDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("mouse emulation"); }
+    Q_OBJECT
+
+    QString name() { return tr("mouse emulation"); }
     QIcon icon() { return QIcon(":/images/mouse.png"); }
 };

@@ -53,7 +53,8 @@ private slots:
 
 class wineDll : public Metadata
 {
-public:
+    Q_OBJECT
+
     QString name() override { return QString("Wine -- Windows layer for Unix"); }
     QIcon icon() override { return QIcon(":/images/wine.png"); }
 };

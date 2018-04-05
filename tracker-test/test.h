@@ -36,8 +36,9 @@ private slots:
 
 class test_metadata : public Metadata
 {
-public:
-    QString name() { return _("Testing - sine wave"); }
+    Q_OBJECT
+
+    QString name() { return tr("Testing - sine wave"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
 

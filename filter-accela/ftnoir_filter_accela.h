@@ -56,7 +56,8 @@ private slots:
 
 class accelaDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("Accela"); }
+    Q_OBJECT
+
+    QString name() { return tr("Accela"); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };

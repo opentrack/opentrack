@@ -71,8 +71,9 @@ private slots:
 
 class joystickDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("Joystick input"); }
+    Q_OBJECT
+
+    QString name() { return tr("Joystick input"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
 

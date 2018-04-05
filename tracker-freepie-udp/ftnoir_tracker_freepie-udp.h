@@ -61,8 +61,9 @@ private slots:
 
 class meta_freepie : public Metadata
 {
-public:
-    QString name() { return otr_tr("FreePIE UDP receiver"); }
+    Q_OBJECT
+
+    QString name() { return tr("FreePIE UDP receiver"); }
     QIcon icon() { return QIcon(":/glovepie.png"); }
 };
 

@@ -15,6 +15,7 @@
 #include <QMessageBox>
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"
+#include "compat/tr.hpp"
 using namespace options;
 
 // x,y,z position in meters, heading, pitch and roll in degrees
@@ -38,11 +39,13 @@ struct settings : opts {
     {}
 };
 
-class flightgear : public IProtocol
+class flightgear : TR, public IProtocol
 {
+    Q_OBJECT
+
 public:
     void pose(const double *headpose);
-    QString game_name() { return otr_tr("FlightGear"); }
+    QString game_name() { return tr("FlightGear"); }
     module_status initialize() override;
 private:
     settings s;
@@ -68,7 +71,8 @@ private slots:
 
 class flightgearDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("FlightGear"); }
+    Q_OBJECT
+
+    QString name() { return tr("FlightGear"); }
     QIcon icon() { return QIcon(":/images/flightgear.png"); }
 };

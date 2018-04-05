@@ -53,8 +53,9 @@ private slots:
 
 class rift_140Dll : public Metadata
 {
-public:
-    QString name() { return otr_tr("Oculus Rift runtime 1.4.0 -- HMD"); }
+    Q_OBJECT
+
+    QString name() { return tr("Oculus Rift runtime 1.4.0 -- HMD"); }
     QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
 };
 

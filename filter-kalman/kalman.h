@@ -157,8 +157,9 @@ public:
 
 class kalmanDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("Kalman"); }
+    Q_OBJECT
+
+    QString name() { return tr("Kalman"); }
     QIcon icon() { return QIcon(":/images/filter-16.png"); }
 };
 

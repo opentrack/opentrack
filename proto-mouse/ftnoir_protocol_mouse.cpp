@@ -60,7 +60,7 @@ void mouse::pose(const double *headpose)
 
 QString mouse::game_name()
 {
-    return otr_tr("Mouse tracker");
+    return tr("Mouse tracker");
 }
 
 int mouse::get_delta(int val, int prev)

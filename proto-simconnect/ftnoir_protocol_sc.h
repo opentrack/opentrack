@@ -43,8 +43,9 @@ public:
     module_status initialize() override;
     void pose(const double* headpose);
     void handle();
-    QString game_name() {
-        return otr_tr("FS2004/FSX");
+    QString game_name()
+    {
+        return tr("FS2004/FSX");
     }
 private:
     enum {
@@ -110,7 +111,8 @@ private slots:
 
 class simconnectDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("Microsoft FSX SimConnect"); }
+    Q_OBJECT
+
+    QString name() { return tr("Microsoft FSX SimConnect"); }
     QIcon icon() { return QIcon(":/images/fsx.png"); }
 };

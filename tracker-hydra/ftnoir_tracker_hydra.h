@@ -41,7 +41,8 @@ private slots:
 
 class hydraDll : public Metadata
 {
-public:
+    Q_OBJECT
+
     QString name() { return QString("Razer Hydra -- inertial device"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };

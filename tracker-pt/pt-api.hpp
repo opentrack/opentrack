@@ -1,7 +1,5 @@
 #pragma once
 
-#include "export.hpp"
-
 #include "pt-settings.hpp"
 
 #include "cv/numeric.hpp"
@@ -15,7 +13,7 @@
 
 #include <QImage>
 
-struct OTR_PT_EXPORT pt_camera_info final
+struct pt_camera_info final
 {
     typedef typename types::f f;
 
@@ -30,13 +28,13 @@ struct OTR_PT_EXPORT pt_camera_info final
     int idx = -1;
 };
 
-struct OTR_PT_EXPORT pt_pixel_pos_mixin
+struct pt_pixel_pos_mixin
 {
     static std::tuple<double, double> to_pixel_pos(double x, double y, int w, int h);
     static std::tuple<double, double> to_screen_pos(double px, double py, int w, int h);
 };
 
-struct OTR_PT_EXPORT pt_frame : pt_pixel_pos_mixin
+struct pt_frame : pt_pixel_pos_mixin
 {
     pt_frame();
     virtual ~pt_frame();
@@ -57,14 +55,14 @@ struct OTR_PT_EXPORT pt_frame : pt_pixel_pos_mixin
     }
 };
 
-struct OTR_PT_EXPORT pt_preview : pt_frame
+struct pt_preview : pt_frame
 {
     virtual pt_preview& operator=(const pt_frame&) = 0;
     virtual QImage get_bitmap() = 0;
     virtual void draw_head_center(double x, double y) = 0;
 };
 
-struct OTR_PT_EXPORT pt_camera
+struct pt_camera
 {
     using result = std::tuple<bool, pt_camera_info>;
 
@@ -85,7 +83,7 @@ struct OTR_PT_EXPORT pt_camera
     virtual void show_camera_settings() = 0;
 };
 
-struct OTR_PT_EXPORT pt_point_extractor : pt_pixel_pos_mixin
+struct pt_point_extractor : pt_pixel_pos_mixin
 {
     using vec2 = types::vec2;
 
@@ -96,7 +94,7 @@ struct OTR_PT_EXPORT pt_point_extractor : pt_pixel_pos_mixin
     static double threshold_radius_value(int w, int h, int threshold);
 };
 
-struct OTR_PT_EXPORT pt_runtime_traits
+struct pt_runtime_traits
 {
     template<typename t> using pointer = std::shared_ptr<t>;
 

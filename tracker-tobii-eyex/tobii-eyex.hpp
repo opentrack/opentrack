@@ -23,8 +23,10 @@ using namespace options;
 #include <QObject>
 #include <QMutex>
 
-class tobii_eyex_tracker : public ITracker
+class tobii_eyex_tracker : public TR, public ITracker
 {
+    Q_OBJECT
+
 public:
     tobii_eyex_tracker();
     ~tobii_eyex_tracker() override;
@@ -80,7 +82,8 @@ private:
 
 class tobii_eyex_metadata : public Metadata
 {
-public:
+    Q_OBJECT
+
     QString name() { return QString("Tobii EyeX"); }
     QIcon icon() { return QIcon(":/images/tobii-eyex-logo.png"); }
 };

@@ -45,14 +45,16 @@ typedef struct
 } TFSState;
 #pragma pack(pop)
 
-class fsuipc : public IProtocol
+class fsuipc : public TR, public IProtocol
 {
+    Q_OBJECT
+
 public:
     fsuipc();
     ~fsuipc() override;
     module_status initialize() override;
     void pose(const double* headpose);
-    QString game_name() { return otr_tr("Microsoft Flight Simulator X"); }
+    QString game_name() { return tr("Microsoft Flight Simulator X"); }
 private:
     QLibrary FSUIPCLib;
     double prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
@@ -80,8 +82,9 @@ private slots:
 
 class fsuipcDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("FSUIPC -- Microsoft FS2002/FS2004"); }
+    Q_OBJECT
+
+    QString name() { return tr("FSUIPC -- Microsoft FS2002/FS2004"); }
     QIcon icon() { return QIcon(":/images/fs9.png"); }
 };
 

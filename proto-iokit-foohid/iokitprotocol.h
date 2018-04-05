@@ -28,7 +28,8 @@ private:
 
 class IOKitProtocolMetadata : public Metadata
 {
-public:
-    QString name() { return otr_tr("Virtual joystick"); }
+    Q_OBJECT
+
+    QString name() { return tr("Virtual joystick"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };

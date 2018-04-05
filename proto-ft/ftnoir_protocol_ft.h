@@ -13,6 +13,7 @@
 #include "freetrackclient/fttypes.h"
 
 #include "compat/shm.h"
+#include "compat/tr.hpp"
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
 
@@ -33,8 +34,10 @@ struct settings : opts {
     {}
 };
 
-class freetrack : public IProtocol
+class freetrack : public TR, public IProtocol
 {
+    Q_OBJECT
+
 public:
     freetrack();
     ~freetrack() override;
@@ -81,7 +84,8 @@ private slots:
 
 class freetrackDll : public Metadata
 {
-public:
-    QString name() { return otr_tr("freetrack 2.0 Enhanced"); }
+    Q_OBJECT
+
+    QString name() { return tr("freetrack 2.0 Enhanced"); }
     QIcon icon() { return QIcon(":/images/freetrack.png"); }
 };

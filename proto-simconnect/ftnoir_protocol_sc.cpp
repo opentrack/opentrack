@@ -170,7 +170,7 @@ module_status simconnect::initialize()
                 return error(tr("dll load failed -- %1").arg(SCClientLib.errorString()));
         }
         else
-            return error(_("can't load SDK -- check selected simconnect version"));
+            return error(tr("can't load SDK -- check selected simconnect version"));
     }
 
     simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");

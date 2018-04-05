@@ -1,6 +1,5 @@
 #pragma once
 
-#include "export.hpp"
 #include "options/options.hpp"
 
 #include <QString>

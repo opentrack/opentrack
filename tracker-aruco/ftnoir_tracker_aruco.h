@@ -168,6 +168,7 @@ private Q_SLOTS:
 
 class aruco_metadata : public Metadata
 {
+    Q_OBJECT
     QString name() { return QString("aruco -- paper marker tracker"); }
     QIcon icon() { return QIcon(":/images/aruco.png"); }
 };

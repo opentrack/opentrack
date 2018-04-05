@@ -38,15 +38,17 @@ public:
     LONG to_axis_value(unsigned axis_id, double val);
 };
 
-class vjoystick_proto : public IProtocol
+class vjoystick_proto : public TR, public IProtocol
 {
+    Q_OBJECT
+
     handle h;
 public:
     vjoystick_proto();
     ~vjoystick_proto() override;
     module_status initialize() override;
     void pose( const double *headpose ) override;
-    QString game_name() override { return otr_tr("Virtual joystick"); }
+    QString game_name() override { return tr("Virtual joystick"); }
 private:
 };
 
@@ -64,7 +66,8 @@ private:
 
 class vjoystick_metadata : public Metadata
 {
-public:
-    QString name() { return otr_tr("Joystick emulation -- vjoystick"); }
+    Q_OBJECT
+
+    QString name() { return tr("Joystick emulation -- vjoystick"); }
     QIcon icon() { return QIcon(":/images/vjoystick.png"); }
 };

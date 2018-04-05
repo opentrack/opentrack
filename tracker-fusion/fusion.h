@@ -51,8 +51,9 @@ private slots:
 
 class fusion_metadata : public Metadata
 {
-public:
-    QString name() { return otr_tr("Fusion"); }
+    Q_OBJECT
+
+    QString name() { return tr("Fusion"); }
     QIcon icon() { return QIcon(":/images/fusion-tracker-logo.png"); }
 };
 

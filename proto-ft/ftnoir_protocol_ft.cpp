@@ -115,7 +115,7 @@ void freetrack::pose(const double* headpose)
         (void)CSV::getGameData(id, t.table, gamename);
 
         if (gamename.isEmpty() && id > 0)
-            gamename = _("Unknown game");
+            gamename = tr("Unknown game");
 
         static_assert(sizeof(LONG) == 4, "");
         static_assert(sizeof(int) == 4, "");
@@ -171,7 +171,7 @@ void freetrack::set_protocols(bool ft, bool npclient)
 module_status freetrack::initialize()
 {
     if (!shm.success())
-        return error(_("Can't load freetrack memory mapping"));
+        return error(tr("Can't load freetrack memory mapping"));
 
     bool use_ft = false, use_npclient = false;
 

@@ -6,11 +6,12 @@
 * copyright notice and this permission notice appear in all copies.
 */
 #include "ftnoir_tracker_pt.h"
-#include "api/plugin-api.hpp"
 
+#include "wii_module.hpp"
 #include "wii_camera.h"
 #include "wii_frame.hpp"
 #include "wii_point_extractor.h"
+#include "wii_module.hpp"
 #include "ftnoir_tracker_pt_dialog.h"
 
 #include "pt-api.hpp"
@@ -62,17 +63,19 @@ struct wii_dialog_pt : TrackerDialog_PT
     wii_dialog_pt();
 };
 
-class wii_metadata_pt : public Metadata
+QString wii_metadata_pt::name()
 {
-    QString name() { return _("WiiPointTracker 1.1"); }
-    QIcon icon() { return QIcon(":/Resources/wii.png"); }
-};
+    return tr("WiiPointTracker 1.1");
+}
+
+QIcon wii_metadata_pt::icon()
+{
+    return QIcon(":/Resources/wii.png");
+}
 
 // ns pt_module
 
 using namespace pt_module;
-
-
 
 wii_dialog_pt::wii_dialog_pt() : TrackerDialog_PT(module_name)
 {

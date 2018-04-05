@@ -1,6 +1,6 @@
 #include "ftnoir_tracker_pt.h"
-#include "api/plugin-api.hpp"
 
+#include "module.hpp"
 #include "camera.h"
 #include "frame.hpp"
 #include "point_extractor.h"
@@ -54,16 +54,13 @@ struct dialog_pt : TrackerDialog_PT
     dialog_pt();
 };
 
-class metadata_pt : public Metadata
-{
-    QString name() { return _("PointTracker 1.1"); }
-    QIcon icon() { return QIcon(":/Resources/Logo_IR.png"); }
-};
-
 // ns pt_module
 
 using namespace pt_module;
 
 dialog_pt::dialog_pt() : TrackerDialog_PT(module_name) {}
+
+QString metadata_pt::name() { return tr("PointTracker 1.1"); }
+QIcon metadata_pt::icon() { return QIcon(":/Resources/Logo_IR.png"); }
 
 OPENTRACK_DECLARE_TRACKER(tracker_pt, dialog_pt, metadata_pt)
