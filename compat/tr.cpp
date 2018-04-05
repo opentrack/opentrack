@@ -10,7 +10,7 @@ TR&TR::operator=(const TR& other)
     if (this == &other)
         return *this;
 
-    TR::~TR();
+    this->~TR();
     return *new (this) TR;
 }
 
