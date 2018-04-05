@@ -29,6 +29,13 @@
     </message>
 </context>
 <context>
+    <name>rift_042Dll</name>
+    <message>
+        <source>Oculus Rift runtime 0.4.2 -- HMD</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>rift_tracker_042</name>
     <message>
         <source>Unable to start Rift tracker: %1</source>

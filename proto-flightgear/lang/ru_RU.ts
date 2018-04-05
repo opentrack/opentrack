@@ -16,4 +16,22 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>flightgear</name>
+    <message>
+        <source>Can&apos;t bind to [%1.%2.%3.%4]:%5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FlightGear</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>flightgearDll</name>
+    <message>
+        <source>FlightGear</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

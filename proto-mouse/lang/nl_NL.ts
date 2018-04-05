@@ -56,4 +56,18 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>mouse</name>
+    <message>
+        <source>Mouse tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>mouseDll</name>
+    <message>
+        <source>mouse emulation</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

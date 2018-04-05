@@ -305,6 +305,13 @@ p, li { white-space: pre-wrap; }
     </message>
 </context>
 <context>
+    <name>hatire_metadata</name>
+    <message>
+        <source>Hatire Arduino</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>hatire_thread</name>
     <message>
         <source>Timeout during writing command</source>

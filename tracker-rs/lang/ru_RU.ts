@@ -29,6 +29,13 @@
     </message>
 </context>
 <context>
+    <name>RSTrackerMetaData</name>
+    <message>
+        <source>Intel® RealSense™ Technology</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UIRSControls</name>
     <message>
         <source>RealSense 3D Tracker settings</source>

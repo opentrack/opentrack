@@ -288,4 +288,11 @@ ROLL или X/Y-смещения.</translation>
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>pt_module::metadata_pt</name>
+    <message>
+        <source>PointTracker 1.1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

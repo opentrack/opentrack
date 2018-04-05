@@ -12,4 +12,46 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>vjoystick_metadata</name>
+    <message>
+        <source>Joystick emulation -- vjoystick</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>vjoystick_proto</name>
+    <message>
+        <source>vjoystick driver missing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vjoystick won&apos;t work without the driver installed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Download the driver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Visit project site</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vjoystick not installed or disabled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>can&apos;t initialize vjoystick</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Virtual joystick</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

@@ -283,4 +283,11 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished">无法打开摄像头</translation>
     </message>
 </context>
+<context>
+    <name>pt_module::metadata_pt</name>
+    <message>
+        <source>PointTracker 1.1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

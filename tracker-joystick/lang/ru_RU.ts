@@ -76,4 +76,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>joystickDll</name>
+    <message>
+        <source>Joystick input</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

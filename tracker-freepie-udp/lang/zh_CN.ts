@@ -76,4 +76,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>meta_freepie</name>
+    <message>
+        <source>FreePIE UDP receiver</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

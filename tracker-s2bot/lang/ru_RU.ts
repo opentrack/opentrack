@@ -80,4 +80,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>meta_s2bot</name>
+    <message>
+        <source>S2Bot receiver</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

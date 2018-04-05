@@ -23,4 +23,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>steamvr_metadata</name>
+    <message>
+        <source>Valve SteamVR</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

@@ -46,5 +46,20 @@
         <source>dll load failed -- %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>can&apos;t load SDK -- check selected simconnect version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FS2004/FSX</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>simconnectDll</name>
+    <message>
+        <source>Microsoft FSX SimConnect</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

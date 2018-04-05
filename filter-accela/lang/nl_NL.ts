@@ -37,6 +37,13 @@
     </message>
 </context>
 <context>
+    <name>accelaDll</name>
+    <message>
+        <source>Accela</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>dialog_accela</name>
     <message>
         <source>%1°</source>

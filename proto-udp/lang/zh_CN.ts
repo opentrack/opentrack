@@ -22,5 +22,16 @@
         <source>Can&apos;t bind socket: %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>UDP over network</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>udpDll</name>
+    <message>
+        <source>UDP over network</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

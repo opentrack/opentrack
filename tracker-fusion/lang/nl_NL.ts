@@ -9,6 +9,13 @@
     </message>
 </context>
 <context>
+    <name>fusion_metadata</name>
+    <message>
+        <source>Fusion</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>fusion_tracker</name>
     <message>
         <source>Fusion tracker</source>

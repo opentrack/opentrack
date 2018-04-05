@@ -55,4 +55,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>udpDll</name>
+    <message>
+        <source>UDP over network</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

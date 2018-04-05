@@ -28,4 +28,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>rift_140Dll</name>
+    <message>
+        <source>Oculus Rift runtime 1.4.0 -- HMD</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

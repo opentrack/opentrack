@@ -29,6 +29,13 @@
     </message>
 </context>
 <context>
+    <name>rift_025Dll</name>
+    <message>
+        <source>Oculus Rift runtime 0.2.5 -- HMD</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>rift_tracker_025</name>
     <message>
         <source>Unable to create Rift sensor</source>

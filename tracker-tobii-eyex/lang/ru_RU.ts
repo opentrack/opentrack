@@ -53,4 +53,11 @@ On the other hand, the snap mode allows for a quick glance outside the field of 
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>tobii_eyex_tracker</name>
+    <message>
+        <source>Connection can&apos;t be established. device missing?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

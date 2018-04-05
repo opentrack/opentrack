@@ -28,4 +28,11 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>kalmanDll</name>
+    <message>
+        <source>Kalman</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>

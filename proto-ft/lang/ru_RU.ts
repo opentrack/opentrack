@@ -43,4 +43,22 @@ Starting tracking will again overwrite the DLL locations.</source>
 Запуск отслеживания в opentrack приведет к перезаписи расположения DLL-файла.</translation>
     </message>
 </context>
+<context>
+    <name>freetrack</name>
+    <message>
+        <source>Can&apos;t load freetrack memory mapping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown game</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>freetrackDll</name>
+    <message>
+        <source>freetrack 2.0 Enhanced</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
