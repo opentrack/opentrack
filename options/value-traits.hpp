@@ -1,3 +1,5 @@
+#pragma once
+
 #include "export.hpp"
 
 #include "slider.hpp"
@@ -12,6 +14,8 @@ namespace detail {
 template<typename t, typename u = t, typename Enable = void>
 struct default_value_traits
 {
+    virtual ~default_value_traits() = default;
+
     using element_type = std::decay_t<t>;
     using value_type = std::decay_t<u>;
 
