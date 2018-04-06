@@ -8,6 +8,10 @@ function(otr_i18n_for_target_directory n)
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
         set(t2 "${CMAKE_CURRENT_BINARY_DIR}/lang/${i}.ts")
         set(input "${${k}-all}")
+        if (NOT EXISTS "${t}")
+            file(READ "${CMAKE_CURRENT_LIST_DIR}/translation-stub.ts")
+            file(WRITE "${t}")
+        endif()
         add_custom_command(OUTPUT "${t2}"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/lang"
@@ -26,7 +30,7 @@ function(otr_i18n_for_target_directory n)
         set_property(SOURCE ${input} PROPERTY GENERATED TRUE)
         set(target-name "i18n-lang-${i}-module-${n}")
         list(APPEND target-names "${target-name}")
-        add_custom_target(${target-name} DEPENDS "${t2}" "${t}" COMMENT "Translation strings for ${n}")
+        add_custom_target(${target-name} DEPENDS "${t2}" "${t}" COMMENT "Updating translation strings for ${n}")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${i}" "${t2}")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-module-${n}" "${target-name}")
     endforeach()
@@ -62,7 +66,12 @@ function(otr_merge_translations)
         list(APPEND all-qm-files "${qm-output}")
 
         add_custom_command(OUTPUT "${qm-output}"
-            COMMAND "${lrelease-binary}" -nounfinished -silent ${ts-files} -qm "${qm-output}"
+            COMMAND "${lrelease-binary}"
+                -nounfinished
+                #-silent
+                -verbose
+                ${ts-files}
+                -qm "${qm-output}"
             DEPENDS ${all-ts-targets}
             COMMENT "Running lrelease for ${i}")
 
