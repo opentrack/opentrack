@@ -8,9 +8,12 @@
 
 #pragma once
 
-#include "export.hpp"
+#include "value-traits.hpp"
 #include "value.hpp"
 #include "compat/run-in-thread.hpp"
+#include "compat/macros.hpp"
+
+#include <type_traits>
 
 #include <QComboBox>
 #include <QCheckBox>
@@ -23,6 +26,8 @@
 
 #include <cmath>
 
+#include "export.hpp"
+
 #if defined __GNUG__
 #   pragma GCC diagnostic push
 #   pragma GCC diagnostic ignored "-Wattributes"
@@ -30,25 +35,61 @@
 
 namespace options {
 
+namespace detail {
+
 template<typename t>
-std::enable_if_t<std::is_enum<t>::value>
-tie_setting(value<t>& v, QComboBox* cb)
+struct tie_setting_traits_helper
 {
-    cb->setCurrentIndex(cb->findData(int(static_cast<t>(v))));
-    v = static_cast<t>(cb->currentData().toInt());
+    using traits = detail::value_traits<t>;
+    using value_type = typename traits::value_type;
+    using element_type = typename traits::element_type;
+
+    static element_type to_element_type(const value<t>& v)
+    {
+        return static_cast<element_type>(static_cast<value_type>(v));
+    }
+};
+
+template<typename t, typename Enable = void>
+struct tie_setting_traits final : tie_setting_traits_helper<t>
+{
+    static constexpr inline bool should_bind_to_itemdata() { return false; }
+};
+
+template<typename t>
+struct tie_setting_traits<t, std::enable_if_t<std::is_enum_v<t>>> : tie_setting_traits_helper<t>
+{
+    static constexpr inline bool should_bind_to_itemdata() { return true; }
+
+    static t itemdata_to_value(int, const QVariant& var)
+    {
+        return static_cast<t>(var.toInt());
+    }
+};
+
+} // ns options::details
+
+template<typename t, typename traits_type = detail::tie_setting_traits<t>>
+std::enable_if_t<traits_type::should_bind_to_itemdata()>
+tie_setting(value<t>& v, QComboBox* cb, const traits_type& traits = traits_type())
+{
+    using element_type = typename detail::value_traits<t>::element_type;
+
+    cb->setCurrentIndex(cb->findData(traits.to_element_type(v)));
+    v = traits.itemdata_to_value(cb->currentIndex(), cb->currentData());
 
     base_value::connect(cb,
                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v,
-                        [&v, cb](int idx)
+                        [&v, cb, traits](int idx)
                         {
                             run_in_thread_sync(cb,
-                                               [&]() {
-                                                    v = static_cast<t>(cb->itemData(idx).toInt());
+                                               [&, traits]() {
+                                                    v = traits.itemdata_to_value(idx, cb->currentData());
                                                });
                         },
                         v.DIRECT_CONNTYPE);
-    base_value::connect(&v, base_value::value_changed<int>(),
+    base_value::connect(&v, base_value::value_changed<element_type>(),
                         cb, [cb](int x) {
                             run_in_thread_sync(cb, [&]() { cb->setCurrentIndex(cb->findData(x)); });
                         },
@@ -78,6 +119,9 @@ void tie_setting(value<t>& v, QObject* obj, F&& fun)
                         obj, fun,
                         v.DIRECT_CONNTYPE);
 }
+
+// XXX TODO add combobox transform both ways via std::function
+// need for non-translated `module_settings' dylib names
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb);
