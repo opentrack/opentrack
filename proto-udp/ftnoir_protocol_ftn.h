@@ -68,7 +68,7 @@ private slots:
     void doCancel();
 };
 
-class udpDll : public Metadata
+class udp_sender_dll : public Metadata
 {
     Q_OBJECT
 

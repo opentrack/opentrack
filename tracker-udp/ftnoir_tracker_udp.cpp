@@ -103,4 +103,4 @@ void udp::data(double *data)
 }
 
 
-OPENTRACK_DECLARE_TRACKER(udp, dialog_udp, udpDll)
+OPENTRACK_DECLARE_TRACKER(udp, dialog_udp, udp_receiver_dll)

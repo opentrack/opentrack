@@ -28,7 +28,7 @@
     </message>
 </context>
 <context>
-    <name>udpDll</name>
+    <name>udp_sender_dll</name>
     <message>
         <source>UDP over network</source>
         <translation type="unfinished"></translation>

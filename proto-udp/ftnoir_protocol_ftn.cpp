@@ -42,4 +42,4 @@ module_status udp::initialize()
         return error(tr("Can't bind socket: %1").arg(outSocket.errorString()));
 }
 
-OPENTRACK_DECLARE_PROTOCOL(udp, FTNControls, udpDll)
+OPENTRACK_DECLARE_PROTOCOL(udp, FTNControls, udp_sender_dll)
