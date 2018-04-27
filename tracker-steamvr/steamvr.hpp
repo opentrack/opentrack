@@ -17,6 +17,10 @@
 #include <QList>
 
 using namespace options;
+
+using rmat = euler::rmat;
+using euler_t = euler::euler_t;
+
 using error_t = vr::EVRInitError;
 using vr_t = vr::IVRSystem*;
 
@@ -69,8 +73,10 @@ class steamvr : public QObject, public ITracker
 {
     Q_OBJECT
 
-    using error_t = vr::EVRInitError;
-    using vr_t = vr::IVRSystem*;
+    static void matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result);
+
+    settings s;
+    int device_index;
 
 public:
     steamvr();
@@ -78,15 +84,6 @@ public:
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
     bool center() override;
-
-private:
-    static void matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result);
-
-    settings s;
-    int device_index;
-
-    using rmat = euler::rmat;
-    using euler_t = euler::euler_t;
 };
 
 class steamvr_dialog : public ITrackerDialog
