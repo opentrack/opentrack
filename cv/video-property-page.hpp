@@ -8,8 +8,6 @@
 
 #include <opencv2/videoio.hpp>
 
-struct IBaseFilter;
-
 struct video_property_page final
 {
     video_property_page() = delete;
