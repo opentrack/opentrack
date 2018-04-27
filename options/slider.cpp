@@ -86,10 +86,6 @@ int slider_value::to_slider_pos(int q_min, int q_max) const
         return int(std::round(((cur() - min()) * q_diff / div) + q_min));
 }
 
-} // end ns options
-
-QT_BEGIN_NAMESPACE
-
 QDataStream& operator << (QDataStream& out, const options::slider_value& v)
 {
     out << v.cur()
@@ -111,4 +107,4 @@ QDataStream& operator >> (QDataStream& in, options::slider_value& v)
     return in;
 }
 
-QT_END_NAMESPACE
+} // end ns options

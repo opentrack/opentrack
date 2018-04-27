@@ -10,8 +10,8 @@
 #include "export.hpp"
 #include "compat/macros.hpp"
 
-#include <QMetaType>
 #include <QDataStream>
+#include <QMetaType>
 #include <QDebug>
 
 namespace options
@@ -49,13 +49,8 @@ namespace options
         slider_value update_from_slider(int pos, int q_min, int q_max) const;
         int to_slider_pos(int q_min, int q_max) const;
     };
+
+    QDebug operator << (QDebug dbg, const options::slider_value& val);
+    QDataStream& operator << (QDataStream& out, const options::slider_value& v);
+    QDataStream& operator >> (QDataStream& in, options::slider_value& v);
 }
-
-QT_BEGIN_NAMESPACE
-
-QDebug operator << (QDebug dbg, const options::slider_value& val);
-QDataStream& operator << (QDataStream& out, const options::slider_value& v);
-QDataStream& operator >> (QDataStream& in, options::slider_value& v);
-
-QT_END_NAMESPACE
-

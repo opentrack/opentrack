@@ -67,7 +67,7 @@ struct tie_setting_traits<t, std::enable_if_t<std::is_enum_v<t>>> : tie_setting_
     }
 };
 
-} // ns options::details
+} // ns options::detail
 
 template<typename t, typename traits_type = detail::tie_setting_traits<t>>
 std::enable_if_t<traits_type::should_bind_to_itemdata()>
