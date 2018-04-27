@@ -28,8 +28,13 @@ else()
     set(__sdk_os_maybe_target "")
 endif()
 
-set(__sdk_paths_filename "${CMAKE_SOURCE_DIR}/sdk-paths-${__sdk_username}@${CMAKE_CXX_COMPILER_ID}-${__sdk_os_maybe_target}${__sdk_os}.cmake")
+set(__sdk_paths_basename "sdk-paths-${__sdk_username}@${CMAKE_CXX_COMPILER_ID}-${__sdk_os_maybe_target}${__sdk_os}.cmake")
+
+set(__sdk_paths_filename "${CMAKE_SOURCE_DIR}/${__sdk_paths_basename}")
 
 if(EXISTS "${__sdk_paths_filename}")
+    message(STATUS "Loading user settings '${__sdk_paths_basename}'")
     include("${__sdk_paths_filename}")
+else()
+    message(STATUS "User settings file '${__sdk_paths_basename}' doesn't exist")
 endif()
