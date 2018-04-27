@@ -47,5 +47,43 @@
 #endif
 
 #if defined __cplusplus
+
+// from now only C++ macros
+
 #   define thunk(...) ([&]() { __VA_ARGS__; })
+
+#if defined _MSC_VER
+#   define OTR_DEPRECATE(msg, decl, body) __declspec(deprecated(msg)) decl body
+#else
+#   define OTR_DEPRECATE(msg, decl, body) decl body __attribute__((deprecated(msg)))
+#endif
+
+#if !defined PP_CAT
+#   define PP_CAT(x,y) PP_CAT1(x,y)
+#   define PP_CAT1(x,y) x##y
+#endif
+
+namespace static_warning_detail {
+    template<bool> struct test___132;
+
+    template<>
+    struct test___132<true>
+    {
+        static constexpr inline void check() {}
+    };
+} // ns static_warning_detail
+
+#define static_warning_template(cond, msg)                                      \
+    {                                                                           \
+        template<bool>                                                          \
+        struct ::static_warning_detail::test___132                              \
+        {                                                                       \
+            OTR_DEPRECATE(msg, static constexpr inline void check(), {})        \
+        };                                                                      \
+        ::static_warning_detail::test___132<(cond)>::check();                   \
+    }
+
+#define static_warning(cond, msg)                                               \
+    static_warning_template(cond, PP_CAT(msg, PP_CAT("\nExpression: ", #cond)))
+
 #endif
