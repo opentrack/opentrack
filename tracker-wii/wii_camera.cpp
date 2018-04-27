@@ -21,8 +21,6 @@
 
 #include <opencv2/imgproc.hpp>
 
-#include "cv/video-property-page.hpp"
-
 #include <bluetoothapis.h>
 
 using namespace pt_module;
