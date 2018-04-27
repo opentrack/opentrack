@@ -51,19 +51,6 @@ namespace detail {
     {
         using type = inst<xs...>;
     };
-
-    template<typename N, N max, N pos, typename... xs>
-    struct index_sequence_
-    {
-        using part = std::integral_constant<N, pos>;
-        using type = typename index_sequence_<N, max, pos+1, xs..., part>::type;
-    };
-
-    template<typename N, N max, typename... xs>
-    struct index_sequence_<N, max, max, xs...>
-    {
-        using type = std::tuple<xs...>;
-    };
 } // ns detail
 
 
