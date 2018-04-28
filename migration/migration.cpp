@@ -26,11 +26,14 @@ namespace migrations {
 
 namespace detail {
 
-void migrator::register_migration(migration* m)
+static std::vector<mptr> migration_list;
+static std::vector<mfun> migration_thunks;
+
+void migrator::register_migration(mptr m)
 {
     const QString date = m->unique_date();
 
-    for (migration* m2 : migrations())
+    for (mptr m2 : migration_list)
         if (m2->unique_date() == date)
             std::abort();
 
@@ -64,13 +67,38 @@ void migrator::register_migration(migration* m)
     if (day_ < 1 || day_ > 31)
         abort();
 
-    migrations().push_back(m);
+    migration_list.push_back(m);
 }
 
-std::vector<migration*>& migrator::migrations()
+void migrator::eval_thunks()
 {
-    static std::vector<migration*> ret;
-    return ret;
+    for (auto& fun : migration_thunks)
+    {
+        mptr m = fun();
+        register_migration(m);
+    }
+    if (migration_thunks.size())
+        sort_migrations();
+    migration_thunks.clear();
+}
+
+void migrator::add_migration_thunk(mfun& thunk)
+{
+    migration_thunks.push_back(thunk);
+}
+
+std::vector<mptr>& migrator::migrations()
+{
+    eval_thunks();
+    return migration_list;
+}
+
+void migrator::sort_migrations()
+{
+    std::sort(migration_list.begin(), migration_list.end(),
+              [](const mptr x, const mptr y) {
+        return x->unique_date() < y->unique_date();
+    });
 }
 
 QString migrator::last_migration_time()
@@ -88,7 +116,7 @@ QString migrator::last_migration_time()
 
 QString migrator::time_after_migrations()
 {
-    const std::vector<migration*> list = sorted_migrations();
+    const std::vector<mptr>& list = migrations();
 
     if (list.size() == 0u)
         return QStringLiteral("19700101_00");
@@ -113,16 +141,6 @@ void migrator::set_last_migration_time(const QString& val)
     });
 }
 
-std::vector<migration*> migrator::sorted_migrations()
-{
-    std::vector<migration*> list(migrations());
-
-    using mm = migration*;
-
-    std::sort(list.begin(), list.end(), [](const mm x, const mm y) { return x->unique_date() < y->unique_date(); });
-    return list;
-}
-
 int migrator::to_int(const QString& str, bool& ok)
 {
     bool tmp = false;
@@ -133,45 +151,36 @@ int migrator::to_int(const QString& str, bool& ok)
 
 std::vector<QString> migrator::run()
 {
-    std::vector<migration*> migrations = sorted_migrations();
     std::vector<QString> done;
 
     const QString last_migration = last_migration_time();
 
-    for (migration* m_ : migrations)
-    {
-        migration& m(*m_);
+    options::group::with_global_settings_object([&](QSettings&) {
+        options::group::with_settings_object([&](QSettings&) {
+            for (mptr m : migrations())
+            {
+                const QString date = m->unique_date();
 
-        const QString date = m.unique_date();
+                if (date <= last_migration)
+                    continue;
 
-        if (date <= last_migration)
-            continue;
-
-        if (m.should_run())
-        {
-            m.run();
-            done.push_back(m.name());
-        }
-    }
-
-    mark_config_as_not_needing_migration();
-
-    if (done.size())
-    {
-        for (const QString& name : done)
-        {
-            const QByteArray data = name.toUtf8();
-            qDebug() << "migrate:" << data.constData();
-        }
-    }
+                if (m->should_run())
+                {
+                    const QByteArray name = m->name().toUtf8();
+                    const QByteArray date = m->unique_date().toUtf8();
+                    qDebug() << "migrate:" << date.constData() << name.constData();
+                    m->run();
+                    done.push_back(m->name());
+                }
+            }
+            mark_config_as_not_needing_migration();
+        });
+    });
 
     return done;
 }
 
 }
-
-migration::migration() {}
-migration::~migration() {}
 
 } // ns
 

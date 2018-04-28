@@ -13,25 +13,36 @@
 
 #include "export.hpp"
 
+#include <functional>
+
 namespace migrations {
 
-class migration;
+struct migration;
 class registrator;
 
 namespace detail {
-    class migrator final
+    using mptr = std::shared_ptr<migration>;
+    using mfun = std::function<mptr ()>;
+
+    struct migrator
     {
-        static std::vector<migration*>& migrations();
+        static std::vector<QString> run();
+        static void add_migration_thunk(std::function<mptr()>& thunk);
+        static void mark_config_as_not_needing_migration();
+
+    private:
+        static void sort_migrations();
+
+        static void register_migration(mptr m);
+        static std::vector<mptr>& migrations();
+
+        static void eval_thunks();
+
         static QString last_migration_time();
         static QString time_after_migrations();
+
         static void set_last_migration_time(const QString& val);
-        migrator() = delete;
-        static std::vector<migration*> sorted_migrations();
         static int to_int(const QString& str, bool& ok);
-    public:
-        static std::vector<QString> run();
-        static void register_migration(migration* m);
-        static void mark_config_as_not_needing_migration();
     };
 
     template<typename t>
@@ -39,8 +50,9 @@ namespace detail {
     {
         registrator()
         {
-            static t m;
-            migrator::register_migration(static_cast<migration*>(&m));
+            mfun f { []() { return std::shared_ptr<migration>(new t); } };
+
+            migrator::add_migration_thunk(f);
         }
     };
 }
@@ -49,29 +61,33 @@ namespace detail {
 #   error "oops, need __COUNTER__ extension for preprocessor"
 #endif
 
-#define OPENTRACK_MIGRATION(type) static ::migrations::detail::registrator<type> opentrack_migration_registrator__ ## __COUNTER__ ## _gensym
+#define MIGRATE_EXPAND2(x) x
+#define MIGRATE_EXPAND1(x) MIGRATE_EXPAND2(x)
+#define MIGRATE_EXPANDED2(type, ctr) \
+    static ::migrations::detail::registrator<type> opentrack_migration_registrator_ ## ctr
+#define MIGRATE_EXPANDED1(type, ctr) \
+    MIGRATE_EXPANDED2(type, ctr)
+
+#define OPENTRACK_MIGRATION(type) \
+    MIGRATE_EXPANDED1(type, MIGRATE_EXPAND1(__COUNTER__))
 
 #ifdef Q_CREATOR_RUN
 #   pragma clang diagnostic ignored "-Wweak-vtables"
 #endif
 
-class migration
+struct migration
 {
-    migration& operator=(const migration&) = delete;
-    migration(const migration&) = delete;
-    migration& operator=(migration&&) = delete;
-    migration(migration&&) = delete;
-
-public:
-    migration();
-    virtual ~migration();
+    migration() = default;
+    inline virtual ~migration();
     virtual QString unique_date() const = 0;
     virtual QString name() const = 0;
     virtual bool should_run() const = 0;
     virtual void run() = 0;
 };
 
-}
+inline migration::~migration() {}
+
+} // ns migrations
 
 OTR_MIGRATION_EXPORT std::vector<QString> run_migrations();
 OTR_MIGRATION_EXPORT void mark_config_as_not_needing_migration();
