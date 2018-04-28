@@ -74,16 +74,16 @@ template<class T> inline T square(const T& val)  { return val*val; }
 
 // internals: auto-strip code from the macros if they weren't defined
 #ifndef TRACE
-# define TRACE
+# define TRACE(...) (void)0
 #endif
 #ifndef DEEP_TRACE
-# define DEEP_TRACE
+# define DEEP_TRACE(...) (void)0
 #endif
 #ifndef WARN
-# define WARN
+# define WARN(...) (void)0
 #endif
 // ------------------------------------------------------------------------------------
-static void _cdecl _TRACE (const TCHAR* fmt, ...)
+static void __cdecl _TRACE (const TCHAR* fmt, ...)
 	{
 	static TCHAR buffer[256];
 	if (!fmt) return;
@@ -2407,7 +2407,7 @@ bool wiimote::Load16bitMonoSampleWAV (const TCHAR* filepath, wiimote_sample &out
 	union {
 		WAVEFORMATEX		 x;
 		WAVEFORMATEXTENSIBLE xe;
-		} wf = {0};
+                } wf = {};
 
 	riff_chunkheader riff_chunkheader;
 	chunk_header	 chunk_header;
