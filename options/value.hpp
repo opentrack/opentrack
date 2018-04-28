@@ -34,11 +34,11 @@ template<typename t>
 class value final : public base_value
 {
     using traits = detail::value_traits<t, t, void>;
-    using element_type = typename traits::element_type;
+    using stored_type = typename traits::stored_type;
 
     static bool is_equal(const QVariant& val1, const QVariant& val2)
     {
-        return val1.value<element_type>() == val2.value<element_type>();
+        return val1.value<stored_type>() == val2.value<stored_type>();
     }
 
     never_inline
@@ -52,7 +52,7 @@ class value final : public base_value
         if (!b->contains(self_name) || variant.type() == QVariant::Invalid)
             return def;
 
-        const element_type x(variant.value<element_type>());
+        const stored_type x(variant.value<stored_type>());
 
         return traits::from_value(traits::from_storage(x), def);
     }
@@ -75,7 +75,7 @@ public:
 
     never_inline
     value(bundle b, const QString& name, t def) :
-        base_value(b, name, &is_equal, std::type_index(typeid(element_type))),
+        base_value(b, name, &is_equal, std::type_index(typeid(stored_type))),
         def(def)
     {
         if (!self_name.isEmpty())

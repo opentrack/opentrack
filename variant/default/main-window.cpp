@@ -33,6 +33,10 @@ extern "C" const char* const opentrack_version;
 #   define EXIT_FAILURE 1
 #endif
 
+#if !defined EX_OSFILE
+#   define EX_OSFILE 72
+#endif
+
 /* FreeBSD sysexits(3)
  *
  * The input data was incorrect	in some	way.  This
@@ -132,7 +136,7 @@ main_window::main_window() :
         bool ok = is_config_listed(cur) ? set_profile(cur) : set_profile(OPENTRACK_DEFAULT_CONFIG);
         if (!ok)
         {
-            exit(64);
+            exit(EX_OSFILE);
             return;
         }
     }
@@ -339,7 +343,7 @@ void main_window::die_on_config_not_writable()
                           tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
                           QMessageBox::Close, QMessageBox::NoButton);
 
-    exit(64);
+    exit(EX_OSFILE);
 }
 
 bool main_window::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
@@ -475,7 +479,7 @@ bool main_window::refresh_config_list()
     QString current = group::ini_filename();
 
     if (!ini_list.contains(current))
-        current = OPENTRACK_DEFAULT_CONFIG_Q;
+        current = OPENTRACK_DEFAULT_CONFIG;
 
     if (maybe_die_on_config_not_writable(current, &ini_list))
         return false;
@@ -780,7 +784,7 @@ bool main_window::set_profile(const QString& new_name_)
     QString new_name = new_name_;
 
     if (!is_config_listed(new_name))
-        new_name = OPENTRACK_DEFAULT_CONFIG_Q;
+        new_name = OPENTRACK_DEFAULT_CONFIG;
 
     if (maybe_die_on_config_not_writable(new_name, nullptr))
         return false;
@@ -979,9 +983,9 @@ bool main_window::event(QEvent* event)
         case t::WindowStateChange:
         case t::FocusIn:
             set_is_visible(*this, true);
-            /*FALLTHROUGH*/
+        break;
         default:
-            break;
+        break;
         }
     }
     return QMainWindow::event(event);

@@ -5,7 +5,6 @@
 
 #define OPENTRACK_CONFIG_FILENAME_KEY "settings-filename"
 #define OPENTRACK_DEFAULT_CONFIG "default.ini"
-#define OPENTRACK_DEFAULT_CONFIG_Q QStringLiteral("default.ini")
 #define OTR_OPTIONS_EXPAND2(x) x
 #define OTR_OPTIONS_EXPAND1(x) OTR_OPTIONS_EXPAND2(x)
 

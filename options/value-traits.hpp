@@ -16,12 +16,12 @@ struct default_value_traits
 {
     virtual ~default_value_traits() = default;
 
-    using element_type = std::decay_t<t>;
+    using stored_type = std::decay_t<t>;
     using value_type = std::decay_t<u>;
 
     static inline value_type from_value(const value_type& val, const value_type&) { return val; }
-    static inline value_type from_storage(const element_type& x) { return static_cast<value_type>(x); }
-    static inline element_type to_storage(const value_type& val) { return static_cast<element_type>(val); }
+    static inline value_type from_storage(const stored_type& x) { return static_cast<value_type>(x); }
+    static inline stored_type to_storage(const value_type& val) { return static_cast<stored_type>(val); }
 };
 
 template<typename t, typename u = t, typename Enable = void>
