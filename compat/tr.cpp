@@ -5,7 +5,7 @@ TR::TR() {}
 
 TR::TR(const TR&) {}
 
-TR&TR::operator=(const TR& other)
+TR& TR::operator=(const TR& other)
 {
     if (this == &other)
         return *this;
