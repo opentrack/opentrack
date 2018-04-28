@@ -1934,6 +1934,7 @@ int wiimote::ParseReadAddress (BYTE* buff)
 					}
 					break;
 				}
+                        // XXX missing break here? -sh
 			case 0x34:
 				{
 				if(Internal.ExtensionType == BALANCE_BOARD)
