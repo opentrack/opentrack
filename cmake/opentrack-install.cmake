@@ -36,8 +36,10 @@ function(install_sources)
 endfunction()
 
 function(cleanup_visual_studio_debug)
-    otr_escape_string(pfx "${CMAKE_INSTALL_PREFIX}")
-    install(CODE "file(REMOVE_RECURSE \"${pfx}/.vs\")")
+    #if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
+        otr_escape_string(pfx "${CMAKE_INSTALL_PREFIX}")
+        install(CODE "file(REMOVE_RECURSE \"${pfx}/.vs\")")
+    #endif()
 endfunction()
 
 otr_install_dir("${opentrack-doc-pfx}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
