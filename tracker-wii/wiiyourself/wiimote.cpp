@@ -1773,50 +1773,54 @@ int wiimote::ParseReadAddress (BYTE* buff)
 				break;
 				}
 
-			#define IF_TYPE(id)	if(type == id) { \
-									/* sometimes it comes in more than once */ \
-									if(Internal.ExtensionType == wiimote_state::id)\
-										break; \
-									Internal.ExtensionType = wiimote_state::id;
+                        // sometimes we get idempotent ExtensionType events
+                        #define IF_TYPE(id, ...)                                        \
+                            if(type == id)                                              \
+                            {                                                           \
+                                if(Internal.ExtensionType == wiimote_state::id)         \
+                                    break;                                              \
+                                Internal.ExtensionType = wiimote_state::id;             \
+                                { __VA_ARGS__ }                                         \
+                            }
 
 			// MotionPlus: once it's activated & mapped to the standard ext. port
-			IF_TYPE(MOTION_PLUS)
+                        IF_TYPE(MOTION_PLUS,
 				TRACE(_T(".. Motion Plus!"));
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
 				bMotionPlusDetected = true;
-				}
-			else IF_TYPE(NUNCHUK)
+                        )
+                        else IF_TYPE(NUNCHUK,
 				TRACE(_T(".. Nunchuk!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(CLASSIC)
+                        )
+                        else IF_TYPE(CLASSIC,
 				TRACE(_T(".. Classic Controller!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(GH3_GHWT_GUITAR)
+                        )
+                        else IF_TYPE(GH3_GHWT_GUITAR,
 				// sometimes it comes in more than once?
 				TRACE(_T(".. GH3/GHWT Guitar Controller!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(GHWT_DRUMS)
+                        )
+                        else IF_TYPE(GHWT_DRUMS,
 				TRACE(_T(".. GHWT Drums!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(BALANCE_BOARD)
+                        )
+                        else IF_TYPE(BALANCE_BOARD,
 				TRACE(_T(".. Balance Board!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_BALANCE_CALIBRATION, 24);
-				}
+                        )
 			else if(type == PARTIALLY_INSERTED) {
 				// sometimes it comes in more than once?
 				if(Internal.ExtensionType == wiimote_state::PARTIALLY_INSERTED)
