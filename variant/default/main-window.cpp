@@ -17,6 +17,8 @@
 #include "compat/library-path.hpp"
 #include "compat/math.hpp"
 
+#include <iterator>
+
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QDir>
@@ -82,7 +84,7 @@ main_window::main_window() :
 
     if (!refresh_config_list())
     {
-        exit(64);
+        exit(EX_OSFILE);
         return;
     }
 
@@ -97,16 +99,16 @@ main_window::main_window() :
 
     // fill dylib comboboxen
     {
-        modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
+        modules.filters().push_front(std::make_shared<dylib>(QString(), dylib::Filter));
 
-        for (std::shared_ptr<dylib>& x : modules.trackers())
-            ui.iconcomboTrackerSource->addItem(x->icon, x->name);
+        for (dylib_ptr& x : modules.trackers())
+            ui.iconcomboTrackerSource->addItem(x->icon, x->name, x->module_name);
 
-        for (std::shared_ptr<dylib>& x : modules.protocols())
-            ui.iconcomboProtocol->addItem(x->icon, x->name);
+        for (dylib_ptr& x : modules.protocols())
+            ui.iconcomboProtocol->addItem(x->icon, x->name, x->module_name);
 
-        for (std::shared_ptr<dylib>& x : modules.filters())
-            ui.iconcomboFilter->addItem(x->icon, x->name);
+        for (dylib_ptr& x : modules.filters())
+            ui.iconcomboFilter->addItem(x->icon, x->name, x->module_name);
     }
 
     // timers
@@ -155,13 +157,48 @@ main_window::main_window() :
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
 
-        connect(&m.tracker_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::DirectConnection);
-        connect(&m.protocol_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::DirectConnection);
-        connect(&m.filter_dll, base_value::value_changed<QString>(), this, &main_window::save_modules, Qt::DirectConnection);
+        connect(&m.tracker_dll, base_value::value_changed<QString>(),
+                this, &main_window::save_modules,
+                Qt::DirectConnection);
 
-        tie_setting(m.tracker_dll, ui.iconcomboTrackerSource);
-        tie_setting(m.protocol_dll, ui.iconcomboProtocol);
-        tie_setting(m.filter_dll, ui.iconcomboFilter);
+        connect(&m.protocol_dll, base_value::value_changed<QString>(),
+                this, &main_window::save_modules,
+                Qt::DirectConnection);
+
+        connect(&m.filter_dll, base_value::value_changed<QString>(),
+                this, &main_window::save_modules,
+                Qt::DirectConnection);
+
+        {
+            struct list {
+                dylib_list& libs;
+                QComboBox* input;
+                value<QString>& place;
+            };
+
+            list types[] {
+                { modules.trackers(), ui.iconcomboTrackerSource, m.tracker_dll },
+                { modules.protocols(), ui.iconcomboProtocol, m.protocol_dll },
+                { modules.filters(), ui.iconcomboFilter, m.filter_dll },
+            };
+
+            for (list& type : types)
+            {
+                list& t = type;
+                tie_setting(t.place, t.input,
+                            [t](const QString& name) {
+                                auto [ptr, idx] = module_by_name(name, t.libs);
+                                return idx;
+                            },
+                            [t](int, const QVariant& userdata) {
+                                auto [ptr, idx] = module_by_name(userdata.toString(), t.libs);
+                                if (ptr)
+                                    return ptr->module_name;
+                                else
+                                    return QString();
+                            });
+            }
+        }
     }
 
     connect(this, &main_window::start_tracker,
@@ -461,6 +498,39 @@ bool main_window::refresh_config_list()
     return true;
 }
 
+std::tuple<main_window::dylib_ptr, int> main_window::module_by_name(const QString& name, Modules::dylib_list& list)
+{
+    auto it = std::find_if(list.cbegin(), list.cend(), [&name](const dylib_ptr& lib) {
+        if (!lib)
+            return name.isEmpty();
+        else
+            return name == lib->module_name;
+    });
+
+    if (it == list.cend())
+        return { nullptr, -1 };
+    else
+        return { *it, int(std::distance(list.cbegin(), it)) };
+}
+
+main_window::dylib_ptr main_window::current_tracker()
+{
+    auto [ptr, idx] = module_by_name(m.tracker_dll, modules.trackers());
+    return ptr;
+}
+
+main_window::dylib_ptr main_window::current_protocol()
+{
+    auto [ptr, idx] = module_by_name(m.protocol_dll, modules.protocols());
+    return ptr;
+}
+
+main_window::dylib_ptr main_window::current_filter()
+{
+    auto [ptr, idx] = module_by_name(m.filter_dll, modules.filters());
+    return ptr;
+}
+
 void main_window::update_button_state(bool running, bool inertialp)
 {
     bool not_running = !running;
@@ -718,12 +788,18 @@ bool main_window::set_profile(const QString& new_name_)
     ui.iconcomboProfile->setCurrentText(new_name);
     set_profile_in_registry(new_name);
 
-    set_title();
+    // XXX workaround migration breakage -sh 20180428
+    QSignalBlocker b1(ui.iconcomboTrackerSource);
+    QSignalBlocker b2(ui.iconcomboProtocol);
+    QSignalBlocker b3(ui.iconcomboFilter);
+
     options::detail::bundler::refresh_all_bundles();
 
     // migrations are for config layout changes and other user-visible
     // incompatibilities in future versions
     run_migrations();
+
+    set_title();
 
     return true;
 }

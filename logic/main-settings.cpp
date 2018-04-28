@@ -49,9 +49,9 @@ main_settings::main_settings() :
 
 module_settings::module_settings() :
     b(make_bundle("modules")),
-    tracker_dll(b, "tracker-dll", "PointTracker 1.1"),
-    filter_dll(b, "filter-dll", "Accela"),
-    protocol_dll(b, "protocol-dll", "freetrack 2.0 Enhanced")
+    tracker_dll(b, "tracker-dll", "pt"),
+    filter_dll(b, "filter-dll", "accela"),
+    protocol_dll(b, "protocol-dll", "freetrack")
 {
 }
 
@@ -60,3 +60,4 @@ key_opts::key_opts(bundle b, const QString& name) :
     guid(b, QString("guid-%1").arg(name), ""),
     button(b, QString("button-%1").arg(name), -1)
 {}
+

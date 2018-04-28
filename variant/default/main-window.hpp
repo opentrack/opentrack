@@ -32,6 +32,7 @@
 #include <QEvent>
 #include <QCloseEvent>
 
+#include <algorithm>
 #include <vector>
 #include <tuple>
 #include <memory>
@@ -72,18 +73,14 @@ class main_window : public QMainWindow, private State
             menu_action_options  { &tray_menu },
             menu_action_mappings { &tray_menu };
 
-    std::shared_ptr<dylib> current_tracker()
-    {
-        return modules.trackers().value(ui.iconcomboTrackerSource->currentIndex(), nullptr);
-    }
-    std::shared_ptr<dylib> current_protocol()
-    {
-        return modules.protocols().value(ui.iconcomboProtocol->currentIndex(), nullptr);
-    }
-    std::shared_ptr<dylib> current_filter()
-    {
-        return modules.filters().value(ui.iconcomboFilter->currentIndex(), nullptr);
-    }
+    using dylib_ptr = Modules::dylib_ptr;
+    using dylib_list = Modules::dylib_list;
+
+    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
+
+    dylib_ptr current_tracker();
+    dylib_ptr current_protocol();
+    dylib_ptr current_filter();
 
     void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
