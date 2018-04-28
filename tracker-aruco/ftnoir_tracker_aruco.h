@@ -14,7 +14,7 @@
 #include "cv/video-widget.hpp"
 #include "compat/timer.hpp"
 
-#include "include/markerdetector.h"
+#include "aruco/markerdetector.h"
 
 #include <QObject>
 #include <QThread>

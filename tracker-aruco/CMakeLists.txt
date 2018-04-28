@@ -1,7 +1,20 @@
+function(maybe_add_static_define)
+    get_filename_component(aruco-ext "${SDK_ARUCO_LIBPATH}" EXT)
+    string(TOLOWER "${aruco-ext}" aruco-ext)
+    if(aruco-ext STREQUAL ".lib" OR aruco-ext STREQUAL ".a")
+        add_definitions(-DARUCO_STATIC)
+    endif()
+endfunction()
+
+
 find_package(OpenCV QUIET)
+
 if(OpenCV_FOUND)
     set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
     if(SDK_ARUCO_LIBPATH)
+
+        maybe_add_static_define()
+
         set(modules "${SDK_ARUCO_LIBPATH}" opencv_core opencv_calib3d opencv_imgproc opencv_videoio)
 
         file(TIMESTAMP "${SDK_ARUCO_LIBPATH}" tm "%s" UTC)
@@ -20,7 +33,12 @@ if(OpenCV_FOUND)
         endif()
 
         otr_module(tracker-aruco)
-        target_link_libraries(opentrack-tracker-aruco opentrack-cv ${modules})
+
         target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+        target_link_libraries(opentrack-tracker-aruco opentrack-cv ${modules})
+
+        get_filename_component(dir "${SDK_ARUCO_LIBPATH}" DIRECTORY)
+        get_filename_component(dir "${dir}" ABSOLUTE)
+        include_directories(opentrack-tracker-aruco SYSTEM PUBLIC "${dir}/include")
     endif()
 endif()
