@@ -1,32 +1,40 @@
+#
 # qtbase configure line for safekeeping
-# "../configure" -prefix d:\dev\qt-5.10.0 -no-ico -no-gif -no-libjpeg -opengl desktop -no-angle -no-fontconfig -no-harfbuzz -nomake tests -no-mp -release -opensource -shared -confirm-license -no-freetype -force-debug-info -separate-debug-info -make-tool jom -platform win32-msvc
+#
+
+# "../configure" -prefix d:\dev\qt-5.10.0 -no-ico -no-gif -no-libjpeg   \
+# -opengl desktop -no-angle -no-fontconfig -no-harfbuzz                 \
+# -nomake tests -no-mp -release -opensource -shared -confirm-license    \
+# -no-freetype -force-debug-info -separate-debug-info                   \
+# -make-tool jom -platform win32-msvc
 
 # remember to change -MD to -MT in mkspecs/
 # also add CFLAGS -Zi and LFLAGS -DEBUG
 
+set(__depdir "${CMAKE_CURRENT_LIST_DIR}/../opentrack-depends")
+
 function(setq name value)
-    set("${name}" "${value}" CACHE INTERNAL "" FORCE)
+    set("${name}" "${__depdir}/${value}" CACHE INTERNAL "" FORCE)
 endfunction()
 
-set(Qt5_DIR "D:/dev/qt-5.10.0/lib/cmake/Qt5")
-set(__depdir "d:/dev/opentrack-depends/")
-set(OpenCV_DIR "${__depdir}/opencv/build")
+set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 
-setq(opentrack_install-debug-info TRUE)
+setq(Qt5_DIR "../qt-5.10.0/lib/cmake/Qt5")
+setq(OpenCV_DIR "opencv/build")
 
-setq(SDK_ARUCO_LIBPATH "${__depdir}/aruco/build/src/aruco.lib")
-setq(EIGEN3_INCLUDE_DIR "${__depdir}/eigen")
+setq(SDK_ARUCO_LIBPATH "aruco/build/src/aruco.lib")
+setq(EIGEN3_INCLUDE_DIR "eigen")
 
-setq(SDK_FSUIPC "${__depdir}/fsuipc")
-setq(SDK_HYDRA "${__depdir}/SixenseSDK")
+setq(SDK_FSUIPC "fsuipc")
+setq(SDK_HYDRA "SixenseSDK")
 
-setq(SDK_RIFT_025 "${__depdir}/LibOVR-025/build")
-setq(SDK_RIFT_042 "${__depdir}/LibOVR-042/build")
-setq(SDK_RIFT_080 "${__depdir}/LibOVR-080/build")
-setq(SDK_RIFT_140 "${__depdir}/LibOVR-140/build")
+setq(SDK_RIFT_025 "LibOVR-025/build")
+setq(SDK_RIFT_042 "LibOVR-042/build")
+setq(SDK_RIFT_080 "LibOVR-080/build")
+setq(SDK_RIFT_140 "LibOVR-140/build")
 
-setq(SDK_VALVE_STEAMVR "${__depdir}/steamvr")
-setq(SDK_TOBII_EYEX "${__depdir}/Tobii-EyeX")
-setq(SDK_VJOYSTICK "${__depdir}/vjoystick")
+setq(SDK_VALVE_STEAMVR "steamvr")
+setq(SDK_TOBII_EYEX "Tobii-EyeX")
+setq(SDK_VJOYSTICK "vjoystick")
 
-setq(SDK_REALSENSE "D:/RSSDK-R2")
+setq(SDK_REALSENSE "RSSDK-R2")
