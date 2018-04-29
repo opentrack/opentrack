@@ -164,6 +164,7 @@ private:
     OTR_OPT_VALUE value<QList<QString>>;
     OTR_OPT_VALUE value<QList<slider_value>>;
     OTR_OPT_VALUE value<QList<QPointF>>;
+    OTR_OPT_VALUE value<QList<QVariant>>;
 
 #endif
 
