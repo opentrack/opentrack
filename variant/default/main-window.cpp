@@ -50,21 +50,33 @@ void main_window::annoy_if_root()
 {
     if (geteuid() == 0)
     {
-        portable::sleep(4000);
-        QMessageBox::critical(this,
-                              tr("Running as root is bad"),
-                              tr("Do not run as root. Set correct device node permissions."),
-                              QMessageBox::Ok);
-        portable::sleep(4000);
-        QMessageBox::critical(this,
-                              tr("Running as root is bad, seriously"),
-                              tr("Do not run as root. I'll keep whining at every startup."),
-                              QMessageBox::Ok);
-        portable::sleep(4000);
-        QMessageBox::critical(this,
-                              tr("Running as root is really seriously bad"),
-                              tr("Do not run as root. Be annoyed, comprehensively."),
-                              QMessageBox::Ok);
+        struct {
+            QString caption;
+            QString msg;
+            int sleep_ms;
+        } list const[] = {
+            {
+                tr("Running as root is bad"),
+                tr("Do not run as root. Set correct device node permissions."),
+                1000,
+            }
+            {
+                tr("Running as root is bad, seriously"),
+                tr("Do not run as root. I'll keep whining at every startup."),
+                3000,
+            },
+            {
+                tr("Be annoyed, comprehensively."),
+                tr("Don't run as root to remove these annoying messages."),
+                0
+            }
+        };
+
+        for (const auto& x : list)
+        {
+            QMessageBox::critical(this, x.caption, x.msg, QMessageBox::Ok);
+            portable::sleep(x.sleep_ms);
+        }
     }
 }
 #endif
