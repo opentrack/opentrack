@@ -1,12 +1,15 @@
 #pragma once
+
 #include "api/plugin-api.hpp"
 #include "api/plugin-support.hpp"
+#include "options/options.hpp"
+using namespace options;
+
+#include <memory>
+
 #include <QObject>
 #include <QFrame>
 #include <QCoreApplication>
-
-#include "options/options.hpp"
-using namespace options;
 
 struct fusion_settings final : opts
 {
@@ -21,7 +24,7 @@ class fusion_tracker : public QObject, public ITracker
 
     double rot_tracker_data[6] {}, pos_tracker_data[6] {};
 
-    std::unique_ptr<QFrame> other_frame;
+    std::unique_ptr<QFrame> other_frame { std::make_unique<QFrame>() };
     std::shared_ptr<dylib> rot_dylib, pos_dylib;
     std::shared_ptr<ITracker> rot_tracker, pos_tracker;
 

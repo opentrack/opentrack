@@ -13,7 +13,7 @@
 #include <QMessageBox>
 #include <QApplication>
 
-static const QString own_name = QStringLiteral("fusion");
+static const char* own_name = "fusion";
 
 static auto get_modules()
 {
@@ -32,13 +32,6 @@ fusion_tracker::~fusion_tracker()
 
     rot_dylib = nullptr;
     pos_dylib = nullptr;
-
-    if (other_frame)
-    {
-        if (other_frame->layout())
-            delete other_frame->layout();
-        other_frame = nullptr;
-    }
 }
 
 const QString& fusion_tracker::caption()
@@ -110,7 +103,6 @@ module_status fusion_tracker::start_tracker(QFrame* frame)
     if (frame->layout() == nullptr)
     {
         status = rot_tracker->start_tracker(frame);
-        other_frame = nullptr;
         if (!status.is_ok())
         {
             err = rot_dylib->name + QStringLiteral(":\n    ") + status.error;
@@ -119,16 +111,10 @@ module_status fusion_tracker::start_tracker(QFrame* frame)
     }
     else
     {
-        other_frame->setVisible(false);
         other_frame->setFixedSize(320, 240); // XXX magic frame size
+        other_frame->setVisible(false);
 
         rot_tracker->start_tracker(other_frame.get());
-
-        if (other_frame->layout() == nullptr)
-            other_frame = nullptr;
-        else
-            other_frame->hide();
-
     }
 
 end:
@@ -159,8 +145,8 @@ fusion_dialog::fusion_dialog()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    ui.rot_tracker->addItem("");
-    ui.pos_tracker->addItem("");
+    ui.rot_tracker->addItem({});
+    ui.pos_tracker->addItem({});
 
     Modules libs = get_modules();
 
