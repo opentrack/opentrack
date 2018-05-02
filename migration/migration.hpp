@@ -9,10 +9,10 @@
 #pragma once
 
 #include <QString>
-#include <vector>
-
 #include "export.hpp"
 
+#include <memory>
+#include <vector>
 #include <functional>
 
 namespace migrations {
@@ -78,6 +78,9 @@ namespace detail {
 struct migration
 {
     migration() = default;
+    migration(const migration&) = delete;
+    migration& operator=(const migration&) = delete;
+
     inline virtual ~migration();
     virtual QString unique_date() const = 0;
     virtual QString name() const = 0;
