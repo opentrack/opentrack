@@ -103,14 +103,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Running as root is really seriously bad</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Do not run as root. Be annoyed, comprehensively.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Create new empty config</source>
         <translation type="unfinished"></translation>
     </message>
@@ -172,6 +164,14 @@ Exiting now.</source>
     </message>
     <message>
         <source> :: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Be annoyed, comprehensively.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t run as root to remove these annoying messages.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -171,11 +171,11 @@ Exiting now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Running as root is really seriously bad</source>
+        <source>Be annoyed, comprehensively.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Do not run as root. Be annoyed, comprehensively.</source>
+        <source>Don&apos;t run as root to remove these annoying messages.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
