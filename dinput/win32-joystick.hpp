@@ -35,7 +35,7 @@ struct hash<QString>
 };
 }
 
-struct OTR_DINPUT_EXPORT win32_joy_ctx
+struct OTR_DINPUT_EXPORT win32_joy_ctx final
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
@@ -97,6 +97,8 @@ private:
         ~enum_state();
         void refresh();
         const joys_t& get_joys() const;
+
+        enum_state(enum_state const&) = delete;
     };
 
     static enum_state enumerator;

@@ -3,6 +3,8 @@
 #undef NDEBUG
 #include "win32-joystick.hpp"
 #include "compat/sleep.hpp"
+
+#include <cstddef>
 #include <cassert>
 #include <cstring>
 #include <algorithm>
@@ -180,18 +182,24 @@ bool win32_joy_ctx::joy::poll(fn f)
         bool is_pov = false;
         int i = -1;
 
+#define POV_HAT_OFFSET(k) \
+    (offsetof(DIJOYSTATE, rgdwPOV) + (k) * sizeof(DWORD))
+
+#define BUTTON(k) \
+    (offsetof(DIJOYSTATE, rgbButtons) + (k) * sizeof(BYTE))
+
         switch (event.dwOfs)
         {
-        case DIJOFS_POV(0): i = 0, is_pov = true; break;
-        case DIJOFS_POV(2): i = 1, is_pov = true; break;
-        case DIJOFS_POV(3): i = 2, is_pov = true; break;
-        case DIJOFS_POV(4): i = 3, is_pov = true; break;
+        case POV_HAT_OFFSET(0): i = 0; is_pov = true; break;
+        case POV_HAT_OFFSET(2): i = 1; is_pov = true; break;
+        case POV_HAT_OFFSET(3): i = 2; is_pov = true; break;
+        case POV_HAT_OFFSET(4): i = 3; is_pov = true; break;
         default:
-            if (event.dwOfs >= DIJOFS_BUTTON0 && event.dwOfs <= DIJOFS_BUTTON(127))
+            if (event.dwOfs >= BUTTON(0) && event.dwOfs <= BUTTON(127))
             {
                 unsigned tmp = event.dwOfs;
-                tmp -= DIJOFS_BUTTON0;
-                tmp /= DIJOFS_BUTTON1 - DIJOFS_BUTTON0;
+                tmp -= BUTTON(0);
+                tmp /= BUTTON(1) - BUTTON(0);
                 tmp &= 127;
                 i = tmp;
             }
