@@ -21,10 +21,10 @@ using namespace options;
 using rmat = euler::rmat;
 using euler_t = euler::euler_t;
 
-using error_t = vr::EVRInitError;
+using vr_error_t = vr::EVRInitError;
 using vr_t = vr::IVRSystem*;
 
-using tt = std::tuple<vr_t, error_t>;
+using tt = std::tuple<vr_t, vr_error_t>;
 using pose_t = vr::TrackedDevicePose_t;
 using origin = vr::ETrackingUniverseOrigin;
 
@@ -55,11 +55,11 @@ struct device_list final
     const QList<device_spec>& devices() const { return device_specs; }
 
     static never_inline maybe_pose get_pose(int k);
-    static QString strerror(error_t error);
+    static QString strerror(vr_error_t error);
     static constexpr inline unsigned max_devices = vr::k_unMaxTrackedDeviceCount;
 
     template<typename F>
-    friend auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()));
+    friend auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), vr_error_t()));
 
 private:
     QList<device_spec> device_specs;

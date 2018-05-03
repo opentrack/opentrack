@@ -31,17 +31,17 @@
 QMutex device_list::mtx(QMutex::Recursive);
 
 template<typename F>
-auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), error_t()))
+auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), vr_error_t()))
 {
     QMutexLocker l(&device_list::mtx);
-    error_t e; vr_t v;
+    vr_error_t e; vr_t v;
     std::tie(v, e) = device_list::vr_init();
     return fun(v, e);
 }
 
 void device_list::fill_device_specs(QList<device_spec>& list)
 {
-    with_vr_lock([&](vr_t v, error_t)
+    with_vr_lock([&](vr_t v, vr_error_t)
     {
         list.clear();
 
@@ -129,7 +129,7 @@ device_list::maybe_pose device_list::get_pose(int k)
     if (k < 0 || !(k < max_devices))
         return maybe_pose(false, pose_t{});
 
-    return with_vr_lock([k](vr_t v, error_t)
+    return with_vr_lock([k](vr_t v, vr_error_t)
     {
         static pose_t poses[max_devices] {}; // vr_lock removes reentrancy
 
@@ -158,7 +158,7 @@ tt device_list::vr_init()
 
 tt device_list::vr_init_()
 {
-    error_t error = error_t::VRInitError_Unknown;
+    vr_error_t error = vr_error_t::VRInitError_Unknown;
     vr_t v = vr::VR_Init(&error, vr::EVRApplicationType::VRApplication_Other);
 
     if (v)
@@ -169,7 +169,7 @@ tt device_list::vr_init_()
     return tt(v, error);
 }
 
-QString device_list::strerror(error_t err)
+QString device_list::strerror(vr_error_t err)
 {
     const char* str(vr::VR_GetVRInitErrorAsSymbol(err));
     return QString(str ? str : "No description");
@@ -185,7 +185,7 @@ steamvr::~steamvr()
 
 module_status steamvr::start_tracker(QFrame*)
 {
-    return with_vr_lock([this](vr_t v, error_t e)
+    return with_vr_lock([this](vr_t v, vr_error_t e)
     {
         QString err;
 
@@ -250,7 +250,7 @@ void steamvr::data(double* data)
 
 bool steamvr::center()
 {
-    return with_vr_lock([&](vr_t v, error_t)
+    return with_vr_lock([&](vr_t v, vr_error_t)
     {
         if (v)
         {
