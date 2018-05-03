@@ -58,11 +58,11 @@ error:
     err.ErrorString[0] = '\0';
     ovr_GetLastErrorInfo(&err);
 
-    QString strerror(err.ErrorString);
-    if (strerror.size() == 0)
-        strerror = "Unknown reason";
+    QString error_string(err.ErrorString);
+    if (error_string.size() == 0)
+        error_string = "Unknown reason";
 
-    return error(strerror);
+    return error(error_string);
 }
 
 void rift_tracker_080::data(double *data)

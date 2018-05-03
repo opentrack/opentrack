@@ -164,12 +164,12 @@ tt device_list::vr_init_()
     if (v)
         std::atexit(vr::VR_Shutdown);
     else
-        qDebug() << "steamvr: init failure" << error << device_list::strerror(error);
+        qDebug() << "steamvr: init failure" << error << device_list::error_string(error);
 
     return tt(v, error);
 }
 
-QString device_list::strerror(vr_error_t err)
+QString device_list::error_string(vr_error_t err)
 {
     const char* str(vr::VR_GetVRInitErrorAsSymbol(err));
     return QString(str ? str : "No description");
@@ -191,7 +191,7 @@ module_status steamvr::start_tracker(QFrame*)
 
         if (!v)
         {
-            err = device_list::strerror(e);
+            err = device_list::error_string(e);
             return error(err);
         }
 

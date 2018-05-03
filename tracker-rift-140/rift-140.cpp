@@ -49,13 +49,13 @@ error:
     ovrErrorInfo err;
     ovr_GetLastErrorInfo(&err);
 
-    QString strerror(err.ErrorString);
-    if (strerror.size() == 0)
-        strerror = QStringLiteral("Unknown reason #%1").arg(err.Result);
+    QString error_string(err.ErrorString);
+    if (error_string.size() == 0)
+        error_string = QStringLiteral("Unknown reason #%1").arg(err.Result);
 
     ovr_Shutdown();
 
-    return error(strerror);
+    return error(error_string);
 }
 
 void rift_tracker_140::data(double *data)
