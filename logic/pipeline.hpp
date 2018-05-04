@@ -6,6 +6,7 @@
 #include "api/plugin-support.hpp"
 #include "mappings.hpp"
 #include "compat/euler.hpp"
+#include "compat/enum-operators.hpp"
 #include "runtime-libraries.hpp"
 #include "extensions.hpp"
 
@@ -62,7 +63,7 @@ public:
 using namespace time_units;
 
 struct OTR_LOGIC_EXPORT bits
-{
+{   
     enum flags : unsigned {
         f_center         = 1 << 0,
         f_held_center    = 1 << 1,
@@ -73,11 +74,13 @@ struct OTR_LOGIC_EXPORT bits
 
     std::atomic<unsigned> b;
 
-    void set(flags flag_, bool val_);
+    void set(flags flag_, bool val);
     void negate(flags flag_);
-    bool get(unsigned flag);
+    bool get(flags flag);
     bits();
 };
+
+DEFINE_ENUM_OPERATORS(bits::flags);
 
 class OTR_LOGIC_EXPORT pipeline : private QThread, private bits
 {
@@ -144,6 +147,6 @@ public:
     void set_zero(bool value);
 };
 
-} // ns pipeine_impl
+} // ns pipeline_impl
 
 using pipeline_impl::pipeline;

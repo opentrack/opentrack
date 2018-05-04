@@ -667,7 +667,7 @@ void bits::negate(flags flag_)
     }
 }
 
-bool bits::get(unsigned flag)
+bool bits::get(flags flag)
 {
     return !!(b & flag);
 }
