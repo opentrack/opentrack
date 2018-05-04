@@ -480,8 +480,10 @@ void pipeline::logic()
 
     {
         ev.run_events(EV::ev_before_filter, value);
-        value = maybe_apply_filter(value);
-        nan_check(value);
+        Pose tmp = maybe_apply_filter(value);
+        nan_check(tmp);
+        if (!center_ordered)
+            value = tmp;
         logger.write_pose(value); // "filtered"
     }
 
