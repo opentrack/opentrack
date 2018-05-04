@@ -230,20 +230,17 @@ static bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-template<typename x, typename y, typename... xs>
-static force_inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
-{
-    return is_nan(datum) || nan_check_(next, rest...);
-}
-
 template<typename x>
 static force_inline bool nan_check_(const x& datum)
 {
     return is_nan(datum);
 }
 
-template<typename>
-static bool nan_check_() = delete;
+template<typename x, typename y, typename... xs>
+static force_inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
+{
+    return is_nan(datum) || nan_check_(next, rest...);
+}
 
 static never_inline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
