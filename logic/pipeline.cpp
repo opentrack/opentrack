@@ -452,6 +452,7 @@ void pipeline::logic()
     // we must center prior to getting data from the tracker
     const bool center_ordered = get(f_center | f_held_center) && tracking_started;
     const bool own_center_logic = center_ordered && libs.pTracker->center();
+    const bool hold_ordered = get(f_enabled_p) ^ get(f_enabled_h);
 
     Pose value, raw;
     vec6_bool disabled;
@@ -461,10 +462,7 @@ void pipeline::logic()
         libs.pTracker->data(tmp);
         nan_check(tmp);
         ev.run_events(EV::ev_raw, tmp);
-
-        if (get(f_enabled_p) ^ !get(f_enabled_h))
-            for (int i = 0; i < 6; i++)
-                newpose(i) = tmp(i);
+        newpose = tmp;
     }
 
     std::tie(raw, value, disabled) = get_selected_axis_value(newpose);
@@ -503,7 +501,12 @@ void pipeline::logic()
         nan_check(value);
     }
 
-    goto ok;
+    // we must proceed with all the filtering since the filter
+    // needs fresh values to prevent deconvergence
+    // same for other stuff that needs dt, it could go stupid
+
+    if (!hold_ordered)
+        goto ok;
 
 error:
     {
