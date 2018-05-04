@@ -75,7 +75,7 @@ euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) co
 Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
                               const vec6_bool& disable, bool neck_enable, int neck_z)
 {
-    euler_t rel(static_cast<const double*>(value));
+    euler_t rel((const double*)(value));
 
     if (state != reltrans_disabled)
     {
@@ -320,7 +320,7 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
             rotation.inv_rot_center = rotation.rotation.t();
             //scaled_rotation.rot_center = scaled_rotation.rotation.t();
 
-            t_center = euler_t(static_cast<const double*>(value));
+            t_center = euler_t((const double*)(value));
         }
     }
 }
@@ -451,19 +451,17 @@ void pipeline::logic()
     const bool own_center_logic = center_ordered && libs.pTracker->center();
     const bool hold_ordered = get(f_enabled_p) ^ get(f_enabled_h);
 
-    Pose value, raw;
-    vec6_bool disabled;
-
     {
         Pose tmp;
         libs.pTracker->data(tmp);
-        nan_check(tmp);
         ev.run_events(EV::ev_raw, tmp);
         newpose = tmp;
     }
 
-    std::tie(raw, value, disabled) = get_selected_axis_value(newpose);
+    auto [raw, value, disabled] = get_selected_axis_value(newpose);
     logger.write_pose(raw); // raw
+
+    nan_check(newpose, raw, value);
 
     value = clamp_value(value);
 
