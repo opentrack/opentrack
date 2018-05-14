@@ -24,10 +24,9 @@ function(otr_i18n_for_target_directory n)
                 .
                 -ts "${t}"
             COMMAND "${CMAKE_COMMAND}" -E copy "${t}" "${t2}"
+            DEPENDS ${input} ${t}
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-            DEPENDS ${input}
             COMMENT "Running lupdate for ${n}/${i}")
-        set_property(SOURCE ${input} PROPERTY GENERATED TRUE)
         set(target-name "i18n-lang-${i}-module-${n}")
         list(APPEND target-names "${target-name}")
         add_custom_target(${target-name} DEPENDS "${t2}" "${t}" COMMENT "Updating translation strings for ${n}")
@@ -72,7 +71,7 @@ function(otr_merge_translations)
                 -verbose
                 ${ts-files}
                 -qm "${qm-output}"
-            DEPENDS ${all-ts-targets}
+            DEPENDS ${all-ts-targets} ${ts-files}
             COMMENT "Running lrelease for ${i}")
 
         install(FILES "${qm-output}"
