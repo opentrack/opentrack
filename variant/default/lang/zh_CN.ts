@@ -99,15 +99,15 @@
         <translation>再说一遍，以管理员运行不是什么好主意</translation>
     </message>
     <message>
-        <source>Do not run as root. I'll keep whining at every startup.</source>
+        <source>Do not run as root. I&apos;ll keep whining at every startup.</source>
         <translation>请不要以管理员运行。这话每次启动我都会强调一遍。</translation>
     </message>
     <message>
-        <source>Don't run as root to remove these annoying messages.</source>
+        <source>Don&apos;t run as root to remove these annoying messages.</source>
         <translation>以管理员运行真的非常不好</translation>
     </message>
     <message>
-        <source>Do not run as root. Be annoyed, comprehensively.</source>
+        <source>Be annoyed, comprehensively.</source>
         <translation>请不要以管理员运行。烦了吧？赶紧动作起来</translation>
     </message>
     <message>
