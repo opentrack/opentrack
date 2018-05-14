@@ -44,7 +44,7 @@ extern "C" const char* const opentrack_version;
  * files.
  */
 
-#if !defined _WIN32 && !defined __APPLE__
+#if !defined _WIN32
 #   include <unistd.h>
 void main_window::annoy_if_root()
 {
@@ -54,7 +54,7 @@ void main_window::annoy_if_root()
             QString caption;
             QString msg;
             int sleep_ms;
-        } list const[] = {
+        } list[] = {
             {
                 tr("Running as root is bad"),
                 tr("Do not run as root. Set correct device node permissions."),

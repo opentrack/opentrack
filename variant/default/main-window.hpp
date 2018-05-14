@@ -96,7 +96,7 @@ class main_window : public QMainWindow, private State
     void changeEvent(QEvent* e) override;
     bool event(QEvent *event) override;
     bool maybe_hide_to_tray(QEvent* e);
-#if !defined _WIN32 && !defined __APPLE__
+#if !defined _WIN32
     void annoy_if_root();
 #endif
 
