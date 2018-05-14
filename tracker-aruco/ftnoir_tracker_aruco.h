@@ -38,29 +38,17 @@
 using namespace options;
 
 struct settings : opts {
-    enum rot
-    {
-        rot_zero = 0,
-        rot_neg = -1,
-        rot_plus = +1,
-    };
+    value<QString> camera_name { b, "camera-name", ""};
+    value<int> fov { b, "field-of-view", 56 };
 
-    value<int> fov;
-    value<double> headpos_x, headpos_y, headpos_z;
-    value<QString> camera_name;
-    value<int> force_fps, resolution;
-    value<rot> model_rotation;
-    settings() :
-        opts("aruco-tracker"),
-        fov(b, "field-of-view", 56),
-        headpos_x(b, "headpos-x", 0),
-        headpos_y(b, "headpos-y", 0),
-        headpos_z(b, "headpos-z", 0),
-        camera_name(b, "camera-name", ""),
-        force_fps(b, "force-fps", 0),
-        resolution(b, "force-resolution", 0),
-        model_rotation(b, "model-rotation", rot_zero)
-    {}
+    value<double> headpos_x { b, "headpos-x", 0 },
+                  headpos_y { b, "headpos-y", 0 },
+                  headpos_z { b, "headpos-z", 0 };
+
+    value<int> force_fps { b, "force-fps", 0 },
+               resolution { b, "force-resolution", 0 };
+
+    settings() = default;
 };
 
 class aruco_dialog;
@@ -93,8 +81,6 @@ private:
     void set_detector_params();
     void cycle_detection_params();
 
-    cv::Point3f rotate_model(float x, float y, settings::rot mode);
-
     cv::VideoCapture camera;
     QMutex camera_mtx;
     QMutex mtx;
@@ -105,9 +91,6 @@ private:
     double no_detection_timeout = 0;
     cv::Mat frame, grayscale, color;
     cv::Matx33d r;
-#ifdef DEBUG_UNSHARP_MASKING
-    cv::Mat blurred;
-#endif
     std::vector<cv::Point3f> obj_points {4};
     cv::Matx33d intrinsics = cv::Matx33d::eye();
     aruco::MarkerDetector detector;
@@ -121,17 +104,13 @@ private:
     std::vector<cv::Point3f> roi_points {4};
     cv::Rect last_roi { 65535, 65535, 0, 0 };
     Timer fps_timer, last_detection_timer;
-    unsigned adaptive_size_pos = 0;
+    unsigned adaptive_size_pos { 0 };
     bool use_otsu = false;
 
 #if !defined USE_EXPERIMENTAL_CANNY
     static constexpr inline int adaptive_thres = 6;
 #else
     static constexpr inline int adaptive_thres = 3;
-#endif
-
-#ifdef DEBUG_UNSHARP_MASKING
-    static constexpr inline double gauss_kernel_size = 3;
 #endif
 
     static constexpr inline double timeout = 1;
@@ -141,6 +120,11 @@ private:
     static constexpr inline float size_max = 0.5;
 
     static constexpr inline double RC = .25;
+
+#ifdef DEBUG_UNSHARP_MASKING
+    static constexpr inline double gauss_kernel_size = 3;
+    cv::Mat blurred;
+#endif
 };
 
 class aruco_dialog : public ITrackerDialog

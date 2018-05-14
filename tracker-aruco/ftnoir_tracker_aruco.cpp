@@ -227,19 +227,6 @@ void aruco_tracker::clamp_last_roi()
     last_roi &= cv::Rect(0, 0, color.cols, color.rows);
 }
 
-cv::Point3f aruco_tracker::rotate_model(float x, float y, settings::rot mode)
-{
-    cv::Point3f pt(x, y, 0);
-
-    if (mode)
-    {
-        const double theta = int(mode) * 90/4. * M_PI/180;
-        pt.x = x * cos(theta) - y * sin(theta);
-        pt.y = y * cos(theta) + x * sin(theta);
-    }
-    return pt;
-}
-
 void aruco_tracker::set_points()
 {
     using f = float;
@@ -249,12 +236,10 @@ void aruco_tracker::set_points()
 
     const int x1=1, x2=2, x3=3, x4=0;
 
-    settings::rot mode = s.model_rotation;
-
-    obj_points[x1] = rotate_model(-size, -size, mode);
-    obj_points[x2] = rotate_model(size, -size, mode);
-    obj_points[x3] = rotate_model(size, size, mode);
-    obj_points[x4] = rotate_model(-size, size, mode);
+    obj_points[x1] = { -size, -size, 0 };
+    obj_points[x2] = { size, -size, 0 };
+    obj_points[x3] = { size, size, 0 };
+    obj_points[x4] = { -size, size, 0 };
 
     for (unsigned i = 0; i < 4; i++)
         obj_points[i] += cv::Point3f(hx, hy, hz);
@@ -341,9 +326,9 @@ void aruco_tracker::set_detector_params()
 
     detector.setThresholdParams(adaptive_sizes[adaptive_size_pos], adaptive_thres);
 #else
-        detector._thresMethod = aruco::MarkerDetector::CANNY;
-        int value = adaptive_sizes[adaptive_size_pos];
-        detector.setThresholdParams(value, value * 3);
+    detector._thresMethod = aruco::MarkerDetector::CANNY;
+    int value = adaptive_sizes[adaptive_size_pos];
+    detector.setThresholdParams(value, value * 3);
 #endif
 }
 
@@ -479,11 +464,6 @@ aruco_dialog::aruco_dialog() :
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
-
-    ui.model_rotation->addItem("0", int(settings::rot_zero));
-    ui.model_rotation->addItem("+22.5", int(settings::rot_plus));
-    ui.model_rotation->addItem("-22.5", int(settings::rot_neg));
-    tie_setting(s.model_rotation, ui.model_rotation);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
