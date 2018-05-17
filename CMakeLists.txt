@@ -26,7 +26,7 @@ include(opentrack-check-build-directory)
 include(opentrack-mrproper)
 
 project(opentrack)
-cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.8 FATAL_ERROR)
 include(opentrack-policy NO_POLICY_SCOPE)
 include(opentrack-load-user-settings)
 
