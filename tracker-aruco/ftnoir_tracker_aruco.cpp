@@ -40,9 +40,10 @@ static const int adaptive_sizes[] =
     30,
     80,
 #else
+    5,
     7,
     9,
-    13,
+    11,
 #endif
 };
 

@@ -113,8 +113,8 @@ private:
     static constexpr inline int adaptive_thres = 3;
 #endif
 
-    static constexpr inline double timeout = 1;
-    static constexpr inline double timeout_backoff_c = 4./11;
+    static constexpr inline double timeout = .35;
+    static constexpr inline double timeout_backoff_c = .25;
 
     static constexpr inline float size_min = 0.05;
     static constexpr inline float size_max = 0.5;
