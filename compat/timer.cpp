@@ -56,7 +56,7 @@ time_type Timer::elapsed_ms() const
 
 Timer::time_type Timer::elapsed_seconds() const
 {
-    return double(elapsed_nsecs() * 1e-9L);
+    return double(elapsed_nsecs() * 1e-9);
 }
 
 // --
