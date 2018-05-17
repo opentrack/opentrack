@@ -1,9 +1,9 @@
 #include "tr.hpp"
 
 
-TR::TR() {}
+TR::TR() : QObject(nullptr) {}
 
-TR::TR(const TR&) {}
+TR::TR(const TR&) : QObject(nullptr) {}
 
 TR& TR::operator=(const TR& other)
 {
