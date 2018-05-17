@@ -68,10 +68,6 @@
         <translation>Camera-instellingen</translation>
     </message>
     <message>
-        <source>Model rotation</source>
-        <translation>Modelrotatie</translation>
-    </message>
-    <message>
         <source>Head X</source>
         <translation>Hoofd-X</translation>
     </message>

@@ -68,10 +68,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Model rotation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Head X</source>
         <translation type="unfinished"></translation>
     </message>
