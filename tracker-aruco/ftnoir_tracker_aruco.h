@@ -48,7 +48,7 @@ struct settings : opts {
     value<int> force_fps { b, "force-fps", 0 },
                resolution { b, "force-resolution", 0 };
 
-    settings() = default;
+    settings() : opts("aruco-tracker") {}
 };
 
 class aruco_dialog;
