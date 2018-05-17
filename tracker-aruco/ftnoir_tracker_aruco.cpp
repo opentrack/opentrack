@@ -106,6 +106,7 @@ bool aruco_tracker::detect_with_roi()
 
         detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false);
 
+        // XXX TODO maybe cache the first-present marker id and force it's the same one? -sh 20180517
         if (markers.size() == 1 && markers[0].size() == 4)
         {
             auto& m = markers[0];
