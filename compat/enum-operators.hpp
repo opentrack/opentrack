@@ -10,7 +10,7 @@
     } // end
 
 #define OTR_FLAGS_SHIFT(type, op)                                       \
-    type operator op (type, unsigned) = delete;
+    type operator op (type, unsigned) = delete
 
 #define OTR_FLAGS_OP1(type, op)                                         \
     inline type operator op (type x)                                    \
