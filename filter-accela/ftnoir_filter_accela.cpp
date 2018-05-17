@@ -13,6 +13,7 @@
 #include <QMutexLocker>
 
 #include "compat/math-imports.hpp"
+#include "compat/time.hpp"
 
 accela::accela() : first_run(true)
 {
@@ -121,8 +122,9 @@ void accela::filter(const double* input, double *output)
 
     using time_units::secs_;
 
-    if (debug_timer.is_elapsed(secs_(1)))
+    if (debug_timer.elapsed_seconds() >= 1)
     {
+        debug_timer.start();
         qDebug() << "accela:"
                  << "max" << debug_max
                  << "mean" << var.avg()
