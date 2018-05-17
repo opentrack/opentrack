@@ -61,7 +61,7 @@ void main_window::annoy_if_root()
                 tr("Running as root is bad"),
                 tr("Do not run as root. Set correct device node permissions."),
                 1000,
-            }
+            },
             {
                 tr("Running as root is bad, seriously"),
                 tr("Do not run as root. I'll keep whining at every startup."),
