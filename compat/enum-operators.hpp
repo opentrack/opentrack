@@ -25,4 +25,4 @@
     OTR_FLAGS_OP2(type, ^)                                              \
     OTR_FLAGS_OP1(type, ~)                                              \
     OTR_FLAGS_SHIFT(type, <<);                                          \
-    OTR_FLAGS_SHIFT(type, >>); // end
+    OTR_FLAGS_SHIFT(type, >>) // end
