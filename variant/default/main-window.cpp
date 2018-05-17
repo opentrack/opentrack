@@ -50,11 +50,13 @@ void main_window::annoy_if_root()
 {
     if (geteuid() == 0)
     {
-        struct {
+        struct lst {
             QString caption;
             QString msg;
             int sleep_ms;
-        } list[] = {
+        };
+
+        const lst list[] = {
             {
                 tr("Running as root is bad"),
                 tr("Do not run as root. Set correct device node permissions."),
