@@ -1,5 +1,6 @@
 find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
     otr_module(cv STATIC)
+    target_link_libraries(opentrack-cv opencv_core opencv_videoio)
     target_include_directories(opentrack-cv SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
 endif()
