@@ -37,7 +37,8 @@ function(otr_i18n_for_target_directory n)
 endfunction()
 
 function(otr_merge_translations)
-    install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/i18n\")")
+    otr_escape_string(i18n-pfx "${opentrack-i18n-pfx}")
+    install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/${i18n-pfx}\")")
 
     get_property(variant GLOBAL PROPERTY opentrack-variant)
     if(NOT ".${variant}" STREQUAL ".default")
