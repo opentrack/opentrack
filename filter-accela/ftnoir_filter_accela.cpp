@@ -116,7 +116,7 @@ void accela::filter(const double* input, double *output)
     });
 
 #if defined DEBUG_ACCELA
-    var.input(fabs(smoothed_input[0]) + fabs(smoothed_input[1]) + fabs(smoothed_input[2]));
+    var.input(fabs(smoothed_input[0]) + fabs(smoothed_input[1]));
     debug_max = fmax(debug_max, smoothed_input[0]);
 
     using time_units::secs_;
