@@ -11,6 +11,8 @@
 #include "timer.hpp"
 #include <cmath>
 
+using time_type = Timer::time_type;
+
 Timer::Timer()
 {
     start();
@@ -23,21 +25,21 @@ void Timer::start()
 
 // nanoseconds
 
-long long Timer::elapsed_nsecs() const
+Timer::time_type Timer::elapsed_nsecs() const
 {
     timespec cur{};
     gettime(&cur);
     return conv_nsecs(cur);
 }
 
-long long Timer::conv_nsecs(const struct timespec& cur) const
+Timer::time_type Timer::conv_nsecs(const struct timespec& cur) const
 {
     return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
 }
 
 // microseconds
 
-double Timer::elapsed_usecs() const
+time_type Timer::elapsed_usecs() const
 {
     timespec cur{};
     gettime(&cur);
@@ -47,12 +49,12 @@ double Timer::elapsed_usecs() const
 
 // milliseconds
 
-double Timer::elapsed_ms() const
+time_type Timer::elapsed_ms() const
 {
     return elapsed_usecs() / 1000.;
 }
 
-double Timer::elapsed_seconds() const
+Timer::time_type Timer::elapsed_seconds() const
 {
     return double(elapsed_nsecs() * 1e-9L);
 }
@@ -77,7 +79,6 @@ static void otr_clock_gettime(timespec* ts)
     static const LARGE_INTEGER freq = otr_get_clock_frequency();
 
     LARGE_INTEGER d;
-
     (void) QueryPerformanceCounter(&d);
 
     using ll = long long;

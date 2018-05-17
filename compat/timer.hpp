@@ -12,16 +12,12 @@
 #include "time.hpp"
 
 #include <ctime>
+#include <type_traits>
 
-class OTR_COMPAT_EXPORT Timer final
+struct OTR_COMPAT_EXPORT Timer final
 {
-    struct timespec state;
-    long long conv_nsecs(const struct timespec& cur) const;
+    using time_type = time_t;
 
-    static void gettime(struct timespec* state);
-
-    using ns = time_units::ns;
-public:
     Timer();
     void start();
 
@@ -32,21 +28,13 @@ public:
         return time_cast<t>(ns(elapsed_nsecs()));
     }
 
-    template<typename t>
-    bool is_elapsed(t&& time_value)
-    {
-        using namespace time_units;
-
-        if (unlikely(elapsed<ns>() >= time_value))
-        {
-            start();
-            return true;
-        }
-        return false;
-    }
-
-    long long elapsed_nsecs() const;
-    double elapsed_usecs() const;
-    double elapsed_ms() const;
-    double elapsed_seconds() const;
+    time_type elapsed_nsecs() const;
+    time_type elapsed_usecs() const;
+    time_type elapsed_ms() const;
+    time_type elapsed_seconds() const;
+private:
+    struct timespec state;
+    static void gettime(struct timespec* state);
+    time_type conv_nsecs(const struct timespec& cur) const;
+    using ns = time_units::ns;
 };
