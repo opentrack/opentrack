@@ -674,7 +674,7 @@ bool bits::get(flags flag)
 
 bits::bits() : b(0u)
 {
-    set(f_center, true);
+    set(f_center, false);
     set(f_held_center, false);
     set(f_enabled_p, true);
     set(f_enabled_h, true);
