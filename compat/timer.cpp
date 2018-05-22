@@ -25,21 +25,21 @@ void Timer::start()
 
 // nanoseconds
 
-Timer::time_type Timer::elapsed_nsecs() const
+time_type Timer::elapsed_nsecs() const
 {
     timespec cur{};
     gettime(&cur);
     return conv_nsecs(cur);
 }
 
-Timer::time_type Timer::conv_nsecs(const struct timespec& cur) const
+time_type Timer::conv_nsecs(const struct timespec& cur) const
 {
     return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
 }
 
 // microseconds
 
-time_type Timer::elapsed_usecs() const
+double Timer::elapsed_usecs() const
 {
     timespec cur{};
     gettime(&cur);
@@ -49,12 +49,12 @@ time_type Timer::elapsed_usecs() const
 
 // milliseconds
 
-time_type Timer::elapsed_ms() const
+double Timer::elapsed_ms() const
 {
     return elapsed_usecs() / 1000.;
 }
 
-Timer::time_type Timer::elapsed_seconds() const
+double Timer::elapsed_seconds() const
 {
     return double(elapsed_nsecs() * 1e-9);
 }

@@ -29,9 +29,9 @@ struct OTR_COMPAT_EXPORT Timer final
     }
 
     time_type elapsed_nsecs() const;
-    time_type elapsed_usecs() const;
-    time_type elapsed_ms() const;
-    time_type elapsed_seconds() const;
+    double elapsed_usecs() const;
+    double elapsed_ms() const;
+    double elapsed_seconds() const;
 private:
     struct timespec state;
     static void gettime(struct timespec* state);
