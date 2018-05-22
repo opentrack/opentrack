@@ -57,7 +57,7 @@ public:
                         const vec6_bool& disable, bool neck_enable, int neck_z);
 
     warn_result_unused
-    euler_t apply_neck(const Pose& value, int nz) const;
+    euler_t apply_neck(const Pose& value, int nz, bool disable_tz) const;
 };
 
 using namespace time_units;

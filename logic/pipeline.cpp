@@ -114,7 +114,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             // dynamic neck
             if (neck_enable)
             {
-                const euler_t neck = apply_neck(value, -neck_z);
+                const euler_t neck = apply_neck(value, -neck_z, disable(TZ));
 
                 for (unsigned k = 0; k < 3; k++)
                     rel(k) += neck(k);
@@ -169,7 +169,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
         // dynamic neck
         if (neck_enable)
         {
-            const euler_t neck = apply_neck(value, -neck_z);
+            const euler_t neck = apply_neck(value, -neck_z, disable(TZ));
 
             for (unsigned k = 0; k < 3; k++)
                 rel(k) += neck(k);
@@ -182,13 +182,16 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
     };
 }
 
-euler_t reltrans::apply_neck(const Pose& value, int nz) const
+euler_t reltrans::apply_neck(const Pose& value, int nz, bool disable_tz) const
 {
     euler_t neck;
 
     const rmat R = euler_to_rmat(euler_t(&value[Yaw]) * d2r);
     neck = rotate(R, { 0, 0, nz }, vec3_bool());
     neck(TZ) = neck(TZ) - nz;
+
+    if (disable_tz)
+        neck(TZ) = 0;
 
     return neck;
 }
