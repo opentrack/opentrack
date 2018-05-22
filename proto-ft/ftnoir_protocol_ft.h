@@ -7,21 +7,21 @@
  */
 
 #pragma once
-
 #include "ui_ftnoir_ftcontrols.h"
-
-#include "freetrackclient/fttypes.h"
-
-#include "compat/shm.h"
-#include "compat/tr.hpp"
-#include "options/options.hpp"
 #include "api/plugin-api.hpp"
 
 #include <QProcess>
 #include <QString>
 #include <QMutex>
 
+#include <QDebug>
+
 #include <cinttypes>
+#include "freetrackclient/fttypes.h"
+
+#include "compat/shm.h"
+#include "options/options.hpp"
+
 #include <memory>
 
 using namespace options;
@@ -34,30 +34,26 @@ struct settings : opts {
     {}
 };
 
-class freetrack : public TR, public IProtocol
+class freetrack : TR, public IProtocol
 {
     Q_OBJECT
 
 public:
-    freetrack();
+    freetrack() = default;
     ~freetrack() override;
     module_status initialize() override;
-    void pose( const double *headpose );
-    QString game_name() override {
-        QMutexLocker foo(&game_name_mutex);
-        return connected_game;
-    }
+    void pose(const double* pose) override;
+    QString game_name() override;
 private:
     settings s;
     shm_wrapper shm { FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap) };
-    FTHeap *pMemData { (FTHeap*) shm.ptr() };
+    FTHeap* pMemData { (FTHeap*) shm.ptr() };
 
     QProcess dummyTrackIR;
 
     int intGameID = -1;
     QString connected_game;
     QMutex game_name_mutex;
-    unsigned data_id = 0;
 
     void start_dummy();
     static float degrees_to_rads(double degrees);
@@ -86,6 +82,7 @@ class freetrackDll : public Metadata
 {
     Q_OBJECT
 
+public:
     QString name() { return tr("freetrack 2.0 Enhanced"); }
     QIcon icon() { return QIcon(":/images/freetrack.png"); }
 };

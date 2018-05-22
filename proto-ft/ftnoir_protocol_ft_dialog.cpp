@@ -8,11 +8,11 @@
  * purpose with or without fee is hereby granted, provided that the above        *
  * copyright notice and this permission notice appear in all copies.             *
  */
-#include "ftnoir_protocol_ft.h"
-#include "compat/library-path.hpp"
 
+#include "compat/library-path.hpp"
+#include "ftnoir_protocol_ft.h"
+#include <QDebug>
 #include <QFileDialog>
-#include <QFileInfo>
 
 FTControls::FTControls()
 {
@@ -21,10 +21,6 @@ FTControls::FTControls()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
-
-    ui.cbxSelectInterface->addItem("Enable both");
-    ui.cbxSelectInterface->addItem("Use FreeTrack, hide TrackIR");
-    ui.cbxSelectInterface->addItem("Use TrackIR, hide FreeTrack");
 
     tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
 }

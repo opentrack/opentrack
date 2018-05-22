@@ -1,4 +1,4 @@
-/* Copyright (c) 2013-2018 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2013-2015, 2017 Stanislaw Halik <sthalik@misaki.pl>
  * Copyright (c) 2015 Wim Vriend
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -6,34 +6,30 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_protocol_ft.h"
-#include "csv/csv.h"
 #include "compat/library-path.hpp"
 
-#include <cassert>
-#include <cstddef>
-#include <atomic>
+#include "ftnoir_protocol_ft.h"
+#include "csv/csv.h"
+
 #include <cmath>
-#include <cstdlib>
-
 #include <windows.h>
-#include <intrin.h>
 
-static int page_size()
+freetrack::~freetrack()
 {
-  SYSTEM_INFO system_info;
-  GetSystemInfo(&system_info);
-  return system_info.dwPageSize;
+    dummyTrackIR.close();
 }
 
+static_assert(sizeof(LONG) == sizeof(std::int32_t), "");
 static_assert(sizeof(LONG) == 4u, "");
+
+static constexpr inline float d2r = float(M_PI/180);
 
 never_inline void store(float volatile& place, const float value)
 {
     union
     {
         float f32;
-        LONG i32;
+        LONG i32 alignas(alignof(float));
     } value_;
 
     value_.f32 = value;
@@ -44,11 +40,10 @@ never_inline void store(float volatile& place, const float value)
     (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
 }
 
-template<typename t, typename u>
-force_inline
-std::enable_if_t<(std::is_integral_v<t>) && sizeof(t) == 4>
-store(t volatile& place, u value)
+template<typename t>
+force_inline void store(t volatile& place, t value)
 {
+    static_assert(sizeof(t) == 4u, "");
     (void)InterlockedExchange((LONG volatile*) &place, value);
 }
 
@@ -57,35 +52,20 @@ force_inline std::int32_t load(std::int32_t volatile& place)
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }
 
-freetrack::freetrack()
-{
-}
-
-freetrack::~freetrack()
-{
-    if (shm.success())
-    {
-        store(pMemData->data.DataID, 0);
-        store(pMemData->GameID2, -1);
-    }
-
-    dummyTrackIR.close();
-}
-
 void freetrack::pose(const double* headpose)
 {
-    const float yaw = -degrees_to_rads(headpose[Yaw]);
-    const float roll = degrees_to_rads(headpose[Roll]);
+    const float yaw = -headpose[Yaw] * d2r;
+    const float roll = headpose[Roll] * d2r;
     const float tx = float(headpose[TX] * 10);
     const float ty = float(headpose[TY] * 10);
     const float tz = float(headpose[TZ] * 10);
 
     // HACK: Falcon BMS makes a "bump" if pitch is over the value -sh 20170615
     const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < 1e-4;
-    const float pitch = -degrees_to_rads(is_crossing_90 ? 89.85 : headpose[Pitch]);
+    const float pitch = -d2r * (is_crossing_90 ? 89.86 : headpose[Pitch]);
 
-    FTHeap* ft = pMemData;
-    FTData* data = &ft->data;
+    FTHeap* const ft = pMemData;
+    FTData* const data = &ft->data;
 
     store(data->X, tx);
     store(data->Y, ty);
@@ -97,15 +77,10 @@ void freetrack::pose(const double* headpose)
 
     const std::int32_t id = load(ft->GameID);
 
-    data_id++;
-    data_id %= 128;
-
-    store(data->DataID, 60 * 5 + data_id);
-
     if (intGameID != id)
     {
         QString gamename;
-        union {
+        union  {
             unsigned char table[8];
             std::int32_t ints[2];
         } t;
@@ -114,36 +89,46 @@ void freetrack::pose(const double* headpose)
 
         (void)CSV::getGameData(id, t.table, gamename);
 
-        if (gamename.isEmpty() && id > 0)
-            gamename = tr("Unknown game");
+        {
+#if 0
+            const std::uintptr_t addr = (std::uintptr_t)(void*)&pMemData->table[0];
+            const std::uintptr_t addr_ = addr & ~(sizeof(LONG)-1u);
 
-        static_assert(sizeof(LONG) == 4, "");
-        static_assert(sizeof(int) == 4, "");
+            // the data `happens' to be aligned by virtue of element ordering
+            // inside FTHeap. there's no deeper reason behind it.
 
-        // memory mappings are page-aligned due to TLB
-        if ((std::intptr_t(pMemData) & page_size() - 1) != 0)
-            assert(!"proto/freetrack: memory mapping not page aligned");
+            if (addr != addr_)
+                assert(!"unaligned access");
 
-        // no atomic access for `char'
-        for (unsigned k = 0; k < 2; k++)
-            store(pMemData->table_ints[k], t.ints[k]);
+            static_assert(sizeof(LONG) == 4, "");
+#endif
+
+            for (unsigned k = 0; k < 2; k++)
+                store(pMemData->table_ints[k], t.ints[k]);
+        }
 
         store(ft->GameID2, id);
+        store((std::uint32_t volatile &)data->DataID, 0u);
 
         intGameID = id;
+
+        if (gamename.isEmpty())
+            gamename = tr("Unknown game");
 
         QMutexLocker foo(&game_name_mutex);
         connected_game = gamename;
     }
+    else
+        (void)InterlockedAdd((LONG volatile*)&data->DataID, 1);
 }
 
-float freetrack::degrees_to_rads(double degrees)
+QString freetrack::game_name()
 {
-    return float(degrees*M_PI/180);
+    QMutexLocker foo(&game_name_mutex);
+    return connected_game;
 }
 
-void freetrack::start_dummy()
-{
+void freetrack::start_dummy() {
     static const QString program = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "TrackIR.exe";
     dummyTrackIR.setProgram("\"" + program + "\"");
     dummyTrackIR.start();
@@ -176,7 +161,6 @@ module_status freetrack::initialize()
     bool use_ft = false, use_npclient = false;
 
     switch (s.intUsedInterface) {
-    default:
     case 0:
         use_ft = true;
         use_npclient = true;
@@ -187,14 +171,17 @@ module_status freetrack::initialize()
     case 2:
         use_npclient = true;
         break;
+    default:
+        break;
     }
 
     set_protocols(use_ft, use_npclient);
 
+    pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
     pMemData->data.CamHeight = 250;
 
-#if 1
+#if 0
     store(pMemData->data.X1, float(100));
     store(pMemData->data.Y1, float(200));
     store(pMemData->data.X2, float(300));
@@ -203,8 +190,7 @@ module_status freetrack::initialize()
     store(pMemData->data.Y3, float(100));
 #endif
 
-    store(pMemData->GameID2, -1);
-    store(pMemData->data.DataID, 0);
+    store(pMemData->GameID2, 0);
 
     for (unsigned k = 0; k < 2; k++)
         store(pMemData->table_ints[k], 0);
