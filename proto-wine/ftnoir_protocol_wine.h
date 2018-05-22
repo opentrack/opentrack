@@ -55,6 +55,7 @@ class wineDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() override { return QString("Wine -- Windows layer for Unix"); }
+public:
+    QString name() override { return tr("Wine -- Windows layer for Unix"); }
     QIcon icon() override { return QIcon(":/images/wine.png"); }
 };
