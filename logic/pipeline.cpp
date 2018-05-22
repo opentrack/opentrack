@@ -421,12 +421,12 @@ Pose pipeline::apply_reltrans(Pose value, vec6_bool disabled, bool centerp)
         rel.on_center();
 
     value = rel.apply_pipeline(s.reltrans_mode, value,
-                               { !!s.reltrans_disable_src_yaw,
-                                 !!s.reltrans_disable_src_pitch,
-                                 !!s.reltrans_disable_src_roll,
-                                 !!s.reltrans_disable_tx,
+                               { !!s.reltrans_disable_tx,
                                  !!s.reltrans_disable_ty,
-                                 !!s.reltrans_disable_tz },
+                                 !!s.reltrans_disable_tz,
+                                 !!s.reltrans_disable_src_yaw,
+                                 !!s.reltrans_disable_src_pitch,
+                                 !!s.reltrans_disable_src_roll, },
                                s.neck_enable,
                                s.neck_z);
 
