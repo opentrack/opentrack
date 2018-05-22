@@ -40,6 +40,18 @@
 Starting tracking will again overwrite the DLL locations.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Enable both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use freetrack, disable TrackIR</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use TrackIR, disable freetrack</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>freetrack</name>
