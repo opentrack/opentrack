@@ -60,7 +60,7 @@ module_status wine::initialize()
     if (lck_shm.success())
         return status_ok();
     else
-        return error(otr_tr("Can't open shared memory mapping"));
+        return error(tr("Can't open shared memory mapping"));
 }
 
 OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wineDll)

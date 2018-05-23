@@ -11,8 +11,9 @@
 #include "api/plugin-api.hpp"
 #include "compat/shm.h"
 #include "wine-shm.h"
+#include "compat/tr.hpp"
 
-class wine : public IProtocol
+class wine : TR, public IProtocol
 {
 public:
     wine();
