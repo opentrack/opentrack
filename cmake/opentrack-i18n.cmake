@@ -66,6 +66,13 @@ function(otr_merge_translations)
         set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
         list(APPEND all-qm-files "${qm-output}")
 
+        # whines about duplicate messages since tracker-pt-base is static
+        if(WIN32)
+            set(to-null "2>NUL")
+        else()
+            set(to-null "2>/dev/null")
+        endif()
+
         add_custom_command(OUTPUT "${qm-output}"
             COMMAND "${lrelease-binary}"
                 -nounfinished
@@ -73,6 +80,7 @@ function(otr_merge_translations)
                 -verbose
                 ${ts-files}
                 -qm "${qm-output}"
+                ${to-null}
             DEPENDS ${all-ts-targets} ${ts-files}
             COMMENT "Running lrelease for ${i}")
 
