@@ -22,7 +22,7 @@ accela::accela() : first_run(true)
 
 template<int N = 3, typename F>
 never_inline
-static void do_deltas(const double* deltas, double* output, double& smoothed, F&& fun)
+static void do_deltas(const double* deltas, double* output, F&& fun)
 {
     double norm[N];
 
@@ -77,9 +77,6 @@ void accela::filter(const double* input, double *output)
             last_output[i] = f;
         }
 
-        smoothed_input[0] = 0;
-        smoothed_input[1] = 0;
-
         t.start();
 #if defined DEBUG_ACCELA
         debug_max = 0;
@@ -112,28 +109,9 @@ void accela::filter(const double* input, double *output)
         deltas[i] = d / rot_thres;
     }
 
-    do_deltas(&deltas[Yaw], &output[Yaw], smoothed_input[0], [this](double x) {
+    do_deltas(&deltas[Yaw], &output[Yaw], [this](double x) {
         return spline_rot.get_value_no_save(x);
     });
-
-#if defined DEBUG_ACCELA
-    var.input(fabs(smoothed_input[0]) + fabs(smoothed_input[1]));
-    debug_max = fmax(debug_max, smoothed_input[0]);
-
-    using time_units::secs_;
-
-    if (debug_timer.elapsed_seconds() >= 1)
-    {
-        debug_timer.start();
-        qDebug() << "accela:"
-                 << "max" << debug_max
-                 << "mean" << var.avg()
-                 << "stddev/mean" << var.stddev() / var.avg();
-
-        var.clear();
-        debug_max = 0;
-    }
-#endif
 
     // pos
 
@@ -148,7 +126,7 @@ void accela::filter(const double* input, double *output)
         deltas[i] = d / pos_thres;
     }
 
-    do_deltas(&deltas[TX], &output[TX], smoothed_input[1], [this](double x) {
+    do_deltas(&deltas[TX], &output[TX], [this](double x) {
         return spline_pos.get_value_no_save(x);
     });
 

@@ -28,7 +28,6 @@ public:
 private:
     settings_accela s;
     double last_output[6], deltas[6];
-    double smoothed_input[2];
     Timer t;
 #if defined DEBUG_ACCELA
     Timer debug_timer;
