@@ -1,13 +1,11 @@
 if(UNIX OR APPLE)
+    set(self opentrack-qxt-mini)
     otr_module(qxt-mini NO-COMPAT BIN)
-    if(NOT APPLE)
-        pkg_check_modules(xprotopkg REQUIRED xproto)
-        target_include_directories(opentrack-qxt-mini SYSTEM PRIVATE ${xprotopkg_INCLUDE_DIRS})
-        target_link_libraries(opentrack-qxt-mini X11)
-        add_definitions(-DQXT_BUILD)
-    else()
-        set_property(TARGET opentrack-qxt-mini
+    otr_pkgconfig(${self} x11 xcb xproto)
+    if(APPLE)
+        set_property(TARGET ${self}
                      APPEND_STRING PROPERTY
-                     LINK_FLAGS "-framework Carbon -framework CoreFoundation ")
+                     LINK_FLAGS " -framework Carbon -framework CoreFoundation ")
     endif()
+    target_compile_definitions(${self} PRIVATE -DQXT_BUILD)
 endif()
