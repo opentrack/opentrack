@@ -15,6 +15,8 @@
 
 class wine : TR, public IProtocol
 {
+    Q_OBJECT
+
 public:
     wine();
     ~wine() override;
