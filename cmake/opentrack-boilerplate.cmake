@@ -125,6 +125,8 @@ function(otr_module n_)
     endif()
 
     set(n "opentrack-${n_}")
+    # XXX TODO update callers to use instead of long name -sh 20180527
+    set(self "${n}" PARENT_SCOPE)
 
     if(NOT arg_SUBDIRS)
         otr_glob_sources(${n} .)
