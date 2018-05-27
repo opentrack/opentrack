@@ -5,8 +5,6 @@
 #include "compat/sleep.hpp"
 
 #include <cstddef>
-#include <cassert>
-#include <cstring>
 #include <algorithm>
 #include <cmath>
 #include <objbase.h>
@@ -71,8 +69,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
             continue;
         }
 
-        DIJOYSTATE2 js;
-        std::memset(&js, 0, sizeof(js));
+        DIJOYSTATE2 js = {};
 
         if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
         {
@@ -154,14 +151,10 @@ void win32_joy_ctx::joy::release()
 bool win32_joy_ctx::joy::poll(fn f)
 {
     HRESULT hr;
-    bool ok = false;
 
     (void) joy_handle->Acquire();
 
-    if (!FAILED(hr = joy_handle->Poll()))
-        ok = true;
-
-    if (!ok)
+    if (FAILED(hr = joy_handle->Poll()))
     {
         //qDebug() << "joy acquire failed" << guid << hr;
         (void) joy_handle->Unacquire();
@@ -182,24 +175,26 @@ bool win32_joy_ctx::joy::poll(fn f)
         bool is_pov = false;
         int i = -1;
 
+        // redefine since MSVC headers don't define as proper constants
+
 #define POV_HAT_OFFSET(k) \
     (offsetof(DIJOYSTATE, rgdwPOV) + (k) * sizeof(DWORD))
 
-#define BUTTON(k) \
+#define BUTTON_OFFSET(k) \
     (offsetof(DIJOYSTATE, rgbButtons) + (k) * sizeof(BYTE))
 
         switch (event.dwOfs)
         {
         case POV_HAT_OFFSET(0): i = 0; is_pov = true; break;
-        case POV_HAT_OFFSET(2): i = 1; is_pov = true; break;
-        case POV_HAT_OFFSET(3): i = 2; is_pov = true; break;
-        case POV_HAT_OFFSET(4): i = 3; is_pov = true; break;
+        case POV_HAT_OFFSET(1): i = 1; is_pov = true; break;
+        case POV_HAT_OFFSET(2): i = 2; is_pov = true; break;
+        case POV_HAT_OFFSET(3): i = 3; is_pov = true; break;
         default:
-            if (event.dwOfs >= BUTTON(0) && event.dwOfs <= BUTTON(127))
+            if (event.dwOfs >= BUTTON_OFFSET(0) && event.dwOfs <= BUTTON_OFFSET(127))
             {
                 unsigned tmp = event.dwOfs;
-                tmp -= BUTTON(0);
-                tmp /= BUTTON(1) - BUTTON(0);
+                tmp -= BUTTON_OFFSET(0);
+                tmp /= BUTTON_OFFSET(1) - BUTTON_OFFSET(0);
                 tmp &= 127;
                 i = tmp;
             }
@@ -209,8 +204,6 @@ bool win32_joy_ctx::joy::poll(fn f)
         if (is_pov)
         {
             //qDebug() << "DBG: pov" << i << event.dwData;
-
-            using std::round;
 
             unsigned char pos;
             unsigned pos_ = event.dwData;
@@ -288,13 +281,9 @@ void win32_joy_ctx::enum_state::refresh()
     for (auto it = joys.begin(); it != joys.end(); )
     {
         if (std::find_if(all.cbegin(), all.cend(), [&](const QString& guid2) { return it->second->guid == guid2; }) == all.end())
-        {
             it = joys.erase(it);
-        }
         else
-        {
             ++it;
-        }
     }
 }
 
@@ -371,8 +360,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
 {
     if (pdidoi->dwType & DIDFT_AXIS)
     {
-        DIPROPRANGE diprg;
-        std::memset(&diprg, 0, sizeof(diprg));
+        DIPROPRANGE diprg = {};
         diprg.diph.dwSize = sizeof( DIPROPRANGE );
         diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
         diprg.diph.dwHow = DIPH_BYID;
