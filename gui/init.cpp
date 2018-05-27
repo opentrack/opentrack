@@ -183,7 +183,7 @@ int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
     return status;
 }
 
-int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_window)
+OTR_GUI_EXPORT int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_window)
 {
 #if defined OTR_HAS_DENORM_CONTROL
     set_fp_mask();

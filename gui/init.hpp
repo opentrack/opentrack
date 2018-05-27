@@ -5,7 +5,7 @@
 #include <functional>
 #include <QWidget>
 
-int OTR_GUI_EXPORT otr_main(int argc, char** argv, std::function<QWidget*()> make_main_window);
+OTR_GUI_EXPORT int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_window);
 
 // XXX TODO need split MainWindow into mixins each implementing part of the functionality
 
