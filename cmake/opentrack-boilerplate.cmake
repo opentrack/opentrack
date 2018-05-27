@@ -73,15 +73,15 @@ function(otr_compat target)
         # gives incorrect result
         #get_property(linker-lang TARGET ${target} PROPERTY LINKER_LANGUAGE)
 
-        set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fvisibility=hidden ")
+        #set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fvisibility=hidden ")
 
-        if (NOT ".${${target}-cxx}" STREQUAL ".") # not a C only target
-            set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fuse-cxa-atexit ")
-        endif()
+        #if (NOT ".${${target}-cxx}" STREQUAL ".") # not a C only target
+        #    set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fuse-cxa-atexit ")
+        #endif()
 
-        if(NOT APPLE)
-            set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--as-needed ")
-        endif()
+        #if(NOT APPLE)
+        #    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--as-needed ")
+        #endif()
     endif()
 endfunction()
 

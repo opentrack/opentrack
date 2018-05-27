@@ -43,7 +43,6 @@ endif()
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_GNUCC TRUE)
-    set(CMAKE_COMPILER_IS_GNUC TRUE)
     set(CMAKE_COMPILER_IS_CLANG TRUE)
 endif()
 
@@ -112,6 +111,14 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
+if(CMAKE_COMPILER_IS_GNUCXX)
+    if (UNIX AND NOT APPLE)
+        set(_common "-fPIC -fvisibility=hidden")
+        set(CMAKE_C_FLAGS "${_common} ${CMAKE_C_FLAGS}")
+        set(CMAKE_CXX_FLAGS "${_common} -fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
+    endif()
+endif()
+
 if(APPLE)
     set(CMAKE_MACOSX_RPATH OFF)
     set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
@@ -119,7 +126,7 @@ if(APPLE)
     #set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
     set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
     set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
-    set(CMAKE_CXX_FLAGS " -stdlib=libc++ ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
 
 #if(NOT MSVC)
@@ -136,12 +143,13 @@ endforeach()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
 
+# this hack fixed mingw-w64. is it necessary anymore? -sh 20180527
 # nix -rdynamic passed from Linux-GNU.cmake
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(__LINUX_COMPILER_GNU 1)
-    set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
-    set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
-endif()
+#if(CMAKE_COMPILER_IS_GNUCXX)
+#    set(__LINUX_COMPILER_GNU 1)
+#    set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
+#    set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
+#endif()
 
 if(MINGW)
     add_definitions(-DMINGW_HAS_SECURE_API)
