@@ -11,6 +11,7 @@
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
 
+#include <cstddef>
 #include <cmath>
 #include <windows.h>
 
@@ -101,6 +102,9 @@ void freetrack::pose(const double* headpose)
                 assert(!"unaligned access");
 
             static_assert(sizeof(LONG) == 4, "");
+#else
+            // FTHeap pMemData happens to be aligned on a page boundary by virtue of
+            static_assert((offsetof(FTHeap, table) & sizeof(LONG)-1) == 0);
 #endif
 
             for (unsigned k = 0; k < 2; k++)
