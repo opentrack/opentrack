@@ -156,5 +156,5 @@ if(MINGW)
 endif()
 
 if(UNIX AND NOT APPLE)
-    include(FindPkgConfig)
+    include(opentrack-pkg-config)
 endif()
