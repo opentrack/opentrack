@@ -19,7 +19,7 @@
 #   include <QDebug>
 #   define warn(...) (qDebug() << __VA_ARGS__)
 #else
-#   define warn(...)
+#   define warn(...) (void)0
 #endif
 
 shm_wrapper::shm_wrapper(const char* shm_name, const char* mutex_name, int map_size)
