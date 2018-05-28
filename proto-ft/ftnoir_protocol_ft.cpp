@@ -91,21 +91,9 @@ void freetrack::pose(const double* headpose)
         (void)CSV::getGameData(id, t.table, gamename);
 
         {
-#if 0
-            const std::uintptr_t addr = (std::uintptr_t)(void*)&pMemData->table[0];
-            const std::uintptr_t addr_ = addr & ~(sizeof(LONG)-1u);
-
-            // the data `happens' to be aligned by virtue of element ordering
-            // inside FTHeap. there's no deeper reason behind it.
-
-            if (addr != addr_)
-                assert(!"unaligned access");
-
-            static_assert(sizeof(LONG) == 4, "");
-#else
             // FTHeap pMemData happens to be aligned on a page boundary by virtue of
+            // memory mapping usage (MS Windows equivalent of mmap(2)).
             static_assert((offsetof(FTHeap, table) & sizeof(LONG)-1) == 0);
-#endif
 
             for (unsigned k = 0; k < 2; k++)
                 store(pMemData->table_ints[k], t.ints[k]);
