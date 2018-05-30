@@ -155,6 +155,13 @@ if(MINGW)
     add_definitions(-DMINGW_HAS_SECURE_API)
 endif()
 
+# assume binutils
+if(LINUX)
+    foreach (i SHARED MODULE EXE)
+        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -Wl,-z,relro,-z,now,--exclude-libs,ALL")
+    endforeach()
+endif()
+
 if(UNIX AND NOT APPLE)
     include(opentrack-pkg-config)
 endif()
