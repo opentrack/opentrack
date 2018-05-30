@@ -111,8 +111,6 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     QPointF last_input_value;
     std::shared_ptr<QObject> ctx { std::make_shared<QObject>() };
 
-    Axis axis = NonAxis;
-
     bool activep = false;
     bool validp = false;
 

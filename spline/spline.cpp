@@ -27,8 +27,7 @@
 
 using namespace spline_detail;
 
-spline::spline(const QString& name, const QString& axis_name, Axis axis) :
-    axis(axis)
+spline::spline(const QString& name, const QString& axis_name, Axis axis)
 {
     set_bundle(options::make_bundle(name), axis_name, axis);
 }
