@@ -17,9 +17,9 @@
 
 #if !defined __WINE__
 #   include <QDebug>
-#   define warn(...) (qDebug() << __VA_ARGS__)
+#   define warn(str, ...) (qDebug() << "shm:" str ": " << __VA_ARGS__)
 #else
-#   define warn(...) (void)0
+#   define warn(str, ...) (void)0
 #endif
 
 shm_wrapper::shm_wrapper(const char* shm_name, const char* mutex_name, int map_size)
@@ -32,7 +32,7 @@ shm_wrapper::shm_wrapper(const char* shm_name, const char* mutex_name, int map_s
 
         if (!mutex)
         {
-            warn("CreateMutexA:" << (int) GetLastError());
+            warn("CreateMutexA", (int) GetLastError());
             return;
         }
     }
@@ -47,7 +47,7 @@ shm_wrapper::shm_wrapper(const char* shm_name, const char* mutex_name, int map_s
 
     if (!mapped_file)
     {
-        warn("CreateFileMappingA:" << (int) GetLastError());
+        warn("CreateFileMappingA", (int) GetLastError());
 
         return;
     }
@@ -59,15 +59,15 @@ shm_wrapper::shm_wrapper(const char* shm_name, const char* mutex_name, int map_s
                         map_size);
 
     if (!mem)
-        warn("MapViewOfFile:" << (int) GetLastError());
+        warn("MapViewOfFile:", (int) GetLastError());
 }
 
 shm_wrapper::~shm_wrapper()
 {
-    if(mem && !UnmapViewOfFile(mem))
+    if (mem && !UnmapViewOfFile(mem))
         goto fail;
 
-    if (!CloseHandle(mapped_file))
+    if (mapped_file && !CloseHandle(mapped_file))
         goto fail;
 
     if (mutex && !CloseHandle(mutex))
@@ -76,10 +76,7 @@ shm_wrapper::~shm_wrapper()
     return;
 
 fail:
-    (void)0;
-#if !defined __WINE__
-    qDebug() << "failed to close mapping";
-#endif
+    warn("failed to close mapping", (int) GetLastError());
 }
 
 bool shm_wrapper::lock()
