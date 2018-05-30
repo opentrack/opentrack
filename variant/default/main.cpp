@@ -5,12 +5,17 @@
 #   include <windows.h>
 #endif
 
+#if defined Q_CREATOR_RUN
+#   pragma GCC diagnostic ignored "-Wmain"
+#endif
+
 int main(int argc, char** argv)
 {
     return run_application(argc, argv, []() { return new main_window; });
 }
 
 #if defined _MSC_VER
+
 int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int /* nCmdShow */)
 {
     return main(__argc, __argv);
