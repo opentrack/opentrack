@@ -15,6 +15,7 @@
 #include "base-value.hpp"
 #include "value-traits.hpp"
 #include "compat/macros.hpp"
+#include "compat/linkage-macros.hpp"
 
 #include <cstdio>
 #include <type_traits>
@@ -142,30 +143,27 @@ private:
     const t def;
 };
 
-#if defined _MSC_VER
+#if !defined OTR_INST_VALUE
+#   define OTR_INST_VALUE OTR_TEMPLATE_IMPORT
+#endif
 
-#   if !defined OTR_OPT_VALUE
-#      define OTR_OPT_VALUE OTR_TEMPLATE_IMPORT
-#   endif
-
-    OTR_OPT_VALUE value<double>;
-    OTR_OPT_VALUE value<float>;
-    OTR_OPT_VALUE value<int>;
-    OTR_OPT_VALUE value<bool>;
-    OTR_OPT_VALUE value<QString>;
-    OTR_OPT_VALUE value<slider_value>;
-    OTR_OPT_VALUE value<QPointF>;
-    OTR_OPT_VALUE value<QVariant>;
-
-    OTR_OPT_VALUE value<QList<double>>;
-    OTR_OPT_VALUE value<QList<float>>;
-    OTR_OPT_VALUE value<QList<int>>;
-    OTR_OPT_VALUE value<QList<bool>>;
-    OTR_OPT_VALUE value<QList<QString>>;
-    OTR_OPT_VALUE value<QList<slider_value>>;
-    OTR_OPT_VALUE value<QList<QPointF>>;
-    OTR_OPT_VALUE value<QList<QVariant>>;
-
+#if !defined __APPLE__
+    OTR_INST_VALUE(value<double>);
+    OTR_INST_VALUE(value<float>);
+    OTR_INST_VALUE(value<int>);
+    OTR_INST_VALUE(value<bool>);
+    OTR_INST_VALUE(value<QString>);
+    OTR_INST_VALUE(value<slider_value>);
+    OTR_INST_VALUE(value<QPointF>);
+    OTR_INST_VALUE(value<QVariant>);
+    OTR_INST_VALUE(value<QList<double>>);
+    OTR_INST_VALUE(value<QList<float>>);
+    OTR_INST_VALUE(value<QList<int>>);
+    OTR_INST_VALUE(value<QList<bool>>);
+    OTR_INST_VALUE(value<QList<QString>>);
+    OTR_INST_VALUE(value<QList<slider_value>>);
+    OTR_INST_VALUE(value<QList<QPointF>>);
+    OTR_INST_VALUE(value<QList<QVariant>>);
 #endif
 
 } // ns options

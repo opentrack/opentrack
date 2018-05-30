@@ -11,5 +11,11 @@
 #   define OTR_GENERIC_IMPORT
 #endif
 
-#define OTR_TEMPLATE_EXPORT template class OTR_GENERIC_EXPORT
-#define OTR_TEMPLATE_IMPORT extern template class OTR_GENERIC_IMPORT
+#define OTR_TEMPLATE_IMPORT(x) extern template class OTR_GENERIC_IMPORT x
+#define OTR_TEMPLATE_EXPORT_(x) template class OTR_GENERIC_EXPORT x
+
+#if defined _MSC_VER
+#   define OTR_TEMPLATE_EXPORT OTR_TEMPLATE_EXPORT_
+#else
+#   define OTR_TEMPLATE_EXPORT OTR_TEMPLATE_EXPORT_
+#endif
