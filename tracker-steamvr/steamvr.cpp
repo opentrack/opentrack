@@ -34,8 +34,7 @@ template<typename F>
 auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), vr_error_t()))
 {
     QMutexLocker l(&device_list::mtx);
-    vr_error_t e; vr_t v;
-    std::tie(v, e) = device_list::vr_init();
+    auto [v, e] = device_list::vr_init();
     return fun(v, e);
 }
 
@@ -228,8 +227,7 @@ void steamvr::data(double* data)
 {
     if (device_index != -1)
     {
-        pose_t pose; bool ok;
-        std::tie(ok, pose) = device_list::get_pose(device_index);
+        auto [ok, pose] = device_list::get_pose(device_index);
         if (ok)
         {
             constexpr int c = 10;

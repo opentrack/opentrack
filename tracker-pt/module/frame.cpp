@@ -57,9 +57,7 @@ QImage Preview::get_bitmap()
 
 void Preview::draw_head_center(double x, double y)
 {
-    double px_, py_;
-
-    std::tie(px_, py_) = to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
+    auto [px_, py_] = to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
 
     int px = iround(px_), py = iround(py_);
 

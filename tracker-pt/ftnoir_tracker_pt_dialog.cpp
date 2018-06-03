@@ -153,9 +153,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
         calib_timer.stop();
         qDebug() << "pt: stopping translation calibration";
         {
-            cv::Vec3f tmp;
-            cv::Vec3i nsamples;
-            std::tie(tmp, nsamples) = trans_calib.get_estimate();
+            auto [tmp, nsamples] = trans_calib.get_estimate();
             s.t_MH_x = int(tmp[0]);
             s.t_MH_y = int(tmp[1]);
             s.t_MH_z = int(tmp[2]);
