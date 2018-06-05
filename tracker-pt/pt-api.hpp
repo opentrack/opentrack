@@ -43,7 +43,7 @@ struct pt_frame : pt_pixel_pos_mixin
     t* as() &
     {
         using u = std::decay_t<t>;
-        static_assert(std::is_convertible_v<u*, pt_frame*>, "must be derived from pt_image");
+        static_assert(std::is_convertible_v<u*, pt_frame*>, "must be derived from pt_frame");
 
         return static_cast<t*>(this);
     }
