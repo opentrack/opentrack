@@ -642,14 +642,11 @@ void bits::set(flags flag_, bool val_)
 {
     const unsigned flag = unsigned(flag_);
     const unsigned val = unsigned(val_);
+    unsigned b_ = 0;
 
     for (;;)
     {
-        unsigned b_(b);
-        if (b.compare_exchange_weak(b_,
-                                    unsigned((b_ & ~flag) | (flag * val)),
-                                    std::memory_order_seq_cst,
-                                    std::memory_order_seq_cst))
+        if (b.compare_exchange_strong(b_, unsigned((b_ & ~flag) | (flag * val))))
             break;
     }
 }
@@ -657,15 +654,11 @@ void bits::set(flags flag_, bool val_)
 void bits::negate(flags flag_)
 {
     const unsigned flag = unsigned(flag_);
+    unsigned b_ = 0;
 
     for (;;)
     {
-        unsigned b_(b);
-
-        if (b.compare_exchange_weak(b_,
-                                    b_ ^ flag,
-                                    std::memory_order_seq_cst,
-                                    std::memory_order_seq_cst))
+        if (b.compare_exchange_strong(b_, b_ ^ flag))
             break;
     }
 }
