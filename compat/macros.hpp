@@ -55,33 +55,14 @@
 
 // from now only C++ macros
 
-#if defined _MSC_VER
-#   define OTR_DEPRECATE(msg, decl, body) __declspec(deprecated(msg)) decl body
-#else
-#   define OTR_DEPRECATE(msg, decl, body) decl body __attribute__((deprecated(msg)))
-#endif
+template<bool>
+[[deprecated]] constexpr force_inline void static_warn() {}
 
-namespace static_warning_detail {
-    template<bool> struct test___132;
+template<>
+constexpr force_inline void static_warn<true>() {}
 
-    template<>
-    struct test___132<true>
-    {
-        static constexpr inline void check() {}
-    };
-} // ns static_warning_detail
+#define static_warning(cond)            \
+        static_warn<(cond)>();          \
 
-#define static_warning_template(cond, msg)                                      \
-    {                                                                           \
-        template<bool>                                                          \
-        struct ::static_warning_detail::test___132                              \
-        {                                                                       \
-            OTR_DEPRECATE(msg, static constexpr inline void check(), {})        \
-        };                                                                      \
-        ::static_warning_detail::test___132<(cond)>::check();                   \
-    }
-
-#define static_warning(cond, msg)                                               \
-    static_warning_template(cond, PP_CAT(msg, PP_CAT("\nExpression: ", #cond)))
-
+// end c++-only macros
 #endif
