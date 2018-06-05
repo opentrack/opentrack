@@ -327,17 +327,17 @@ void main_window::register_shortcuts()
 
     t_keys keys
     {
-        t_key(s.key_start_tracking1, [&](bool) { start_tracker(); }, true),
-        t_key(s.key_start_tracking2, [&](bool) { start_tracker(); }, true),
+        t_key(s.key_start_tracking1, [this](bool) { start_tracker(); }, true),
+        t_key(s.key_start_tracking2, [this](bool) { start_tracker(); }, true),
 
-        t_key(s.key_stop_tracking1, [&](bool) { stop_tracker(); }, true),
-        t_key(s.key_stop_tracking2, [&](bool) { stop_tracker(); }, true),
+        t_key(s.key_stop_tracking1, [this](bool) { stop_tracker(); }, true),
+        t_key(s.key_stop_tracking2, [this](bool) { stop_tracker(); }, true),
 
-        t_key(s.key_toggle_tracking1, [&](bool) { toggle_tracker(); }, true),
-        t_key(s.key_toggle_tracking2, [&](bool) { toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking1, [this](bool) { toggle_tracker(); }, true),
+        t_key(s.key_toggle_tracking2, [this](bool) { toggle_tracker(); }, true),
 
-        t_key(s.key_restart_tracking1, [&](bool) { restart_tracker(); }, true),
-        t_key(s.key_restart_tracking2, [&](bool) { restart_tracker(); }, true),
+        t_key(s.key_restart_tracking1, [this](bool) { restart_tracker(); }, true),
+        t_key(s.key_restart_tracking2, [this](bool) { restart_tracker(); }, true),
     };
 
     global_shortcuts.reload(keys);
@@ -354,7 +354,7 @@ void main_window::die_on_config_not_writable()
 
     QMessageBox::critical(this,
                           tr("The Octopus is sad"),
-                          tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory()).arg(pad),
+                          tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory(), pad),
                           QMessageBox::Close, QMessageBox::NoButton);
 
     exit(EX_OSFILE);
@@ -725,7 +725,7 @@ inline bool main_window::mk_window(std::unique_ptr<t>& place, Args&&... params)
 }
 
 template<typename t>
-bool main_window::mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d)
+bool main_window::mk_dialog(const std::shared_ptr<dylib>& lib, std::unique_ptr<t>& d)
 {
     const bool just_created = mk_window_common(d, [&]() -> t* {
         if (lib && lib->Dialog)

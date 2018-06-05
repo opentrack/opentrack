@@ -102,7 +102,7 @@ class main_window : public QMainWindow, private State
 
     // only use in impl file since no definition in header!
     template<typename t>
-    bool mk_dialog(std::shared_ptr<dylib> lib, std::unique_ptr<t>& d);
+    bool mk_dialog(const std::shared_ptr<dylib>& lib, std::unique_ptr<t>& d);
 
     // idem
     template<typename t, typename... Args>
