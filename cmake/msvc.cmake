@@ -68,7 +68,7 @@ set(_LDFLAGS "-machine:X86 -DEBUG")
 #set(_ltcg "-LTCG")
 set(_ltcg "-LTCG:INCREMENTAL")
 
-set(_LDFLAGS_RELEASE "-OPT:REF,ICF -cgthreads:1 ${_ltcg}")
+set(_LDFLAGS_RELEASE "-OPT:REF,ICF=4 -verbose -cgthreads:1 ${_ltcg}")
 set(_LDFLAGS_DEBUG "")
 
 set(_LDFLAGS_STATIC "-machine:X86 -WX")
@@ -77,7 +77,7 @@ set(_LDFLAGS_STATIC_DEBUG "")
 
 # debugging build times
 #set(_CXXFLAGS "${_CXXFLAGS} -Bt+")
-set(_LDFLAGS "${_LDFLAGS} -time")
+#set(_LDFLAGS "${_LDFLAGS} -time")
 
 set(CMAKE_RC_FLAGS "/nologo -DWIN32")
 

@@ -83,7 +83,8 @@ if(MSVC)
     endif()
 
     foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -DYNAMICBASE -NXCOMPAT -DEBUG ${ent}")
+        # 4020 is compiler bug for opentrack-cv
+        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -DYNAMICBASE -NXCOMPAT -DEBUG -ignore:4020 ${ent} ")
     endforeach()
 endif()
 
