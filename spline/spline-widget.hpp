@@ -17,12 +17,6 @@ using namespace options;
 #include "export.hpp"
 
 #include <QWidget>
-#include <QRect>
-#include <QPoint>
-#include <QPointF>
-#include <QToolTip>
-#include <QShowEvent>
-#include <QFocusEvent>
 #include <QMetaObject>
 
 #include <QDebug>

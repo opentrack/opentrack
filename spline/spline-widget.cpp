@@ -8,17 +8,11 @@
 #include "spline-widget.hpp"
 #include "compat/math.hpp"
 #include <QPainter>
-#include <QPainterPath>
-#include <QPaintEvent>
-#include <QPen>
 #include <QPixmap>
-#include <QList>
-#include <QPoint>
 #include <QString>
-#include <QRect>
+#include <QToolTip>
 #include <QApplication>
-#include <QStyle>
-#include <QMouseEvent>
+#include <QtEvents>
 
 #include <QDebug>
 
