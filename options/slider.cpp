@@ -98,9 +98,10 @@ QDataStream& operator << (QDataStream& out, const options::slider_value& v)
     return out;
 }
 
-QDebug operator << (QDebug dbg, const options::slider_value& val)
+QDebug operator << (QDebug dbg, const options::slider_value& v)
 {
-    return dbg << val.cur();
+    return dbg << QStringLiteral("slider_value(cur=%1, min=%2, max=%3)")
+                    .arg(v.cur()).arg(v.min()).arg(v.max()).toUtf8().data();
 }
 
 QDataStream& operator >> (QDataStream& in, options::slider_value& v)
