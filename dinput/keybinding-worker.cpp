@@ -9,7 +9,7 @@
 #ifdef _WIN32
 
 #include "keybinding-worker.hpp"
-#include "compat/meta.hpp"
+#include "compat/macros.hpp"
 
 #include <QDebug>
 #include <QMutexLocker>

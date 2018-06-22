@@ -51,9 +51,18 @@
 #   define PP_CAT1(x,y) x##y
 #endif
 
+#define once_only(...) do { static bool once__ = false; if (!once__) { once__ = true; __VA_ARGS__; } } while(false)
+
 #if defined __cplusplus
 
-// from now only C++ macros
+// from now only C++
+
+#include <type_traits>
+
+template<typename t>
+using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>,
+                                        std::decay_t<t>,
+                                        std::add_lvalue_reference_t<std::add_const_t<std::remove_reference_t<t>>>>;
 
 template<bool>
 [[deprecated]] constexpr force_inline void static_warn() {}
@@ -70,4 +79,3 @@ constexpr force_inline void static_warn<true>() {}
 // end c++-only macros
 #endif
 
-#define once_only(...) do { static bool once__ = false; if (!once__) { once__ = true; __VA_ARGS__; } } while(false)
