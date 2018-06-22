@@ -610,15 +610,8 @@ QPointF spline_widget::pixel_to_point(const QPointF& point)
         y = int(y * c + .5/c) / double(c);
     }
 
-    if (x < 0)
-        x = 0;
-    if (x > _config->max_input())
-        x = _config->max_input();
-
-    if (y < 0)
-        y = 0;
-    if (y > _config->max_output())
-        y = _config->max_output();
+    x = clamp(x, 0, _config->max_input());
+    y = clamp(y, 0, _config->max_output());
 
     return { x, y };
 }
