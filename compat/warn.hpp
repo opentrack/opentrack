@@ -43,26 +43,25 @@ never_inline void warn_(const char* file, int line, const char* level, const xs&
 
 } // ns warn_detail
 
+// todo add runtime loglevel
+
 #define otr_impl_warn_base(level, ...) \
     (warn_detail::warn_(__FILE__, __LINE__, (level), __VA_ARGS__))
 
-#define warn(...) \
+#define dbg_warn(...) \
     otr_impl_warn_base("WARN", __VA_ARGS__)
 
-#define debug(...) \
-    otr_impl_warn_base("DEBUG", __VA_ARGS__)
+#define dbg_log(...) \
+    otr_impl_warn_base("INFO", __VA_ARGS__)
 
-#define crit(...) \
+#define dbg_crit(...) \
     otr_impl_warn_base("CRIT", __VA_ARGS__)
 
-#if 0
-#include <utility>
+#include <cstdlib>
 
-#define fatal(...)                                  \
+#define dbg_fatal(...)                              \
     do                                              \
     {                                               \
-        otr_impl_warn_base("CRIT", __VA_ARGS__);    \
-        *(volatile int*)0 = 0;                      \
-        std::quick_exit(255);                       \
+        otr_impl_warn_base("FATAL", __VA_ARGS__);   \
+        std::abort();                               \
     } while (0)
-#endif
