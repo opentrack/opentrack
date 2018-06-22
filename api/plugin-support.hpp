@@ -58,7 +58,7 @@ struct dylib final
             return;
 
         handle.setFileName(filename_);
-        handle.setLoadHints(QLibrary::DeepBindHint | QLibrary::PreventUnloadHint);
+        handle.setLoadHints(QLibrary::DeepBindHint | QLibrary::PreventUnloadHint | QLibrary::ResolveAllSymbolsHint);
 
         if (check(!handle.load()))
             return;
