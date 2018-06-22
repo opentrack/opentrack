@@ -49,8 +49,8 @@ namespace options
         slider_value update_from_slider(int pos, int q_min, int q_max) const;
         int to_slider_pos(int q_min, int q_max) const;
     };
-
-    QDebug operator << (QDebug dbg, const options::slider_value& val);
-    QDataStream& operator << (QDataStream& out, const options::slider_value& v);
-    QDataStream& operator >> (QDataStream& in, options::slider_value& v);
 }
+
+OTR_OPTIONS_EXPORT QDebug operator << (QDebug dbg, const options::slider_value& val);
+OTR_OPTIONS_EXPORT QDataStream& operator << (QDataStream& out, const options::slider_value& v);
+OTR_OPTIONS_EXPORT QDataStream& operator >> (QDataStream& in, options::slider_value& v);
