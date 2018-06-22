@@ -178,15 +178,6 @@ void Tracker_PT::data(double *data)
             alpha = atan2( R(1,0), R(0,0));
             gamma = atan2( R(2,1), R(2,2));
 
-#if 0
-            if (t[2] > 1e-4)
-            {
-                alpha += copysign(atan(t[0] / t[2]), t[0]);
-                // pitch is skewed anyway due to only one focal length value
-                //beta -= copysign(atan(t[1] / t[2]), t[1]);
-            }
-#endif
-
             data[Yaw] = rad2deg * alpha;
             data[Pitch] = -rad2deg * beta;
             data[Roll] = rad2deg * gamma;
