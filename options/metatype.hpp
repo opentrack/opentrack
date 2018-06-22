@@ -6,13 +6,20 @@
 #include <QDebug>
 
 #include "slider.hpp"
+#include "defs.hpp"
 
-Q_DECLARE_METATYPE(QList<double>)
-Q_DECLARE_METATYPE(QList<float>)
-Q_DECLARE_METATYPE(QList<int>)
-Q_DECLARE_METATYPE(QList<bool>)
-Q_DECLARE_METATYPE(QList<QString>)
-Q_DECLARE_METATYPE(QList<QPointF>)
-Q_DECLARE_METATYPE(::options::slider_value)
+#ifndef OPENTRACK_METATYPE_
+#   define OPENTRACK_METATYPE(x) Q_DECLARE_METATYPE(x)
+#else
+#   define OPENTRACK_METATYPE(x) Q_DECLARE_METATYPE(x) OPENTRACK_METATYPE_(x)
+#endif
+
+OPENTRACK_METATYPE(QList<double>)
+OPENTRACK_METATYPE(QList<float>)
+OPENTRACK_METATYPE(QList<int>)
+OPENTRACK_METATYPE(QList<bool>)
+OPENTRACK_METATYPE(QList<QString>)
+OPENTRACK_METATYPE(QList<QPointF>)
+OPENTRACK_METATYPE(::options::slider_value)
 
 

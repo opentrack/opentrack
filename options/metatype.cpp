@@ -1,10 +1,3 @@
-#include "metatype.hpp"
 #include "defs.hpp"
-
-OPENTRACK_DEFINE_METATYPE(::options::slider_value);
-OPENTRACK_DEFINE_METATYPE(QList<double>);
-OPENTRACK_DEFINE_METATYPE(QList<float>);
-OPENTRACK_DEFINE_METATYPE(QList<int>);
-OPENTRACK_DEFINE_METATYPE(QList<bool>);
-OPENTRACK_DEFINE_METATYPE(QList<QString>);
-OPENTRACK_DEFINE_METATYPE(QList<QPointF>);
+#define OPENTRACK_METATYPE_(x) OPENTRACK_DEFINE_METATYPE(x)
+#include "metatype.hpp"

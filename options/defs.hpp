@@ -1,5 +1,7 @@
 #pragma once
 
+#include "compat/macros.hpp"
+
 #include <QString>
 #include <QMetaType>
 
@@ -8,23 +10,19 @@
 #define OTR_OPTIONS_EXPAND2(x) x
 #define OTR_OPTIONS_EXPAND1(x) OTR_OPTIONS_EXPAND2(x)
 
-#define OPENTRACK_REGISTER_METATYPE2(t, ctr)                                                        \
-    OPENTRACK_REGISTER_METATYPE3(t, ctr)
+#define OPENTRACK_DEFINE_METATYPE2(t, ctr)                                                          \
+    OPENTRACK_DEFINE_METATYPE3(t, ctr)
 
-#define OPENTRACK_REGISTER_METATYPE3(t, sym)                                                        \
-    OPENTRACK_REGISTER_METATYPE4(t, init_metatype_ ## sym)
+#define OPENTRACK_DEFINE_METATYPE3(t, ctr)                                                          \
+    OPENTRACK_DEFINE_METATYPE4(t, init_metatype_ ## ctr)
 
-#define OPENTRACK_REGISTER_METATYPE4(t, sym)                                                        \
-    class sym {                                                                                     \
+#define OPENTRACK_DEFINE_METATYPE4(t, sym)                                                          \
+    static class sym {                                                                              \
         static const int dribble;                                                                   \
     } sym ## _singleton;                                                                            \
-    const int sym :: dribble = ::options::detail::custom_type_initializer::declare_for_type<t>(#t)
+    const int sym :: dribble = ::options::detail::custom_type_initializer::declare_for_type<t>(#t);
 
-#if defined Q_CREATOR_RUN
-#   define OPENTRACK_DEFINE_METATYPE(t)
-#else
-#   define OPENTRACK_DEFINE_METATYPE(t) OPENTRACK_REGISTER_METATYPE2(t, OTR_OPTIONS_EXPAND1(__COUNTER__))
-#endif
+#define OPENTRACK_DEFINE_METATYPE(t) OPENTRACK_DEFINE_METATYPE2(t, __COUNTER__)
 
 namespace options {
 namespace detail {
