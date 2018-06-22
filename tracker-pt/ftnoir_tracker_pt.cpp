@@ -31,6 +31,7 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     preview_frame { traits->make_preview(preview_width, preview_height) }
 {
     cv::setBreakOnError(true);
+    cv::setNumThreads(1);
 
     connect(s.b.get(), SIGNAL(saving()), this, SLOT(maybe_reopen_camera()), Qt::DirectConnection);
     connect(&s.fov, SIGNAL(valueChanged(int)), this, SLOT(set_fov(int)), Qt::DirectConnection);
@@ -48,8 +49,6 @@ Tracker_PT::~Tracker_PT()
 
 void Tracker_PT::run()
 {
-    cv::setNumThreads(1);
-
 #ifdef PT_PERF_LOG
     QFile log_file(OPENTRACK_BASE_PATH + "/PointTrackerPerformance.txt");
     if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;

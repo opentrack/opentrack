@@ -63,6 +63,8 @@ static const resolution_tuple resolution_choices[] =
 aruco_tracker::aruco_tracker()
 {
     cv::setBreakOnError(true);
+    cv::setNumThreads(1);
+
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
     set_detector_params();
 }
@@ -359,8 +361,6 @@ void aruco_tracker::cycle_detection_params()
 
 void aruco_tracker::run()
 {
-    cv::setNumThreads(1);
-
     if (!open_camera())
         return;
 
