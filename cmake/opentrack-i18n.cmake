@@ -76,8 +76,8 @@ function(otr_merge_translations)
         add_custom_command(OUTPUT "${qm-output}"
             COMMAND "${lrelease-binary}"
                 -nounfinished
-                #-silent
-                -verbose
+                -silent
+                #-verbose
                 ${ts-files}
                 -qm "${qm-output}"
                 ${to-null}
