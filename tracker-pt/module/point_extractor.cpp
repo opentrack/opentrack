@@ -102,7 +102,7 @@ void PointExtractor::ensure_buffers(const cv::Mat& frame)
     {
         frame_gray = cv::Mat1b(H, W);
         frame_bin = cv::Mat1b(H, W);
-        frame_blobs = cv::Mat1b(H, W);
+        frame_gray_unmasked = cv::Mat1b(H, W);
     }
 }
 
@@ -180,7 +180,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
 
         const f radius = (f) threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
 
-        float const* const __restrict ptr = (float*) hist.ptr(0);
+        float const* const __restrict ptr = hist.ptr<float>(0);
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         unsigned thres = 32;
@@ -202,33 +202,34 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
     cv::Mat& preview_frame = *preview_frame_.as<Preview>();
 
     ensure_buffers(frame);
-    color_to_grayscale(frame, frame_gray);
+    color_to_grayscale(frame, frame_gray_unmasked);
 
 #if defined PREVIEW
     cv::imshow("capture", frame_gray);
     cv::waitKey(1);
 #endif
 
-    threshold_image(frame_gray, frame_bin);
-
-    blobs.clear();
-    frame_bin.copyTo(frame_blobs);
+    threshold_image(frame_gray_unmasked, frame_bin);
+    frame_gray_unmasked.copyTo(frame_gray, frame_bin);
 
     const f region_size_min = s.min_point_size;
     const f region_size_max = s.max_point_size;
 
     unsigned idx = 0;
-    for (int y=0; y < frame_blobs.rows; y++)
+
+    blobs.clear();
+
+    for (int y=0; y < frame_bin.rows; y++)
     {
-        const unsigned char* ptr_bin = frame_blobs.ptr(y);
-        for (int x=0; x < frame_blobs.cols; x++)
+        const unsigned char* ptr_bin = frame_bin.ptr(y);
+        for (int x=0; x < frame_bin.cols; x++)
         {
             if (ptr_bin[x] != 255)
                 continue;
             idx = blobs.size() + 1;
 
             cv::Rect rect;
-            cv::floodFill(frame_blobs,
+            cv::floodFill(frame_bin,
                           cv::Point(x,y),
                           cv::Scalar(idx),
                           &rect,
@@ -244,7 +245,7 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
 
             for (int i=rect.y; i < ymax; i++)
             {
-                unsigned char const* const __restrict ptr_blobs = frame_blobs.ptr(i);
+                unsigned char const* const __restrict ptr_blobs = frame_bin.ptr(i);
                 unsigned char const* const __restrict ptr_gray = frame_gray.ptr(i);
                 for (int j=rect.x; j < xmax; j++)
                 {
