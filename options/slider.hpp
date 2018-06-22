@@ -32,7 +32,7 @@ namespace options
         {}
 
         template<typename t>
-        never_inline
+        cc_noinline
         explicit operator arith_conversion_t<t>() const
         {
             return t(cur_);

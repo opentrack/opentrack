@@ -38,8 +38,8 @@ class OTR_OPTIONS_EXPORT group final
         int& refcount;
         bool& modifiedp;
 
-        never_inline ~saver_();
-        never_inline saver_(QSettings& s, int& refcount, bool& modifiedp);
+        cc_noinline ~saver_();
+        cc_noinline saver_(QSettings& s, int& refcount, bool& modifiedp);
     };
     static std::shared_ptr<QSettings> cur_settings_object();
     static std::shared_ptr<QSettings> cur_global_settings_object();
@@ -60,7 +60,7 @@ public:
     static void mark_ini_modified();
 
     template<typename t>
-    never_inline
+    cc_noinline
     t get(const QString& k) const
     {
         auto value = kvs.find(k);
@@ -70,7 +70,7 @@ public:
     }
 
     template<typename F>
-    never_inline
+    cc_noinline
     static auto with_settings_object(F&& fun)
     {
         QMutexLocker l(&cur_ini_mtx);

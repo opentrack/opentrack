@@ -282,8 +282,8 @@ void pose_transform::project_quad_texture()
     const unsigned orig_pitch = tex.bytesPerLine();
     const unsigned dest_pitch = image.bytesPerLine();
 
-    unsigned char const* restrict_ptr orig = tex.constBits();
-    unsigned char* restrict_ptr dest = image.bits();
+    unsigned char const* __restrict orig = tex.constBits();
+    unsigned char* __restrict dest = image.bits();
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
@@ -304,7 +304,7 @@ void pose_transform::project_quad_texture()
     for (int y = 0; y < dist.y(); y++)
         for (int x = 0; x < dist.x(); x++)
         {
-            uv_* restrict_ptr uv = &uv_vec[y * dist.x() + x];
+            uv_* __restrict uv = &uv_vec[y * dist.x() + x];
             if (!t.barycentric_coords(vec2(x + min.x(), y + min.y()), uv->coords, uv->i))
                 uv->i = -1;
         }
@@ -330,7 +330,7 @@ void pose_transform::project_quad_texture()
         for (int x_ = 0, dx = dist.x(); x_ < dx; x_++)
         {
             const int y = y_ + min.y(), x = x_ + min.x();
-            const uv_* restrict_ptr uv__ = &uv_vec[y_ * dx + x_];
+            const uv_* __restrict uv__ = &uv_vec[y_ * dx + x_];
 
             if (uv__->i != -1)
             {

@@ -234,18 +234,18 @@ static bool is_nan(const dmat<u,w>& r)
 }
 
 template<typename x>
-static force_inline bool nan_check_(const x& datum)
+static cc_forceinline bool nan_check_(const x& datum)
 {
     return is_nan(datum);
 }
 
 template<typename x, typename y, typename... xs>
-static force_inline bool nan_check_(const x& datum, const y& next, const xs&... rest)
+static cc_forceinline bool nan_check_(const x& datum, const y& next, const xs&... rest)
 {
     return is_nan(datum) || nan_check_(next, rest...);
 }
 
-static never_inline
+static cc_noinline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
     once_only(
@@ -257,7 +257,7 @@ void emit_nan_check_msg(const char* text, const char* fun, int line)
 }
 
 template<typename... xs>
-static never_inline
+static cc_noinline
 bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 {
     if (nan_check_(vals...))
@@ -273,7 +273,7 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 #define nan_check(...)                                                              \
     do                                                                              \
     {                                                                               \
-        if (likely(!maybe_nan(#__VA_ARGS__, OTR_FUNNAME, __LINE__, __VA_ARGS__)))   \
+        if (likely(!maybe_nan(#__VA_ARGS__, cc_function_name, __LINE__, __VA_ARGS__)))   \
             (void)0;                                                                \
         else                                                                        \
             goto error;                                                             \

@@ -53,7 +53,7 @@ struct run_in_thread_traits<void>
 }
 
 template<typename F>
-auto never_inline
+auto cc_noinline
 run_in_thread_sync(QObject* obj, F&& fun)
     -> typename qt_impl_detail::run_in_thread_traits<decltype(fun())>::ret_type
 {

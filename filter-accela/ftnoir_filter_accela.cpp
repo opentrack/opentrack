@@ -21,7 +21,7 @@ accela::accela() : first_run(true)
 }
 
 template<int N = 3, typename F>
-never_inline
+cc_noinline
 static void do_deltas(const double* deltas, double* output, F&& fun)
 {
     double norm[N];

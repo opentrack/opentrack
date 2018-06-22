@@ -63,12 +63,12 @@ signals:
     void saving() const;
     void changed() const;
 public:
-    never_inline bundle(const QString& group_name);
-    never_inline ~bundle() override;
+    cc_noinline bundle(const QString& group_name);
+    cc_noinline ~bundle() override;
     QString name() const { return group_name; }
-    never_inline void store_kv(const QString& name, const QVariant& datum);
-    never_inline bool contains(const QString& name) const;
-    never_inline bool is_modified() const;
+    cc_noinline void store_kv(const QString& name, const QVariant& datum);
+    cc_noinline bool contains(const QString& name) const;
+    cc_noinline bool is_modified() const;
 
     template<typename t>
     t get(const QString& name) const

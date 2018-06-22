@@ -7,43 +7,41 @@
 #endif
 
 #if defined _MSC_VER
-#   define never_inline __declspec(noinline)
+#   define cc_noinline __declspec(noinline)
 #elif defined __GNUG__
-#   define never_inline __attribute__((noinline))
+#   define cc_noinline __attribute__((noinline))
 #else
-#   define never_inline
-#endif
-
-#if defined __cplusplus
-#   define restrict_ptr __restrict
+#   define cc_noinline
 #endif
 
 #if defined _MSC_VER
-#   define force_inline __forceinline
+#   define cc_forceinline __forceinline
 #else
-#   define force_inline __attribute__((always_inline, gnu_inline)) inline
+#   define cc_forceinline __attribute__((always_inline, gnu_inline)) inline
 #endif
 
 #ifdef Q_CREATOR_RUN
-#   define warn_result_unused
+#   define cc_warn_unused_result
 #elif defined _MSC_VER
-#   define warn_result_unused _Check_return_
+#   define cc_warn_unused_result _Check_return_
 #else
-#   define warn_result_unused __attribute__((warn_unused_result))
+#   define cc_warn_unused_result __attribute__((warn_unused_result))
 #endif
 
-#if defined __GNUC__
-#   define likely(x)       __builtin_expect(!!(x),1)
-#   define unlikely(x)     __builtin_expect(!!(x),0)
-#else
-#   define likely(x) (x)
-#   define unlikely(x) (x)
+#if !defined likely
+#   if defined __GNUC__
+#      define likely(x)       __builtin_expect(!!(x),1)
+#      define unlikely(x)     __builtin_expect(!!(x),0)
+#   else
+#      define likely(x) (x)
+#      define unlikely(x) (x)
+#   endif
 #endif
 
 #if defined _MSC_VER
-#   define OTR_FUNNAME (__FUNCSIG__)
+#   define cc_function_name (__FUNCSIG__)
 #else
-#   define OTR_FUNNAME (__PRETTY_FUNCTION__)
+#   define cc_function_name (__PRETTY_FUNCTION__)
 #endif
 
 #if !defined PP_CAT
@@ -65,10 +63,10 @@ using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>,
                                         std::add_lvalue_reference_t<std::add_const_t<std::remove_reference_t<t>>>>;
 
 template<bool>
-[[deprecated]] constexpr force_inline void static_warn() {}
+[[deprecated]] constexpr cc_forceinline void static_warn() {}
 
 template<>
-constexpr force_inline void static_warn<true>() {}
+constexpr cc_forceinline void static_warn<true>() {}
 
 #define static_warning(cond)            \
         static_warn<(cond)>();          \

@@ -190,7 +190,7 @@ std::shared_ptr<QSettings> group::cur_global_settings_object()
     return cur_global_ini;
 }
 
-never_inline
+cc_noinline
 group::saver_::~saver_()
 {
     if (--refcount == 0 && modifiedp)
@@ -202,7 +202,7 @@ group::saver_::~saver_()
     }
 }
 
-never_inline
+cc_noinline
 group::saver_::saver_(QSettings& s, int& refcount, bool& modifiedp) :
     s(s), refcount(refcount), modifiedp(modifiedp)
 {

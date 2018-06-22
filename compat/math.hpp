@@ -68,7 +68,7 @@ inline auto uround(const t& val) -> std::enable_if_t<!std::is_integral_v<std::de
 #include "macros.hpp"
 
 template <typename T>
-static force_inline constexpr auto signum(T x)
+static cc_forceinline constexpr auto signum(T x)
 {
     return x < T(0) ? -1 : 1;
 }

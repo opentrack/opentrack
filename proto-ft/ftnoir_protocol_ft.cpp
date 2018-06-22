@@ -25,7 +25,7 @@ static_assert(sizeof(LONG) == 4u, "");
 
 static constexpr inline float d2r = float(M_PI/180);
 
-never_inline void store(float volatile& place, const float value)
+cc_noinline void store(float volatile& place, const float value)
 {
     union
     {
@@ -42,13 +42,13 @@ never_inline void store(float volatile& place, const float value)
 }
 
 template<typename t>
-force_inline void store(t volatile& place, t value)
+cc_forceinline void store(t volatile& place, t value)
 {
     static_assert(sizeof(t) == 4u, "");
     (void)InterlockedExchange((LONG volatile*) &place, value);
 }
 
-force_inline std::int32_t load(std::int32_t volatile& place)
+cc_forceinline std::int32_t load(std::int32_t volatile& place)
 {
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }

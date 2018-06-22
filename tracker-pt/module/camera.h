@@ -40,7 +40,7 @@ struct Camera final : pt_camera
     void show_camera_settings() override;
 
 private:
-    warn_result_unused bool _get_frame(cv::Mat& Frame);
+    cc_warn_unused_result bool _get_frame(cv::Mat& Frame);
 
     double dt_mean = 0, fov = 30;
     Timer t;

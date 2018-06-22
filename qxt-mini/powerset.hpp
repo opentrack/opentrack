@@ -66,8 +66,8 @@ private:
 };
 
 template<typename t, typename... xs>
-auto force_inline
-make_powerset(const t& arg, const xs&... args)
+auto
+cc_forceinline make_powerset(const t& arg, const xs&... args)
 {
     using cnt = std::integral_constant<std::uintptr_t, sizeof...(xs)+1>;
     using p = powerset<t, cnt::value>;

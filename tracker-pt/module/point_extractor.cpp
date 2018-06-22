@@ -57,7 +57,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
     vec2 com { 0, 0  };
     for (int i = 0; i < frame_gray.rows; i++)
     {
-        auto frame_ptr = (uint8_t const* restrict_ptr)frame_gray.ptr(i);
+        auto frame_ptr = (uint8_t const* __restrict)frame_gray.ptr(i);
         for (int j = 0; j < frame_gray.cols; j++)
         {
             f val = frame_ptr[j];
@@ -180,7 +180,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
 
         const f radius = (f) threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
 
-        float const* const restrict_ptr ptr = (float*) hist.ptr(0);
+        float const* const __restrict ptr = (float*) hist.ptr(0);
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         unsigned thres = 32;
@@ -244,8 +244,8 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
 
             for (int i=rect.y; i < ymax; i++)
             {
-                unsigned char const* const restrict_ptr ptr_blobs = frame_blobs.ptr(i);
-                unsigned char const* const restrict_ptr ptr_gray = frame_gray.ptr(i);
+                unsigned char const* const __restrict ptr_blobs = frame_blobs.ptr(i);
+                unsigned char const* const __restrict ptr_gray = frame_gray.ptr(i);
                 for (int j=rect.x; j < xmax; j++)
                 {
                     if (ptr_blobs[j] != idx)

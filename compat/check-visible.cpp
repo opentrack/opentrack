@@ -15,7 +15,7 @@ static Timer timer;
 static QMutex mtx;
 static bool visible = true;
 
-never_inline OTR_COMPAT_EXPORT
+cc_noinline OTR_COMPAT_EXPORT
 void set_is_visible(const QWidget& w, bool force)
 {
     QMutexLocker l(&mtx);
@@ -47,7 +47,7 @@ void set_is_visible(const QWidget& w, bool force)
     }
 }
 
-never_inline OTR_COMPAT_EXPORT
+cc_noinline OTR_COMPAT_EXPORT
 bool check_is_visible()
 {
     QMutexLocker l(&mtx);
@@ -57,12 +57,12 @@ bool check_is_visible()
 
 #else
 
-never_inline OTR_COMPAT_EXPORT
+cc_noinline OTR_COMPAT_EXPORT
 void set_is_visible(const QWidget&, bool)
 {
 }
 
-never_inline  OTR_COMPAT_EXPORT
+cc_noinline OTR_COMPAT_EXPORT
 bool check_is_visible()
 {
     return true;

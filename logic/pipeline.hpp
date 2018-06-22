@@ -49,14 +49,14 @@ public:
 
     void on_center();
 
-    warn_result_unused
+    cc_warn_unused_result
     euler_t rotate(const rmat& rmat, const euler_t& in, vec3_bool disable) const;
 
-    warn_result_unused
+    cc_warn_unused_result
     Pose apply_pipeline(reltrans_state state, const Pose& value,
                         const vec6_bool& disable, bool neck_enable, int neck_z);
 
-    warn_result_unused
+    cc_warn_unused_result
     euler_t apply_neck(const Pose& value, int nz, bool disable_tz) const;
 };
 

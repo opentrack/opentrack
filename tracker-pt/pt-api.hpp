@@ -69,11 +69,11 @@ struct pt_camera
     pt_camera();
     virtual ~pt_camera();
 
-    virtual warn_result_unused bool start(int idx, int fps, int res_x, int res_y) = 0;
+    virtual cc_warn_unused_result bool start(int idx, int fps, int res_x, int res_y) = 0;
     virtual void stop() = 0;
-    virtual warn_result_unused result get_frame(pt_frame& frame) = 0;
+    virtual cc_warn_unused_result result get_frame(pt_frame& frame) = 0;
 
-    virtual warn_result_unused result get_info() const = 0;
+    virtual cc_warn_unused_result result get_info() const = 0;
     virtual pt_camera_info get_desired() const = 0;
 
     virtual QString get_desired_name() const = 0;

@@ -42,7 +42,7 @@ class value final : public base_value
         return val1.value<stored_type>() == val2.value<stored_type>();
     }
 
-    never_inline
+    cc_noinline
     t get() const
     {
         if (self_name.isEmpty())
@@ -59,7 +59,7 @@ class value final : public base_value
     }
 
 public:
-    never_inline
+    cc_noinline
     t operator=(const t& datum)
     {
         if (self_name.isEmpty())
@@ -74,7 +74,7 @@ public:
     static constexpr inline Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
     static constexpr inline Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    never_inline
+    cc_noinline
     value(bundle b, const QString& name, t def) :
         base_value(b, name, &is_equal, std::type_index(typeid(stored_type))),
         def(def)
@@ -91,49 +91,49 @@ public:
         static_assert(k > 0, "");
     }
 
-    never_inline
+    cc_noinline
     t default_value() const
     {
         return def;
     }
 
-    never_inline
+    cc_noinline
     void set_to_default() override
     {
         *this = def;
     }
 
-    never_inline
+    cc_noinline
     operator t() const { return get(); }
 
-    never_inline
+    cc_noinline
     t operator->() const
     {
         return get();
     }
 
-    never_inline
+    cc_noinline
     void reload() override
     {
         if (!self_name.isEmpty())
             *this = static_cast<t>(*this);
     }
 
-    never_inline
+    cc_noinline
     void bundle_value_changed() const override
     {
         if (!self_name.isEmpty())
             emit valueChanged(traits::to_storage(get()));
     }
 
-    never_inline
+    cc_noinline
     t operator()() const
     {
         return get();
     }
 
     template<typename u>
-    never_inline
+    cc_noinline
     u to() const
     {
         return static_cast<u>(get());

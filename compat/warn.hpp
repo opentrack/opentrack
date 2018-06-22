@@ -13,10 +13,10 @@ namespace warn_detail {
 template<typename t> using basic_string_stream = std::basic_ostringstream<t, std::char_traits<t>, std::allocator<t>>;
 using string_stream = basic_string_stream<wchar_t>;
 
-force_inline void do_warn(string_stream&) {}
+cc_forceinline void do_warn(string_stream&) {}
 
 template<typename x, typename... xs>
-force_inline void do_warn(string_stream& acc, const x& datum, const xs&... rest)
+cc_forceinline void do_warn(string_stream& acc, const x& datum, const xs&... rest)
 {
     acc << datum;
     if (sizeof...(rest) > 0u)
@@ -25,7 +25,7 @@ force_inline void do_warn(string_stream& acc, const x& datum, const xs&... rest)
 }
 
 template<typename... xs>
-never_inline void warn_(const char* file, int line, const char* level, const xs&... seq)
+cc_noinline void warn_(const char* file, int line, const char* level, const xs&... seq)
 {
     using namespace warn_detail;
     string_stream stream;
