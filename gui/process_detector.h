@@ -13,7 +13,6 @@
 #include <QObject>
 #include <QWidget>
 #include <QTableWidget>
-#include <QResizeEvent>
 
 #include "gui/ui_process_widget.h"
 #include "process-detector-fancy-table.hpp"

@@ -132,8 +132,8 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
         {
             if (gameLine.at(6).compare(id_str, Qt::CaseInsensitive) == 0)
             {
-                const QString proto(std::move(gameLine.at(3)));
-                const QString name(std::move(gameLine.at(1)));
+                const QString& proto = gameLine.at(3);
+                const QString& name = gameLine.at(1);
 
                 const QByteArray id_cstr = gameLine.at(7).toLatin1();
 

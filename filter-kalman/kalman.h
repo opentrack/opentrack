@@ -125,8 +125,8 @@ struct settings : opts {
 
     settings() :
         opts("kalman-filter"),
-        noise_rot_slider_value(b, "noise-rotation-slider", slider_value(0.5, 0., 1.)),
-        noise_pos_slider_value(b, "noise-position-slider", slider_value(0.5, 0., 1.))
+        noise_rot_slider_value(b, "noise-rotation-slider", { .5, 0., 1. }),
+        noise_pos_slider_value(b, "noise-position-slider", { .5, 0., 1. })
     {}
 
 };

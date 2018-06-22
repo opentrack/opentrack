@@ -17,7 +17,7 @@
 #include "ui_keyboard_listener.h"
 
 #include <QDialog>
-#include <QKeyEvent>
+#include <QtEvents>
 
 class OTR_GUI_EXPORT keyboard_listener : public QDialog
 {

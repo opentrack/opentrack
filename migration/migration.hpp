@@ -50,7 +50,7 @@ namespace detail {
     {
         registrator()
         {
-            mfun f { []() { return std::shared_ptr<migration>(new t); } };
+            mfun f { [] { return std::shared_ptr<migration>(new t); } };
 
             migrator::add_migration_thunk(f);
         }

@@ -130,7 +130,7 @@ main_window::main_window() :
     }
 
     // timers
-    connect(&config_list_timer, &QTimer::timeout, this, [this]() { refresh_config_list(); });
+    connect(&config_list_timer, &QTimer::timeout, this, [this] { refresh_config_list(); });
     connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(show_pose()), Qt::DirectConnection);
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
 
@@ -220,19 +220,19 @@ main_window::main_window() :
     }
 
     connect(this, &main_window::start_tracker,
-            this, [&]() { qDebug() << "start tracker"; start_tracker_(); },
+            this, [&] { qDebug() << "start tracker"; start_tracker_(); },
             Qt::QueuedConnection);
 
     connect(this, &main_window::stop_tracker,
-            this, [&]() { qDebug() << "stop tracker"; stop_tracker_(); },
+            this, [&] { qDebug() << "stop tracker"; stop_tracker_(); },
             Qt::QueuedConnection);
 
     connect(this, &main_window::toggle_tracker,
-            this, [&]() { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
+            this, [&] { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
             Qt::QueuedConnection);
 
     connect(this, &main_window::restart_tracker,
-            this, [&]() { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
+            this, [&] { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
             Qt::QueuedConnection);
 
     init_tray();
@@ -276,7 +276,7 @@ void main_window::init_tray()
     menu_action_show.setIconVisibleInMenu(true);
     menu_action_show.setText(isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
     menu_action_show.setIcon(QIcon(":/images/opentrack.png"));
-    QObject::connect(&menu_action_show, &QAction::triggered, this, [&]() { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
+    QObject::connect(&menu_action_show, &QAction::triggered, this, [&] { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
     tray_menu.addAction(&menu_action_show);
 
     tray_menu.addSeparator();
@@ -721,7 +721,7 @@ bool main_window::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
 template<typename t, typename... Args>
 inline bool main_window::mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
-    return mk_window_common(place, [&]() { return new t(params...); });
+    return mk_window_common(place, [&] { return new t(params...); });
 }
 
 template<typename t>
@@ -742,7 +742,7 @@ void main_window::show_tracker_settings()
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
     if (pTrackerDialog)
         QObject::connect(pTrackerDialog.get(), &ITrackerDialog::closing,
-                         this, [this]() { pTrackerDialog = nullptr; });
+                         this, [this] { pTrackerDialog = nullptr; });
 }
 
 void main_window::show_proto_settings()
@@ -751,7 +751,7 @@ void main_window::show_proto_settings()
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
     if (pProtocolDialog)
         QObject::connect(pProtocolDialog.get(), &IProtocolDialog::closing,
-                         this, [this]() { pProtocolDialog = nullptr; });
+                         this, [this] { pProtocolDialog = nullptr; });
 }
 
 void main_window::show_filter_settings()
@@ -760,7 +760,7 @@ void main_window::show_filter_settings()
         pFilterDialog->register_filter(work->libs.pFilter.get());
     if (pFilterDialog)
         QObject::connect(pFilterDialog.get(), &IFilterDialog::closing,
-                         this, [this]() { pFilterDialog = nullptr; });
+                         this, [this] { pFilterDialog = nullptr; });
 }
 
 void main_window::show_options_dialog()

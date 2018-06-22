@@ -18,6 +18,7 @@
 #include <QHash>
 #include <QPushButton>
 #include <QSettings>
+#include <QtEvents>
 
 static constexpr inline auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
 static constexpr inline auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_

@@ -107,3 +107,6 @@ struct pt_runtime_traits
     virtual pointer<pt_preview> make_preview(int w, int h) const = 0;
     virtual QString get_module_name() const = 0;
 };
+
+template<typename t>
+using pt_pointer = typename pt_runtime_traits::pointer<t>;

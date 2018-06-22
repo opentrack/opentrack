@@ -74,8 +74,8 @@ struct OTR_LOGIC_EXPORT bits
 
     std::atomic<unsigned> b;
 
-    void set(flags flag_, bool val);
-    void negate(flags flag_);
+    void set(flags flag, bool val);
+    void negate(flags flag);
     bool get(flags flag);
     bits();
 };

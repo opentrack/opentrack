@@ -64,5 +64,10 @@ constexpr force_inline void static_warn<true>() {}
 #define static_warning(cond)            \
         static_warn<(cond)>();          \
 
+#define progn(...) (([&] { __VA_ARGS__ })())
+#define prog1(x, ...) (([&] { auto _ret1324 = (x); do { __VA_ARGS__; } while (0); return _ret1324; })())
+
 // end c++-only macros
 #endif
+
+#define once_only(...) do { static bool once__ = false; if (!once__) { once__ = true; __VA_ARGS__; } } while(false)

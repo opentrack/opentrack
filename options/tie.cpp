@@ -59,7 +59,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
     base_value::connect(&v, base_value::value_changed<QVariant>(),
                         cb,
                         [cb, set_idx](const QVariant& var) {
-        run_in_thread_sync(cb, [&]() {
+        run_in_thread_sync(cb, [&] {
             set_idx(var);
         });
     }, v.DIRECT_CONNTYPE);

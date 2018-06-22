@@ -15,7 +15,7 @@
 #include <algorithm>
 
 #include <QPainter>
-#include <QPaintEvent>
+#include <QtEvents>
 
 #include <QDebug>
 
@@ -130,12 +130,12 @@ void pose_widget::rotate_sync(double xAngle, double yAngle, double zAngle, doubl
 
 void pose_transform::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
-    with_rotate([this]() {}, xAngle, yAngle, zAngle, x, y, z);
+    with_rotate([] {}, xAngle, yAngle, zAngle, x, y, z);
 }
 
 void pose_transform::rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {
-    with_rotate([this]() {
+    with_rotate([this] {
         rotation = rotation_;
         translation = translation_;
         project_quad_texture();

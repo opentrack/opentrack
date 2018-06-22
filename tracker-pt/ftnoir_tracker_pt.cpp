@@ -7,14 +7,13 @@
  */
 
 #include "ftnoir_tracker_pt.h"
+#include "cv/video-widget.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
 #include "pt-api.hpp"
 
 #include <cmath>
-
-#include <opencv2/imgproc.hpp>
 
 #include <QHBoxLayout>
 #include <QDebug>
@@ -23,7 +22,7 @@
 
 using namespace types;
 
-Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> traits) :
+Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
     s { traits->get_module_name() },
     point_extractor { traits->make_point_extractor() },

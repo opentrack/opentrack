@@ -37,10 +37,10 @@ FGControls::FGControls()
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.buttonBox, &QDialogButtonBox::helpRequested,
-            ui.buttonBox, []()
-    {
-        static const QString contrib_dir = "file:///" + QDir::toNativeSeparators(QStringLiteral("%1/%2/%3").
-            arg(OPENTRACK_BASE_PATH, OPENTRACK_CONTRIB_PATH, "FlightGear"));
+            ui.buttonBox, [] {
+        static const QString contrib_dir =
+                "file:///" + QDir::toNativeSeparators(QStringLiteral("%1/%2/%3").
+                                                      arg(OPENTRACK_BASE_PATH, OPENTRACK_CONTRIB_PATH, "FlightGear"));
         QDesktopServices::openUrl(contrib_dir);
     });
 }

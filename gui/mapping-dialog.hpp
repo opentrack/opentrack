@@ -8,9 +8,7 @@
 
 #include <QWidget>
 #include <QDialog>
-#include <QShowEvent>
-#include <QCloseEvent>
-#include <QCheckBox>
+#include <QtEvents>
 
 class OTR_GUI_EXPORT mapping_dialog final : public QDialog
 {

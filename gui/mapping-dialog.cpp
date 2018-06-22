@@ -10,6 +10,8 @@
 #include "logic/main-settings.hpp"
 #include "spline/spline-widget.hpp"
 
+#include <QtEvents>
+
 mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);

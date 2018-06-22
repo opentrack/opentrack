@@ -638,29 +638,25 @@ void pipeline::set_zero(bool value) { set(f_zero, value); }
 void pipeline::toggle_zero() { negate(f_zero); }
 void pipeline::toggle_enabled() { negate(f_enabled_p); }
 
-void bits::set(flags flag_, bool val_)
+void bits::set(flags flag, bool val)
 {
-    const unsigned flag = unsigned(flag_);
-    const unsigned val = unsigned(val_);
+    const unsigned flag_ = unsigned(flag);
+    const unsigned val_ = unsigned(val);
     unsigned b_ = 0;
 
     for (;;)
-    {
-        if (b.compare_exchange_strong(b_, unsigned((b_ & ~flag) | (flag * val))))
+        if (b.compare_exchange_weak(b_, unsigned((b_ & ~flag_) | (flag_ * val_))))
             break;
-    }
 }
 
-void bits::negate(flags flag_)
+void bits::negate(flags flag)
 {
-    const unsigned flag = unsigned(flag_);
+    const unsigned flag_= flag;
     unsigned b_ = 0;
 
     for (;;)
-    {
-        if (b.compare_exchange_strong(b_, b_ ^ flag))
+        if (b.compare_exchange_weak(b_, b_ ^ flag_))
             break;
-    }
 }
 
 bool bits::get(flags flag)

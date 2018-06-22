@@ -47,10 +47,10 @@ struct settings_accela : opts
 
     static void make_splines(spline& rot, spline& pos);
 
-    value<slider_value> rot_smoothing { b, "rotation-sensitivity", slider_value(1.5, .05, 2.5) },
-                        pos_smoothing { b, "translation-sensitivity", slider_value(1., .05, 1.5) },
-                        rot_deadzone { b, "rotation-deadzone", slider_value(.03, 0, .2) },
-                        pos_deadzone { b, "translation-deadzone", slider_value(.1, 0, 1) };
+    value<slider_value> rot_smoothing { b, "rotation-sensitivity", { 1.5, .05, 2.5 } },
+                        pos_smoothing { b, "translation-sensitivity", { 1., .05, 1.5 } },
+                        rot_deadzone { b, "rotation-deadzone", { .03, 0, .2 } },
+                        pos_deadzone { b, "translation-deadzone", { .1, 0, 1 } };
 
     settings_accela() : opts("accela-sliders") {}
 };

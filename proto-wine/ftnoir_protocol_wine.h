@@ -2,7 +2,6 @@
 
 #include "ui_ftnoir_winecontrols.h"
 #include <QMessageBox>
-#include <QLibrary>
 #include <QProcess>
 #include <QDebug>
 #include <QMutex>

@@ -165,18 +165,16 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
             // Don't bother counting roll samples. Roll calibration is hard enough
             // that it's a hidden unsupported feature anyway.
 
-            const QString sample_feedback = progn(
-                if (nsamples[0] < min_yaw_samples)
-                    return tr("%1 yaw samples. Yaw more to %2 samples for stable calibration.")
-                        .arg(nsamples[0]).arg(min_yaw_samples);
-                if (nsamples[1] < min_pitch_samples)
-                    return tr("%1 pitch samples. Pitch more to %2 samples for stable calibration.")
-                        .arg(nsamples[1]).arg(min_pitch_samples);
-
+            QString sample_feedback;
+            if (nsamples[0] < min_yaw_samples)
+                sample_feedback = tr("%1 yaw samples. Yaw more to %2 samples for stable calibration.").arg(nsamples[0]).arg(min_yaw_samples);
+            else if (nsamples[1] < min_pitch_samples)
+                sample_feedback = tr("%1 pitch samples. Pitch more to %2 samples for stable calibration.").arg(nsamples[1]).arg(min_pitch_samples);
+            else
+            {
                 const int nsamples_total = nsamples[0] + nsamples[1];
-
-                return tr("%1 samples. Over %2, good!").arg(nsamples_total).arg(min_samples);
-            );
+                sample_feedback = tr("%1 samples. Over %2, good!").arg(nsamples_total).arg(min_samples);
+            }
 
             ui.sample_count_display->setText(sample_feedback);
         }
@@ -184,12 +182,11 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
     ui.tx_spin->setEnabled(!start);
     ui.ty_spin->setEnabled(!start);
     ui.tz_spin->setEnabled(!start);
-    ui.tcalib_button->setText(progn(
-        if (start)
-          return tr("Stop calibration");
-        else
-          return tr("Start calibration");
-    ));
+
+    if (start)
+        ui.tcalib_button->setText(tr("Stop calibration"));
+    else
+        ui.tcalib_button->setText(tr("Start calibration"));
 }
 
 void TrackerDialog_PT::poll_tracker_info_impl()

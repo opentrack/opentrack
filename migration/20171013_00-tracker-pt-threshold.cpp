@@ -24,7 +24,6 @@ struct move_int_to_slider : migration
         return "20171013_00";
     }
 
-
     QString name() const override
     {
         return "tracker/pt threshold slider (int -> slider_value)";
@@ -32,19 +31,19 @@ struct move_int_to_slider : migration
 
     bool should_run() const override
     {
-        bundle b = make_bundle("tracker-pt");
+        bundle b = make_bundle(bundle_name);
 
         return b->contains(old_name) && !b->contains(new_name);
     }
 
     void run() override
     {
-        bundle b = make_bundle("tracker-pt");
+        bundle b = make_bundle(bundle_name);
 
         value<int> old_val(b, old_name, 128);
-        value<slider_value> new_val(b, new_name, slider_value(128, 0, 255));
+        value<slider_value> new_val(b, new_name, { 128, 0, 255 });
 
-        new_val = slider_value(old_val.to<int>(), 0, 255);
+        new_val = { old_val.to<int>(), 0, 255 };
 
         b->save();
     }

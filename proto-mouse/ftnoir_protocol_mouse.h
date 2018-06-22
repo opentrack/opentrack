@@ -21,12 +21,12 @@ class mouse : public TR, public IProtocol
     Q_OBJECT
 
 public:
-    mouse();
+    mouse() = default;
     module_status initialize() override { return status_ok(); }
-    void pose( const double *headpose) override;
+    void pose(const double* headpose) override;
     QString game_name() override;
 
-    int last_x, last_y;
+    int last_x = 0, last_y = 0;
 private:
     static int get_delta(int val, int prev);
     static int get_value(double val, double sensitivity, bool is_rotation);

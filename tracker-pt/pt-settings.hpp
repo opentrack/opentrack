@@ -52,5 +52,5 @@ struct pt_settings final : options::opts
     value<bool> auto_threshold { b, "automatic-threshold", true };
     value<pt_color_type> blob_color { b, "blob-color", pt_color_natural };
 
-    value<slider_value> threshold_slider { b, "threshold-slider", slider_value(128, 0, 255) };
+    value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };
 };

@@ -23,7 +23,7 @@ static const double invert[] =
     1., -1., 1.
 };
 
-void mouse::pose(const double *headpose)
+void mouse::pose(const double* headpose)
 {
     const int axis_x = s.Mouse_X - 1;
     const int axis_y = s.Mouse_Y - 1;
@@ -81,7 +81,5 @@ int mouse::get_value(double val, double sensitivity, bool is_rotation)
 
     return iround(val * c * sensitivity * sgn[unsigned(is_rotation)]);
 }
-
-mouse::mouse() : last_x(0), last_y(0) {}
 
 OPENTRACK_DECLARE_PROTOCOL(mouse, MOUSEControls, mouseDll)

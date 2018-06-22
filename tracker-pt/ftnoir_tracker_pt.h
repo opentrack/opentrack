@@ -9,12 +9,9 @@
 #pragma once
 
 #include "api/plugin-api.hpp"
-
-#include "cv/numeric.hpp"
-
 #include "pt-api.hpp"
 #include "point_tracker.h"
-#include "cv/video-widget.hpp"
+#include "cv/numeric.hpp"
 
 #include <atomic>
 #include <memory>
@@ -25,9 +22,9 @@
 #include <QThread>
 #include <QMutex>
 #include <QLayout>
-#include <QTimer>
 
 class TrackerDialog_PT;
+class cv_video_widget;
 
 namespace pt_module {
 
@@ -40,10 +37,9 @@ class Tracker_PT : public QThread, public ITracker
     friend class ::TrackerDialog_PT;
 
 public:
-    template<typename t>
-    using pointer = typename pt_runtime_traits::pointer<t>;
+    template<typename t> using pointer = pt_pointer<t>;
 
-    Tracker_PT(pointer<pt_runtime_traits> pt_runtime_traits);
+    Tracker_PT(pointer<pt_runtime_traits> const& pt_runtime_traits);
     ~Tracker_PT() override;
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;

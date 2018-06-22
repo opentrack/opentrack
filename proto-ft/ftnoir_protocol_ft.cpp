@@ -30,7 +30,7 @@ never_inline void store(float volatile& place, const float value)
     union
     {
         float f32;
-        LONG i32 alignas(alignof(float));
+        LONG i32;
     } value_;
 
     value_.f32 = value;

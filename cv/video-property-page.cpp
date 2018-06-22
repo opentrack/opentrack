@@ -51,7 +51,7 @@ prop_settings_worker::prop_settings_worker(int idx)
     int ret = cap.get(cv::CAP_PROP_SETTINGS);
 
     if (ret != 0)
-        run_in_thread_async(qApp, []() {
+        run_in_thread_async(qApp, [] {
             QMessageBox::warning(nullptr,
                                  "Camera properties",
                                  "Camera dialog already opened",
@@ -98,7 +98,7 @@ ok:
 
     if (!cap.set(cv::CAP_PROP_SETTINGS, 0))
     {
-        run_in_thread_async(qApp, []() {
+        run_in_thread_async(qApp, [] {
             QMessageBox::warning(nullptr,
                                  "Camera properties",
                                  "Can't open camera dialog",
@@ -137,7 +137,7 @@ bool video_property_page::show(int idx)
 
     // XXX is this a race condition?
     thread->moveToThread(qApp->thread());
-    QObject::connect(thread, &QThread::finished, qApp, [thread]() { thread->deleteLater(); }, Qt::DirectConnection);
+    QObject::connect(thread, &QThread::finished, qApp, [thread] { thread->deleteLater(); }, Qt::DirectConnection);
 
     thread->start();
 

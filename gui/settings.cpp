@@ -151,7 +151,7 @@ options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
                 val.label,
                 [=](const QString&) { val.label->setText(kopts_to_string(val.opt)); });
         {
-            connect(val.button, &QPushButton::clicked, this, [=]() { bind_key(val.opt, val.label); });
+            connect(val.button, &QPushButton::clicked, this, [=] { bind_key(val.opt, val.label); });
         }
     }
 }

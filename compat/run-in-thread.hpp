@@ -93,7 +93,7 @@ run_in_thread_sync(QObject* obj, F&& fun)
         QObject::connect(&src,
                          &QObject::destroyed,
                          obj,
-                         [&]() {
+                         [&] {
             traits::assign(ret, traits::call(fun));
             sem.notify();
         },

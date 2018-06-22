@@ -31,9 +31,9 @@ void tracker_s2bot::run() {
     if (s.freq == 0) s.freq = 10;
     timer.setInterval(1000.0/s.freq);
     timer.setSingleShot(false);
-    connect(&timer, &QTimer::timeout, [this]() {
+    connect(&timer, &QTimer::timeout, [this] {
         auto reply = m_nam->get(QNetworkRequest(QUrl("http://localhost:17317/poll")));
-        connect(reply, &QNetworkReply::finished, [this, reply]() {
+        connect(reply, &QNetworkReply::finished, [this, reply] {
             if (reply->error() == QNetworkReply::NoError) {
                 //qDebug() << "Request submitted OK";
             }

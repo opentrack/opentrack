@@ -54,15 +54,15 @@ inline auto clamp(const t& val, const u& min, const w& max)
 }
 
 template<typename t>
-inline int iround(const t& val)
+inline auto iround(t val) -> std::enable_if_t<!std::is_integral_v<std::decay_t<t>>, t>
 {
-    return int(std::round(val));
+    return (int) std::round(val);
 }
 
 template<typename t>
-inline unsigned uround(const t& val)
+inline auto uround(const t& val) -> std::enable_if_t<!std::is_integral_v<std::decay_t<t>>, t>
 {
-    return std::round(std::fmax(t(0), val));
+    return (unsigned) std::fmax(0, std::round(val));
 }
 
 #include "macros.hpp"

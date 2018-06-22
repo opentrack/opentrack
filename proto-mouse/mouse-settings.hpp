@@ -13,8 +13,8 @@ struct mouse_settings : opts {
         opts("mouse-proto"),
         Mouse_X(b, "mouse-x", 0),
         Mouse_Y(b, "mouse-y", 0),
-        sensitivity_x(b, "mouse-sensitivity-x", slider_value(200, 25, 500)),
-        sensitivity_y(b, "mouse-sensitivity-y", slider_value(200, 25, 500))
+        sensitivity_x(b, "mouse-sensitivity-x", { 200, 25, 500 }),
+        sensitivity_y(b, "mouse-sensitivity-y", { 200, 25, 500 })
     {}
 };
 

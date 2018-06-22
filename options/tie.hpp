@@ -40,7 +40,7 @@ std::enable_if_t<std::is_enum_v<t>> tie_setting(value<t>& v, QComboBox* cb)
     base_value::connect(cb,
                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v, [&v, cb](int idx) {
-        run_in_thread_sync(cb, [&]() {
+        run_in_thread_sync(cb, [&] {
             v = static_cast<t>(cb->itemData(idx).toInt());
         });
     },
@@ -48,7 +48,7 @@ std::enable_if_t<std::is_enum_v<t>> tie_setting(value<t>& v, QComboBox* cb)
 
     base_value::connect(&v, base_value::value_changed<int>(),
                         cb, [cb](int x) {
-                            run_in_thread_sync(cb, [=]() { cb->setCurrentIndex(cb->findData(x)); });
+                            run_in_thread_sync(cb, [=] { cb->setCurrentIndex(cb->findData(x)); });
                         },
                         v.DIRECT_CONNTYPE);
 }
@@ -61,13 +61,13 @@ void tie_setting(value<t>& v, QComboBox* cb, From&& fn_to_index, To&& fn_to_valu
 
     base_value::connect(cb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v, [&v, cb, fn_to_value](int idx) {
-        run_in_thread_sync(cb, [&]() {
+        run_in_thread_sync(cb, [&] {
             v = fn_to_value(idx, cb->currentData());
         });
     }, v.DIRECT_CONNTYPE);
     base_value::connect(&v, base_value::value_changed<t>(),
                         cb, [&v, cb, fn_to_index](cv_qualified<t>& v) {
-        run_in_thread_sync(cb, [&]() {
+        run_in_thread_sync(cb, [&] {
             cb->setCurrentIndex(fn_to_index(v));
         });
     });

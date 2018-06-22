@@ -16,7 +16,7 @@
 #include <QObject>
 #include <QWidget>
 #include <QPainter>
-#include <QPaintEvent>
+#include <QtEvents>
 #include <QTimer>
 #include <QMutex>
 #include <QMutexLocker>

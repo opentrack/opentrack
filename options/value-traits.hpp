@@ -34,7 +34,7 @@ struct value_traits<slider_value> : default_value_traits<slider_value>
 {
     static inline slider_value from_value(const slider_value& val, const slider_value& def)
     {
-        return slider_value(val.cur(), def.min(), def.max());
+        return { val.cur(), def.min(), def.max() };
     }
 };
 
