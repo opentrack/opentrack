@@ -348,7 +348,7 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
         if (b)
         {
             connection = QObject::connect(b.get(), &bundle_::changed,
-                                          s.get(), [&]() { invalidate_settings(); });
+                                          s.get(), [&] { invalidate_settings(); });
 
             // this isn't strictly necessary for the spline but helps the widget
             conn_maxx = QObject::connect(&s->opts.clamp_x_, base_value::value_changed<int>(),

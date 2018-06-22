@@ -48,7 +48,7 @@ void spline_widget::setConfig(base_spline* spl)
 
         std::shared_ptr<base_spline::base_settings> s = spl->get_settings();
         connection = connect(s.get(), &spline::base_settings::recomputed,
-                             this, [this]() { reload_spline(); },
+                             this, [this] { reload_spline(); },
                              Qt::QueuedConnection);
     }
 }
@@ -152,7 +152,7 @@ void spline_widget::drawFunction()
         moving_control_point_idx < points.size())
     {
         const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
-        const QPointF prev_ = point_to_pixel(QPointF(0, 0));
+        const QPointF prev_ = point_to_pixel({});
         QPointF prev(iround(prev_.x()), iround(prev_.y()));
         for (int i = 0; i < points.size(); i++)
         {
@@ -187,7 +187,7 @@ void spline_widget::drawFunction()
     constexpr double step_ = 5;
 
     const double maxx = _config->max_input();
-    const double step = step_ / c.x();
+    const double step = std::fmax(1e-4, step_ / c.x());
 
     QPainterPath path;
 
@@ -195,21 +195,21 @@ void spline_widget::drawFunction()
 
     const double max_x_pixel = point_to_pixel({maxx, 0}).x();
 
-    auto check = [=](const QPointF& val) {
-        return val.x() < max_x_pixel
+    auto clamp = [=](const QPointF& val) {
+        return val.x() <= max_x_pixel
                ? val
-               : QPointF(max_x_pixel, val.y());
+               : QPointF{max_x_pixel, val.y()};
     };
 
     for (double k = 0; k < maxx; k += step*3)
     {
-        const float next_1(_config->get_value_no_save(k + step*1));
-        const float next_2(_config->get_value_no_save(k + step*2));
-        const float next_3(_config->get_value_no_save(k + step*3));
+        const auto next_1 = (double) _config->get_value_no_save(k + step*1);
+        const auto next_2 = (double) _config->get_value_no_save(k + step*2);
+        const auto next_3 = (double) _config->get_value_no_save(k + step*3);
 
-        QPointF b(check(point_to_pixel(QPointF(k + step*1, qreal(next_1))))),
-                c(check(point_to_pixel(QPointF(k + step*2, qreal(next_2))))),
-                d(check(point_to_pixel(QPointF(k + step*3, qreal(next_3)))));
+        QPointF b(clamp(point_to_pixel({k + step*1, next_1}))),
+                c(clamp(point_to_pixel({k + step*2, next_2}))),
+                d(clamp(point_to_pixel({k + step*3, next_3})));
 
         path.cubicTo(b, c, d);
     }
@@ -222,15 +222,15 @@ void spline_widget::drawFunction()
     QPointF prev = point_to_pixel({});
     for (double i = 0; i < max; i += step)
     {
-        const double val = double(_config->get_value_no_save(i));
-        const QPointF cur = point_to_pixel(QPointF(i, val));
+        const auto val = (double) _config->get_value_no_save(i);
+        const QPointF cur = point_to_pixel({i, val});
         painter.drawLine(prev, cur);
         prev = cur;
     }
     {
-        painter.drawLine(QPointF(prev), point_to_pixel_(QPointF(maxx, maxy)));
         const double maxx = _config->max_input();
         const double maxy = double(_config->get_value_no_save(maxx));
+        painter.drawLine(prev, point_to_pixel({ maxx, maxy }));
     }
 #endif
 
@@ -528,7 +528,8 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     if (std::fabs(y_ - y) < 1e-3)
         y = y_;
 
-    const bool is_fusion = QStringLiteral("fusion") == QApplication::style()->objectName();
+    static const bool is_fusion = QStringLiteral("fusion") == QApplication::style()->objectName();
+    // no fusion means OSX
     const int add_x = (is_fusion ? 25 : 0), add_y = (is_fusion ? 15 : 0);
 
     const QPoint pix(pos.x() + add_x, pos.y() + add_y);
@@ -560,7 +561,7 @@ void spline_widget::update_range()
     const int mwr = 15, mhr = 35;
 
     pixel_bounds = QRect(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
-    c = QPointF(pixel_bounds.width() / _config->max_input(), pixel_bounds.height() / _config->max_output());
+    c = { pixel_bounds.width() / _config->max_input(), pixel_bounds.height() / _config->max_output() };
     _draw_function = true;
 
     _background = QPixmap();
@@ -619,7 +620,7 @@ QPointF spline_widget::pixel_to_point(const QPointF& point)
     if (y > _config->max_output())
         y = _config->max_output();
 
-    return QPointF(x, y);
+    return { x, y };
 }
 
 QPointF spline_widget::point_to_pixel(const QPointF& point)
