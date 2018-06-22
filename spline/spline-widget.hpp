@@ -64,25 +64,24 @@ protected slots:
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
 private:
-    int get_closeness_limit();
+    double get_closeness_limit();
     void show_tooltip(const QPoint& pos, const QPointF& value = QPointF(0, 0));
-    bool is_in_bounds(const QPoint& pos) const;
+    bool is_in_bounds(const QPointF& pos) const;
 
     void drawBackground();
     void drawFunction();
     void drawPoint(QPainter& painter, const QPointF& pt, const QColor& colBG, const QColor& border = QColor(50, 100, 120, 200));
-    void drawLine(QPainter& painter, const QPoint& start, const QPoint& end, const QPen& pen);
-    bool point_within_pixel(const QPointF& pt, const QPoint& pixel);
+    void drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen);
+    bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 
     void focusOutEvent(QFocusEvent*e) override;
     void resizeEvent(QResizeEvent *) override;
 
-    bool is_on_pt(const QPoint& pos, int* pt = nullptr);
+    bool is_on_pt(const QPointF& pos, int* pt = nullptr);
     void update_range();
-    QPointF pixel_coord_to_point(const QPoint& point);
 
-    QPointF point_to_pixel_(const QPointF& point);
-    QPoint point_to_pixel(const QPointF& point);
+    QPointF pixel_to_point(const QPointF& point);
+    QPointF point_to_pixel(const QPointF& point);
 
     QPointF c;
     base_spline* _config = nullptr;

@@ -102,7 +102,7 @@ void spline_widget::drawBackground()
     QFont font;
     font.setPointSize(8);
     painter.setFont(font);
-    QFontMetrics metrics(font);
+    QFontMetricsF metrics(font);
 
     QColor color__(176, 190, 209, 127);
 
@@ -118,10 +118,10 @@ void spline_widget::drawBackground()
     // horizontal grid
     for (int i = 0; i <= maxy; i += ystep)
     {
-        const int y = int(pixel_bounds.height() - i * c.y() + pixel_bounds.y());
+        const double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
         drawLine(painter,
-                 QPoint(pixel_bounds.x(), y),
-                 QPoint(pixel_bounds.x() + pixel_bounds.width(), y),
+                 QPointF(pixel_bounds.x(), y),
+                 QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
                  pen);
         painter.drawText(QRectF(10,
                                 y - metrics.height()/2.,
@@ -133,10 +133,10 @@ void spline_widget::drawBackground()
     // vertical grid
     for (int i = 0; i <= maxx; i += xstep)
     {
-        const int x = iround(pixel_bounds.x() + i * c.x());
+        const double x = pixel_bounds.x() + i * c.x();
         drawLine(painter,
-                 QPoint(x, pixel_bounds.y()),
-                 QPoint(x, pixel_bounds.y() + pixel_bounds.height()),
+                 QPointF(x, pixel_bounds.y()),
+                 QPointF(x, pixel_bounds.y() + pixel_bounds.height()),
                  pen);
         const QString text = QString::number(i);
         painter.drawText(QRectF(x - metrics.width(text)/2.,
@@ -159,11 +159,10 @@ void spline_widget::drawFunction()
     {
         const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
         const QPointF prev_ = point_to_pixel(QPointF(0, 0));
-        QPoint prev(iround(prev_.x()), iround(prev_.y()));
+        QPointF prev(iround(prev_.x()), iround(prev_.y()));
         for (int i = 0; i < points.size(); i++)
         {
-            const QPointF tmp_ = point_to_pixel(points[i]);
-            const QPoint tmp(iround(tmp_.x()), iround(tmp_.y()));
+            const QPointF tmp = point_to_pixel(points[i]);
             drawLine(painter, prev, tmp, pen);
             prev = tmp;
         }
@@ -198,9 +197,9 @@ void spline_widget::drawFunction()
 
     QPainterPath path;
 
-    path.moveTo(point_to_pixel(QPointF(0, 0)));
+    path.moveTo(point_to_pixel({}));
 
-    const double max_x_pixel = point_to_pixel_(QPointF(maxx, 0)).x();
+    const double max_x_pixel = point_to_pixel({maxx, 0}).x();
 
     auto check = [=](const QPointF& val) {
         return val.x() < max_x_pixel
@@ -214,9 +213,9 @@ void spline_widget::drawFunction()
         const float next_2(_config->get_value_no_save(k + step*2));
         const float next_3(_config->get_value_no_save(k + step*3));
 
-        QPointF b(check(point_to_pixel_(QPointF(k + step*1, qreal(next_1))))),
-                c(check(point_to_pixel_(QPointF(k + step*2, qreal(next_2))))),
-                d(check(point_to_pixel_(QPointF(k + step*3, qreal(next_3)))));
+        QPointF b(check(point_to_pixel(QPointF(k + step*1, qreal(next_1))))),
+                c(check(point_to_pixel(QPointF(k + step*2, qreal(next_2))))),
+                d(check(point_to_pixel(QPointF(k + step*3, qreal(next_3)))));
 
         path.cubicTo(b, c, d);
     }
@@ -224,8 +223,8 @@ void spline_widget::drawFunction()
     painter.drawPath(path);
 #else
     constexpr int line_length_pixels = 3;
-    const qreal max = _config->maxInput();
-    const qreal step = clamp(line_length_pixels / c.x(), 5e-2, max);
+    const double max = _config->max_input();
+    const double step = clamp(line_length_pixels / c.x(), 5e-2, max);
     QPointF prev = point_to_pixel(QPoint(0, 0));
     for (qreal i = 0; i < max; i += step)
     {
@@ -270,8 +269,8 @@ void spline_widget::paintEvent(QPaintEvent *e)
     QPainter p(this);
 
     const double dpr = devicePixelRatioF();
-    const int W = int(width() * dpr);
-    const int H = int(height() * dpr);
+    const int W = iround(width() * dpr);
+    const int H = iround(height() * dpr);
 
     if (_background.size() != QSize(W, H))
     {
@@ -309,7 +308,7 @@ void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColo
     painter.restore();
 }
 
-void spline_widget::drawLine(QPainter& painter, const QPoint& start, const QPoint& end, const QPen& pen)
+void spline_widget::drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen)
 {
     painter.save();
     painter.setPen(pen);
@@ -320,13 +319,13 @@ void spline_widget::drawLine(QPainter& painter, const QPoint& start, const QPoin
 
 void spline_widget::mousePressEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled() || !is_in_bounds(e->pos()) || _preview_only)
+    if (!_config || !isEnabled() || !is_in_bounds(e->localPos()) || _preview_only)
     {
         clearFocus();
         return;
     }
 
-    const int point_pixel_closeness_limit = get_closeness_limit();
+    const double point_pixel_closeness_limit = get_closeness_limit();
 
     moving_control_point_idx = -1;
 
@@ -338,7 +337,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
         for (int i = 0; i < points.size(); i++)
         {
-            if (point_within_pixel(points[i], e->pos()))
+            if (point_within_pixel(points[i], e->localPos()))
             {
                 is_touching_point = true;
                 moving_control_point_idx = i;
@@ -349,7 +348,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
         if (!is_touching_point)
         {
             bool too_close = false;
-            const QPoint pos = e->pos();
+            const QPointF pos = e->localPos();
 
             for (int i = 0; i < points.size(); i++)
             {
@@ -364,7 +363,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
             if (!too_close)
             {
-                _config->add_point(pixel_coord_to_point(e->pos()));
+                _config->add_point(pixel_to_point(e->localPos()));
                 show_tooltip(e->pos());
             }
         }
@@ -379,7 +378,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             int found_pt = -1;
             for (int i = 0; i < points.size(); i++)
             {
-                if (point_within_pixel(points[i], e->pos()))
+                if (point_within_pixel(points[i], e->localPos()))
                 {
                     found_pt = i;
                     break;
@@ -419,25 +418,31 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
     if (i >= 0 && i < sz)
     {
-        const int point_closeness_limit = get_closeness_limit();
-        bool overlap = false;
+        const double point_closeness_limit = get_closeness_limit();
+        QPointF new_pt = pixel_to_point(e->localPos());
+        const QPointF pix = point_to_pixel(new_pt);
+        //bool overlap = false;
+        const bool has_prev = i > 0, has_next = i + 1 < points.size();
 
-        const QPointF pix_ = point_to_pixel(pixel_coord_to_point(e->pos()));
-        const QPoint pix(int(pix_.x()), int(pix_.y()));
+        auto check_next = [&] {
+            return !has_next || points[i+1].x() - new_pt.x() < point_closeness_limit;
+        };
 
-        QPointF new_pt = pixel_coord_to_point(e->pos());
+        auto check_prev = [&] {
+            return !has_prev || new_pt.x() - points[i-1].x() < point_closeness_limit;
+        };
 
-        if (i + 1 < points.size())
-        {
-            overlap |= points[i+1].x() - new_pt.x() < point_closeness_limit;
-        }
-        if (i > 0)
-        {
-            overlap |= new_pt.x() - points[i-1].x() < point_closeness_limit;
-        }
+        const bool status_next = !has_next || !check_next();
+        const bool status_prev = !has_prev || !check_prev();
 
-        if (overlap)
-            new_pt = QPointF(points[i].x(), new_pt.y());
+        if (!status_prev)
+            new_pt = { points[i-1].x() + point_closeness_limit, new_pt.y() };
+
+        if (!status_next)
+            new_pt = { points[i+1].x() - point_closeness_limit, new_pt.y() };
+
+        if (check_prev() && check_next())
+            new_pt = { points[i].x(), new_pt.y() };
 
         _config->move_point(i, new_pt);
 
@@ -445,12 +450,12 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         repaint();
 
         setCursor(Qt::ClosedHandCursor);
-        show_tooltip(pix, new_pt);
+        show_tooltip(pix.toPoint(), new_pt);
     }
     else if (sz)
     {
         int i;
-        bool is_on_point = is_on_pt(e->pos(), &i);
+        bool is_on_point = is_on_pt(e->localPos(), &i);
 
         if (is_on_point)
         {
@@ -460,7 +465,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         else
         {
             setCursor(Qt::ArrowCursor);
-            if (is_in_bounds(e->pos()))
+            if (is_in_bounds(e->localPos()))
                 show_tooltip(e->pos());
             else
                 QToolTip::hideText();
@@ -482,13 +487,13 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
     if (e->button() == Qt::LeftButton)
     {
         {
-            if (is_on_pt(e->pos(), nullptr))
+            if (is_on_pt(e->localPos(), nullptr))
                 setCursor(Qt::CrossCursor);
             else
                 setCursor(Qt::ArrowCursor);
         }
 
-        if (is_in_bounds(e->pos()))
+        if (is_in_bounds(e->localPos()))
             show_tooltip(e->pos());
         else
             QToolTip::hideText();
@@ -508,14 +513,14 @@ void spline_widget::reload_spline()
     update();
 }
 
-int spline_widget::get_closeness_limit()
+double spline_widget::get_closeness_limit()
 {
-    return iround(std::fmax(snap_x, 1));
+    return std::fmax(snap_x, 1);
 }
 
 void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 {
-    const QPointF value = QPoint(0, 0) == value_ ? pixel_coord_to_point(pos) : value_;
+    const QPointF value = value_.isNull() ? pixel_to_point(pos) : value_;
 
     double x = value.x(), y = value.y();
 
@@ -524,11 +529,9 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 
     const int x_ = iround(x), y_ = iround(y);
 
-    using std::fabs;
-
-    if (fabs(x_ - x) < 1e-3)
+    if (std::fabs(x_ - x) < 1e-3)
         x = x_;
-    if (fabs(y_ - y) < 1e-3)
+    if (std::fabs(y_ - y) < 1e-3)
         y = y_;
 
     const bool is_fusion = QStringLiteral("fusion") == QApplication::style()->objectName();
@@ -537,13 +540,13 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     const QPoint pix(pos.x() + add_x, pos.y() + add_y);
 
     QToolTip::showText(mapToGlobal(pix),
-                       QStringLiteral("value: %1x%2").arg(x, 0, 'f', 2).arg(y, 0, 'f', 2),
+                       QString{"value: %1x%2"}.arg(x, 0, 'f', 2).arg(y, 0, 'f', 2),
                        this,
                        rect(),
                        0);
 }
 
-bool spline_widget::is_in_bounds(const QPoint& pos) const
+bool spline_widget::is_in_bounds(const QPointF& pos) const
 {
     constexpr int grace = point_size * 3;
     constexpr int bottom_grace = int(point_size * 1.5);
@@ -572,7 +575,7 @@ void spline_widget::update_range()
     repaint();
 }
 
-bool spline_widget::point_within_pixel(const QPointF& pt, const QPoint &pixel)
+bool spline_widget::point_within_pixel(const QPointF& pt, const QPointF& pixel)
 {
     const QPointF tmp = pixel - point_to_pixel(pt);
     return QPointF::dotProduct(tmp, tmp) < point_size * point_size;
@@ -589,7 +592,7 @@ void spline_widget::focusOutEvent(QFocusEvent* e)
     e->accept();
 }
 
-QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
+QPointF spline_widget::pixel_to_point(const QPointF& point)
 {
     qreal x = (point.x() - pixel_bounds.x()) / c.x();
     qreal y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
@@ -625,17 +628,10 @@ QPointF spline_widget::pixel_coord_to_point(const QPoint& point)
     return QPointF(x, y);
 }
 
-QPointF spline_widget::point_to_pixel_(const QPointF& point)
+QPointF spline_widget::point_to_pixel(const QPointF& point)
 {
     return QPointF(pixel_bounds.x() + point.x() * c.x(),
                    pixel_bounds.y() + pixel_bounds.height() - point.y() * c.y());
-}
-
-QPoint spline_widget::point_to_pixel(const QPointF& point)
-{
-    QPointF pt(point_to_pixel_(point));
-
-    return QPoint(iround(pt.x()), iround(pt.y()));
 }
 
 void spline_widget::resizeEvent(QResizeEvent *)
@@ -643,7 +639,7 @@ void spline_widget::resizeEvent(QResizeEvent *)
     update_range();
 }
 
-bool spline_widget::is_on_pt(const QPoint& pos, int* pt)
+bool spline_widget::is_on_pt(const QPointF& pos, int* pt)
 {
     if (!_config)
     {
