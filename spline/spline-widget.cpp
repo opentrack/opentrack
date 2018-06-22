@@ -112,8 +112,8 @@ void spline_widget::drawBackground()
     const QPen pen(color__, 1, Qt::SolidLine, Qt::FlatCap);
 
     const int ystep = _y_step, xstep = _x_step;
-    const qreal maxx = _config->max_input();
-    const qreal maxy = _config->max_output();
+    const double maxx = _config->max_input();
+    const double maxy = _config->max_output();
 
     // horizontal grid
     for (int i = 0; i <= maxy; i += ystep)
@@ -225,18 +225,18 @@ void spline_widget::drawFunction()
     constexpr int line_length_pixels = 3;
     const double max = _config->max_input();
     const double step = clamp(line_length_pixels / c.x(), 5e-2, max);
-    QPointF prev = point_to_pixel(QPoint(0, 0));
-    for (qreal i = 0; i < max; i += step)
+    QPointF prev = point_to_pixel({});
+    for (double i = 0; i < max; i += step)
     {
-        const qreal val = qreal(_config->get_value_no_save(i));
+        const double val = double(_config->get_value_no_save(i));
         const QPointF cur = point_to_pixel(QPointF(i, val));
         painter.drawLine(prev, cur);
         prev = cur;
     }
     {
-        const qreal maxx = _config->maxInput();
-        const qreal maxy = qreal(_config->get_value_no_save(maxx));
         painter.drawLine(QPointF(prev), point_to_pixel_(QPointF(maxx, maxy)));
+        const double maxx = _config->max_input();
+        const double maxy = double(_config->get_value_no_save(maxx));
     }
 #endif
 
@@ -353,7 +353,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             for (int i = 0; i < points.size(); i++)
             {
                 const QPointF pt = point_to_pixel(points[i]);
-                const qreal x = std::fabs(pt.x() - pos.x());
+                const double x = std::fabs(pt.x() - pos.x());
                 if (point_pixel_closeness_limit >= x)
                 {
                     too_close = true;
@@ -594,8 +594,8 @@ void spline_widget::focusOutEvent(QFocusEvent* e)
 
 QPointF spline_widget::pixel_to_point(const QPointF& point)
 {
-    qreal x = (point.x() - pixel_bounds.x()) / c.x();
-    qreal y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
+    double x = (point.x() - pixel_bounds.x()) / c.x();
+    double y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
 
     constexpr int c = 1000;
 
