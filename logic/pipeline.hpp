@@ -101,19 +101,19 @@ private:
     // the logger while the tracker is running.
     TrackLogger& logger;
 
-    struct state
+    struct state_
     {
         rmat inv_rot_center;
         rmat rotation;
+        euler_t t_center;
 
-        state() : inv_rot_center(rmat::eye())
+        state_() : inv_rot_center(rmat::eye())
         {}
     };
 
     reltrans rel;
 
-    state rotation;
-    euler_t t_center;
+    state_ state;
 
     ns backlog_time = ns(0);
 

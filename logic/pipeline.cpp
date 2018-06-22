@@ -303,8 +303,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
 void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 {
     euler_t tmp = d2r * euler_t(&value[Yaw]);
-    //scaled_rotation.rotation = euler_to_rmat(c_div * tmp);
-    rotation.rotation = euler_to_rmat(tmp);
+    state.rotation = euler_to_rmat(tmp);
 
     if (get(f_center | f_held_center))
     {
@@ -313,17 +312,13 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 
         if (own_center_logic)
         {
-            //scaled_rotation.rot_center = rmat::eye();
-            rotation.inv_rot_center = rmat::eye();
-
-            t_center = euler_t();
+            state.inv_rot_center = rmat::eye();
+            state.t_center = euler_t();
         }
         else
         {
-            rotation.inv_rot_center = rotation.rotation.t();
-            //scaled_rotation.rot_center = scaled_rotation.rotation.t();
-
-            t_center = euler_t((const double*)(value));
+            state.inv_rot_center = state.rotation.t();
+            state.t_center = euler_t((const double*)(value));
         }
     }
 }
@@ -351,10 +346,10 @@ Pose pipeline::clamp_value(Pose value) const
 
 Pose pipeline::apply_center(Pose value) const
 {
-    euler_t T = euler_t(value) - t_center;
-    euler_t R = r2d * rmat_to_euler(rotation.rotation * rotation.inv_rot_center);
+    euler_t T = euler_t(value) - state.t_center;
+    euler_t R = r2d * rmat_to_euler(state.rotation * state.inv_rot_center);
 
-    T = rel.rotate(rotation.inv_rot_center, T, vec3_bool());
+    T = rel.rotate(state.inv_rot_center, T, vec3_bool());
 
     for (int i = 0; i < 3; i++)
     {
@@ -575,9 +570,10 @@ void pipeline::run()
         logic();
 
         constexpr ns const_sleep_ms(time_cast<ns>(ms(4)));
-        const ns elapsed_nsecs = prog1(t.elapsed<ns>(), t.start());
+        const ns elapsed_nsecs = t.elapsed<ns>();
+        t.start();
 
-        if (backlog_time > secs_(3) || backlog_time < secs_(-3))
+        if (backlog_time > secs(3) || backlog_time < secs(-3))
         {
             qDebug() << "tracker: backlog interval overflow"
                      << time_cast<ms>(backlog_time).count() << "ms";
