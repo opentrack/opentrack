@@ -184,7 +184,7 @@ void spline_widget::drawFunction()
 
 //#define DEBUG_SPLINE
 #ifndef DEBUG_SPLINE
-    constexpr double step_ = 5;
+    constexpr double step_ = 3;
 
     const double maxx = _config->max_input();
     const double step = std::fmax(1e-4, step_ / c.x());
@@ -415,36 +415,36 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         const double point_closeness_limit = get_closeness_limit();
         QPointF new_pt = pixel_to_point(e->localPos());
         const QPointF pix = point_to_pixel(new_pt);
-        //bool overlap = false;
+
         const bool has_prev = i > 0, has_next = i + 1 < points.size();
 
         auto check_next = [&] {
-            return !has_next || points[i+1].x() - new_pt.x() < point_closeness_limit;
+            return points[i+1].x() - new_pt.x() >= point_closeness_limit;
         };
 
         auto check_prev = [&] {
-            return !has_prev || new_pt.x() - points[i-1].x() < point_closeness_limit;
+            return new_pt.x() - points[i-1].x() >= point_closeness_limit;
         };
 
-        const bool status_next = !has_next || !check_next();
-        const bool status_prev = !has_prev || !check_prev();
+        if (has_prev && !check_prev())
+        {
+            new_pt.rx() = points[i-1].x() + point_closeness_limit + 1e-4;
+        }
 
-        if (!status_prev)
-            new_pt = { points[i-1].x() + point_closeness_limit, new_pt.y() };
-
-        if (!status_next)
-            new_pt = { points[i+1].x() - point_closeness_limit, new_pt.y() };
-
-        if (check_prev() && check_next())
-            new_pt = { points[i].x(), new_pt.y() };
-
-        _config->move_point(i, new_pt);
-
-        _draw_function = true;
-        repaint();
+        if (has_next && !check_next())
+        {
+            new_pt.rx() = points[i+1].x() - point_closeness_limit - 1e-4;
+        }
 
         setCursor(Qt::ClosedHandCursor);
         show_tooltip(pix.toPoint(), new_pt);
+
+        if ((!has_prev || check_prev()) && (!has_next || check_next()))
+        {
+            _config->move_point(i, new_pt);
+            _draw_function = true;
+            repaint();
+        }
     }
     else if (sz)
     {
