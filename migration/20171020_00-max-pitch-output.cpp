@@ -49,7 +49,7 @@ struct max_pitch_output : migration
         spline& pitch_spline_2 = pitch_map.spline_alt;
 
         for (const spline& spl : { pitch_spline_1, pitch_spline_2 })
-            for (QPointF& point : spl.get_points())
+            for (const QPointF& point : spl.get_points())
                 if (point.y() - 1e-2 > 90)
                     return true;
 

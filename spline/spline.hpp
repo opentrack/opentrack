@@ -64,7 +64,7 @@ struct OTR_SPLINE_EXPORT base_spline_
 
     using points_t = QList<QPointF>;
 
-    virtual points_t get_points() const = 0;
+    virtual points_t const& get_points() const = 0;
     virtual int get_point_count() const = 0;
 
     virtual std::shared_ptr<spline_detail::base_settings> get_settings() = 0;
@@ -101,7 +101,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     static int element_count(const QList<QPointF>& points, double max_input);
 
     std::shared_ptr<spline_detail::settings> s;
-    QMetaObject::Connection connection, conn_maxx, conn_maxy;
+    QMetaObject::Connection conn_changed, conn_maxx, conn_maxy, conn_reload;
 
     static constexpr inline std::size_t value_count = 4096;
 
@@ -113,6 +113,8 @@ class OTR_SPLINE_EXPORT spline : public base_spline
 
     bool activep = false;
     bool validp = false;
+
+    points_t points;
 
 public:
     void invalidate_settings();
@@ -141,11 +143,11 @@ public:
     void remove_point(int i) override;
     void clear() override;
 
-    points_t get_points() const override;
+    points_t const& get_points() const override;
 
     void set_tracking_active(bool value) override;
     bundle get_bundle();
-    void ensure_valid(QList<QPointF>& the_points);
+    void ensure_valid(points_t& the_points);
 
     std::shared_ptr<spline_detail::base_settings> get_settings() override;
     std::shared_ptr<const spline_detail::base_settings> get_settings() const override;
