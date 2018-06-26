@@ -10,7 +10,6 @@
 
 #include "compat/copyable-mutex.hpp"
 #include "options/options.hpp"
-using namespace options;
 
 #include "axis-opts.hpp"
 
@@ -28,6 +27,8 @@ using namespace options;
 #include <QMetaObject>
 
 namespace spline_detail {
+
+using namespace options;
 
 class OTR_SPLINE_EXPORT base_settings : public QObject
 {
@@ -47,8 +48,6 @@ public:
     ~settings() override;
 };
 
-} // ns spline_detail
-
 struct OTR_SPLINE_EXPORT base_spline_
 {
     virtual inline ~base_spline_();
@@ -66,9 +65,16 @@ struct OTR_SPLINE_EXPORT base_spline_
 
     virtual points_t const& get_points() const = 0;
     virtual int get_point_count() const = 0;
+};
+
+struct OTR_SPLINE_EXPORT spline_settings_mixin
+{
+    using base_settings = spline_detail::base_settings;
 
     virtual std::shared_ptr<spline_detail::base_settings> get_settings() = 0;
     virtual std::shared_ptr<const spline_detail::base_settings> get_settings() const = 0;
+
+    virtual inline ~spline_settings_mixin();
 };
 
 struct OTR_SPLINE_EXPORT spline_modify_mixin
@@ -82,10 +88,8 @@ struct OTR_SPLINE_EXPORT spline_modify_mixin
     virtual inline ~spline_modify_mixin();
 };
 
-class OTR_SPLINE_EXPORT base_spline : public base_spline_, public spline_modify_mixin
+struct OTR_SPLINE_EXPORT base_spline : base_spline_, spline_modify_mixin, spline_settings_mixin
 {
-public:
-    using base_settings = spline_detail::base_settings;
 };
 
 class OTR_SPLINE_EXPORT spline : public base_spline
@@ -159,3 +163,8 @@ public:
 
 inline base_spline_::~base_spline_() {}
 inline spline_modify_mixin::~spline_modify_mixin() {}
+inline spline_settings_mixin::~spline_settings_mixin() {}
+
+} // ns spline_detail
+
+using spline = spline_detail::spline;
