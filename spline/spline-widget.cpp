@@ -509,7 +509,7 @@ void spline_widget::reload_spline()
 
 double spline_widget::get_closeness_limit()
 {
-    return std::fmax(snap_x, 1);
+    return std::fmax(snap_x, .5);
 }
 
 void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
