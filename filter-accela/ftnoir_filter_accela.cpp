@@ -41,21 +41,19 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
         norm[k] = c;
     }
 
-    progn(
-        double n = 0;
-        for (unsigned k = 0; k < N; k++)
-            n += norm[k];
+    double n = 0;
+    for (unsigned k = 0; k < N; k++)
+        n += norm[k];
 
-        if (n > 1e-6)
-        {
-            const double ret = 1./n;
-            for (unsigned k = 0; k < N; k++)
-                norm[k] *= ret;
-        }
-        else
-            for (unsigned k = 0; k < N; k++)
-                norm[k] = 0;
-    );
+    if (n > 1e-6)
+    {
+        const double ret = 1./n;
+        for (unsigned k = 0; k < N; k++)
+            norm[k] *= ret;
+    }
+    else
+        for (unsigned k = 0; k < N; k++)
+            norm[k] = 0;
 
     for (unsigned k = 0; k < N; k++)
     {
