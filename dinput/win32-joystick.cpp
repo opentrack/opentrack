@@ -246,7 +246,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
     return true;
 }
 
-win32_joy_ctx::enum_state::enum_state() : di(dinput_handle::make_di())
+win32_joy_ctx::enum_state::enum_state()
 {
 }
 

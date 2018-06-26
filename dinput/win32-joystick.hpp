@@ -76,8 +76,6 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx final
     win32_joy_ctx();
     void refresh();
 
-    using di_t = dinput_handle::di_t;
-
 private:
     static QString guid_to_string(const GUID& guid);
 
@@ -85,7 +83,7 @@ private:
     {
         std::vector<QString> all;
         joys_t joys;
-        dinput_handle::di_t di;
+        di_t di {};
 
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);

@@ -10,42 +10,42 @@
 
 #include "export.hpp"
 
-#undef DIRECTINPUT_VERSION
-#define DIRECTINPUT_VERSION 0x800
-#include <dinput.h>
 #include <atomic>
 
-class OTR_DINPUT_EXPORT dinput_handle final
-{
-public:
-    class di_t;
+#undef DIRECTINPUT_VERSION
+#define DIRECTINPUT_VERSION 0x800
 
-private:
+#include <dinput.h>
+
+using diptr = IDirectInput8A*;
+
+class OTR_DINPUT_EXPORT di_t final
+{
+    static void unref_di();
+    static void ref_di();
+
+    static diptr handle;
     static std::atomic<int> refcnt;
     static std::atomic_flag init_lock;
+    static diptr init_di_();
 
-    static LPDIRECTINPUT8& init_di();
 public:
-    class di_t final
+    di_t();
+    ~di_t();
+    di_t(const di_t&) : di_t() {}
+    di_t& operator=(const di_t&) { return *this; }
+
+    diptr operator->() const { return handle; }
+    operator bool() { return handle; }
+
+    // for debugging bad usages
+    template<typename t = void>
+    operator void*() const
     {
-        friend class dinput_handle;
+        static_assert(sizeof(t) == -1);
+        static_assert(sizeof(t) == 0);
 
-        LPDIRECTINPUT8* handle;
-
-        di_t(LPDIRECTINPUT8& handle);
-        void free_di();
-        void unref_di();
-        void ref_di();
-
-    public:
-        LPDIRECTINPUT8 operator->() { return *handle; }
-        operator LPDIRECTINPUT8() { return *handle; }
-        LPDIRECTINPUT8 di() { return *handle; }
-        di_t& operator=(const di_t& new_di);
-        di_t();
-        ~di_t();
-    };
-
-    static di_t make_di();
-    dinput_handle() = delete;
+        return nullptr;
+    }
 };
+

@@ -47,7 +47,7 @@ private:
     std::vector<std::unique_ptr<fun>> receivers;
     QMutex mtx;
     QMainWindow fake_main_window;
-    dinput_handle::di_t din;
+    di_t din;
 
     bool keystate[256] {};
     bool old_keystate[256] {};

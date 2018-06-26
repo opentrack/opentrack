@@ -93,7 +93,7 @@ bool KeybindingWorker::init()
     return true;
 }
 
-KeybindingWorker::KeybindingWorker() : dinkeyboard(nullptr), din(dinput_handle::make_di())
+KeybindingWorker::KeybindingWorker()
 {
     if (init())
         start(QThread::HighPriority);
