@@ -1,12 +1,6 @@
 #pragma once
 
 #if defined _MSC_VER
-#   define MEMORY_BARRIER() _ReadWriteBarrier()
-#else
-#   define MEMORY_BARRIER() asm volatile("" ::: "memory")
-#endif
-
-#if defined _MSC_VER
 #   define cc_noinline __declspec(noinline)
 #elif defined __GNUG__
 #   define cc_noinline __attribute__((noinline))
