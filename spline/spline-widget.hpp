@@ -12,7 +12,6 @@
 #include "spline.hpp"
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"
-using namespace options;
 
 #include "export.hpp"
 
@@ -20,6 +19,10 @@ using namespace options;
 #include <QMetaObject>
 
 #include <QDebug>
+
+namespace spline_detail {
+
+using namespace options;
 
 class OTR_SPLINE_EXPORT spline_widget final : public QWidget
 {
@@ -97,3 +100,7 @@ private:
 
     static constexpr inline int point_size = 4;
 };
+
+} // ns spline_detail
+
+using spline_widget = spline_detail::spline_widget;

@@ -7,6 +7,11 @@
 
 #include "spline-widget.hpp"
 #include "compat/math.hpp"
+#include "compat/macros.hpp"
+
+#include <cmath>
+#include <algorithm>
+
 #include <QPainter>
 #include <QPixmap>
 #include <QString>
@@ -16,13 +21,14 @@
 
 #include <QDebug>
 
-#include <cmath>
-#include <algorithm>
+#include "compat/timer.hpp"
+
+using namespace spline_detail;
 
 spline_widget::spline_widget(QWidget *parent) : QWidget(parent)
 {
     setMouseTracking(true);
-    setFocusPolicy(Qt::ClickFocus);
+    //setFocusPolicy(Qt::ClickFocus);
     setCursor(Qt::ArrowCursor);
 }
 
@@ -154,9 +160,9 @@ void spline_widget::drawFunction()
         const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
         const QPointF prev_ = point_to_pixel({});
         QPointF prev(iround(prev_.x()), iround(prev_.y()));
-        for (int i = 0; i < points.size(); i++)
+        for (auto point : points)
         {
-            const QPointF tmp = point_to_pixel(points[i]);
+            const QPointF tmp = point_to_pixel(point);
             drawLine(painter, prev, tmp, pen);
             prev = tmp;
         }
@@ -182,13 +188,21 @@ void spline_widget::drawFunction()
 
     painter.setPen(QPen(color_, 1.75, Qt::SolidLine, Qt::FlatCap));
 
-//#define DEBUG_SPLINE
-#ifndef DEBUG_SPLINE
-    constexpr double step_ = 3;
+//#define DEBUG_TIMINGS
+#ifdef DEBUG_TIMINGS
+    static Timer t;
+    static unsigned cnt = 0;
+    static time_units::ms total { 0 };
+    cnt++;
+    t.start();
+#endif
 
+    const int line_length_pixels = 2;
+    const double step = std::fmax(.25, line_length_pixels / c.x());
     const double maxx = _config->max_input();
-    const double step = std::fmax(1e-4, step_ / c.x());
 
+//#define USE_CUBIC_SPLINE
+#if defined USE_CUBIC_SPLINE
     QPainterPath path;
 
     path.moveTo(point_to_pixel({}));
@@ -216,11 +230,8 @@ void spline_widget::drawFunction()
 
     painter.drawPath(path);
 #else
-    constexpr int line_length_pixels = 3;
-    const double max = _config->max_input();
-    const double step = clamp(line_length_pixels / c.x(), 5e-2, max);
     QPointF prev = point_to_pixel({});
-    for (double i = 0; i < max; i += step)
+    for (double i = 0; i < maxx; i += step)
     {
         const auto val = (double) _config->get_value_no_save(i);
         const QPointF cur = point_to_pixel({i, val});
@@ -234,6 +245,11 @@ void spline_widget::drawFunction()
     }
 #endif
 
+#ifdef DEBUG_TIMINGS
+    total += t.elapsed<time_units::ms>();
+    qDebug() << "avg" << total.count() / cnt;
+#endif
+
     const QRect r1(pixel_bounds.left(), 0, width() - pixel_bounds.left(), pixel_bounds.top()),
                 r2(pixel_bounds.right(), 0, width() - pixel_bounds.right(), pixel_bounds.bottom());
 
@@ -245,10 +261,10 @@ void spline_widget::drawFunction()
     const int alpha = !isEnabled() ? 64 : 120;
     if (!_preview_only)
     {
-        for (int i = 0; i < points.size(); i++)
+        for (auto point : points)
         {
             drawPoint(painter,
-                      point_to_pixel(points[i]),
+                      point_to_pixel(point),
                       QColor(200, 200, 210, alpha),
                       isEnabled() ? QColor(50, 100, 120, 200) : QColor(200, 200, 200, 96));
         }
@@ -314,10 +330,7 @@ void spline_widget::drawLine(QPainter& painter, const QPointF& start, const QPoi
 void spline_widget::mousePressEvent(QMouseEvent *e)
 {
     if (!_config || !isEnabled() || !is_in_bounds(e->localPos()) || _preview_only)
-    {
-        clearFocus();
         return;
-    }
 
     const double point_pixel_closeness_limit = get_closeness_limit();
 
@@ -344,9 +357,9 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             bool too_close = false;
             const QPointF pos = e->localPos();
 
-            for (int i = 0; i < points.size(); i++)
+            for (auto point : points)
             {
-                const QPointF pt = point_to_pixel(points[i]);
+                const QPointF pt = point_to_pixel(point);
                 const double x = std::fabs(pt.x() - pos.x());
                 if (point_pixel_closeness_limit >= x)
                 {
@@ -396,13 +409,12 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
     if (_preview_only && _config)
     {
         show_tooltip(e->pos());
-        clearFocus();
         return;
     }
 
-    if (!_config || !isEnabled() || !isActiveWindow() || (moving_control_point_idx != -1 && !hasFocus()))
+    if (!_config || !isEnabled() || !isActiveWindow())
     {
-        clearFocus();
+        QToolTip::hideText();
         return;
     }
 
@@ -469,11 +481,8 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
 void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 {
-    if (!_config || !isEnabled() || !isActiveWindow() || !hasFocus() || _preview_only)
-    {
-        clearFocus();
+    if (!_config || !isEnabled() || !isActiveWindow() || _preview_only)
         return;
-    }
 
     const bool redraw = moving_control_point_idx != -1;
     moving_control_point_idx = -1;
@@ -618,8 +627,10 @@ QPointF spline_widget::pixel_to_point(const QPointF& point)
 
 QPointF spline_widget::point_to_pixel(const QPointF& point)
 {
-    return QPointF(pixel_bounds.x() + point.x() * c.x(),
-                   pixel_bounds.y() + pixel_bounds.height() - point.y() * c.y());
+    return {
+        pixel_bounds.x() + point.x() * c.x(),
+        pixel_bounds.y() + pixel_bounds.height() - point.y() * c.y()
+    };
 }
 
 void spline_widget::resizeEvent(QResizeEvent *)
