@@ -43,7 +43,7 @@ struct move_int_to_slider : migration
         value<int> old_val(b, old_name, 128);
         value<slider_value> new_val(b, new_name, { 128, 0, 255 });
 
-        new_val = { old_val.to<int>(), 0, 255 };
+        new_val = { *old_val, 0, 255 };
 
         b->save();
     }

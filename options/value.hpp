@@ -15,7 +15,6 @@
 #include "base-value.hpp"
 #include "value-traits.hpp"
 #include "compat/macros.hpp"
-#include "compat/linkage-macros.hpp"
 
 #include <cstdio>
 #include <type_traits>
@@ -85,12 +84,6 @@ public:
                              DIRECT_CONNTYPE);
     }
 
-    template<unsigned k>
-    inline value(bundle b, const char (&name)[k], t def) : value(b, QLatin1String(name, k-1), def)
-    {
-        static_assert(k > 0, "");
-    }
-
     cc_noinline
     t default_value() const
     {
@@ -103,10 +96,8 @@ public:
         *this = def;
     }
 
-    cc_noinline
     operator t() const { return get(); }
 
-    cc_noinline
     t operator->() const
     {
         return get();
@@ -126,14 +117,17 @@ public:
             emit valueChanged(traits::to_storage(get()));
     }
 
-    cc_noinline
     t operator()() const
     {
         return get();
     }
 
+    t operator*() const
+    {
+        return get();
+    }
+
     template<typename u>
-    cc_noinline
     u to() const
     {
         return static_cast<u>(get());
