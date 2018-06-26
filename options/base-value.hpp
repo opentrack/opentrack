@@ -3,9 +3,10 @@
 #include "bundle.hpp"
 #include "slider.hpp"
 #include "connector.hpp"
+#include "metatype.hpp"
 
 #include "export.hpp"
-#include "compat/meta.hpp"
+#include "compat/macros.hpp"
 
 #include <QObject>
 #include <QString>
@@ -20,7 +21,7 @@
 
 namespace options {
 
-class OTR_OPTIONS_EXPORT base_value : public QObject
+class OTR_OPTIONS_EXPORT value_ : public QObject
 {
     Q_OBJECT
 
@@ -28,20 +29,20 @@ class OTR_OPTIONS_EXPORT base_value : public QObject
 
     using comparator = bool(*)(const QVariant& val1, const QVariant& val2);
     template<typename t>
-    using signal_sig = void(base_value::*)(cv_qualified<t>) const;
+    using signal_sig = void(value_::*)(cv_qualified<t>) const;
 
 public:
     bundle get_bundle() { return b; }
     QString name() const { return self_name; }
-    base_value(bundle b, const QString& name, comparator cmp, std::type_index type_idx);
-    ~base_value() override;
+    value_(bundle b, const QString& name, comparator cmp, std::type_index type_idx);
+    ~value_() override;
 
     // MSVC has ODR problems in 15.4
     // no C++17 "constexpr inline" for data declarations in MSVC
     template<typename t>
     constexpr static auto value_changed()
     {
-        return static_cast<signal_sig<t>>(&base_value::valueChanged);
+        return static_cast<signal_sig<t>>(&value_::valueChanged);
     }
 
     void notify() const;
@@ -63,6 +64,7 @@ signals:
     OPENTRACK_DEFINE_SIGNAL(const QList<QString>&);
     OPENTRACK_DEFINE_SIGNAL(const QList<slider_value>&);
     OPENTRACK_DEFINE_SIGNAL(const QList<QPointF>&);
+
 protected:
     bundle b;
     QString self_name;
@@ -98,7 +100,7 @@ public slots:
     virtual void bundle_value_changed() const = 0;
     virtual void set_to_default() = 0;
 
-    friend void ::options::detail::set_base_value_to_default(base_value* val);
+    friend void ::options::detail::set_base_value_to_default(value_* val);
 };
 
 } //ns options

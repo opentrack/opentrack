@@ -22,15 +22,15 @@
 
 namespace options {
 
-class base_value;
+class value_;
 
 namespace detail {
 
 class OTR_OPTIONS_EXPORT connector
 {
-    friend class ::options::base_value;
+    friend class ::options::value_;
 
-    using value_type = base_value*;
+    using value_type = value_*;
     using value_vec = std::vector<value_type>;
     using comparator = bool(*)(const QVariant&, const QVariant&);
     using tt = std::tuple<value_vec, comparator, std::type_index>;

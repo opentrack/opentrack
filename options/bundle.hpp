@@ -31,7 +31,7 @@ namespace options {
 
 namespace detail {
 
-void set_base_value_to_default(base_value* val);
+void set_base_value_to_default(value_* val);
 
 struct bundler;
 

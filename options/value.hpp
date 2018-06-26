@@ -32,7 +32,7 @@
 namespace options {
 
 template<typename t>
-class value final : public base_value
+class value final : public value_
 {
     using traits = detail::value_traits<t, t, void>;
     using stored_type = typename traits::stored_type;
@@ -76,7 +76,7 @@ public:
 
     cc_noinline
     value(bundle b, const QString& name, t def) :
-        base_value(b, name, &is_equal, std::type_index(typeid(stored_type))),
+        value_(b, name, &is_equal, std::type_index(typeid(stored_type))),
         def(def)
     {
         if (!self_name.isEmpty())

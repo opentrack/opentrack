@@ -37,7 +37,7 @@ std::enable_if_t<std::is_enum_v<t>> tie_setting(value<t>& v, QComboBox* cb)
     cb->setCurrentIndex(cb->findData(int(static_cast<t>(v))));
     v = static_cast<t>(cb->currentData().toInt());
 
-    base_value::connect(cb,
+    value_::connect(cb,
                         static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v, [&v, cb](int idx) {
         run_in_thread_sync(cb, [&] {
@@ -46,7 +46,7 @@ std::enable_if_t<std::is_enum_v<t>> tie_setting(value<t>& v, QComboBox* cb)
     },
     v.DIRECT_CONNTYPE);
 
-    base_value::connect(&v, base_value::value_changed<int>(),
+    value_::connect(&v, value_::value_changed<int>(),
                         cb, [cb](int x) {
                             run_in_thread_sync(cb, [=] { cb->setCurrentIndex(cb->findData(x)); });
                         },
@@ -59,13 +59,13 @@ void tie_setting(value<t>& v, QComboBox* cb, From&& fn_to_index, To&& fn_to_valu
     cb->setCurrentIndex(fn_to_index(v));
     v = fn_to_value(cb->currentIndex(), cb->currentData());
 
-    base_value::connect(cb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+    value_::connect(cb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                         &v, [&v, cb, fn_to_value](int idx) {
         run_in_thread_sync(cb, [&] {
             v = fn_to_value(idx, cb->currentData());
         });
     }, v.DIRECT_CONNTYPE);
-    base_value::connect(&v, base_value::value_changed<t>(),
+    value_::connect(&v, value_::value_changed<t>(),
                         cb, [&v, cb, fn_to_index](cv_qualified<t>& v) {
         run_in_thread_sync(cb, [&] {
             cb->setCurrentIndex(fn_to_index(v));
@@ -79,7 +79,7 @@ void tie_setting(value<t>& v, QLabel* lb, F&& fun)
     auto closure = [=](cv_qualified<t> x) { lb->setText(fun(x)); };
 
     closure(v());
-    base_value::connect(&v, base_value::value_changed<t>(),
+    value_::connect(&v, value_::value_changed<t>(),
                         lb, closure,
                         v.SAFE_CONNTYPE);
 }
@@ -92,7 +92,7 @@ void tie_setting(value<t>& v, QObject* obj, F&& fun)
 
     fun(v());
 
-    base_value::connect(&v, base_value::value_changed<t>(),
+    value_::connect(&v, value_::value_changed<t>(),
                         obj, fun,
                         v.DIRECT_CONNTYPE);
 }

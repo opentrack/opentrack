@@ -15,16 +15,16 @@ OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb)
 {
     cb->setCurrentIndex(v);
     v = cb->currentIndex();
-    base_value::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
+    value_::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb)
 {
     cb->setCurrentText(v);
     v = cb->currentText();
-    base_value::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(const QString&)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, SIGNAL(valueChanged(const QString&)), cb, SLOT(setCurrentText(const QString&)), v.SAFE_CONNTYPE);
+    value_::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(const QString&)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(const QString&)), cb, SLOT(setCurrentText(const QString&)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
@@ -52,13 +52,13 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
     else
         v = QVariant(QVariant::Invalid);
 
-    base_value::connect(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                        &v, [cb, &v](int idx) {
+    value_::connect(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                    &v, [cb, &v](int idx) {
         v = cb->itemData(idx);
     }, v.DIRECT_CONNTYPE);
-    base_value::connect(&v, base_value::value_changed<QVariant>(),
-                        cb,
-                        [cb, set_idx](const QVariant& var) {
+    value_::connect(&v, value_::value_changed<QVariant>(),
+                    cb,
+                    [cb, set_idx](const QVariant& var) {
         run_in_thread_sync(cb, [&] {
             set_idx(var);
         });
@@ -70,42 +70,42 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
 OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb)
 {
     cb->setChecked(v);
-    base_value::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
+    value_::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
 {
     dsb->setValue(v);
-    base_value::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.SAFE_CONNTYPE);
+    value_::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb)
 {
     sb->setValue(v);
-    base_value::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
+    value_::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le)
 {
     le->setText(v);
-    base_value::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, base_value::value_changed<QString>(), le, &QLineEdit::setText, v.SAFE_CONNTYPE);
+    value_::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, value_::value_changed<QString>(), le, &QLineEdit::setText, v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb)
 {
     lb->setText(v);
-    base_value::connect(&v, base_value::value_changed<QString>(), lb, &QLabel::setText, v.SAFE_CONNTYPE);
+    value_::connect(&v, value_::value_changed<QString>(), lb, &QLabel::setText, v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t)
 {
     t->setCurrentIndex(v);
-    base_value::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-    base_value::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
+    value_::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w)
@@ -118,10 +118,10 @@ OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w)
         v = v().update_from_slider(w->value(), q_min, q_max);
     }
 
-    base_value::connect(w,
-                        &QSlider::valueChanged,
-                        &v,
-                        [=, &v](int pos)
+    value_::connect(w,
+                    &QSlider::valueChanged,
+                    &v,
+                    [=, &v](int pos)
     {
         run_in_thread_sync(w, [&]()
         {
@@ -133,10 +133,10 @@ OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w)
     },
     v.DIRECT_CONNTYPE);
 
-    base_value::connect(&v,
-                        base_value::value_changed<slider_value>(),
-                        w,
-                        [=, &v](double) {
+    value_::connect(&v,
+                    value_::value_changed<slider_value>(),
+                    w,
+                    [=, &v](double) {
         run_in_thread_sync(w, [=, &v]()
         {
             const int q_min = w->minimum();

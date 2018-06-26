@@ -2,7 +2,7 @@
 
 using namespace options;
 
-base_value::base_value(bundle b, const QString& name, base_value::comparator cmp, std::type_index type_idx) :
+value_::value_(bundle b, const QString& name, value_::comparator cmp, std::type_index type_idx) :
     b(b),
     self_name(name),
     cmp(cmp),
@@ -11,17 +11,17 @@ base_value::base_value(bundle b, const QString& name, base_value::comparator cmp
     b->on_value_created(name, this);
 }
 
-base_value::~base_value()
+value_::~value_()
 {
     b->on_value_destructed(self_name, this);
 }
 
-void base_value::notify() const
+void value_::notify() const
 {
     bundle_value_changed();
 }
 
-void base_value::store(const QVariant& datum)
+void value_::store(const QVariant& datum)
 {
     b->store_kv(self_name, datum);
 }
@@ -29,7 +29,7 @@ void base_value::store(const QVariant& datum)
 namespace options {
 namespace detail {
 
-void set_base_value_to_default(base_value* val)
+void set_base_value_to_default(value_* val)
 {
     val->set_to_default();
 }

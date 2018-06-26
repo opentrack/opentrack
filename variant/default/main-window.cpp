@@ -175,15 +175,15 @@ main_window::main_window() :
                 this,
                 [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
 
-        connect(&m.tracker_dll, base_value::value_changed<QString>(),
+        connect(&m.tracker_dll, value_::value_changed<QString>(),
                 this, &main_window::save_modules,
                 Qt::DirectConnection);
 
-        connect(&m.protocol_dll, base_value::value_changed<QString>(),
+        connect(&m.protocol_dll, value_::value_changed<QString>(),
                 this, &main_window::save_modules,
                 Qt::DirectConnection);
 
-        connect(&m.filter_dll, base_value::value_changed<QString>(),
+        connect(&m.filter_dll, value_::value_changed<QString>(),
                 this, &main_window::save_modules,
                 Qt::DirectConnection);
 
@@ -315,7 +315,7 @@ void main_window::init_tray()
     tray_menu.addAction(&menu_action_exit);
 
     connect(&s.tray_enabled,
-            static_cast<void (base_value::*)(bool) const>(&base_value::valueChanged),
+            static_cast<void (value_::*)(bool) const>(&value_::valueChanged),
             this,
             &main_window::ensure_tray);
 }

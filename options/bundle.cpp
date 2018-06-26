@@ -12,7 +12,7 @@
 #include <QThread>
 #include <QApplication>
 
-using options::base_value;
+using options::value_;
 
 namespace options
 {
@@ -53,7 +53,7 @@ void bundle::set_all_to_default()
 {
     QMutexLocker l(&mtx);
 
-    forall([](const QString&, base_value* val) { set_base_value_to_default(val); });
+    forall([](const QString&, value_* val) { set_base_value_to_default(val); });
 
     if (is_modified())
         group::mark_ini_modified();
