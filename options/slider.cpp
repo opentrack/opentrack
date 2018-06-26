@@ -32,16 +32,6 @@ slider_value::slider_value() : slider_value(0, 0, 0)
 {
 }
 
-slider_value& slider_value::operator=(const slider_value& v)
-{
-    cur_ = v.cur_;
-
-    min_ = v.min_;
-    max_ = v.max_;
-
-    return *this;
-}
-
 bool slider_value::operator==(const slider_value& v) const
 {
     using std::fabs;
@@ -55,6 +45,11 @@ bool slider_value::operator==(const slider_value& v) const
 #else
     return (fabs(v.cur_ - cur_) < eps);
 #endif
+}
+
+bool slider_value::operator!=(const slider_value& v) const
+{
+    return !(*this == v);
 }
 
 slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const

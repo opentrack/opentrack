@@ -10,6 +10,8 @@
 #include "export.hpp"
 #include "compat/macros.hpp"
 
+#include <type_traits>
+
 #include <QDataStream>
 #include <QMetaType>
 #include <QDebug>
@@ -33,15 +35,15 @@ namespace options
 
         template<typename t>
         cc_noinline
-        explicit operator arith_conversion_t<t>() const
+        operator arith_conversion_t<t>() const
         {
             return t(cur_);
         }
 
         slider_value(const slider_value& v);
         slider_value();
-        slider_value& operator=(const slider_value& v);
         bool operator==(const slider_value& v) const;
+        bool operator!=(const slider_value& v) const;
         operator double() const { return cur_; }
         double cur() const { return cur_; }
         double min() const { return min_; }
