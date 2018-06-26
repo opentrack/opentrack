@@ -58,7 +58,7 @@ QHash<QString, QString> proc_detector_settings::split_process_names()
     QHash<QString, QString> ret;
     QString str = get_game_list();
     QStringList pairs = str.split(RECORD_SEPARATOR, QString::SkipEmptyParts);
-    for (auto pair : pairs)
+    for (auto const& pair : pairs)
     {
         QList<QString> tmp = pair.split(UNIT_SEPARATOR);
         if (tmp.count() != 2)
@@ -67,7 +67,7 @@ QHash<QString, QString> proc_detector_settings::split_process_names()
             continue;
         if (tmp[1].contains(UNIT_SEPARATOR) || tmp[1].contains(RECORD_SEPARATOR))
             continue;
-        if (tmp[0] == QLatin1String("") || tmp[1] == QLatin1String(""))
+        if (tmp[0].isEmpty() || tmp[1].isEmpty())
             continue;
         ret[tmp[0]] = tmp[1];
     }
@@ -76,21 +76,19 @@ QHash<QString, QString> proc_detector_settings::split_process_names()
 
 void BrowseButton::browse()
 {
-    QFileDialog dialog(this);
-    dialog.setFileMode(QFileDialog::ExistingFile);
     QString dir_path = QFileInfo(group::ini_pathname()).absolutePath();
-    QString filename = dialog.getOpenFileName(
-                this,
-                tr("Set executable name"),
-                dir_path,
-                tr("Executable (*.exe);;All Files (*)"));
+    QString filename = QFileDialog::getOpenFileName(
+                           this,
+                           tr("Set executable name"),
+                           dir_path,
+                           tr("Executable (*.exe);;All Files (*)"));
     QDir::setCurrent(OPENTRACK_BASE_PATH);
     filename = QFileInfo(filename).fileName();
     if (!filename.isNull())
         twi->setText(filename);
 }
 
-int process_detector::add_row(QString exe_name, QString profile)
+int process_detector::add_row(QString const& exe_name, QString const& profile)
 {
     int i = ui.tableWidget->rowCount();
     ui.tableWidget->insertRow(i);
@@ -122,7 +120,7 @@ void process_detector::add_items()
     ui.tableWidget->clearContents();
     auto keys = names.keys();
     std::sort(keys.begin(), keys.end());
-    for (auto n : keys)
+    for (auto const& n : keys)
         add_row(n, names[n]);
 }
 

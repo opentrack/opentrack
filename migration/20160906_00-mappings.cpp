@@ -18,6 +18,7 @@
 
 #include <QDebug>
 
+using namespace options;
 using namespace migrations;
 
 static const char* const old_names[] =
@@ -46,19 +47,19 @@ static QList<QList<QPointF>> get_old_splines()
     return group::with_settings_object([&](QSettings& settings) {
         for (const char* name : old_names)
         {
+            const int max = settings.value("point-count", 0).toInt();
+
+            if (max < 0 || max > 1 << 16)
+                return ret;
+
             QList<QPointF> points;
+            points.reserve(max);
 
             settings.beginGroup(QString("Curves-%1").arg(name));
 
-            const int max = settings.value("point-count", 0).toInt();
-
             for (int i = 0; i < max; i++)
-            {
-                QPointF new_point(settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
-                                  settings.value(QString("point-%1-y").arg(i), 0).toDouble());
-
-                points.append(new_point);
-            }
+                points.append({ settings.value(QString("point-%1-x").arg(i), 0).toDouble(),
+                                settings.value(QString("point-%1-y").arg(i), 0).toDouble() });
 
             settings.endGroup();
 
@@ -85,7 +86,7 @@ struct mappings_from_2_3_0_rc11 : migration
 
             // run only if old splines exist
             for (const QList<QPointF>& points : get_old_splines())
-                if (points.size())
+                if (!points.empty())
                     return true;
         }
 

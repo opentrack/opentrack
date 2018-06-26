@@ -33,7 +33,7 @@ struct OTR_COMPAT_EXPORT Timer final
     double elapsed_ms() const;
     double elapsed_seconds() const;
 private:
-    struct timespec state;
+    struct timespec state {};
     static void gettime(struct timespec* state);
     time_type conv_nsecs(const struct timespec& cur) const;
     using ns = time_units::ns;

@@ -15,7 +15,7 @@
 #include "compat/math-imports.hpp"
 #include "compat/time.hpp"
 
-accela::accela() : first_run(true)
+accela::accela()
 {
     s.make_splines(spline_rot, spline_pos);
 }

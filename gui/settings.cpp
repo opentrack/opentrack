@@ -9,6 +9,9 @@
 #include "settings.hpp"
 #include "keyboard.h"
 #include "compat/library-path.hpp"
+
+#include <utility>
+
 #include <QPushButton>
 #include <QLayout>
 #include <QDialog>
@@ -41,8 +44,8 @@ void options_dialog::set_disable_translation_state(bool value)
     });
 }
 
-options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
-    pause_keybindings(pause_keybindings)
+options_dialog::options_dialog(std::function<void(bool)>&& pause_keybindings) :
+    pause_keybindings(std::move(pause_keybindings))
 {
     ui.setupUi(this);
 

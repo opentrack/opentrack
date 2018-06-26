@@ -138,14 +138,14 @@ device_list::maybe_pose device_list::get_pose(int k)
         const pose_t& pose = poses[k];
 
         if (pose.bPoseIsValid && pose.bDeviceIsConnected)
-            return maybe_pose(true, poses[k]);
+            return maybe_pose{ true, poses[k] };
         else
             once_only(qDebug() << "steamvr:"
                                << "no valid pose from device" << k
                                << "valid" << pose.bPoseIsValid
                                << "connected" << pose.bDeviceIsConnected);
 
-        return maybe_pose(false, pose_t{});
+        return maybe_pose{ false, {} };
     });
 }
 
@@ -165,7 +165,7 @@ tt device_list::vr_init_()
     else
         qDebug() << "steamvr: init failure" << error << device_list::error_string(error);
 
-    return tt(v, error);
+    return { v, error };
 }
 
 QString device_list::error_string(vr_error_t err)

@@ -4,10 +4,12 @@
 
 #include "gui/ui_settings-dialog.h"
 #include "logic/shortcuts.h"
+
+#include <functional>
+
 #include <QObject>
 #include <QDialog>
 #include <QWidget>
-#include <functional>
 
 class OTR_GUI_EXPORT options_dialog : public QDialog
 {
@@ -15,12 +17,12 @@ class OTR_GUI_EXPORT options_dialog : public QDialog
 signals:
     void closing();
 public:
-    options_dialog(std::function<void(bool)> pause_keybindings);
+    options_dialog(std::function<void(bool)>&& pause_keybindings);
 private:
     main_settings main;
     std::function<void(bool)> pause_keybindings;
     Ui::options_dialog ui;
-    void closeEvent(QCloseEvent *) override;
+    void closeEvent(QCloseEvent*) override;
     static QString kopts_to_string(const key_opts& opts);
 private slots:
     void doOK();

@@ -8,12 +8,9 @@
 #pragma once
 
 #include "pt-api.hpp"
-
 #include "compat/timer.hpp"
 
-#include <functional>
 #include <memory>
-#include <tuple>
 
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>

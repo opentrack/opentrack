@@ -14,10 +14,6 @@
 #include "compat/timer.hpp"
 #include "compat/library-path.hpp"
 
-simconnect::simconnect() : hSimConnect(nullptr), should_reconnect(false)
-{
-}
-
 simconnect::~simconnect()
 {
     requestInterruption();
@@ -112,11 +108,8 @@ void simconnect::pose( const double *headpose )
 class ActivationContext
 {
 public:
-    ActivationContext(const int resid) :
-        ok(false)
+    explicit ActivationContext(int resid)
     {
-        hactctx = INVALID_HANDLE_VALUE;
-        actctx_cookie = 0;
         ACTCTXA actx = {};
         actx.cbSize = sizeof(actx);
         actx.lpResourceName = MAKEINTRESOURCEA(resid);
@@ -126,7 +119,6 @@ public:
         QByteArray name = QFile::encodeName(path);
         actx.lpSource = name.constData();
         hactctx = CreateActCtxA(&actx);
-        actctx_cookie = 0;
         if (hactctx != INVALID_HANDLE_VALUE)
         {
             if (!ActivateActCtx(hactctx, &actctx_cookie))
@@ -151,9 +143,9 @@ public:
     bool is_ok() const { return ok; }
 
 private:
-    ULONG_PTR actctx_cookie;
-    HANDLE hactctx;
-    bool ok;
+    ULONG_PTR actctx_cookie = 0;
+    HANDLE hactctx = INVALID_HANDLE_VALUE;
+    bool ok = false;
 };
 
 module_status simconnect::initialize()
@@ -174,27 +166,22 @@ module_status simconnect::initialize()
     }
 
     simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
-    if (simconnect_open == NULL) {
+    if (!simconnect_open)
         return error("Open function not found in DLL!");
-    }
     simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
-    if (simconnect_set6DOF == NULL) {
+    if (!simconnect_set6DOF)
         return error("CameraSetRelative6DOF function not found in DLL!");
-    }
     simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
-    if (simconnect_close == NULL) {
+    if (!simconnect_close)
         return error("Close function not found in DLL!");
-    }
 
     simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
-    if (simconnect_calldispatch == NULL) {
+    if (!simconnect_calldispatch)
         return error("CallDispatch function not found in DLL!");
-    }
 
     simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
-    if (simconnect_subscribetosystemevent == NULL) {
+    if (!simconnect_subscribetosystemevent)
         return error("SubscribeToSystemEvent function not found in DLL!");
-    }
 
     start();
 

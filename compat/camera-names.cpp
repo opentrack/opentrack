@@ -33,30 +33,30 @@ OTR_COMPAT_EXPORT QList<QString> get_camera_names()
     // Create the System Device Enumerator.
     HRESULT hr;
     CoInitialize(nullptr);
-    ICreateDevEnum *pSysDevEnum = NULL;
-    hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
+    ICreateDevEnum *pSysDevEnum = nullptr;
+    hr = CoCreateInstance(CLSID_SystemDeviceEnum, nullptr, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
     if (FAILED(hr))
     {
         qDebug() << "failed CLSID_SystemDeviceEnum" << hr;
         return ret;
     }
     // Obtain a class enumerator for the video compressor category.
-    IEnumMoniker *pEnumCat = NULL;
+    IEnumMoniker *pEnumCat = nullptr;
     hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
 
     if (hr == S_OK) {
         // Enumerate the monikers.
-        IMoniker *pMoniker = NULL;
+        IMoniker *pMoniker = nullptr;
         ULONG cFetched;
         while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK)
         {
             IPropertyBag *pPropBag;
-            hr = pMoniker->BindToStorage(0, 0, IID_IPropertyBag, (void **)&pPropBag);
+            hr = pMoniker->BindToStorage(nullptr, nullptr, IID_IPropertyBag, (void **)&pPropBag);
             if (SUCCEEDED(hr))	{
                 // To retrieve the filter's friendly name, do the following:
                 VARIANT varName;
                 VariantInit(&varName);
-                hr = pPropBag->Read(L"FriendlyName", &varName, 0);
+                hr = pPropBag->Read(L"FriendlyName", &varName, nullptr);
                 if (SUCCEEDED(hr))
                 {
                     // Display the name in your UI somehow.

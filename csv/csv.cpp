@@ -132,12 +132,12 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
         {
             if (gameLine.at(6).compare(id_str, Qt::CaseInsensitive) == 0)
             {
-                const QString& proto = gameLine.at(3);
-                const QString& name = gameLine.at(1);
+                const QString& proto = gameLine[3];
+                QString& name = gameLine[1];
 
-                const QByteArray id_cstr = gameLine.at(7).toLatin1();
+                const QByteArray id_cstr = gameLine[7].toLatin1();
 
-                if (proto == QString("V160"))
+                if (proto == QStringLiteral("V160"))
                 {
                     /* nothing */
                 }

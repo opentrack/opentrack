@@ -27,7 +27,7 @@ bool connector::is_equal(const QString& name, const QVariant& val1, const QVaria
 
     auto it = connected_values.find(name);
 
-    if (it != connected_values.cend() && std::get<0>((*it).second).size() != 0)
+    if (it != connected_values.cend() && !std::get<0>((*it).second).empty())
         return std::get<1>((*it).second)(val1, val2);
     else
         return generic_is_equal(val1, val2);
@@ -37,28 +37,22 @@ bool connector::on_value_destructed_impl(const QString& name, value_type val)
 {
     QMutexLocker l(get_mtx());
 
-    const bool ok = progn(
-        auto it = connected_values.find(name);
+    auto it = connected_values.find(name);
 
-        if (it != connected_values.end())
+    if (it != connected_values.end())
+    {
+        std::vector<value_type>& values = std::get<0>((*it).second);
+        for (auto it = values.begin(); it != values.end(); it++)
         {
-            std::vector<value_type>& values = std::get<0>((*it).second);
-            for (auto it = values.begin(); it != values.end(); it++)
+            if (*it == val)
             {
-                if (*it == val)
-                {
-                    values.erase(it);
-                    return true;
-                }
+                values.erase(it);
+                return true;
             }
         }
-        return false;
-    );
-
-    return ok;
+    }
+    return false;
 }
-
-
 
 void connector::on_value_destructed(const QString& name, value_type val)
 {

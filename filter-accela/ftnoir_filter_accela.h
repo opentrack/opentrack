@@ -27,14 +27,14 @@ public:
     module_status initialize() override { return status_ok(); }
 private:
     settings_accela s;
-    double last_output[6], deltas[6];
+    double last_output[6] {}, deltas[6] {};
     Timer t;
 #if defined DEBUG_ACCELA
     Timer debug_timer;
     double debug_max;
     variance var;
 #endif
-    bool first_run;
+    bool first_run = true;
 };
 
 class dialog_accela : public IFilterDialog

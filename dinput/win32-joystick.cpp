@@ -17,11 +17,11 @@ DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[win32_joy_ctx::joy::num_
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
 
-void win32_joy_ctx::poll(fn f)
+void win32_joy_ctx::poll(fn const& f)
 {
     //refresh(false);
 
-    QMutexLocker l(&enumerator.mtx);
+    QMutexLocker l(&enum_state::mtx);
 
     auto& joys = enumerator.get_joys();
 
@@ -33,7 +33,7 @@ void win32_joy_ctx::poll(fn f)
 
 bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
 {
-    QMutexLocker l(&enumerator.mtx);
+    QMutexLocker l(&enum_state::mtx);
 
     for (int k = 0; k < 10; k++)
     {
@@ -102,7 +102,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
 std::vector<win32_joy_ctx::joy_info> win32_joy_ctx::get_joy_info()
 {
     std::vector<joy_info> ret;
-    QMutexLocker l(&enumerator.mtx);
+    QMutexLocker l(&enum_state::mtx);
     auto& joys = enumerator.get_joys();
     ret.reserve(joys.size());
 
@@ -121,7 +121,7 @@ win32_joy_ctx::win32_joy_ctx()
 
 void win32_joy_ctx::refresh()
 {
-    QMutexLocker l(&enumerator.mtx);
+    QMutexLocker l(&enum_state::mtx);
     enumerator.refresh();
 }
 
@@ -131,7 +131,7 @@ QString win32_joy_ctx::guid_to_string(const GUID& guid)
     wchar_t szGuidW[40] = {0};
 
     StringFromGUID2(guid, szGuidW, 40);
-    WideCharToMultiByte(0, 0, szGuidW, -1, buf, 40, NULL, NULL);
+    WideCharToMultiByte(0, 0, szGuidW, -1, buf, 40, nullptr, nullptr);
 
     return QString(buf);
 }
@@ -148,7 +148,7 @@ void win32_joy_ctx::joy::release()
     }
 }
 
-bool win32_joy_ctx::joy::poll(fn f)
+bool win32_joy_ctx::joy::poll(fn const& f)
 {
     HRESULT hr;
 
@@ -380,7 +380,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
     return DIENUM_CONTINUE;
 }
 
-win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString &guid, const QString &name)
+win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString &name)
     : joy_handle(handle), guid(guid), name(name)
 {
     //qDebug() << "make joy" << guid << name << joy_handle;

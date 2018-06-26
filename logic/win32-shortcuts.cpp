@@ -119,7 +119,7 @@ static const win_key windows_key_sequences[] {
        { DIK_PAUSE, Qt::Key_Pause},
        { DIK_NUMLOCK, Qt::Key_NumLock},
        { DIK_CAPSLOCK, Qt::Key_CapsLock},
-#define mod(x, y) static_cast<Qt::Key>(x | y)
+#define mod(x, y) static_cast<Qt::Key>((x) | (y))
        { DIK_NUMPAD0,      mod(Qt::Key_0,        Qt::KeypadModifier)},
        { DIK_NUMPAD0,      mod(Qt::Key_0,        Qt::KeypadModifier)},
        { DIK_NUMPAD1,      mod(Qt::Key_1,        Qt::KeypadModifier)},

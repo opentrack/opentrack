@@ -82,7 +82,7 @@ static void otr_clock_gettime(timespec* ts)
     (void) QueryPerformanceCounter(&d);
 
     using ll = long long;
-    const ll part = ll(std::roundl((d.QuadPart * 1000000000.L) / ll(freq.QuadPart)));
+    const auto part = ll(std::roundl((d.QuadPart * 1000000000.L) / ll(freq.QuadPart)));
     using t_s = decltype(ts->tv_sec);
     using t_ns = decltype(ts->tv_nsec);
 

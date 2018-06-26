@@ -69,8 +69,7 @@ bool group::contains(const QString &s) const
 bool group::is_portable_installation()
 {
 #if defined _WIN32
-    if (QFile::exists(OPENTRACK_BASE_PATH + "/portable.txt"))
-        return true;
+    return QFile::exists(OPENTRACK_BASE_PATH + "/portable.txt");
 #endif
     return false;
 }

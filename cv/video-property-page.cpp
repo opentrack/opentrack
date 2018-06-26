@@ -37,7 +37,7 @@ bool video_property_page::show_from_capture(cv::VideoCapture& cap, int /*index *
 
 struct prop_settings_worker final : QThread
 {
-    prop_settings_worker(int idx);
+    explicit prop_settings_worker(int idx);
     ~prop_settings_worker() override;
     void _open_prop_page();
     void run() override;

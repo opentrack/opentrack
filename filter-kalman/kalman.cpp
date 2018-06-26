@@ -112,8 +112,8 @@ void kalman::fill_process_noise_cov_matrix(StateMatrix &target, double dt) const
     // brownian motion. Unlike standard models for tracking of objects
     // with a very well predictable trajectory (e.g.
     // https://en.wikipedia.org/wiki/Kalman_filter#Example_application.2C_technical)
-    double sigma_pos = s.process_sigma_pos;
-    double sigma_angle = s.process_sigma_rot;
+    double sigma_pos = settings::process_sigma_pos;
+    double sigma_angle = settings::process_sigma_rot;
     double a_pos = sigma_pos * sigma_pos * dt;
     double a_ang = sigma_angle * sigma_angle * dt;
     constexpr double b = 20;
@@ -238,7 +238,7 @@ void kalman::filter(const double* input_, double *output_)
         // We can use this to calculate the size of the deadzone, so that in the stationary state the
         // deadzone size is small. Thus the tracking error due to the dz-filter becomes also small.
         PoseVector variance = kf.state_cov.diagonal().head(6);
-        dz_filter.dz_size = variance.cwiseSqrt() * s.deadzone_scale;
+        dz_filter.dz_size = variance.cwiseSqrt() * settings::deadzone_scale;
     }
     output = dz_filter.filter(output);
 

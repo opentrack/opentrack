@@ -169,7 +169,7 @@ void attach_parent_console()
 
 #endif
 
-int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
+static int run_window(std::unique_ptr<QWidget> main_window)
 {
     if (!main_window->isEnabled())
     {
@@ -177,8 +177,8 @@ int run_window(QApplication& app, std::unique_ptr<QWidget> main_window)
         return 2;
     }
 
-    app.setQuitOnLastWindowClosed(true);
-    int status = app.exec();
+    QApplication::setQuitOnLastWindowClosed(true);
+    int status = QApplication::exec();
 
     return status;
 }
@@ -224,7 +224,7 @@ OTR_GUI_EXPORT int otr_main(int argc, char** argv, std::function<QWidget*()> con
         }
     }
 
-    int ret = run_window(app, std::unique_ptr<QWidget>(make_main_window()));
+    int ret = run_window(std::unique_ptr<QWidget>(make_main_window()));
 
 #if 0
     // msvc crashes in Qt plugin system's dtor

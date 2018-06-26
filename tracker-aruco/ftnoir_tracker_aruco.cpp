@@ -193,9 +193,9 @@ void aruco_tracker::set_intrinsics()
     const double focal_length_h = .5 * h / tan(.5 * fov_h);
 
     intrinsics(0, 0) = focal_length_w;
-    intrinsics(0, 2) = grayscale.cols/2;
+    intrinsics(0, 2) = grayscale.cols/2.;
     intrinsics(1, 1) = focal_length_h;
-    intrinsics(1, 2) = grayscale.rows/2;
+    intrinsics(1, 2) = grayscale.rows/2.;
 }
 
 void aruco_tracker::update_fps()
@@ -257,7 +257,7 @@ void aruco_tracker::draw_centroid()
 
     cv::projectPoints(centroid, rvec, tvec, intrinsics, cv::noArray(), repr2);
 
-    cv::circle(frame, repr2[0], 4, cv::Scalar(255, 0, 255), -1);
+    cv::circle(frame, repr2[0], 4, {255, 0, 255}, -1);
 }
 
 void aruco_tracker::set_last_roi()
@@ -542,6 +542,7 @@ void aruco_dialog::camera_settings()
 
 void aruco_dialog::update_camera_settings_state(const QString& name)
 {
+    (void)name;
     ui.camera_settings->setEnabled(true);
 }
 

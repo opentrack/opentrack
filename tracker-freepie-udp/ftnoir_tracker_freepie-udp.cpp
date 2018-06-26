@@ -22,7 +22,7 @@ void tracker_freepie::run() {
         uint8_t pad1;
         uint8_t flags;
         float fl[12];
-    } data;
+    } data {};
 #pragma pack(pop)
 
     enum F
@@ -49,7 +49,7 @@ void tracker_freepie::run() {
         while (sock.hasPendingDatagrams())
         {
             using t = decltype(data);
-            t tmp {0,0, {0,0,0, 0,0,0, 0,0,0, 0,0,0}};
+            t tmp {};
             (void) sock.readDatagram(reinterpret_cast<char*>(&tmp), sizeof(data));
 
             int flags = tmp.flags & F::Mask;

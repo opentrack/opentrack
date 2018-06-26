@@ -22,7 +22,7 @@
 // to minSmooth at a rate controlled by the powCurve setting.
 
 
-ewma::ewma() : first_run(true)
+ewma::ewma()
 {
 }
 
@@ -48,10 +48,10 @@ void ewma::filter(const double *input, double *output)
     double noise_alpha = dt/(dt + noise_RC);
 
     // scale curve .01->1 where 1.0 is sqrt(norm_noise).
-    const double smoothing_scale_curve = static_cast<slider_value>(s.kSmoothingScaleCurve);
+    const double smoothing_scale_curve = *s.kSmoothingScaleCurve;
     // min/max smoothing .01->1
-    const double min_smoothing = static_cast<slider_value>(s.kMinSmoothing);
-    const double max_smoothing = std::fmax(min_smoothing, static_cast<slider_value>(s.kMaxSmoothing));
+    const double min_smoothing = *s.kMinSmoothing;
+    const double max_smoothing = std::fmax(min_smoothing, *s.kMaxSmoothing);
 
     // Calculate the new camera position.
     for (int i=0;i<6;i++)

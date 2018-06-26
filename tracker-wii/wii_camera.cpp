@@ -57,8 +57,8 @@ void WIICamera::show_camera_settings()
 WIICamera::result WIICamera::get_info() const
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
-        return result(false, pt_camera_info());
-    return result(true, cam_info);
+        return { false, {} };
+    return { true, cam_info };
 }
 
 WIICamera::result WIICamera::get_frame(pt_frame& frame_)
@@ -78,10 +78,10 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 		_get_points(wii);
 		break;
 	case wii_cam_data_no_change:
-		return result(false, cam_info);
+        return { false, cam_info };
 	}
 
-	return result(true, cam_info);
+    return { true, cam_info };
 }
 
 bool WIICamera::start(int idx, int fps, int res_x, int res_y)
@@ -97,12 +97,12 @@ bool WIICamera::start(int idx, int fps, int res_x, int res_y)
 void WIICamera::stop()
 {
 	onExit = true;
-	m_pDev->ChangedCallback = NULL;
+	m_pDev->ChangedCallback = nullptr;
 	m_pDev->Disconnect();
 	Beep(1000, 200);
 	if (m_pDev) {
 		m_pDev=nullptr;
-		m_pDev = NULL;
+		m_pDev = nullptr;
 	}
 
     desired_name = QString();
@@ -181,7 +181,7 @@ wii_camera_status WIICamera::_pair()
 			pwd[4] = btinfo.address.rgBytes[4];
 			pwd[5] = btinfo.address.rgBytes[5];
 
-			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(NULL, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
+			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(nullptr, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
 			DWORD servicecount = 32;
 			GUID guids[32];
 			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { error = true; continue; }

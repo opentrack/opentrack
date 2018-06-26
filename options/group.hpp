@@ -1,5 +1,6 @@
 #pragma once
 
+#include "compat/macros.hpp"
 #include "export.hpp"
 
 // included here to propagate into callers of options::group

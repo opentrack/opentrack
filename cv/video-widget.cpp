@@ -8,6 +8,7 @@
 
 #include "video-widget.hpp"
 #include "compat/check-visible.hpp"
+#include "compat/math.hpp"
 
 #include <cstring>
 
@@ -88,8 +89,8 @@ void cv_video_widget::paintEvent(QPaintEvent*)
 
     double dpr = devicePixelRatioF();
 
-    int W = int(QWidget::width() * dpr);
-    int H = int(QWidget::height() * dpr);
+    int W = iround(QWidget::width() * dpr);
+    int H = iround(QWidget::height() * dpr);
 
     painter.drawImage(rect(), texture);
 

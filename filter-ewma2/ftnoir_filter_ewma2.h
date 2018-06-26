@@ -36,7 +36,7 @@ private:
     double last_output[6];
     Timer timer;
     settings s;
-    bool first_run;
+    bool first_run = true;
 };
 
 class dialog_ewma: public IFilterDialog

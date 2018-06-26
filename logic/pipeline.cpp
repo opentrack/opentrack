@@ -130,7 +130,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
             interp_timer.start();
 
-            if (RC_phase + 1 != std::size(RC_phases) &&
+            if (RC_phase + 1 < std::size(RC_phases) &&
                 interp_phase_timer.elapsed_seconds() > RC_time_deltas[RC_phase])
             {
                 RC_phase++;
@@ -252,7 +252,7 @@ void emit_nan_check_msg(const char* text, const char* fun, int line)
         qDebug()  << "nan check failed"
                   << "for:" << text
                   << "function:" << fun
-                  << "line:" << line;
+                  << "line:" << line
     );
 }
 
@@ -577,7 +577,7 @@ void pipeline::run()
         {
             qDebug() << "tracker: backlog interval overflow"
                      << time_cast<ms>(backlog_time).count() << "ms";
-            backlog_time = backlog_time.zero();
+            backlog_time = ns::zero();
         }
 
         backlog_time += ns(elapsed_nsecs - const_sleep_ms);

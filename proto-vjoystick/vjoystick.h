@@ -27,8 +27,8 @@ public:
 
 private:
     state joy_state;
-    LONG axis_min[6];
-    LONG axis_max[6];
+    LONG axis_min[6] {};
+    LONG axis_max[6] {};
 
     void init();
 public:

@@ -12,6 +12,8 @@
 
 #include <QtEvents>
 
+using namespace options;
+
 mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);

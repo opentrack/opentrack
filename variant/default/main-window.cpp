@@ -475,7 +475,7 @@ bool main_window::refresh_config_list()
     QStringList ini_list = group::ini_list();
 
     // check for sameness
-    const bool exact_same = ini_list.size() > 0 && progn(
+    const bool exact_same = !ini_list.empty() && progn(
         if (ini_list.size() == ui.iconcomboProfile->count())
         {
             const int sz = ini_list.size();

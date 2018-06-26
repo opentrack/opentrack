@@ -149,7 +149,7 @@ module_status fsuipc::initialize()
     FSUIPCLib.setFileName( s.LocationOfDLL );
     FSUIPCLib.setLoadHints(QLibrary::PreventUnloadHint);
 
-    if (FSUIPCLib.load() != true)
+    if (!FSUIPCLib.load())
         return error(tr("Can't load fsuipc at '%1'").arg(s.LocationOfDLL));
     else
         return status_ok();

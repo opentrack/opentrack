@@ -15,17 +15,17 @@ Affine::Affine(const mat33& R, const vec3& t) : R(R),t(t) {}
 
 Affine operator*(const Affine& X, const Affine& Y)
 {
-    return Affine(X.R*Y.R, X.R*Y.t + X.t);
+    return { X.R*Y.R, X.R*Y.t + X.t };
 }
 
 Affine operator*(const mat33& X, const Affine& Y)
 {
-    return Affine(X*Y.R, X*Y.t);
+    return { X*Y.R, X*Y.t };
 }
 
 Affine operator*(const Affine& X, const mat33& Y)
 {
-    return Affine(X.R*Y, X.t);
+    return { X.R*Y, X.t };
 }
 
 vec3 operator*(const Affine& X, const vec3& v)

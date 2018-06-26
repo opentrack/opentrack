@@ -39,7 +39,7 @@ class reltrans
     // this implements smooth transition into reltrans mode
     // once not aiming anymore. see `apply_pipeline()'.
     Timer interp_phase_timer;
-    unsigned RC_phase;
+    unsigned RC_phase = 0;
 
     bool cur = false;
     bool in_zone = false;

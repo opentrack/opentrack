@@ -95,7 +95,7 @@ struct OTR_API_EXPORT module_status final
     QString error;
 
     bool is_ok() const;
-    module_status(const QString& error = QString());
+    module_status(QString error = {});
 };
 
 /*

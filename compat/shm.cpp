@@ -10,7 +10,7 @@
 #if defined _WIN32
 
 #include <cstring>
-#include <stdio.h>
+#include <cstdio>
 
 #include <accctrl.h>
 #include <aclapi.h>
@@ -131,7 +131,7 @@ bool shm_wrapper::success()
 #ifndef _WIN32
     return mem != (void*) -1;
 #else
-    return mem != NULL;
+    return mem != nullptr;
 #endif
 }
 

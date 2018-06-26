@@ -39,9 +39,9 @@ private:
 
     TrackerSettings s;
 
-    int frame_cnt;
+    int frame_cnt = 0;
 
-    std::atomic<int> CptError;
+    std::atomic<int> CptError { 0 };
 
     static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }
 };

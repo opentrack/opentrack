@@ -1,5 +1,6 @@
 #include "plugin-api.hpp"
-#include "compat/macros.hpp"
+
+#include <utility>
 
 using namespace plugin_api::detail;
 
@@ -63,7 +64,7 @@ bool module_status::is_ok() const
     return error.isNull();
 }
 
-module_status::module_status(const QString& error) : error(error) {}
+module_status::module_status(QString error) : error(std::move(error)) {}
 
 module_status module_status_mixin::status_ok() { return module_status(); }
 

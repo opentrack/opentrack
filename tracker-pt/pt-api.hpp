@@ -15,7 +15,7 @@
 
 struct pt_camera_info final
 {
-    typedef typename types::f f;
+    using f = typename types::f;
 
     pt_camera_info();
     static double get_focal_length(f fov, int res_x, int res_y);

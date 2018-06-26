@@ -31,7 +31,7 @@ cc_noinline void store(float volatile& place, const float value)
     {
         float f32;
         LONG i32;
-    } value_;
+    } value_ {};
 
     value_.f32 = value;
 
@@ -84,7 +84,7 @@ void freetrack::pose(const double* headpose)
         union  {
             unsigned char table[8];
             std::int32_t ints[2];
-        } t;
+        } t {};
 
         t.ints[0] = 0; t.ints[1] = 0;
 

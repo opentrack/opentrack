@@ -16,6 +16,8 @@
 
 #include "cv/video-property-page.hpp"
 
+#include <cstdlib>
+
 using namespace pt_module;
 
 Camera::Camera(const QString& module_name) : s { module_name }
@@ -75,10 +77,10 @@ Camera::result Camera::get_frame(pt_frame& frame_)
         cam_info.res_y = frame.rows;
         cam_info.fov = fov;
 
-        return result(true, cam_info);
+        return { true, cam_info };
     }
     else
-        return result(false, pt_camera_info());
+        return { false, {} };
 }
 
 bool Camera::start(int idx, int fps, int res_x, int res_y)

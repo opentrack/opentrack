@@ -407,7 +407,7 @@ vec2 pose_transform::project(const vec3 &point)
     num y = h_ * translation.y() / 2 / -80;
     if (fabs(y) > h_/2)
         y = y > 0 ? h_/2 : h_/-2;
-    return vec2(z * (ret.x() + x), z * (ret.y() + y));
+    return { z * (ret.x() + x), z * (ret.y() + y) };
 }
 
 vec3 pose_transform::project2(const vec3 &point)

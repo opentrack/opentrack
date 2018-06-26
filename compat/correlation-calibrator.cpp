@@ -49,7 +49,7 @@ static constexpr wchar_t const* const names[6] {
     L"yaw", L"pitch", L"roll",
 };
 
-bool correlation_calibrator::check_buckets(const vec6 &data)
+bool correlation_calibrator::check_buckets(const vec6& data)
 {
     bool ret = false;
     unsigned pos[6];
@@ -63,7 +63,7 @@ bool correlation_calibrator::check_buckets(const vec6 &data)
         {
             once_only(qDebug() << "idx" << k
                                << "bucket" << (int)pos[k]
-                               << "outside bounds" << nbuckets[k]);;
+                               << "outside bounds" << nbuckets[k]);
 
             return false;
         }
@@ -135,8 +135,8 @@ mat66 correlation_calibrator::get_coefficients() const
 #if defined DEBUG_PRINT
     fwprintf(stderr, L"v:change-of h:due-to\n");
     fwprintf(stderr, L"%10s ", L"");
-    for (unsigned k = 0; k < 6; k++)
-        fwprintf(stderr, L"%10s", names[k]);
+    for (wchar_t const* k : names)
+        fwprintf(stderr, L"%10s", k);
     fwprintf(stderr, L"\n");
 
     for (unsigned i = 0; i < 6; i++)

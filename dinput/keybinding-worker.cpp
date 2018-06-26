@@ -47,7 +47,7 @@ bool KeybindingWorker::init()
         return false;
     }
 
-    if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, NULL) != DI_OK) {
+    if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, nullptr) != DI_OK) {
         qDebug() << "setup CreateDevice function failed!" << GetLastError();
         return false;
     }
@@ -55,13 +55,13 @@ bool KeybindingWorker::init()
     if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
         qDebug() << "setup SetDataFormat function failed!" << GetLastError();
         dinkeyboard->Release();
-        dinkeyboard = 0;
+        dinkeyboard = nullptr;
         return false;
     }
 
     if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
-        dinkeyboard = 0;
+        dinkeyboard = nullptr;
         qDebug() << "setup SetCooperativeLevel function failed!" << GetLastError();
         return false;
     }
@@ -77,7 +77,7 @@ bool KeybindingWorker::init()
         {
             qDebug() << "setup keyboard buffer mode failed!";
             dinkeyboard->Release();
-            dinkeyboard = 0;
+            dinkeyboard = nullptr;
             return false;
         }
     }
@@ -85,7 +85,7 @@ bool KeybindingWorker::init()
     if (dinkeyboard->Acquire() != DI_OK)
     {
         dinkeyboard->Release();
-        dinkeyboard = 0;
+        dinkeyboard = nullptr;
         qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
         return false;
     }
@@ -112,7 +112,7 @@ void KeybindingWorker::run()
         {
             QMutexLocker l(&mtx);
 
-            if (receivers.size())
+            if (!receivers.empty())
             {
                 /* There are some problems reported on various forums
                  * with regard to key-up events. But that's what I dug up:

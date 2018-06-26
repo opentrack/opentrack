@@ -38,7 +38,7 @@ class simconnect : private QThread, public IProtocol
 {
     Q_OBJECT
 public:
-    simconnect();
+    simconnect() = default;
     ~simconnect() override;
     module_status initialize() override;
     void pose(const double* headpose);
@@ -74,12 +74,12 @@ private:
 
     void run() override;
 
-    std::atomic<float> virtSCPosX;
-    std::atomic<float> virtSCPosY;
-    std::atomic<float> virtSCPosZ;
-    std::atomic<float> virtSCRotX;
-    std::atomic<float> virtSCRotY;
-    std::atomic<float> virtSCRotZ;
+    std::atomic<float> virtSCPosX {0};
+    std::atomic<float> virtSCPosY {0};
+    std::atomic<float> virtSCPosZ {0};
+    std::atomic<float> virtSCRotX {0};
+    std::atomic<float> virtSCRotY {0};
+    std::atomic<float> virtSCRotZ {0};
 
     importSimConnect_Open simconnect_open;
     importSimConnect_Close simconnect_close;
@@ -87,8 +87,8 @@ private:
     importSimConnect_CallDispatch simconnect_calldispatch;
     importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 
-    HANDLE hSimConnect;
-    std::atomic<bool> should_reconnect;
+    HANDLE hSimConnect = nullptr;
+    std::atomic<bool> should_reconnect = false;
     static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
     QLibrary SCClientLib;

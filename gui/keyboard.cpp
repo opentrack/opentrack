@@ -12,14 +12,14 @@ keyboard_listener::keyboard_listener(QWidget* parent) :
             if (k.alt) mods |= Qt::AltModifier;
             if (k.shift) mods |= Qt::ShiftModifier;
             if (k.ctrl) mods |= Qt::ControlModifier;
-            joystick_button_pressed(k.guid, k.keycode | mods, k.held);
+            emit joystick_button_pressed(k.guid, k.keycode | mods, k.held);
         }
         else
         {
             Qt::KeyboardModifiers m;
             QKeySequence k_;
             if (win_key::to_qt(k, k_, m))
-                key_pressed(static_cast<QVariant>(k_).toInt() | m);
+                emit key_pressed(static_cast<QVariant>(k_).toInt() | m);
         }
     })
 // token initializer ends, real ctor body begins

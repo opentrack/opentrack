@@ -54,7 +54,7 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx final
         ~joy();
 
         void release();
-        bool poll(fn f);
+        bool poll(fn const& f);
     };
 
     using joys_t = std::unordered_map<QString, std::shared_ptr<joy>>;
@@ -66,7 +66,7 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx final
         QString name, guid;
     };
 
-    void poll(fn f);
+    void poll(fn const& f);
     bool poll_axis(const QString& guid, int* axes);
     std::vector<joy_info> get_joy_info();
 

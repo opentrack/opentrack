@@ -134,7 +134,7 @@ QPointF spline::ensure_in_bounds(const QList<QPointF>& points, int i)
     const int sz = points.size();
 
     if (i < 0 || sz == 0)
-        return QPointF(0, 0);
+        return {};
 
     if (i < sz)
         return points[i];
@@ -168,7 +168,7 @@ void spline::update_interp_data()
     const double maxx = max_input();
 
     if (sz == 0)
-        list.prepend(QPointF(maxx, max_output()));
+        list.prepend({ maxx, max_output() });
 
     std::stable_sort(list.begin(), list.begin() + sz, sort_fn);
 
@@ -377,7 +377,7 @@ double spline::max_input() const
     {
         using m = axis_opts::max_clamp;
         const value<m>& clamp = s->opts.clamp_x_;
-        if (clamp == m::x1000 && points.size())
+        if (clamp == m::x1000 && !points.empty())
             return points[points.size() - 1].x();
         return s ? std::fabs(clamp.to<double>()) : 0;
     }
@@ -391,7 +391,7 @@ double spline::max_output() const
     {
         using m = axis_opts::max_clamp;
         const value<m>& clamp = s->opts.clamp_y_;
-        if (clamp == m::x1000 && points.size())
+        if (clamp == m::x1000 && !points.empty())
             return points[points.size() - 1].y();
         return s ? std::fabs(clamp.to<double>()) : 0;
     }

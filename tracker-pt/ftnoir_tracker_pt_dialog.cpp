@@ -265,7 +265,7 @@ void TrackerDialog_PT::register_tracker(ITracker *t)
 
 void TrackerDialog_PT::unregister_tracker()
 {
-    tracker = NULL;
+    tracker = nullptr;
     ui.tcalib_button->setEnabled(false);
     poll_tracker_info();
     timer.stop();
