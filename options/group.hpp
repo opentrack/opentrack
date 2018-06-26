@@ -14,6 +14,8 @@
 #include <QSettings>
 #include <QMutex>
 
+// XXX TODO remove qsettings usage -sh 20180624
+
 namespace options {
 
 // snapshot of qsettings group at given time
