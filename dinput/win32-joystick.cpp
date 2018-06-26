@@ -230,7 +230,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
             for (unsigned j = 0; j < 4; j++)
             {
                 //pressed[i] = state[j];
-                f(guid, i, state[j]);
+                f(guid, i + j, state[j]);
             }
         }
         else if (i != -1)
