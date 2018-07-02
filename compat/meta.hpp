@@ -7,17 +7,22 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#if 0
-
-#include <tuple>
-#include <cstddef>
+#define OTR_META_INST_FAIL(x)                                        \
+    static_assert(sizeof...(x) == ~0ul);                             \
+    static_assert(sizeof...(x) == 0u)
 
 namespace meta {
 
 namespace detail {
 
-    template<typename x, typename y>
-    struct reverse_;
+    template<typename... xs>
+    struct tuple;
+
+    template<typename... xs>
+    struct reverse_
+    {
+        OTR_META_INST_FAIL(xs);
+    };
 
     template<typename x0, typename... xs, template<typename...> class x, typename... ys>
     struct reverse_<x<x0, xs...>, x<ys...>>
@@ -31,28 +36,32 @@ namespace detail {
         using type = x<ys...>;
     };
 
-    template<template<typename...> class inst, typename x>
-    struct lift_;
-
-    template<template<typename...> class inst, template<typename...> class x, typename... xs>
-    struct lift_<inst, x<xs...>>
+    template<template<typename...> class inst, typename... xs>
+    struct lift_
     {
-        using type = inst<xs...>;
+        OTR_META_INST_FAIL(xs);
+    };
+
+    template<template<typename...> class to, template<typename...> class from, typename... xs>
+    struct lift_<to, from<xs...>>
+    {
+        using type = to<xs...>;
     };
 } // ns detail
 
 
 template<typename... xs>
-using reverse = typename detail::reverse_<std::tuple<xs...>, std::tuple<>>::type;
+using reverse = typename detail::reverse_<detail::tuple<xs...>, detail::tuple<>>::type;
 
-template<template<typename...> class inst, class x>
-using lift = typename detail::lift_<inst, x>::type;
+// the to/from order is awkward but mimics function composition
+template<template<typename...> class to, typename from>
+using lift = typename detail::lift_<to, from>::type;
 
 template<typename x, typename... xs>
 using first = x;
 
 template<typename x, typename... xs>
-using rest = std::tuple<xs...>;
+using rest = detail::tuple<xs...>;
 
 template<typename... xs>
 using butlast = reverse<rest<reverse<xs...>>>;
@@ -60,9 +69,5 @@ using butlast = reverse<rest<reverse<xs...>>>;
 template<typename... xs>
 using last = lift<first, reverse<xs...>>;
 
-template<std::size_t max>
-using index_sequence = typename detail::index_sequence_<std::size_t, max, std::size_t(0)>::type;
-
 } // ns meta
 
-#endif
