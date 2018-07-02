@@ -322,25 +322,19 @@ void main_window::init_tray()
 
 void main_window::register_shortcuts()
 {
-    using t_key = Shortcuts::t_key;
-    using t_keys = Shortcuts::t_keys;
+    global_shortcuts.reload({
+        { s.key_start_tracking1, [this](bool) { start_tracker(); }, true },
+        { s.key_start_tracking2, [this](bool) { start_tracker(); }, true },
 
-    t_keys keys
-    {
-        t_key(s.key_start_tracking1, [this](bool) { start_tracker(); }, true),
-        t_key(s.key_start_tracking2, [this](bool) { start_tracker(); }, true),
+        { s.key_stop_tracking1, [this](bool) { stop_tracker(); }, true },
+        { s.key_stop_tracking2, [this](bool) { stop_tracker(); }, true },
 
-        t_key(s.key_stop_tracking1, [this](bool) { stop_tracker(); }, true),
-        t_key(s.key_stop_tracking2, [this](bool) { stop_tracker(); }, true),
+        { s.key_toggle_tracking1, [this](bool) { toggle_tracker(); }, true },
+        { s.key_toggle_tracking2, [this](bool) { toggle_tracker(); }, true },
 
-        t_key(s.key_toggle_tracking1, [this](bool) { toggle_tracker(); }, true),
-        t_key(s.key_toggle_tracking2, [this](bool) { toggle_tracker(); }, true),
-
-        t_key(s.key_restart_tracking1, [this](bool) { restart_tracker(); }, true),
-        t_key(s.key_restart_tracking2, [this](bool) { restart_tracker(); }, true),
-    };
-
-    global_shortcuts.reload(keys);
+        { s.key_restart_tracking1, [this](bool) { restart_tracker(); }, true },
+        { s.key_restart_tracking2, [this](bool) { restart_tracker(); }, true },
+    });
 
     if (work)
         work->reload_shortcuts();
