@@ -18,7 +18,7 @@ class CSV_EXPORT CSV
 public:
     QString readLine();
     QStringList parseLine();
-    static QStringList parseLine(QString line);
+    static QStringList parseLine(const QString& line);
 
     void setCodec(const char* codecName);
     static bool getGameData(const int gameID, unsigned char* table, QString& gamename);

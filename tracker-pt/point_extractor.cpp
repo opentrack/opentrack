@@ -81,7 +81,7 @@ void PointExtractor::extract_points(cv::Mat& frame, std::vector<cv::Vec2d>& poin
         //val *= 240./256.;
         //qDebug() << "thres" << thres;
 
-        cv::threshold(frame_gray, frame_bin, thres, 255, CV_THRESH_BINARY);
+        cv::threshold(frame_gray, frame_bin, thres, 255, cv::THRESH_BINARY);
     }
 
     blobs.clear();

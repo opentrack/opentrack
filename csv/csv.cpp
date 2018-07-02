@@ -54,7 +54,7 @@ QString CSV::readLine(){
 QStringList CSV::parseLine(){
 	return parseLine(readLine());
 }
-QStringList CSV::parseLine(QString line){
+QStringList CSV::parseLine(QString const& line){
 	QStringList list;
 	int pos2 = 0;
 	QRegExp rx2("(?:\"([^\"]*)\";?)|(?:([^;]*);?)");

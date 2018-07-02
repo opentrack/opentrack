@@ -1,4 +1,4 @@
-find_package(OpenCV 3.0 QUIET)
+find_package(OpenCV 4.0 QUIET)
 if(OpenCV_FOUND)
     opentrack_boilerplate(opentrack-tracker-pt STATIC)
     target_link_libraries(opentrack-tracker-pt ${OpenCV_LIBS})
