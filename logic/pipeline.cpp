@@ -248,7 +248,7 @@ static cc_forceinline bool nan_check_(const x& datum, const y& next, const xs&..
 static cc_noinline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
-    once_only(
+    eval_once(
         qDebug()  << "nan check failed"
                   << "for:" << text
                   << "function:" << fun

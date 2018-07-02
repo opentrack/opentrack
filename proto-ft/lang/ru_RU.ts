@@ -58,11 +58,11 @@ Starting tracking will again overwrite the DLL locations.</source>
 <context>
     <name>freetrack</name>
     <message>
-        <source>Can&apos;t load freetrack memory mapping</source>
+        <source>Unknown game</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Unknown game</source>
+        <source>Can&apos;t load freetrack memory mapping</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

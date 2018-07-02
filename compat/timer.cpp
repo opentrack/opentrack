@@ -6,9 +6,8 @@
  * notice appear in all copies.
  */
 
-#include <cassert>
-
 #include "timer.hpp"
+#include <cassert>
 #include <cmath>
 
 using time_type = Timer::time_type;

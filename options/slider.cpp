@@ -24,8 +24,21 @@ slider_value::slider_value(double cur, double min, double max) :
         cur_ = min_;
 }
 
-slider_value::slider_value(const slider_value& v) : slider_value(v.cur(), v.min(), v.max())
+slider_value& slider_value::operator=(const slider_value& v)
 {
+    if (this != &v)
+    {
+        cur_ = v.cur();
+        min_ = v.min();
+        max_ = v.max();
+    }
+
+    return *this;
+}
+
+slider_value::slider_value(const slider_value& v)
+{
+    *this = v;
 }
 
 slider_value::slider_value() : slider_value(0, 0, 0)

@@ -44,8 +44,13 @@
 
 // from now only C++
 
+#include <utility>
+
 //#define once_only(...) do { static bool once__ = false; if (!once__) { once__ = true; __VA_ARGS__; } } while(false)
-#define once_only(expr) ([&] { static decltype(auto) ret___1132 = (expr); return ret___1132; }())
+//#define once_only(expr) ([&] { static decltype(auto) ret___1132 = (expr); return (decltype(ret___1132) const&) ret___1132; }())
+
+#define eval_once__2(expr, ident) (([&] { static bool ident = ((expr), true); (void)(ident); }))
+#define eval_once(expr) eval_once__2(expr, PP_CAT(eval_once_init__, __COUNTER__))
 
 #include <type_traits>
 

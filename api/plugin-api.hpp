@@ -27,8 +27,7 @@ enum Axis {
     NonAxis = -1,
 };
 
-namespace plugin_api {
-namespace detail {
+namespace plugin_api::detail {
 
 class OTR_API_EXPORT BaseDialog : public QDialog
 {
@@ -43,7 +42,6 @@ private slots:
     void done(int) override;
 };
 
-} // ns
 } // ns
 
 #define OTR_PLUGIN_EXPORT OTR_GENERIC_EXPORT

@@ -14,10 +14,7 @@
 
 using options::value_;
 
-namespace options
-{
-
-namespace detail {
+namespace options::detail {
 
 bundle::bundle(const QString& group_name)
     : mtx(QMutex::Recursive),
@@ -152,7 +149,7 @@ void bundler::after_profile_changed_()
 
 void bundler::refresh_all_bundles()
 {
-    singleton().after_profile_changed_();
+    bundler_singleton().after_profile_changed_();
 }
 
 bundler::bundler() : implsgl_mtx(QMutex::Recursive)
@@ -164,7 +161,7 @@ bundler::~bundler()
     //qDebug() << "exit: bundle singleton";
 }
 
-std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k& key)
+std::shared_ptr<bundler::v> bundler::make_bundle_(const bundler::k& key)
 {
     QMutexLocker l(&implsgl_mtx);
 
@@ -193,7 +190,7 @@ std::shared_ptr<bundler::v> bundler::make_bundle(const bundler::k& key)
     return shr;
 }
 
-OTR_OPTIONS_EXPORT bundler& singleton()
+bundler& bundler::bundler_singleton()
 {
     static bundler ret;
     return ret;
@@ -201,14 +198,16 @@ OTR_OPTIONS_EXPORT bundler& singleton()
 
 QMutex* bundle::get_mtx() const { return mtx; }
 
-} // end options::detail
+} // ns options::detail
+
+namespace options {
 
 OTR_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name)
 {
     if (name.size())
-        return detail::singleton().make_bundle(name);
+        return detail::bundler::bundler_singleton().make_bundle_(name);
     else
         return std::make_shared<bundle_>(QString());
 }
 
-} // end options
+} // ns options

@@ -18,8 +18,8 @@ struct pt_settings final : options::opts
 {
     using slider_value = options::slider_value;
 
-    pt_settings(const QString& name) : opts(name) {}
-    ~pt_settings() {}
+    explicit pt_settings(const QString& name) : opts(name) {}
+    ~pt_settings() override = default;
 
     value<QString> camera_name { b, "camera-name", "" };
     value<int> cam_res_x { b, "camera-res-width", 640 },

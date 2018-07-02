@@ -40,6 +40,8 @@ namespace options
             return t(cur_);
         }
 
+        slider_value& operator=(const slider_value& v);
+
         slider_value(const slider_value& v);
         slider_value();
         bool operator==(const slider_value& v) const;

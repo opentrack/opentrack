@@ -20,8 +20,8 @@ freetrack::~freetrack()
     dummyTrackIR.close();
 }
 
-static_assert(sizeof(LONG) == sizeof(std::int32_t), "");
-static_assert(sizeof(LONG) == 4u, "");
+static_assert(sizeof(LONG) == sizeof(std::int32_t));
+static_assert(sizeof(LONG) == 4u);
 
 static constexpr inline float d2r = float(M_PI/180);
 
@@ -35,8 +35,8 @@ cc_noinline void store(float volatile& place, const float value)
 
     value_.f32 = value;
 
-    static_assert(sizeof(value_) == sizeof(float), "");
-    static_assert(offsetof(decltype(value_), f32) == offsetof(decltype(value_), i32), "");
+    static_assert(sizeof(value_) == sizeof(float));
+    static_assert(offsetof(decltype(value_), f32) == offsetof(decltype(value_), i32));
 
     (void)InterlockedExchange((LONG volatile*)&place, value_.i32);
 }
@@ -44,7 +44,7 @@ cc_noinline void store(float volatile& place, const float value)
 template<typename t>
 cc_forceinline void store(t volatile& place, t value)
 {
-    static_assert(sizeof(t) == 4u, "");
+    static_assert(sizeof(t) == 4u);
     (void)InterlockedExchange((LONG volatile*) &place, value);
 }
 

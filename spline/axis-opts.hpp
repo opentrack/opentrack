@@ -50,7 +50,7 @@ struct OTR_SPLINE_EXPORT axis_opts final
     QString const& prefix() const;
     Axis axis() const;
 private:
-    static inline QString n(QString pfx, QString name);
+    static inline QString n(QString const& pfx, QString const& name);
 
     QString prefix_;
     Axis axis_;

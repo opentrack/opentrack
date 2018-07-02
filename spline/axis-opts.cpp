@@ -39,7 +39,7 @@ QString const& axis_opts::prefix() const { return prefix_; }
 
 Axis axis_opts::axis() const { return axis_; }
 
-QString axis_opts::n(QString pfx, QString name)
+QString axis_opts::n(QString const& pfx, QString const& name)
 {
     return QString("%1-%2").arg(pfx, name);
 }

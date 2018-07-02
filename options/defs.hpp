@@ -24,8 +24,7 @@
 
 #define OPENTRACK_DEFINE_METATYPE(t) OPENTRACK_DEFINE_METATYPE2(t, __COUNTER__)
 
-namespace options {
-namespace detail {
+namespace options::detail {
 
 struct custom_type_initializer final
 {
@@ -39,4 +38,4 @@ struct custom_type_initializer final
 };
 
 } // ns options::detail
-} // ns options
+

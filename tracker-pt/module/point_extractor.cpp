@@ -147,7 +147,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         break;
     }
     default:
-        once_only(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
+        eval_once(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
         /*FALLTHROUGH*/
     case pt_color_natural:
         cv::cvtColor(frame, output, cv::COLOR_BGR2GRAY);

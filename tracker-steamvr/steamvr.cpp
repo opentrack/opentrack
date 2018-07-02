@@ -140,7 +140,7 @@ device_list::maybe_pose device_list::get_pose(int k)
         if (pose.bPoseIsValid && pose.bDeviceIsConnected)
             return maybe_pose{ true, poses[k] };
         else
-            once_only(qDebug() << "steamvr:"
+            eval_once(qDebug() << "steamvr:"
                                << "no valid pose from device" << k
                                << "valid" << pose.bPoseIsValid
                                << "connected" << pose.bDeviceIsConnected);

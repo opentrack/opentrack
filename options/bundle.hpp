@@ -27,11 +27,17 @@
 
 #include "export.hpp"
 
+namespace options::detail {
+    class bundle;
+} // ns options::detail
+
 namespace options {
+    using bundle_ = detail::bundle;
+    using bundle = std::shared_ptr<bundle_>;
+    OTR_OPTIONS_EXPORT std::shared_ptr<detail::bundle> make_bundle(const QString& name);
+} // ns options
 
-namespace detail {
-
-void set_base_value_to_default(value_* val);
+namespace options::detail {
 
 struct bundler;
 
@@ -52,17 +58,18 @@ private:
     group saved;
     group transient;
 
+signals:
+    void reloading();
+    void saving() const;
+    void changed() const;
+
+public:
     bundle(const bundle&) = delete;
     bundle(bundle&&) = delete;
     bundle& operator=(bundle&&) = delete;
     bundle& operator=(const bundle&) = delete;
     QMutex* get_mtx() const override;
 
-signals:
-    void reloading();
-    void saving() const;
-    void changed() const;
-public:
     cc_noinline bundle(const QString& group_name);
     cc_noinline ~bundle() override;
     QString name() const { return group_name; }
@@ -82,32 +89,34 @@ public slots:
     void set_all_to_default();
 };
 
-OTR_OPTIONS_EXPORT bundler& singleton();
-
-struct OTR_OPTIONS_EXPORT bundler
+struct OTR_OPTIONS_EXPORT bundler final
 {
-public:
     using k = QString;
     using v = bundle;
     using weak = std::weak_ptr<v>;
     using shared = std::shared_ptr<v>;
+
 private:
     QMutex implsgl_mtx;
     std::map<k, weak> implsgl_data;
     void after_profile_changed_();
+
 public:
+    static void refresh_all_bundles();
+
+private:
+    friend OTR_OPTIONS_EXPORT
+    std::shared_ptr<v> options::make_bundle(const QString& name);
+
+    std::shared_ptr<v> make_bundle_(const k& key);
+
+    static bundler& bundler_singleton();
+
     bundler();
     ~bundler();
-    std::shared_ptr<v> make_bundle(const k& key);
-    static void refresh_all_bundles();
 };
 
-OTR_OPTIONS_EXPORT bundler& singleton();
+void set_base_value_to_default(value_* val);
+
 } // ns options::detail
 
-using bundle_ = detail::bundle;
-using bundle = std::shared_ptr<bundle_>;
-
-OTR_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name);
-
-} // ns options

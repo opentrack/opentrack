@@ -8,8 +8,7 @@
 
 #include <type_traits>
 
-namespace options {
-namespace detail {
+namespace options::detail {
 
 template<typename t, typename u = t, typename Enable = void>
 struct default_value_traits
@@ -49,5 +48,5 @@ struct value_traits<float> : public default_value_traits<float, double, void>
 {
 };
 
-} // ns detail
-} // ns options
+} // ns options::detail
+

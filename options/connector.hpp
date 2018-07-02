@@ -21,10 +21,10 @@
 #include "export.hpp"
 
 namespace options {
+    class value_;
+}
 
-class value_;
-
-namespace detail {
+namespace options::detail {
 
 class OTR_OPTIONS_EXPORT connector
 {
@@ -67,5 +67,4 @@ public:
     connector& operator=(connector&&) = default;
 };
 
-} // ns detail
-} // ns options
+} // ns options::detail

@@ -11,9 +11,7 @@
     static_assert(sizeof...(x) == ~0ul);                             \
     static_assert(sizeof...(x) == 0u)
 
-namespace meta {
-
-namespace detail {
+namespace meta::detail {
 
     template<typename... xs>
     struct tuple;
@@ -47,27 +45,26 @@ namespace detail {
     {
         using type = to<xs...>;
     };
-} // ns detail
+} // ns meta::detail
 
+namespace meta {
+    template<typename... xs>
+    using reverse = typename detail::reverse_<detail::tuple<xs...>, detail::tuple<>>::type;
 
-template<typename... xs>
-using reverse = typename detail::reverse_<detail::tuple<xs...>, detail::tuple<>>::type;
+    // the to/from order is awkward but mimics function composition
+    template<template<typename...> class to, typename from>
+    using lift = typename detail::lift_<to, from>::type;
 
-// the to/from order is awkward but mimics function composition
-template<template<typename...> class to, typename from>
-using lift = typename detail::lift_<to, from>::type;
+    template<typename x, typename... xs>
+    using first = x;
 
-template<typename x, typename... xs>
-using first = x;
+    template<typename x, typename... xs>
+    using rest = detail::tuple<xs...>;
 
-template<typename x, typename... xs>
-using rest = detail::tuple<xs...>;
+    template<typename... xs>
+    using butlast = reverse<rest<reverse<xs...>>>;
 
-template<typename... xs>
-using butlast = reverse<rest<reverse<xs...>>>;
-
-template<typename... xs>
-using last = lift<first, reverse<xs...>>;
-
+    template<typename... xs>
+    using last = lift<first, reverse<xs...>>;
 } // ns meta
 

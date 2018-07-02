@@ -11,8 +11,7 @@
 
 #include <utility>
 
-namespace options {
-namespace detail {
+namespace options::detail {
 
 static bool generic_is_equal(const QVariant& val1, const QVariant& val2)
 {
@@ -129,6 +128,4 @@ connector::connector()
 {
 }
 
-}
-
-}
+} // ns options::detail

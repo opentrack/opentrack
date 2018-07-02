@@ -10,7 +10,7 @@
 
 struct OTR_LOGIC_EXPORT win_key
 {
-    win_key(int win, Qt::Key qt) : win(win), qt(qt) {}
+    //win_key(int win, Qt::Key qt) : win(win), qt(qt) {}
     int win;
     Qt::Key qt;
     static bool from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers &mods);

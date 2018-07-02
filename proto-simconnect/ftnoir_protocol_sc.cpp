@@ -22,7 +22,7 @@ simconnect::~simconnect()
 
 void simconnect::run()
 {
-    HANDLE event = CreateEventA(NULL, FALSE, FALSE, nullptr);
+    HANDLE event = CreateEventA(nullptr, FALSE, FALSE, nullptr);
 
     if (event == nullptr)
     {

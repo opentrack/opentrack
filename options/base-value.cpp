@@ -26,8 +26,7 @@ void value_::store(const QVariant& datum)
     b->store_kv(self_name, datum);
 }
 
-namespace options {
-namespace detail {
+namespace options::detail {
 
 void set_base_value_to_default(value_* val)
 {
@@ -35,5 +34,4 @@ void set_base_value_to_default(value_* val)
 }
 
 } // ns options::detail
-} // ns options
 

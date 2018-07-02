@@ -4,7 +4,7 @@
 
 #include "timer.hpp"
 
-#include <QMutexLocker>
+#include <QMutex>
 
 #include <windows.h>
 
