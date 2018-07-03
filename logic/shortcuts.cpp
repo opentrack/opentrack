@@ -127,17 +127,14 @@ void Shortcuts::reload(const t_keys& keys_)
 
     for (unsigned i = 0; i < sz; i++)
     {
-        const auto& kk = keys_[i];
-        const key_opts& opts = std::get<0>(kk);
-        const bool held = std::get<2>(kk);
-        auto const& fun = std::get<1>(kk);
+        auto const& [opts, fun, held] = keys_[i];
 #ifdef _WIN32
         K k;
 #else
         K k(nullptr);
 #endif
         bind_shortcut(k, opts, held);
-        keys.emplace_back(k, [=](bool flag) { fun(flag); }, held);
+        keys.emplace_back(k, fun, held);
 
 #ifndef _WIN32
         const int idx = keys.size() - 1;
