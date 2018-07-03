@@ -80,5 +80,11 @@ else (EIGEN3_INCLUDE_DIR)
 endif(EIGEN3_INCLUDE_DIR)
 
 if(EIGEN3_FOUND)
-    add_definitions(-DEIGEN_MPL2_ONLY)
+    add_definitions(
+        -DEIGEN_MPL2_ONLY=1
+        -DEIGEN_MAX_CPP_VER=17
+        -DEIGEN_DEFAULT_DENSE_INDEX_TYPE=int
+        -DEIGEN_NO_DEBUG=1
+        -DEIGEN_DONT_PARALLELIZE=1
+    )
 endif()

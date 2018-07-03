@@ -76,6 +76,10 @@ void KalmanProcessNoiseScaler::update(KalmanFilter &kf, double dt)
     //qDebug() << "alpha = " << alpha;
 }
 
+void DeadzoneFilter::reset()
+{
+    last_output = PoseVector::Zero();
+}
 
 PoseVector DeadzoneFilter::filter(const PoseVector &input)
 {
@@ -151,7 +155,8 @@ PoseVector kalman::do_kalman_filter(const PoseVector &input, double dt, bool new
 
 
 
-kalman::kalman() {
+kalman::kalman()
+{
     reset();
 }
 
@@ -289,5 +294,31 @@ void dialog_kalman::doCancel()
     close();
 }
 
+double settings::map_slider_value(const slider_value& v_)
+{
+    const double v = v_;
+#if 0
+    //return std::pow(10., v * 4. - 3.);
+#else
+    constexpr int min_log10 = -3;
+    constexpr int max_log10 = 1;
+    constexpr int num_divisions = max_log10 - min_log10;
+    /* ascii art representation of slider
+          // ----- //  ------//  ------// ------- //   4 divisions
+         -3    -   2         -1        0           1    power of 10
+                   |      |
+                   |      f + left_side_log10
+                   |
+                   left_side_log10
+        */
+    const int k = v * num_divisions; // in which division are we?!
+    const double f = v * num_divisions - k; // where in the division are we?!
+    const double ff = f * 9. + 1.;
+    const double multiplier = int(ff * 10.) / 10.;
+    const int left_side_log10 = min_log10 + k;
+    const double val = std::pow(10., left_side_log10) * multiplier;
+    return val;
+#endif
+}
 
 OPENTRACK_DECLARE_FILTER(kalman, dialog_kalman, kalmanDll)

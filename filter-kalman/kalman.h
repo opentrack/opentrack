@@ -6,19 +6,25 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ui_ftnoir_kalman_filtercontrols.h"
+#include "compat/timer.hpp"
 #include "api/plugin-api.hpp"
 #include "options/options.hpp"
 using namespace options;
-#include "compat/timer.hpp"
+
+// Eigen can't check for SSE3 on MSVC
+#if defined _MSC_VER && defined __SSE2__
+#   define EIGEN_VECTORIZE_SSE3
+// this hardware is 10 years old
+#   define EIGEN_VECTORIZE_SSE4_1
+#   define EIGEN_VECTORIZE_SSE4_2
+#endif
 
 #include <Eigen/Core>
 #include <Eigen/LU>
 
+#include "ui_ftnoir_kalman_filtercontrols.h"
 #include <QString>
 #include <QWidget>
-
-#include <atomic>
 
 static constexpr inline int NUM_STATE_DOF = 12;
 static constexpr inline int NUM_MEASUREMENT_DOF = 6;
@@ -48,11 +54,10 @@ struct KalmanFilter
         state_prior;
     PoseVector
         innovation;
+
     void init();
     void time_update();
     void measurement_update(const PoseVector &measurement);
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 struct KalmanProcessNoiseScaler
@@ -63,32 +68,23 @@ struct KalmanProcessNoiseScaler
         base_cov; // baseline (unscaled) process noise covariance matrix
     void init();
     void update(KalmanFilter &kf, double dt);
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 
 struct DeadzoneFilter
 {
-    PoseVector
-        last_output,
-        dz_size;
-    DeadzoneFilter() :
-        last_output(PoseVector::Zero()),
-        dz_size(PoseVector::Zero())
-    {}
-    void reset() {
-        last_output = PoseVector::Zero();
-    }
-    PoseVector filter(const PoseVector &input);
+    PoseVector last_output { PoseVector::Zero() },
+               dz_size     { PoseVector::Zero() };
 
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+    DeadzoneFilter() = default;
+    void reset();
+    PoseVector filter(const PoseVector &input);
 };
 
 
 struct settings : opts {
-    value<slider_value> noise_rot_slider_value;
-    value<slider_value> noise_pos_slider_value;
+    value<slider_value> noise_rot_slider_value { b, "noise-rotation-slider", { .5, 0, 1 } };
+    value<slider_value> noise_pos_slider_value { b, "noise-position-slider", { .5, 0, 1 } };
 
     static constexpr inline double adaptivity_window_length = 0.25; // seconds
     static constexpr inline double deadzone_scale = 8;
@@ -96,39 +92,9 @@ struct settings : opts {
     static constexpr inline double process_sigma_pos = 0.5;
     static constexpr inline double process_sigma_rot = 0.5;
 
-    static double map_slider_value(const slider_value &v_)
-    {
-        const double v = v_;
-#if 0
-        //return std::pow(10., v * 4. - 3.);
-#else
-        constexpr int min_log10 = -3;
-        constexpr int max_log10 = 1;
-        constexpr int num_divisions = max_log10 - min_log10;
-        /* ascii art representation of slider
-          // ----- //  ------//  ------// ------- //   4 divisions
-         -3    -   2         -1        0           1    power of 10
-                   |      |
-                   |      f + left_side_log10
-                   |
-                   left_side_log10
-        */
-        const int k = v * num_divisions; // in which division are we?!
-        const double f = v * num_divisions - k; // where in the division are we?!
-        const double ff = f * 9. + 1.;
-        const double multiplier = int(ff * 10.) / 10.;
-        const int left_side_log10 = min_log10 + k;
-        const double val = std::pow(10., left_side_log10) * multiplier;
-        return val;
-#endif
-    }
+    static double map_slider_value(const slider_value &v);
 
-    settings() :
-        opts("kalman-filter"),
-        noise_rot_slider_value(b, "noise-rotation-slider", { .5, 0., 1. }),
-        noise_pos_slider_value(b, "noise-position-slider", { .5, 0., 1. })
-    {}
-
+    settings() : opts("kalman-filter") {}
 };
 
 class kalman : public IFilter
@@ -141,7 +107,8 @@ public:
     void reset();
     void filter(const double *input, double *output) override;
     void center() override { reset(); }
-    module_status initialize() { return status_ok(); }
+    module_status initialize() override { return status_ok(); }
+
     PoseVector last_input;
     Timer timer;
     bool first_run;
@@ -151,16 +118,14 @@ public:
     KalmanProcessNoiseScaler kf_adaptive_process_noise_cov;
     DeadzoneFilter dz_filter;
     slider_value prev_slider_pos[2];
-
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 };
 
 class kalmanDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Kalman"); }
-    QIcon icon() { return QIcon(":/images/filter-16.png"); }
+    QString name() override { return tr("Kalman"); }
+    QIcon icon() override { return QIcon(":/images/filter-16.png"); }
 };
 
 class dialog_kalman: public IFilterDialog
