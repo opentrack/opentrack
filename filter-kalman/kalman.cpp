@@ -5,8 +5,8 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "kalman.h"
-#include <QDebug>
 #include <cmath>
+#include <QDebug>
 
 void KalmanFilter::init()
 {
@@ -270,12 +270,8 @@ dialog_kalman::dialog_kalman()
 
 void dialog_kalman::updateLabels(const slider_value&)
 {
-    // M$ hates unicode! (M$ autoconverts source code of one kind of utf-8 format,
-    // the one without BOM, to another kind that QT does not like)
-    // Previous attempt to use c++11 utf8 strings like u8" °" now failed for unknown
-    // reasons where it worked before. Hence fallback to QChar(0x00b0).
     this->ui.noiseRotLabel->setText(
-        QString::number(settings::map_slider_value(s.noise_rot_slider_value), 'f', 3) + " " + QChar(0x00b0));
+        QString::number(settings::map_slider_value(s.noise_rot_slider_value), 'f', 3) + "°");
 
     this->ui.noisePosLabel->setText(
         QString::number(settings::map_slider_value(s.noise_pos_slider_value), 'f', 3) + " cm");

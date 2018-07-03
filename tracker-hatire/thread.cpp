@@ -1,13 +1,15 @@
 #include "thread.hpp"
-#include "compat/sleep.hpp"
 #include "compat/base-path.hpp"
+#include "compat/sleep.hpp"
+
 #include <utility>
+#include <cstring>
 
 #include <QTextStream>
 #include <QTime>
-#include <QDebug>
+#include <QByteArray>
 
-#include <cstring>
+#include <QDebug>
 
 void hatire_thread::sendcmd_impl(const QByteArray &cmd)
 {
@@ -123,7 +125,8 @@ void hatire_thread::teardown_serial()
         }
         emit serial_debug_info(msg);
 
-        disconnect(&com_port, SIGNAL(readyRead()), nullptr, nullptr);
+        // XXX does this make any sense? -sh 20180703
+        //disconnect(&com_port, SIGNAL(readyRead()), nullptr, nullptr);
         com_port.close();
     }
 }
@@ -305,9 +308,6 @@ void hatire_thread::on_serial_read()
 
     if (sz > 0)
     {
-        stat.input(timer.elapsed_ms());
-        timer.start();
-
         QMutexLocker lck(&data_mtx);
         data_read.append(buf, sz);
     }
@@ -319,19 +319,15 @@ void hatire_thread::on_serial_read()
     }
 #endif
 
-    if (s.serial_bug_workaround || sz <= 0)
+    if (sz <= 0)
     {
         // qt can fire QSerialPort::readyRead() needlessly, causing a busy loop.
         // see https://github.com/opentrack/opentrack/issues/327#issuecomment-207941003
+
+        // this probably happens with flaky BT/usb-to-serial converters (?)
         constexpr int hz = 90;
         constexpr int ms = 1000/hz;
         portable::sleep(ms);
-    }
-
-    if (throttle_timer.elapsed_ms() >= 3000)
-    {
-        throttle_timer.start();
-        qDebug() << "stat:" << "avg" << stat.avg() << "stddev" << stat.stddev();
     }
 }
 

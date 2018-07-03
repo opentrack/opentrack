@@ -63,7 +63,7 @@ class OTR_COMPAT_EXPORT correlation_calibrator final
     bool check_buckets(const vec6& data);
 
 public:
-    correlation_calibrator();
+    correlation_calibrator() = default;
     void input(const vec6& data);
     mat66 get_coefficients() const;
     unsigned sample_count() const;

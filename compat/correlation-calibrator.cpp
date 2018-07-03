@@ -18,10 +18,6 @@
 
 using namespace correlation_calibrator_impl;
 
-correlation_calibrator::correlation_calibrator()
-{
-}
-
 static constexpr unsigned nbuckets[6] =
 {
     x_nbuckets,

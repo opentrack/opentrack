@@ -13,7 +13,6 @@ class OTR_COMPAT_EXPORT TR : public QObject
 public:
     TR();
     TR(const TR&);
-    ~TR() override;
 
     TR& operator=(const TR& other);
 };

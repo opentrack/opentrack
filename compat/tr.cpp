@@ -10,4 +10,3 @@ TR& TR::operator=(const TR&)
     return *this;
 }
 
-TR::~TR() {}

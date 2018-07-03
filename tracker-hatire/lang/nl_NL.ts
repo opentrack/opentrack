@@ -16,14 +16,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Buggy serial port uses too much CPU</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Workaround</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Zero</source>
         <translation type="unfinished"></translation>
     </message>

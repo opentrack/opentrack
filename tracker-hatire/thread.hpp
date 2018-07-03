@@ -4,15 +4,11 @@
 #include "ftnoir_tracker_hat_settings.h"
 
 #include <QSerialPort>
-#include <QByteArray>
 #include <QThread>
 #include <QMutex>
 
 #include <QFile>
 #include <QCoreApplication>
-
-#include "compat/variance.hpp"
-#include "compat/timer.hpp"
 
 enum results
 {
@@ -34,7 +30,7 @@ struct serial_result
     serial_result(results code, const QString& error) : error(error), code(code) {}
 
     QString error;
-    results code;
+    results code { result_error };
 };
 
 class hatire_thread : public QThread
@@ -51,8 +47,6 @@ class hatire_thread : public QThread
     QByteArray data_read;
     serial_t com_port;
     TrackerSettings s;
-    variance stat;
-    Timer timer, throttle_timer;
     char buf[1024];
 
     void run() override;
