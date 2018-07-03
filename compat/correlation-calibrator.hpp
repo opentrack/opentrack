@@ -73,4 +73,4 @@ public:
 
 } // ns correlation_calibrator_impl
 
-using correlation_calibrator_impl::correlation_calibrator;
+using correlation_calibrator = correlation_calibrator_impl::correlation_calibrator;
