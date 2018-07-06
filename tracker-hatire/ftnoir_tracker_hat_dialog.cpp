@@ -98,8 +98,6 @@ dialog_hatire::dialog_hatire() : theTracker(nullptr), timer(this)
     tie_setting(s.pParity, ui.QCB_Serial_parity);
     tie_setting(s.pStopBits, ui.QCB_Serial_stopBits);
 
-    tie_setting(s.serial_bug_workaround, ui.serial_bug_workaround);
-
     tie_setting(s.QSerialPortName, ui.cbSerialPort);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
