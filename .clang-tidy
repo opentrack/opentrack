@@ -6,6 +6,7 @@ Checks: '
     -hicpp-use-equals-default -modernize-use-equals-default,
     -hicpp-use-auto,
     -hicpp-vararg,
+    -hicpp-member-init,
     -cert-err58-cpp,
     -readability-implicit-bool-conversion,
     -readability-else-after-return,
