@@ -8,11 +8,13 @@
 
 #include "bundle.hpp"
 #include "value.hpp"
+#include "globals.hpp"
 
 #include <QThread>
 #include <QApplication>
 
-using options::value_;
+using namespace options;
+using namespace options::globals;
 
 namespace options::detail {
 
@@ -24,9 +26,7 @@ bundle::bundle(const QString& group_name)
 {
 }
 
-bundle::~bundle()
-{
-}
+bundle::~bundle() = default;
 
 void bundle::reload()
 {
@@ -53,19 +53,23 @@ void bundle::set_all_to_default()
     forall([](const QString&, value_* val) { set_base_value_to_default(val); });
 
     if (is_modified())
-        group::mark_ini_modified();
+        mark_ini_modified();
 }
 
-void bundle::store_kv(const QString& name, const QVariant& datum)
+void bundle::store_kv(const QString& name, const QVariant& new_value)
 {
     QMutexLocker l(&mtx);
 
-    transient.put(name, datum);
-
-    if (group_name.size())
-        connector::notify_values(name);
-
-    emit changed();
+    if (!group_name.isEmpty())
+    {
+        const QVariant old_value = transient.get_variant(name);
+        if (!connector::is_equal(name, old_value, new_value))
+        {
+            transient.put(name, new_value);
+            connector::notify_values(name);
+            emit changed();
+        }
+    }
 }
 
 bool bundle::contains(const QString &name) const
@@ -152,14 +156,8 @@ void bundler::refresh_all_bundles()
     bundler_singleton().after_profile_changed_();
 }
 
-bundler::bundler() : implsgl_mtx(QMutex::Recursive)
-{
-}
-
-bundler::~bundler()
-{
-    //qDebug() << "exit: bundle singleton";
-}
+bundler::bundler() = default;
+bundler::~bundler() = default;
 
 std::shared_ptr<bundler::v> bundler::make_bundle_(const bundler::k& key)
 {

@@ -8,9 +8,8 @@
 
 #include "defs.hpp"
 #include "bundle.hpp"
-#include "group.hpp"
 #include "slider.hpp"
 #include "value.hpp"
 #include "tie.hpp"
-#include "metatype.hpp"
 #include "scoped.hpp"
+#include "globals.hpp"

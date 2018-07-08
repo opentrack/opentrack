@@ -18,7 +18,7 @@ static bool generic_is_equal(const QVariant& val1, const QVariant& val2)
     return val1 == val2;
 }
 
-connector::~connector() {}
+connector::~connector() = default;
 
 bool connector::is_equal(const QString& name, const QVariant& val1, const QVariant& val2) const
 {
@@ -109,23 +109,17 @@ void connector::notify_values(const QString& name) const
 {
     auto it = connected_values.find(name);
     if (it != connected_values.cend())
-    {
         for (value_type val : std::get<0>((*it).second))
-        {
             val->bundle_value_changed();
-        }
-    }
 }
 
 void connector::notify_all_values() const
 {
-    for (auto& pair : connected_values)
-        for (value_type val : std::get<0>(pair.second))
+    for (auto& [k, v] : connected_values)
+        for (value_type val : std::get<0>(v))
             val->bundle_value_changed();
 }
 
-connector::connector()
-{
-}
+connector::connector() = default;
 
 } // ns options::detail

@@ -213,7 +213,7 @@ OTR_GUI_EXPORT int otr_main(int argc, char** argv, std::function<QWidget*()> con
             qDebug() << "locale:" << forced_locale;
         }
 
-        const bool no_i18n = group::with_global_settings_object([](QSettings& s) {
+        const bool no_i18n = options::globals::with_global_settings_object([](QSettings& s) {
             return s.value("disable-translation", false).toBool();
         });
 

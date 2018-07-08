@@ -2,6 +2,7 @@
 #include "options/options.hpp"
 
 using namespace options;
+using namespace options::globals;
 using namespace migrations;
 
 static constexpr auto OLD_RECORD_SEPARATOR  = QChar('|');
@@ -26,7 +27,7 @@ struct process_detector_record_separator : migration
 
     bool should_run() const override
     {
-        return group::with_global_settings_object([](const QSettings& s)
+        return with_global_settings_object([](const QSettings& s)
         {
             const QString old_value = s.value(KEY_NAME).toString();
             return old_value.contains(OLD_RECORD_SEPARATOR);
@@ -35,7 +36,7 @@ struct process_detector_record_separator : migration
 
     void run() override
     {
-        return group::with_global_settings_object([](QSettings& s)
+        return with_global_settings_object([](QSettings& s)
         {
             QString value = s.value(KEY_NAME).toString();
             value.replace(OLD_UNIT_SEPARATOR,   NEW_UNIT_SEPARATOR);

@@ -25,6 +25,9 @@
 
 extern "C" const char* const opentrack_version;
 
+using namespace options::globals;
+using namespace options;
+
 #if !defined EXIT_SUCCESS
 #   define EXIT_SUCCESS 0
 #endif
@@ -83,8 +86,7 @@ void main_window::annoy_if_root()
 }
 #endif
 
-main_window::main_window() :
-    State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
+main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
 
@@ -94,7 +96,7 @@ main_window::main_window() :
 
     update_button_state(false, false);
 
-    if (group::ini_directory().size() == 0)
+    if (ini_directory().isEmpty())
     {
         die_on_config_not_writable();
         return;
@@ -146,7 +148,7 @@ main_window::main_window() :
     }
 
     {
-        const QString cur = group::ini_filename();
+        const QString cur = ini_filename();
         bool ok = is_config_listed(cur) ? set_profile(cur) : set_profile(OPENTRACK_DEFAULT_CONFIG);
         if (!ok)
         {
@@ -348,7 +350,7 @@ void main_window::die_on_config_not_writable()
 
     QMessageBox::critical(this,
                           tr("The Octopus is sad"),
-                          tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(group::ini_directory(), pad),
+                          tr("Check permissions for your .ini directory:\n\n\"%1\"%2\n\nExiting now.").arg(ini_directory(), pad),
                           QMessageBox::Close, QMessageBox::NoButton);
 
     exit(EX_OSFILE);
@@ -357,24 +359,24 @@ void main_window::die_on_config_not_writable()
 bool main_window::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
 {
     const bool writable =
-        group::with_settings_object([&](QSettings& s) {
+        with_settings_object([&](QSettings& s) {
             return s.isWritable();
         });
 
     if (writable)
         return false;
 
-    const bool open = QFile(group::ini_combine(current)).open(QFile::ReadWrite);
-    const QStringList ini_list = group::ini_list();
+    const bool open = QFile(ini_combine(current)).open(QFile::ReadWrite);
+    const QStringList list = ini_list();
 
-    if (!ini_list.contains(current) || !open)
+    if (!list.contains(current) || !open)
     {
         die_on_config_not_writable();
         return true;
     }
 
     if (ini_list_ != nullptr)
-        *ini_list_ = ini_list;
+        *ini_list_ = list;
 
     return false;
 }
@@ -415,7 +417,7 @@ void main_window::make_empty_config()
     QString name;
     if (get_new_config_name_from_dialog(name))
     {
-        QFile(group::ini_combine(name)).open(QFile::ReadWrite);
+        QFile(ini_combine(name)).open(QFile::ReadWrite);
 
         if (!refresh_config_list())
             return;
@@ -433,11 +435,11 @@ void main_window::make_empty_config()
 
 void main_window::make_copied_config()
 {
-    const QString cur = group::ini_pathname();
+    const QString cur = ini_pathname();
     QString name;
     if (cur != "" && get_new_config_name_from_dialog(name))
     {
-        const QString new_name = group::ini_combine(name);
+        const QString new_name = ini_combine(name);
         (void) QFile::remove(new_name);
         QFile::copy(cur, new_name);
 
@@ -458,7 +460,7 @@ void main_window::make_copied_config()
 
 void main_window::open_config_directory()
 {
-    QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(group::ini_directory()));
+    QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(ini_directory()));
 }
 
 bool main_window::refresh_config_list()
@@ -466,16 +468,16 @@ bool main_window::refresh_config_list()
     if (work)
         return true;
 
-    QStringList ini_list = group::ini_list();
+    QStringList list = ini_list();
 
     // check for sameness
-    const bool exact_same = !ini_list.empty() && progn(
-        if (ini_list.size() == ui.iconcomboProfile->count())
+    const bool exact_same = !list.empty() && progn(
+        if (list.size() == ui.iconcomboProfile->count())
         {
-            const int sz = ini_list.size();
+            const int sz = list.size();
             for (int i = 0; i < sz; i++)
             {
-                if (ini_list[i] != ui.iconcomboProfile->itemText(i))
+                if (list[i] != ui.iconcomboProfile->itemText(i))
                     return false;
             }
             return true;
@@ -484,12 +486,12 @@ bool main_window::refresh_config_list()
         return false;
     );
 
-    QString current = group::ini_filename();
+    QString current = ini_filename();
 
-    if (!ini_list.contains(current))
+    if (!list.contains(current))
         current = OPENTRACK_DEFAULT_CONFIG;
 
-    if (maybe_die_on_config_not_writable(current, &ini_list))
+    if (maybe_die_on_config_not_writable(current, &list))
         return false;
 
     if (exact_same)
@@ -500,9 +502,9 @@ bool main_window::refresh_config_list()
     QSignalBlocker l(ui.iconcomboProfile);
 
     ui.iconcomboProfile->clear();
-    ui.iconcomboProfile->addItems(ini_list);
+    ui.iconcomboProfile->addItems(list);
 
-    for (int i = 0; i < ini_list.size(); i++)
+    for (int i = 0; i < list.size(); i++)
         ui.iconcomboProfile->setItemIcon(i, icon);
 
     ui.iconcomboProfile->setCurrentText(current);
@@ -663,7 +665,7 @@ void main_window::set_title(const QString& game_title_)
     QString game_title;
     if (game_title_ != "")
         game_title = tr(" :: ") + game_title_;
-    QString current = group::ini_filename();
+    QString current = ini_filename();
     QString version(opentrack_version);
     version = tr("opentrack") + " " + version.mid(sizeof("opentrack-") - 1);
     setWindowTitle(version + tr(" :: ") + current + game_title);
@@ -681,7 +683,7 @@ void main_window::show_pose()
 
     double mapped[6], raw[6];
 
-    work->tracker->raw_and_mapped_pose(mapped, raw);
+    work->pipeline_.raw_and_mapped_pose(mapped, raw);
 
     display_pose(mapped, raw);
 }
@@ -817,7 +819,7 @@ bool main_window::set_profile(const QString& new_name_)
 }
 
 void main_window::ensure_tray()
-{    
+{
     if (!QSystemTrayIcon::isSystemTrayAvailable())
     {
         QApplication::setQuitOnLastWindowClosed(true);
@@ -953,7 +955,7 @@ void main_window::set_keys_enabled(bool flag)
     if (!flag)
     {
         if (work)
-            work->sc->reload({});
+            work->sc.reload({});
         global_shortcuts.reload({});
     }
     else
@@ -1011,7 +1013,7 @@ bool main_window::start_in_tray()
 
 void main_window::set_profile_in_registry(const QString &profile)
 {
-    group::with_global_settings_object([&](QSettings& s) {
+    with_global_settings_object([&](QSettings& s) {
         s.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
     });
 }

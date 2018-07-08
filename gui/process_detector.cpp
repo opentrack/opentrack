@@ -24,31 +24,32 @@ static constexpr inline auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
 static constexpr inline auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_
 
 using namespace options;
+using namespace options::globals;
 
 void proc_detector_settings::set_game_list(const QString &game_list)
 {
-    group::with_global_settings_object([&](QSettings& settings) {
+    with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-list", game_list);
     });
 }
 
 QString proc_detector_settings::get_game_list()
 {
-    return group::with_global_settings_object([&](QSettings& settings) {
+    return with_global_settings_object([&](QSettings& settings) {
         return settings.value("executable-list").toString();
     });
 }
 
 bool proc_detector_settings::is_enabled()
 {
-    return group::with_global_settings_object([&](QSettings& settings) {
+    return with_global_settings_object([&](QSettings& settings) {
         return settings.value("executable-detector-enabled", false).toBool();
     });
 }
 
 void proc_detector_settings::set_is_enabled(bool enabled)
 {
-    group::with_global_settings_object([&](QSettings& settings) {
+    with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-detector-enabled", enabled);
     });
 }
@@ -76,7 +77,7 @@ QHash<QString, QString> proc_detector_settings::split_process_names()
 
 void BrowseButton::browse()
 {
-    QString dir_path = QFileInfo(group::ini_pathname()).absolutePath();
+    QString dir_path = QFileInfo(ini_pathname()).absolutePath();
     QString filename = QFileDialog::getOpenFileName(
                            this,
                            tr("Set executable name"),
@@ -96,7 +97,7 @@ int process_detector::add_row(QString const& exe_name, QString const& profile)
     QComboBox* cb = new QComboBox();
     cb->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     cb->addItem("");
-    cb->addItems(group::ini_list());
+    cb->addItems(ini_list());
     ui.tableWidget->setCellWidget(i, 1, cb);
 
     QTableWidgetItem* twi = new QTableWidgetItem(exe_name);

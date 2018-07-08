@@ -16,24 +16,19 @@
 #include "value-traits.hpp"
 #include "compat/macros.hpp"
 
-#include <cstdio>
 #include <type_traits>
 #include <typeinfo>
-#include <typeindex>
-#include <utility>
 
-#include <QVariant>
-#include <QString>
-#include <QPointF>
-#include <QList>
-#include <QMutex>
+#include <QMetaType>
 
 namespace options {
 
 template<typename t>
 class value final : public value_
 {
-    using traits = detail::value_traits<t, t, void>;
+    const t def;
+
+    using traits = detail::value_traits<t>;
     using stored_type = typename traits::stored_type;
 
     static bool is_equal(const QVariant& val1, const QVariant& val2)
@@ -52,22 +47,40 @@ class value final : public value_
         if (!b->contains(self_name) || variant.type() == QVariant::Invalid)
             return def;
 
-        const stored_type x(variant.value<stored_type>());
+        const stored_type x { variant.value<stored_type>() };
 
         return traits::from_value(traits::from_storage(x), def);
     }
 
-public:
-    cc_noinline
-    t operator=(const t& datum)
+    friend class detail::connector;
+    void bundle_value_changed() const override
+    {
+        if (!self_name.isEmpty())
+            emit valueChanged(traits::to_storage(get()));
+    }
+
+    void store_variant(const QVariant& value) override
     {
         if (self_name.isEmpty())
-            return def;
+            return;
+
+        if (value.type() == qMetaTypeId<stored_type>())
+            b->store_kv(self_name, value);
+        else
+            operator=(traits::value_from_variant(value));
+    }
+
+public:
+    cc_noinline
+    value<t>& operator=(const t& datum)
+    {
+        if (self_name.isEmpty())
+            return *this;
 
         if (datum != get())
-            store(traits::to_storage(datum));
+            b->store_kv(self_name, QVariant::fromValue<stored_type>(traits::to_storage(datum)));
 
-        return datum;
+        return *this;
     }
 
     static constexpr inline Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
@@ -79,8 +92,8 @@ public:
         def(def)
     {
         if (!self_name.isEmpty())
-            QObject::connect(b.get(), SIGNAL(reloading()),
-                             this, SLOT(reload()),
+            QObject::connect(b.get(), &detail::bundle::reloading,
+                             this, &value_::reload,
                              DIRECT_CONNTYPE);
     }
 
@@ -96,52 +109,49 @@ public:
         *this = def;
     }
 
-    operator t() const { return get(); }
+    operator t() const { return get(); } // NOLINT
 
-    t operator->() const
+    template<typename u, typename = decltype(static_cast<u>(std::declval<t>()))>
+    explicit cc_forceinline operator u() const { return to<u>(); }
+
+    auto operator->() const
     {
-        return get();
+        struct dereference_wrapper final
+        {
+            cc_forceinline t const* operator->() const { return &x; }
+            cc_forceinline t* operator->() { return &x; }
+            t x;
+            explicit cc_forceinline dereference_wrapper(t&& x) : x(x) {}
+        };
+
+        return dereference_wrapper { get() };
     }
 
     cc_noinline
     void reload() override
     {
+#if 0
         if (!self_name.isEmpty())
-            *this = static_cast<t>(*this);
+            store(traits::to_storage(get()));
+#endif
     }
 
-    cc_noinline
-    void bundle_value_changed() const override
-    {
-        if (!self_name.isEmpty())
-            emit valueChanged(traits::to_storage(get()));
-    }
-
-    t operator()() const
-    {
-        return get();
-    }
-
-    t operator*() const
-    {
-        return get();
-    }
+    cc_forceinline t operator()() const { return get(); }
+    cc_forceinline t operator*() const { return get(); }
 
     template<typename u>
     u to() const
     {
         return static_cast<u>(get());
     }
-
-private:
-    const t def;
 };
 
-#if !defined OTR_INST_VALUE
-#   define OTR_INST_VALUE OTR_TEMPLATE_IMPORT
-#endif
-
+// some linker problems
 #if !defined __APPLE__
+#   if !defined OTR_INST_VALUE
+#       define OTR_INST_VALUE OTR_TEMPLATE_IMPORT
+#   endif
+
     OTR_INST_VALUE(value<double>);
     OTR_INST_VALUE(value<float>);
     OTR_INST_VALUE(value<int>);

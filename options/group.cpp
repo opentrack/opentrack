@@ -8,18 +8,19 @@
 
 #include "group.hpp"
 #include "defs.hpp"
+#include "globals.hpp"
 
-#include "compat/timer.hpp"
-#include "compat/library-path.hpp"
-
-#include <cmath>
+#include <utility>
+#include <algorithm>
 
 #include <QFile>
-#include <QStandardPaths>
+
 #include <QDir>
 #include <QDebug>
 
-namespace options {
+namespace options::detail {
+
+using namespace options::globals;
 
 group::group(const QString& name) : name(name)
 {
@@ -66,146 +67,14 @@ bool group::contains(const QString &s) const
     return it != kvs.cend() && it->second != QVariant::Invalid;
 }
 
-bool group::is_portable_installation()
+QVariant group::get_variant(const QString& name) const
 {
-#if defined _WIN32
-    return QFile::exists(OPENTRACK_BASE_PATH + "/portable.txt");
-#endif
-    return false;
+    auto it = kvs.find(name);
+    if (it != kvs.cend())
+        return it->second;
+
+    return {};
 }
 
-QString group::ini_directory()
-{
+} // ns options::detail
 
-    QString dir;
-
-    if (is_portable_installation())
-    {
-        dir = OPENTRACK_BASE_PATH;
-
-        static const QString subdir = "ini";
-
-        if (!QDir(dir).mkpath(subdir))
-            return QString();
-
-        return dir + '/' + subdir;
-    }
-    else
-    {
-        dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
-        if (dir.isEmpty())
-            return QString();
-        if (!QDir(dir).mkpath(OPENTRACK_ORG))
-            return QString();
-
-        dir += '/';
-        dir += OPENTRACK_ORG;
-    }
-
-    return dir;
-}
-
-QString group::ini_filename()
-{
-    return with_global_settings_object([&](QSettings& settings) {
-        const QString ret = settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
-        if (ret.size() == 0)
-            return QStringLiteral(OPENTRACK_DEFAULT_CONFIG);
-        return ret;
-    });
-}
-
-QString group::ini_pathname()
-{
-    const auto dir = ini_directory();
-    if (dir == "")
-        return "";
-    return dir + "/" + ini_filename();
-}
-
-QString group::ini_combine(const QString& filename)
-{
-    return ini_directory() + QStringLiteral("/") + filename;
-}
-
-QStringList group::ini_list()
-{
-    const auto dirname = ini_directory();
-    if (dirname == "")
-        return QStringList();
-    QDir settings_dir(dirname);
-    QStringList list = settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
-    std::sort(list.begin(), list.end());
-    return list;
-}
-
-void group::mark_ini_modified()
-{
-    QMutexLocker l(&cur_ini_mtx);
-    ini_modifiedp = true;
-}
-
-QString group::cur_ini_pathname;
-
-std::shared_ptr<QSettings> group::cur_ini;
-QMutex group::cur_ini_mtx(QMutex::Recursive);
-int group::ini_refcount = 0;
-bool group::ini_modifiedp = false;
-
-std::shared_ptr<QSettings> group::cur_global_ini;
-QMutex group::global_ini_mtx(QMutex::Recursive);
-int group::global_ini_refcount = 0;
-bool group::global_ini_modifiedp = false;
-
-std::shared_ptr<QSettings> group::cur_settings_object()
-{
-    const QString pathname = ini_pathname();
-
-    if (pathname.isEmpty())
-        return std::make_shared<QSettings>();
-
-    if (pathname != cur_ini_pathname)
-    {
-        cur_ini = std::make_shared<QSettings>(pathname, QSettings::IniFormat);
-        cur_ini_pathname = pathname;
-    }
-
-    return cur_ini;
-}
-
-std::shared_ptr<QSettings> group::cur_global_settings_object()
-{
-    if (cur_global_ini)
-        return cur_global_ini;
-
-    if (!is_portable_installation())
-        cur_global_ini = std::make_shared<QSettings>(OPENTRACK_ORG);
-    else
-    {
-        static const QString pathname = OPENTRACK_BASE_PATH + QStringLiteral("/globals.ini");
-        cur_global_ini = std::make_shared<QSettings>(pathname, QSettings::IniFormat);
-    }
-
-    return cur_global_ini;
-}
-
-cc_noinline
-group::saver_::~saver_()
-{
-    if (--refcount == 0 && modifiedp)
-    {
-        modifiedp = false;
-        s.sync();
-        if (s.status() != QSettings::NoError)
-            qDebug() << "error with .ini file" << s.fileName() << s.status();
-    }
-}
-
-cc_noinline
-group::saver_::saver_(QSettings& s, int& refcount, bool& modifiedp) :
-    s(s), refcount(refcount), modifiedp(modifiedp)
-{
-    refcount++;
-}
-
-} // ns options

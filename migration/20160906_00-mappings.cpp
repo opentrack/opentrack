@@ -19,6 +19,7 @@
 #include <QDebug>
 
 using namespace options;
+using namespace options::globals;
 using namespace migrations;
 
 static const char* const old_names[] =
@@ -44,7 +45,7 @@ static QList<QList<QPointF>> get_old_splines()
 {
     QList<QList<QPointF>> ret;
 
-    return group::with_settings_object([&](QSettings& settings) {
+    return with_settings_object([&](QSettings& settings) {
         for (const char* name : old_names)
         {
             const int max = settings.value("point-count", 0).toInt();
@@ -96,7 +97,7 @@ struct mappings_from_2_3_0_rc11 : migration
 
     void run() override
     {        
-        group::with_settings_object([this](QSettings&) {
+        with_settings_object([](QSettings&) {
             const QList<QList<QPointF>> old_mappings = get_old_splines();
 
             for (int i = 0; i < 12; i++)

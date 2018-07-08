@@ -20,6 +20,8 @@
 
 #include <memory>
 
+using namespace options::globals;
+
 // individual migrations are run in the UI thread. they can be interactive if necessary.
 
 namespace migrations {
@@ -105,7 +107,7 @@ QString migrator::last_migration_time()
 {
     QString ret;
 
-    options::group::with_settings_object([&](QSettings& s) {
+    with_settings_object([&](QSettings& s) {
         s.beginGroup("migrations");
         ret = s.value("last-migration-at", "19700101_00").toString();
         s.endGroup();
@@ -129,13 +131,13 @@ QString migrator::time_after_migrations()
 
 void migrator::set_last_migration_time(const QString& val)
 {
-    options::group::with_settings_object([&](QSettings& s) {
+    with_settings_object([&](QSettings& s) {
         s.beginGroup("migrations");
         const QString old_value = s.value("last-migration-at", "").toString();
         if (val != old_value)
         {
             s.setValue("last-migration-at", val);
-            options::group::mark_ini_modified();
+            mark_ini_modified();
         }
         s.endGroup();
     });
@@ -155,26 +157,24 @@ std::vector<QString> migrator::run()
 
     const QString last_migration = last_migration_time();
 
-    options::group::with_global_settings_object([&](QSettings&) {
-        options::group::with_settings_object([&](QSettings&) {
-            for (mptr m : migrations())
+    with_global_settings_object([&](QSettings&) {
+        for (mptr const& m : migrations())
+        {
+            const QString date = m->unique_date();
+
+            if (date <= last_migration)
+                continue;
+
+            if (m->should_run())
             {
-                const QString date = m->unique_date();
-
-                if (date <= last_migration)
-                    continue;
-
-                if (m->should_run())
-                {
-                    const QByteArray name = m->name().toUtf8();
-                    const QByteArray date = m->unique_date().toUtf8();
-                    qDebug() << "migrate:" << date.constData() << name.constData();
-                    m->run();
-                    done.push_back(m->name());
-                }
+                const QByteArray name = m->name().toUtf8();
+                const QByteArray date = m->unique_date().toUtf8();
+                qDebug() << "migrate:" << date.constData() << name.constData();
+                m->run();
+                done.push_back(m->name());
             }
-            mark_config_as_not_needing_migration();
-        });
+        }
+        mark_config_as_not_needing_migration();
     });
 
     return done;

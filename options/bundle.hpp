@@ -48,7 +48,7 @@ class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
     class OTR_OPTIONS_EXPORT mutex final : public QMutex
     {
     public:
-        mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
+        explicit mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
         operator QMutex*() const { return const_cast<QMutex*>(static_cast<const QMutex*>(this)); }
     };
 
@@ -70,7 +70,7 @@ public:
     bundle& operator=(const bundle&) = delete;
     QMutex* get_mtx() const override;
 
-    cc_noinline bundle(const QString& group_name);
+    cc_noinline explicit bundle(const QString& group_name);
     cc_noinline ~bundle() override;
     QString name() const { return group_name; }
     cc_noinline void store_kv(const QString& name, const QVariant& datum);
@@ -83,6 +83,7 @@ public:
         QMutexLocker l(mtx);
         return transient.get<t>(name);
     }
+
 public slots:
     void save();
     void reload();
@@ -97,7 +98,7 @@ struct OTR_OPTIONS_EXPORT bundler final
     using shared = std::shared_ptr<v>;
 
 private:
-    QMutex implsgl_mtx;
+    QMutex implsgl_mtx { QMutex::Recursive };
     std::map<k, weak> implsgl_data;
     void after_profile_changed_();
 

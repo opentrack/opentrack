@@ -18,10 +18,11 @@
 #include <QFileDialog>
 
 using namespace options;
+using namespace options::globals;
 
 QString options_dialog::kopts_to_string(const key_opts& kopts)
 {
-    if (static_cast<QString>(kopts.guid) != "")
+    if (!kopts.guid->isEmpty())
     {
         const int btn = kopts.button & ~Qt::KeyboardModifierMask;
         const int mods = kopts.button & Qt::KeyboardModifierMask;
@@ -31,14 +32,14 @@ QString options_dialog::kopts_to_string(const key_opts& kopts)
         if (mods & Qt::ShiftModifier) mm += "Shift+";
         return mm + tr("Joy button %1").arg(QString::number(btn));
     }
-    if (static_cast<QString>(kopts.keycode) == "")
+    if (kopts.keycode->isEmpty())
         return tr("None");
     return kopts.keycode;
 }
 
 void options_dialog::set_disable_translation_state(bool value)
 {
-    group::with_global_settings_object([&](QSettings& s)
+    with_global_settings_object([&](QSettings& s)
     {
         s.setValue("disable-translation", value);
     });
@@ -105,7 +106,7 @@ options_dialog::options_dialog(std::function<void(bool)>&& pause_keybindings) :
 
     tie_setting(main.neck_enable, ui.neck_enable);
 
-    const bool is_translation_disabled = group::with_global_settings_object([] (QSettings& s) {
+    const bool is_translation_disabled = with_global_settings_object([] (QSettings& s) {
         return s.value("disable-translation", false).toBool();
     });
     ui.disable_translation->setChecked(is_translation_disabled);

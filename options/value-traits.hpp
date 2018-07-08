@@ -18,9 +18,19 @@ struct default_value_traits
     using stored_type = std::decay_t<t>;
     using value_type = std::decay_t<u>;
 
-    static inline value_type from_value(const value_type& val, const value_type&) { return val; }
-    static inline value_type from_storage(const stored_type& x) { return static_cast<value_type>(x); }
-    static inline stored_type to_storage(const value_type& val) { return static_cast<stored_type>(val); }
+    static value_type from_value(const value_type& val, const value_type&) { return val; }
+    static value_type from_storage(const stored_type& x) { return static_cast<value_type>(x); }
+    static stored_type to_storage(const value_type& val) { return static_cast<stored_type>(val); }
+
+    static value_type value_from_variant(const QVariant& x)
+    {
+        return from_storage(storage_from_variant(x));
+    }
+
+    static stored_type storage_from_variant(const QVariant& x)
+    {
+        return x.value<stored_type>();
+    }
 };
 
 template<typename t, typename u = t, typename Enable = void>

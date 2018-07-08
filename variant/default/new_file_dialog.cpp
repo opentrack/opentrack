@@ -23,7 +23,7 @@ void new_file_dialog::ok_clicked()
     text = text.replace('\\', "");
     if (text != "" && !text.endsWith(".ini"))
         text += ".ini";
-    if (text == "" || text == ".ini" || QFile(options::group::ini_directory() + "/" + text).exists())
+    if (text == "" || text == ".ini" || QFile(options::globals::ini_directory() + "/" + text).exists())
     {
         QMessageBox::warning(this,
                              tr("File exists"),
