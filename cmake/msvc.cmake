@@ -34,6 +34,8 @@ foreach(k CMP0020 CMP0022 CMP0058 CMP0028 CMP0042 CMP0063 CMP0053 CMP0011 CMP005
 endforeach()
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
+    include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
+
     #C4263 - member function does not override any base class virtual member function
     #C4264 - no override available for virtual member function from base class, function is hidden
     #C4265 - class has virtual functions, but destructor is not virtual
@@ -51,6 +53,8 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
         set(warns_ "${warns_} -w1${i}")
     endforeach()
     set(cc "${cc} -GR-")
+
+    set(CMAKE_RC_FLAGS "/nologo /DWIN32")
 endif()
 
 set(base-cflags "${warns_} -MT -Zi -W4")
@@ -79,25 +83,24 @@ set(_LDFLAGS_STATIC_DEBUG "")
 #set(_CXXFLAGS "${_CXXFLAGS} -Bt+")
 #set(_LDFLAGS "${_LDFLAGS} -time")
 
-set(CMAKE_RC_FLAGS "/nologo -DWIN32")
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install")
+endif()
 
-set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
-set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
-
-set(CMAKE_STATIC_LINKER_FLAGS "${_LDFLAGS_STATIC}" CACHE STRING "" FORCE)
-set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${_LDFLAGS_STATIC_RELEASE}" CACHE STRING "" FORCE)
-set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${_LDFLAGS_STATIC_DEBUG}" CACHE STRING "" FORCE)
+set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} ${_LDFLAGS_STATIC}")
+set(CMAKE_STATIC_LINKER_FLAGS_RELEASE "${CMAKE_STATIC_LINKER_FLAGS_RELEASE} ${_LDFLAGS_STATIC_RELEASE}")
+set(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${CMAKE_STATIC_LINKER_FLAGS_DEBUG} ${_LDFLAGS_STATIC_DEBUG}")
 
 foreach(j C CXX)
     foreach(i "" _DEBUG _RELEASE)
-        set(CMAKE_${j}_FLAGS${i} "${_${j}FLAGS${i}}" CACHE STRING "" FORCE)
+        set(CMAKE_${j}_FLAGS${i} "${CMAKE_${j}_FLAGS${i}} ${_${j}FLAGS${i}}")
     endforeach()
 endforeach()
 
 foreach(j "" _DEBUG _RELEASE)
     foreach(i MODULE EXE SHARED)
-        set(CMAKE_${i}_LINKER_FLAGS${j} "${_LDFLAGS${j}}" CACHE STRING "" FORCE)
+        set(CMAKE_${i}_LINKER_FLAGS${j} "${CMAKE_${i}_LINKER_FLAGS${j}} ${_LDFLAGS${j}}")
     endforeach()
 endforeach()
 
-include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
