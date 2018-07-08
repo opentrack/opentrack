@@ -157,7 +157,7 @@ std::vector<QString> migrator::run()
 
     const QString last_migration = last_migration_time();
 
-    with_global_settings_object([&](QSettings&) {
+    with_settings_object([&](QSettings&) {
         for (mptr const& m : migrations())
         {
             const QString date = m->unique_date();
