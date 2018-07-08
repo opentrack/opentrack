@@ -1,6 +1,8 @@
-Checks: '
-    -*,readability-*,misc-*,hicpp-*,cert-*,modernize-*,clang-analyzer-*,
+Checks:
+    -*,
+    clang-analyzer-*,clang-diagnostic-*,
     cppcoreguidelines-*,performance-*,bugprone-*,
+    readability-*,misc-*,hicpp-*,cert-*,modernize-*,
     -cppcoreguidelines-special-member-functions,-hicpp-special-member-functions,
     -hicpp-braces-around-statements,-readability-braces-around-statements,
     -hicpp-use-equals-default -modernize-use-equals-default,
@@ -28,6 +30,9 @@ Checks: '
     -cppcoreguidelines-pro-type-cstyle-cast,
     -cppcoreguidelines-pro-type-reinterpret-cast,
     -cppcoreguidelines-owning-memory,
-    '
+    -cppcoreguidelines-pro-type-const-cast,
+    -hicpp-function-size,
+    -cppcoreguidelines-pro-type-static-cast-downcast,
+
 AnalyzeTemporaryDtors: true
 HeaderFilterRegex: '/dev/opentrack'
