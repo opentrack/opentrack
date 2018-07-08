@@ -6,6 +6,7 @@
  */
 
 #include "imagewidget.h"
+#include <utility>
 #include <QPainter>
 
 ImageWidget::ImageWidget(QWidget *parent) :
@@ -14,11 +15,11 @@ ImageWidget::ImageWidget(QWidget *parent) :
     mImage.fill(Qt::gray);
 }
 
-void ImageWidget::setImage(const QImage image)
+void ImageWidget::setImage(QImage image)
 {
     {
         QMutexLocker lock(&mMutex);
-        mImage = image;
+        mImage = std::move(image);
     }
     repaint();
 }

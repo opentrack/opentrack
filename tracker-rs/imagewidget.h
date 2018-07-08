@@ -15,7 +15,7 @@ class ImageWidget : public QWidget {
   Q_OBJECT
 public:
   ImageWidget(QWidget* parent = 0);
-  void setImage(const QImage image);
+  void setImage(QImage image);
 
 private:
   QImage mImage;

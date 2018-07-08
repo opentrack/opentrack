@@ -2,10 +2,7 @@
 
 mutex& mutex::operator=(const mutex& datum)
 {
-    inner = nullptr;
-    inner = std::make_unique<QMutex>(datum->isRecursive()
-                                     ? QMutex::Recursive
-                                     : QMutex::NonRecursive);
+    inner.emplace(datum->isRecursive() ? QMutex::Recursive : QMutex::NonRecursive);
     return *this;
 }
 
@@ -15,7 +12,7 @@ mutex::mutex(const mutex& datum)
 }
 
 mutex::mutex(mutex::mode m) :
-    inner(std::make_unique<QMutex>(static_cast<QMutex::RecursionMode>(int(m))))
+    inner { std::in_place, static_cast<QMutex::RecursionMode>(int(m)) }
 {
 }
 
@@ -31,6 +28,6 @@ QMutex* mutex::operator->() const
 
 mutex::operator QMutex*() const
 {
-    return const_cast<QMutex*>(inner.get());
+    return const_cast<QMutex*>(&inner.value());
 }
 

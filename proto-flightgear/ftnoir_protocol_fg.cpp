@@ -22,7 +22,7 @@ void flightgear::pose(const double* headpose) {
     FlightData.r = -headpose[Roll];
     FlightData.status = 1;
     QHostAddress destIP(quint32(s.ip1 << 24 | s.ip2 << 16 | s.ip3 << 8 | s.ip4));
-    (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, static_cast<quint16>(s.port));
+    (void) outSocket.writeDatagram(reinterpret_cast<const char*>(&FlightData), sizeof(FlightData), destIP, quint16(s.port));
 }
 
 module_status flightgear::initialize()

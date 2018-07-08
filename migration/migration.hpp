@@ -33,7 +33,7 @@ namespace detail {
     private:
         static void sort_migrations();
 
-        static void register_migration(mptr m);
+        static void register_migration(const mptr& m);
         static std::vector<mptr>& migrations();
 
         static void eval_thunks();

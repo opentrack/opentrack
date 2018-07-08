@@ -84,8 +84,8 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_thres = s.rot_smoothing.to<double>();
-    const double pos_thres = s.pos_smoothing.to<double>();
+    const double rot_thres { s.rot_smoothing };
+    const double pos_thres { s.pos_smoothing };
 
     const double dt = t.elapsed_seconds();
     t.start();

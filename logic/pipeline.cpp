@@ -35,7 +35,7 @@ using namespace pipeline_impl;
 static constexpr inline double r2d = 180. / M_PI;
 static constexpr inline double d2r = M_PI / 180.;
 
-reltrans::reltrans() {}
+reltrans::reltrans() = default;
 
 void reltrans::on_center()
 {

@@ -11,7 +11,7 @@
 
 joystick::joystick()
 {
-    if (static_cast<QString>(s.guid) == "")
+    if (s.guid->isEmpty())
     {
         std::vector<win32_joy_ctx::joy_info> info = joy_ctx.get_joy_info();
         if (!info.empty())

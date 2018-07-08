@@ -29,11 +29,11 @@ namespace detail {
 static std::vector<mptr> migration_list;
 static std::vector<mfun> migration_thunks;
 
-void migrator::register_migration(mptr m)
+void migrator::register_migration(mptr const& m)
 {
     const QString date = m->unique_date();
 
-    for (mptr m2 : migration_list)
+    for (mptr const& m2 : migration_list)
         if (m2->unique_date() == date)
             std::abort();
 
@@ -77,7 +77,7 @@ void migrator::eval_thunks()
         mptr m = fun();
         register_migration(m);
     }
-    if (migration_thunks.size())
+    if (!migration_thunks.empty())
         sort_migrations();
     migration_thunks.clear();
 }
@@ -118,7 +118,7 @@ QString migrator::time_after_migrations()
 {
     const std::vector<mptr>& list = migrations();
 
-    if (list.size() == 0u)
+    if (list.empty())
         return QStringLiteral("19700101_00");
 
     QString ret = list[list.size() - 1]->unique_date();

@@ -5,41 +5,21 @@
 
 #include <fstream>
 #include <QString>
-#include <QMessageBox>
-#include <QWidget>
+#include <QDebug>
 
 class OTR_LOGIC_EXPORT TrackLogger
 {
-    TrackLogger(TrackLogger&&) = delete;
-    TrackLogger(const TrackLogger&) = delete;
-    TrackLogger& operator=(const TrackLogger&) = delete;
-    TrackLogger& operator=(TrackLogger&&) = delete;
-
     Timer t;
 
 public:
-    TrackLogger()
-    {
-    }
+    TrackLogger() = default;
+    virtual ~TrackLogger() = default;
 
-    virtual ~TrackLogger();
+    virtual void write(const char *) {}
+    virtual void write(const double *, int) {}
+    virtual void next_line() {}
 
-    virtual void write(const char *)
-    {
-    }
-
-    virtual void write(const double *, int)
-    {
-    }
-
-    virtual void next_line()
-    {
-    }
-
-    void write_pose(const double *p)
-    {
-        write(p, 6);
-    }
+    void write_pose(const double *p);
 
     void reset_dt();
     void write_dt();
@@ -49,10 +29,10 @@ public:
 class OTR_LOGIC_EXPORT TrackLoggerCSV : public TrackLogger
 {
     std::ofstream out;
-    bool first_col;
+    bool first_col = true;
     inline void handle_first_col_sep();
 public:
-    TrackLoggerCSV(const QString &filename) : first_col(true)
+    explicit TrackLoggerCSV(const QString &filename)
     {
         out.open(filename.toStdString());
     }

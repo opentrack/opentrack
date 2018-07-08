@@ -7,33 +7,23 @@
  */
 #pragma once
 
-#ifdef _WIN32
-
 #include "dinput.hpp"
 #include "compat/timer.hpp"
+#include "compat/qhash.hpp"
 #include "export.hpp"
+
 #include <cstring>
 #include <memory>
 #include <vector>
 #include <functional>
 #include <algorithm>
 #include <unordered_map>
+
 #include <QString>
 #include <QDebug>
 #include <QMutex>
 #include <QMutexLocker>
 #include <QWidget>
-
-namespace std {
-template<>
-struct hash<QString>
-{
-    inline std::size_t operator()(const QString& value) const
-    {
-        return qHash(value);
-    }
-};
-}
 
 struct OTR_DINPUT_EXPORT win32_joy_ctx final
 {
@@ -102,4 +92,3 @@ private:
     static enum_state enumerator;
 };
 
-#endif

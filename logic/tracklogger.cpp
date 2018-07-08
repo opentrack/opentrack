@@ -1,7 +1,12 @@
 #include "tracklogger.hpp"
 #include "pipeline.hpp"
 
-TrackLogger::~TrackLogger() {}
+#include <QMessageBox>
+
+void TrackLogger::write_pose(const double* p)
+{
+    write(p, 6);
+}
 
 void TrackLogger::reset_dt()
 {

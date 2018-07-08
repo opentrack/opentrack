@@ -16,7 +16,7 @@
 
 #include <windows.h>
 
-Key::Key() {}
+Key::Key() = default;
 
 bool Key::should_process()
 {

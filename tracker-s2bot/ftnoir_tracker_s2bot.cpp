@@ -56,7 +56,7 @@ void tracker_s2bot::run() {
             int add_indices[] = { s.add_yaw, s.add_pitch, s.add_roll, };
             double orient[4] {};
 
-            for (auto line : slist)
+            for (auto const& line : slist)
             {
                 QStringList keyval = line.split(' ');
                 if (keyval.count() < 2) continue;

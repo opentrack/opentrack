@@ -59,7 +59,7 @@ private:
 
     bool fresh = true;
     cv::Mat frame_copy, frame_color, frame_resize, frame_out;
-	wii_camera_status status;
+	wii_camera_status status = wii_cam_wait_for_dongle;
 };
 
 } // ns pt_module

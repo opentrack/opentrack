@@ -2,7 +2,7 @@
 
 using namespace options;
 
-value_::value_(bundle b, const QString& name, value_::comparator cmp, std::type_index type_idx) :
+value_::value_(bundle const& b, const QString& name, value_::comparator cmp, std::type_index type_idx) :
     b(b),
     self_name(name),
     cmp(cmp),
@@ -19,11 +19,6 @@ value_::~value_()
 void value_::notify() const
 {
     bundle_value_changed();
-}
-
-void value_::store(const QVariant& datum)
-{
-    b->store_kv(self_name, datum);
 }
 
 namespace options::detail {

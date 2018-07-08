@@ -20,9 +20,7 @@ static auto get_modules()
     return Modules(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 }
 
-fusion_tracker::fusion_tracker()
-{
-}
+fusion_tracker::fusion_tracker() = default;
 
 fusion_tracker::~fusion_tracker()
 {

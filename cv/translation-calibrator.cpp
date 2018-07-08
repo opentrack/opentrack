@@ -62,8 +62,8 @@ std::tuple<cv::Vec3f, cv::Vec3i> TranslationCalibrator::get_estimate()
     for (unsigned k = 0; k < 3; k++)
     {
         const vec& data = *in[k];
-        for (unsigned i = 0; i < data.size(); i++)
-            if (data[i])
+        for (unsigned i : data)
+            if (i)
                 values[k]++;
     }
 

@@ -11,7 +11,7 @@
 
 namespace options {
 
-slider_value::slider_value(double cur, double min, double max) :
+constexpr slider_value::slider_value(double cur, double min, double max) :
     cur_(cur),
     min_(min),
     max_(max)
@@ -24,48 +24,31 @@ slider_value::slider_value(double cur, double min, double max) :
         cur_ = min_;
 }
 
-slider_value& slider_value::operator=(const slider_value& v)
+template<typename t>
+static constexpr auto abs_(t x)
 {
-    if (this != &v)
-    {
-        cur_ = v.cur();
-        min_ = v.min();
-        max_ = v.max();
-    }
-
-    return *this;
+    return x < t{0} ? -x : x;
 }
 
-slider_value::slider_value(const slider_value& v)
+constexpr bool slider_value::operator==(const slider_value& v) const
 {
-    *this = v;
-}
-
-slider_value::slider_value() : slider_value(0, 0, 0)
-{
-}
-
-bool slider_value::operator==(const slider_value& v) const
-{
-    using std::fabs;
-
     constexpr double eps = 2e-3;
 
 #if 1
-    return (fabs(v.cur_ - cur_) < eps &&
-            fabs(v.min_ - min_) < eps &&
-            fabs(v.max_ - max_) < eps);
+    return (abs_(v.cur_ - cur_) < eps &&
+            abs_(v.min_ - min_) < eps &&
+            abs_(v.max_ - max_) < eps);
 #else
-    return (fabs(v.cur_ - cur_) < eps);
+    return (abs_(v.cur_ - cur_) < eps);
 #endif
 }
 
-bool slider_value::operator!=(const slider_value& v) const
+constexpr bool slider_value::operator!=(const slider_value& v) const
 {
     return !(*this == v);
 }
 
-slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const
+constexpr slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const
 {
     slider_value v(*this);
 
@@ -75,11 +58,11 @@ slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) con
                           : (((pos - q_min) * (v.max() - v.min())) / q_diff + v.min());
 
     if (sv_pos < v.min())
-        v = slider_value(v.min(), v.min(), v.max());
+        v = { v.min(), v.min(), v.max() };
     else if (sv_pos > v.max())
-        v = slider_value(v.max(), v.min(), v.max());
+        v = { v.max(), v.min(), v.max() };
     else
-        v = slider_value(sv_pos, v.min(), v.max());
+        v = { sv_pos, v.min(), v.max() };
     return v;
 }
 

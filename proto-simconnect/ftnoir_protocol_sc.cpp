@@ -152,7 +152,7 @@ module_status simconnect::initialize()
 {
     if (!SCClientLib.isLoaded())
     {
-        ActivationContext ctx(142 + static_cast<int>(s.sxs_manifest));
+        ActivationContext ctx(142 + s.sxs_manifest);
 
         if (ctx.is_ok())
         {

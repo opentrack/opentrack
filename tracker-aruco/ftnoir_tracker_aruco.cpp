@@ -141,7 +141,7 @@ bool aruco_tracker::open_camera()
         rint = 0;
     resolution_tuple res = resolution_choices[rint];
     int fps;
-    switch (static_cast<int>(s.force_fps))
+    switch (*s.force_fps)
     {
     default:
     case 0:
@@ -186,7 +186,7 @@ bool aruco_tracker::open_camera()
 void aruco_tracker::set_intrinsics()
 {
     const int w = grayscale.cols, h = grayscale.rows;
-    const double diag_fov = static_cast<int>(s.fov) * M_PI / 180.;
+    const double diag_fov = s.fov * M_PI / 180.;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
     const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
     const double focal_length_w = .5 * w / tan(.5 * fov_w);

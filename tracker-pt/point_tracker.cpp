@@ -49,12 +49,12 @@ void PointModel::set_model(const pt_settings& s)
     switch (s.active_model_panel)
     {
     case Clip:
-        M01 = vec3(0, static_cast<f>(s.clip_ty), -static_cast<f>(s.clip_tz));
-        M02 = vec3(0, -static_cast<f>(s.clip_by), -static_cast<f>(s.clip_bz));
+        M01 = vec3(0, s.clip_ty, -s.clip_tz);
+        M02 = vec3(0, -s.clip_by, -s.clip_bz);
         break;
     case Cap:
-        M01 = vec3(-static_cast<f>(s.cap_x), -static_cast<f>(s.cap_y), -static_cast<f>(s.cap_z));
-        M02 = vec3(static_cast<f>(s.cap_x), -static_cast<f>(s.cap_y), -static_cast<f>(s.cap_z));
+        M01 = vec3(-s.cap_x, s.cap_y, -s.cap_z);
+        M02 = vec3(s.cap_x, -s.cap_y, -s.cap_z);
         break;
     case Custom:
         M01 = vec3(s.m01_x, s.m01_y, s.m01_z);
@@ -81,9 +81,7 @@ void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& 
 }
 
 
-PointTracker::PointTracker()
-{
-}
+PointTracker::PointTracker() = default;
 
 PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2* points,
                                                                      const PointModel& model,

@@ -81,7 +81,7 @@ void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &
 {
     const unsigned short* const str_ = msg.utf16();
     auto str = reinterpret_cast<const wchar_t* const>(str_);
-    static_assert(sizeof(*str_) == sizeof(*str), "");
+    static_assert(sizeof(*str_) == sizeof(*str));
 
     std::fflush(stderr);
     if (ctx.function)

@@ -23,7 +23,7 @@
 #endif
 #include <sixense.h>
 
-Hydra_Tracker::Hydra_Tracker() {}
+Hydra_Tracker::Hydra_Tracker() = default;
 
 #include <sixense_math.hpp>
 

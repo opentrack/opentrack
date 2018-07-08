@@ -84,9 +84,7 @@ pose_widget::pose_widget(QWidget* parent) : QWidget(parent), xform(this)
     rotate_sync(0,0,0, 0,0,0);
 }
 
-pose_widget::~pose_widget()
-{
-}
+pose_widget::~pose_widget() = default;
 
 void pose_widget::rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z)
 {

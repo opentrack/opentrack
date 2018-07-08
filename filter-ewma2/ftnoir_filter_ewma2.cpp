@@ -22,9 +22,7 @@
 // to minSmooth at a rate controlled by the powCurve setting.
 
 
-ewma::ewma()
-{
-}
+ewma::ewma() = default;
 
 void ewma::filter(const double *input, double *output)
 {

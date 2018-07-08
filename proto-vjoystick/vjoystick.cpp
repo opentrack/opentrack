@@ -101,13 +101,8 @@ LONG handle::to_axis_value(unsigned axis_id, double val)
     return LONG(clamp((val+minmax) * max / (2*minmax) - min, min, max));
 }
 
-vjoystick_proto::vjoystick_proto()
-{
-}
-
-vjoystick_proto::~vjoystick_proto()
-{
-}
+vjoystick_proto::vjoystick_proto() = default;
+vjoystick_proto::~vjoystick_proto() = default;
 
 module_status vjoystick_proto::initialize()
 {

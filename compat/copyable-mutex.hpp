@@ -1,6 +1,6 @@
 #pragma once
 
-#include <memory>
+#include <optional>
 
 #include <QMutex>
 
@@ -8,7 +8,7 @@
 
 class OTR_COMPAT_EXPORT mutex
 {
-    std::unique_ptr<QMutex> inner;
+    std::optional<QMutex> inner;
 
 public:
     enum mode
@@ -19,7 +19,7 @@ public:
 
     mutex& operator=(const mutex& datum);
     mutex(const mutex& datum);
-    mutex(mode m = normal);
+    explicit mutex(mode m = normal);
 
     QMutex* operator&() const;
     operator QMutex*() const;

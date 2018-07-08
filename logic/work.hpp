@@ -29,22 +29,23 @@ class OTR_LOGIC_EXPORT Work final : public TR
 {
     Q_OBJECT
 
+    using dylibptr = std::shared_ptr<dylib>;
+
+    static std::unique_ptr<TrackLogger> make_logger(main_settings &s);
+    static QString browse_datalogging_file(main_settings &s);
+
 public:
     using fn_t = std::function<void(bool)>;
     using key_tuple = std::tuple<key_opts&, fn_t, bool>;
     main_settings s; // tracker needs settings, so settings must come before it
     runtime_libraries libs; // idem
-    std::shared_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
-    std::shared_ptr<pipeline> tracker;
-    std::shared_ptr<Shortcuts> sc;
+    std::unique_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
+    pipeline pipeline_;
+    Shortcuts sc;
     std::vector<key_tuple> keys;
 
-    Work(Mappings& m, event_handler& ev, QFrame* frame, std::shared_ptr<dylib> tracker, std::shared_ptr<dylib> filter, std::shared_ptr<dylib> proto);
-    ~Work();
+    Work(Mappings& m, event_handler& ev, QFrame* frame,
+         const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto);
     void reload_shortcuts();
     bool is_ok() const;
-
-private:
-    static std::shared_ptr<TrackLogger> make_logger(main_settings &s);
-    static QString browse_datalogging_file(main_settings &s);
 };

@@ -81,7 +81,7 @@ test_dialog::test_dialog()
 
     connect(ui.buttonBox, &QDialogButtonBox::clicked, [this](QAbstractButton* btn) {
         if (btn == ui.buttonBox->button(QDialogButtonBox::Abort))
-            *(volatile int*)0 = 0;
+            *(volatile int*)nullptr = 0;
     });
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));

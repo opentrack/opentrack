@@ -39,9 +39,7 @@
 
 #include "ui_main-window.h"
 
-using namespace options;
-
-class main_window : public QMainWindow, private State
+class main_window final : public QMainWindow, private State
 {
     Q_OBJECT
 
@@ -147,7 +145,7 @@ signals:
     void restart_tracker();
 public:
     main_window();
-    ~main_window();
+    ~main_window() override;
     static void set_working_directory();
     bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
     void die_on_config_not_writable();

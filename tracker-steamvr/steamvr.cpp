@@ -178,9 +178,7 @@ steamvr::steamvr() : device_index(-1)
 {
 }
 
-steamvr::~steamvr()
-{
-}
+steamvr::~steamvr() = default;
 
 module_status steamvr::start_tracker(QFrame*)
 {

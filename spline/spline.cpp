@@ -492,9 +492,7 @@ settings::settings(bundle b, const QString& axis_name, Axis idx):
     opts(axis_name, idx)
 {}
 
-settings::~settings()
-{
-}
+settings::~settings() = default;
 
 }
 

@@ -84,13 +84,11 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
     return { true, cam_info };
 }
 
-bool WIICamera::start(int idx, int fps, int res_x, int res_y)
+bool WIICamera::start(int, int, int, int)
 {
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;
-	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED |
-		EXTENSION_CHANGED |
-		MOTIONPLUS_CHANGED);
+	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED|EXTENSION_CHANGED |MOTIONPLUS_CHANGED);
         return true;
 }
 

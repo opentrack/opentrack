@@ -195,8 +195,8 @@ void kalman::reset()
     first_run = true;
     dt_since_last_input = 0;
 
-    prev_slider_pos[0] = static_cast<slider_value>(s.noise_pos_slider_value);
-    prev_slider_pos[1] = static_cast<slider_value>(s.noise_rot_slider_value);
+    prev_slider_pos[0] = s.noise_pos_slider_value;
+    prev_slider_pos[1] = s.noise_rot_slider_value;
 
     dz_filter.reset();
 }
