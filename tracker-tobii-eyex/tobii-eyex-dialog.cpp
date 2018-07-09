@@ -7,10 +7,7 @@ tobii_eyex_dialog::tobii_eyex_dialog()
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &tobii_eyex_dialog::do_ok);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &tobii_eyex_dialog::do_cancel);
 
-    ui.tracking_mode->addItem("Snap", tobii_snap);
-    ui.tracking_mode->addItem("Accumulative", tobii_acc);
-
-    tie_setting(s.mode, ui.tracking_mode);
+    //tie_setting(s.mode, ui.tracking_mode);
 }
 
 void tobii_eyex_dialog::do_ok()

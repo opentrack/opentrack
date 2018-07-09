@@ -21,6 +21,7 @@ enum max_pitch
 
 struct settings final : public opts
 {
+#if 0
     value<tobii_mode> mode { b, "mode", tobii_snap };
 
     value<slider_value> snap_speed {b, "snap-speed", { .1, .05, 1 }},
@@ -28,9 +29,15 @@ struct settings final : public opts
     value<slider_value> acc_speed {b, "acc-speed", { .1, .05, 1 }},
                         acc_dz_len {b, "acc-screen-edge-length", { .1, .1, 1 }};
     value<max_yaw> snap_yaw {b, "snap-max-yaw", y20},
-                   acc_yaw {b, "acc-max-yaw", y20};
     value<max_pitch> snap_pitch {b, "snap-max-pitch", p15},
                      acc_pitch {b, "acc-max-pitch", p15};
+                     acc_yaw {b, "acc-max-yaw", y20};
+#endif
+    value<slider_value> acc_speed { b, "acc-max-speed-deg", { 3, 1, 10 } };
+    value<slider_value> acc_dz { b, "acc-deadzone", { .15, .0, .3 } };
 
-    settings() : opts("tobii-eyex") {}
+    value<slider_value> acc_max_yaw { b, "acc-max-yaw", { 30, 15, 45} },
+                        acc_max_pitch { b, "acc-max-pitch", { 30, 15, 45 } };
+
+    settings();
 };

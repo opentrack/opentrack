@@ -1,6 +1,7 @@
 #include "tobii-eyex.hpp"
 #include "compat/math-imports.hpp"
 
+#include <tuple>
 #include <cstdlib>
 #include <cstdio>
 
@@ -32,17 +33,7 @@ static inline tobii_eyex_tracker& to_self(TX_USERPARAM param)
     return *reinterpret_cast<tobii_eyex_tracker*>(param);
 }
 
-tobii_eyex_tracker::tobii_eyex_tracker() :
-    dev_ctx(TX_EMPTY_HANDLE),
-    conn_state_changed_ticket(TX_INVALID_TICKET),
-    event_handler_ticket(TX_INVALID_TICKET),
-    state_snapshot(TX_EMPTY_HANDLE),
-    display_state(TX_EMPTY_HANDLE),
-    yaw(0),
-    pitch(0),
-    do_center(false)
-{
-}
+tobii_eyex_tracker::tobii_eyex_tracker() = default;
 
 void tobii_eyex_tracker::call_tx_deinit()
 {
@@ -54,12 +45,12 @@ tobii_eyex_tracker::~tobii_eyex_tracker()
 {
     dbg_verbose("dtor");
 
-    (void) txDisableConnection(dev_ctx);
+    (void) txDisableConnection(ctx);
     (void) txReleaseObject(&state_snapshot);
 
     bool status = true;
-    status &= txShutdownContext(dev_ctx, TX_CLEANUPTIMEOUT_FORCEIMMEDIATE, TX_FALSE) == TX_RESULT_OK;
-    status &= txReleaseContext(&dev_ctx) == TX_RESULT_OK;
+    status &= txShutdownContext(ctx, TX_CLEANUPTIMEOUT_FORCEIMMEDIATE, TX_FALSE) == TX_RESULT_OK;
+    status &= txReleaseContext(&ctx) == TX_RESULT_OK;
 
     // the API cleanup function needs to be called exactly once over image lifetime.
     // client software communicates with a service and a desktop program.
@@ -129,7 +120,7 @@ void tobii_eyex_tracker::snapshot_committed_handler(TX_CONSTHANDLE async_data_ha
         dbg_notice("snapshot bad result code") << result;
 }
 
-void tobii_eyex_tracker::connection_state_change_handler(TX_CONNECTIONSTATE state, TX_USERPARAM param)
+void tobii_eyex_tracker::state_change_handler(TX_CONNECTIONSTATE state, TX_USERPARAM param)
 {
     tobii_eyex_tracker& self = to_self(param);
 
@@ -142,7 +133,7 @@ void tobii_eyex_tracker::connection_state_change_handler(TX_CONNECTIONSTATE stat
             dbg_notice("connected but failed to initialize data stream");
         else
         {
-            txGetStateAsync(self.dev_ctx, TX_STATEPATH_EYETRACKINGSCREENBOUNDS, display_state_handler, param);
+            txGetStateAsync(self.ctx, TX_STATEPATH_EYETRACKINGSCREENBOUNDS, display_state_handler, param);
             dbg_notice("connected, data stream ok");
         }
     }
@@ -222,11 +213,11 @@ module_status tobii_eyex_tracker::start_tracker(QFrame*)
     bool status = true;
 
     status &= txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, nullptr, nullptr, nullptr, nullptr) == TX_RESULT_OK;
-    status &= txCreateContext(&dev_ctx, TX_FALSE) == TX_RESULT_OK;
-    status &= register_state_snapshot(dev_ctx, &state_snapshot);
-    status &= txRegisterConnectionStateChangedHandler(dev_ctx, &conn_state_changed_ticket, connection_state_change_handler, reinterpret_cast<TX_USERPARAM>(this)) == TX_RESULT_OK;
-    status &= txRegisterEventHandler(dev_ctx, &event_handler_ticket, event_handler, reinterpret_cast<TX_USERPARAM>(this)) == TX_RESULT_OK;
-    status &= txEnableConnection(dev_ctx) == TX_RESULT_OK;
+    status &= txCreateContext(&ctx, TX_FALSE) == TX_RESULT_OK;
+    status &= register_state_snapshot(ctx, &state_snapshot);
+    status &= txRegisterConnectionStateChangedHandler(ctx, &state_changed_ticket, state_change_handler, (TX_USERPARAM)this) == TX_RESULT_OK;
+    status &= txRegisterEventHandler(ctx, &event_handler_ticket, event_handler, (TX_USERPARAM)this) == TX_RESULT_OK;
+    status &= txEnableConnection(ctx) == TX_RESULT_OK;
 
     if (!status)
         return error(tr("Connection can't be established. device missing?"));
@@ -234,78 +225,15 @@ module_status tobii_eyex_tracker::start_tracker(QFrame*)
         return status_ok();
 }
 
-tobii_eyex_tracker::num tobii_eyex_tracker::gain(num x)
+bool tobii_eyex_tracker::center()
 {
-    return 1;
+    do_center = true;
+    return true;
 }
 
-static inline double signum(double x)
-{
-    return !(x < 0) - (x < 0);
-}
+settings::settings() : opts("tobii-eyex") {}
 
-void tobii_eyex_tracker::data(double* data)
-{
-    TX_REAL px, py, dw, dh, x_, y_;
-    bool fresh;
-
-    {
-        QMutexLocker l(&global_state_mtx);
-
-        if (!dev_state.is_valid())
-            return;
-
-        px = dev_state.px;
-        py = dev_state.py;
-        dw = dev_state.display_res_x;
-        dh = dev_state.display_res_y;
-
-        fresh = dev_state.fresh;
-        dev_state.fresh = false;
-    }
-
-    x_ = (px-dw/2.) / (dw/2.);
-    y_ = (py-dh/2.) / (dh/2.);
-
-    data[TX] = x_ * 50;
-    data[TY] = y_ * -50;
-
-    if (fresh)
-    {
-        const double dt = t.elapsed_seconds();
-        t.start();
-
-        using std::fabs;
-
-        constexpr double max_yaw = 45, max_pitch = 30;
-        constexpr double c_yaw = 3;
-        constexpr double c_pitch = c_yaw * max_pitch / max_yaw;
-
-        const double yaw_delta = gain(fabs(x_)) * signum(x_) * c_yaw * dt;
-        const double pitch_delta = gain(fabs(y_)) * signum(y_) * c_pitch * dt;
-
-        yaw += yaw_delta;
-        pitch += pitch_delta;
-
-        yaw = clamp(yaw, -max_yaw, max_yaw);
-        pitch = clamp(pitch, -max_pitch, max_pitch);
-    }
-
-    if (do_center)
-    {
-        do_center = false;
-        yaw = 0;
-        pitch = 0;
-    }
-
-    data[Yaw] = yaw;
-    data[Pitch] = pitch;
-    data[Roll] = 0;
-    data[TZ] = 0; // XXX TODO
-
-    // tan(x) in 0->.7 is almost linear. we don't need to adjust.
-    // .7 is 40 degrees which is already quite a lot from the monitor.
-}
+state::state() = default;
 
 #include "tobii-eyex-dialog.hpp"
 
