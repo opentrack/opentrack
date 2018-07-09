@@ -29,7 +29,7 @@
 #   define OPENTRACK_SOLIB_EXT "so"
 #endif
 
-#define OPENTRACK_SOLIB_PREFIX "lib"
+#define OPENTRACK_SOLIB_PREFIX ""
 
 extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
 extern "C" typedef Metadata_* (*OPENTRACK_METADATA_FUNPTR)(void);

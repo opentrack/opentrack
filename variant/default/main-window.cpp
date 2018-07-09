@@ -866,19 +866,14 @@ void main_window::ensure_tray()
 
 void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 {
-    if (progn(
-        switch (e)
-        {
-        // if we enable double click also then it causes
-        // toggle back to the original state
-        //case QSystemTrayIcon::DoubleClick:
-        case QSystemTrayIcon::Trigger: // single click
-            return false;
-        default:
-            return true;
-        }
-    ))
+    switch (e)
     {
+    // if we enable double click also then it causes
+    // toggle back to the original state
+    //case QSystemTrayIcon::DoubleClick:
+    case QSystemTrayIcon::Trigger: // single click
+        break;
+    default:
         return;
     }
 
@@ -891,12 +886,11 @@ void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
     setVisible(is_minimized);
     setHidden(!is_minimized);
 
-    setWindowState(progn(
-        using ws = Qt::WindowStates;
+    setWindowState(typed_progn(Qt::WindowStates,
         if (is_minimized)
-           return ws(windowState() & (~Qt::WindowMinimized));
+           return windowState() & ~Qt::WindowMinimized;
         else
-           return ws(Qt::WindowNoState);
+           return Qt::WindowNoState;
     ));
 
     if (is_minimized)

@@ -158,7 +158,7 @@ function(otr_module n_)
             set(link-mode STATIC)
         endif()
         add_library(${n} ${link-mode} "${${n}-all}")
-        set_property(TARGET "${n}" PROPERTY PREFIX "lib")
+        set_property(TARGET "${n}" PROPERTY PREFIX "")
     endif()
 
     set_property(SOURCE ${${n}-moc} ${${n}-uih} ${${n}-rcc} PROPERTY GENERATED TRUE)

@@ -14,12 +14,16 @@ enum pt_color_type
     pt_color_blue_only = 6,
 };
 
+namespace pt_settings_detail {
+
+using namespace options;
+
 struct pt_settings final : options::opts
 {
     using slider_value = options::slider_value;
 
-    explicit pt_settings(const QString& name) : opts(name) {}
-    ~pt_settings() override = default;
+    explicit pt_settings(const QString& name);
+    ~pt_settings() override;
 
     value<QString> camera_name { b, "camera-name", "" };
     value<int> cam_res_x { b, "camera-res-width", 640 },
@@ -54,3 +58,7 @@ struct pt_settings final : options::opts
 
     value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };
 };
+
+} // ns pt_settings_detail
+
+using pt_settings = pt_settings_detail::pt_settings;

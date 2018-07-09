@@ -40,17 +40,26 @@
 #   define PP_CAT2(x,y) x ## y
 #endif
 
+#ifndef PP_EXPAND
+#   define PP_EXPAND(x) PP_EXPAND__2(x)
+#   define PP_EXPAND__2(x) PP_EXPAND__3(x) x
+#   define PP_EXPAND__3(x) x
+#endif
+
 #if defined __cplusplus
 
 // from now only C++
 
 #include <utility>
 
-//#define once_only(...) do { static bool once__ = false; if (!once__) { once__ = true; __VA_ARGS__; } } while(false)
-//#define once_only(expr) ([&] { static decltype(auto) ret___1132 = (expr); return (decltype(ret___1132) const&) ret___1132; }())
+// causes ICE in Visual Studio 2017 Preview. the ICE was reported and they handle them seriously in due time.
+// the ICE is caused by decltype(auto) and const& return value
+//#define eval_once(expr) ([&]() -> decltype(auto) { static decltype(auto) ret___1132 = (expr); return (decltype(ret___1132) const&) ret___1132; }())
 
-#define eval_once__2(expr, ident) (([&] { static bool ident = ((expr), true); (void)(ident); }))
-#define eval_once(expr) eval_once__2(expr, PP_CAT(eval_once_init__, __COUNTER__))
+#define eval_once(expr) eval_once__2(expr, PP_CAT(_EVAL_ONCE__, __COUNTER__))
+#define eval_once__2(expr, ident) eval_once__3(expr, ident)
+#define eval_once__3(expr, ident) \
+    ([&]() -> std::decay_t<decltype(expr)> const& { static const std::decay_t<decltype(expr)> INIT##ident = (expr); return INIT##ident; }())
 
 #include <type_traits>
 
@@ -68,6 +77,7 @@ constexpr cc_forceinline void static_warn<true>() {}
 #define static_warning(cond)            \
         static_warn<(cond)>();          \
 
+#define typed_progn(type, ...) (([&] () -> type { __VA_ARGS__ })())
 #define progn(...) (([&] { __VA_ARGS__ })())
 #define prog1(x, ...) (([&] { decltype(auto) ret1324 = (x); __VA_ARGS__; return ret1324; })())
 

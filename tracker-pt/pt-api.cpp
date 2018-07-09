@@ -3,9 +3,7 @@
 
 using namespace types;
 
-pt_camera_info::pt_camera_info()
-{
-}
+pt_camera_info::pt_camera_info() = default;
 
 double pt_camera_info::get_focal_length(f fov, int res_x, int res_y)
 {
@@ -21,29 +19,12 @@ double pt_camera_info::get_focal_length(f fov, int res_x, int res_y)
     //static bool once = false; if (!once) { once = true; qDebug() << "f" << ret << "fov" << (fov * 180/M_PI); }
 }
 
-pt_camera::pt_camera()
-{
-}
-
-pt_camera::~pt_camera()
-{
-}
-
-pt_runtime_traits::pt_runtime_traits()
-{
-}
-
-pt_runtime_traits::~pt_runtime_traits()
-{
-}
-
-pt_point_extractor::pt_point_extractor()
-{
-}
-
-pt_point_extractor::~pt_point_extractor()
-{
-}
+pt_camera::pt_camera() = default;
+pt_camera::~pt_camera() = default;
+pt_runtime_traits::pt_runtime_traits() = default;
+pt_runtime_traits::~pt_runtime_traits() = default;
+pt_point_extractor::pt_point_extractor() = default;
+pt_point_extractor::~pt_point_extractor() = default;
 
 double pt_point_extractor::threshold_radius_value(int w, int h, int threshold)
 {
@@ -68,10 +49,6 @@ std::tuple<double, double> pt_pixel_pos_mixin::to_screen_pos(double px, double p
     return std::make_tuple((px - w/2.)/w, -(py - h/2.)/w);
 }
 
-pt_frame::pt_frame()
-{
-}
+pt_frame::pt_frame() = default;
 
-pt_frame::~pt_frame()
-{
-}
+pt_frame::~pt_frame() = default;

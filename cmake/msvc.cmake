@@ -42,8 +42,8 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #C4266 - no override available for virtual member function from base type, function is hidden
     #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
 
-    set(warns 4263 4264 4266 4928)
-    set(warns-noerr 4265)
+    set(warns 4265)
+    set(warns-noerr)
 
     foreach(i ${warns})
         set(warns_ "${warns_} -w1${i} -we${i}")

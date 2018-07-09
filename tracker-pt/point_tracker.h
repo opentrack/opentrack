@@ -84,5 +84,5 @@ private:
 
 } // ns pt_impl
 
-using pt_module::PointTracker;
-using pt_module::PointModel;
+using PointTracker = pt_module::PointTracker;
+using PointModel = pt_module::PointModel;
