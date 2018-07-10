@@ -9,13 +9,13 @@
 #include "defs.hpp"
 #include <QMetaType>
 
-#ifndef OPENTRACK_METATYPE_
+#if !defined OPENTRACK_METATYPE_ || defined Q_CREATOR_RUN
 #   define OPENTRACK_METATYPE(x) Q_DECLARE_METATYPE(x)
 #else
 #   define OPENTRACK_METATYPE(x) Q_DECLARE_METATYPE(x) OPENTRACK_METATYPE_(x)
 #endif
 
-#if !defined __clang_analyzer__ && !defined Q_CREATOR_RUN
+#if !defined __clang_analyzer__
 OPENTRACK_METATYPE(QList<double>);
 OPENTRACK_METATYPE(QList<float>);
 OPENTRACK_METATYPE(QList<int>);
