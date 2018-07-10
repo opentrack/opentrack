@@ -1,11 +1,7 @@
-#include "../../compat/linkage-macros.hpp"
+#include <aruco/abi.h>
 
-#define ARUCO_ABI aruco_opentrack_fork_abi_1
+#if ARUCO_OPENTRACK_FORK_ABI != 2
+#   error "wrong ABI"
+#endif
 
-extern "C" void ARUCO_ABI(void);
-
-int main(void)
-{
-    ARUCO_ABI();
-    return 0;
-}
+int main(void) { return 0; }

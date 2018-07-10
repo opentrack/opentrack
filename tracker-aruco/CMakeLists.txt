@@ -17,14 +17,18 @@ if(OpenCV_FOUND)
 
         set(modules "${SDK_ARUCO_LIBPATH}" opencv_core opencv_calib3d opencv_imgproc opencv_videoio)
 
+        get_filename_component(dir "${SDK_ARUCO_LIBPATH}" DIRECTORY)
+        get_filename_component(dir "${dir}" ABSOLUTE)
+        set(dir "${dir}/include")
+
         file(TIMESTAMP "${SDK_ARUCO_LIBPATH}" tm "%s" UTC)
-        set(cache-str "${tm}|${SDK_ARUCO_LIBPATH}")
+        set(cache-str "${tm}^|^${SDK_ARUCO_LIBPATH}")
 
         if(NOT aruco_has-working-abi STREQUAL "${cache-str}")
             try_compile(result "${CMAKE_CURRENT_BINARY_DIR}"
                                SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/compile-test/abi.cpp"
-                               OUTPUT_VARIABLE krap
-                               LINK_LIBRARIES ${modules})
+                               CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${dir}"
+                               OUTPUT_VARIABLE krap)
             if(NOT result)
                 message(FATAL_ERROR "${krap}\n" "Must use Aruco fork from <https://github.com/opentrack/aruco>")
             endif()
@@ -34,11 +38,7 @@ if(OpenCV_FOUND)
 
         otr_module(tracker-aruco)
 
-        target_include_directories(opentrack-tracker-aruco SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-        target_link_libraries(opentrack-tracker-aruco opentrack-cv ${modules})
-
-        get_filename_component(dir "${SDK_ARUCO_LIBPATH}" DIRECTORY)
-        get_filename_component(dir "${dir}" ABSOLUTE)
-        include_directories(opentrack-tracker-aruco SYSTEM PUBLIC "${dir}/include")
+        target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS} "${dir}")
+        target_link_libraries(${self} opentrack-cv ${modules})
     endif()
 endif()
