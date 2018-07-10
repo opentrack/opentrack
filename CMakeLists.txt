@@ -55,9 +55,9 @@ if(WIN32)
     enable_language(RC)
 endif()
 
-add_custom_target(mrproper COMMAND
-    "${CMAKE_COMMAND}" -P
-    "${CMAKE_SOURCE_DIR}/cmake/opentrack-clean-build-directory.cmake"
+add_custom_target(mrproper
+    COMMAND "${CMAKE_COMMAND}" -P
+        "${CMAKE_SOURCE_DIR}/cmake/mrproper.cmake"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 function(otr_add_subdirs)
