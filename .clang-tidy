@@ -33,6 +33,7 @@ Checks:
     -cppcoreguidelines-pro-type-const-cast,
     -hicpp-function-size,
     -cppcoreguidelines-pro-type-static-cast-downcast,
+    -hicpp-use-override,
 
 AnalyzeTemporaryDtors: true
 HeaderFilterRegex: '/dev/opentrack'
