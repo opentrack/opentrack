@@ -34,10 +34,10 @@ struct settings final : public opts
                      acc_yaw {b, "acc-max-yaw", y20};
 #endif
     value<slider_value> acc_speed { b, "acc-max-speed-deg", { 3, 1, 10 } };
-    value<slider_value> acc_dz { b, "acc-deadzone", { .15, .0, .3 } };
+    value<slider_value> acc_dz { b, "acc-deadzone", { .15, .0, .5 } };
 
-    value<slider_value> acc_max_yaw { b, "acc-max-yaw", { 30, 15, 45} },
-                        acc_max_pitch { b, "acc-max-pitch", { 30, 15, 45 } };
+    value<slider_value> acc_max_yaw { b, "acc-max-yaw", { 45, 15, 60} },
+                        acc_max_pitch { b, "acc-max-pitch", { 45, 15, 60 } };
 
     settings();
 };

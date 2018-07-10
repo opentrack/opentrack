@@ -61,14 +61,14 @@ private:
     static void TX_CALLCONVENTION display_state_handler(TX_CONSTHANDLE async_data_handle, TX_USERPARAM param);
     void process_display_state(TX_HANDLE display_state_handle);
 
-    real gain(real x);
+    static real gain(real x);
 
     state dev_state;
     real yaw = 0, pitch = 0;
 
     TX_CONTEXTHANDLE ctx = TX_EMPTY_HANDLE;
-    TX_TICKET state_changed_ticket = TX_INVALID_TICKET;
-    TX_TICKET event_handler_ticket = TX_INVALID_TICKET;
+    TX_TICKET state_change_ticket = TX_INVALID_TICKET;
+    TX_TICKET event_cookie = TX_INVALID_TICKET;
     TX_HANDLE state_snapshot = TX_EMPTY_HANDLE;
     TX_HANDLE display_state = TX_EMPTY_HANDLE;
 
@@ -83,7 +83,7 @@ class tobii_eyex_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() override { return QString("Tobii EyeX"); }
+    QString name() override { return tr("Tobii EyeX"); }
     QIcon icon() override { return QIcon(":/images/tobii-eyex-logo.png"); }
 };
 

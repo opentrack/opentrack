@@ -5,7 +5,7 @@
 real tobii_eyex_tracker::gain(real x)
 {
     // simple sigmoid
-    x = clamp(x * 12 - 6, -6, 6);
+    x = clamp(x * 6, -6, 6);
     x = 1 / (1 + exp(-x));
     x = x * 2 - 1;
     return clamp(x, -1, 1);

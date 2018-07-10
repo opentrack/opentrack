@@ -15,13 +15,19 @@
 #ifdef TOBII_EYEX_VERBOSE_PRINTF
 #   define dbg_verbose(msg) (qDebug() << "tobii-eyex:" << (msg))
 #else
-#   define dbg_verbose(msg) (QMessageLogger().noDebug() << (msg))
+#   define dbg_verbose(msg) (void)0
 #endif
 
-#ifdef TOBII_EYEX_DEBUG_PRINTF
+#ifdef TOBII_EYEX_DEBUG2_PRINTF
 #   define dbg_debug(msg) (qDebug() << "tobii-eyex:" << (msg))
 #else
-#   define dbg_debug(msg) (QMessageLogger().noDebug() << (msg))
+#   define dbg_debug(msg) (void)0
+#endif
+
+#ifdef TOBII_EYEX_DEBUG1_PRINTF
+#   define dbg_debug(msg) (qDebug() << "tobii-eyex:" << (msg))
+#else
+#   define dbg_debug(msg) (void)0
 #endif
 
 #define dbg_notice(msg) (qDebug() << "tobii-eyex:" << (msg))
@@ -159,35 +165,31 @@ void tobii_eyex_tracker::gaze_data_handler(TX_HANDLE gaze_data_handle)
 
     if (txGetGazePointDataEventParams(gaze_data_handle, &params) == TX_RESULT_OK)
     {
+        QMutexLocker l(&global_state_mtx);
+
+        if (params.Timestamp > dev_state.last_timestamp &&
+            dev_state.display_res_x > 0 &&
+            // the API allows for events outside screen bounds to e.g. detect looking at keyboard.
+            // closer to the screen bounds, the values get less accurate.
+            // ignore events outside the screen bounds.
+            params.X >= 0 && params.X < dev_state.display_res_x &&
+            params.Y >= 0 && params.Y < dev_state.display_res_y)
         {
-            QMutexLocker l(&global_state_mtx);
+            dev_state.last_timestamp = params.Timestamp;
+            dev_state.px = params.X;
+            dev_state.py = params.Y;
 
-            if (params.Timestamp > dev_state.last_timestamp &&
-                dev_state.display_res_x > 0 &&
-                // the API allows for events outside screen bounds to e.g. detect looking at keyboard.
-                // closer to the screen bounds, the values get less accurate.
-                // ignore events outside the screen bounds.
-                params.X >= 0 && params.X < dev_state.display_res_x &&
-                params.Y >= 0 && params.Y < dev_state.display_res_y)
-            {
-                dev_state.last_timestamp = params.Timestamp;
-                dev_state.px = params.X;
-                dev_state.py = params.Y;
-
-#ifdef TOBII_EYEX_DEBUG_PRINTF
-                char buf[256] = {0};
-                (void) std::sprintf(buf, "gaze data: (%.1f, %.1f)", params.X, params.Y);
-                dbg_debug(buf);
+#ifdef TOBII_EYEX_DEBUG2_PRINTF
+            char buf[256] = {0};
+            (void) std::sprintf(buf, "gaze data: (%.1f, %.1f)", params.X, params.Y);
+            dbg_debug(buf);
 #endif
 
-                dev_state.fresh = true;
-            }
+            dev_state.fresh = true;
         }
     }
     else
-    {
-        dbg_notice("failed to interpret gaze data event packet");
-    }
+        dbg_notice("failed to process gaze data event packet");
 }
 
 void tobii_eyex_tracker::event_handler(TX_CONSTHANDLE async_data_handle, TX_USERPARAM param)
@@ -215,9 +217,15 @@ module_status tobii_eyex_tracker::start_tracker(QFrame*)
     status &= txInitializeEyeX(TX_EYEXCOMPONENTOVERRIDEFLAG_NONE, nullptr, nullptr, nullptr, nullptr) == TX_RESULT_OK;
     status &= txCreateContext(&ctx, TX_FALSE) == TX_RESULT_OK;
     status &= register_state_snapshot(ctx, &state_snapshot);
-    status &= txRegisterConnectionStateChangedHandler(ctx, &state_changed_ticket, state_change_handler, (TX_USERPARAM)this) == TX_RESULT_OK;
-    status &= txRegisterEventHandler(ctx, &event_handler_ticket, event_handler, (TX_USERPARAM)this) == TX_RESULT_OK;
+    status &= txRegisterConnectionStateChangedHandler(ctx, &state_change_ticket, state_change_handler, (TX_USERPARAM)this) == TX_RESULT_OK;
+    status &= txRegisterEventHandler(ctx, &event_cookie, event_handler, (TX_USERPARAM)this) == TX_RESULT_OK;
     status &= txEnableConnection(ctx) == TX_RESULT_OK;
+#if 0
+    // XXX check this
+    TX_CONNECTIONSTATE state;
+    status &= txGetConnectionState(ctx, &state) == TX_RESULT_OK;
+    status &= state == TX_CONNECTIONSTATE_CONNECTED || state == TX_CONNECTIONSTATE_TRYINGTOCONNECT;
+#endif
 
     if (!status)
         return error(tr("Connection can't be established. device missing?"));
