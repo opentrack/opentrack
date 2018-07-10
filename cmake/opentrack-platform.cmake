@@ -33,7 +33,7 @@ if(APPLE)
 endif()
 
 if(MSVC AND MSVC_VERSION LESS "1900" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
-    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2015 Update 3 or newer.")
+    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 Preview or newer.")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -47,6 +47,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
 endif()
 
 if((NOT CMAKE_COMPILER_IS_GNUCXX) EQUAL (NOT (NOT CMAKE_COMPILER_IS_GNUCC)))
+    # this build system has logic errors otherwise
     message(FATAL_ERROR "use either use both gcc and g++ or neither")
 endif()
 
@@ -58,22 +59,12 @@ if(MSVC)
     add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -D_NO_DEBUG_HEAP)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
-    add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING -D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
-
     add_definitions(-D_USE_MATH_DEFINES=1)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Zi")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Zi")
 
-    if(NOT CMAKE_COMPILER_IS_CLANG)
-        if(MSVC_VERSION GREATER 1909) # visual studio 2017
-            set(__stuff "-permissive-")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${__stuff}")
-            set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS} ${__stuff}")
-        endif()
-    else()
-        set(__stuff "-fms-compatibility -fms-compatibility-version=1911 -fms-extensions")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${__stuff} -std:c++latest -Xclang -std=c++17")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${__stuff}")
+    if(MSVC_VERSION GREATER 1909) # visual studio 2017
+        set(__stuff "-permissive-")
+        set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_C_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
     endif()
 
     if(opentrack-64bit)
@@ -84,17 +75,17 @@ if(MSVC)
 
     foreach (i SHARED MODULE EXE)
         # 4020 is compiler bug for opentrack-cv
-        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -DYNAMICBASE -NXCOMPAT -DEBUG -ignore:4020 ${ent} ")
+        set(CMAKE_${i}_LINKER_FLAGS "-DYNAMICBASE -NXCOMPAT -DEBUG -ignore:4020 ${ent} ${CMAKE_${i}_LINKER_FLAGS}")
     endforeach()
 endif()
 
 if(WIN32)
-  if(CMAKE_COMPILER_IS_GNUCXX AND NOT MSVC)
+  if(CMAKE_COMPILER_IS_GNUCXX)
     set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
     set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> --use-temp-file -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
   endif()
   enable_language(RC)
-endif(WIN32)
+endif()
 
 if(opentrack-install-rpath)
     set(CMAKE_INSTALL_RPATH "${opentrack-install-rpath}")
@@ -106,18 +97,16 @@ set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 set(CMAKE_SKIP_INSTALL_RPATH FALSE)
 set(CMAKE_SKIP_RPATH FALSE)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_INCLUDE_CURRENT_DIR OFF)
 set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    if (UNIX AND NOT APPLE)
-        set(_common "-fPIC -fvisibility=hidden")
-        set(CMAKE_C_FLAGS "${_common} ${CMAKE_C_FLAGS}")
-        set(CMAKE_CXX_FLAGS "${_common} -fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
-    endif()
+if(CMAKE_COMPILER_IS_GNUCXX AND UNIX AND (NOT APPLE))
+    set(_common "-fvisibility=hidden")
+    set(CMAKE_C_FLAGS "${_common} ${CMAKE_C_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${_common} -fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(APPLE)
@@ -130,27 +119,17 @@ if(APPLE)
     set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
 
-#if(NOT MSVC)
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_DEFAULT 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-    set(CMAKE_CXX_EXTENSIONS FALSE)
-#endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_DEFAULT 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
 
 foreach(k _RELEASE _DEBUG _RELWITHDEBINFO _MINSIZEREL)
-    set(CMAKE_C_FLAGS${k} "${CMAKE_C_FLAGS${k}} -UNDEBUG")
-    set(CMAKE_CXX_FLAGS${k} "${CMAKE_CXX_FLAGS${k}} -UNDEBUG")
+    set(CMAKE_C_FLAGS${k} "-UNDEBUG ${CMAKE_C_FLAGS${k}}")
+    set(CMAKE_CXX_FLAGS${k} "-UNDEBUG ${CMAKE_CXX_FLAGS${k}}")
 endforeach()
 
 set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
-
-# this hack fixed mingw-w64. is it necessary anymore? -sh 20180527
-# nix -rdynamic passed from Linux-GNU.cmake
-#if(CMAKE_COMPILER_IS_GNUCXX)
-#    set(__LINUX_COMPILER_GNU 1)
-#    set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS)
-#    set(CMAKE_SHARED_LIBRARY_LINK_CXX_FLAGS)
-#endif()
 
 if(MINGW)
     add_definitions(-DMINGW_HAS_SECURE_API)
@@ -159,7 +138,7 @@ endif()
 # assume binutils
 if(LINUX)
     foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -Wl,-z,relro,-z,now,--exclude-libs,ALL")
+        set(CMAKE_${i}_LINKER_FLAGS "-Wl,-z,relro,-z,now,--exclude-libs,ALL ${CMAKE_${i}_LINKER_FLAGS}")
     endforeach()
 endif()
 
