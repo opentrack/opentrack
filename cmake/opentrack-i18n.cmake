@@ -9,8 +9,9 @@ function(otr_i18n_for_target_directory n)
         set(t2 "${CMAKE_CURRENT_BINARY_DIR}/lang/${i}.ts")
         set(input "${${k}-all}")
         if (NOT EXISTS "${t}")
-            file(READ "${CMAKE_CURRENT_LIST_DIR}/translation-stub.ts")
-            file(WRITE "${t}")
+            file(MAKE_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/lang")
+            file(READ "${CMAKE_SOURCE_DIR}/cmake/translation-stub.ts" stub)
+            file(WRITE "${t}" "${stub}")
         endif()
         add_custom_command(OUTPUT "${t2}"
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CMAKE_CURRENT_SOURCE_DIR}/lang"

@@ -135,6 +135,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS OFF)
 
 if(MINGW)
     add_definitions(-DMINGW_HAS_SECURE_API)
+    add_definitions(-DSTRSAFE_NO_DEPRECATE)
 endif()
 
 # assume binutils
