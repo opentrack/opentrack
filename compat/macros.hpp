@@ -51,6 +51,21 @@
 // from now only C++
 
 #include <utility>
+#include <type_traits>
+
+// before C++20
+namespace cxx20_compat {
+    template<typename T>
+    struct remove_cvref {
+        using type = std::remove_cv_t<std::remove_reference_t<T>>;
+    };
+} // ns cxx20_compat
+
+template<typename t>
+using remove_cvref_t = typename cxx20_compat::remove_cvref<t>::type;
+
+template<typename t>
+using to_const_lvalue_reference_t = remove_cvref_t<t> const&;
 
 // causes ICE in Visual Studio 2017 Preview. the ICE was reported and they handle them seriously in due time.
 // the ICE is caused by decltype(auto) and const& return value
@@ -58,8 +73,12 @@
 
 #define eval_once(expr) eval_once__2(expr, PP_CAT(_EVAL_ONCE__, __COUNTER__))
 #define eval_once__2(expr, ident) eval_once__3(expr, ident)
-#define eval_once__3(expr, ident) \
-    ([&]() -> std::decay_t<decltype(expr)> const& { static const std::decay_t<decltype(expr)> INIT##ident = (expr); return INIT##ident; }())
+
+#define eval_once__3(expr, ident)                                                               \
+    ([&] {                                                                                      \
+        static auto INIT##ident = (expr);                                                       \
+        return static_cast<to_const_lvalue_reference_t<decltype(INIT##ident)>>(INIT##ident);    \
+    }())
 
 #include <type_traits>
 
