@@ -42,7 +42,7 @@ using namespace options;
 #   include <cfloat>
 
 #define OTR_HAS_DENORM_CONTROL
-void set_fp_mask()
+static void set_fp_mask()
 {
     //_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
@@ -51,7 +51,7 @@ void set_fp_mask()
 }
 #endif
 
-void set_qt_style()
+static void set_qt_style()
 {
 #if defined _WIN32
     if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
@@ -77,7 +77,7 @@ void set_qt_style()
 
 #ifdef _WIN32
 
-void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
+static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
 {
     const unsigned short* const str_ = msg.utf16();
     auto str = reinterpret_cast<const wchar_t* const>(str_);
@@ -93,7 +93,7 @@ void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &
     std::fflush(stderr);
 }
 
-void add_win32_path()
+static void add_win32_path()
 {
     // see https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
     static char env_path[4096] { '\0', };
@@ -145,7 +145,7 @@ void add_win32_path()
 
 #include <windows.h>
 
-void attach_parent_console()
+static void attach_parent_console()
 {
     std::fflush(stdin);
     std::fflush(stderr);
