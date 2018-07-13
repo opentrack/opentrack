@@ -21,6 +21,17 @@
 
 #include <QMetaType>
 
+namespace options::detail {
+    template<typename t>
+    struct dereference_wrapper final
+    {
+        cc_forceinline constexpr t const* operator->() const { return &x; }
+        cc_forceinline constexpr t* operator->() { return &x; }
+        t x;
+        constexpr explicit cc_forceinline dereference_wrapper(t&& x) : x(x) {}
+    };
+} // ns options::detail
+
 namespace options {
 
 template<typename t>
@@ -116,15 +127,7 @@ public:
 
     auto operator->() const
     {
-        struct dereference_wrapper final
-        {
-            cc_forceinline t const* operator->() const { return &x; }
-            cc_forceinline t* operator->() { return &x; }
-            t x;
-            explicit cc_forceinline dereference_wrapper(t&& x) : x(x) {}
-        };
-
-        return dereference_wrapper { get() };
+        return detail::dereference_wrapper<t>{get()};
     }
 
     cc_noinline

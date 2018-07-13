@@ -28,9 +28,7 @@ hatire::hatire()
         End.append((unsigned char) 0x55);
 }
 
-hatire::~hatire()
-{
-}
+hatire::~hatire() = default;
 
 //send RESET to Arduino
 void hatire::reset()

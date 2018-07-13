@@ -21,14 +21,9 @@ const double test_tracker::incr[6] =
     70, 5, 3
 };
 
-test_tracker::test_tracker() :
-    last_x { 0, 0, 0, 0, 0, 0 }
-{
-}
+test_tracker::test_tracker() = default;
 
-test_tracker::~test_tracker()
-{
-}
+test_tracker::~test_tracker() = default;
 
 module_status test_tracker::start_tracker(QFrame*)
 {
@@ -81,6 +76,7 @@ test_dialog::test_dialog()
 
     connect(ui.buttonBox, &QDialogButtonBox::clicked, [this](QAbstractButton* btn) {
         if (btn == ui.buttonBox->button(QDialogButtonBox::Abort))
+            // NOLINTNEXTLINE
             *(volatile int*)nullptr = 0;
     });
 

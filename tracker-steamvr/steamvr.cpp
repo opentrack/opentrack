@@ -317,7 +317,7 @@ void steamvr_dialog::doCancel()
 
 QString device_spec::to_string() const
 {
-    return QStringLiteral("<%1> %2 [%3]").arg(type).arg(model).arg(serial);
+    return QStringLiteral("<%1> %2 [%3]").arg(type, model, serial);
 }
 
 OPENTRACK_DECLARE_TRACKER(steamvr, steamvr_dialog, steamvr_metadata)

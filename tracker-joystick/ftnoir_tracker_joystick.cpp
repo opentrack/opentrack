@@ -22,9 +22,7 @@ joystick::joystick()
     }
 }
 
-joystick::~joystick()
-{
-}
+joystick::~joystick() = default;
 
 void joystick::data(double *data)
 {

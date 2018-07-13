@@ -43,7 +43,7 @@ struct PointModel final
 
     enum Model { Clip, Cap, Custom };
 
-    PointModel(const pt_settings& s);
+    explicit PointModel(const pt_settings& s);
     void set_model(const pt_settings& s);
 
     void get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const;
@@ -82,7 +82,7 @@ private:
     bool init_phase = true, prev_order_valid = false;
 };
 
-} // ns pt_impl
+} // ns pt_module
 
 using PointTracker = pt_module::PointTracker;
 using PointModel = pt_module::PointModel;

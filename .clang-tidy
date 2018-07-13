@@ -3,6 +3,9 @@ Checks:
     clang-analyzer-*,clang-diagnostic-*,
     cppcoreguidelines-*,performance-*,bugprone-*,
     readability-*,misc-*,hicpp-*,cert-*,modernize-*,
+    -clang-diagnostic-nonportable-include-path,
+    -clang-analyzer-deadcode-DeadStores,
+    -clang-analyze-core.CallAndMessage,
     -cppcoreguidelines-special-member-functions,-hicpp-special-member-functions,
     -hicpp-braces-around-statements,-readability-braces-around-statements,
     -hicpp-use-equals-default -modernize-use-equals-default,
@@ -34,6 +37,31 @@ Checks:
     -hicpp-function-size,
     -cppcoreguidelines-pro-type-static-cast-downcast,
     -hicpp-use-override,
+    -hicpp-use-equals-delete,
+    -readability-static-accessed-through-instance,
+    -cert-flp30-c,
 
 AnalyzeTemporaryDtors: true
-HeaderFilterRegex: '/dev/opentrack'
+#HeaderFilterRegex: '/dev/opentrack'
+
+CheckOptions:
+  - key:      cert-dcl59-cpp.HeaderFileExtensions
+    value:    ',h,hpp'
+  - key:      cppcoreguidelines-pro-type-member-init.IgnoreArrays
+    value:    '1'
+  - key:      readability-simplify-boolean-expr.ChainedConditionalAssignment
+    value:    '1'
+  - key:      readability-simplify-boolean-expr.ChainedConditionalReturn
+    value:    '1'
+  - key:      readability-function-size.BranchThreshold
+    value:    '15'
+  - key:      readability-function-size.LineThreshold
+    value:    '120'
+  - key:      readability-function-size.NestingThreshold
+    value:    '6'
+  - key:      readability-function-size.ParameterThreshold
+    value:    '8'
+  - key:      readability-function-size.StatementThreshold
+    value:    '90'
+  - key:      readability-function-size.VariableThreshold
+    value:    '10'

@@ -17,7 +17,7 @@ class OTR_GUI_EXPORT options_dialog : public QDialog
 signals:
     void closing();
 public:
-    options_dialog(std::function<void(bool)>&& pause_keybindings);
+    explicit options_dialog(std::function<void(bool)>&& pause_keybindings);
 private:
     main_settings main;
     std::function<void(bool)> pause_keybindings;

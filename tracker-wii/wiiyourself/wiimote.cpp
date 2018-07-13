@@ -22,11 +22,7 @@
 #include "wiimote.h"
 #include <setupapi.h>
 extern "C" {
-# ifdef __MINGW32__
-#  include <ddk/hidsdi.h>// from WinDDK
-# else
-#  include <hidsdi.h>
-# endif
+#include <hidsdi.h>// from WinDDK
 }
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
@@ -90,7 +86,7 @@ static void __cdecl _TRACE(const TCHAR* fmt, ...)
 
 	va_list	 argptr;
 	va_start(argptr, fmt);
-#if (_MSC_VER >= 1400) // VC 2005+
+#ifdef _MSC_VER
 	_vsntprintf_s(buffer, ARRAY_ENTRIES(buffer), _TRUNCATE, fmt, argptr);
 #else
 	_vsntprintf(buffer, ARRAY_ENTRIES(buffer), fmt, argptr);

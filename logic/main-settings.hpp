@@ -72,6 +72,6 @@ struct OTR_LOGIC_EXPORT main_settings final
 
 } // ns main_settings_impl
 
-using main_settings_impl::key_opts;
-using main_settings_impl::module_settings;
-using main_settings_impl::main_settings;
+using key_opts = main_settings_impl::key_opts;
+using module_settings = main_settings_impl::module_settings;
+using main_settings = main_settings_impl::main_settings;

@@ -42,24 +42,20 @@ private slots:
     void done(int) override;
 };
 
-} // ns
+} // ns plugin_api::detail
 
 #define OTR_PLUGIN_EXPORT OTR_GENERIC_EXPORT
 
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
-    extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor(); \
-    extern "C" OTR_PLUGIN_EXPORT Metadata_* GetMetadata(); \
-    extern "C" OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog(); \
-    \
-    extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor() \
+    extern "C" OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor(void) \
     { \
         return new ctor_class; \
     } \
-    extern "C" OTR_PLUGIN_EXPORT Metadata_* GetMetadata() \
+    extern "C" OTR_PLUGIN_EXPORT Metadata_* GetMetadata(void) \
     { \
         return new metadata_class; \
     } \
-    extern "C" OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog() \
+    extern "C" OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog(void) \
     { \
         return new dialog_class; \
     }
@@ -84,8 +80,8 @@ class OTR_API_EXPORT Metadata : public TR, public Metadata_
     Q_OBJECT
 
 public:
-    Metadata() {}
-    ~Metadata() {}
+    Metadata();
+    ~Metadata();
 };
 
 struct OTR_API_EXPORT module_status final

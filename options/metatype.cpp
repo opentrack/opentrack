@@ -20,7 +20,7 @@ int declare_metatype_for_type(const char* str)
     OPENTRACK_DEFINE_METATYPE4(t, init_metatype_ ## ctr)
 
 #define OPENTRACK_DEFINE_METATYPE4(t, sym)                                                          \
-    static class sym {                                                                              \
+    class sym {                                                                                     \
         static const int dribble;                                                                   \
     } sym ## _singleton;                                                                            \
     const int sym :: dribble = ::options::detail::declare_metatype_for_type<t>(#t)

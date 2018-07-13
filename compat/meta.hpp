@@ -45,6 +45,15 @@ namespace meta::detail {
     {
         using type = to<xs...>;
     };
+
+    template<typename...> struct cons_;
+
+    template<template<typename...> class t, typename x, typename... xs>
+    struct cons_<t<xs...>, x>
+    {
+        using type = t<x, xs...>;
+    };
+
 } // ns meta::detail
 
 namespace meta {
@@ -66,5 +75,9 @@ namespace meta {
 
     template<typename... xs>
     using last = lift<first, reverse<xs...>>;
+
+    template<typename... xs>
+    using cons = detail::cons_<xs...>;
+
 } // ns meta
 

@@ -60,6 +60,7 @@ if(MSVC)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
     add_definitions(-D_USE_MATH_DEFINES=1)
+    add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
 

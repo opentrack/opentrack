@@ -16,7 +16,7 @@ public:
 
 private:
     static const double incr[6];
-    double last_x[6];
+    double last_x[6] {};
     Timer t;
 };
 

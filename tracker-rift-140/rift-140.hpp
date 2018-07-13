@@ -28,9 +28,9 @@ public:
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 private:
-    double old_yaw;
-    ovrSession hmd;
-    ovrGraphicsLuid luid;
+    double old_yaw = 0;
+    ovrSession hmd = nullptr;
+    ovrGraphicsLuid luid {};
     settings s;
 };
 

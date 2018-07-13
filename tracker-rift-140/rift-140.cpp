@@ -21,9 +21,7 @@
 
 using namespace OVR;
 
-rift_tracker_140::rift_tracker_140() : old_yaw(0), hmd(nullptr)
-{
-}
+rift_tracker_140::rift_tracker_140() = default;
 
 rift_tracker_140::~rift_tracker_140()
 {

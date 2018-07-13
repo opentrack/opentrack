@@ -158,7 +158,7 @@ bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods
     return false;
 }
 
-bool win_key::from_qt(QKeySequence qt_, int& dik, Qt::KeyboardModifiers& mods)
+bool win_key::from_qt(QKeySequence const& qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     // CAVEAT don't use QVariant::toUInt() or conversion fails
     const unsigned qt = static_cast<unsigned>(QVariant(qt_).toInt());
