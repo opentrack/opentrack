@@ -11,7 +11,7 @@
 
 namespace options {
 
-constexpr slider_value::slider_value(double cur, double min, double max) :
+slider_value::slider_value(double cur, double min, double max) :
     cur_(cur),
     min_(min),
     max_(max)
@@ -24,31 +24,25 @@ constexpr slider_value::slider_value(double cur, double min, double max) :
         cur_ = min_;
 }
 
-template<typename t>
-static constexpr auto abs_(t x)
-{
-    return x < t{0} ? -x : x;
-}
-
-constexpr bool slider_value::operator==(const slider_value& v) const
+bool slider_value::operator==(const slider_value& v) const
 {
     constexpr double eps = 2e-3;
 
 #if 1
-    return (abs_(v.cur_ - cur_) < eps &&
-            abs_(v.min_ - min_) < eps &&
-            abs_(v.max_ - max_) < eps);
+    return (std::fabs(v.cur_ - cur_) < eps &&
+            std::fabs(v.min_ - min_) < eps &&
+            std::fabs(v.max_ - max_) < eps);
 #else
-    return (abs_(v.cur_ - cur_) < eps);
+    return (std::fabs(v.cur_ - cur_) < eps);
 #endif
 }
 
-constexpr bool slider_value::operator!=(const slider_value& v) const
+bool slider_value::operator!=(const slider_value& v) const
 {
     return !(*this == v);
 }
 
-constexpr slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const
+slider_value slider_value::update_from_slider(int pos, int q_min, int q_max) const
 {
     slider_value v(*this);
 

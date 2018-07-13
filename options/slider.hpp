@@ -23,26 +23,26 @@ namespace options
         double cur_, min_, max_;
 
     public:
-        constexpr slider_value(double cur, double min, double max);
+        slider_value(double cur, double min, double max);
 
         template<typename t, typename u, typename v>
-        constexpr slider_value(t cur, u min, v max) :
+        slider_value(t cur, u min, v max) :
             cur_(double(cur)),
             min_(double(min)),
             max_(double(max))
         {}
 
         slider_value& operator=(const slider_value& v) = default;
-        constexpr slider_value(const slider_value& v) = default;
-        constexpr slider_value() : slider_value{0, 0, 0} {};
+        slider_value(const slider_value& v) = default;
+        slider_value() : slider_value{0, 0, 0} {};
 
-        constexpr bool operator==(const slider_value& v) const;
-        constexpr bool operator!=(const slider_value& v) const;
-        constexpr operator double() const { return cur_; }
-        constexpr double cur() const { return cur_; }
-        constexpr double min() const { return min_; }
-        constexpr double max() const { return max_; }
-        constexpr slider_value update_from_slider(int pos, int q_min, int q_max) const;
+        bool operator==(const slider_value& v) const;
+        bool operator!=(const slider_value& v) const;
+        operator double() const { return cur_; }
+        double cur() const { return cur_; }
+        double min() const { return min_; }
+        double max() const { return max_; }
+        slider_value update_from_slider(int pos, int q_min, int q_max) const;
         int to_slider_pos(int q_min, int q_max) const;
     };
 }
