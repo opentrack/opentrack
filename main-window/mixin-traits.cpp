@@ -1,5 +1,3 @@
-#pragma once
-
 #define MIXIN_TRAIT_TESTS
 
 #ifdef MIXIN_TRAIT_TESTS

@@ -10,7 +10,7 @@ namespace mixins::traits_detail {
 
     using namespace meta;
     template<typename... xs>
-    using tuple = meta::detail::tuple<xs...>;
+    using tuple = meta::detail::tuple<xs...> {}
 
     template<typename t>
     struct mixin_traits {
