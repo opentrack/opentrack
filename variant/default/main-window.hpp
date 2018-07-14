@@ -112,6 +112,11 @@ class main_window final : public QMainWindow, private State
 
     void closeEvent(QCloseEvent *event) override;
 
+    bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
+    void die_on_config_not_writable();
+    bool is_tray_enabled();
+    bool start_in_tray();
+
 private slots:
     void save_modules();
     void exit(int status = EXIT_SUCCESS);
@@ -137,18 +142,15 @@ private slots:
     void ensure_tray();
 
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
+    static void set_working_directory();
 
 signals:
     void start_tracker();
     void stop_tracker();
     void toggle_tracker();
     void restart_tracker();
+
 public:
     main_window();
     ~main_window() override;
-    static void set_working_directory();
-    bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
-    void die_on_config_not_writable();
-    bool is_tray_enabled();
-    bool start_in_tray();
 };
