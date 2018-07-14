@@ -660,15 +660,19 @@ void main_window::display_pose(const double *mapped, const double *raw)
     set_title(game_title);
 }
 
-void main_window::set_title(const QString& game_title_)
+void main_window::set_title(const QString& game_title)
 {
-    QString game_title;
-    if (game_title_ != "")
-        game_title = tr(" :: ") + game_title_;
-    QString current = ini_filename();
-    QString version(opentrack_version);
-    version = tr("opentrack") + " " + version.mid(sizeof("opentrack-") - 1);
-    setWindowTitle(version + tr(" :: ") + current + game_title);
+    static const QString version{opentrack_version};
+    static const QString sep { tr(" :: ") };
+    static const QString pat1{ version + sep + "%1" + sep + "%2" };
+    static const QString pat2{ version + sep + "%1" };
+
+    const QString current = ini_filename();
+
+    if (game_title.isEmpty())
+        setWindowTitle(pat2.arg(current));
+    else
+        setWindowTitle(pat1.arg(current, game_title));
 }
 
 void main_window::show_pose()
