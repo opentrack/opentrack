@@ -120,6 +120,7 @@ void Timer::gettime(timespec* state)
     otr_clock_gettime(state);
 #elif defined CLOCK_MONOTONIC
     const int res = clock_gettime(CLOCK_MONOTONIC, state);
+    (void)res;
     assert(res == 0 && "must support CLOCK_MONOTONIC");
 #else
 #   error "timer query method not known"

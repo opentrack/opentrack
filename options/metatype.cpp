@@ -23,7 +23,7 @@ int declare_metatype_for_type(const char* str)
     class sym {                                                                                     \
         static const int dribble;                                                                   \
     } sym ## _singleton;                                                                            \
-    const int sym :: dribble = ::options::detail::declare_metatype_for_type<t>(#t)
+    const int sym :: dribble = ::options::detail::declare_metatype_for_type<t>(#t);
 
 #define OPENTRACK_DEFINE_METATYPE(t) OPENTRACK_DEFINE_METATYPE2(t, __COUNTER__)
 

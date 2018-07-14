@@ -43,7 +43,7 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
         }
         else
         {
-            auto logger = std::make_unique<TrackLoggerCSV>(s.tracklogging_filename);
+            auto logger = std::make_unique<TrackLoggerCSV>(*s.tracklogging_filename);
 
             if (!logger->is_open())
             {
