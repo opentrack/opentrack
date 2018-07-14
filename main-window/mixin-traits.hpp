@@ -6,7 +6,7 @@
 
 #include <type_traits>
 
-//namespace mixins::traits_detail {
+namespace mixins::traits_detail {
 
     using namespace meta;
     template<typename... xs>
@@ -39,27 +39,10 @@
         using type = std::bool_constant<b1::value && b2::value && b3::value>;
     };
 
-#if 0
-    template<typename final_class, typename t>
-    static constexpr void check_depends_recursively()
-    {
-        std::is_base_of_v<x, final_class> &&
-                           assert_depends<final_class, xs...>::check_depends()
-
-        using depends = typename mixin_traits<t>::depends;
-        static_assert(lift<assert_depends, cons<t, depends>>::check_depends());
-
-        using car = first<depends>;
-        using cdr = rest<depends>;
-
-        check_depends_recursively<car>();
-    }
-#endif
-
     template<typename t>
     class impl
     {
         using t1 = typename lift<check_depends_, cons<t, typename mixin_traits<t>::depends>>::type;
         static_assert(t1::value);
     };
-//} // ns mixins::traits_detail
+} // ns mixins::traits_detail

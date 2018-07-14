@@ -1,9 +1,9 @@
-#define MIXIN_TRAIT_TESTS
+//#define MIXIN_TRAIT_TESTS
 
 #ifdef MIXIN_TRAIT_TESTS
 #   include "mixin-traits.hpp"
 
-//namespace mixins::traits_detail {
+namespace mixins::traits_detail {
 
 struct A {};
 struct B : A {};
@@ -33,6 +33,6 @@ void test1()
     impl<A> ok2;
 }
 
-//} // ns mixins::traits_detail
+} // ns mixins::traits_detail
 
 #endif
