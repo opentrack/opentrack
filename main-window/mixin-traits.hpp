@@ -6,15 +6,15 @@
 
 #include <type_traits>
 
-namespace mixins::traits_detail {
+//namespace mixins::traits_detail {
 
     using namespace meta;
     template<typename... xs>
-    using tuple = meta::detail::tuple<xs...> {}
+    using tuple = meta::detail::tuple<xs...>;
 
     template<typename t>
     struct mixin_traits {
-        using depends = tuple<>;
+        //using depends = tuple<>;
     };
 
     template<typename klass, typename...> struct check_depends_;
@@ -22,20 +22,21 @@ namespace mixins::traits_detail {
     template<typename klass>
     struct check_depends_<klass>
     {
-        static constexpr bool recurse() { return true; }
+        using type = std::bool_constant<true>;
     };
 
     template<typename klass, typename x, typename... xs>
     struct check_depends_<klass, x, xs...>
     {
-        static constexpr bool recurse()
-        {
-            using depends = typename mixin_traits<x>::depends;
+        using b1 = std::is_base_of<x, klass>;
+        using b2 = typename check_depends_<klass, xs...>::type;
 
-            return (std::is_base_of_v<x, klass> || std::is_same_v<x, klass>) &&
-                   check_depends_<klass, xs...>::recurse() &&
-                   lift<check_depends_, cons<klass, depends>>::recurse();
-        }
+        using depends = typename mixin_traits<x>::depends;
+        using t1 = cons<klass, depends>;
+        using t2 = lift<check_depends_, t1>;
+        using b3 = typename t2::type;
+
+        using type = std::bool_constant<b1::value && b2::value && b3::value>;
     };
 
 #if 0
@@ -58,6 +59,7 @@ namespace mixins::traits_detail {
     template<typename t>
     class impl
     {
-        static_assert(lift<check_depends_, cons<t, typename mixin_traits<t>::depends>>::recurse());
+        using t1 = typename lift<check_depends_, cons<t, typename mixin_traits<t>::depends>>::type;
+        static_assert(t1::value);
     };
-} // ns mixins::traits_detail
+//} // ns mixins::traits_detail

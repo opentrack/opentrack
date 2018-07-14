@@ -3,7 +3,7 @@
 #ifdef MIXIN_TRAIT_TESTS
 #   include "mixin-traits.hpp"
 
-namespace mixins::traits_detail {
+//namespace mixins::traits_detail {
 
 struct A {};
 struct B : A {};
@@ -16,22 +16,23 @@ template<> struct mixin_traits<B>
 
 template<> struct mixin_traits<A>
 {
-    using depends = tuple<B>;
+    using depends = tuple<>;
 };
 
 template<> struct mixin_traits<C>
 {
-    using depends = tuple<B, A>;
+    using depends = tuple<A>;
 };
 
 extern void test1();
 
 void test1()
 {
-    //impl<A> fail1;
+    //impl<C> fail1;
     impl<B> ok1;
+    impl<A> ok2;
 }
 
-} // ns mixins::traits_detail
+//} // ns mixins::traits_detail
 
 #endif
