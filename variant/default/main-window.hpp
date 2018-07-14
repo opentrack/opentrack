@@ -32,8 +32,6 @@
 #include <QEvent>
 #include <QCloseEvent>
 
-#include <algorithm>
-#include <vector>
 #include <tuple>
 #include <memory>
 
@@ -97,18 +95,6 @@ class main_window final : public QMainWindow, private State
 #if !defined _WIN32
     void annoy_if_root();
 #endif
-
-    // only use in impl file since no definition in header!
-    template<typename t>
-    bool mk_dialog(const std::shared_ptr<dylib>& lib, std::unique_ptr<t>& d);
-
-    // idem
-    template<typename t, typename... Args>
-    inline bool mk_window(std::unique_ptr<t>& place, Args&&... params);
-
-    // idem
-    template<typename t, typename F>
-    bool mk_window_common(std::unique_ptr<t>& d, F&& ctor);
 
     void closeEvent(QCloseEvent *event) override;
 

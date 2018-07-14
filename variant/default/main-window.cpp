@@ -17,7 +17,9 @@
 #include "compat/library-path.hpp"
 #include "compat/math.hpp"
 
+#include <algorithm>
 #include <iterator>
+#include <utility>
 
 #include <QMessageBox>
 #include <QDesktopServices>
@@ -367,7 +369,7 @@ bool main_window::maybe_die_on_config_not_writable(const QString& current, QStri
         return false;
 
     const bool open = QFile(ini_combine(current)).open(QFile::ReadWrite);
-    const QStringList list = ini_list();
+    QStringList list = ini_list();
 
     if (!list.contains(current) || !open)
     {
@@ -376,7 +378,7 @@ bool main_window::maybe_die_on_config_not_writable(const QString& current, QStri
     }
 
     if (ini_list_ != nullptr)
-        *ini_list_ = list;
+        *ini_list_ = std::move(list);
 
     return false;
 }
@@ -692,53 +694,62 @@ void main_window::show_pose()
     display_pose(mapped, raw);
 }
 
-template<typename t, typename F>
-bool main_window::mk_window_common(std::unique_ptr<t>& d, F&& ctor)
-{
-    if (d)
-    {
-        d->show();
-        d->raise();
-
-        return false;
-    }
-    else if ((d = std::unique_ptr<t>(ctor())))
-    {
-        QWidget& w = *d;
-
-        w.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | w.windowFlags());
-        w.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-        w.show();
-        w.adjustSize();
-
-        return true;
-    }
-
-    return false;
-}
-
 template<typename t, typename... Args>
-inline bool main_window::mk_window(std::unique_ptr<t>& place, Args&&... params)
+bool mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
-    return mk_window_common(place, [&] { return new t(params...); });
+    return mk_window_common(place, [&] {
+        return std::make_unique<t>(params...);
+    });
 }
 
 template<typename t>
-bool main_window::mk_dialog(const std::shared_ptr<dylib>& lib, std::unique_ptr<t>& d)
+bool mk_dialog(std::unique_ptr<t>& place, const std::shared_ptr<dylib>& lib)
 {
-    const bool just_created = mk_window_common(d, [&]() -> t* {
-        if (lib && lib->Dialog)
-            return (t*) lib->Dialog();
-        return nullptr;
-    });
+    using u = std::unique_ptr<t>;
 
-    return just_created;
+    return mk_window_common(place, [&] {
+        if (lib && lib->Dialog)
+            return u{ (t*)lib->Dialog() };
+        else
+            return u{};
+    });
+}
+
+template<typename t, typename F>
+bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
+{
+    bool fresh = false;
+
+    if (!d)
+        d = fun(), fresh = !!d;
+
+    if (d)
+        show_window(*d, fresh);
+
+    return fresh;
+}
+
+void show_window(QWidget& d, bool fresh)
+{
+    if (fresh)
+    {
+        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
+        d.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+        d.show();
+        d.adjustSize();
+        d.raise();
+    }
+    else
+    {
+        d.show();
+        d.raise();
+    }
 }
 
 void main_window::show_tracker_settings()
 {
-    if (mk_dialog(current_tracker(), pTrackerDialog) && work && work->libs.pTracker)
+    if (mk_dialog(pTrackerDialog, current_tracker()) && work && work->libs.pTracker)
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
     if (pTrackerDialog)
         QObject::connect(pTrackerDialog.get(), &ITrackerDialog::closing,
@@ -747,7 +758,7 @@ void main_window::show_tracker_settings()
 
 void main_window::show_proto_settings()
 {
-    if (mk_dialog(current_protocol(), pProtocolDialog) && work && work->libs.pProtocol)
+    if (mk_dialog(pProtocolDialog, current_protocol()) && work && work->libs.pProtocol)
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
     if (pProtocolDialog)
         QObject::connect(pProtocolDialog.get(), &IProtocolDialog::closing,
@@ -756,7 +767,7 @@ void main_window::show_proto_settings()
 
 void main_window::show_filter_settings()
 {
-    if (mk_dialog(current_filter(), pFilterDialog) && work && work->libs.pFilter)
+    if (mk_dialog(pFilterDialog, current_filter()) && work && work->libs.pFilter)
         pFilterDialog->register_filter(work->libs.pFilter.get());
     if (pFilterDialog)
         QObject::connect(pFilterDialog.get(), &IFilterDialog::closing,
