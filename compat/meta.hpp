@@ -7,20 +7,13 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#define OTR_META_INST_FAIL(x)                                        \
-    static_assert(sizeof...(x) == ~0ul);                             \
-    static_assert(sizeof...(x) == 0u)
-
 namespace meta::detail {
 
     template<typename... xs>
     struct tuple;
 
     template<typename... xs>
-    struct reverse_
-    {
-        OTR_META_INST_FAIL(xs);
-    };
+    struct reverse_;
 
     template<typename x0, typename... xs, template<typename...> class x, typename... ys>
     struct reverse_<x<x0, xs...>, x<ys...>>
@@ -34,11 +27,7 @@ namespace meta::detail {
         using type = x<ys...>;
     };
 
-    template<template<typename...> class inst, typename... xs>
-    struct lift_
-    {
-        OTR_META_INST_FAIL(xs);
-    };
+    template<template<typename...> class, typename, typename...> struct lift_;
 
     template<template<typename...> class to, template<typename...> class from, typename... xs>
     struct lift_<to, from<xs...>>
@@ -46,17 +35,59 @@ namespace meta::detail {
         using type = to<xs...>;
     };
 
-    template<typename...> struct cons_;
+    template<typename> struct append_helper;
+
+    template<typename, typename> struct cons_;
 
     template<template<typename...> class t, typename x, typename... xs>
-    struct cons_<t<xs...>, x>
+    struct cons_<x, t<xs...>>
     {
         using type = t<x, xs...>;
+    };
+
+    template<typename> struct append2;
+
+    template<template<typename...> class t, typename... xs>
+    struct append2<t<xs...>>
+    {
+        template<typename> struct append1;
+
+        template<template<typename...> class u, typename... ys>
+        struct append1<u<ys...>>
+        {
+            using type = t<xs..., ys...>;
+        };
+    };
+
+    template<typename, typename...> struct list__;
+
+    template<typename rest, typename... first>
+    struct list__
+    {
+        template<typename> struct list1;
+
+        template<template<typename...> class t, typename... xs>
+        struct list1<t<xs...>>
+        {
+            using type = t<first..., xs...>;
+        };
+
+        using type = typename list1<rest>::type;
+    };
+
+    template<typename xs, typename ys>
+    struct append_
+    {
+        using t1 = append2<xs>;
+        using type = typename t1::template append1<ys>::type;
     };
 
 } // ns meta::detail
 
 namespace meta {
+    template<typename... xs>
+    using tuple_ = detail::tuple<xs...>;
+
     template<typename... xs>
     using reverse = typename detail::reverse_<detail::tuple<xs...>, detail::tuple<>>::type;
 
@@ -76,8 +107,14 @@ namespace meta {
     template<typename... xs>
     using last = lift<first, reverse<xs...>>;
 
-    template<typename... xs>
-    using cons = detail::cons_<xs...>;
+    template<typename x, typename rest>
+    using cons = typename detail::cons_<x, rest>::type;
+
+    template<typename xs, typename ys>
+    using append = typename detail::append_<xs, ys>;
+
+    template<typename rest, typename... xs>
+    using list_ = typename detail::list__<rest, xs...>;
 
 } // ns meta
 
