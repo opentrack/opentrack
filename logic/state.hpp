@@ -19,7 +19,7 @@
 
 struct State
 {
-    State(const QString& library_path) :
+    explicit State(const QString& library_path) :
         modules(library_path),
         ev(modules.extensions()),
         pose(s.all_axis_opts)
