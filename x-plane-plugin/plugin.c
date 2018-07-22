@@ -31,8 +31,11 @@
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
 
-#define BUILD_compat
-#include "compat/export.hpp"
+#include "compat/linkage-macros.hpp"
+
+#ifndef MAP_FAILED
+#   define MAP_FAILED ((void*)-1)
+#endif
 
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
@@ -50,7 +53,7 @@ typedef struct WineSHM
     int gameid, gameid2;
     unsigned char table[8];
     bool stop;
-} WineSHM;
+} volatile WineSHM;
 
 static shm_wrapper* lck_posix = NULL;
 static WineSHM* shm_posix = NULL;
@@ -100,11 +103,10 @@ void shm_wrapper_unlock(shm_wrapper* self)
     flock(self->fd, LOCK_UN);
 }
 
-float write_head_position(
-        float                inElapsedSinceLastCall,
-        float                inElapsedTimeSinceLastFlightLoop,
-        int                  inCounter,
-        void *               inRefcon )
+float write_head_position(float inElapsedSinceLastCall,
+                          float inElapsedTimeSinceLastFlightLoop,
+                          int   inCounter,
+                          void* inRefcon)
 {
     if (lck_posix != NULL && shm_posix != NULL) {
         shm_wrapper_lock(lck_posix);
@@ -122,17 +124,17 @@ float write_head_position(
     return -1.0;
 }
 
-static int TrackToggleHandler( XPLMCommandRef inCommand,
-                               XPLMCommandPhase inPhase,
-                               void * inRefCon )
+static int TrackToggleHandler(XPLMCommandRef inCommand,
+                              XPLMCommandPhase inPhase,
+                              void* inRefCon)
 {
-    if ( track_disabled )
+    if (track_disabled)
     {
         //Enable
-        XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
+        XPLMRegisterFlightLoopCallback(write_head_position, -1, NULL);
 
         // Reinit the offsets when we re-enable the plugin
-        if ( !translation_disabled )
+        if (!translation_disabled)
             reinit_offset();
     }
     else
@@ -144,9 +146,9 @@ static int TrackToggleHandler( XPLMCommandRef inCommand,
     return 0;
 }
 
-static int TranslationToggleHandler( XPLMCommandRef inCommand,
-                                     XPLMCommandPhase inPhase,
-                                     void * inRefCon )
+static int TranslationToggleHandler(XPLMCommandRef inCommand,
+                                    XPLMCommandPhase inPhase,
+                                    void* inRefCon)
 {
     translation_disabled = !translation_disabled;
     if (!translation_disabled)
@@ -157,7 +159,8 @@ static int TranslationToggleHandler( XPLMCommandRef inCommand,
     return 0;
 }
 
-PLUGIN_API OTR_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignature, char * outDescription ) {
+PLUGIN_API OTR_GENERIC_EXPORT
+int XPluginStart (char* outName, char* outSignature, char* outDescription) {
     view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
     view_y = XPLMFindDataRef("sim/aircraft/view/acf_peY");
     view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
@@ -168,24 +171,24 @@ PLUGIN_API OTR_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignat
     track_toggle = XPLMCreateCommand("opentrack/toggle", "Disable/Enable head tracking");
     translation_disable_toggle = XPLMCreateCommand("opentrack/toggle_translation", "Disable/Enable input translation from opentrack");
 
-    XPLMRegisterCommandHandler( track_toggle,
-                                TrackToggleHandler,
-                                1,
-                                (void*)0);
+    XPLMRegisterCommandHandler(track_toggle,
+                               TrackToggleHandler,
+                               1,
+                               NULL);
 
-    XPLMRegisterCommandHandler( translation_disable_toggle,
-                                TranslationToggleHandler,
-                                1,
-                                (void*)0);
+    XPLMRegisterCommandHandler(translation_disable_toggle,
+                               TranslationToggleHandler,
+                               1,
+                               NULL);
 
 
     if (view_x && view_y && view_z && view_heading && view_pitch && track_toggle && translation_disable_toggle) {
         lck_posix = shm_wrapper_init(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
-        if (lck_posix->mem == (void*)-1) {
+        if (lck_posix->mem == MAP_FAILED) {
             fprintf(stderr, "opentrack failed to init SHM!\n");
             return 0;
         }
-        shm_posix = (WineSHM*) lck_posix->mem;
+        shm_posix = lck_posix->mem;
         memset(shm_posix, 0, sizeof(WineSHM));
         strcpy(outName, "opentrack");
         strcpy(outSignature, "opentrack - freetrack lives!");
@@ -196,7 +199,8 @@ PLUGIN_API OTR_COMPAT_EXPORT int XPluginStart ( char * outName, char * outSignat
     return 0;
 }
 
-PLUGIN_API OTR_COMPAT_EXPORT void XPluginStop ( void ) {
+PLUGIN_API OTR_GENERIC_EXPORT
+void XPluginStop (void) {
     if (lck_posix)
     {
         shm_wrapper_free(lck_posix);
@@ -205,21 +209,23 @@ PLUGIN_API OTR_COMPAT_EXPORT void XPluginStop ( void ) {
     }
 }
 
-PLUGIN_API OTR_COMPAT_EXPORT int XPluginEnable ( void ) {
+PLUGIN_API OTR_GENERIC_EXPORT
+int XPluginEnable (void) {
     XPLMRegisterFlightLoopCallback(write_head_position, -1.0, NULL);
     track_disabled = 0;
     return 1;
 }
 
-PLUGIN_API OTR_COMPAT_EXPORT void XPluginDisable ( void ) {
+PLUGIN_API OTR_GENERIC_EXPORT
+void XPluginDisable (void) {
     XPLMUnregisterFlightLoopCallback(write_head_position, NULL);
     track_disabled = 1;
 }
 
-PLUGIN_API OTR_COMPAT_EXPORT void XPluginReceiveMessage(
-        XPLMPluginID    inFromWho,
-        int             inMessage,
-        void *          inParam)
+PLUGIN_API OTR_GENERIC_EXPORT
+void XPluginReceiveMessage(XPLMPluginID    inFromWho,
+                           int             inMessage,
+                           void *          inParam)
 {
     if (inMessage == XPLM_MSG_AIRPORT_LOADED)
         reinit_offset();
