@@ -39,7 +39,7 @@ namespace meta::detail {
 
     template<typename, typename> struct cons_;
 
-    template<template<typename...> class t, typename x, typename... xs>
+    template<typename x, template<typename...> class t, typename... xs>
     struct cons_<x, t<xs...>>
     {
         using type = t<x, xs...>;
