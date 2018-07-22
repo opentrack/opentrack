@@ -75,7 +75,7 @@ using to_const_lvalue_reference_t = remove_cvref_t<t> const&;
 #define eval_once__2(expr, ident) eval_once__3(expr, ident)
 
 #define eval_once__3(expr, ident)                                                               \
-    ([&]() -> decltype(auto) {                                                                                      \
+    ([&]() -> decltype(auto) {                                                                  \
         static auto INIT##ident = (expr);                                                       \
         return static_cast<to_const_lvalue_reference_t<decltype(INIT##ident)>>(INIT##ident);    \
     }())
@@ -96,13 +96,13 @@ constexpr cc_forceinline void static_warn<true>() {}
 #define static_warning(cond)            \
         static_warn<(cond)>();          \
 
-#define typed_progn(type, ...) (([&]() -> type { __VA_ARGS__ })())
-#define progn(...) (([&]() -> decltype(auto) { __VA_ARGS__ })())
+#define typed_progn(type, ...) ([&]() -> type { __VA_ARGS__ }())
+#define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
 
-#define prog1(x, ...) (([&]() -> to_const_lvalue_reference_t<decltype((x))>       \
+#define prog1(x, ...) ([&]() -> decltype(auto)                                  \
     {                                                                           \
         decltype(auto) ret1324 = (x); __VA_ARGS__; return ret1324;              \
-    })())
+    }())
 
 // end c++-only macros
 #endif

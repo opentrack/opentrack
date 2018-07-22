@@ -11,7 +11,6 @@
 #include "export.hpp"
 #include "value.hpp"
 #include "compat/run-in-thread.hpp"
-#include "compat/meta.hpp"
 
 #include <QComboBox>
 #include <QCheckBox>

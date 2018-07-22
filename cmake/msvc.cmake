@@ -35,8 +35,10 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
         endif()
     endforeach()
 
+    # C4265: class has virtual functions, but destructor is not virtual
     set(warns 4265)
-    set(warns-noerr)
+    # C4005: macro redefinition
+    set(warns-noerr 4005)
 
     foreach(i ${warns-disable})
         set(warns_ "${warns_} -wd${i}")

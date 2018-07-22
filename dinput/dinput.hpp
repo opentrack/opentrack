@@ -33,14 +33,14 @@ public:
     di_t();
     ~di_t();
     di_t(const di_t&) : di_t() {}
-    di_t& operator=(const di_t&) { return *this; }
+    di_t& operator=(const di_t&) = default;
 
     diptr operator->() const { return handle; }
     operator bool() { return handle; }
 
     // for debugging bad usages
     template<typename t = void>
-    operator void*() const
+    explicit operator void*() const
     {
         static_assert(sizeof(t) == -1);
         static_assert(sizeof(t) == 0);
