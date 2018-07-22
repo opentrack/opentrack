@@ -12,32 +12,47 @@
 #include "compat/qhash.hpp"
 #include "export.hpp"
 
-#include <cstring>
 #include <memory>
 #include <vector>
 #include <functional>
-#include <algorithm>
 #include <unordered_map>
+#include <iterator>
 
 #include <QString>
-#include <QDebug>
 #include <QMutex>
-#include <QMutexLocker>
-#include <QWidget>
+
+namespace win32_joy_impl {
+
+static constexpr inline unsigned max_buttons = std::size(DIJOYSTATE2().rgbButtons);
+static constexpr inline unsigned max_pov_hats = std::size(DIJOYSTATE2().rgdwPOV);
+
+static constexpr inline unsigned pov_hat_directions = 8;
+
+// cf. https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee416628(v=vs.85)
+// see also remarks on the page
+// no need to check for pos == unsigned(-1) || pos == 0xffff,
+// this logic doesn't require that
+static constexpr inline unsigned value_per_pov_hat_direction = 36000 / pov_hat_directions;
+static constexpr inline unsigned max_buttons_and_pov_hats = max_buttons + max_pov_hats * pov_hat_directions;
+
+//static_assert(pov_hat_directions == 4 || pov_hat_directions == 8);
+
+// XXX how many axis update events can we reasonably get in a short time frame?
+static constexpr inline unsigned num_buffers = 16;
+
+#define WIN32_JOY_DEBUG
 
 struct OTR_DINPUT_EXPORT win32_joy_ctx final
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
-    struct joy
+    struct joy final
     {
         LPDIRECTINPUTDEVICE8 joy_handle;
         QString guid, name;
-        enum { num_pressed_keys = 128 + 4 * 4 };
-        //bool pressed[num_pressed_keys] {};
+        bool last_state[max_buttons_and_pov_hats] {};
         Timer first_timer;
 
-        static constexpr int num_buffers = 16;
         static DIDEVICEOBJECTDATA keystate_buffers[num_buffers];
 
         joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name);
@@ -92,3 +107,6 @@ private:
     static enum_state enumerator;
 };
 
+} // ns win32_joy_impl
+
+using win32_joy_ctx = win32_joy_impl::win32_joy_ctx;

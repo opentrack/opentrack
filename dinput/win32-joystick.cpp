@@ -1,21 +1,30 @@
 #ifdef _WIN32
 
-#undef NDEBUG
 #include "win32-joystick.hpp"
-#include "compat/sleep.hpp"
+#include "compat/macros.hpp"
 
-#include <cstddef>
+// doesn't play well with Qt Creator clang code model
+#if defined Q_CREATOR_RUN && defined _MSC_VER
+#   undef offsetof
+#   define offsetof(type, member)  __builtin_offsetof(type, member)
+#else
+#   include <cstddef>
+#endif
+
 #include <algorithm>
 #include <cmath>
-#include <objbase.h>
+
+#include <QWidget>
 
 #include <QDebug>
 
-// XXX how many axis update events can we reasonably get in a short time frame?
-DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[win32_joy_ctx::joy::num_buffers];
+#include <objbase.h>
+
+namespace win32_joy_impl {
 
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
+DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[num_buffers] = {};
 
 void win32_joy_ctx::poll(fn const& f)
 {
@@ -26,9 +35,7 @@ void win32_joy_ctx::poll(fn const& f)
     auto& joys = enumerator.get_joys();
 
     for (auto& j : joys)
-    {
         j.second->poll(f);
-    }
 }
 
 bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
@@ -53,19 +60,18 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
         HRESULT hr;
 
         if (!FAILED(hr = joy_handle->Poll()))
-        {
             ok = true;
-        }
 
         if (!ok && FAILED(hr = joy_handle->Acquire()))
         {
+            (void)0;
             //qDebug() << "joy acquire failed" << hr;
         }
 
         if (!ok)
         {
-            portable::sleep(25);
-            (void) joy_handle->Unacquire();
+            (void)joy_handle->Unacquire();
+            Sleep(100);
             continue;
         }
 
@@ -74,7 +80,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
         if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
         {
             //qDebug() << "joy get state failed" << guid << hr;
-            portable::sleep(50);
+            Sleep(500);
             continue;
         }
 
@@ -164,7 +170,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
     DWORD sz = num_buffers;
     if (FAILED(hr = joy_handle->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keystate_buffers, &sz, 0)))
     {
-        //qDebug() << "joy get state failed" << guid << hr;
+        eval_once(qDebug() << "joy get state failed" << guid << hr);
         return false;
     }
 
@@ -175,13 +181,10 @@ bool win32_joy_ctx::joy::poll(fn const& f)
         bool is_pov = false;
         int i = -1;
 
-        // redefine since MSVC headers don't define as proper constants
-
 #define POV_HAT_OFFSET(k) \
-    (offsetof(DIJOYSTATE, rgdwPOV) + (k) * sizeof(DWORD))
-
+        (offsetof(DIJOYSTATE2, rgdwPOV) + (k) * sizeof(DWORD))
 #define BUTTON_OFFSET(k) \
-    (offsetof(DIJOYSTATE, rgbButtons) + (k) * sizeof(BYTE))
+        (offsetof(DIJOYSTATE2, rgbButtons) + (k) * sizeof(BYTE))
 
         switch (event.dwOfs)
         {
@@ -190,65 +193,53 @@ bool win32_joy_ctx::joy::poll(fn const& f)
         case POV_HAT_OFFSET(2): i = 2; is_pov = true; break;
         case POV_HAT_OFFSET(3): i = 3; is_pov = true; break;
         default:
-            if (event.dwOfs >= BUTTON_OFFSET(0) && event.dwOfs <= BUTTON_OFFSET(127))
+            if (event.dwOfs >= BUTTON_OFFSET(0) && event.dwOfs <= BUTTON_OFFSET(max_buttons - 1))
             {
-                unsigned tmp = event.dwOfs;
-                tmp -= BUTTON_OFFSET(0);
-                tmp /= BUTTON_OFFSET(1) - BUTTON_OFFSET(0);
-                tmp &= 127;
-                i = tmp;
+                i = event.dwOfs - BUTTON_OFFSET(0);
+                i /= sizeof(DIJOYSTATE2().rgbButtons[0]);
+                i %= max_buttons; // defensive programming
             }
             break;
         }
 
         if (is_pov)
         {
-            //qDebug() << "DBG: pov" << i << event.dwData;
+            unsigned pos = event.dwData / value_per_pov_hat_direction;
 
-            unsigned char pos;
-            unsigned pos_ = event.dwData;
-            if ((pos_ & 0xffff) == 0xffff)
-                pos = 0;
-            else if (pos_ == ~0u)
-                pos = 0;
-            else
+            i = max_buttons + i * pov_hat_directions;
+
+            for (unsigned j = 0; j < pov_hat_directions; j++)
             {
-                using uc = unsigned char;
-                pos = uc(((pos_ / 9000u) % 4u) + 1u);
-            }
-
-            const bool state[] =
-            {
-                pos == 1,
-                pos == 2,
-                pos == 3,
-                pos == 4
-            };
-
-            i = 128u + i * 4u;
-
-            for (unsigned j = 0; j < 4; j++)
-            {
-                //pressed[i] = state[j];
-                f(guid, i + j, state[j]);
+                const unsigned idx = i + j;
+                const bool new_value = pos == j;
+                if (last_state[idx] != new_value)
+                {
+#ifdef WIN32_JOY_DEBUG
+                    qDebug() << "DBG: pov" << idx << (pos == j);
+#endif
+                    last_state[idx] = new_value;
+                    f(guid, idx, new_value);
+                }
             }
         }
-        else if (i != -1)
+        else if (i >= 0 && i < max_buttons)
         {
-            const bool state = !!(event.dwData & 0x80);
-            //qDebug() << "DBG: btn" << i << state;
-            //pressed[i] = state;
-            f(guid, i, state);
+            const bool new_value = !!(event.dwData & 0x80);
+            if (last_state[i] != new_value)
+            {
+#ifdef WIN32_JOY_DEBUG
+                qDebug() << "DBG: btn" << i << new_value;
+#endif
+                last_state[i] = new_value;
+                f(guid, i, new_value);
+            }
         }
-
     }
 
     return true;
 }
 
-win32_joy_ctx::enum_state::enum_state()
-{
-}
+win32_joy_ctx::enum_state::enum_state() = default;
 
 win32_joy_ctx::enum_state::~enum_state()
 {
@@ -274,7 +265,7 @@ void win32_joy_ctx::enum_state::refresh()
                                    this,
                                    DIEDFL_ATTACHEDONLY)))
     {
-        qDebug() << "failed enum joysticks" << hr;
+        eval_once(qDebug() << "failed enum joysticks" << hr);
         return;
     }
 
@@ -317,7 +308,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
             goto end;
         }
 
-        // not a static member - need main() to run for some time first
+        // not a library-load-time member - need main() to run for some time first
         static const QWidget fake_window;
 
         if (FAILED(h->SetCooperativeLevel(reinterpret_cast<HWND>(fake_window.winId()), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND)))
@@ -328,12 +319,12 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
         }
 
         {
-            DIPROPDWORD dipdw;
-            dipdw.dwData = 128;
+            DIPROPDWORD dipdw = {};
             dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
+            dipdw.diph.dwSize = sizeof(dipdw);
             dipdw.diph.dwHow = DIPH_DEVICE;
             dipdw.diph.dwObj = 0;
-            dipdw.diph.dwSize = sizeof(dipdw);
+            dipdw.dwData = num_buffers;
 
             if (h->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph) != DI_OK)
             {
@@ -391,5 +382,7 @@ win32_joy_ctx::joy::~joy()
     //qDebug() << "nix joy" << guid;
     release();
 }
+
+} // ns win32_joy_impl
 
 #endif
