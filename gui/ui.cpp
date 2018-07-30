@@ -13,8 +13,11 @@
 #include "opentrack-compat/options.hpp"
 #include "new_file_dialog.h"
 #include "wizard.h"
+#include "opentrack-compat/sleep.hpp"
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QProcess>
+#include <QDebug>
 
 #ifndef _WIN32
 #   include <unistd.h>
@@ -301,6 +304,15 @@ void MainWindow::startTracker() {
 
     // tracker dtor needs run first
     work = nullptr;
+
+    {
+        int status = QProcess::execute("taskkill -f -im cl-eyetest.exe");
+        if (!status)
+        {
+            qDebug() << "trackhat: killed cl-eye test";
+            portable::sleep(1000);
+        }
+    }
 
     libs = SelectedLibraries(ui.video_frame, std::make_shared<Tracker_PT>(), current_protocol(), std::make_shared<FTNoIR_Filter>());
 
