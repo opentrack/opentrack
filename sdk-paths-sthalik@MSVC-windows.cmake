@@ -18,6 +18,7 @@ function(setq name value)
 endfunction()
 
 set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
+set(opentrack_maintainer-mode TRUE CACHE INTERNAL "" FORCE)
 
 setq(Qt5_DIR "../qt-5.10.0/lib/cmake/Qt5")
 setq(OpenCV_DIR "opencv/build")

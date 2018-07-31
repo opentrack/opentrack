@@ -149,3 +149,5 @@ endif()
 if(UNIX AND NOT APPLE)
     include(opentrack-pkg-config)
 endif()
+
+set(opentrack_maintainer-mode FALSE CACHE BOOL "Select if developing core code (not modules)")
