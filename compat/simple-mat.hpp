@@ -76,7 +76,7 @@ public:
     template<int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
     constexpr inline operator()(unsigned i) & { return data[0][i]; }
 
-#define OPENTRACK_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_, "")
+#define OPENTRACK_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_)
 
     // const variants
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num>
@@ -111,7 +111,7 @@ public:
     std::enable_if_t<is_vector<P, Q>::value, num>
     norm() const
     {
-        static_assert(P == h_ && Q == w_, "");
+        static_assert(P == h_ && Q == w_);
 
         const num val = dot(*this);
 
@@ -125,7 +125,7 @@ public:
     std::enable_if_t<is_vector_pair<R, S, P, Q>::value, num>
     constexpr dot(const Mat<num, R, S>& p2) const
     {
-        static_assert(P == h_ && Q == w_, "");
+        static_assert(P == h_ && Q == w_);
 
         num ret = 0;
         constexpr int len = vector_len<R, S>::value;
@@ -138,7 +138,7 @@ public:
     std::enable_if_t<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>
     constexpr cross(const Mat<num, R, S>& b) const
     {
-        static_assert(P == h_ && Q == w_, "");
+        static_assert(P == h_ && Q == w_);
         auto& a = *this;
 
         return Mat<num, R, S>(a.y()*b.z() - a.z()*b.y(),
@@ -222,7 +222,7 @@ public:
              typename = std::enable_if_t<is_arglist_correct<num, h__, w__, ts...>::value>>
     constexpr Mat(const ts... xs) : data{static_cast<num>(xs)...}
     {
-        static_assert(h__ == h_ && w__ == w_, "");
+        static_assert(h__ == h_ && w__ == w_);
     }
 
 #ifdef __GNUG__
@@ -252,7 +252,7 @@ public:
     template<int h__ = h_>
     static std::enable_if_t<h_ == w_, Mat<num, h__, h__>> eye()
     {
-        static_assert(h_ == h__, "");
+        static_assert(h_ == h__);
 
         Mat<num, h_, h_> ret;
         for (int j = 0; j < h_; j++)
