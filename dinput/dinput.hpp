@@ -38,7 +38,7 @@ public:
     diptr operator->() const { return handle; }
     operator bool() { return handle; }
 
-    // for debugging bad usages
+    // for debugging bad usages. must use a dependent name.
     template<typename t = void>
     explicit operator void*() const
     {
