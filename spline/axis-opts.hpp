@@ -58,4 +58,4 @@ private:
 
 } // ns axis_opts_impl
 
-using axis_opts_impl::axis_opts;
+using axis_opts = axis_opts_impl::axis_opts;
