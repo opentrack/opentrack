@@ -13,9 +13,9 @@ static inline constexpr auto time_cast(u&& in)
     return std::chrono::duration_cast<t>(in);
 }
 
-using secs = duration<double>;
-using ms = duration<double, std::milli>;
-using us = duration<double, std::micro>;
-using ns = duration<double, std::nano>;
+using secs = duration<float>;
+using ms = duration<float, std::milli>;
+using us = duration<float, std::micro>;
+using ns = duration<float, std::nano>;
 
 } // ns time_units
