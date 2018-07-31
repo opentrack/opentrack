@@ -3,7 +3,7 @@
 # mkdir build && cmake -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../cmake/msvc.cmake build/
 
 SET(CMAKE_SYSTEM_NAME Windows)
-SET(CMAKE_SYSTEM_VERSION 6.0)
+SET(CMAKE_SYSTEM_VERSION 4.0)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -18,11 +18,12 @@ set(cc "${cc} -FS -arch:SSE2 -D_HAS_EXCEPTIONS=0")
 #set(cc "${cc} -Qvec-report:1")
 
 set(warns_ "")
-set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 4702)
+set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 4702 4457)
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
-
+    #C4457: declaration of 'id' hides function parameter
+    #C4456: declaration of 'i' hides previous local declaration
     #C4263 - member function does not override any base class virtual member function
     #C4264 - no override available for virtual member function from base class, function is hidden
     #C4265 - class has virtual functions, but destructor is not virtual
