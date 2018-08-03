@@ -2,38 +2,53 @@
 #include "math-imports.hpp"
 #include <cmath>
 
-// rotation order is XYZ
-
 namespace euler {
 
 euler_t OTR_COMPAT_EXPORT rmat_to_euler(const rmat& R)
 {
-    double alpha, beta, gamma;
-
-    beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-    alpha = atan2( R(1,0), R(0,0));
-    gamma = atan2( R(2,1), R(2,2));
-
-    return { alpha, beta, gamma };
+    const double cy = sqrt(R(2,2)*R(2, 2) + R(2, 1)*R(2, 1));
+    const bool large_enough = cy > 1e-10;
+    if (large_enough)
+       return {
+           atan2(-R(1, 0), R(0, 0)),
+           atan2(R(2, 0), cy),
+           atan2(-R(2, 1), R(2, 2))
+       };
+    else
+        return {
+           atan2(R(0, 1), R(1, 1)),
+           atan2(R(2, 0), cy),
+           0
+        };
 }
 
-rmat OTR_COMPAT_EXPORT euler_to_rmat(const euler_t& e)
+// tait-bryan angles, not euler
+rmat OTR_COMPAT_EXPORT euler_to_rmat(const euler_t& input)
 {
-    const double X = -e(2);
-    const double Y = -e(1);
-    const double Z = -e(0);
+    const double H = -input(0);
+    const double P = -input(1);
+    const double B = -input(2);
 
-    const double cx = cos(X);
-    const double sx = sin(X);
-    const double cy = cos(Y);
-    const double sy = sin(Y);
-    const double cz = cos(Z);
-    const double sz = sin(Z);
+    const auto c1 = cos(H);
+    const auto s1 = sin(H);
+    const auto c2 = cos(P);
+    const auto s2 = sin(P);
+    const auto c3 = cos(B);
+    const auto s3 = sin(B);
 
     return {
-        cy*cz,              -cy*sz,             sy,
-        cz*sx*sy + cx*sz,   cx*cz - sx*sy*sz,   -cy*sx,
-        -cx*cz*sy + sx*sz,  cz*sx + cx*sy*sz,   cx*cy,
+        // z
+        c1*c2,
+        c1*s2*s3 - c3*s1,
+        s1*s3 + c1*c3*s2,
+        // y
+        c2*s1,
+        c1*c3 + s1*s2*s3,
+        c3*s1*s2 - c1*s3,
+        // x
+        -s2,
+        c2*s3,
+        c2*c3
     };
 }
 
