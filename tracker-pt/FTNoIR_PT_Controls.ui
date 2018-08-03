@@ -412,6 +412,11 @@
             </item>
             <item>
              <property name="text">
+              <string>Green only</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>Blue only</string>
              </property>
             </item>
@@ -1406,6 +1411,14 @@ Don't roll or change position.</string>
  </tabstops>
  <resources>
   <include location="module/tracker_pt.qrc"/>
+  <include location="module/tracker_pt.qrc"/>
+  <include location="module/tracker_pt.qrc"/>
+  <include location="module/tracker_pt.qrc"/>
+  <include location="module/tracker_pt.qrc"/>
+  <include location="tracker_pt_base.qrc"/>
+  <include location="tracker_pt_base.qrc"/>
+  <include location="tracker_pt_base.qrc"/>
+  <include location="tracker_pt_base.qrc"/>
   <include location="tracker_pt_base.qrc"/>
  </resources>
  <connections/>

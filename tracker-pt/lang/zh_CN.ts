@@ -275,6 +275,10 @@
 Don&apos;t roll or change position.</source>
         <translation>用pitch和yaw校准。不要roll或者变换位置</translation>
     </message>
+    <message>
+        <source>Green only</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_module::Tracker_PT</name>

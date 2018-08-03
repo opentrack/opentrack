@@ -275,6 +275,10 @@ Don&apos;t roll or change position.</source>
         <source>Camera Info:</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Green only</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_module::Tracker_PT</name>
