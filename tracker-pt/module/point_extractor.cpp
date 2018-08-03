@@ -32,6 +32,8 @@
 using namespace types;
 using namespace pt_module;
 
+// meanshift code written by Michael Welter
+
 /*
 http://en.wikipedia.org/wiki/Mean-shift
 In this application the idea, is to eliminate any bias of the point estimate 
