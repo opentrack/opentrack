@@ -80,7 +80,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
     if (state != reltrans_disabled)
     {
         {
-            bool tcomp_in_zone_ = progn(
+            bool in_zone_ = progn(
                 if (state == reltrans_non_center)
                 {
                     const bool looking_down = value(Pitch) < 20;
@@ -90,7 +90,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
                     return true;
             );
 
-            if (!cur && in_zone != tcomp_in_zone_)
+            if (!cur && in_zone != in_zone_)
             {
                 //qDebug() << "reltrans-interp: START" << tcomp_in_zone_;
                 cur = true;
@@ -99,15 +99,16 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
                 RC_phase = 0;
             }
 
-            in_zone = tcomp_in_zone_;
+            in_zone = in_zone_;
         }
 
         // only when looking behind or downward
         if (in_zone)
         {
-            const rmat R = euler_to_rmat(euler_t(value(Yaw)   * d2r * !disable(Yaw),
-                                                 value(Pitch) * d2r * !disable(Pitch),
-                                                 value(Roll)  * d2r * !disable(Roll)));
+            const rmat R = euler_to_rmat(
+                               euler_t(value(Yaw)   * d2r * !disable(Yaw),
+                                       value(Pitch) * d2r * !disable(Pitch),
+                                       value(Roll)  * d2r * !disable(Roll)));
 
             rel = rotate(R, rel, &disable[TX]);
 
@@ -213,8 +214,8 @@ pipeline::~pipeline()
 double pipeline::map(double pos, Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
-    axis.spline_main.set_tracking_active( !altp );
-    axis.spline_alt.set_tracking_active( altp );
+    axis.spline_main.set_tracking_active(!altp);
+    axis.spline_alt.set_tracking_active(altp);
     auto& fc = altp ? axis.spline_alt : axis.spline_main;
     return double(fc.get_value(pos));
 }
@@ -234,15 +235,17 @@ static bool is_nan(const dmat<u,w>& r)
 }
 
 template<typename x>
-static cc_forceinline bool nan_check_(const x& datum)
+static cc_forceinline
+bool nan_check_(const x& datum)
 {
     return is_nan(datum);
 }
 
 template<typename x, typename y, typename... xs>
-static cc_forceinline bool nan_check_(const x& datum, const y& next, const xs&... rest)
+static cc_forceinline
+bool nan_check_(const x& datum, const y& next, const xs&... rest)
 {
-    return is_nan(datum) ? true : nan_check_(next, rest...);
+    return nan_check_(datum) || nan_check_(next, rest...);
 }
 
 static cc_noinline
@@ -302,9 +305,6 @@ bool pipeline::maybe_enable_center_on_tracking_started()
 
 void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 {
-    euler_t tmp = d2r * euler_t(&value[Yaw]);
-    state.rotation = euler_to_rmat(tmp);
-
     if (get(f_center | f_held_center))
     {
         if (libs.pFilter)
@@ -312,15 +312,37 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 
         if (own_center_logic)
         {
+#if 0
             state.inv_rot_center = rmat::eye();
-            state.t_center = euler_t();
+            state.t_center = {};
+#endif
+
+            scaled_state.inv_rot_center = rmat::eye();
+            scaled_state.t_center = {};
         }
         else
         {
-            state.inv_rot_center = state.rotation.t();
-            state.t_center = euler_t((const double*)(value));
+#if 0
+            state.inv_rot_center = state.inv_rot_center;
+            state.t_center = (const double*)(value);
+#endif
+
+            scaled_state.inv_rot_center = scaled_state.rotation.t();
+            scaled_state.t_center = (const double*)(value);
         }
     }
+}
+
+void pipeline::store_tracker_pose(const Pose& value)
+{
+#if 0
+    euler_t tmp(d2r * euler_t(&value[Yaw]));
+    state.rotation = euler_to_rmat(tmp);
+#endif
+    // alas, this is poor man's gimbal lock "prevention"
+    // this is some kind of "canonical" representation,
+    // if we can even talk of one
+    scaled_state.rotation = euler_to_rmat(scale_inv_c * d2r * euler_t(&value[Yaw]));
 }
 
 Pose pipeline::clamp_value(Pose value) const
@@ -328,17 +350,12 @@ Pose pipeline::clamp_value(Pose value) const
     // hatire, udp, and freepie trackers can mess up here
     for (unsigned i = 3; i < 6; i++)
     {
-        using std::fmod;
-        using std::copysign;
-        using std::fabs;
-
-        value(i) = fmod(value(i), 360);
+        value(i) = std::fmod(value(i), 360);
 
         const double x = value(i);
-        if (fabs(x) - 1e-2 > 180)
-            value(i) = fmod(x + copysign(180, x), 360) - copysign(180, x);
-        else
-            value(i) = clamp(x, -180, 180);
+        if (std::fabs(x) - 1e-2 > 180)
+            value(i) = std::fmod(x + std::copysign(180, x), 360) - std::copysign(180, x);
+        value(i) = clamp(x, -180, 180);
     }
 
     return value;
@@ -346,10 +363,12 @@ Pose pipeline::clamp_value(Pose value) const
 
 Pose pipeline::apply_center(Pose value) const
 {
-    euler_t T = euler_t(value) - state.t_center;
-    euler_t R = r2d * rmat_to_euler(state.rotation * state.inv_rot_center);
+    euler_t T = euler_t(value) - scaled_state.t_center;
+    euler_t R = scale_c * r2d * rmat_to_euler(scaled_state.rotation * scaled_state.inv_rot_center);
 
-    T = rel.rotate(state.inv_rot_center, T, vec3_bool());
+    // XXX check these lines, it's been here forever
+    T = rel.rotate(scaled_state.inv_rot_center, T, {});
+    T = T * scale_c;
 
     for (int i = 0; i < 3; i++)
     {
@@ -372,7 +391,7 @@ Pose pipeline::apply_center(Pose value) const
 }
 
 std::tuple<Pose, Pose, vec6_bool>
-pipeline::get_selected_axis_value(const Pose& newpose) const
+pipeline::get_selected_axis_values(const Pose& newpose) const
 {
     Pose value;
     vec6_bool disabled;
@@ -456,7 +475,7 @@ void pipeline::logic()
         newpose = tmp;
     }
 
-    auto [raw, value, disabled] = get_selected_axis_value(newpose);
+    auto [raw, value, disabled] = get_selected_axis_values(newpose);
     logger.write_pose(raw); // raw
 
     nan_check(newpose, raw, value);
@@ -465,6 +484,7 @@ void pipeline::logic()
 
     {
         maybe_enable_center_on_tracking_started();
+        store_tracker_pose(value);
         maybe_set_center_pose(value, own_center_logic);
         value = apply_center(value);
         // "corrected" - after various transformations to account for camera position
@@ -473,6 +493,8 @@ void pipeline::logic()
 
     {
         ev.run_events(EV::ev_before_filter, value);
+        // we must proceed with all the filtering since the filter
+        // needs fresh values to prevent deconvergence
         Pose tmp = maybe_apply_filter(value);
         nan_check(tmp);
         if (!center_ordered)
@@ -482,7 +504,7 @@ void pipeline::logic()
 
     {
         ev.run_events(EV::ev_before_mapping, value);
-        // CAVEAT rotation only, due to tcomp
+        // CAVEAT rotation only, due to reltrans
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
     }
@@ -495,10 +517,6 @@ void pipeline::logic()
             value(i) = map(value(i), m(i));
         nan_check(value);
     }
-
-    // we must proceed with all the filtering since the filter
-    // needs fresh values to prevent deconvergence
-    // same for other stuff that needs dt, it could go stupid
 
     if (!hold_ordered)
         goto ok;
@@ -549,7 +567,7 @@ void pipeline::run()
         static const char* const datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
 
         logger.write(datachannels[0]);
-        char buffer[128];
+        char buffer[16];
         for (unsigned j = 1; j < 5; ++j)
         {
             for (unsigned i = 0; i < 6; ++i)
@@ -569,26 +587,37 @@ void pipeline::run()
     {
         logic();
 
-        constexpr ns const_sleep_ms(time_cast<ns>(ms(4)));
+        constexpr ns const_sleep_ms(ms{4});
         const ns elapsed_nsecs = t.elapsed<ns>();
         t.start();
 
         if (backlog_time > secs(3) || backlog_time < secs(-3))
         {
             qDebug() << "tracker: backlog interval overflow"
-                     << time_cast<ms>(backlog_time).count() << "ms";
-            backlog_time = ns::zero();
+                     << ms{backlog_time}.count() << "ms";
+            backlog_time = ns{};
         }
 
-        backlog_time += ns(elapsed_nsecs - const_sleep_ms);
+        backlog_time += ns{elapsed_nsecs - const_sleep_ms};
 
-        const int sleep_time_ms = time_cast<ms>(clamp(const_sleep_ms - backlog_time,
-                                                      ms::zero(), ms(10))).count();
+        const int sleep_time_ms = ms{clamp(const_sleep_ms - backlog_time,
+                                           ms{}, ms{10})}.count() + .1f;
 
 #if 0
-        qDebug() << "sleepy time" << sleep_time_ms
-                 << "elapsed" << time_cast<ms>(elapsed_nsecs).count()
-                 << "backlog" << time_cast<ms>(backlog_time).count();
+        {
+            static int cnt;
+            static Timer tt;
+            if (tt.elapsed_seconds() >= 1)
+            {
+                tt.start();
+                qDebug() << cnt << "Hz"
+                         << "sleepy time" << sleep_time_ms
+                         << "elapsed" << ms{elapsed_nsecs}.count()
+                         << "backlog" << ms{backlog_time}.count();
+                cnt = 0;
+            }
+            cnt++;
+        }
 #endif
 
         portable::sleep(sleep_time_ms);

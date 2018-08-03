@@ -31,6 +31,16 @@ using euler_t = euler::euler_t;
 using vec6_bool = Mat<bool, 6, 1>;
 using vec3_bool = Mat<bool, 6, 1>;
 
+static constexpr inline double scale_c = 8;
+static constexpr inline double scale_inv_c = 1/scale_c;
+
+struct state_
+{
+    rmat inv_rot_center { rmat::eye() };
+    rmat rotation { rmat::eye() };
+    euler_t t_center;
+};
+
 class reltrans
 {
     euler_t interp_pos;
@@ -85,7 +95,7 @@ DEFINE_ENUM_OPERATORS(bits::flags);
 class OTR_LOGIC_EXPORT pipeline : private QThread, private bits
 {
     Q_OBJECT
-private:
+
     QMutex mtx;
     main_settings s;
     Mappings& m;
@@ -101,21 +111,12 @@ private:
     // the logger while the tracker is running.
     TrackLogger& logger;
 
-    struct state_
-    {
-        rmat inv_rot_center;
-        rmat rotation;
-        euler_t t_center;
-
-        state_() : inv_rot_center(rmat::eye())
-        {}
-    };
-
     reltrans rel;
 
-    state_ state;
+    //state_ state, scaled_state;
+    state_ scaled_state;
 
-    ns backlog_time = ns(0);
+    ns backlog_time { ns{} };
 
     bool tracking_started = false;
 
@@ -124,16 +125,17 @@ private:
     void run() override;
     bool maybe_enable_center_on_tracking_started();
     void maybe_set_center_pose(const Pose& value, bool own_center_logic);
+    void store_tracker_pose(const Pose& value);
     Pose clamp_value(Pose value) const;
     Pose apply_center(Pose value) const;
-    std::tuple<Pose, Pose, vec6_bool> get_selected_axis_value(const Pose& newpose) const;
+    std::tuple<Pose, Pose, vec6_bool> get_selected_axis_values(const Pose& newpose) const;
     Pose maybe_apply_filter(const Pose& value) const;
     Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);
     Pose apply_zero_pos(Pose value) const;
 
 public:
     pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
-    ~pipeline();
+    ~pipeline() override;
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;
     void start() { QThread::start(QThread::HighPriority); }
@@ -149,4 +151,4 @@ public:
 
 } // ns pipeline_impl
 
-using pipeline_impl::pipeline;
+using pipeline = pipeline_impl::pipeline;
