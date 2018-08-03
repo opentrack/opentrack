@@ -94,6 +94,7 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
         pt_color_average,
         pt_color_natural,
         pt_color_red_only,
+        pt_color_green_only,
         pt_color_blue_only,
     };
 

@@ -128,6 +128,11 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
 {
     switch (s.blob_color)
     {
+    case pt_color_green_only:
+    {
+        extract_single_channel(frame, 1, output);
+        break;
+    }
     case pt_color_blue_only:
     {
         extract_single_channel(frame, 0, output);
