@@ -27,7 +27,7 @@ struct OTR_OPTIONS_EXPORT opts
     bundle b;
 
     virtual ~opts();
-    opts(const QString& name);
+    explicit opts(const QString& name);
 
     opts& operator=(const opts&) = delete;
     opts(const opts&) = delete;

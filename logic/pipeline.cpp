@@ -75,7 +75,7 @@ euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) co
 Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
                               const vec6_bool& disable, bool neck_enable, int neck_z)
 {
-    euler_t rel((const double*)(value));
+    euler_t rel((const double*)value);
 
     if (state != reltrans_disabled)
     {
@@ -242,7 +242,7 @@ static cc_forceinline bool nan_check_(const x& datum)
 template<typename x, typename y, typename... xs>
 static cc_forceinline bool nan_check_(const x& datum, const y& next, const xs&... rest)
 {
-    return is_nan(datum) || nan_check_(next, rest...);
+    return is_nan(datum) ? true : nan_check_(next, rest...);
 }
 
 static cc_noinline
@@ -270,13 +270,13 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 
 // for MSVC `else' is like `unlikely' for GNU
 
-#define nan_check(...)                                                              \
-    do                                                                              \
-    {                                                                               \
-        if (likely(!maybe_nan(#__VA_ARGS__, cc_function_name, __LINE__, __VA_ARGS__)))   \
-            (void)0;                                                                \
-        else                                                                        \
-            goto error;                                                             \
+#define nan_check(...)                                                                  \
+    do                                                                                  \
+    {                                                                                   \
+        if (likely(!maybe_nan(#__VA_ARGS__, cc_function_name, __LINE__, __VA_ARGS__)))  \
+            (void)0;                                                                    \
+        else                                                                            \
+            goto error;                                                                 \
     } while (false)
 
 bool pipeline::maybe_enable_center_on_tracking_started()
