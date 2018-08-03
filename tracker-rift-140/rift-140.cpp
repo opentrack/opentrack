@@ -80,23 +80,13 @@ void rift_tracker_140::data(double *data)
             pitch *= c_mult;
             roll *= c_mult;
 
-            double yaw_ = double(yaw);
-            if (s.useYawSpring)
-            {
-                yaw_ = old_yaw*s.persistence + (yaw_-old_yaw);
-                if(yaw_ > s.deadzone)
-                    yaw_ -= s.constant_drift;
-                if(yaw_ < -s.deadzone)
-                    yaw_ += s.constant_drift;
-                old_yaw = yaw_;
-            }
             constexpr double d2r = 180 / M_PI;
-            data[Yaw] = yaw_                   * -d2r;
-            data[Pitch] = double(pitch)        *  d2r;
-            data[Roll] = double(roll)          *  d2r;
-            data[TX] = double(pose.Translation.x) * -1e2;
-            data[TY] = double(pose.Translation.y) *  1e2;
-            data[TZ] = double(pose.Translation.z) *  1e2;
+            data[Yaw] =     double(yaw)                 * -d2r;
+            data[Pitch] =   double(pitch)               *  d2r;
+            data[Roll] =    double(roll)                *  d2r;
+            data[TX] = double(pose.Translation.x)   * -1e2;
+            data[TY] = double(pose.Translation.y)   *  1e2;
+            data[TZ] = double(pose.Translation.z)   *  1e2;
         }
     }
 }

@@ -7,26 +7,6 @@
         <source>Oculus Rift tracker settings FaceTrackNoIR</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Yaw spring</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Persistence</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Constant drift</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Deadzone</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>rift_140Dll</name>

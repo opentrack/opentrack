@@ -9,14 +9,7 @@
 using namespace options;
 
 struct settings : opts {
-    value<bool> useYawSpring;
-    value<double> constant_drift, persistence, deadzone;
-    settings() :
-        opts("Rift-140"),
-        useYawSpring(b, "yaw-spring", false),
-        constant_drift(b, "constant-drift", 0.000005),
-        persistence(b, "persistence", 0.99999),
-        deadzone(b, "deadzone", 0.02)
+    settings() : opts("Rift-140")
     {}
 };
 
@@ -28,7 +21,6 @@ public:
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 private:
-    double old_yaw = 0;
     ovrSession hmd = nullptr;
     ovrGraphicsLuid luid {};
     settings s;
@@ -40,8 +32,8 @@ class dialog_rift_140: public ITrackerDialog
 public:
     dialog_rift_140();
 
-    void register_tracker(ITracker *) {}
-    void unregister_tracker() {}
+    void register_tracker(ITracker*) override {}
+    void unregister_tracker() override {}
 
 private:
     Ui::dialog_rift_140 ui;
@@ -55,7 +47,7 @@ class rift_140Dll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Oculus Rift runtime 1.4.0 -- HMD"); }
-    QIcon icon() { return QIcon(":/images/rift_tiny.png"); }
+    QString name() override { return tr("Oculus Rift runtime 1.4.0 -- HMD"); }
+    QIcon icon() override { return QIcon(":/images/rift_tiny.png"); }
 };
 
