@@ -20,6 +20,8 @@ public:
     ~rift_tracker_140() override;
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
+    bool center() override;
+
 private:
     ovrSession hmd = nullptr;
     ovrGraphicsLuid luid {};

@@ -37,7 +37,10 @@ module_status rift_tracker_140::start_tracker(QFrame*)
     if (OVR_FAILURE(ovr_Initialize(nullptr)))
         goto error;
 
-    if(OVR_FAILURE(ovr_Create(&hmd, &luid)))
+    if (OVR_FAILURE(ovr_Create(&hmd, &luid)))
+        goto error;
+
+    if (OVR_FAILURE(ovr_SetTrackingOriginType(hmd, ovrTrackingOrigin_EyeLevel)))
         goto error;
 
     return status_ok();
@@ -89,6 +92,12 @@ void rift_tracker_140::data(double *data)
             data[TZ] = double(pose.Translation.z)   *  1e2;
         }
     }
+}
+
+bool rift_tracker_140::center()
+{
+    (void)ovr_RecenterTrackingOrigin(hmd);
+    return false;
 }
 
 OPENTRACK_DECLARE_TRACKER(rift_tracker_140, dialog_rift_140, rift_140Dll)
