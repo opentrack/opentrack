@@ -39,7 +39,7 @@ class Tracker_PT : public QThread, public ITracker
 public:
     template<typename t> using pointer = pt_pointer<t>;
 
-    Tracker_PT(pointer<pt_runtime_traits> const& pt_runtime_traits);
+    explicit Tracker_PT(pointer<pt_runtime_traits> const& pt_runtime_traits);
     ~Tracker_PT() override;
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
@@ -76,6 +76,7 @@ private:
 
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success { false };
+    std::atomic_flag center_flag = ATOMIC_FLAG_INIT;
 
     static constexpr inline f rad2deg = f(180/M_PI);
     //static constexpr float deg2rad = float(M_PI/180);
@@ -83,4 +84,4 @@ private:
 
 } // ns pt_impl
 
-using pt_module::Tracker_PT;
+using Tracker_PT = pt_module::Tracker_PT;

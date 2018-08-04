@@ -20,7 +20,7 @@
 #include <QFile>
 #include <QCoreApplication>
 
-using namespace types;
+namespace pt_module {
 
 Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
@@ -69,6 +69,9 @@ void Tracker_PT::run()
 
         if (new_frame)
         {
+            while (center_flag.test_and_set())
+                (void)0;
+
             *preview_frame = *frame;
 
             point_extractor->extract_points(*frame, *preview_frame, points);
@@ -113,6 +116,8 @@ void Tracker_PT::run()
                     preview_frame = traits->make_preview(w, h);
                 }
             }
+
+            center_flag.clear();
         }
     }
     qDebug() << "pt: thread stopped";
@@ -192,7 +197,13 @@ void Tracker_PT::data(double *data)
 
 bool Tracker_PT::center()
 {
+    while (center_flag.test_and_set())
+        (void)0;
+
     point_tracker.reset_state();
+
+    center_flag.clear();
+
     return false;
 }
 
@@ -217,4 +228,4 @@ bool Tracker_PT::get_cam_info(pt_camera_info* info)
     return ret;
 }
 
-
+} // ns pt_module
