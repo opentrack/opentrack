@@ -18,16 +18,15 @@
 // Comparison of Several Algorithms for Computing Sample Means and Variances.
 // Journal of the American Statistical Association, Vol. 69, No. 348, 859-866.
 
-class variance
+class variance final
 {
     double m_old, m_new, s_old, s_new;
-    std::uintptr_t cnt;
+    std::uintptr_t cnt = 0;
 
 public:
     using size_type = std::uintptr_t;
 
-    variance() : cnt(0) {}
-
+    variance& operator=(variance const&) = default;
     void clear() { *this = variance(); }
 
     size_type count() { return cnt; }
