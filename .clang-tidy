@@ -4,7 +4,7 @@ Checks:
     cppcoreguidelines-*,performance-*,bugprone-*,
     readability-*,misc-*,hicpp-*,cert-*,modernize-*,
     -clang-diagnostic-nonportable-include-path,
-    -clang-analyzer-deadcode-DeadStores,
+    -clang-analyzer-deadcode.DeadStores,
     -clang-analyze-core.CallAndMessage,
     -cppcoreguidelines-special-member-functions,-hicpp-special-member-functions,
     -hicpp-braces-around-statements,-readability-braces-around-statements,
@@ -40,6 +40,7 @@ Checks:
     -hicpp-use-equals-delete,
     -readability-static-accessed-through-instance,
     -cert-flp30-c,
+    -modernize-redundant-void-arg
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
