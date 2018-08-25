@@ -65,7 +65,7 @@ void tie_setting(value<t>& v, QComboBox* cb, From&& fn_to_index, To&& fn_to_valu
         });
     }, v.DIRECT_CONNTYPE);
     value_::connect(&v, value_::value_changed<t>(),
-                    cb, [&v, cb, fn_to_index](cv_qualified<t>& v) {
+                    cb, [cb, fn_to_index](cv_qualified<t>& v) {
         run_in_thread_sync(cb, [&] {
             cb->setCurrentIndex(fn_to_index(v));
         });
@@ -75,7 +75,7 @@ void tie_setting(value<t>& v, QComboBox* cb, From&& fn_to_index, To&& fn_to_valu
 template<typename t, typename F>
 void tie_setting(value<t>& v, QLabel* lb, F&& fun)
 {
-    auto closure = [=](cv_qualified<t> x) { lb->setText(fun(x)); };
+    auto closure = [lb, fun](cv_qualified<t> v) { lb->setText(fun(v)); };
 
     closure(v());
     value_::connect(&v, value_::value_changed<t>(),
