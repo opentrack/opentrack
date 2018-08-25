@@ -53,6 +53,9 @@ private:
     bool old_keystate[256] {};
 
     void run() override;
+    bool run_keyboard_nolock();
+    bool run_joystick_nolock();
+
     bool init();
     KeybindingWorker();
 

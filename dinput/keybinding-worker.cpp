@@ -114,88 +114,100 @@ void KeybindingWorker::run()
 
             if (!receivers.empty())
             {
-                /* There are some problems reported on various forums
-                 * with regard to key-up events. But that's what I dug up:
-                 *
-                 * https://www.gamedev.net/forums/topic/633011-keyboard-getdevicedata-buffered-never-releases-keys/
-                 *
-                 * "Over in the xna forums (http://xboxforums.create.msdn.com/forums/p/108722/642144.aspx#642144)
-                 *  we discovered this behavior is caused by calling Unacquire in your event processing loop.
-                 *  Funnily enough only the keyboard seems to be affected."
-                 *
-                 * Key-up events work on my end.
-                 */
+                bool ok = true;
 
-                {
-                    DWORD sz = num_keyboard_states;
-                    const HRESULT hr = dinkeyboard->GetDeviceData(sizeof(*keyboard_states), keyboard_states, &sz, 0);
+                ok &= run_keyboard_nolock();
+                ok &= run_joystick_nolock();
 
-                    if (hr != DI_OK)
-                    {
-                        qDebug() << "Tracker::run GetDeviceData function failed!" << hr;
-                        Sleep(25);
-                        continue;
-                    }
-                    else
-                    {
-                        for (unsigned k = 0; k < sz; k++)
-                        {
-                            const unsigned idx = keyboard_states[k].dwOfs & 0xff; // defensive programming
-                            const bool held = !!(keyboard_states[k].dwData & 0x80);
-
-                            switch (idx)
-                            {
-                            case DIK_LCONTROL:
-                            case DIK_LSHIFT:
-                            case DIK_LALT:
-                            case DIK_RCONTROL:
-                            case DIK_RSHIFT:
-                            case DIK_RALT:
-                            case DIK_LWIN:
-                            case DIK_RWIN:
-                                break;
-                            default:
-                            {
-                                Key k;
-                                k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
-                                k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
-                                k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
-                                k.keycode = idx;
-                                k.held = held;
-
-                                for (auto& r : receivers)
-                                    (*r)(k);
-                                break;
-                            }
-                            }
-                            keystate[idx] = held;
-                        }
-                    }
-                }
-
-                {
-                    using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
-
-                    joy_fn f = [&](const QString& guid, int idx, bool held) {
-                        Key k;
-                        k.keycode = idx;
-                        k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
-                        k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
-                        k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
-                        k.guid = guid;
-                        k.held = held;
-
-                        for (auto& r : receivers)
-                            (*r)(k);
-                    };
-
-                    joy_ctx.poll(f);
-                }
+                if (!ok)
+                    Sleep(500);
             }
         }
 
         Sleep(25);
     }
+}
+
+bool KeybindingWorker::run_keyboard_nolock()
+{
+    /* There are some problems reported on various forums
+     * with regard to key-up events. But that's what I dug up:
+     *
+     * https://www.gamedev.net/forums/topic/633011-keyboard-getdevicedata-buffered-never-releases-keys/
+     *
+     * "Over in the xna forums (http://xboxforums.create.msdn.com/forums/p/108722/642144.aspx#642144)
+     *  we discovered this behavior is caused by calling Unacquire in your event processing loop.
+     *  Funnily enough only the keyboard seems to be affected."
+     *
+     * Key-up events work on my end.
+     */
+
+    DWORD sz = num_keyboard_states;
+    const HRESULT hr = dinkeyboard->GetDeviceData(sizeof(*keyboard_states), keyboard_states, &sz, 0);
+
+    if (hr != DI_OK)
+    {
+        eval_once(qDebug() << "dinput: keyboard GetDeviceData failed" << hr);
+        return false;
+    }
+
+    for (unsigned k = 0; k < sz; k++)
+    {
+        const unsigned idx = keyboard_states[k].dwOfs & 0xff; // defensive programming
+        const bool held = !!(keyboard_states[k].dwData & 0x80);
+
+        switch (idx)
+        {
+        case DIK_LCONTROL:
+        case DIK_LSHIFT:
+        case DIK_LALT:
+        case DIK_RCONTROL:
+        case DIK_RSHIFT:
+        case DIK_RALT:
+        case DIK_LWIN:
+        case DIK_RWIN:
+            break;
+        default:
+        {
+            Key k;
+            k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
+            k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
+            k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
+            k.keycode = idx;
+            k.held = held;
+
+            for (auto& r : receivers)
+                (*r)(k);
+        }
+            break;
+        }
+
+        keystate[idx] = held;
+    }
+
+    return true;
+}
+
+bool KeybindingWorker::run_joystick_nolock()
+{
+    using joy_fn = std::function<void(const QString& guid, int idx, bool held)>;
+
+    joy_fn f = [&](const QString& guid, int idx, bool held) {
+        Key k;
+        k.keycode = idx;
+        k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
+        k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
+        k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
+        k.guid = guid;
+        k.held = held;
+
+        for (auto& r : receivers)
+            (*r)(k);
+    };
+
+    joy_ctx.poll(f);
+
+    return true;
 }
 
 KeybindingWorker::fun* KeybindingWorker::_add_receiver(fun& receiver)
