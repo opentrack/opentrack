@@ -29,9 +29,9 @@
 #endif
 
 #if defined _MSC_VER
-#   define cc_function_name (__FUNCSIG__)
+#   define cc_function_name __FUNCSIG__
 #else
-#   define cc_function_name (__PRETTY_FUNCTION__)
+#   define cc_function_name __PRETTY_FUNCTION__
 #endif
 
 #if !defined PP_CAT
