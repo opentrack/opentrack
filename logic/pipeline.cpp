@@ -591,11 +591,11 @@ void pipeline::run()
         const ns elapsed_nsecs = t.elapsed<ns>();
         t.start();
 
-        if (backlog_time > secs(3) || backlog_time < secs(-3))
+        if (std::chrono::abs(backlog_time) > secs(3))
         {
             qDebug() << "tracker: backlog interval overflow"
                      << ms{backlog_time}.count() << "ms";
-            backlog_time = ns{};
+            backlog_time = {};
         }
 
         backlog_time += ns{elapsed_nsecs - const_sleep_ms};

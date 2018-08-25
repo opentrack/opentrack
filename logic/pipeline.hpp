@@ -116,7 +116,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread, private bits
     //state_ state, scaled_state;
     state_ scaled_state;
 
-    ms backlog_time {};
+    ns backlog_time {};
 
     bool tracking_started = false;
 
