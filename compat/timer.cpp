@@ -85,8 +85,8 @@ static void otr_clock_gettime(timespec* ts)
     using t_s = decltype(ts->tv_sec);
     using t_ns = decltype(ts->tv_nsec);
 
-    ts->tv_sec = t_s(part / 1000000000);
-    ts->tv_nsec = t_ns(part % 1000000000);
+    ts->tv_sec = t_s(part / 1000000000LL);
+    ts->tv_nsec = t_ns(part % 1000000000LL);
 }
 
 #elif defined __MACH__
@@ -106,8 +106,8 @@ static void otr_clock_gettime(timespec* ts)
     uint64_t state, nsec;
     state = mach_absolute_time();
     nsec = state * timebase_info.numer / timebase_info.denom;
-    ts->tv_sec = nsec / 1000000000L;
-    ts->tv_nsec = nsec % 1000000000L;
+    ts->tv_sec = nsec / 1000000000UL;
+    ts->tv_nsec = nsec % 1000000000UL;
 }
 
 #endif
