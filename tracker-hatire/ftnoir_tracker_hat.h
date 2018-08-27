@@ -33,7 +33,7 @@ public:
 
     hatire_thread t;
 private:
-    TArduinoData ArduinoData, HAT;
+    TArduinoData ArduinoData {}, HAT {};
     QByteArray Begin;
     QByteArray End;
 

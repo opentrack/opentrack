@@ -15,17 +15,11 @@
 
 hatire::hatire()
 {
-        HAT.Rot[0]=0;
-        HAT.Rot[1]=0;
-        HAT.Rot[2]=0;
-        HAT.Trans[0]=0;
-        HAT.Trans[1]=0;
-        HAT.Trans[2]=0;
 
-        Begin.append((unsigned char) 0xAA);
-        Begin.append((unsigned char) 0xAA);
-        End.append((unsigned char) 0x55);
-        End.append((unsigned char) 0x55);
+    Begin.append((unsigned char) 0xAA);
+    Begin.append((unsigned char) 0xAA);
+    End.append((unsigned char) 0x55);
+    End.append((unsigned char) 0x55);
 }
 
 hatire::~hatire() = default;
@@ -146,11 +140,8 @@ void hatire::data(double *data)
         { s.EnableRoll, s.InvertRoll, HAT.Rot[s.RollAxis], data[Roll] },
     };
 
-    for (unsigned i = 0; i < std::size(spec); i++)
-    {
-        auto& k = spec[i];
+    for (auto& k : spec)
         k.place = (k.sign ? -1 : 1) * (k.enable ? k.input : 0);
-    }
 }
 
 #include "ftnoir_tracker_hat_dialog.h"
