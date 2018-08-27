@@ -62,7 +62,7 @@ void freetrack::pose(const double* headpose)
     const float tz = float(headpose[TZ] * 10);
 
     // HACK: Falcon BMS makes a "bump" if pitch is over the value -sh 20170615
-    const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < 1e-4;
+    const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < .15;
     const float pitch = -d2r * (is_crossing_90 ? 89.86 : headpose[Pitch]);
 
     FTHeap* const ft = pMemData;
