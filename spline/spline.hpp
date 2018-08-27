@@ -42,9 +42,9 @@ class OTR_SPLINE_EXPORT settings final : public base_settings
 {
 public:
     bundle b;
-    value<QList<QPointF>> points;
+    value<QList<QPointF>> points { b, "points", {} };
     axis_opts opts;
-    settings(bundle b, const QString& axis_name, Axis idx);
+    settings(bundle const& b, const QString& axis_name, Axis idx);
     ~settings() override;
 };
 
@@ -132,7 +132,7 @@ public:
 
     spline();
     spline(const QString& name, const QString& axis_name, Axis axis);
-    ~spline();
+    ~spline() override;
 
     spline& operator=(const spline&) = default;
     spline(const spline&) = default;
@@ -161,9 +161,9 @@ public:
     using settings = spline_detail::settings;
 };
 
-inline base_spline_::~base_spline_() {}
-inline spline_modify_mixin::~spline_modify_mixin() {}
-inline spline_settings_mixin::~spline_settings_mixin() {}
+inline base_spline_::~base_spline_() = default;
+inline spline_modify_mixin::~spline_modify_mixin() = default;
+inline spline_settings_mixin::~spline_settings_mixin() = default;
 
 } // ns spline_detail
 

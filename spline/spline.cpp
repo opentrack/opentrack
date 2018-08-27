@@ -486,9 +486,8 @@ double spline::bucket_size_coefficient(const QList<QPointF>& points) const
 
 namespace spline_detail {
 
-settings::settings(bundle b, const QString& axis_name, Axis idx):
+settings::settings(bundle const& b, const QString& axis_name, Axis idx):
     b(b ? b : make_bundle("")),
-    points(b, "points", {}),
     opts(axis_name, idx)
 {}
 
