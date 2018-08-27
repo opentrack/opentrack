@@ -150,27 +150,25 @@ public:
 };
 
 // some linker problems
-#if !defined __APPLE__
-#   if !defined OTR_INST_VALUE
-#       define OTR_INST_VALUE OTR_TEMPLATE_IMPORT
-#   endif
-
-    OTR_INST_VALUE(value<double>);
-    OTR_INST_VALUE(value<float>);
-    OTR_INST_VALUE(value<int>);
-    OTR_INST_VALUE(value<bool>);
-    OTR_INST_VALUE(value<QString>);
-    OTR_INST_VALUE(value<slider_value>);
-    OTR_INST_VALUE(value<QPointF>);
-    OTR_INST_VALUE(value<QVariant>);
-    OTR_INST_VALUE(value<QList<double>>);
-    OTR_INST_VALUE(value<QList<float>>);
-    OTR_INST_VALUE(value<QList<int>>);
-    OTR_INST_VALUE(value<QList<bool>>);
-    OTR_INST_VALUE(value<QList<QString>>);
-    OTR_INST_VALUE(value<QList<slider_value>>);
-    OTR_INST_VALUE(value<QList<QPointF>>);
-    OTR_INST_VALUE(value<QList<QVariant>>);
+#if !defined OTR_INST_VALUE
+#   define OTR_INST_VALUE OTR_TEMPLATE_IMPORT
 #endif
+
+OTR_INST_VALUE(value<double>);
+OTR_INST_VALUE(value<float>);
+OTR_INST_VALUE(value<int>);
+OTR_INST_VALUE(value<bool>);
+OTR_INST_VALUE(value<QString>);
+OTR_INST_VALUE(value<slider_value>);
+OTR_INST_VALUE(value<QPointF>);
+OTR_INST_VALUE(value<QVariant>);
+OTR_INST_VALUE(value<QList<double>>);
+OTR_INST_VALUE(value<QList<float>>);
+OTR_INST_VALUE(value<QList<int>>);
+OTR_INST_VALUE(value<QList<bool>>);
+OTR_INST_VALUE(value<QList<QString>>);
+OTR_INST_VALUE(value<QList<slider_value>>);
+OTR_INST_VALUE(value<QList<QPointF>>);
+OTR_INST_VALUE(value<QList<QVariant>>);
 
 } // ns options
