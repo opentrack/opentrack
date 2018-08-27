@@ -331,6 +331,7 @@ struct FlightData
     //fuel values
     float fwd, aft, total;
 
+#if 0
     void SetLightBit (unsigned int newBit) {lightBits |= newBit;};
     void ClearLightBit(unsigned int newBit) { lightBits &= ~newBit; };
     bool IsSet(unsigned int newBit) { return ((lightBits & newBit) != 0); };
@@ -346,6 +347,7 @@ struct FlightData
     void SetHsiBit(unsigned int newBit) { hsiBits |= newBit; };
     void ClearHsiBit(unsigned int newBit) { hsiBits &= ~newBit; };
     bool IsSetHsi(unsigned int newBit) { return ((hsiBits & newBit) != 0); };
+#endif
 
     int VersionNum;    // Version of FlightData mem area
 
@@ -526,6 +528,7 @@ struct FlightData2
     char pilotsCallsign[MAX_CALLSIGNS][CALLSIGN_LEN]; // List of pilots callsign connected to an MP session
     char pilotsStatus[MAX_CALLSIGNS];                 // Status of the MP pilots, see enum FlyStates
 
+#if 0
     // TACAN
     // setters for internal use only
     void SetUfcTacanToAA(bool t) { if (t) { tacanInfo[UFC] |= mode; } else { tacanInfo[UFC] &= ~mode; } }
@@ -561,8 +564,12 @@ struct FlightData2
     // HSI/eHSI mode state
     void SetNavMode(int newMode) {navMode = newMode;};
     int  GetNavMode(void) {return navMode;};
+#endif
 };
 
+#define BMS_MEM_OSB "FalconSharedOsbMemoryArea"
+#define BMS_MEM_DATA1 "FalconSharedMemoryArea"
+#define BMS_MEM_DATA2 "FalconSharedMemoryArea2"
 
 #if 0
 extern OSBData cockpitOSBData;         // "FalconSharedOsbMemoryArea"
