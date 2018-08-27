@@ -116,8 +116,7 @@ dialog_hatire::dialog_hatire() : theTracker(nullptr), timer(this)
     //connect(ui.lineSend,SIGNAL(keyPressEvent),this,SLOT(on_lineSend_returnPressed()) );
 }
 
-dialog_hatire::~dialog_hatire() {
-}
+dialog_hatire::~dialog_hatire() = default;
 
 void dialog_hatire::Initialize(QWidget *parent)
 {
