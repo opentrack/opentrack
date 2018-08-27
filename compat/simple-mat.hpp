@@ -64,6 +64,9 @@ class Mat
     num data[h_][w_];
 
 public:
+    // parameters w_ and h_ are rebound so that SFINAE occurs
+    // removing them causes a compile-time error -sh 20150811
+
     template<int Q = w_> std::enable_if_t<equals<Q, 1, 0>::value, num>
     constexpr inline operator()(unsigned i) const& { return data[i][0]; }
 
@@ -104,8 +107,18 @@ public:
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num&>
     constexpr inline w() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
 
-    // parameters w_ and h_ are rebound so that SFINAE occurs
-    // removing them causes a compile-time error -sh 20150811
+    template<int h_pos, int w_pos>
+    constexpr Mat<num, h_ - h_pos, w_ - w_pos> slice() const
+    {
+        return (const double*)*this;
+    }
+
+    template<int off> std::enable_if_t<equals<h_, 1, 0>::value, Mat<num, 1, w_ - off>>
+    slice() const { return ((double const*)*this) + off; }
+
+    template<int off> std::enable_if_t<!equals<h_, 1, 2>::value && equals<w_, 1, 1>::value,
+    Mat<num, h_ - off, 1>>
+    slice() const { return ((double const*)*this) + off; }
 
     template<int P = h_, int Q = w_>
     std::enable_if_t<is_vector<P, Q>::value, num>
@@ -293,7 +306,21 @@ constexpr Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
     return ret;
 }
 
+#if 0
+OTR_GENERIC_EXPORT inline void test()
+{
+    Mat<double, 3, 3> x1 = Mat<double, 4, 4>::eye().slice<1, 1>();
+    Mat<double, 1, 3> x2 = Mat<double, 1, 4>().slice<1>();
+    Mat<double, 3, 1> x3 = Mat<double, 4, 1>().slice<1>();
+    //Mat<double, 3, 1> x4 = Mat<double, 4, 1>().slice<2>(); (void) x4;
+
+    (void) x1; (void) x2; (void) x3;
+}
+#endif
+
 } // ns simple_mat_detail
 
 template<typename num, int h, int w>
 using Mat = simple_mat_detail::Mat<num, h, w>;
+
+
