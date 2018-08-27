@@ -9,7 +9,6 @@
 #include "compat/math.hpp"
 #include "compat/macros.hpp"
 
-#include <cmath>
 #include <algorithm>
 
 #include <QPainter>
@@ -64,7 +63,7 @@ QColor spline_widget::colorBezier() const
     return spline_color;
 }
 
-void spline_widget::setColorBezier(QColor color)
+void spline_widget::setColorBezier(QColor const& color)
 {
     spline_color = color;
     repaint();
@@ -197,8 +196,9 @@ void spline_widget::drawFunction()
     t.start();
 #endif
 
-    const int line_length_pixels = 2;
-    const double step = std::fmax(.25, line_length_pixels / c.x());
+    const double dpr = devicePixelRatioF();
+    const double line_length_pixels = std::fmax(1, 2 * dpr);
+    const double step = std::fmax(.1, line_length_pixels / c.x());
     const double maxx = _config->max_input();
 
 //#define USE_CUBIC_SPLINE
@@ -215,7 +215,7 @@ void spline_widget::drawFunction()
                : QPointF{max_x_pixel, val.y()};
     };
 
-    for (double k = 0; k < maxx; k += step*3)
+    for (double k = 0; k < maxx; k += step*3) // NOLINT
     {
         const auto next_1 = (double) _config->get_value_no_save(k + step*1);
         const auto next_2 = (double) _config->get_value_no_save(k + step*2);
@@ -231,7 +231,7 @@ void spline_widget::drawFunction()
     painter.drawPath(path);
 #else
     QPointF prev = point_to_pixel({});
-    for (double i = 0; i < maxx; i += step)
+    for (double i = 0; i < maxx; i += step) // NOLINT
     {
         const auto val = (double) _config->get_value_no_save(i);
         const QPointF cur = point_to_pixel({i, val});
@@ -261,7 +261,7 @@ void spline_widget::drawFunction()
     const int alpha = !isEnabled() ? 64 : 120;
     if (!_preview_only)
     {
-        for (auto point : points)
+        for (auto const& point : points)
         {
             drawPoint(painter,
                       point_to_pixel(point),
@@ -312,9 +312,9 @@ void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColo
     painter.save();
     painter.setPen(QPen(border, 1, Qt::SolidLine, Qt::PenCapStyle::FlatCap));
     painter.setBrush(colBG);
-    painter.drawEllipse(QRectF(pos.x() - point_size,
-                                pos.y() - point_size,
-                                point_size*2, point_size*2));
+    painter.drawEllipse(QRectF{pos.x() - point_size_in_pixels,
+                               pos.y() - point_size_in_pixels,
+                               point_size_in_pixels*2, point_size_in_pixels*2});
     painter.restore();
 }
 
@@ -332,7 +332,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
     if (!_config || !isEnabled() || !is_in_bounds(e->localPos()) || _preview_only)
         return;
 
-    const double point_pixel_closeness_limit = get_closeness_limit();
+    const double min_dist = min_pt_distance();
 
     moving_control_point_idx = -1;
 
@@ -355,13 +355,12 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
         if (!is_touching_point)
         {
             bool too_close = false;
-            const QPointF pos = e->localPos();
+            const QPointF pos = pixel_to_point(e->localPos());
 
-            for (auto point : points)
+            for (QPointF const& point : points)
             {
-                const QPointF pt = point_to_pixel(point);
-                const double x = std::fabs(pt.x() - pos.x());
-                if (point_pixel_closeness_limit >= x)
+                const double x = std::fabs(point.x() - pos.x());
+                if (min_dist > x)
                 {
                     too_close = true;
                     break;
@@ -382,20 +381,14 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
     {
         if (_config)
         {
-            int found_pt = -1;
             for (int i = 0; i < points.size(); i++)
             {
                 if (point_within_pixel(points[i], e->localPos()))
                 {
-                    found_pt = i;
+                    _config->remove_point(i);
+                    _draw_function = true;
                     break;
                 }
-            }
-
-            if (found_pt != -1)
-            {
-                _config->remove_point(found_pt);
-                _draw_function = true;
             }
         }
     }
@@ -424,32 +417,31 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
 
     if (i >= 0 && i < sz)
     {
-        const double point_closeness_limit = get_closeness_limit();
+        const double min_dist = min_pt_distance();
         QPointF new_pt = pixel_to_point(e->localPos());
-        const QPointF pix = point_to_pixel(new_pt);
 
         const bool has_prev = i > 0, has_next = i + 1 < points.size();
 
         auto check_next = [&] {
-            return points[i+1].x() - new_pt.x() >= point_closeness_limit;
+            return points[i+1].x() - new_pt.x() >= min_dist;
         };
 
         auto check_prev = [&] {
-            return new_pt.x() - points[i-1].x() >= point_closeness_limit;
+            return new_pt.x() - points[i-1].x() >= min_dist;
         };
 
         if (has_prev && !check_prev())
         {
-            new_pt.rx() = points[i-1].x() + point_closeness_limit + 1e-4;
+            new_pt.rx() = points[i-1].x() + min_dist + 1e-4;
         }
 
         if (has_next && !check_next())
         {
-            new_pt.rx() = points[i+1].x() - point_closeness_limit - 1e-4;
+            new_pt.rx() = points[i+1].x() - min_dist - 1e-4;
         }
 
         setCursor(Qt::ClosedHandCursor);
-        show_tooltip(pix.toPoint(), new_pt);
+        show_tooltip(point_to_pixel(new_pt).toPoint(), new_pt);
 
         if ((!has_prev || check_prev()) && (!has_next || check_next()))
         {
@@ -516,9 +508,11 @@ void spline_widget::reload_spline()
     update();
 }
 
-double spline_widget::get_closeness_limit()
+double spline_widget::min_pt_distance() const
 {
-    return std::fmax(snap_x, .5);
+    double pt = 3*std::fmax(point_size_in_pixels, point_size_in_pixels_) / c.x();
+    pt = snap(pt, snap_x);
+    return pt;
 }
 
 void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
@@ -539,9 +533,9 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 
     static const bool is_fusion = QStringLiteral("fusion") == QApplication::style()->objectName();
     // no fusion means OSX
-    const int add_x = (is_fusion ? 25 : 0), add_y = (is_fusion ? 15 : 0);
+    const int off_x = (is_fusion ? 25 : 0), off_y = (is_fusion ? 15 : 0);
 
-    const QPoint pix(pos.x() + add_x, pos.y() + add_y);
+    const QPoint pix(pos.x() + off_x, pos.y() + off_y);
 
     QToolTip::showText(mapToGlobal(pix),
                        QString{"value: %1x%2"}.arg(x, 0, 'f', 2).arg(y, 0, 'f', 2),
@@ -552,8 +546,8 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 
 bool spline_widget::is_in_bounds(const QPointF& pos) const
 {
-    constexpr int grace = point_size * 3;
-    constexpr int bottom_grace = int(point_size * 1.5);
+    const int grace = point_size_in_pixels * 3;
+    const int bottom_grace = int(point_size_in_pixels * 1.5);
     return (pos.x() + grace        > pixel_bounds.left() &&
             pos.x() - grace        < pixel_bounds.right() &&
             pos.y() + grace        > pixel_bounds.top() &&
@@ -582,7 +576,7 @@ void spline_widget::update_range()
 bool spline_widget::point_within_pixel(const QPointF& pt, const QPointF& pixel)
 {
     const QPointF tmp = pixel - point_to_pixel(pt);
-    return QPointF::dotProduct(tmp, tmp) < point_size * point_size;
+    return QPointF::dotProduct(tmp, tmp) < point_size_in_pixels * point_size_in_pixels;
 }
 
 void spline_widget::focusOutEvent(QFocusEvent* e)
@@ -596,28 +590,30 @@ void spline_widget::focusOutEvent(QFocusEvent* e)
     e->accept();
 }
 
+double spline_widget::snap(double x, double snap_value)
+{
+    if (snap_value > 0)
+    {
+        constexpr int c = 1000;
+        x += snap_value * .5;
+        x -= std::fmod(x, snap_value);
+        // truncate after few decimal places to reduce rounding errors.
+        // round upward.
+        x = int(x * c + .5/c) / double(c);
+    }
+
+    return x;
+}
+
 QPointF spline_widget::pixel_to_point(const QPointF& point)
 {
     double x = (point.x() - pixel_bounds.x()) / c.x();
     double y = (pixel_bounds.height() - point.y() + pixel_bounds.y()) / c.y();
 
-    constexpr int c = 1000;
-
     if (snap_x > 0)
-    {
-        x += snap_x * .5;
-        x -= std::fmod(x, snap_x);
-        // truncate after few decimal places to reduce rounding errors.
-        // round upward to nearest.
-        x = int(x * c + .5/c) / double(c);
-    }
+        x = snap(x, snap_x);
     if (snap_y > 0)
-    {
-        y += snap_y * .5;
-        y -= std::fmod(y, snap_y);
-        // idem
-        y = int(y * c + .5/c) / double(c);
-    }
+        y = snap(y, snap_y);
 
     x = clamp(x, 0, _config->max_input());
     y = clamp(y, 0, _config->max_output());

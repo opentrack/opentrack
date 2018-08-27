@@ -15,6 +15,8 @@
 
 #include "export.hpp"
 
+#include <cmath>
+
 #include <QWidget>
 #include <QMetaObject>
 
@@ -40,7 +42,7 @@ public:
     void setConfig(base_spline* spl);
 
     QColor colorBezier() const;
-    void setColorBezier(QColor color);
+    void setColorBezier(QColor const& color);
 
     void force_redraw();
     void set_preview_only(bool val);
@@ -61,7 +63,7 @@ protected slots:
     void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
 private:
-    double get_closeness_limit();
+    double min_pt_distance() const;
     void show_tooltip(const QPoint& pos, const QPointF& value = QPointF(0, 0));
     bool is_in_bounds(const QPointF& pos) const;
 
@@ -79,6 +81,8 @@ private:
 
     QPointF pixel_to_point(const QPointF& point);
     QPointF point_to_pixel(const QPointF& point);
+
+    static double snap(double x, double snap_value);
 
     QPointF c;
     base_spline* _config = nullptr;
@@ -98,7 +102,10 @@ private:
     int moving_control_point_idx = -1;
     bool _draw_function = true, _preview_only = false;
 
-    static constexpr inline int point_size = 4;
+    // point's circle radius on the widget
+    static constexpr inline int point_size_in_pixels_ = 4;
+
+    const double point_size_in_pixels = point_size_in_pixels_ * std::fmax(1, devicePixelRatioF() * .66);
 };
 
 } // ns spline_detail
