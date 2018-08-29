@@ -24,6 +24,9 @@ bool connector::is_equal(const QString& name, const QVariant& val1, const QVaria
 {
     QMutexLocker l(get_mtx());
 
+    if(val1.isValid() != val2.isValid())
+        return false;
+
     auto it = connected_values.find(name);
 
     if (it != connected_values.cend() && !std::get<0>((*it).second).empty())
