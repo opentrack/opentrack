@@ -1,9 +1,9 @@
 #include "camera-names.hpp"
 
 #ifdef _WIN32
+#   include <cwchar>
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
-#   include <cwchar>
 #elif defined(__unix) || defined(__linux) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
@@ -13,6 +13,7 @@
 #   include <sys/ioctl.h>
 #   include <linux/videodev2.h>
 #   include <cerrno>
+#   include <cstring>
 #endif
 
 #include <QDebug>
@@ -29,7 +30,7 @@ int camera_name_to_index(const QString &name)
 QList<QString> get_camera_names()
 {
     QList<QString> ret;
-#if defined(_WIN32)
+#ifdef _WIN32
     // Create the System Device Enumerator.
     HRESULT hr;
     CoInitialize(nullptr);
@@ -54,23 +55,16 @@ QList<QString> get_camera_names()
             hr = pMoniker->BindToStorage(nullptr, nullptr, IID_IPropertyBag, (void **)&pPropBag);
             if (SUCCEEDED(hr))	{
                 // To retrieve the filter's friendly name, do the following:
-                VARIANT varName;
-                VariantInit(&varName);
-                hr = pPropBag->Read(L"FriendlyName", &varName, nullptr);
+                VARIANT var;
+                VariantInit(&var);
+                hr = pPropBag->Read(L"FriendlyName", &var, nullptr);
                 if (SUCCEEDED(hr))
                 {
                     // Display the name in your UI somehow.
-                    QString str((QChar*)varName.bstrVal, int(std::wcslen(varName.bstrVal)));
+                    QString str((QChar*)var.bstrVal, int(std::wcslen(var.bstrVal)));
                     ret.append(str);
                 }
-                VariantClear(&varName);
-
-                ////// To create an instance of the filter, do the following:
-                ////IBaseFilter *pFilter;
-                ////hr = pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter,
-                ////	(void**)&pFilter);
-                // Now add the filter to the graph.
-                //Remember to release pFilter later.
+                VariantClear(&var);
                 pPropBag->Release();
             }
             pMoniker->Release();
@@ -82,14 +76,11 @@ QList<QString> get_camera_names()
 
     pSysDevEnum->Release();
 #endif
+
 #ifdef __linux
     for (int i = 0; i < 16; i++) {
-        char buf[128];
-        sprintf(buf, "/dev/video%d", i);
-        if (access(buf, F_OK) == 0)
-            ret.append(buf);
-        else
-            continue;
+        char buf[32];
+        snprintf(buf, sizeof(buf), "/dev/video%d", i);
 
         if (access(buf, R_OK | W_OK) == 0) {
             int fd = open(buf, O_RDONLY);
@@ -102,7 +93,7 @@ QList<QString> get_camera_names()
                 close(fd);
                 continue;
             }
-            ret[ret.size()-1] = reinterpret_cast<const char*>(video_cap.card);
+            ret.append(QString{(const char*)video_cap.card});
             close(fd);
         }
     }

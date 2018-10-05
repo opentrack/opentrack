@@ -74,7 +74,8 @@ private:
 
     PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const pt_camera_info& info);
-    int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);  // The POSIT algorithm, returns the number of iterations
+    // The POSIT algorithm, returns the number of iterations
+    int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);
 
     Affine X_CM; // transform from model to camera
     PointOrder prev_order, prev_scaled_order;

@@ -53,10 +53,10 @@ inline auto clamp(const t& val, const u& min, const w& max)
     return ::util_detail::clamp<std::decay_t<tp>, tp>::clamp_(val, min, max);
 }
 
-template<typename t>
-inline auto iround(t val) -> std::enable_if_t<!std::is_integral_v<std::decay_t<t>>, t>
+template<typename t, typename integral_type = int>
+inline auto iround(t val) -> std::enable_if_t<!std::is_integral_v<std::decay_t<t>>, integral_type>
 {
-    return (int) std::round(val);
+    return static_cast<integral_type>(std::round(val));
 }
 
 template<typename t>

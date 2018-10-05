@@ -28,9 +28,7 @@
 #   include <windows.h>
 #endif
 
-using namespace euler;
-using namespace time_units;
-using namespace pipeline_impl;
+namespace pipeline_impl {
 
 static constexpr inline double r2d = 180. / M_PI;
 static constexpr inline double d2r = M_PI / 180.;
@@ -158,9 +156,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             }
         }
         else
-        {
             interp_pos = rel;
-        }
     }
     else
     {
@@ -295,7 +291,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
 
         if (tracking_started && s.center_at_startup)
         {
-            set(f_center, true);
+            b.set(f_center, true);
             return true;
         }
     }
@@ -305,28 +301,18 @@ bool pipeline::maybe_enable_center_on_tracking_started()
 
 void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 {
-    if (get(f_center | f_held_center))
+    if (b.get(f_center | f_held_center))
     {
         if (libs.pFilter)
             libs.pFilter->center();
 
         if (own_center_logic)
         {
-#if 0
-            state.inv_rot_center = rmat::eye();
-            state.t_center = {};
-#endif
-
             scaled_state.inv_rot_center = rmat::eye();
             scaled_state.t_center = {};
         }
         else
         {
-#if 0
-            state.inv_rot_center = state.inv_rot_center;
-            state.t_center = (const double*)(value);
-#endif
-
             scaled_state.inv_rot_center = scaled_state.rotation.t();
             scaled_state.t_center = (const double*)(value);
         }
@@ -335,10 +321,6 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 
 void pipeline::store_tracker_pose(const Pose& value)
 {
-#if 0
-    euler_t tmp(d2r * euler_t(&value[Yaw]));
-    state.rotation = euler_to_rmat(tmp);
-#endif
     // alas, this is poor man's gimbal lock "prevention"
     // this is some kind of "canonical" representation,
     // if we can even talk of one
@@ -464,9 +446,9 @@ void pipeline::logic()
     logger.reset_dt();
 
     // we must center prior to getting data from the tracker
-    const bool center_ordered = get(f_center | f_held_center) && tracking_started;
+    const bool center_ordered = b.get(f_center | f_held_center) && tracking_started;
     const bool own_center_logic = center_ordered && libs.pTracker->center();
-    const bool hold_ordered = get(f_enabled_p) ^ get(f_enabled_h);
+    const bool hold_ordered = b.get(f_enabled_p) ^ b.get(f_enabled_h);
 
     {
         Pose tmp;
@@ -535,9 +517,9 @@ error:
 
 ok:
 
-    set(f_center, false);
+    b.set(f_center, false);
 
-    if (get(f_zero))
+    if (b.get(f_zero))
         for (int i = 0; i < 6; i++)
             value(i) = 0;
 
@@ -650,20 +632,20 @@ void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
     }
 }
 
-void pipeline::set_center() { set(f_center, true); }
+void pipeline::set_center() { b.set(f_center, true); }
 
 void pipeline::set_held_center(bool value)
 {
-    set(f_held_center, value);
+    b.set(f_held_center, value);
 }
 
-void pipeline::set_enabled(bool value) { set(f_enabled_h, value); }
-void pipeline::set_zero(bool value) { set(f_zero, value); }
+void pipeline::set_enabled(bool value) { b.set(f_enabled_h, value); }
+void pipeline::set_zero(bool value) { b.set(f_zero, value); }
 
-void pipeline::toggle_zero() { negate(f_zero); }
-void pipeline::toggle_enabled() { negate(f_enabled_p); }
+void pipeline::toggle_zero() { b.negate(f_zero); }
+void pipeline::toggle_enabled() { b.negate(f_enabled_p); }
 
-void bits::set(flags flag, bool val)
+void bits::set(bit_flags flag, bool val)
 {
     const unsigned flag_ = unsigned(flag);
     const unsigned val_ = unsigned(val);
@@ -674,7 +656,7 @@ void bits::set(flags flag, bool val)
             break;
 }
 
-void bits::negate(flags flag)
+void bits::negate(bit_flags flag)
 {
     const unsigned flag_= flag;
     unsigned b_ = 0;
@@ -684,7 +666,7 @@ void bits::negate(flags flag)
             break;
 }
 
-bool bits::get(flags flag)
+bool bits::get(bit_flags flag)
 {
     return !!(b & flag);
 }
@@ -697,3 +679,5 @@ bits::bits() : b(0u)
     set(f_enabled_h, true);
     set(f_zero, false);
 }
+
+} // ns pipeline_impl

@@ -36,7 +36,7 @@ public:
     di_t& operator=(const di_t&) = default;
 
     diptr operator->() const { return handle; }
-    operator bool() { return handle; }
+    operator bool() { return handle != nullptr; }
 
     // for debugging bad usages. must use a dependent name.
     template<typename t = void>

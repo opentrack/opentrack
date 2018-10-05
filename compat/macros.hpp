@@ -85,7 +85,7 @@ using to_const_lvalue_reference_t = remove_cvref_t<t> const&;
 template<typename t>
 using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>,
                                         std::decay_t<t>,
-                                        std::add_lvalue_reference_t<std::add_const_t<std::remove_reference_t<t>>>>;
+                                        std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>>;
 
 template<bool>
 [[deprecated]] constexpr cc_forceinline void static_warn() {}

@@ -29,13 +29,9 @@ setq(EIGEN3_INCLUDE_DIR "eigen")
 setq(SDK_FSUIPC "fsuipc")
 setq(SDK_HYDRA "SixenseSDK")
 
-setq(SDK_RIFT_025 "LibOVR-025/build")
-setq(SDK_RIFT_042 "LibOVR-042/build")
-setq(SDK_RIFT_080 "LibOVR-080/build")
 setq(SDK_RIFT_140 "LibOVR-140/build")
 
 setq(SDK_VALVE_STEAMVR "steamvr")
-setq(SDK_TOBII_EYEX "Tobii-EyeX")
 setq(SDK_VJOYSTICK "vjoystick")
 
 setq(SDK_REALSENSE "RSSDK-R2")

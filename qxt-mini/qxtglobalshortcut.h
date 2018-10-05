@@ -1,4 +1,4 @@
-#ifndef QXTGLOBALSHORTCUT_H
+#pragma once
 /****************************************************************************
 ** Copyright (c) 2006 - 2011, the LibQxt project.
 ** See the Qxt AUTHORS file for a list of authors and copyright holders.
@@ -62,5 +62,3 @@ public Q_SLOTS:
 Q_SIGNALS:
     void activated(bool keydown = true);
 };
-
-#endif // QXTGLOBALSHORTCUT_H

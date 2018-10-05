@@ -167,17 +167,17 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
                 this,
-                [&](const QString&) { if (pTrackerDialog) pTrackerDialog = nullptr; });
+                [&](const QString&) { pTrackerDialog = nullptr; });
 
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
                 this,
-                [&](const QString&) { if (pProtocolDialog) pProtocolDialog = nullptr; });
+                [&](const QString&) { pProtocolDialog = nullptr; });
 
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
                 this,
-                [&](const QString&) { if (pFilterDialog) pFilterDialog = nullptr; });
+                [&](const QString&) { pFilterDialog = nullptr; });
 
         connect(&m.tracker_dll, value_::value_changed<QString>(),
                 this, &main_window::save_modules,

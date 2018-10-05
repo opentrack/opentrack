@@ -56,7 +56,6 @@ private:
     QMutex game_name_mutex;
 
     void start_dummy();
-    static float degrees_to_rads(double degrees);
 
 public:
     static void set_protocols(bool ft, bool npclient);

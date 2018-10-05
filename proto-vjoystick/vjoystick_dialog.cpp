@@ -1,6 +1,8 @@
 #include "vjoystick.h"
 #include "api/plugin-api.hpp"
 
+#include <QDialogButtonBox>
+
 vjoystick_dialog::vjoystick_dialog()
 {
     ui.setupUi(this);

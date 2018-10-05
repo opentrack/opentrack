@@ -15,12 +15,9 @@
 #include <QPixmap>
 #include <QString>
 #include <QToolTip>
-#include <QApplication>
 #include <QtEvents>
 
 #include <QDebug>
-
-#include "compat/timer.hpp"
 
 using namespace spline_detail;
 
@@ -187,15 +184,6 @@ void spline_widget::drawFunction()
 
     painter.setPen(QPen(color_, 1.75, Qt::SolidLine, Qt::FlatCap));
 
-//#define DEBUG_TIMINGS
-#ifdef DEBUG_TIMINGS
-    static Timer t;
-    static unsigned cnt = 0;
-    static time_units::ms total { 0 };
-    cnt++;
-    t.start();
-#endif
-
     const double dpr = devicePixelRatioF();
     const double line_length_pixels = std::fmax(1, 2 * dpr);
     const double step = std::fmax(.1, line_length_pixels / c.x());
@@ -243,11 +231,6 @@ void spline_widget::drawFunction()
         const double maxy = double(_config->get_value_no_save(maxx));
         painter.drawLine(prev, point_to_pixel({ maxx, maxy }));
     }
-#endif
-
-#ifdef DEBUG_TIMINGS
-    total += t.elapsed<time_units::ms>();
-    qDebug() << "avg" << total.count() / cnt;
 #endif
 
     const QRect r1(pixel_bounds.left(), 0, width() - pixel_bounds.left(), pixel_bounds.top()),
@@ -531,8 +514,14 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     if (std::fabs(y_ - y) < 1e-3)
         y = y_;
 
-    static const bool is_fusion = QStringLiteral("fusion") == QApplication::style()->objectName();
-    // no fusion means OSX
+    // the style on OSX has different offsets
+    static const bool is_fusion =
+#if defined __APPLE__
+            true;
+#else
+            false;
+#endif
+
     const int off_x = (is_fusion ? 25 : 0), off_y = (is_fusion ? 15 : 0);
 
     const QPoint pix(pos.x() + off_x, pos.y() + off_y);
