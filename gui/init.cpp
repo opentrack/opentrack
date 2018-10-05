@@ -35,20 +35,37 @@ using namespace options;
 #include <QDebug>
 
 #if /* denormal control */ \
-    /* GNU */   defined __x86_64__  || defined __SSE2__ || \
+    /* GNU */   defined __x86_64__  || defined __SSE3__ || \
     /* MSVC */  defined _M_AMD64    || (defined _M_IX86_FP && _M_IX86_FP >= 2)
-#   include <xmmintrin.h>
-#   include <pmmintrin.h>
+
+#   if defined __GNUG__ && defined __SSE2__ && !defined __SSE3__ && !defined __x86_64__
+#      undef OTR_DENORM_DAZ
+#      include <emmintrin.h>
+#   else
+#      define OTR_DENORM_DAZ
+#      include <pmmintrin.h>
+#   endif
 #   include <cfloat>
 
-#define OTR_HAS_DENORM_CONTROL
+#   ifdef __APPLE__
+#       include <fenv.h>
+#   endif
+
 static void set_fp_mask()
 {
-    //_MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+#ifdef OTR_DENORM_DAZ
     _MM_SET_DENORMALS_ZERO_MODE(_MM_DENORMALS_ZERO_ON);
-    _MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
+#endif
+    _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
+    //_MM_SET_ROUNDING_MODE(_MM_ROUND_NEAREST);
     _MM_SET_EXCEPTION_MASK(_MM_MASK_MASK);
+
+#ifdef __APPLE__
+    fesetenv(FE_DFL_DISABLE_SSE_DENORMS_ENV);
+#endif
 }
+#else
+static inline void set_fp_mask() {}
 #endif
 
 static void set_qt_style()
@@ -185,9 +202,7 @@ static int run_window(std::unique_ptr<QWidget> main_window)
 
 int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_window)
 {
-#if defined OTR_HAS_DENORM_CONTROL
     set_fp_mask();
-#endif
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads, true);
