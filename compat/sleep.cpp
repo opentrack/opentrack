@@ -8,7 +8,7 @@
 
 namespace portable
 {
-    OTR_COMPAT_EXPORT void sleep(int milliseconds)
+    void sleep(int milliseconds)
     {
         if (milliseconds > 0)
         {

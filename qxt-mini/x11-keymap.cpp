@@ -174,7 +174,6 @@ static tt numpad_keymap[] = {
     { Qt::Key_ScrollLock, XK_Scroll_Lock },
 };
 
-QXT_GUI_EXPORT
 quint32 qt_mods_to_x11(Qt::KeyboardModifiers modifiers)
 {
     quint32 mods = 0;
@@ -193,7 +192,6 @@ quint32 qt_mods_to_x11(Qt::KeyboardModifiers modifiers)
     return mods;
 }
 
-QXT_GUI_EXPORT
 std::vector<quint32> qt_key_to_x11(Display*, Qt::Key k, Qt::KeyboardModifiers)
 {
     std::vector<quint32> ret;
@@ -212,10 +210,10 @@ std::vector<quint32> qt_key_to_x11(Display*, Qt::Key k, Qt::KeyboardModifiers)
 
     return ret;
 }
-QXT_GUI_EXPORT
+
 Qt::KeyboardModifiers x11_mods_to_qt(quint32 mods)
 {
-    Qt::KeyboardModifiers ret(0);
+    Qt::KeyboardModifiers ret{0};
 
     if (mods & Mod1Mask)
         ret |= Qt::AltModifier;
@@ -229,7 +227,6 @@ Qt::KeyboardModifiers x11_mods_to_qt(quint32 mods)
     return ret;
 }
 
-QXT_GUI_EXPORT
 std::tuple<Qt::Key, Qt::KeyboardModifiers> x11_key_to_qt(Display* disp, quint32 keycode, quint32 mods)
 {
     (void)disp;
@@ -247,7 +244,6 @@ std::tuple<Qt::Key, Qt::KeyboardModifiers> x11_key_to_qt(Display* disp, quint32 
 }
 
 
-QXT_GUI_EXPORT
 QPair<KeySym, KeySym> keycode_to_keysym(Display* disp,
                                         quint32 keycode, quint32 keystate,
                                         xcb_key_press_event_t const* kev)
@@ -298,10 +294,9 @@ QPair<KeySym, KeySym> keycode_to_keysym(Display* disp,
     return ret;
 }
 
-QXT_GUI_EXPORT
 quint32 xcb_mods_to_x11(quint32 mods)
 {
-    unsigned int keystate = 0;
+    unsigned keystate = 0;
 
     if(mods & XCB_MOD_MASK_1) // alt
         keystate |= Mod1Mask;

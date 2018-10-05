@@ -17,7 +17,7 @@ diptr di_t::init_di_()
                                         nullptr);
         !SUCCEEDED(hr))
     {
-        qDebug() << "can't make dinput:" << (void*)hr;
+        qDebug() << "can't make dinput:" << (void*)(LONG_PTR)hr;
         qDebug() << "crashing!";
         std::abort();
     }

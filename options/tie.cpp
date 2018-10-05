@@ -11,7 +11,7 @@
 
 namespace options {
 
-OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb)
+void tie_setting(value<int>& v, QComboBox* cb)
 {
     cb->setCurrentIndex(v);
     v = cb->currentIndex();
@@ -19,7 +19,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb)
     value_::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb)
+void tie_setting(value<QString>& v, QComboBox* cb)
 {
     cb->setCurrentText(v);
     v = cb->currentText();
@@ -27,7 +27,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb)
     value_::connect(&v, SIGNAL(valueChanged(const QString&)), cb, SLOT(setCurrentText(const QString&)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
+void tie_setting(value<QVariant>& v, QComboBox* cb)
 {
     auto set_idx = [cb](const QVariant& var) {
         const int sz = cb->count();
@@ -50,7 +50,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
     if (idx != -1)
         v = cb->itemData(idx);
     else
-        v = QVariant(QVariant::Invalid);
+        v = {};
 
     value_::connect(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
                     &v, [cb, &v](int idx) {
@@ -67,48 +67,48 @@ OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb)
 
 // XXX TODO need variant with setEnabled based on lambda retval -- sh 20170524
 
-OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb)
+void tie_setting(value<bool>& v, QCheckBox* cb)
 {
     cb->setChecked(v);
     value_::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
     value_::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
+void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
 {
     dsb->setValue(v);
     value_::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.DIRECT_CONNTYPE);
     value_::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb)
+void tie_setting(value<int>& v, QSpinBox* sb)
 {
     sb->setValue(v);
     value_::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
     value_::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le)
+void tie_setting(value<QString>& v, QLineEdit* le)
 {
     le->setText(v);
     value_::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.DIRECT_CONNTYPE);
     value_::connect(&v, value_::value_changed<QString>(), le, &QLineEdit::setText, v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb)
+void tie_setting(value<QString>& v, QLabel* lb)
 {
     lb->setText(v);
     value_::connect(&v, value_::value_changed<QString>(), lb, &QLabel::setText, v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t)
+void tie_setting(value<int>& v, QTabWidget* t)
 {
     t->setCurrentIndex(v);
     value_::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
     value_::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
 }
 
-OTR_OPTIONS_EXPORT void tie_setting(value<slider_value>& v, QSlider* w)
+void tie_setting(value<slider_value>& v, QSlider* w)
 {
     {
         const int q_min = w->minimum();
