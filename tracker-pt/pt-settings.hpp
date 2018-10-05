@@ -52,7 +52,7 @@ struct pt_settings final : options::opts
 
     value<int> fov { b, "camera-fov", 56 };
 
-    value<bool> dynamic_pose { b, "dynamic-pose-resolution", true };
+    value<bool> dynamic_pose { b, "dynamic-pose-resolution", false };
     value<int> init_phase_timeout { b, "init-phase-timeout", 250 };
     value<bool> auto_threshold { b, "automatic-threshold", true };
     value<pt_color_type> blob_color { b, "blob-color", pt_color_natural };
