@@ -3,6 +3,19 @@
 # mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../cmake/mingw-w64.cmake
 # -sh 20140922
 
+if((NOT CMAKE_BUILD_TYPE STREQUAL "DEBUG") AND (NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE"))
+    set(CMAKE_BUILD_TYPE "DEBUG" CACHE STRING "" FORCE)
+endif()
+
+string(TOUPPER "${CMAKE_BUILD_TYPE}" __build_type)
+if(NOT __build_type STREQUAL CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "${__build_type}" CACHE STRING "" FORCE)
+endif()
+
+if(NOT CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "" FORCE)
+endif()
+
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 5)
 
@@ -39,7 +52,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
 # oldest CPU supported here is Northwood-based Pentium 4. -sh 20150811
 set(fpu "-ffast-math -mfpmath=both -mstackrealign -falign-functions=16 -falign-loops=16")
-set(cpu "-O3 -march=i686 -msse3 -mtune=skylake -frename-registers")
+set(cpu "-O3 -march=native -frename-registers")
 #set(lto "-fno-lto -fno-use-linker-plugin -flto-compression-level=9 -flto-partition=balanced -fno-ipa-pta -fno-lto-odr-type-merging")
 set(lto "")
 set(sections "-ffunction-sections -fdata-sections -s")
@@ -115,7 +128,4 @@ foreach(j "" _DEBUG _RELEASE)
     endforeach()
 endforeach()
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
-endif()
+
