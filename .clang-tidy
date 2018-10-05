@@ -40,7 +40,8 @@ Checks:
     -hicpp-use-equals-delete,
     -readability-static-accessed-through-instance,
     -cert-flp30-c,
-    -modernize-redundant-void-arg
+    -modernize-redundant-void-arg,
+    -hicpp-explicit-conversions,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
