@@ -20,7 +20,8 @@ module_mixin::module_by_name(const QString& name, const dylib_list& list) const
         return { *it, int(std::distance(list.cbegin(), it)) };
 }
 
-static void show_window(QWidget& d, bool fresh)
+//static
+void show_window(QWidget& d, bool fresh)
 {
     if (fresh)
     {
