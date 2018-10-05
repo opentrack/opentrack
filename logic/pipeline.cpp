@@ -77,28 +77,26 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
     if (state != reltrans_disabled)
     {
-        {
-            bool in_zone_ = progn(
-                if (state == reltrans_non_center)
-                {
-                    const bool looking_down = value(Pitch) < 20;
-                    return looking_down ? std::fabs(value(Yaw)) > 35 : std::fabs(value(Yaw)) > 65;
-                }
-                else
-                    return true;
-            );
-
-            if (!cur && in_zone != in_zone_)
+        const bool in_zone_ = progn(
+            if (state == reltrans_non_center)
             {
-                //qDebug() << "reltrans-interp: START" << tcomp_in_zone_;
-                cur = true;
-                interp_timer.start();
-                interp_phase_timer.start();
-                RC_phase = 0;
+                const bool looking_down = value(Pitch) < 20;
+                return looking_down ? std::fabs(value(Yaw)) > 35 : std::fabs(value(Yaw)) > 65;
             }
+            else
+                return true;
+        );
 
-            in_zone = in_zone_;
+        if (!cur && in_zone != in_zone_)
+        {
+            //qDebug() << "reltrans-interp: START" << tcomp_in_zone_;
+            cur = true;
+            interp_timer.start();
+            interp_phase_timer.start();
+            RC_stage = 0;
         }
+
+        in_zone = in_zone_;
 
         // only when looking behind or downward
         if (in_zone)
@@ -111,9 +109,9 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             rel = rotate(R, rel, &disable[TX]);
 
             // dynamic neck
-            if (neck_enable)
+            if (neck_enable && (state != reltrans_non_center || !in_zone))
             {
-                const euler_t neck = apply_neck(value, -neck_z, disable(TZ));
+                const euler_t neck = apply_neck(R, -neck_z, disable(TZ));
 
                 for (unsigned k = 0; k < 3; k++)
                     rel(k) += neck(k);
@@ -124,19 +122,19 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
         {
             const double dt = interp_timer.elapsed_seconds();
 
-            static constexpr float RC_phases[] = { 2, 1, .5, .1, .025 };
+            static constexpr float RC_stages[] = { 2, 1, .5, .1, .05 };
             static constexpr float RC_time_deltas[] = { 1, .25, .25, 2 };
 
             interp_timer.start();
 
-            if (RC_phase + 1 < std::size(RC_phases) &&
-                interp_phase_timer.elapsed_seconds() > RC_time_deltas[RC_phase])
+            if (RC_stage + 1 < std::size(RC_stages) &&
+                interp_phase_timer.elapsed_seconds() > RC_time_deltas[RC_stage])
             {
-                RC_phase++;
+                RC_stage++;
                 interp_phase_timer.start();
             }
 
-            const double RC = RC_phases[RC_phase];
+            const double RC = RC_stages[RC_stage];
             const double alpha = dt/(dt+RC);
 
             constexpr double eps = .01;
@@ -162,15 +160,6 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
     {
         cur = false;
         in_zone = false;
-
-        // dynamic neck
-        if (neck_enable)
-        {
-            const euler_t neck = apply_neck(value, -neck_z, disable(TZ));
-
-            for (unsigned k = 0; k < 3; k++)
-                rel(k) += neck(k);
-        }
     }
 
     return {
@@ -179,12 +168,11 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
     };
 }
 
-euler_t reltrans::apply_neck(const Pose& value, int nz, bool disable_tz) const
+euler_t reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
 {
     euler_t neck;
 
-    const rmat R = euler_to_rmat(euler_t(&value[Yaw]) * d2r);
-    neck = rotate(R, { 0, 0, nz }, vec3_bool());
+    neck = rotate(R, { 0, 0, nz }, {});
     neck(TZ) = neck(TZ) - nz;
 
     if (disable_tz)
@@ -194,12 +182,8 @@ euler_t reltrans::apply_neck(const Pose& value, int nz, bool disable_tz) const
 }
 
 pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
-    m(m),
-    ev(ev),
-    libs(libs),
-    logger(logger)
-{
-}
+    m(m), ev(ev), libs(libs), logger(logger)
+{}
 
 pipeline::~pipeline()
 {
@@ -346,11 +330,10 @@ Pose pipeline::clamp_value(Pose value) const
 Pose pipeline::apply_center(Pose value) const
 {
     euler_t T = euler_t(value) - scaled_state.t_center;
-    euler_t R = scale_c * r2d * rmat_to_euler(scaled_state.rotation * scaled_state.inv_rot_center);
+    euler_t R = d2r * scale_c * rmat_to_euler(scaled_state.rotation * scaled_state.inv_rot_center);
 
     // XXX check these lines, it's been here forever
-    T = rel.rotate(scaled_state.inv_rot_center, T, {});
-    T = T * scale_c;
+    T = rel.rotate(euler_to_rmat(R), T, {});
 
     for (int i = 0; i < 3; i++)
     {
@@ -366,7 +349,7 @@ Pose pipeline::apply_center(Pose value) const
     for (int i = 0; i < 3; i++)
     {
         value(i) = T(i);
-        value(i+3) = R(i);
+        value(i+3) = R(i) * r2d;
     }
 
     return value;
