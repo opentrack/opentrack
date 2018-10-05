@@ -14,9 +14,7 @@
 #include <algorithm>
 
 #include <QFile>
-
 #include <QDir>
-#include <QDebug>
 
 namespace options::detail {
 
@@ -29,14 +27,8 @@ group::group(const QString& name) : name(name)
 
     with_settings_object([&](QSettings& conf) {
         conf.beginGroup(name);
-        for (auto& k_ : conf.childKeys())
-        {
-            auto tmp = k_.toUtf8();
-            QString k(tmp);
-            QVariant val = conf.value(k_);
-            if (val.type() != QVariant::Invalid)
-                kvs[k] = std::move(val);
-        }
+        for (auto const& k : conf.childKeys())
+            kvs[k] = conf.value(k);
         conf.endGroup();
     });
 }
@@ -48,11 +40,9 @@ void group::save() const
 
     with_settings_object([&](QSettings& s) {
         s.beginGroup(name);
-        for (auto& i : kvs)
+        for (auto const& i : kvs)
             s.setValue(i.first, i.second);
         s.endGroup();
-
-        mark_ini_modified();
     });
 }
 
@@ -64,7 +54,7 @@ void group::put(const QString &s, const QVariant &d)
 bool group::contains(const QString &s) const
 {
     const auto it = kvs.find(s);
-    return it != kvs.cend() && it->second != QVariant::Invalid;
+    return it != kvs.cend();
 }
 
 QVariant group::get_variant(const QString& name) const
@@ -73,7 +63,7 @@ QVariant group::get_variant(const QString& name) const
     if (it != kvs.cend())
         return it->second;
 
-    return {};
+    return QVariant();
 }
 
 } // ns options::detail

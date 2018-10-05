@@ -105,7 +105,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     static int element_count(const QList<QPointF>& points, double max_input);
 
     std::shared_ptr<spline_detail::settings> s;
-    QMetaObject::Connection conn_changed, conn_maxx, conn_maxy, conn_reload;
+    QMetaObject::Connection conn_changed, conn_maxx, conn_maxy;
 
     static constexpr inline std::size_t value_count = 4096;
 

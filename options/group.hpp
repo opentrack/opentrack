@@ -4,21 +4,16 @@
 
 #include "compat/base-path.hpp"
 #include "compat/library-path.hpp"
-#include "compat/qhash.hpp"
 #include "compat/macros.hpp"
+#include "compat/qhash.hpp"
 #include "export.hpp"
 
 #include <optional>
 #include <unordered_map>
 
-#include <QHash>
 #include <QString>
-#include <QMutex>
-#include <QFile>
-#include <QDir>
-#include <QStandardPaths>
 #include <QVariant>
-#include <QSettings>
+
 #include <QDebug>
 
 // XXX TODO remove qsettings usage -sh 20180624
@@ -35,12 +30,6 @@ namespace options::detail {
         void save() const;
         void put(const QString& s, const QVariant& d);
         bool contains(const QString& s) const;
-
-        template<typename t>
-        cc_noinline t get(const QString& k) const
-        {
-            return get_variant(k).value<t>();
-        }
 
         cc_noinline QVariant get_variant(const QString& name) const;
     };

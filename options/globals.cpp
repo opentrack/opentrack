@@ -9,6 +9,8 @@
 
 namespace options::globals::detail {
 
+ini_ctx::ini_ctx() = default;
+
 bool is_portable_installation()
 {
 #if defined _WIN32
@@ -23,11 +25,11 @@ saver_::~saver_()
 {
     if (--ctx.refcount == 0 && ctx.modifiedp)
     {
-        ctx.modifiedp = false;
         auto& settings = *ctx.qsettings;
         settings.sync();
         if (settings.status() != QSettings::NoError)
             qDebug() << "error with .ini file" << settings.fileName() << settings.status();
+        ctx.modifiedp = false;
     }
     ctx.mtx.unlock();
 }
@@ -41,7 +43,6 @@ ini_ctx& cur_settings()
 {
     static ini_ctx ini;
     const QString pathname = ini_pathname();
-    static QString ini_pathname;
 
     ini.mtx.lock();
 
@@ -51,7 +52,7 @@ ini_ctx& cur_settings()
         ini.pathname = pathname;
     }
 
-    if (pathname != ini_pathname)
+    if (ini.pathname != pathname)
     {
         ini.qsettings.emplace(pathname, QSettings::IniFormat);
         ini.pathname = pathname;
@@ -66,15 +67,20 @@ ini_ctx& global_settings()
 
     ini.mtx.lock();
 
-    if (!is_portable_installation())
-        // Windows registry or xdg on Linux
-        ini.qsettings.emplace(OPENTRACK_ORG);
-    else
+    if (ini.pathname.isEmpty())
     {
-        static const QString pathname = OPENTRACK_BASE_PATH + QStringLiteral("/globals.ini");
-        // file in executable's directory
-        ini.qsettings.emplace(pathname, QSettings::IniFormat);
-        ini.pathname = pathname;
+        if (!is_portable_installation())
+            // Windows registry or xdg on Linux
+            ini.qsettings.emplace(OPENTRACK_ORG);
+        else
+        {
+            static const QString pathname = OPENTRACK_BASE_PATH + QStringLiteral("/globals.ini");
+            // file in executable's directory
+            ini.qsettings.emplace(pathname, QSettings::IniFormat);
+            ini.pathname = pathname;
+        }
+
+        ini.pathname = "placeholder";
     }
 
     return ini;
@@ -84,6 +90,16 @@ ini_ctx& global_settings()
 
 namespace options::globals
 {
+
+using namespace detail;
+
+bool is_ini_modified()
+{
+    ini_ctx& ini = cur_settings();
+    bool ret = ini.modifiedp;
+    ini.mtx.unlock();
+    return ret;
+}
 
 QString ini_filename()
 {
@@ -119,11 +135,10 @@ QStringList ini_list()
     return list;
 }
 
-void mark_ini_modified()
+void mark_ini_modified(bool value)
 {
-    using namespace detail;
     auto& ini = cur_settings();
-    ini.modifiedp = true;
+    ini.modifiedp = value;
     ini.mtx.unlock();
 }
 
@@ -138,7 +153,7 @@ QString ini_directory()
         static const QString subdir = "ini";
 
         if (!QDir(dir).mkpath(subdir))
-            return QString();
+            return {};
 
         return dir + '/' + subdir;
     }

@@ -35,7 +35,7 @@ struct reltrans_enum : migration
     void run() override
     {
         auto b = make_bundle("opentrack-ui");
-        bool value = b->get<bool>(old_name);
+        bool value = b->get_variant(old_name).value<bool>();
         b->store_kv(new_name, int(value ? reltrans_enabled : reltrans_disabled));
         b->save();
     }

@@ -55,7 +55,7 @@ struct module_names : migration
                 continue;
             }
 
-            QString value = b->get<QString>(type.name);
+            QString value = b->get_variant(type.name).value<QString>();
 
             bool found = false;
 

@@ -9,99 +9,57 @@
 #include "connector.hpp"
 #include "value.hpp"
 
-#include <utility>
-
 namespace options::detail {
 
-static bool generic_is_equal(const QVariant& val1, const QVariant& val2)
-{
-    return val1 == val2;
-}
-
+connector::connector() = default;
 connector::~connector() = default;
 
-bool connector::is_equal(const QString& name, const QVariant& val1, const QVariant& val2) const
+void connector::on_value_destructed(value_type val)
 {
+    const QString& name = val->name();
+
     QMutexLocker l(get_mtx());
 
-    auto it = connected_values.find(name);
-
-    if (it != connected_values.cend() && !std::get<0>((*it).second).empty())
-        return std::get<1>((*it).second)(val1, val2);
-    else
-        return generic_is_equal(val1, val2);
-}
-
-bool connector::on_value_destructed_impl(const QString& name, value_type val)
-{
-    QMutexLocker l(get_mtx());
-
-    auto it = connected_values.find(name);
+    const auto it = connected_values.find(name);
 
     if (it != connected_values.end())
     {
-        std::vector<value_type>& values = std::get<0>((*it).second);
-        for (auto it = values.begin(); it != values.end(); it++)
+        value_vec& values = it->second;
+        for (auto it = values.begin(); it != values.end(); )
         {
             if (*it == val)
-            {
-                values.erase(it);
-                return true;
-            }
+                it = values.erase(it);
+            else
+                it++;
         }
     }
-    return false;
+
+    if (it != connected_values.end() && it->second.empty())
+        connected_values.erase(it);
 }
 
-void connector::on_value_destructed(const QString& name, value_type val)
+void connector::on_value_created(value_type val)
 {
-    if (!name.size())
-        return;
+    const QString& name = val->name();
 
-    const bool ok = on_value_destructed_impl(name, val);
-
-    if (!ok)
-        qWarning() << "options/connector: value destructed without creating;"
-                   << "bundle"
-                   << val->b->name()
-                   << "value-name" << name
-                   << "value-ptr" << quintptr(val);
-}
-
-void connector::on_value_created(const QString& name, value_type val)
-{
-    if (!name.size())
+    if (name.isEmpty())
         return;
 
     QMutexLocker l(get_mtx());
-
-    int i = 1;
-    while (on_value_destructed_impl(name, val))
-    {
-        qWarning() << "options/connector: value created twice;"
-                   << "cnt" << i++
-                   << "bundle" << val->b->name()
-                   << "value-name" << name
-                   << "value-ptr" << quintptr(val);
-    }
 
     auto it = connected_values.find(name);
 
     if (it != connected_values.end())
     {
-        tt& tmp = (*it).second;
-        std::type_index& typeidx = std::get<2>(tmp);
-        std::vector<value_type>& values = std::get<0>(tmp);
-
-        if (typeidx != val->type_index)
-            std::get<1>((*it).second) = generic_is_equal;
+        value_vec& values = it->second;
         values.push_back(val);
     }
     else
     {
-        std::vector<value_type> vec;
+        value_vec vec;
+        vec.reserve(4);
         vec.push_back(val);
-        connected_values.emplace(name, tt(vec, val->cmp, val->type_index));
+        connected_values.emplace(name, vec);
     }
 }
 
@@ -109,17 +67,15 @@ void connector::notify_values(const QString& name) const
 {
     auto it = connected_values.find(name);
     if (it != connected_values.cend())
-        for (value_type val : std::get<0>((*it).second))
+        for (value_type val : it->second)
             val->bundle_value_changed();
 }
 
 void connector::notify_all_values() const
 {
-    for (auto& [k, v] : connected_values)
-        for (value_type val : std::get<0>(v))
+    for (const auto& [k, v] : connected_values)
+        for (value_type val : v)
             val->bundle_value_changed();
 }
-
-connector::connector() = default;
 
 } // ns options::detail

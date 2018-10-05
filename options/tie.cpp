@@ -8,6 +8,11 @@
 
 #include "tie.hpp"
 #include "compat/run-in-thread.hpp"
+#include "compat/macros.hpp"
+
+#include "value-traits.hpp"
+
+#include <cmath>
 
 namespace options {
 
@@ -141,9 +146,9 @@ void tie_setting(value<slider_value>& v, QSlider* w)
         {
             const int q_min = w->minimum();
             const int q_max = w->maximum();
-            const int pos = v().to_slider_pos(q_min, q_max);
+            const int pos = v->to_slider_pos(q_min, q_max);
+            v = v->update_from_slider(pos, q_min, q_max);
             w->setValue(pos);
-            v = v().update_from_slider(w->value(), q_min, q_max);
         });
     },
     v.DIRECT_CONNTYPE);

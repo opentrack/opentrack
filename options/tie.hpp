@@ -36,20 +36,17 @@ std::enable_if_t<std::is_enum_v<t>> tie_setting(value<t>& v, QComboBox* cb)
     cb->setCurrentIndex(cb->findData(int(static_cast<t>(v))));
     v = static_cast<t>(cb->currentData().toInt());
 
-    value_::connect(cb,
-                        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                        &v, [&v, cb](int idx) {
-        run_in_thread_sync(cb, [&] {
-            v = static_cast<t>(cb->itemData(idx).toInt());
-        });
-    },
-    v.DIRECT_CONNTYPE);
+    value_::connect(cb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                    &v, [&v, cb](int idx) {
+                        run_in_thread_sync(cb, [&] {
+                            v = static_cast<t>(cb->itemData(idx).toInt());
+                        });
+                    }, v.DIRECT_CONNTYPE);
 
     value_::connect(&v, value_::value_changed<int>(),
-                        cb, [cb](int x) {
+                    cb, [cb](int x) {
                             run_in_thread_sync(cb, [=] { cb->setCurrentIndex(cb->findData(x)); });
-                        },
-                        v.DIRECT_CONNTYPE);
+                    }, v.DIRECT_CONNTYPE);
 }
 
 template<typename t, typename From, typename To>
@@ -79,8 +76,8 @@ void tie_setting(value<t>& v, QLabel* lb, F&& fun)
 
     closure(v());
     value_::connect(&v, value_::value_changed<t>(),
-                        lb, closure,
-                        v.SAFE_CONNTYPE);
+                    lb, closure,
+                    v.SAFE_CONNTYPE);
 }
 
 template<typename t, typename F>
@@ -92,8 +89,8 @@ void tie_setting(value<t>& v, QObject* obj, F&& fun)
     fun(v());
 
     value_::connect(&v, value_::value_changed<t>(),
-                        obj, fun,
-                        v.DIRECT_CONNTYPE);
+                    obj, fun,
+                    v.DIRECT_CONNTYPE);
 }
 
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);

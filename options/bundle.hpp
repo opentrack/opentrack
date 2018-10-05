@@ -13,7 +13,7 @@
 
 #include <memory>
 #include <tuple>
-#include <map>
+#include <unordered_map>
 #include <memory>
 #include <vector>
 
@@ -21,13 +21,21 @@
 #include <QString>
 #include <QVariant>
 #include <QMutex>
-#include <QMutexLocker>
 
 #include <QDebug>
+
+#include "compat/qhash.hpp"
 
 #include "export.hpp"
 
 namespace options::detail {
+    class OTR_OPTIONS_EXPORT mutex final : public QMutex
+    {
+    public:
+        explicit mutex(QMutex::RecursionMode mode);
+        cc_noinline operator QMutex*() const; // NOLINT
+    };
+
     class bundle;
 } // ns options::detail
 
@@ -39,20 +47,10 @@ namespace options {
 
 namespace options::detail {
 
-struct bundler;
-
 class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
 {
     Q_OBJECT
 
-    class OTR_OPTIONS_EXPORT mutex final : public QMutex
-    {
-    public:
-        explicit mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
-        operator QMutex*() const { return const_cast<QMutex*>(static_cast<const QMutex*>(this)); }
-    };
-
-private:
     mutex mtx;
     const QString group_name;
     group saved;
@@ -65,24 +63,18 @@ signals:
 
 public:
     bundle(const bundle&) = delete;
-    bundle(bundle&&) = delete;
-    bundle& operator=(bundle&&) = delete;
     bundle& operator=(const bundle&) = delete;
-    QMutex* get_mtx() const override;
 
-    cc_noinline explicit bundle(const QString& group_name);
-    cc_noinline ~bundle() override;
+    QMutex* get_mtx() const override { return mtx; }
     QString name() const { return group_name; }
-    cc_noinline void store_kv(const QString& name, const QVariant& datum);
-    cc_noinline bool contains(const QString& name) const;
-    cc_noinline bool is_modified() const;
 
-    template<typename t>
-    t get(const QString& name) const
-    {
-        QMutexLocker l(mtx);
-        return transient.get<t>(name);
-    }
+    explicit bundle(const QString& group_name);
+    ~bundle() override;
+
+    void store_kv(const QString& name, const QVariant& datum);
+    bool contains(const QString& name) const;
+
+    QVariant get_variant(const QString& name) const;
 
 public slots:
     void save();
@@ -97,27 +89,25 @@ struct OTR_OPTIONS_EXPORT bundler final
     using weak = std::weak_ptr<v>;
     using shared = std::shared_ptr<v>;
 
-private:
-    QMutex implsgl_mtx { QMutex::Recursive };
-    std::map<k, weak> implsgl_data;
-    void after_profile_changed_();
-
-public:
     static void refresh_all_bundles();
 
 private:
+    QMutex implsgl_mtx { QMutex::Recursive };
+    std::unordered_map<k, weak> implsgl_data {};
+
+    void after_profile_changed_();
+
     friend OTR_OPTIONS_EXPORT
     std::shared_ptr<v> options::make_bundle(const QString& name);
 
-    std::shared_ptr<v> make_bundle_(const k& key);
-
-    static bundler& bundler_singleton();
+    [[nodiscard]] std::shared_ptr<v> make_bundle_(const k& key);
+    [[nodiscard]] static bundler& bundler_singleton();
 
     bundler();
     ~bundler();
 };
 
-void set_base_value_to_default(value_* val);
+void set_value_to_default(value_* val);
 
 } // ns options::detail
 

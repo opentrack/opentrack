@@ -58,7 +58,7 @@ struct split_modules_rc11 : migration
         bundle old_bundle = make_bundle("opentrack-ui");
 
         for (const char* name : module_names)
-            new_bundle->store_kv(name, QVariant(old_bundle->get<QString>(name)));
+            new_bundle->store_kv(name, old_bundle->get_variant(name));
 
         new_bundle->save();
     }

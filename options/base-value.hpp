@@ -15,7 +15,6 @@
 #include <QPointF>
 #include <QVariant>
 
-#include <typeindex>
 #include <utility>
 
 #define OTR_OPTIONS_SLOT(t) void setValue(t datum) { store_(datum); }
@@ -29,13 +28,12 @@ class OTR_OPTIONS_EXPORT value_ : public QObject
 
     friend class detail::connector;
 
-    using comparator = bool(*)(const QVariant& val1, const QVariant& val2);
     template<typename t>
     using signal_sig = void(value_::*)(cv_qualified<t>) const;
 
 public:
     QString name() const { return self_name; }
-    value_(bundle const& b, const QString& name, comparator cmp, std::type_index type_idx);
+    value_(bundle const& b, const QString& name);
     ~value_() override;
 
     // no C++17 "constexpr inline" for data declarations in MSVC
@@ -68,8 +66,6 @@ signals:
 protected:
     bundle b;
     QString self_name;
-    comparator cmp;
-    std::type_index type_index;
 
     virtual void store_variant(const QVariant& x) = 0;
 
@@ -77,8 +73,7 @@ protected:
     void store_(const t& datum)
     {
         using traits = detail::value_traits<t>;
-        using stored_type = typename traits::stored_type;
-        store_variant(QVariant::fromValue<stored_type>(datum));
+        store_variant(traits::qvariant_from_value(datum));
     }
 
 public slots:
@@ -98,11 +93,10 @@ public slots:
     OTR_OPTIONS_SLOT(const QList<slider_value>&)
     OTR_OPTIONS_SLOT(const QList<QPointF>&)
 
-    virtual void reload() = 0;
     virtual void bundle_value_changed() const = 0;
     virtual void set_to_default() = 0;
 
-    friend void ::options::detail::set_base_value_to_default(value_* val);
+    friend void ::options::detail::set_value_to_default(value_* val);
 };
 
 } //ns options

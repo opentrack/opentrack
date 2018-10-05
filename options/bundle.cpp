@@ -10,6 +10,8 @@
 #include "value.hpp"
 #include "globals.hpp"
 
+#include <cstdlib>
+
 #include <QThread>
 #include <QApplication>
 
@@ -18,8 +20,15 @@ using namespace options::globals;
 
 namespace options::detail {
 
-bundle::bundle(const QString& group_name)
-    : mtx(QMutex::Recursive),
+mutex::mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
+
+mutex::operator QMutex*() const
+{
+    return const_cast<QMutex*>(static_cast<const QMutex*>(this));
+}
+
+bundle::bundle(const QString& group_name) :
+      mtx(QMutex::Recursive),
       group_name(group_name),
       saved(group_name),
       transient(saved)
@@ -30,19 +39,25 @@ bundle::~bundle() = default;
 
 void bundle::reload()
 {
-    if (group_name.size())
+    if (!is_ini_modified())
+        return;
+
+    if (!group_name.isEmpty())
     {
         QMutexLocker l(&mtx);
+
+        // XXX what do we do when values are and aren't equal?
+        // see QPointF -sh 20180830
+
+        // XXX we could probably skip assigning to `saved' -sh 20180830
         saved = group(group_name);
-        const bool has_changes = is_modified();
         transient = saved;
 
-        if (has_changes)
-        {
-            connector::notify_all_values();
-            emit reloading();
-            emit changed();
-        }
+        mark_ini_modified(false);
+
+        connector::notify_all_values();
+        emit reloading();
+        emit changed();
     }
 }
 
@@ -50,10 +65,9 @@ void bundle::set_all_to_default()
 {
     QMutexLocker l(&mtx);
 
-    forall([](const QString&, value_* val) { set_base_value_to_default(val); });
-
-    if (is_modified())
-        mark_ini_modified();
+    forall([](value_* val) {
+        set_value_to_default(val);
+    });
 }
 
 void bundle::store_kv(const QString& name, const QVariant& new_value)
@@ -62,14 +76,19 @@ void bundle::store_kv(const QString& name, const QVariant& new_value)
 
     if (!group_name.isEmpty())
     {
-        const QVariant old_value = transient.get_variant(name);
-        if (!connector::is_equal(name, old_value, new_value))
-        {
-            transient.put(name, new_value);
-            connector::notify_values(name);
-            emit changed();
-        }
+        transient.put(name, new_value);
+
+        mark_ini_modified();
+
+        connector::notify_values(name);
+        emit changed();
     }
+}
+
+QVariant bundle::get_variant(const QString& name) const
+{
+    QMutexLocker l(mtx);
+    return transient.get_variant(name);
 }
 
 bool bundle::contains(const QString &name) const
@@ -83,56 +102,18 @@ void bundle::save()
     if (QThread::currentThread() != qApp->thread())
         qDebug() << "group::save - current thread not ui thread";
 
-    if (group_name.size() == 0)
+    if (group_name.isEmpty())
         return;
-
-    bool modified_ = false;
 
     {
         QMutexLocker l(&mtx);
 
-        if (is_modified())
-        {
-            //qDebug() << "bundle" << group_name << "changed, saving";
-            modified_ = true;
-            saved = transient;
-            saved.save();
-        }
+        saved = transient;
+        saved.save();
     }
 
-    if (modified_)
-    {
-        qDebug() << "saving" << name();
-        emit saving();
-    }
-}
-
-bool bundle::is_modified() const
-{
-    QMutexLocker l(mtx);
-
-    for (const auto& kv : transient.kvs)
-    {
-        const QVariant other = saved.get<QVariant>(kv.first);
-        if (!saved.contains(kv.first) || !is_equal(kv.first, kv.second, other))
-        {
-            //if (logspam)
-            //    qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
-            return true;
-        }
-    }
-
-    for (const auto& kv : saved.kvs)
-    {
-        if (!transient.contains(kv.first))
-        {
-            //if (logspam)
-            //    qDebug() << "bundle" << group_name << "modified" << "key" << kv.first << "-" << other << "<>" << kv.second;
-            return true;
-        }
-    }
-
-    return false;
+    qDebug() << "saving" << name();
+    emit saving();
 }
 
 void bundler::after_profile_changed_()
@@ -159,11 +140,13 @@ void bundler::refresh_all_bundles()
 bundler::bundler() = default;
 bundler::~bundler() = default;
 
-std::shared_ptr<bundler::v> bundler::make_bundle_(const bundler::k& key)
+std::shared_ptr<bundler::v> bundler::make_bundle_(const k& key)
 {
     QMutexLocker l(&implsgl_mtx);
 
-    auto it = implsgl_data.find(key);
+    using iter = decltype(implsgl_data.cbegin());
+
+    const iter it = implsgl_data.find(key);
 
     if (it != implsgl_data.end())
     {
@@ -177,11 +160,14 @@ std::shared_ptr<bundler::v> bundler::make_bundle_(const bundler::k& key)
     auto shr = shared(new v(key), [this, key](v* ptr) {
         QMutexLocker l(&implsgl_mtx);
 
-        auto it = implsgl_data.find(key);
+        const iter it = implsgl_data.find(key);
         if (it != implsgl_data.end())
-            implsgl_data.erase(it);
+            (void)implsgl_data.erase(it);
         else
-            qDebug() << "ERROR: can't find self-bundle!";
+        {
+            qCritical() << "ERROR: can't find self-bundle!";
+            std::abort();
+        }
         delete ptr;
     });
     implsgl_data[key] = weak(shr);
@@ -194,13 +180,11 @@ bundler& bundler::bundler_singleton()
     return ret;
 }
 
-QMutex* bundle::get_mtx() const { return mtx; }
-
 } // ns options::detail
 
 namespace options {
 
-OTR_OPTIONS_EXPORT std::shared_ptr<bundle_> make_bundle(const QString& name)
+std::shared_ptr<bundle_> make_bundle(const QString& name)
 {
     if (name.size())
         return detail::bundler::bundler_singleton().make_bundle_(name);

@@ -8,15 +8,13 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <vector>
-#include <tuple>
-#include <typeinfo>
-#include <typeindex>
-#include <QVariant>
+
 #include <QString>
 #include <QMutex>
-#include <QMutexLocker>
+
+#include "compat/qhash.hpp"
 
 #include "export.hpp"
 
@@ -32,13 +30,10 @@ class OTR_OPTIONS_EXPORT connector
 
     using value_type = value_*;
     using value_vec = std::vector<value_type>;
-    using comparator = bool(*)(const QVariant&, const QVariant&);
-    using tt = std::tuple<value_vec, comparator, std::type_index>;
-    std::map<QString, tt> connected_values;
+    std::unordered_map<QString, value_vec> connected_values;
 
-    void on_value_destructed(const QString& name, value_type val);
-    void on_value_created(const QString& name, value_type val);
-    bool on_value_destructed_impl(const QString& name, value_type val);
+    void on_value_destructed(value_type val);
+    void on_value_created(value_type val);
 
 protected:
     void notify_values(const QString& name) const;
@@ -51,20 +46,16 @@ protected:
         QMutexLocker l(get_mtx());
 
         for (auto& pair : connected_values)
-            for (auto& val : std::get<0>(pair.second))
-                fun(pair.first, val);
+            for (auto& val : pair.second)
+                fun(val);
     }
 
 public:
     connector();
     virtual ~connector();
 
-    bool is_equal(const QString& name, const QVariant& val1, const QVariant& val2) const;
-
     connector(const connector&) = default;
     connector& operator=(const connector&) = default;
-    connector(connector&&) = default;
-    connector& operator=(connector&&) = default;
 };
 
 } // ns options::detail

@@ -41,11 +41,9 @@ spline::~spline()
         QObject::disconnect(conn_changed);
         QObject::disconnect(conn_maxx);
         QObject::disconnect(conn_maxy);
-        QObject::disconnect(conn_reload);
-        conn_changed = QMetaObject::Connection();
-        conn_maxx = QMetaObject::Connection();
-        conn_maxy = QMetaObject::Connection();
-        conn_reload = QMetaObject::Connection();
+        conn_changed = {};
+        conn_maxx = {};
+        conn_maxy = {};
     }
 }
 
@@ -350,9 +348,6 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
         {
             conn_changed = QObject::connect(b.get(), &bundle_::changed,
                                             s.get(), [&] { invalidate_settings(); });
-
-            conn_reload = QObject::connect(b.get(), &bundle_::reloading,
-                                           s.get(), [&] { invalidate_settings(); });
 
             // this isn't strictly necessary for the spline but helps the widget
             conn_maxx = QObject::connect(&s->opts.clamp_x_, value_::value_changed<int>(),

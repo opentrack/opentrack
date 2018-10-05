@@ -11,20 +11,18 @@
 
 namespace options::globals::detail {
 
-struct ini_ctx;
 struct saver_;
 
-OTR_OPTIONS_EXPORT ini_ctx& cur_settings();
-OTR_OPTIONS_EXPORT ini_ctx& global_settings();
-OTR_OPTIONS_EXPORT bool is_portable_installation();
-
-struct ini_ctx
+struct OTR_OPTIONS_EXPORT ini_ctx
 {
     std::optional<QSettings> qsettings { std::in_place };
+    QString pathname;
+    QMutex mtx { QMutex::Recursive };
+
     int refcount = 0;
     bool modifiedp = false;
-    QMutex mtx { QMutex::Recursive };
-    QString pathname;
+
+    ini_ctx();
 };
 
 struct OTR_OPTIONS_EXPORT saver_ final
@@ -44,11 +42,16 @@ auto with_settings_object_(ini_ctx& ini, F&& fun)
     return fun(*ini.qsettings);
 }
 
+OTR_OPTIONS_EXPORT ini_ctx& cur_settings();
+OTR_OPTIONS_EXPORT ini_ctx& global_settings();
+OTR_OPTIONS_EXPORT bool is_portable_installation();
+
 } // ns options::globals::detail
 
 namespace options::globals
 {
-    OTR_OPTIONS_EXPORT void mark_ini_modified();
+    OTR_OPTIONS_EXPORT void mark_ini_modified(bool value = true);
+    OTR_OPTIONS_EXPORT bool is_ini_modified();
     OTR_OPTIONS_EXPORT QString ini_directory();
     OTR_OPTIONS_EXPORT QString ini_filename();
     OTR_OPTIONS_EXPORT QString ini_pathname();

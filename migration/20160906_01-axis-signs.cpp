@@ -73,7 +73,7 @@ void axis_signs_split_rc11::run()
 
     for (const char* name : axis_names)
         new_bundle->store_kv(alt_sign_fmt.arg(name),
-                             QVariant(old_bundle->get<bool>(alt_sign_fmt.arg(name))));
+                             old_bundle->get_variant(alt_sign_fmt.arg(name)));
 
     new_bundle->save();
 }

@@ -2,18 +2,15 @@
 
 using namespace options;
 
-value_::value_(bundle const& b, const QString& name, value_::comparator cmp, std::type_index type_idx) :
-    b(b),
-    self_name(name),
-    cmp(cmp),
-    type_index(type_idx)
+value_::value_(bundle const& b, const QString& name) :
+    b(b), self_name(name)
 {
-    b->on_value_created(name, this);
+    b->on_value_created(this);
 }
 
 value_::~value_()
 {
-    b->on_value_destructed(self_name, this);
+    b->on_value_destructed(this);
 }
 
 void value_::notify() const
@@ -23,7 +20,7 @@ void value_::notify() const
 
 namespace options::detail {
 
-void set_base_value_to_default(value_* val)
+void set_value_to_default(value_* val)
 {
     val->set_to_default();
 }
