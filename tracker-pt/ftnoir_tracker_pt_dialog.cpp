@@ -23,7 +23,7 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     s(module_name),
     tracker(nullptr),
     timer(this),
-    trans_calib(1, 2, 0)
+    trans_calib(1, 2)
 {
     Q_INIT_RESOURCE(tracker_pt_base);
 

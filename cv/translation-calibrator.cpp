@@ -13,8 +13,8 @@
 
 #include <QDebug>
 
-TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof, unsigned roll_rdof) :
-    yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof), roll_rdof(roll_rdof)
+TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_rdof) :
+    yaw_rdof(yaw_rdof), pitch_rdof(pitch_rdof)
 {
     reset();
 }
@@ -22,11 +22,10 @@ TranslationCalibrator::TranslationCalibrator(unsigned yaw_rdof, unsigned pitch_r
 void TranslationCalibrator::reset()
 {
     P = cv::Matx66f::zeros();
-    y = cv::Vec6f(0,0,0, 0,0,0);
+    y = { 0,0,0, 0,0,0 };
 
-    used_yaw_poses = vec(1 + iround(360 / yaw_spacing_in_degrees), 0);
-    used_pitch_poses = vec(1 + iround(360 / pitch_spacing_in_degrees), 0);
-    used_roll_poses = vec(1 + iround(360 / roll_spacing_in_degrees), 0);
+    used_yaw_poses = vec_i(1 + iround(360 / yaw_spacing_in_degrees), 0);
+    used_pitch_poses = vec_i(1 + iround(360 / pitch_spacing_in_degrees), 0);
 
     nsamples = 0;
 }
@@ -52,34 +51,40 @@ void TranslationCalibrator::update(const cv::Matx33d& R_CM_k, const cv::Vec3d& t
     y += H_k_T * t_CM_k;
 }
 
-std::tuple<cv::Vec3f, cv::Vec3i> TranslationCalibrator::get_estimate()
+using cv_out_vec = TranslationCalibrator::cv_nsample_vec;
+using cv_in_vec = TranslationCalibrator::cv_cal_vec;
+using tt = TranslationCalibrator::tt;
+
+tt TranslationCalibrator::get_estimate()
 {
     cv::Vec6f x = P.inv() * y;
 
-    unsigned values[3] {};
-    vec* in[] { &used_yaw_poses, &used_pitch_poses, &used_roll_poses };
+    vec_i const* in[num_nsample_axis] = { &used_yaw_poses, &used_pitch_poses, };
+    unsigned nsamples[num_cal_axis] {};
 
-    for (unsigned k = 0; k < 3; k++)
+    for (unsigned k = 0; k < num_nsample_axis; k++)
     {
-        const vec& data = *in[k];
+        vec_i const& data = *in[k];
         for (unsigned i : data)
             if (i)
-                values[k]++;
+                nsamples[k]++;
     }
 
     qDebug() << "samples total" << nsamples
-             << "yaw" << values[0]
-             << "pitch" << values[1]
-             << "roll" << values[2];
+             << "yaw" << nsamples[0]
+             << "pitch" << nsamples[1];
 
-    return std::make_tuple(cv::Vec3f(-x[0], -x[1], -x[2]),
-                           cv::Vec3i(values[0], values[1], values[2]));
+    return {
+        { -x[0], -x[1], -x[2] },
+        { nsamples[0], nsamples[1] },
+    };
 }
+
+static constexpr inline double r2d = 180/M_PI;
 
 bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 {
     using namespace euler;
-    constexpr double r2d = 180/M_PI;
 
     rmat r;
     for (unsigned j = 0; j < 3; j++)
@@ -88,27 +93,28 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 
     const euler_t ypr = rmat_to_euler(r) * r2d;
 
-    const unsigned yaw_k = iround((ypr(yaw_rdof) + 180)/yaw_spacing_in_degrees);
-    const unsigned pitch_k = iround((ypr(pitch_rdof) + 180)/pitch_spacing_in_degrees);
-    const unsigned roll_k = iround((ypr(roll_rdof) + 180)/roll_spacing_in_degrees);
+    auto array_index = [](double val, double spacing) {
+        return iround((val + 180)/spacing);
+    };
+
+    const unsigned yaw_k = array_index(ypr(yaw_rdof), yaw_spacing_in_degrees);
+    const unsigned pitch_k = array_index(ypr(pitch_rdof), pitch_spacing_in_degrees);
 
     if (yaw_k < used_yaw_poses.size() &&
-        pitch_k < used_pitch_poses.size() &&
-        roll_k < used_roll_poses.size())
+        pitch_k < used_pitch_poses.size())
     {
         used_yaw_poses[yaw_k]++;
         used_pitch_poses[pitch_k]++;
-        used_roll_poses[roll_k]++;
 
         return used_yaw_poses[yaw_k] == 1 ||
-               used_pitch_poses[pitch_k] == 1 ||
-               used_roll_poses[roll_k] == 1;
+               used_pitch_poses[pitch_k] == 1;
     }
     else
-        qDebug() << "calibrator: index out of range"
-                 << "yaw" << yaw_k
-                 << "pitch" << pitch_k
-                 << "roll" << roll_k;
+    {
+        eval_once(qDebug() << "calibrator: index out of range"
+                           << "yaw" << yaw_k
+                           << "pitch" << pitch_k);
 
-    return false;
+        return false;
+    }
 }

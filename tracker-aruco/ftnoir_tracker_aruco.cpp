@@ -452,7 +452,7 @@ void aruco_tracker::data(double *data)
 }
 
 aruco_dialog::aruco_dialog() :
-    calibrator(1, 0, 2)
+    calibrator(1, 0)
 {
     tracker = nullptr;
     calib_timer.setInterval(100);
@@ -493,8 +493,8 @@ void aruco_dialog::toggleCalibrate()
     {
         cleanupCalib();
 
-        cv::Vec3d pos;
-        std::tie(pos, std::ignore) = calibrator.get_estimate();
+        auto [ pos, nvals ] = calibrator.get_estimate();
+        (void) nvals;
         s.headpos_x = -pos(0);
         s.headpos_y = -pos(1);
         s.headpos_z = -pos(2);
