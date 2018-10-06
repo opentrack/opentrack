@@ -5,6 +5,7 @@
 
 #include <QString>
 
+#include <cmath>
 #include <cinttypes>
 #include <type_traits>
 

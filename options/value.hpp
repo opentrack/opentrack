@@ -112,8 +112,8 @@ public:
 
     operator t() const { return get(); }
 
-    template<typename u, typename = decltype(static_cast<u>(std::declval<t>()))>
-    explicit cc_forceinline operator u() const { return to<u>(); }
+    template<typename w, typename = decltype(static_cast<w>(std::declval<t>()))>
+    explicit cc_forceinline operator w() const { return to<w>(); }
 
     auto operator->() const
     {

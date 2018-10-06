@@ -215,14 +215,14 @@ static bool is_nan(const dmat<u,w>& r)
 }
 
 template<typename x>
-static cc_forceinline
+static inline
 bool nan_check_(const x& datum)
 {
     return is_nan(datum);
 }
 
 template<typename x, typename y, typename... xs>
-static cc_forceinline
+static inline
 bool nan_check_(const x& datum, const y& next, const xs&... rest)
 {
     return nan_check_(datum) || nan_check_(next, rest...);

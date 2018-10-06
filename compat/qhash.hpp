@@ -6,7 +6,7 @@
 namespace std {
 template<> struct hash<QString>
 {
-    constexpr unsigned operator()(const QString& value) const
+    unsigned operator()(const QString& value) const
     {
         return qHash(value);
     }
