@@ -17,9 +17,8 @@
 #   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000
 #endif
 
-static const double invert[] =
-{
-    1.,  1., 1.,
+static const double invert[] = {
+    1., 1., 1.,
     1., -1., 1.
 };
 
@@ -52,10 +51,12 @@ void mouse::pose(const double* headpose)
     INPUT input;
     input.type = INPUT_MOUSE;
     input.mi = mi;
-    (void) SendInput(1, &input, sizeof(INPUT));
-
-    last_x = mouse_x;
-    last_y = mouse_y;
+    if (mi.dx || mi.dy)
+    {
+        (void) SendInput(1, &input, sizeof(INPUT));
+        last_x = mouse_x;
+        last_y = mouse_y;
+    }
 }
 
 QString mouse::game_name()
