@@ -240,7 +240,7 @@ void KeybindingWorker::remove_receiver(KeybindingWorker::fun* pos)
     }
     if (!ok)
     {
-        qDebug() << "bad remove receiver" << (long) pos;
+        qDebug() << "bad remove receiver" << (void*) pos;
     }
 }
 
