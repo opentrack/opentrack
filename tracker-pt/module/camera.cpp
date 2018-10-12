@@ -151,11 +151,11 @@ bool Camera::_get_frame(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {
-        for (int i = 0; i < 5; i++)
+        for (unsigned i = 0; i < 10; i++)
         {
             if (cap->read(frame))
                 return true;
-            portable::sleep(1);
+            portable::sleep(50);
         }
     }
     return false;
