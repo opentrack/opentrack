@@ -58,8 +58,8 @@ public:
     KeybindingWorker::Token key_token {[this](const Key& k) { receiver(k); }};
 #endif
 
-    Shortcuts() {}
-    ~Shortcuts();
+    Shortcuts() = default;
+    ~Shortcuts() override;
 
     void reload(const t_keys& keys_);
 private:

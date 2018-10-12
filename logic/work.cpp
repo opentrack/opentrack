@@ -64,29 +64,7 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
 Work::Work(Mappings& m, event_handler& ev, QFrame* frame,
            const dylibptr& tracker_, const dylibptr& filter_, const dylibptr& proto_) :
     libs(frame, tracker_, filter_, proto_),
-    logger{make_logger(s)},
-    pipeline_{ m, libs, ev, *logger },
-    keys {
-#if defined OTR_HAS_KEY_UP_SUPPORT
-        key_tuple(s.key_center1, [&](bool x) { pipeline_.set_center(); pipeline_.set_held_center(x); }, false),
-        key_tuple(s.key_center2, [&](bool x) { pipeline_.set_center(); pipeline_.set_held_center(x); }, false),
-#else
-        key_tuple(s.key_center1, [&](bool) { pipeline_.set_center(); }, true),
-        key_tuple(s.key_center2, [&](bool) { pipeline_.set_center(); }, true),
-#endif
-
-        key_tuple(s.key_toggle1, [&](bool) { pipeline_.toggle_enabled(); }, true),
-        key_tuple(s.key_toggle2, [&](bool) { pipeline_.toggle_enabled(); }, true),
-
-        key_tuple(s.key_zero1, [&](bool) { pipeline_.toggle_zero(); }, true),
-        key_tuple(s.key_zero2, [&](bool) { pipeline_.toggle_zero(); }, true),
-
-        key_tuple(s.key_toggle_press1, [&](bool x) { pipeline_.set_enabled(!x); }, false),
-        key_tuple(s.key_toggle_press2, [&](bool x) { pipeline_.set_enabled(!x); }, false),
-
-        key_tuple(s.key_zero_press1, [&](bool x) { pipeline_.set_zero(x); }, false),
-        key_tuple(s.key_zero_press2, [&](bool x) { pipeline_.set_zero(x); }, false),
-    }
+    pipeline_{ m, libs, ev, *logger }
 {
     if (!is_ok())
         return;

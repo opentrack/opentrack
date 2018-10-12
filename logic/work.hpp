@@ -37,12 +37,27 @@ class OTR_LOGIC_EXPORT Work final : public TR
 public:
     using fn_t = std::function<void(bool)>;
     using key_tuple = std::tuple<key_opts&, fn_t, bool>;
-    main_settings s; // tracker needs settings, so settings must come before it
+    main_settings s; // pipeline needs settings, so settings must come before it
     runtime_libraries libs; // idem
-    std::unique_ptr<TrackLogger> logger; // must come before tracker, since tracker depends on it
+    std::unique_ptr<TrackLogger> logger { make_logger(s) }; // must come before pipeline, since pipeline depends on it
     pipeline pipeline_;
     Shortcuts sc;
-    std::vector<key_tuple> keys;
+
+    std::vector<key_tuple> keys {
+        // third argument means "keydown only"
+        key_tuple(s.key_center1, [&](bool x) { pipeline_.set_held_center(x); }, false),
+        key_tuple(s.key_center2, [&](bool x) { pipeline_.set_held_center(x); }, false),
+
+        key_tuple(s.key_toggle1, [&](bool) { pipeline_.toggle_enabled(); }, true),
+        key_tuple(s.key_toggle2, [&](bool) { pipeline_.toggle_enabled(); }, true),
+        key_tuple(s.key_toggle_press1, [&](bool x) { pipeline_.set_enabled(!x); }, false),
+        key_tuple(s.key_toggle_press2, [&](bool x) { pipeline_.set_enabled(!x); }, false),
+
+        key_tuple(s.key_zero1, [&](bool) { pipeline_.toggle_zero(); }, true),
+        key_tuple(s.key_zero2, [&](bool) { pipeline_.toggle_zero(); }, true),
+        key_tuple(s.key_zero_press1, [&](bool x) { pipeline_.set_zero(x); }, false),
+        key_tuple(s.key_zero_press2, [&](bool x) { pipeline_.set_zero(x); }, false),
+    };
 
     Work(Mappings& m, event_handler& ev, QFrame* frame,
          const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto);

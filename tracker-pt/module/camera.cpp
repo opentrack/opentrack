@@ -102,19 +102,18 @@ bool Camera::start(int idx, int fps, int res_x, int res_y)
             cam_desired.res_y = res_y;
             cam_desired.fov = fov;
 
-            cap = camera_ptr(new cv::VideoCapture(cam_desired.idx));
+            cap = camera_ptr(new cv::VideoCapture(idx));
 
             if (cam_desired.res_x)
-                cap->set(cv::CAP_PROP_FRAME_WIDTH,  cam_desired.res_x);
+                cap->set(cv::CAP_PROP_FRAME_WIDTH,  res_x);
             if (cam_desired.res_y)
-                cap->set(cv::CAP_PROP_FRAME_HEIGHT, cam_desired.res_y);
-            if (cam_desired.fps)
-                cap->set(cv::CAP_PROP_FPS, cam_desired.fps);
+                cap->set(cv::CAP_PROP_FRAME_HEIGHT, res_y);
+            if (fps > 0)
+                cap->set(cv::CAP_PROP_FPS, fps);
 
             if (cap->isOpened())
             {
                 cam_info = pt_camera_info();
-                active_name = QString();
                 cam_info.idx = idx;
                 dt_mean = 0;
                 active_name = desired_name;

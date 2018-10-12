@@ -124,7 +124,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     void logic();
     void run() override;
     bool maybe_enable_center_on_tracking_started();
-    void maybe_set_center_pose(const Pose& value, bool own_center_logic);
+    void set_center_pose(const Pose& value, bool own_center_logic);
     void store_tracker_pose(const Pose& value);
     Pose clamp_value(Pose value) const;
     Pose apply_center(Pose value) const;
@@ -132,6 +132,8 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     Pose maybe_apply_filter(const Pose& value) const;
     Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);
     Pose apply_zero_pos(Pose value) const;
+
+    void set_center(bool x);
 
     bits b;
 
@@ -145,7 +147,6 @@ public:
     void toggle_zero();
     void toggle_enabled();
 
-    void set_center();
     void set_held_center(bool value);
     void set_enabled(bool value);
     void set_zero(bool value);

@@ -28,10 +28,16 @@
 #   include <windows.h>
 #endif
 
+#if defined __llvm__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wlanguage-extension-token"
+#   pragma clang diagnostic ignored "-Wunknown-pragmas"
+#endif
+
 namespace pipeline_impl {
 
-static constexpr inline double r2d = 180. / M_PI;
-static constexpr inline double d2r = M_PI / 180.;
+static constexpr inline double r2d = 180 / M_PI;
+static constexpr inline double d2r = M_PI / 180;
 
 reltrans::reltrans() = default;
 
@@ -183,7 +189,8 @@ euler_t reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
 
 pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m), ev(ev), libs(libs), logger(logger)
-{}
+{
+}
 
 pipeline::~pipeline()
 {
@@ -199,6 +206,11 @@ double pipeline::map(double pos, Map& axis)
     auto& fc = altp ? axis.spline_alt : axis.spline_main;
     return double(fc.get_value(pos));
 }
+
+//#define NO_NAN_CHECK
+//#define DEBUG_TIMINGS
+
+#ifndef NO_NAN_CHECK
 
 template<int u, int w>
 static bool is_nan(const dmat<u,w>& r)
@@ -228,8 +240,7 @@ bool nan_check_(const x& datum, const y& next, const xs&... rest)
     return nan_check_(datum) || nan_check_(next, rest...);
 }
 
-static cc_noinline
-void emit_nan_check_msg(const char* text, const char* fun, int line)
+static void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
     eval_once(
         qDebug()  << "nan check failed"
@@ -262,6 +273,10 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
             goto error;                                                                 \
     } while (false)
 
+#else
+#   define nan_check(...) (void)(__VA_ARGS__)
+#endif
+
 bool pipeline::maybe_enable_center_on_tracking_started()
 {
     if (!tracking_started)
@@ -275,7 +290,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
 
         if (tracking_started && s.center_at_startup)
         {
-            b.set(f_center, true);
+            set_center(true);
             return true;
         }
     }
@@ -283,10 +298,12 @@ bool pipeline::maybe_enable_center_on_tracking_started()
     return false;
 }
 
-void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
+void pipeline::set_center_pose(const Pose& value, bool own_center_logic)
 {
     if (b.get(f_center | f_held_center))
     {
+        set_center(false);
+
         if (libs.pFilter)
             libs.pFilter->center();
 
@@ -448,10 +465,12 @@ void pipeline::logic()
     value = clamp_value(value);
 
     {
-        maybe_enable_center_on_tracking_started();
         store_tracker_pose(value);
-        maybe_set_center_pose(value, own_center_logic);
+
+        maybe_enable_center_on_tracking_started();
+        set_center_pose(value, own_center_logic);
         value = apply_center(value);
+
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
     }
@@ -500,7 +519,7 @@ error:
 
 ok:
 
-    b.set(f_center, false);
+    set_center(false);
 
     if (b.get(f_zero))
         for (int i = 0; i < 6; i++)
@@ -533,9 +552,9 @@ void pipeline::run()
 
         logger.write(datachannels[0]);
         char buffer[16];
-        for (unsigned j = 1; j < 5; ++j)
+        for (unsigned j = 1; j < 5; ++j) // NOLINT(modernize-loop-convert)
         {
-            for (unsigned i = 0; i < 6; ++i)
+            for (unsigned i = 0; i < 6; ++i) // NOLINT(modernize-loop-convert)
             {
                 std::sprintf(buffer, "%s%s", datachannels[j], posechannels[i]);
                 logger.write(buffer);
@@ -568,7 +587,7 @@ void pipeline::run()
         const int sleep_time_ms = ms{clamp(const_sleep_ms - backlog_time,
                                            ms{}, ms{10})}.count() + .1f;
 
-#if 0
+#ifdef DEBUG_TIMINGS
         {
             static int cnt;
             static Timer tt;
@@ -577,7 +596,7 @@ void pipeline::run()
                 tt.start();
                 qDebug() << cnt << "Hz"
                          << "sleepy time" << sleep_time_ms
-                         << "elapsed" << ms{elapsed_nsecs}.count()
+                         << "diff" << ms{elapsed_nsecs}.count() - ms{const_sleep_ms}.count()
                          << "backlog" << ms{backlog_time}.count();
                 cnt = 0;
             }
@@ -615,7 +634,7 @@ void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
     }
 }
 
-void pipeline::set_center() { b.set(f_center, true); }
+void pipeline::set_center(bool x) { b.set(f_center, x); }
 
 void pipeline::set_held_center(bool value)
 {
@@ -664,3 +683,7 @@ bits::bits() : b(0u)
 }
 
 } // ns pipeline_impl
+
+#if defined __llvm__
+#   pragma clang diagnostic pop
+#endif
