@@ -277,6 +277,7 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 #   define nan_check(...) (void)(__VA_ARGS__)
 #endif
 
+
 bool pipeline::maybe_enable_center_on_tracking_started()
 {
     if (!tracking_started)
@@ -545,6 +546,9 @@ void pipeline::run()
 #if defined _WIN32
     const MMRESULT mmres = timeBeginPeriod(1);
 #endif
+
+    setPriority(QThread::HighPriority);
+    setPriority(QThread::HighestPriority);
 
     {
         static const char* const posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
