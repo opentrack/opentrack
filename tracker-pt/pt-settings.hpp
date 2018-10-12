@@ -23,9 +23,6 @@ struct pt_settings final : options::opts
 {
     using slider_value = options::slider_value;
 
-    explicit pt_settings(const QString& name);
-    ~pt_settings() override;
-
     value<QString> camera_name { b, "camera-name", "" };
     value<int> cam_res_x { b, "camera-res-width", 640 },
                cam_res_y { b, "camera-res-height", 480 },
@@ -58,6 +55,9 @@ struct pt_settings final : options::opts
     value<pt_color_type> blob_color { b, "blob-color", pt_color_natural };
 
     value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };
+
+    explicit pt_settings(const QString& name) : opts(name) {}
+    ~pt_settings() = default;
 };
 
 } // ns pt_settings_detail
