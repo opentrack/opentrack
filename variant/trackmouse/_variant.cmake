@@ -11,9 +11,11 @@ function(otr_init_variant)
         "logic"
         "dinput"
         "gui"
-        "pose-widget"
         "spline"
         "cv"
-        "migration")
+        "migration"
+        "executable"
+        "pose-widget"
+    )
     set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
 endfunction()

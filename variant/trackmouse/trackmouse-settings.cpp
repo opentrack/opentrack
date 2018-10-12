@@ -47,9 +47,9 @@ static void force_main_settings()
 
     module_settings m;
 
-    m.tracker_dll = "PointTracker 1.1";
-    m.protocol_dll = "Mouse";
-    m.filter_dll = "Accela";
+    m.tracker_dll = "pt";
+    m.protocol_dll = "win32-mouse";
+    m.filter_dll = "accela";
 
     s.b->save();
     s.b_map->save();
@@ -85,6 +85,7 @@ static void force_pt_settings()
 
 static void force_mouse_settings()
 {
+
     mouse_settings s;
 
     s.Mouse_X = Yaw + 1;
@@ -98,13 +99,29 @@ static void force_accela_settings()
     // TODO
 }
 
+static void force_shortcut_settings()
+{
+    main_settings s;
+    s.key_toggle_tracking1.keycode = "Alt+F10";
+    s.key_center1.keycode = "Alt+F11";
+    s.key_toggle_press1.keycode = "Alt+F12";
+
+    for (key_opts* k : { &s.key_toggle_tracking1, &s.key_center1, &s.key_toggle_press1 })
+    {
+        k->button = -1;
+        k->guid = {};
+    }
+    s.b->save();
+}
+
 void force_trackmouse_settings()
 {
-    group::with_settings_object([](QSettings&) { // batch config save
+   options::globals::with_settings_object([](QSettings&) {
        force_main_settings();
        force_spline_settings();
        force_pt_settings();
        force_mouse_settings();
        force_accela_settings();
-    });
+       force_shortcut_settings();
+   });
 }

@@ -32,6 +32,7 @@ struct OTR_LOGIC_EXPORT key_opts
     value<int> button;
 
     key_opts(bundle b, const QString& name);
+    key_opts& operator=(const key_opts& x);
 };
 
 struct OTR_LOGIC_EXPORT module_settings
