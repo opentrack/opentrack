@@ -588,8 +588,10 @@ void pipeline::run()
 
         backlog_time += ns{elapsed_nsecs - const_sleep_ms};
 
-        const int sleep_time_ms = ms{clamp(const_sleep_ms - backlog_time,
-                                           ms{}, ms{10})}.count() + .1f;
+        const int sleep_time_ms = (int)(
+            clamp(ms{const_sleep_ms - backlog_time},
+                  ms{0}, ms{10}).count() - .45f
+        );
 
 #ifdef DEBUG_TIMINGS
         {
