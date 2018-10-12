@@ -15,7 +15,10 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     pProtocol = make_dylib_instance<IProtocol>(p);
 
     if (!pProtocol)
+    {
+        qDebug() << "protocol dylib load failure";
         goto end;
+    }
 
     if(status = pProtocol->initialize(), !status.is_ok())
     {
@@ -30,6 +33,12 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     if (!pTracker)
     {
         qDebug() << "tracker dylib load failure";
+        goto end;
+    }
+
+    if (f && !pFilter)
+    {
+        qDebug() << "filter load failure";
         goto end;
     }
 
