@@ -330,7 +330,7 @@ Pose pipeline::clamp_value(Pose value) const
 Pose pipeline::apply_center(Pose value) const
 {
     euler_t T = euler_t(value) - scaled_state.t_center;
-    euler_t R = d2r * scale_c * rmat_to_euler(scaled_state.rotation * scaled_state.inv_rot_center);
+    euler_t R = scale_c * rmat_to_euler(scaled_state.rotation * scaled_state.inv_rot_center);
 
     // XXX check these lines, it's been here forever
     T = rel.rotate(euler_to_rmat(R), T, {});
