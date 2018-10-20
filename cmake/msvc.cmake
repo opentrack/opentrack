@@ -68,7 +68,7 @@ set(_CFLAGS_DEBUG "-GS -sdl -Gs -guard:cf")
 set(_CXXFLAGS_RELEASE "${cc}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-cgthreads:1 -DEBUG -machine:x86 -WX")
+set(_LDFLAGS "-cgthreads:1 -DEBUG -machine:x86")
 
 #set(_ltcg "-LTCG")
 set(_ltcg "-LTCG:INCREMENTAL")
@@ -76,7 +76,7 @@ set(_ltcg "-LTCG:INCREMENTAL")
 set(_LDFLAGS_RELEASE "-OPT:REF,ICF=4 ${_ltcg}")
 set(_LDFLAGS_DEBUG "")
 
-set(_LDFLAGS_STATIC "-machine:x86 -WX")
+set(_LDFLAGS_STATIC "-machine:x86")
 set(_LDFLAGS_STATIC_RELEASE "${_ltcg}")
 set(_LDFLAGS_STATIC_DEBUG "")
 
