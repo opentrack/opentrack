@@ -1,11 +1,11 @@
-*.cpp text=auto eol=lf
-*.hpp text=auto eol=lf
-*.c text=auto eol=lf
-*.h text=auto eol=lf
-*.cxx text=auto eol=lf
+*.[ch]pp text=auto eol=lf
+*.[ch] text=auto eol=lf
+*.[ch]xx text=auto eol=lf
 *.txt text=auto eol=lf
 *.ui text=auto eol=lf
 *.qrc text=auto eol=lf
 *.cc text=auto eol=lf
 *.md text=auto eol=lf
+*.rc text=auto eol=lf
 *.csv text=auto eol=lf
+.[a-z]* text=auto eol=lf
