@@ -73,9 +73,10 @@ public:
     class Token
     {
         fun* pos;
+    public:
         Token(const Token&) = delete;
         Token& operator=(Token&) = delete;
-    public:
+
         ~Token()
         {
             make().remove_receiver(pos);

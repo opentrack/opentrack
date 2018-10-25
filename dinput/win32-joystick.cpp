@@ -222,7 +222,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
                 }
             }
         }
-        else if (i >= 0 && i < max_buttons)
+        else if ((unsigned)i < max_buttons)
         {
             const bool new_value = !!(event.dwData & 0x80);
             if (last_state[i] != new_value)

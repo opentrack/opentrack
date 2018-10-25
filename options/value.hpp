@@ -17,7 +17,7 @@
 #include "compat/macros.hpp"
 
 #include <type_traits>
-#include <typeinfo>
+#include <utility>
 
 #include <QMetaType>
 
@@ -94,7 +94,7 @@ public:
 
     cc_noinline
     value(bundle b, const QString& name, t def) :
-        value_(b, name), def(def)
+        value_(b, name), def(std::move(def))
     {
     }
 
@@ -110,7 +110,7 @@ public:
         *this = def;
     }
 
-    operator t() const { return get(); }
+    operator t() const { return get(); } // NOLINT
 
     template<typename w, typename = decltype(static_cast<w>(std::declval<t>()))>
     explicit cc_forceinline operator w() const { return to<w>(); }
@@ -135,21 +135,21 @@ public:
 #   define OTR_INST_VALUE OTR_TEMPLATE_IMPORT
 #endif
 
-OTR_INST_VALUE(value<double>);
-OTR_INST_VALUE(value<float>);
-OTR_INST_VALUE(value<int>);
-OTR_INST_VALUE(value<bool>);
-OTR_INST_VALUE(value<QString>);
-OTR_INST_VALUE(value<slider_value>);
-OTR_INST_VALUE(value<QPointF>);
-OTR_INST_VALUE(value<QVariant>);
-OTR_INST_VALUE(value<QList<double>>);
-OTR_INST_VALUE(value<QList<float>>);
-OTR_INST_VALUE(value<QList<int>>);
-OTR_INST_VALUE(value<QList<bool>>);
-OTR_INST_VALUE(value<QList<QString>>);
-OTR_INST_VALUE(value<QList<slider_value>>);
-OTR_INST_VALUE(value<QList<QPointF>>);
-OTR_INST_VALUE(value<QList<QVariant>>);
+OTR_INST_VALUE(value<double>)
+OTR_INST_VALUE(value<float>)
+OTR_INST_VALUE(value<int>)
+OTR_INST_VALUE(value<bool>)
+OTR_INST_VALUE(value<QString>)
+OTR_INST_VALUE(value<slider_value>)
+OTR_INST_VALUE(value<QPointF>)
+OTR_INST_VALUE(value<QVariant>)
+OTR_INST_VALUE(value<QList<double>>)
+OTR_INST_VALUE(value<QList<float>>)
+OTR_INST_VALUE(value<QList<int>>)
+OTR_INST_VALUE(value<QList<bool>>)
+OTR_INST_VALUE(value<QList<QString>>)
+OTR_INST_VALUE(value<QList<slider_value>>)
+OTR_INST_VALUE(value<QList<QPointF>>)
+OTR_INST_VALUE(value<QList<QVariant>>)
 
 } // ns options

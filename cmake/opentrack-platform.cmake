@@ -114,10 +114,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
-if(CMAKE_COMPILER_IS_GNUCXX AND UNIX AND (NOT APPLE))
+if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
     set(_common "-fvisibility=hidden")
     set(CMAKE_C_FLAGS "${_common} ${CMAKE_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${_common} -fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${_common} ${CMAKE_CXX_FLAGS}")
+    if(NOT APPLE)
+        set(CMAKE_CXX_FLAGS "-fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
+    endif()
 endif()
 
 if(APPLE)

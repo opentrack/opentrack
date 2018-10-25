@@ -29,9 +29,9 @@ void Shortcuts::free_binding(K& key)
 #endif
 }
 
-void Shortcuts::bind_shortcut(K &key, const key_opts& k, bool held)
+void Shortcuts::bind_shortcut(K& key, const key_opts& k, bool held)
 {
-#if !defined(_WIN32)
+#if !defined _WIN32
     (void)held;
     using sh = QxtGlobalShortcut;
     if (key)
@@ -46,13 +46,12 @@ void Shortcuts::bind_shortcut(K &key, const key_opts& k, bool held)
         key->setShortcut(QKeySequence::fromString(k.keycode, QKeySequence::PortableText));
         key->setEnabled();
     }
-}
 #else
-    key = K();
+    key = {};
     int idx = 0;
-    QKeySequence code;
+    QKeySequence code(QKeySequence::UnknownKey);
 
-    if (k.guid != "")
+    if (!k.guid->isEmpty())
     {
         key.guid = k.guid;
         key.keycode = k.button & ~Qt::KeyboardModifierMask;
@@ -63,26 +62,27 @@ void Shortcuts::bind_shortcut(K &key, const key_opts& k, bool held)
     }
     else
     {
-        if (k.keycode == "")
-            code = QKeySequence(Qt::Key_unknown);
-        else
+        if (!k.keycode->isEmpty())
             code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
 
         Qt::KeyboardModifiers mods = Qt::NoModifier;
-        if (code != Qt::Key_unknown)
-            win_key::from_qt(code, idx, mods);
-
-        key.guid = "";
-        key.keycode = idx;
-        key.held = held;
-        key.ctrl = !!(mods & Qt::ControlModifier);
-        key.alt = !!(mods & Qt::AltModifier);
-        key.shift = !!(mods & Qt::ShiftModifier);
+        if (!code.isEmpty() &&
+            code != QKeySequence{ QKeySequence::UnknownKey } &&
+            win_key::from_qt(code, idx, mods))
+        {
+            key.guid = "";
+            key.keycode = idx;
+            key.held = held;
+            key.ctrl = !!(mods & Qt::ControlModifier);
+            key.alt = !!(mods & Qt::AltModifier);
+            key.shift = !!(mods & Qt::ShiftModifier);
+        }
     }
-}
 #endif
+}
 
 #ifdef _WIN32
+
 void Shortcuts::receiver(const Key& k)
 {
     const unsigned sz = keys.size();
@@ -105,6 +105,7 @@ void Shortcuts::receiver(const Key& k)
         f(k.held);
     }
 }
+
 #endif
 
 Shortcuts::~Shortcuts()
@@ -127,7 +128,7 @@ void Shortcuts::reload(const t_keys& keys_)
 
     for (unsigned i = 0; i < sz; i++)
     {
-        auto const& [opts, fun, held] = keys_[i];
+        auto const&[opts, fun, held] = keys_[i];
 #ifdef _WIN32
         K k;
 #else

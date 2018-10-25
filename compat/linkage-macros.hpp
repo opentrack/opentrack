@@ -7,20 +7,18 @@
 #   define OTR_GENERIC_EXPORT __attribute__((dllexport, visibility ("default")))
 #   define OTR_GENERIC_IMPORT __attribute__((dllimport, visibility ("default")))
 #else
-#   define OTR_GENERIC_EXPORT __attribute__ ((visibility ("default")))
-#   define OTR_GENERIC_IMPORT
+#   define OTR_GENERIC_EXPORT __attribute__((visibility ("default")))
+#   define OTR_GENERIC_IMPORT __attribute__((visibility ("default")))
 #endif
 
-#if defined __APPLE__
-#   define OTR_TEMPLATE_IMPORT(x) //nothing
+#if defined __APPLE__ || (defined __MINGW32__ && defined _WIN64)
+#   define OTR_NO_TMPL_INST // link failure on both targets
+#endif
+
+#if defined OTR_NO_TMPL_INST
+#   define OTR_TEMPLATE_IMPORT(x)
+#   define OTR_TEMPLATE_EXPORT(x)
 #else
-#   define OTR_TEMPLATE_IMPORT(x) extern template class OTR_GENERIC_IMPORT x
-#endif
-
-#define OTR_TEMPLATE_EXPORT_(x) template class OTR_GENERIC_EXPORT x
-
-#if defined __APPLE__
-#   define OTR_TEMPLATE_EXPORT(x) // nothing
-#else /* does this _always_ work for binutils ELF? */
-#   define OTR_TEMPLATE_EXPORT(x) OTR_TEMPLATE_EXPORT_(x)
+#   define OTR_TEMPLATE_IMPORT(x) extern template class OTR_GENERIC_IMPORT x;
+#   define OTR_TEMPLATE_EXPORT(x) template class OTR_GENERIC_EXPORT x;
 #endif

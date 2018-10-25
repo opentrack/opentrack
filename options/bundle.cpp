@@ -99,7 +99,7 @@ bool bundle::contains(const QString &name) const
 
 void bundle::save()
 {
-    if (QThread::currentThread() != qApp->thread())
+    if (QThread::currentThread() != qApp->thread()) // NOLINT
         qDebug() << "group::save - current thread not ui thread";
 
     if (group_name.isEmpty())
@@ -112,7 +112,6 @@ void bundle::save()
         saved.save();
     }
 
-    qDebug() << "saving" << name();
     emit saving();
 }
 

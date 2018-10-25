@@ -125,7 +125,7 @@ void device_list::refresh_device_list()
 
 device_list::maybe_pose device_list::get_pose(int k)
 {
-    if (k < 0 || !(k < max_devices))
+    if (!(unsigned(k) < max_devices))
         return maybe_pose(false, pose_t{});
 
     return with_vr_lock([k](vr_t v, vr_error_t)

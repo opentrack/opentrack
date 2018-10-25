@@ -27,10 +27,10 @@ static void ensure_thread()
 {
     // only as a bug check
 
-    if (qApp == nullptr)
+    if (qApp == nullptr) // NOLINT
         abort();
 
-    const QThread* ui_thread = qApp->thread();
+    const QThread* ui_thread = qApp->thread(); // NOLINT
     const QThread* curthread = QThread::currentThread();
 
     if (ui_thread == nullptr)

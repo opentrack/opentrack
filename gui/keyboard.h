@@ -24,13 +24,13 @@ class OTR_GUI_EXPORT keyboard_listener : public QDialog
     Q_OBJECT
     Ui_keyboard_listener ui;
 #ifdef _WIN32
+    auto make_token();
     KeybindingWorker::Token token;
+#else
+    void keyPressEvent(QKeyEvent* event) override;
 #endif
 public:
     keyboard_listener(QWidget* parent = nullptr);
-#ifndef _WIN32
-    void keyPressEvent(QKeyEvent* event) override;
-#endif
 signals:
     void key_pressed(QKeySequence k);
     void joystick_button_pressed(QString guid, int idx, bool held);

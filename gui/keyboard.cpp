@@ -2,11 +2,11 @@
 
 #include <QDebug>
 
-keyboard_listener::keyboard_listener(QWidget* parent) :
-    QDialog(parent)
-#if defined _WIN32
-  , token([this](const Key& k) {
-        if(k.guid != "")
+#ifdef _WIN32
+auto keyboard_listener::make_token()
+{
+    return [this](const Key& k) {
+        if(!k.guid.isEmpty())
         {
             int mods = 0;
             if (k.alt) mods |= Qt::AltModifier;
@@ -19,10 +19,17 @@ keyboard_listener::keyboard_listener(QWidget* parent) :
             Qt::KeyboardModifiers m;
             QKeySequence k_;
             if (win_key::to_qt(k, k_, m))
-                emit key_pressed(static_cast<QVariant>(k_).toInt() | m);
+                emit key_pressed({ int(m), int(k_) });
         }
-    })
-// token initializer ends, real ctor body begins
+    };
+}
+
+#endif
+
+keyboard_listener::keyboard_listener(QWidget* parent) :
+    QDialog(parent)
+#ifdef _WIN32
+    , token(make_token())
 #endif
 {
     ui.setupUi(this);
