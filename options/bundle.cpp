@@ -39,9 +39,6 @@ bundle::~bundle() = default;
 
 void bundle::reload()
 {
-    if (!is_ini_modified())
-        return;
-
     if (!group_name.isEmpty())
     {
         QMutexLocker l(&mtx);
@@ -52,8 +49,6 @@ void bundle::reload()
         // XXX we could probably skip assigning to `saved' -sh 20180830
         saved = group(group_name);
         transient = saved;
-
-        mark_ini_modified(false);
 
         connector::notify_all_values();
         emit reloading();
@@ -185,7 +180,7 @@ namespace options {
 
 std::shared_ptr<bundle_> make_bundle(const QString& name)
 {
-    if (name.size())
+    if (!name.isEmpty())
         return detail::bundler::bundler_singleton().make_bundle_(name);
     else
         return std::make_shared<bundle_>(QString());
