@@ -17,10 +17,9 @@ struct value_traits;
 template<typename t, typename u = t, typename Enable = void>
 struct default_value_traits
 {
-    using stored_type = std::decay_t<u>;
-    using value_type = std::decay_t<t>;
-
-    using self = value_traits<t>;
+    using value_type = t;
+    using stored_type = u;
+    using self = value_traits<value_type>;
 
     static value_type value_with_default(const value_type& val, const value_type&)
     {
@@ -91,30 +90,9 @@ struct value_traits<double> : default_value_traits<double>
 
             value_type x_, y_;
 
-            return I(std::round(std::modf(x, &x_) * K)) == I(std::round(std::modf(y, &y_) * K)) &&
-                   I(std::round(x_)) == I(std::round(y_));
+            return I(std::modf(x, &x_) * K) == I(std::modf(y, &y_) * K) &&
+                   I(x_) == I(y_);
         }
-    }
-};
-
-template<> struct value_traits<bool> : default_value_traits<bool, int>
-{
-    static stored_type storage_from_qvariant(const QVariant& x)
-    {
-        if (x.type() == QVariant::String)
-            return x.toBool();
-        else
-            return !!x.toInt();
-    }
-
-    static QVariant qvariant_from_storage(const stored_type& val)
-    {
-        return QVariant::fromValue<int>(!!val);
-    }
-
-    static value_type value_from_storage(const stored_type& x)
-    {
-        return !!x;
     }
 };
 

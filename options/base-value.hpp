@@ -43,8 +43,6 @@ public:
         return static_cast<signal_sig<t>>(&value_::valueChanged);
     }
 
-    void notify() const;
-
 signals:
     OTR_OPTIONS_SIGNAL(double);
     OTR_OPTIONS_SIGNAL(float);
@@ -95,6 +93,8 @@ public slots:
 
     virtual void bundle_value_changed() const = 0;
     virtual void set_to_default() = 0;
+
+    void notify() const;
 
     friend void ::options::detail::set_value_to_default(value_* val);
 };
