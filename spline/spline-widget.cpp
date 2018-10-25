@@ -49,7 +49,7 @@ void spline_widget::setConfig(base_spline* spl)
         update_range();
 
         std::shared_ptr<base_spline::base_settings> s = spl->get_settings();
-        connection = connect(s.get(), &spline::base_settings::recomputed,
+        connection = connect(s.get(), &base_spline::base_settings::recomputed,
                              this, [this] { reload_spline(); },
                              Qt::QueuedConnection);
     }

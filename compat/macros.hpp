@@ -12,12 +12,6 @@
 #   define cc_forceinline __attribute__((always_inline))
 #endif
 
-#if defined _MSC_VER
-#   define cc_warn_unused_result _Check_return_
-#else
-#   define cc_warn_unused_result __attribute__((warn_unused_result))
-#endif
-
 #if !defined likely
 #   if defined __GNUC__
 #      define likely(x)       __builtin_expect(!!(x),1)
@@ -65,7 +59,7 @@ template<typename t>
 using remove_cvref_t = typename cxx20_compat::remove_cvref<t>::type;
 
 template<typename t>
-using to_const_lvalue_reference_t = remove_cvref_t<t> const&;
+using to_const_cvref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>;
 
 // causes ICE in Visual Studio 2017 Preview. the ICE was reported and they handle them seriously in due time.
 // the ICE is caused by decltype(auto) and const& return value
@@ -77,15 +71,15 @@ using to_const_lvalue_reference_t = remove_cvref_t<t> const&;
 #define eval_once__3(expr, ident)                                                               \
     ([&]() -> decltype(auto) {                                                                  \
         static auto INIT##ident = (expr);                                                       \
-        return static_cast<to_const_lvalue_reference_t<decltype(INIT##ident)>>(INIT##ident);    \
+        return static_cast<to_const_cvref_t<decltype(INIT##ident)>>(INIT##ident);    \
     }())
 
 #include <type_traits>
 
 template<typename t>
-using cv_qualified = std::conditional_t<std::is_fundamental_v<std::decay_t<t>>,
-                                        std::decay_t<t>,
-                                        std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>>;
+using cv_qualified = std::conditional_t<std::is_fundamental_v<remove_cvref_t<t>>,
+                                        remove_cvref_t<t>,
+                                        to_const_cvref_t<t>>;
 
 template<bool>
 [[deprecated]] constexpr cc_forceinline void static_warn() {}

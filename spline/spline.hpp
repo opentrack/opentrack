@@ -55,7 +55,7 @@ struct OTR_SPLINE_EXPORT base_spline_
     virtual float get_value(double x) = 0;
     virtual float get_value_no_save(double x) const = 0;
 
-    cc_warn_unused_result virtual bool get_last_value(QPointF& point) = 0;
+    [[nodiscard]] virtual bool get_last_value(QPointF& point) = 0;
     virtual void set_tracking_active(bool value) = 0;
 
     virtual double max_input() const = 0;
@@ -139,7 +139,7 @@ public:
 
     float get_value(double x) override;
     float get_value_no_save(double x) const override;
-    cc_warn_unused_result bool get_last_value(QPointF& point) override;
+    [[nodiscard]] bool get_last_value(QPointF& point) override;
 
     void add_point(QPointF pt) override;
     void add_point(double x, double y) override;

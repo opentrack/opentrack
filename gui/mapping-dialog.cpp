@@ -131,7 +131,7 @@ void mapping_dialog::load()
 
         using c = axis_opts::max_clamp;
 
-        auto update_xstep = [idx, &conf, &qfc](int clamp_x) {
+        auto update_xstep = [&qfc](int clamp_x) {
             int value;
 
             if (clamp_x <= c::r20)
@@ -144,7 +144,7 @@ void mapping_dialog::load()
             qfc.set_x_step(value);
         };
 
-        auto update_ystep = [idx, &conf, &qfc](int clamp_y) {
+        auto update_ystep = [&qfc](int clamp_y) {
             int value;
             switch (clamp_y)
             {
@@ -159,10 +159,7 @@ void mapping_dialog::load()
             qfc.set_y_step(value);
         };
 
-        if (idx >= Yaw)
-            qfc.set_snap(.5, 1);
-        else
-            qfc.set_snap(.5, 1);
+        qfc.set_snap(.5, 1);
 
         connect(&axis.opts.clamp_x_, value_::value_changed<int>(), &qfc, update_xstep);
         connect(&axis.opts.clamp_y_, value_::value_changed<int>(), &qfc, update_ystep);

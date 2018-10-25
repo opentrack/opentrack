@@ -34,7 +34,7 @@ class OTR_SPLINE_EXPORT spline_widget final : public QWidget
     Q_PROPERTY(int x_step READ x_step WRITE set_x_step)
     Q_PROPERTY(int y_step READ y_step WRITE set_y_step)
 
-    using points_t = spline::points_t;
+    using points_t = base_spline::points_t;
 public:
     explicit spline_widget(QWidget *parent = nullptr);
     ~spline_widget() override;

@@ -42,7 +42,7 @@ struct pt_frame : pt_pixel_pos_mixin
     template<typename t>
     t* as() &
     {
-        using u = std::decay_t<t>;
+        using u = remove_cvref_t<t>;
         static_assert(std::is_convertible_v<u*, pt_frame*>, "must be derived from pt_frame");
 
         return static_cast<t*>(this);
@@ -69,11 +69,11 @@ struct pt_camera
     pt_camera();
     virtual ~pt_camera();
 
-    virtual cc_warn_unused_result bool start(int idx, int fps, int res_x, int res_y) = 0;
+    [[nodiscard]] virtual bool start(int idx, int fps, int res_x, int res_y) = 0;
     virtual void stop() = 0;
-    virtual cc_warn_unused_result result get_frame(pt_frame& frame) = 0;
 
-    virtual cc_warn_unused_result result get_info() const = 0;
+    virtual result get_frame(pt_frame& frame) = 0;
+    virtual result get_info() const = 0;
     virtual pt_camera_info get_desired() const = 0;
 
     virtual QString get_desired_name() const = 0;

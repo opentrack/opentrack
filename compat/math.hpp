@@ -13,10 +13,10 @@ inline auto clamp_float(n val, n min_, n max_)
     return std::fmin(std::fmax(val, min_), max_);
 }
 
-template<typename t, typename n>
+template<typename t>
 struct clamp final
 {
-    static inline auto clamp_(const n& val, const n& min_, const n& max_)
+    static inline auto clamp_(t val, t min_, t max_)
     {
         if (unlikely(val > max_))
             return max_;
@@ -26,8 +26,8 @@ struct clamp final
     }
 };
 
-template<typename t>
-struct clamp<float, t>
+template<>
+struct clamp<float>
 {
     static inline auto clamp_(float val, float min_, float max_)
     {
@@ -35,8 +35,8 @@ struct clamp<float, t>
     }
 };
 
-template<typename t>
-struct clamp<double, t>
+template<>
+struct clamp<double>
 {
     static inline auto clamp_(double val, double min_, double max_)
     {
@@ -46,29 +46,27 @@ struct clamp<double, t>
 
 } // ns util_detail
 
-template<typename t, typename u, typename w>
-inline auto clamp(const t& val, const u& min, const w& max)
+template<typename t, typename u, typename v>
+inline auto clamp(const t& val, const u& min, const v& max)
 {
-    using tp = decltype(val + min + max);
-    return ::util_detail::clamp<std::decay_t<tp>, tp>::clamp_(val, min, max);
-}
-
-template<typename t, typename integral_type = int>
-inline auto iround(t val) -> std::enable_if_t<!std::is_integral_v<std::decay_t<t>>, integral_type>
-{
-    return static_cast<integral_type>(std::round(val));
+    using w = cv_qualified<decltype(val + min + max)>;
+    return ::util_detail::clamp<w>::clamp_(val, min, max);
 }
 
 template<typename t>
-inline auto uround(const t& val) -> std::enable_if_t<!std::is_integral_v<std::decay_t<t>>, t>
+inline auto iround(t val) -> std::enable_if_t<std::is_floating_point_v<remove_cvref_t<t>>, int>
 {
-    return (unsigned) std::fmax(0, std::round(val));
+    return (int)std::round(val);
 }
 
-#include "macros.hpp"
-
-template <typename T>
-static cc_forceinline constexpr auto signum(T x)
+template<typename t>
+inline auto uround(t val) -> std::enable_if_t<std::is_floating_point_v<remove_cvref_t<t>>, unsigned>
 {
-    return x < T(0) ? -1 : 1;
+    return (unsigned)std::fmax(0, std::round(val));
+}
+
+template <typename t>
+static cc_forceinline constexpr int signum(const t& x)
+{
+    return x < t{0} ? -1 : 1;
 }

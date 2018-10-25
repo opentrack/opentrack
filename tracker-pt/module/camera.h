@@ -37,7 +37,7 @@ struct Camera final : pt_camera
     void show_camera_settings() override;
 
 private:
-    cc_warn_unused_result bool _get_frame(cv::Mat& Frame);
+    [[nodiscard]] bool _get_frame(cv::Mat& Frame);
 
     double dt_mean = 0, fov = 30;
     Timer t;
@@ -56,7 +56,7 @@ private:
 
     pt_settings s;
 
-    static constexpr inline double dt_eps = 1./384;
+    static constexpr inline double dt_eps = 1./256;
 };
 
 } // ns pt_module

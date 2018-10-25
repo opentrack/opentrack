@@ -59,15 +59,10 @@ public:
 
     void on_center();
 
-    cc_warn_unused_result
     euler_t rotate(const rmat& rmat, const euler_t& in, vec3_bool disable) const;
-
-    cc_warn_unused_result
+    euler_t apply_neck(const rmat& R, int nz, bool disable_tz) const;
     Pose apply_pipeline(reltrans_state state, const Pose& value,
                         const vec6_bool& disable, bool neck_enable, int neck_z);
-
-    cc_warn_unused_result
-    euler_t apply_neck(const rmat& R, int nz, bool disable_tz) const;
 };
 
 using namespace time_units;
