@@ -21,6 +21,7 @@
 
 #include <opencv2/imgproc.hpp>
 
+#include <bthsdpdef.h>
 #include <bluetoothapis.h>
 
 using namespace pt_module;
@@ -79,6 +80,8 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 		break;
 	case wii_cam_data_no_change:
         return { false, cam_info };
+	default:
+		break;
 	}
 
     return { true, cam_info };
@@ -109,9 +112,12 @@ void WIICamera::stop()
     cam_desired = pt_camera_info();
 }
 
-
 wii_camera_status WIICamera::_pair()
 {
+#if defined __MINGW32__
+        // missing prototypes and implib entries
+        return wii_cam_wait_for_connect;
+#else
 	wii_camera_status ret = wii_cam_wait_for_sync;
 	HBLUETOOTH_RADIO_FIND hbt;
 	BLUETOOTH_FIND_RADIO_PARAMS bt_param;
@@ -195,20 +201,24 @@ wii_camera_status WIICamera::_pair()
 	}
 	if (wiifound) { ret = wii_cam_wait_for_connect; }
 	return ret;
+#endif
 }
 
 wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 {
+	(void)frame;
 	wii_camera_status ret = wii_cam_wait_for_connect;
 
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
 		ret = _pair();
-		switch(ret){
+		switch (ret) {
 		case wii_cam_wait_for_sync:
 			m_pDev->Disconnect();
 			goto goodbye;
 		case wii_cam_wait_for_connect:
+			break;
+		default:
 			break;
 		}
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {

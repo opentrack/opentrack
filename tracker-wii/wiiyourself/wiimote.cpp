@@ -8,15 +8,17 @@
 //
 //  wiimote.cpp  (tab = 4 spaces)
 
+#include "warns-begin.hpp"
+
 // VC-specifics:
 #ifdef _MSC_VER 
  // disable warning "C++ exception handler used, but unwind semantics are not enabled."
  //				     in <xstring> (I don't use it - or just enable C++ exceptions)
 # pragma warning(disable: 4530)
 //  auto-link with the necessary libs
-# pragma comment(lib, "setupapi.lib")	
-# pragma comment(lib, "hid.lib")		// for HID API (from DDK)
-# pragma comment(lib, "winmm.lib")		// for timeGetTime()
+//# pragma comment(lib, "setupapi.lib")
+//# pragma comment(lib, "hid.lib")		// for HID API (from DDK)
+//# pragma comment(lib, "winmm.lib")		// for timeGetTime()
 #endif // _MSC_VER
 
 #include "wiimote.h"
@@ -24,14 +26,13 @@
 extern "C" {
 #include <hidsdi.h>// from WinDDK
 }
+
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
+#include <cstring>
+#include <cstdio>
 #include <process.h>	// for _beginthreadex()
-#ifdef __BORLANDC__
-# include <cmath.h>		// for orientation
-#else
-# include <math.h>		// "
-#endif
+#include <math.h>		// for orientation
 #include <mmreg.h>		// for WAVEFORMATEXTENSIBLE
 #include <mmsystem.h>	// for timeGetTime()
 
@@ -49,17 +50,12 @@ template<class T> inline T square(const T& val) { return val * val; }
 // ------------------------------------------------------------------------------------
 //  Tracing & Debugging
 // ------------------------------------------------------------------------------------
-#define PREFIX	_T("WiiYourself! : ")
+#define PREFIX	"WiiYourself: "
 
 // comment these to auto-strip their code from the library:
 //  (they currently use OutputDebugString() via _TRACE() - change to suit)
-#if (_MSC_VER >= 1400) // VC 2005+ (earlier versions don't support variable args)
-# define TRACE(fmt, ...) _TRACE(PREFIX          fmt          _T("\n"), __VA_ARGS__)
-# define WARN(fmt, ...)  _TRACE(PREFIX _T("* ") fmt _T(" *") _T("\n"), __VA_ARGS__)
-#elif defined(__MINGW32__)
-# define TRACE(fmt, ...) _TRACE(PREFIX          fmt          _T("\n") , ##__VA_ARGS__)
-# define WARN(fmt, ...)  _TRACE(PREFIX _T("* ") fmt _T(" *") _T("\n") , ##__VA_ARGS__)
-#endif
+# define TRACE _TRACE
+# define WARN _TRACE
 // uncomment any of these for deeper debugging:
 //#define DEEP_TRACE(fmt, ...) _TRACE(PREFIX _T("|") fmt _T("\n"), __VA_ARGS__)    // VC 2005+
 //#define DEEP_TRACE(fmt, ...) _TRACE(PREFIX _T("|") fmt _T("\n") , ##__VA_ARGS__) // mingw
@@ -745,7 +741,7 @@ void wiimote::SetReportType(input_report type, bool continuous)
 		TYPE2NAME(IN_BUTTONS_ACCEL_EXT) :
 		TYPE2NAME(IN_BUTTONS_ACCEL_IR_EXT) :
 		TYPE2NAME(IN_BUTTONS_BALANCE_BOARD) :
-		_T("(unknown??)");
+		_T("(unknown?)");
 	TRACE(_T("ReportType: %s (%s)"), name, (continuous ? _T("continuous") :
 		_T("non-continuous")));
 #endif
@@ -2372,10 +2368,10 @@ unsigned __stdcall wiimote::SampleStreamThreadfunc(void* param)
 // ------------------------------------------------------------------------------------
 bool wiimote::Load16bitMonoSampleWAV(const TCHAR* filepath, wiimote_sample &out)
 {
+	out = {};
 	// converts unsigned 16bit mono .wav audio data to the 4bit ADPCM variant
 	//  used by the Wiimote (at least the closest match so far), and returns
 	//  the data in a BYTE array (caller must delete[] it when no longer needed):
-	memset(&out, 0, sizeof(out));
 
 	TRACE(_T("Loading '%s'"), filepath);
 
@@ -2543,10 +2539,10 @@ bool wiimote::Load16BitMonoSampleRAW(const TCHAR*   filepath,
 	speaker_freq   freq,
 	wiimote_sample &out)
 {
+	out = {};
 	// converts (.wav style) unsigned 16bit mono raw data to the 4bit ADPCM variant
 	//  used by the Wiimote, and returns the data in a BYTE array (caller must
 	//  delete[] it when no longer needed):
-	memset(&out, 0, sizeof(out));
 
 	// get the length of the file
 	struct _stat file_info;
@@ -2564,12 +2560,11 @@ bool wiimote::Load16BitMonoSampleRAW(const TCHAR*   filepath,
 
 	unsigned total_samples = (len + 1) / 2; // round up just in case file is corrupt
 	// allocate a buffer to hold the samples to convert
-	short *samples = new short[total_samples];
-	_ASSERT(samples);
-	if (!samples) {
+	if (!total_samples) {
 		TRACE(_T("Couldn't open '%s"), filepath);
 		return false;
 	}
+	short *samples = new short[total_samples];
 
 	// load them
 	FILE *file;
@@ -2608,10 +2603,11 @@ bool wiimote::Convert16bitMonoSamples(const short*   samples,
 	speaker_freq   freq,
 	wiimote_sample &out)
 {
+	out = {};
+
 	// converts 16bit mono sample data to the native 4bit format used by the Wiimote,
 	//  and returns the data in a BYTE array (caller must delete[] when no
 	//  longer needed):
-	memset(&out, 0, sizeof(0));
 
 	_ASSERT(samples && length);
 	if (!samples || !length)
@@ -2815,3 +2811,6 @@ void wiimote::StopRecording()
 }
 // ------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------
+
+#include "warns-end.hpp"
+

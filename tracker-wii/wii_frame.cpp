@@ -49,14 +49,18 @@ WIIPreview::WIIPreview(int w, int h)
 
 QImage WIIPreview::get_bitmap()
 {
-	switch (status) {
-	case wii_cam_wait_for_dongle:
-		return QImage(":/Resources/usb.png");
-	case wii_cam_wait_for_sync:
-		return QImage(":/Resources/sync.png");
-	case wii_cam_wait_for_connect:
-		return QImage(":/Resources/on.png");
-	}
+    switch (status) {
+    case wii_cam_wait_for_dongle:
+        return QImage(":/Resources/usb.png");
+    case wii_cam_wait_for_sync:
+        return QImage(":/Resources/sync.png");
+    case wii_cam_wait_for_connect:
+        return QImage(":/Resources/on.png");
+    case wii_cam_data_change:
+    case wii_cam_data_no_change:
+        break;
+    }
+
     int stride = frame_out.step.p[0];
 
     if (stride < 64 || stride < frame_out.cols * 4)
