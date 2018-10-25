@@ -42,13 +42,13 @@ cc_noinline void store(float volatile& place, const float value)
 }
 
 template<typename t>
-cc_forceinline void store(t volatile& place, t value)
+static void store(t volatile& place, t value)
 {
     static_assert(sizeof(t) == 4u);
     (void)InterlockedExchange((LONG volatile*) &place, value);
 }
 
-cc_forceinline std::int32_t load(std::int32_t volatile& place)
+static std::int32_t load(std::int32_t volatile& place)
 {
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }
@@ -93,7 +93,7 @@ void freetrack::pose(const double* headpose)
         {
             // FTHeap pMemData happens to be aligned on a page boundary by virtue of
             // memory mapping usage (MS Windows equivalent of mmap(2)).
-            static_assert((offsetof(FTHeap, table) & sizeof(LONG)-1) == 0);
+            static_assert((offsetof(FTHeap, table) & (sizeof(LONG)-1)) == 0);
 
             for (unsigned k = 0; k < 2; k++)
                 store(pMemData->table_ints[k], t.ints[k]);
