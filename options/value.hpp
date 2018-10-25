@@ -38,9 +38,7 @@ namespace options {
 template<typename u>
 class value final : public value_
 {
-    using t = std::conditional_t<std::is_enum_v<remove_cvref_t<u>>,
-                                 std::decay_t<u>,
-                                 remove_cvref_t<u>>;
+    using t = remove_cvref_t<u>;
     const t def;
 
     using traits = detail::value_traits<t>;
