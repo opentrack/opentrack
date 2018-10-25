@@ -104,6 +104,8 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
     static int element_count(const QList<QPointF>& points, double max_input);
 
+    void disconnect_signals();
+
     std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection conn_changed, conn_maxx, conn_maxy;
 
@@ -151,7 +153,7 @@ public:
 
     void set_tracking_active(bool value) override;
     bundle get_bundle();
-    void ensure_valid(points_t& the_points);
+    void ensure_valid(points_t& points_);
 
     std::shared_ptr<spline_detail::base_settings> get_settings() override;
     std::shared_ptr<const spline_detail::base_settings> get_settings() const override;
