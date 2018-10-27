@@ -101,7 +101,7 @@ static void force_mouse_settings()
 
 static void force_accela_settings()
 {
-    // TODO
+    // XXX TODO
 }
 
 static void force_shortcut_settings()
@@ -109,7 +109,7 @@ static void force_shortcut_settings()
     main_settings s;
     s.key_toggle_tracking1.keycode = "Alt+F10";
     s.key_center1.keycode = "Alt+F11";
-    s.key_toggle_press1.keycode = "Alt+F12";
+    s.key_toggle1.keycode = "Alt+F12";
 
     for (key_opts* k : { &s.key_toggle_tracking1, &s.key_center1, &s.key_toggle_press1 })
     {

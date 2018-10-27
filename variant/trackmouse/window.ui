@@ -298,7 +298,7 @@
              </font>
             </property>
             <property name="text">
-             <string>freeze</string>
+             <string>freeze toggle</string>
             </property>
            </widget>
           </item>
