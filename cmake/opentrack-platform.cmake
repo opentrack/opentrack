@@ -37,7 +37,7 @@ if(APPLE)
     endif()
 endif()
 
-if(MSVC AND MSVC_VERSION LESS "1900" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
+if(MSVC AND MSVC_VERSION LESS "1915" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
     message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 Preview or newer.")
 endif()
 
@@ -72,11 +72,9 @@ if(MSVC)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
 
-    if(MSVC_VERSION GREATER 1909) # visual studio 2017
-        set(__stuff "-permissive-")
-        set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
-        set(CMAKE_C_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
-    endif()
+    set(__stuff "-permissive- -diagnostics:caret")
+    set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
 
     if(opentrack-64bit)
         set(ent "-HIGHENTROPYVA")
@@ -114,13 +112,10 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
-if(CMAKE_COMPILER_IS_GNUCXX AND UNIX)
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     set(_common "-fvisibility=hidden")
     set(CMAKE_C_FLAGS "${_common} ${CMAKE_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${_common} ${CMAKE_CXX_FLAGS}")
-    if(NOT APPLE)
-        set(CMAKE_CXX_FLAGS "-fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
-    endif()
+    set(CMAKE_CXX_FLAGS "${_common} -fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
 endif()
 
 if(APPLE)
@@ -149,13 +144,10 @@ if(MINGW)
 endif()
 
 # assume binutils
-if(LINUX)
+if(UNIX AND NOT APPLE)
     foreach (i SHARED MODULE EXE)
         set(CMAKE_${i}_LINKER_FLAGS "-Wl,-z,relro,-z,now,--exclude-libs,ALL ${CMAKE_${i}_LINKER_FLAGS}")
     endforeach()
-endif()
-
-if(UNIX AND NOT APPLE)
     include(opentrack-pkg-config)
 endif()
 

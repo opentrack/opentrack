@@ -44,13 +44,6 @@ function(otr_escape_string var str)
         set(${var} "${tmp__}" PARENT_SCOPE)
 endfunction()
 
-function(otr_setup_refresh_install_dir)
-    if((NOT CMAKE_INSTALL_PREFIX STREQUAL "") AND (NOT opentrack-doc-src-pfx STREQUAL ""))
-        otr_escape_string(dir "${CMAKE_INSTALL_PREFIX}/${opentrack-doc-src-pfx}/")
-        install(CODE "file(REMOVE_RECURSE \"${dir}\")")
-    endif()
-endfunction()
-
 set(opentrack-contrib-pfx "${opentrack-doc-pfx}/contrib")
 
 set(opentrack-binary-suffix "")

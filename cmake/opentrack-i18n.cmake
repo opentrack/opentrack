@@ -1,3 +1,5 @@
+add_custom_target(i18n ALL)
+
 function(otr_i18n_for_target_directory n)
     set(k "opentrack-${n}")
 
@@ -25,31 +27,21 @@ function(otr_i18n_for_target_directory n)
                 .
                 -ts "${t}"
             COMMAND "${CMAKE_COMMAND}" -E copy "${t}" "${t2}"
-            DEPENDS ${input} ${t}
+            DEPENDS "${input}" "${t}"
             WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
             COMMENT "Running lupdate for ${n}/${i}")
         set(target-name "i18n-lang-${i}-module-${n}")
         list(APPEND target-names "${target-name}")
-        add_custom_target(${target-name} DEPENDS "${t2}" "${t}" COMMENT "")
-        add_dependencies("opentrack-${n}" "${target-name}")
+        add_custom_target(${target-name} DEPENDS "${t2}" COMMENT "")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${i}" "${t2}")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-module-${n}" "${target-name}")
     endforeach()
-    add_custom_target("i18n-module-${n}" DEPENDS ${target-names})
+    #add_custom_target("i18n-module-${n}" DEPENDS ${target-names})
 endfunction()
 
 function(otr_merge_translations)
     otr_escape_string(i18n-pfx "${opentrack-i18n-pfx}")
     install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/${i18n-pfx}\")")
-
-    get_property(variant GLOBAL PROPERTY opentrack-variant)
-    if(NOT ".${variant}" STREQUAL ".default")
-        set(force-skip-update TRUE)
-    else()
-        set(force-skip-update FALSE)
-    endif()
-
-    set(all-qm-files "")
 
     get_property(all-modules GLOBAL PROPERTY opentrack-all-modules)
 
@@ -65,7 +57,6 @@ function(otr_merge_translations)
         get_property(lrelease-binary TARGET "${Qt5_LRELEASE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
 
         set(qm-output "${CMAKE_CURRENT_BINARY_DIR}/${i}.qm")
-        list(APPEND all-qm-files "${qm-output}")
 
         # whines about duplicate messages since tracker-pt-base is static
         if(WIN32)
@@ -82,13 +73,15 @@ function(otr_merge_translations)
                 ${ts-files}
                 -qm "${qm-output}"
                 ${to-null}
-            DEPENDS ${all-ts-targets} ${ts-files}
+            DEPENDS ${all-ts-targets}
             COMMENT "Running lrelease for ${i}")
+
+        add_custom_target("i18n-qm-${i}" DEPENDS "${qm-output}")
+        add_dependencies(i18n "i18n-qm-${i}")
 
         install(FILES "${qm-output}"
                 DESTINATION "${CMAKE_INSTALL_PREFIX}/${opentrack-i18n-pfx}"
                 PERMISSIONS ${opentrack-perms-file})
     endforeach()
 
-    add_custom_target(i18n ALL DEPENDS ${all-qm-files})
 endfunction()
