@@ -327,8 +327,16 @@ void main_window::set_title(const QString& game_title)
 
 void main_window::exit(int status)
 {
+    if (exiting_already)
+        return;
+    exiting_already = true;
+
+    qDebug() << "trackmouse: saving settings on app exit";
+    save_settings_timer.stop();
+    mouse.b->save();
+
+    //close();
     QApplication::setQuitOnLastWindowClosed(true);
-    close();
     QApplication::exit(status);
 }
 
