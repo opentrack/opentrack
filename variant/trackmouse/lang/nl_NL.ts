@@ -12,6 +12,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Check permissions for your .ini directory:
+
+%1&quot;%2
+
+Exiting now.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>window</name>
+    <message>
         <source>trackmouse prototype</source>
         <translation type="unfinished"></translation>
     </message>
@@ -57,14 +68,6 @@
     </message>
     <message>
         <source>Stop</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Check permissions for your .ini directory:
-
-%1&quot;%2
-
-Exiting now.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
