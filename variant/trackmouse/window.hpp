@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include "ui_window.h"
 #include "proto-mouse/mouse-settings.hpp"
 
 #include "api/plugin-support.hpp"
@@ -20,17 +21,15 @@
 #include "logic/state.hpp"
 #include "options/options.hpp"
 
+#include <tuple>
+#include <memory>
+
 #include <QMainWindow>
 #include <QKeySequence>
 #include <QShortcut>
 #include <QPixmap>
 #include <QTimer>
 #include <QString>
-
-#include <tuple>
-#include <memory>
-
-#include "ui_window.h"
 
 class main_window final : public QMainWindow, private State
 {
