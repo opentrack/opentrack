@@ -7,7 +7,7 @@
 
 int main(int argc, char** argv)
 {
-    return run_application(argc, argv, []() { return new window; });
+    return run_application(argc, argv, []() { return new main_window; });
 }
 
 #if defined _MSC_VER
