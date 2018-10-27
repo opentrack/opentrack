@@ -135,11 +135,11 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 
     // timers
     connect(&config_list_timer, &QTimer::timeout, this, [this] { refresh_config_list(); });
-    connect(&pose_update_timer, SIGNAL(timeout()), this, SLOT(show_pose()), Qt::DirectConnection);
+    connect(&pose_update_timer, &QTimer::timeout, this, &main_window::show_pose, Qt::DirectConnection);
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
 
     // ctrl+q exits
-    connect(&kbd_quit, SIGNAL(activated()), this, SLOT(exit()));
+    connect(&kbd_quit, &QShortcut::activated, this, [this]() { main_window::exit(EXIT_SUCCESS); }, Qt::DirectConnection);
 
     // profile menu
     {
@@ -793,11 +793,22 @@ void main_window::show_mapping_window()
 
 void main_window::exit(int status)
 {
-    QApplication::setQuitOnLastWindowClosed(true);
+    // don't use std::call_once here, leads to freeze in Microsoft's CRT
+    // this function never needs reentrancy anyway
+
+    // this is probably harmless, but better safe than sorry
+    if (exiting_already)
+        return;
+    exiting_already = true;
+
+    qDebug() << "opentrack: exiting";
+
     if (tray)
         tray->hide();
     tray = nullptr;
-    close();
+
+    //close();
+    QApplication::setQuitOnLastWindowClosed(true);
     QApplication::exit(status);
 }
 

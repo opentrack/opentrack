@@ -157,7 +157,7 @@ module_status simconnect::initialize()
         if (ctx.is_ok())
         {
             SCClientLib.setFileName("SimConnect.dll");
-            SCClientLib.setLoadHints(QLibrary::PreventUnloadHint);
+            SCClientLib.setLoadHints(QLibrary::PreventUnloadHint | QLibrary::ResolveAllSymbolsHint);
             if (!SCClientLib.load())
                 return error(tr("dll load failed -- %1").arg(SCClientLib.errorString()));
         }

@@ -190,7 +190,7 @@ static int run_window(std::unique_ptr<QWidget> main_window)
 {
     if (!main_window->isEnabled())
     {
-        qDebug() << "exit before window created";
+        qDebug() << "opentrack: exit before window created";
         return 2;
     }
 
@@ -228,7 +228,9 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_w
             qDebug() << "locale:" << forced_locale;
         }
 
-        const bool no_i18n = options::globals::with_global_settings_object([](QSettings& s) {
+        using namespace options::globals;
+
+        const bool no_i18n = with_global_settings_object([](QSettings& s) {
             return s.value("disable-translation", false).toBool();
         });
 

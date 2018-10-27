@@ -69,14 +69,16 @@ class main_window final : public QMainWindow, private State
             menu_action_options  { &tray_menu },
             menu_action_mappings { &tray_menu };
 
+    bool exiting_already { false };
+
     using dylib_ptr = Modules::dylib_ptr;
     using dylib_list = Modules::dylib_list;
-
-    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
 
     dylib_ptr current_tracker();
     dylib_ptr current_protocol();
     dylib_ptr current_filter();
+
+    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
 
     void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
