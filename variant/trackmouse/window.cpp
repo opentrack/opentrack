@@ -83,6 +83,39 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
 
+    {
+        tie_setting(mouse.sensitivity_x, ui.sensitivity_slider);
+        tie_setting(mouse.sensitivity_x, ui.sensitivity_label,
+                    [](double x) { return QString::number(x) + QStringLiteral("%"); });
+        // one-way only
+        tie_setting(mouse.sensitivity_x, this,
+                    [this](double x) { mouse.sensitivity_y = *mouse.sensitivity_x; });
+
+        // no "ok" button, gotta save on timer
+        auto save = [this] {
+            qDebug() << "trackmouse: saving settings";
+            mouse.b->save();
+            save_settings_timer.stop();
+        };
+
+        auto start_save_timer = [this](double) {
+            save_settings_timer.start();
+        };
+
+        save_settings_timer.setInterval(save_settings_interval_ms);
+        save_settings_timer.setSingleShot(true);
+
+        ui.sensitivity_slider->setTracking(false);
+        connect(&save_settings_timer, &QTimer::timeout, this, save, Qt::DirectConnection);
+#if 1
+        // this doesn't fire the timer on application load
+        connect(ui.sensitivity_slider, &QSlider::valueChanged, this, start_save_timer, Qt::DirectConnection);
+#else
+        // but this does so let's not not use it
+        tie_setting(mouse.sensitivity_x, this, start_save_timer);
+#endif
+    }
+
     force_trackmouse_settings();
 
     register_shortcuts();

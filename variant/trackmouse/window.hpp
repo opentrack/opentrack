@@ -10,6 +10,8 @@
 
 #pragma once
 
+#include "proto-mouse/mouse-settings.hpp"
+
 #include "api/plugin-support.hpp"
 #include "logic/main-settings.hpp"
 #include "logic/pipeline.hpp"
@@ -36,13 +38,17 @@ class main_window final : public QMainWindow, private State
 
     Ui::window ui;
 
+    QTimer save_settings_timer { this };
+
     Shortcuts global_shortcuts;
     module_settings m;
+    mouse_settings mouse;
 
     QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
     std::unique_ptr<IFilterDialog> pFilterDialog;
     std::unique_ptr<IProtocolDialog> pProtocolDialog;
     std::unique_ptr<ITrackerDialog> pTrackerDialog;
+    bool exiting_already { false };
 
     using dylib_ptr = Modules::dylib_ptr;
     using dylib_list = Modules::dylib_list;
@@ -64,6 +70,8 @@ class main_window final : public QMainWindow, private State
 
     bool maybe_die_on_config_not_writable(const QString& current);
     void die_on_config_not_writable();
+
+    static constexpr inline int save_settings_interval_ms = 2500;
 
 private slots:
     void save_modules();

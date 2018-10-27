@@ -47,10 +47,6 @@ Exiting now.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>freeze</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Alt+F12</source>
         <translation type="unfinished"></translation>
     </message>
@@ -68,6 +64,10 @@ Exiting now.</source>
     </message>
     <message>
         <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>freeze toggle</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

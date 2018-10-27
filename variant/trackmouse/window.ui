@@ -350,6 +350,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="maximum">
+             <number>475</number>
+            </property>
             <property name="pageStep">
              <number>1</number>
             </property>
@@ -360,7 +363,7 @@
              <enum>QSlider::TicksAbove</enum>
             </property>
             <property name="tickInterval">
-             <number>10</number>
+             <number>50</number>
             </property>
            </widget>
           </item>
