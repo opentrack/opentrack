@@ -62,7 +62,11 @@ static void force_pt_settings()
     enum { Clip = 0 };
 
     s.active_model_panel = Clip;
-    // XXX TODO trackmouse clip sizes
+    // XXX TODO these are Mini Clip Right sizes
+    s.clip_by = 60;
+    s.clip_bz = 38.2;
+    s.clip_ty = 42.2;
+    s.clip_tz = 12.6;
 
     s.cam_fps = 60;
     s.cam_res_x = 640;
@@ -74,6 +78,7 @@ static void force_pt_settings()
 
     // XXX TODO auto threshold slider position
     s.auto_threshold = true;
+    s.threshold_slider = slider_value(178., s.threshold_slider->min(), s.threshold_slider->max());
 
     s.t_MH_x = 0, s.t_MH_y = 0, s.t_MH_z = 0;
     s.blob_color = pt_color_natural;
