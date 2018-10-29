@@ -1,5 +1,7 @@
 include_guard(GLOBAL)
 
+add_custom_target(moc COMMENT "Qt temporary files")
+
 set(opentrack-perms-file WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 set(opentrack-perms-dir WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
 set(opentrack-perms-exec "${opentrack-perms-dir}")
@@ -163,7 +165,9 @@ function(otr_module n_)
         set_property(TARGET "${n}" PROPERTY PREFIX "")
     endif()
 
-    set_property(SOURCE ${${n}-moc} ${${n}-uih} ${${n}-rcc} PROPERTY GENERATED TRUE)
+    set_property(SOURCE ${${n}-moc} ${${n}-uih} PROPERTY GENERATED TRUE)
+    add_custom_target(moc-${n} DEPENDS ${${n}-moc} ${${n}-uih} ${${n}-rc} COMMENT "")
+    add_dependencies(moc "moc-${n}")
 
     if(NOT arg_RELINK)
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)
@@ -214,6 +218,8 @@ function(otr_module n_)
 
     set_property(GLOBAL APPEND PROPERTY opentrack-all-modules "${n_}")
     set_property(GLOBAL APPEND PROPERTY opentrack-all-source-dirs "${CMAKE_CURRENT_SOURCE_DIR}")
+
+    #make_directory("${CMAKE_CURRENT_BINARY_DIR}")
 endfunction()
 
 function(otr_add_target_dirs var)
