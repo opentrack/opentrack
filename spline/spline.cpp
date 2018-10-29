@@ -226,11 +226,13 @@ void spline::update_interp_data()
         }
     }
 
+    double maxy = max_output();
     float last = 0;
     for (unsigned i = 0; i < unsigned(value_count); i++)
     {
         if (data[i] == magic_fill_value)
             data[i] = last;
+        data[i] = (float)clamp(data[i], 0, maxy);
         last = data[i];
     }
 }
