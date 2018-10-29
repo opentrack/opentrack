@@ -50,7 +50,7 @@ function(otr_qt n)
     if(".${${n}-cc}${${n}-cxx}${${n}-hh}" STREQUAL ".")
         message(FATAL_ERROR "project ${n} not globbed")
    endif()
-    qt5_wrap_cpp(${n}-moc ${${n}-hh} OPTIONS --no-notes)
+    qt5_wrap_cpp(${n}-moc ${${n}-hh} OPTIONS --no-notes -I "${CMAKE_CURRENT_BINARY_DIR}" -I "${CMAKE_SOURCE_DIR}")
     qt5_wrap_ui(${n}-uih ${${n}-ui})
     qt5_add_resources(${n}-rcc ${${n}-rc})
 
