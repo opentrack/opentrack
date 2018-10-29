@@ -157,36 +157,33 @@ void spline::update_interp_data()
 
     const double maxx = max_input();
 
-    if (sz == 0)
+    if (list.isEmpty())
         list.prepend({ maxx, max_output() });
-
-    std::stable_sort(list.begin(), list.begin() + sz, sort_fn);
 
     const double c = bucket_size_coefficient(list);
     const double c_interp = c * 30;
 
-    for (unsigned i = 0; i < value_count; i++)
-        data[i] = -16;
+    enum { magic_fill_value = -255 };
 
-    if (sz < 2)
+    for (unsigned i = 0; i < value_count; i++)
+        data[i] = magic_fill_value;
+
+    if (sz < 2) // lerp only
     {
-        if (list[0].x() - 1e-2 < maxx)
-        {
-            const double x = list[0].x();
-            const double y = list[0].y();
-            const unsigned max = (unsigned)clamp(iround(x * c), 1, value_count-1);
-            for (unsigned k = 0; k <= max; k++)
-            {
-                if (k < value_count)
-                    data[unsigned(k)] = float(y * k / max);
-            }
-        }
+        const QPointF& pt = list[0];
+        const double x = pt.x();
+        const double y = pt.y();
+        const unsigned max = clamp(uround(x * c), 0, value_count-2);
+
+        for (unsigned k = 0; k <= max; k++)
+            data[k] = float(y * k / max); // no need for bresenham
     }
     else
     {
         if (list[0].x() > 1e-2 && list[0].x() <= maxx)
             list.push_front(QPointF(0, 0));
 
+        // now this is hella expensive due to `c_interp'
         for (int i = 0; i < sz; i++)
         {
             const QPointF p0 = ensure_in_bounds(list, i - 1);
@@ -232,7 +229,7 @@ void spline::update_interp_data()
     float last = 0;
     for (unsigned i = 0; i < unsigned(value_count); i++)
     {
-        if (data[i] == -16)
+        if (data[i] == magic_fill_value)
             data[i] = last;
         last = data[i];
     }
@@ -311,9 +308,11 @@ void spline::invalidate_settings()
     // we're holding the mutex to allow signal disconnection in spline dtor
     // before this slot gets called for the next time
 
-    QMutexLocker l(&_mutex);
-    validp = false;
-    points = s->points;
+    {
+        QMutexLocker l(&_mutex);
+        validp = false;
+        points = s->points;
+    }
     emit s->recomputed();
 }
 
@@ -332,12 +331,12 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
         s = std::make_shared<settings>(b, axis_name, axis);
 
         conn_changed = QObject::connect(b.get(), &bundle_::changed,
-                                        s.get(), [&] { invalidate_settings(); });
+                                        s.get(), [&] { invalidate_settings(); }, Qt::QueuedConnection);
         // this isn't strictly necessary for the spline but helps the widget
         conn_maxx = QObject::connect(&s->opts.clamp_x_, value_::value_changed<int>(),
-                                     ctx.get(), [&](double) { invalidate_settings(); });
+                                     ctx.get(), [&](double) { invalidate_settings(); }, Qt::QueuedConnection);
         conn_maxy = QObject::connect(&s->opts.clamp_y_, value_::value_changed<int>(),
-                                     ctx.get(), [&](double) { invalidate_settings(); });
+                                     ctx.get(), [&](double) { invalidate_settings(); }, Qt::QueuedConnection);
 
         invalidate_settings();
     }
@@ -363,11 +362,9 @@ double spline::max_output() const
     return std::fabs(clamp.to<double>());
 }
 
-void spline::ensure_valid(points_t& points_)
+void spline::ensure_valid(points_t& list)
 {
     QMutexLocker foo(&_mutex);
-
-    QList<QPointF> list = points_;
 
     // storing to s->points fires bundle::changed and that leads to an infinite loop
     // thus, only store if we can't help it
@@ -375,44 +372,53 @@ void spline::ensure_valid(points_t& points_)
 
     const int sz = list.size();
 
-    QList<QPointF> ret_, tmp;
-    ret_.reserve(sz), tmp.reserve(sz);
+    QList<QPointF> all_points, tmp;
+    all_points.reserve(sz), tmp.reserve(sz);
 
     const double maxx = max_input(), maxy = max_output();
 
     for (int i = 0; i < sz; i++)
     {
-        QPointF& pt(list[i]);
+        QPointF& pt{list[i]};
 
-        const bool overlap = progn(
-            for (int j = 0; j < i; j++)
+        bool overlap = false;
+        for (int j = i+1; j < sz; j++)
+        {
+            const QPointF& pt2{list[j]};
+            const QPointF tmp(pt - pt2);
+            const double dist_sq = QPointF::dotProduct(tmp, tmp);
+            constexpr double min_dist = 1e-4;
+            if (dist_sq < min_dist)
             {
-                const QPointF& pt2(list[j]);
-                const QPointF tmp(pt - pt2);
-                const double dist_sq = QPointF::dotProduct(tmp, tmp);
-                const double overlap = maxx / 500.;
-                if (dist_sq < overlap * overlap)
-                    return true;
+                overlap = true;
+                break;
             }
-            return false;
-        );
+        }
 
         if (!overlap)
-            tmp.append(pt);
-
-        if (pt.x() - 1e-2 < maxx && pt.x() >= 0 &&
-            pt.y() - 1e-2 < maxy && pt.y() >= 0 && !overlap)
         {
-            ret_.push_back(pt);
+            tmp.append(pt); // all points total
+
+            // points within selected limit, for use in `update_interp_data'
+            if (pt.x() - 1e-4 <= maxx && pt.x() >= 0)
+                all_points.push_back(pt);
         }
     }
 
-    if (ret_ != points_)
+    // size check guards against livelock with value<t>/bundle_ signals
+
+    // points that are within bounds
+    if (tmp.size() < points.size())
     {
         points = std::move(tmp);
+        // can't stuff there unconditionally
+        // fires signals from `value<t>' and `bundle_' otherwise
         s->points = points;
-        points_ = std::move(ret_);
     }
+
+    if (all_points.size() < list.size())
+        // all points that don't overlap, after clamping
+        list = std::move(all_points);
 
     last_input_value = {};
     activep = false;
