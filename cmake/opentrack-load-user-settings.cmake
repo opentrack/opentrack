@@ -1,3 +1,4 @@
+include_guard(GLOBAL)
 if(WIN32)
     set(__sdk_username "$ENV{USERNAME}")
 else()

@@ -1,3 +1,4 @@
+include_guard(GLOBAL)
 include(GetGitRevisionDescription)
 
 find_package(Git QUIET)

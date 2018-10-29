@@ -1,4 +1,4 @@
-# XXX that belongs in each variant's directory!
+include_guard(GLOBAL)
 
 function(otr_dist_select_variant)
     file(GLOB variants "variant/*")

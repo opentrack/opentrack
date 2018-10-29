@@ -1,3 +1,4 @@
+include_guard(GLOBAL)
 find_package(Qt5 REQUIRED COMPONENTS Core Network Widgets LinguistTools Gui QUIET)
 if(WIN32)
     find_package(Qt5Gui REQUIRED COMPONENTS QWindowsIntegrationPlugin)

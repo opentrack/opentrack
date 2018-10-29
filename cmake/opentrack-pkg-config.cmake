@@ -1,3 +1,4 @@
+include_guard(GLOBAL)
 include(FindPkgConfig)
 
 function(otr_pkgconfig target)

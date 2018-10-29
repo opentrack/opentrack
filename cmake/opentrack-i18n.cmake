@@ -1,3 +1,5 @@
+include_guard(GLOBAL)
+
 add_custom_target(i18n ALL)
 
 function(otr_i18n_for_target_directory n)

@@ -1,3 +1,4 @@
+include_guard(GLOBAL)
 if(CMAKE_SIZEOF_VOID_P GREATER 4)
     set(opentrack-64bit TRUE)
 else()

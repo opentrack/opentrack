@@ -7,6 +7,8 @@
 # TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 # PERFORMANCE OF THIS SOFTWARE.
 
+include_guard(GLOBAL)
+
 set(opentrack-install-rpath "")
 if(APPLE)
     set(opentrack-hier-pfx ".")

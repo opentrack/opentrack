@@ -1,3 +1,4 @@
+include_guard(GLOBAL)
 function(otr_rift proj opt)
     if(${opt})
         set(link-flags)
