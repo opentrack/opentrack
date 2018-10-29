@@ -20,7 +20,7 @@ endfunction()
 set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 set(opentrack_maintainer-mode TRUE CACHE INTERNAL "" FORCE)
 
-setq(Qt5_DIR "../qt-5.10.0/lib/cmake/Qt5")
+setq(Qt5_DIR "../qt-5.11.2/lib/cmake/Qt5")
 setq(OpenCV_DIR "opencv/build")
 
 setq(SDK_ARUCO_LIBPATH "aruco/build/src/aruco.lib")
@@ -35,3 +35,7 @@ setq(SDK_VALVE_STEAMVR "steamvr")
 setq(SDK_VJOYSTICK "vjoystick")
 
 setq(SDK_REALSENSE "RSSDK-R2")
+
+if(CMAKE_GENERATOR STREQUAL "NMake Makefiles")
+    set(CMAKE_MAKE_PROGRAM "jom" CACHE STRING "" FORCE)
+endif()
