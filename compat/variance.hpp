@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cmath>
-#include <cinttypes>
 
 // no copyright information other than the attribution below.
 
@@ -18,18 +17,18 @@
 // Comparison of Several Algorithms for Computing Sample Means and Variances.
 // Journal of the American Statistical Association, Vol. 69, No. 348, 859-866.
 
-class variance final
+struct variance final
 {
-    double m_old, m_new, s_old, s_new;
-    std::uintptr_t cnt = 0;
-
-public:
-    using size_type = std::uintptr_t;
+    using size_type = unsigned;
 
     variance& operator=(variance const&) = default;
-    void clear() { *this = variance(); }
+    void clear() { *this = {}; }
 
-    size_type count() { return cnt; }
+    constexpr size_type count() const { return cnt; }
+
+    constexpr double avg() const { return cnt > 0 ? m_new : 0; }
+    constexpr double Var() const { return cnt > 1 ? s_new/(cnt - 1) : 0; }
+    double stddev() const { return std::sqrt(Var()); }
 
     void input(double x)
     {
@@ -50,7 +49,7 @@ public:
         }
     }
 
-    double avg() const { return cnt > 0 ? m_new : 0; }
-    double Var() const { return cnt > 1 ? s_new/(cnt - 1) : 0; }
-    double stddev() const { return std::sqrt(Var()); }
+private:
+    double m_old, m_new, s_old, s_new;
+    size_type cnt = 0;
 };
