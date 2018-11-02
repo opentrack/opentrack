@@ -73,12 +73,12 @@ static void force_pt_settings()
     s.cam_res_y = 480;
     s.camera_name = "PS3Eye Camera";
 
-    s.min_point_size = 6;
-    s.max_point_size = 15;
+    s.min_point_size = 3.7;
+    s.max_point_size = 10;
 
     // XXX TODO auto threshold slider position
     s.auto_threshold = true;
-    s.threshold_slider = slider_value(178., s.threshold_slider->min(), s.threshold_slider->max());
+    s.threshold_slider = slider_value(82., s.threshold_slider->min(), s.threshold_slider->max());
 
     s.t_MH_x = 0, s.t_MH_y = 0, s.t_MH_z = 0;
     s.blob_color = pt_color_natural;
