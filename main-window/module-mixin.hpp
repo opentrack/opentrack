@@ -4,13 +4,13 @@
 #include "compat/library-path.hpp"
 #include "api/plugin-api.hpp"
 #include "logic/extensions.hpp"
-#include "logic/work.hpp"
+#include "logic/state.hpp"
+#include "logic/main-settings.hpp"
 
 #include <memory>
 #include <utility>
 
 #include <QObject>
-#include <QString>
 
 namespace OTR_MIXIN_NS(module_mixin) {
 
@@ -18,15 +18,6 @@ using namespace options;
 
 using dylib_ptr = Modules::dylib_ptr;
 using dylib_list = Modules::dylib_list;
-
-struct OTR_MAIN_EXPORT module_settings final
-{
-    bundle b { make_bundle("modules") };
-    value<QString> tracker_dll { b, "tracker-dll", "pt" },
-                   filter_dll { b, "filter-dll", "accela" },
-                   protocol_dll { b, "protocol-dll", "freetrack" };
-    module_settings();
-};
 
 struct OTR_MAIN_EXPORT module_mixin
 {
@@ -43,14 +34,17 @@ struct OTR_MAIN_EXPORT module_mixin
     dylib_ptr current_protocol();
     dylib_ptr current_filter();
 
-    void show_tracker_settings();
-    void show_proto_settings();
-    void show_filter_settings();
+    void show_tracker_settings_();
+    void show_proto_settings_();
+    void show_filter_settings_();
 
 private:
     Modules modules { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH };
     event_handler ev { modules.extensions() };
     module_settings s;
+    State state { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH };
+
+    QObject fuzz;
 };
 
 }

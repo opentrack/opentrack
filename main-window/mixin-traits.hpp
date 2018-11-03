@@ -13,11 +13,7 @@ namespace mixins::traits_detail {
     template<typename t>
     struct mixin_traits {
         // implement this!
-        using depends = tuple<>;
-
-        // unconditional but at instantiation time
-        static_assert(sizeof(t) < sizeof(char),
-                      "must specialize mixin_traits");
+        //using depends = tuple<>;
     };
 
     template<typename klass, typename...> struct check_depends_;
@@ -31,7 +27,7 @@ namespace mixins::traits_detail {
     struct check_depends_<klass, x, xs...> :
             std::bool_constant<
                 std::is_base_of_v<x, klass> &&
-                lift<check_depends_, cons<klass, typename mixin_traits<x>::depends>>::value &&
+                lift_v<check_depends_, cons<klass, typename mixin_traits<x>::depends>> &&
                 check_depends_<klass, xs...>::value
             >
     {
@@ -40,8 +36,7 @@ namespace mixins::traits_detail {
     template<typename klass, typename... xs>
     struct impl
     {
-        static constexpr bool class_must_inherit_dependent_mixins =
-                lift<check_depends_, tuple<klass, xs...>>::value;
-        static_assert(class_must_inherit_dependent_mixins);
+        static_assert(lift<check_depends_, tuple<klass, xs...>>::value,
+                      "class must inherit dependent mixins");
     };
 } // ns mixins::traits_detail

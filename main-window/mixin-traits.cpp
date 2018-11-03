@@ -43,16 +43,17 @@ void test1()
     struct W : C, A {};
     struct Q : virtual W, virtual D {};
 
-#if 0
-    (void)impl<Q, W>();     // W not a mixin
-    (void)impl<V, A>();     // A
-    (void)impl<V, D>();     // D => C => A
-    (void)impl<V, D>();     // D => C => A
-    (void)impl<W, C, B>();  // B
+//#define SHOULD_NOT_COMPILE
+#ifdef SHOULD_NOT_COMPILE
+    (void)impl<Q, W>{};     // W not a mixin
+    (void)impl<V, A>{};     // A
+    (void)impl<V, D>{};     // D => C => A
+    (void)impl<V, D>{};     // D => C => A
+    (void)impl<W, C, B>{};  // B
 #else
-    (void)impl<U, B>();
-    (void)impl<W, C>();
-    (void)impl<Q, D, A>();
+    (void)impl<U, B>{};
+    (void)impl<W, C>{};
+    (void)impl<Q, D, A>{};
 #endif
 }
 
