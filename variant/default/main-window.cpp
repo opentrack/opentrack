@@ -16,6 +16,7 @@
 #include "compat/macros.hpp"
 #include "compat/library-path.hpp"
 #include "compat/math.hpp"
+#include "compat/sysexits.hpp"
 
 #include <algorithm>
 #include <iterator>
@@ -29,25 +30,6 @@ extern "C" const char* const opentrack_version;
 
 using namespace options::globals;
 using namespace options;
-
-#if !defined EXIT_SUCCESS
-#   define EXIT_SUCCESS 0
-#endif
-
-#if !defined EXIT_FAILURE
-#   define EXIT_FAILURE 1
-#endif
-
-/* FreeBSD sysexits(3)
- *
- * The input data was incorrect	in some	way.  This
- * should only be used for user's data and not system
- * files.
- */
-
-#if !defined EX_OSFILE
-#   define EX_OSFILE 72
-#endif
 
 main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
