@@ -95,6 +95,9 @@ namespace meta {
     template<template<typename...> class to, typename from>
     using lift = typename detail::lift_<to, from>::type;
 
+    template<template<typename...> class to, typename from>
+    constexpr inline auto lift_v = detail::lift_<to, from>::type::value;
+
     template<typename x, typename... xs>
     using first = x;
 
