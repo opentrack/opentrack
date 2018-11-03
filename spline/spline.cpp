@@ -377,7 +377,7 @@ void spline::ensure_valid(points_t& list)
     QList<QPointF> all_points, tmp;
     all_points.reserve(sz), tmp.reserve(sz);
 
-    const double maxx = max_input(), maxy = max_output();
+    const double maxx = max_input();
 
     for (int i = 0; i < sz; i++)
     {

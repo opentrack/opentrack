@@ -127,8 +127,6 @@ void mapping_dialog::load()
             qfc.force_redraw();
         }
 
-        const int idx = qfcs[i].axis;
-
         using c = axis_opts::max_clamp;
 
         auto update_xstep = [&qfc](int clamp_x) {

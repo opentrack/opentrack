@@ -68,6 +68,10 @@ function(otr_compat target)
         set_property(SOURCE ${${target}-moc} APPEND_STRING PROPERTY COMPILE_FLAGS "-w -Wno-error ")
     endif()
 
+    if(UNIX) # no-op on OSX
+        target_link_libraries(${target} m)
+    endif()
+
     get_property(type TARGET "${n}" PROPERTY TYPE)
     if (".${TYPE}" STREQUAL ".EXECUTABLE")
         otr_fixup_subsystem(${target})

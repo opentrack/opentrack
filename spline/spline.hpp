@@ -99,7 +99,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     float get_value_internal(int x);
     void add_lone_point();
     float get_value_no_save_internal(double x);
-    static cc_forceinline bool sort_fn(const QPointF& one, const QPointF& two);
+    static bool sort_fn(const QPointF& one, const QPointF& two);
 
     static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
     static int element_count(const QList<QPointF>& points, double max_input);
