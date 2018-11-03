@@ -49,45 +49,6 @@ using namespace options;
 #   define EX_OSFILE 72
 #endif
 
-#if !defined _WIN32
-#   include <unistd.h>
-void main_window::annoy_if_root()
-{
-    if (geteuid() == 0)
-    {
-        struct lst {
-            QString caption;
-            QString msg;
-            int sleep_ms;
-        };
-
-        const lst list[] = {
-            {
-                tr("Running as root is bad"),
-                tr("Do not run as root. Set correct device node permissions."),
-                1000,
-            },
-            {
-                tr("Running as root is bad, seriously"),
-                tr("Do not run as root. I'll keep whining at every startup."),
-                3000,
-            },
-            {
-                tr("Be annoyed, comprehensively."),
-                tr("Don't run as root to remove these annoying messages."),
-                0
-            }
-        };
-
-        for (const auto& x : list)
-        {
-            QMessageBox::critical(this, x.caption, x.msg, QMessageBox::Ok);
-            portable::sleep(x.sleep_ms);
-        }
-    }
-}
-#endif
-
 main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
@@ -1037,3 +998,42 @@ void main_window::set_profile_in_registry(const QString &profile)
         s.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
     });
 }
+
+#if !defined _WIN32
+#   include <unistd.h>
+void main_window::annoy_if_root()
+{
+    if (geteuid() == 0)
+    {
+        struct lst {
+            QString caption;
+            QString msg;
+            int sleep_ms;
+        };
+
+        const lst list[] = {
+            {
+                tr("Running as root is bad"),
+                tr("Do not run as root. Set correct device node permissions."),
+                1000,
+            },
+            {
+                tr("Running as root is bad, seriously"),
+                tr("Do not run as root. I'll keep whining at every startup."),
+                3000,
+            },
+            {
+                tr("Be annoyed, comprehensively."),
+                tr("Don't run as root to remove these annoying messages."),
+                0
+            }
+        };
+
+        for (const auto& x : list)
+        {
+            QMessageBox::critical(this, x.caption, x.msg, QMessageBox::Ok);
+            portable::sleep(x.sleep_ms);
+        }
+    }
+}
+#endif
