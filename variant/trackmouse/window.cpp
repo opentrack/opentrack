@@ -80,6 +80,10 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
             this, [&] { qDebug() << "stop tracker"; stop_tracker_(); },
             Qt::QueuedConnection);
 
+    connect(this, &main_window::toggle_tracker,
+            this, [&] { qDebug() << "toggle tracker"; toggle_tracker_(); },
+            Qt::QueuedConnection);
+
     connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
     connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
 
@@ -132,7 +136,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 void main_window::register_shortcuts()
 {
     global_shortcuts.reload({
-        { s.key_toggle_tracking1, [this](bool) { main_window::toggle_tracker_(); }, true },
+        { s.key_toggle_tracking1, [this](bool) { main_window::toggle_tracker(); }, true },
     });
 
     if (work)
@@ -372,8 +376,9 @@ void main_window::set_profile_in_registry()
 
 void main_window::toggle_tracker_()
 {
+    qDebug() << "toggle tracker";
     if (work)
-        stop_tracker();
+        stop_tracker_();
     else
-        start_tracker();
+        start_tracker_();
 }

@@ -86,6 +86,7 @@ private slots:
 signals:
     void start_tracker();
     void stop_tracker();
+    void toggle_tracker();
 
 public:
     main_window();
