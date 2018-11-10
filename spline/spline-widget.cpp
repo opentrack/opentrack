@@ -493,7 +493,7 @@ void spline_widget::reload_spline()
 
 double spline_widget::min_pt_distance() const
 {
-    double pt = 3*std::fmax(point_size_in_pixels, point_size_in_pixels_) / c.x();
+    double pt = 3*point_size_in_pixels / c.x();
     pt = snap(pt, snap_x);
     return pt;
 }
