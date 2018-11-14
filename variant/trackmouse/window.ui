@@ -226,7 +226,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Alt+F10</string>
+             <string>Insert</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -273,7 +273,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Alt+F11</string>
+             <string>Page Up</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -320,7 +320,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Alt+F12</string>
+             <string>Page Down</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
