@@ -55,13 +55,12 @@ bundle spline::get_bundle()
 
 void spline::clear()
 {
-    QMutexLocker l(&_mutex);
-    s->points = points_t();
+    {
+        QMutexLocker l(&_mutex);
+        s->points = {};
+    }
 
-    // XXX TODO check invalidate
-    points = points_t();
-
-    validp = false;
+    invalidate_settings();
 }
 
 float spline::get_value(double x)
