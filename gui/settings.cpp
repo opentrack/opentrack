@@ -168,8 +168,8 @@ void options_dialog::closeEvent(QCloseEvent *)
 void options_dialog::bind_key(key_opts& kopts, QLabel* label)
 {
     kopts.button = -1;
-    kopts.guid = "";
-    kopts.keycode = "";
+    kopts.guid = {};
+    kopts.keycode = {};
     auto k = new keyboard_listener;
     k->setWindowModality(Qt::ApplicationModal);
     k->deleteLater();
@@ -180,7 +180,7 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
             [&](const QKeySequence& s)
             {
                 kopts.keycode = s.toString(QKeySequence::PortableText);
-                kopts.guid = "";
+                kopts.guid = {};
                 kopts.button = -1;
                 k->close();
             });
@@ -191,7 +191,7 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
                 if (!held)
                 {
                     kopts.guid = guid;
-                    kopts.keycode = "";
+                    kopts.keycode = {};
                     kopts.button = idx;
                     k->close();
                 }
@@ -208,8 +208,8 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
     );
     if (is_crap)
     {
-        kopts.keycode = QStringLiteral("");
-        kopts.guid = QStringLiteral("");
+        kopts.keycode = {};
+        kopts.guid = {};
         kopts.button = -1;
         label->setText(tr("None"));
     }

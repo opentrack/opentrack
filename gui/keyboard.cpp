@@ -19,7 +19,7 @@ auto keyboard_listener::make_token()
             Qt::KeyboardModifiers m;
             QKeySequence k_;
             if (win_key::to_qt(k, k_, m))
-                emit key_pressed({ int(m), int(k_) });
+                emit key_pressed({ int(m) | int(k_) });
         }
     };
 }
