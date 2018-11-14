@@ -1,13 +1,5 @@
-/CMakeLists.txt.user
-*~
 /build*
 /installer/Output
-# merely git cola saves there
-/patches/
 .DS_Store
-*.obj
-*.exp
-*.pdb
 /.idea/
 /sdk-paths-*.cmake
-/.vs/
