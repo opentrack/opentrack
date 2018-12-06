@@ -292,24 +292,10 @@ void pipeline::set_center_pose(const Pose& value, bool own_center_logic)
             libs.pFilter->center();
 
         if (own_center_logic)
-        {
-            scaled_state.inv_rot_center = rmat::eye();
-            scaled_state.t_center = {};
-        }
+            center = {};
         else
-        {
-            scaled_state.inv_rot_center = scaled_state.rotation.t();
-            scaled_state.t_center = (const double*)(value);
-        }
+            center = value;
     }
-}
-
-void pipeline::store_tracker_pose(const Pose& value)
-{
-    // alas, this is poor man's gimbal lock "prevention"
-    // this is some kind of "canonical" representation,
-    // if we can even talk of one
-    scaled_state.rotation = euler_to_rmat(scale_inv_c * d2r * euler_t(&value[Yaw]));
 }
 
 Pose pipeline::clamp_value(Pose value) const
@@ -330,28 +316,14 @@ Pose pipeline::clamp_value(Pose value) const
 
 Pose pipeline::apply_center(Pose value) const
 {
-    euler_t T = euler_t(value) - scaled_state.t_center;
-    euler_t R = scale_c * rmat_to_euler(scaled_state.rotation * scaled_state.inv_rot_center);
+    // this is incorrect but people like it
+    value = value - center;
 
-    // XXX check these lines, it's been here forever
-    T = rel.rotate(euler_to_rmat(R), T, {});
-
-    for (int i = 0; i < 3; i++)
-    {
+    for (int i = 0; i < 6; i++)
         // don't invert after reltrans
         // inverting here doesn't break centering
-
-        if (m(i+3).opts.invert)
-            R(i) = -R(i);
         if (m(i).opts.invert)
-            T(i) = -T(i);
-    }
-
-    for (int i = 0; i < 3; i++)
-    {
-        value(i) = T(i);
-        value(i+3) = R(i) * r2d;
-    }
+            value(i) = -value(i);
 
     return value;
 }
@@ -449,8 +421,6 @@ void pipeline::logic()
     value = clamp_value(value);
 
     {
-        store_tracker_pose(value);
-
         maybe_enable_center_on_tracking_started();
         set_center_pose(value, own_center_logic);
         value = apply_center(value);
@@ -463,10 +433,11 @@ void pipeline::logic()
         ev.run_events(EV::ev_before_filter, value);
         // we must proceed with all the filtering since the filter
         // needs fresh values to prevent deconvergence
-        Pose tmp = maybe_apply_filter(value);
-        nan_check(tmp);
-        if (!center_ordered)
-            value = tmp;
+        if (center_ordered)
+            (void)maybe_apply_filter(value);
+        else
+            value = maybe_apply_filter(value);
+        nan_check(value);
         logger.write_pose(value); // "filtered"
     }
 

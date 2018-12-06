@@ -31,16 +31,6 @@ using namespace time_units;
 using vec6_bool = Mat<bool, 6, 1>;
 using vec3_bool = Mat<bool, 6, 1>;
 
-static constexpr inline double scale_c = 8;
-static constexpr inline double scale_inv_c = 1/scale_c;
-
-struct state_
-{
-    rmat inv_rot_center { rmat::eye() };
-    rmat rotation { rmat::eye() };
-    euler_t t_center;
-};
-
 class reltrans
 {
     euler_t interp_pos;
@@ -108,8 +98,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     reltrans rel;
 
-    //state_ state, scaled_state;
-    state_ scaled_state;
+    Pose center;
 
     ns backlog_time {};
 
@@ -120,7 +109,6 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     void run() override;
     bool maybe_enable_center_on_tracking_started();
     void set_center_pose(const Pose& value, bool own_center_logic);
-    void store_tracker_pose(const Pose& value);
     Pose clamp_value(Pose value) const;
     Pose apply_center(Pose value) const;
     std::tuple<Pose, Pose, vec6_bool> get_selected_axis_values(const Pose& newpose) const;
