@@ -73,6 +73,7 @@ if(MSVC)
     add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
+    add_definitions(-DWIN32_LEAN_AND_MEAN)
 
     set(__stuff "-permissive- -diagnostics:caret")
     set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")

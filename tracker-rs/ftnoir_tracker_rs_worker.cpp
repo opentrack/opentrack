@@ -7,6 +7,7 @@
 
 #include "ftnoir_tracker_rs_worker.h"
 #include "rs_impl/ftnoir_tracker_rs_impl.h"
+#include <cstdlib>
 #include <QImage>
 #include <QDebug>
 

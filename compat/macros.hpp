@@ -93,11 +93,6 @@ constexpr cc_forceinline void static_warn<true>() {}
 #define typed_progn(type, ...) ([&]() -> type { __VA_ARGS__ }())
 #define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
 
-#define prog1(x, ...) ([&]() -> decltype(auto)                                  \
-    {                                                                           \
-        decltype(auto) ret1324 = (x); __VA_ARGS__; return ret1324;              \
-    }())
-
 // end c++-only macros
 #endif
 

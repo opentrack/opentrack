@@ -26,12 +26,7 @@
 
 #ifdef _WIN32
 #   include <windows.h>
-#endif
-
-#if defined __llvm__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wlanguage-extension-token"
-#   pragma clang diagnostic ignored "-Wunknown-pragmas"
+#   include <mmsystem.h>
 #endif
 
 namespace pipeline_impl {
@@ -45,7 +40,7 @@ void reltrans::on_center()
 {
     interp_pos = { 0, 0, 0 };
     in_zone = false;
-    cur = false;
+    moving_to_reltans = false;
 }
 
 euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) const
@@ -83,20 +78,17 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
     if (state != reltrans_disabled)
     {
-        const bool in_zone_ = progn(
-            if (state == reltrans_non_center)
-            {
-                const bool looking_down = value(Pitch) < 20;
-                return looking_down ? std::fabs(value(Yaw)) > 35 : std::fabs(value(Yaw)) > 65;
-            }
-            else
-                return true;
-        );
+        bool in_zone_ = true;
+        if (state == reltrans_non_center)
+        {
+            const bool looking_down = value(Pitch) < 20;
+            in_zone_ = looking_down ? std::fabs(value(Yaw)) > 35 : std::fabs(value(Yaw)) > 65;
+        }
 
-        if (!cur && in_zone != in_zone_)
+        if (!moving_to_reltans && in_zone != in_zone_)
         {
             //qDebug() << "reltrans-interp: START" << tcomp_in_zone_;
-            cur = true;
+            moving_to_reltans = true;
             interp_timer.start();
             interp_phase_timer.start();
             RC_stage = 0;
@@ -124,7 +116,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             }
         }
 
-        if (cur)
+        if (moving_to_reltans)
         {
             const double dt = interp_timer.elapsed_seconds();
 
@@ -156,7 +148,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             if (delta < eps)
             {
                 //qDebug() << "reltrans-interp: STOP";
-                cur = false;
+                moving_to_reltans = false;
             }
         }
         else
@@ -164,7 +156,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
     }
     else
     {
-        cur = false;
+        moving_to_reltans = false;
         in_zone = false;
     }
 
@@ -213,10 +205,11 @@ double pipeline::map(double pos, Map& axis)
 #ifndef NO_NAN_CHECK
 
 template<int u, int w>
-static bool is_nan(const dmat<u,w>& r)
+static cc_forceinline
+bool is_nan(const dmat<u,w>& r)
 {
-    for (int i = 0; i < u; i++)
-        for (int j = 0; j < w; j++)
+    for (unsigned i = 0; i < u; i++)
+        for (unsigned j = 0; j < w; j++)
         {
             int val = std::fpclassify(r(i, j));
             if (val == FP_NAN || val == FP_INFINITE)
@@ -226,21 +219,8 @@ static bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-template<typename x>
-static inline
-bool nan_check_(const x& datum)
-{
-    return is_nan(datum);
-}
-
-template<typename x, typename y, typename... xs>
-static inline
-bool nan_check_(const x& datum, const y& next, const xs&... rest)
-{
-    return nan_check_(datum) || nan_check_(next, rest...);
-}
-
-static void emit_nan_check_msg(const char* text, const char* fun, int line)
+static cc_forceinline
+void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
     eval_once(
         qDebug()  << "nan check failed"
@@ -254,29 +234,32 @@ template<typename... xs>
 static cc_noinline
 bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 {
-    if (nan_check_(vals...))
-    {
-        emit_nan_check_msg(text, fun, line);
-        return true;
-    }
+    for (const auto& x : { vals... })
+        if (is_nan(x))
+        {
+            emit_nan_check_msg(text, fun, line);
+            return true;
+        }
     return false;
 }
-
-// for MSVC `else' is like `unlikely' for GNU
 
 #define nan_check(...)                                                                  \
     do                                                                                  \
     {                                                                                   \
         if (likely(!maybe_nan(#__VA_ARGS__, cc_function_name, __LINE__, __VA_ARGS__)))  \
+        {                                                                               \
             (void)0;                                                                    \
+        }                                                                               \
         else                                                                            \
+        {                                                                               \
             goto error;                                                                 \
-    } while (false)
+        }                                                                               \
+    }                                                                                   \
+    while (false)
 
 #else
 #   define nan_check(...) (void)(__VA_ARGS__)
 #endif
-
 
 bool pipeline::maybe_enable_center_on_tracking_started()
 {
@@ -689,7 +672,3 @@ bits::bits() : b(0u)
 }
 
 } // ns pipeline_impl
-
-#if defined __llvm__
-#   pragma clang diagnostic pop
-#endif

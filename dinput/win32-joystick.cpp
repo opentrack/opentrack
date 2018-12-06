@@ -3,19 +3,11 @@
 #include "win32-joystick.hpp"
 #include "compat/macros.hpp"
 
-// doesn't play well with Qt Creator clang code model
-#if defined Q_CREATOR_RUN && defined _MSC_VER
-#   undef offsetof
-#   define offsetof(type, member)  __builtin_offsetof(type, member)
-#else
-#   include <cstddef>
-#endif
-
+#include <cstddef>
 #include <algorithm>
 #include <cmath>
 
 #include <QWidget>
-
 #include <QDebug>
 
 #include <objbase.h>
@@ -59,19 +51,15 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
         bool ok = false;
         HRESULT hr;
 
-        if (!FAILED(hr = joy_handle->Poll()))
+        if (SUCCEEDED(hr = joy_handle->Poll()))
             ok = true;
-
-        if (!ok && FAILED(hr = joy_handle->Acquire()))
-        {
-            (void)0;
-            //qDebug() << "joy acquire failed" << hr;
-        }
+        else if (SUCCEEDED(hr = joy_handle->Acquire()) && SUCCEEDED(hr = joy_handle->Poll()))
+            ok = true;
 
         if (!ok)
         {
             (void)joy_handle->Unacquire();
-            Sleep(100);
+            Sleep(0);
             continue;
         }
 
@@ -80,7 +68,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
         if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
         {
             //qDebug() << "joy get state failed" << guid << hr;
-            Sleep(500);
+            Sleep(0);
             continue;
         }
 
@@ -133,11 +121,12 @@ void win32_joy_ctx::refresh()
 
 QString win32_joy_ctx::guid_to_string(const GUID& guid)
 {
-    char buf[40] = {0};
-    wchar_t szGuidW[40] = {0};
+    char buf[40] = {};
+    wchar_t szGuidW[40] = {};
 
-    StringFromGUID2(guid, szGuidW, 40);
-    WideCharToMultiByte(0, 0, szGuidW, -1, buf, 40, nullptr, nullptr);
+    StringFromGUID2(guid, szGuidW, sizeof(buf));
+    WideCharToMultiByte(0, 0, szGuidW, -1, buf, sizeof(buf), nullptr, nullptr);
+    buf[sizeof(buf)-1] = 0;
 
     return QString(buf);
 }
@@ -254,7 +243,7 @@ void win32_joy_ctx::enum_state::refresh()
 
     if (!di)
     {
-        qDebug() << "can't create dinput";
+        qDebug() << "dinput: can't create dinput";
         return;
     }
 
@@ -265,7 +254,7 @@ void win32_joy_ctx::enum_state::refresh()
                                    this,
                                    DIEDFL_ATTACHEDONLY)))
     {
-        eval_once(qDebug() << "failed enum joysticks" << hr);
+        eval_once(qDebug() << "dinput: failed enum joysticks" << hr);
         return;
     }
 
@@ -298,12 +287,12 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
         LPDIRECTINPUTDEVICE8 h;
         if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
-            qDebug() << "createdevice" << guid << hr;
+            qDebug() << "dinput: joystick CreateDevice" << guid << hr;
             goto end;
         }
         if (FAILED(h->SetDataFormat(&c_dfDIJoystick2)))
         {
-            qDebug() << "format";
+            qDebug() << "dinput: joystick SetDataFormat";
             h->Release();
             goto end;
         }
@@ -328,7 +317,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
 
             if (h->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph) != DI_OK)
             {
-                qDebug() << "setup joystick buffer mode failed!";
+                qDebug() << "dinput: joystick DIPROP_BUFFERSIZE";
                 h->Release();
                 goto end;
             }
@@ -336,7 +325,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
 
         if (FAILED(hr = h->EnumObjects(EnumObjectsCallback, h, DIDFT_ALL)))
         {
-            qDebug() << "enum-objects";
+            qDebug() << "dinput: joystick EnumObjects";
             h->Release();
             goto end;
         }
@@ -363,7 +352,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
 
         if (FAILED(hr = reinterpret_cast<LPDIRECTINPUTDEVICE8>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
         {
-            qDebug() << "DIPROP_RANGE" << hr;
+            qDebug() << "dinput: joystick DIPROP_RANGE" << hr;
             return DIENUM_STOP;
         }
     }

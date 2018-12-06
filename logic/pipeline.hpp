@@ -51,7 +51,7 @@ class reltrans
     Timer interp_phase_timer;
     unsigned RC_stage = 0;
 
-    bool cur = false;
+    bool moving_to_reltans = false;
     bool in_zone = false;
 
 public:

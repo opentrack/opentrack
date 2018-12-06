@@ -25,13 +25,11 @@ cc_noinline
 static void do_deltas(const double* deltas, double* output, F&& fun)
 {
     double norm[N];
+    double dist = 0;
 
-    const double dist = progn(
-        double ret = 0;
-        for (unsigned k = 0; k < N; k++)
-            ret += deltas[k]*deltas[k];
-        return sqrt(ret);
-    );
+    for (unsigned k = 0; k < N; k++)
+        dist += deltas[k]*deltas[k];
+    dist = sqrt(dist);
 
     const double value = double(fun(dist));
 

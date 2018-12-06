@@ -14,6 +14,8 @@
 #include <pxcfacemodule.h>
 #include <pxcfaceconfiguration.h>
 
+#include <cstdlib>
+
 const size_t kPreviewStreamWidth = 640;
 const size_t kPreviewStreamHeight = 480;
 

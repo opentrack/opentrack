@@ -48,12 +48,12 @@ bool KeybindingWorker::init()
     }
 
     if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, nullptr) != DI_OK) {
-        qDebug() << "setup CreateDevice function failed!" << GetLastError();
+        qDebug() << "dinput: create keyboard failed" << GetLastError();
         return false;
     }
 
     if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
-        qDebug() << "setup SetDataFormat function failed!" << GetLastError();
+        qDebug() << "dinput: keyboard SetDataFormat" << GetLastError();
         dinkeyboard->Release();
         dinkeyboard = nullptr;
         return false;
@@ -62,20 +62,20 @@ bool KeybindingWorker::init()
     if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
         dinkeyboard->Release();
         dinkeyboard = nullptr;
-        qDebug() << "setup SetCooperativeLevel function failed!" << GetLastError();
+        qDebug() << "dinput: keyboard SetCooperativeLevel" << GetLastError();
         return false;
     }
 
     {
         DIPROPDWORD dipdw;
-        dipdw.dwData = 128;
+        dipdw.dwData = num_keyboard_states;
         dipdw.diph.dwHeaderSize = sizeof(dipdw.diph);
         dipdw.diph.dwHow = DIPH_DEVICE;
         dipdw.diph.dwObj = 0;
         dipdw.diph.dwSize = sizeof(dipdw);
         if ( dinkeyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph) != DI_OK)
         {
-            qDebug() << "setup keyboard buffer mode failed!";
+            qDebug() << "dinput: DIPROP_BUFFERSIZE";
             dinkeyboard->Release();
             dinkeyboard = nullptr;
             return false;
@@ -86,7 +86,7 @@ bool KeybindingWorker::init()
     {
         dinkeyboard->Release();
         dinkeyboard = nullptr;
-        qDebug() << "setup dinkeyboard Acquire failed!" << GetLastError();
+        qDebug() << "dinput: acquire keyboard failed" << GetLastError();
         return false;
     }
 
@@ -147,7 +147,7 @@ bool KeybindingWorker::run_keyboard_nolock()
 
     if (hr != DI_OK)
     {
-        eval_once(qDebug() << "dinput: keyboard GetDeviceData failed" << hr);
+        eval_once(qDebug() << "dinput: keyboard GetDeviceData" << hr);
         return false;
     }
 

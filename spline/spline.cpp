@@ -367,8 +367,6 @@ void spline::ensure_valid(points_t& list)
 {
     QMutexLocker foo(&_mutex);
 
-    // storing to s->points fires bundle::changed and that leads to an infinite loop
-    // thus, only store if we can't help it
     std::stable_sort(list.begin(), list.end(), sort_fn);
 
     const int sz = list.size();
@@ -406,26 +404,24 @@ void spline::ensure_valid(points_t& list)
         }
     }
 
-    // size check guards against livelock with value<t>/bundle_ signals
+    // simply storing to s->points fires bundle::changed leading to a livelock
+    // hence only store if we can't help it
 
-    // points that are within bounds
     if (tmp.size() < points.size())
     {
+        // all points that don't overlap
         points = std::move(tmp);
-        // can't stuff there unconditionally
-        // fires signals from `value<t>' and `bundle_' otherwise
         s->points = points;
     }
 
     if (all_points.size() < list.size())
-        // all points that don't overlap, after clamping
+        // points that are within currently-specified bounds
         list = std::move(all_points);
 
     last_input_value = {};
     activep = false;
 }
 
-// the return value is only safe to use with no spline::set_bundle calls
 std::shared_ptr<base_settings> spline::get_settings()
 {
     QMutexLocker foo(&_mutex);
@@ -460,13 +456,9 @@ void spline::disconnect_signals()
 {
     if (conn_changed)
     {
-        QObject::disconnect(conn_changed);
-        QObject::disconnect(conn_maxx);
-        QObject::disconnect(conn_maxy);
-
-        conn_changed = {};
-        conn_maxx = {};
-        conn_maxy = {};
+        QObject::disconnect(conn_changed), conn_changed = {};
+        QObject::disconnect(conn_maxx), conn_maxx = {};
+        QObject::disconnect(conn_maxy), conn_maxy = {};
     }
 }
 

@@ -64,7 +64,7 @@ private:
     void remove_receiver(fun* pos);
     ~KeybindingWorker();
 
-    static constexpr int num_keyboard_states = 16;
+    static constexpr int num_keyboard_states = 64;
     DIDEVICEOBJECTDATA keyboard_states[num_keyboard_states] {};
 
     KeybindingWorker(const KeybindingWorker&) = delete;

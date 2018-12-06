@@ -44,16 +44,20 @@ void udp::run()
             }
             while (sock.hasPendingDatagrams());
 
-            if (ok &&
-                progn(
-                    for (unsigned i = 0; i < 6; i++)
+            if (ok)
+            {
+                for (unsigned i = 0; i < 6; i++)
+                {
+                    int val = std::fpclassify(last_recv_pose2[i]);
+                    if (val == FP_NAN || val == FP_INFINITE)
                     {
-                        int val = std::fpclassify(last_recv_pose2[i]);
-                        if (val == FP_NAN || val == FP_INFINITE)
-                            return false;
+                        ok = false;
+                        break;
                     }
-                    return true;
-               ))
+                }
+            }
+
+            if (ok)
             {
                 for (unsigned i = 0; i < 6; i++)
                     last_recv_pose[i] = last_recv_pose2[i];

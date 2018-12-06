@@ -6,15 +6,8 @@
  */
 
 #pragma once
-#ifdef EXPORT_RS_IMPL
-#define RSTRACKERIMPL_VISIBILITY   __declspec( dllexport ) 
-#else
-#define RSTRACKERIMPL_VISIBILITY  
-#endif
 
-extern "C" {                
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_start();
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_update_pose(double *pose);
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_get_preview(void* data, int width, int height);
-    RSTRACKERIMPL_VISIBILITY int rs_tracker_impl_end();
-}
+int rs_tracker_impl_start();
+int rs_tracker_impl_update_pose(double *pose);
+int rs_tracker_impl_get_preview(void* data, int width, int height);
+int rs_tracker_impl_end();
