@@ -190,7 +190,8 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
         float const* const __restrict ptr = hist.ptr<float>(0);
         const unsigned area = uround(3 * M_PI * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
-        unsigned thres = 32;
+        constexpr unsigned min_thres = 64;
+        unsigned thres = min_thres;
         for (unsigned i = sz-1, cnt = 0; i > 32; i--)
         {
             cnt += ptr[i];
@@ -198,6 +199,9 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
                 break;
             thres = i;
         }
+
+        if (thres > min_thres)
+            thres *= .8;
 
         cv::threshold(frame_gray, output, thres, 255, cv::THRESH_BINARY);
     }
