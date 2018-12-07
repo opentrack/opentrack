@@ -83,5 +83,17 @@
         <source>Toggle calibration</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>50</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>120</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

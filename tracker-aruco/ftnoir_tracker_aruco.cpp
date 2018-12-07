@@ -144,24 +144,15 @@ bool aruco_tracker::open_camera()
     switch (*s.force_fps)
     {
     default:
-    case 0:
-        fps = 0;
-        break;
-    case 1:
-        fps = 30;
-        break;
-    case 2:
-        fps = 60;
-        break;
-    case 3:
-        fps = 75;
-        break;
-    case 4:
-        fps = 125;
-        break;
-    case 5:
-        fps = 200;
-        break;
+    case 0: fps = 0; break;
+    case 1: fps = 30; break;
+    case 2: fps = 50; break;
+    case 3: fps = 60; break;
+    case 4: fps = 75; break;
+    case 5: fps = 100; break;
+    case 6: fps = 120; break;
+    case 7: fps = 125; break;
+    case 8: fps = 200; break;
     }
 
     QMutexLocker l(&camera_mtx);

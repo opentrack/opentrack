@@ -83,5 +83,17 @@
         <source>Toggle calibration</source>
         <translation>Schakel tussen kalibratie</translation>
     </message>
+    <message>
+        <source>50</source>
+        <translation type="unfinished">50</translation>
+    </message>
+    <message>
+        <source>100</source>
+        <translation type="unfinished">100</translation>
+    </message>
+    <message>
+        <source>120</source>
+        <translation type="unfinished">120</translation>
+    </message>
 </context>
 </TS>

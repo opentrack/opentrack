@@ -166,12 +166,27 @@
            </item>
            <item>
             <property name="text">
+             <string>50</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>60</string>
             </property>
            </item>
            <item>
             <property name="text">
              <string>75</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>100</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>120</string>
             </property>
            </item>
            <item>
