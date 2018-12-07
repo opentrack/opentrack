@@ -154,51 +154,6 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
-           <item>
-            <property name="text">
-             <string>Default</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>30</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>50</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>60</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>75</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>100</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>120</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>125</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>200</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="4" column="1">

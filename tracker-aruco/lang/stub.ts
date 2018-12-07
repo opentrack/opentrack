@@ -16,30 +16,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Default</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>30</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>60</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>75</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>125</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>200</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>640x480</source>
         <translation type="unfinished"></translation>
     </message>
@@ -83,16 +59,11 @@
         <source>Toggle calibration</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>aruco_dialog</name>
     <message>
-        <source>50</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>100</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>120</source>
+        <source>Default</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

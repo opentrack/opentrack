@@ -36,30 +36,6 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Lees de &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Aruco-tracker&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiki-pagina&lt;/span&gt;&lt;/a&gt; en voornamelijk de laatste paragraaf voordat u de markering uitprint.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Default</source>
-        <translation>Standaard</translation>
-    </message>
-    <message>
-        <source>30</source>
-        <translation>30</translation>
-    </message>
-    <message>
-        <source>60</source>
-        <translation>30</translation>
-    </message>
-    <message>
-        <source>75</source>
-        <translation>75</translation>
-    </message>
-    <message>
-        <source>125</source>
-        <translation>125</translation>
-    </message>
-    <message>
-        <source>200</source>
-        <translation>200</translation>
-    </message>
-    <message>
         <source>Default (not recommended!)</source>
         <translation>Standaard (niet aanbevolen)</translation>
     </message>
@@ -83,17 +59,12 @@
         <source>Toggle calibration</source>
         <translation>Schakel tussen kalibratie</translation>
     </message>
+</context>
+<context>
+    <name>aruco_dialog</name>
     <message>
-        <source>50</source>
-        <translation type="unfinished">50</translation>
-    </message>
-    <message>
-        <source>100</source>
-        <translation type="unfinished">100</translation>
-    </message>
-    <message>
-        <source>120</source>
-        <translation type="unfinished">120</translation>
+        <source>Default</source>
+        <translation type="unfinished">Standaard</translation>
     </message>
 </context>
 </TS>

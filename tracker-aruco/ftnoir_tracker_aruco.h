@@ -37,6 +37,20 @@
 
 using namespace options;
 
+enum aruco_fps
+{
+    fps_default = 0,
+    fps_30      = 1,
+    fps_60      = 2,
+    fps_75      = 3,
+    fps_125     = 4,
+    fps_200     = 5,
+    fps_50      = 6,
+    fps_100     = 7,
+    fps_120     = 8,
+    fps_MAX     = 9,
+};
+
 struct settings : opts {
     value<QString> camera_name { b, "camera-name", ""};
     value<int> fov { b, "field-of-view", 56 };
@@ -45,18 +59,15 @@ struct settings : opts {
                   headpos_y { b, "headpos-y", 0 },
                   headpos_z { b, "headpos-z", 0 };
 
-    value<int> force_fps { b, "force-fps", 0 },
-               resolution { b, "force-resolution", 0 };
+    value<int> resolution { b, "force-resolution", 0 };
+    value<aruco_fps> force_fps { b, "force-fps", fps_default };
 
-    settings() : opts("aruco-tracker") {}
+    settings();
 };
-
-class aruco_dialog;
 
 class aruco_tracker : protected virtual QThread, public ITracker
 {
     Q_OBJECT
-    friend class aruco_dialog;
     static constexpr inline float c_search_window = 1.3f;
 public:
     aruco_tracker();
@@ -64,7 +75,11 @@ public:
     module_status start_tracker(QFrame* frame) override;
     void data(double *data) override;
     void run() override;
+
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
+    QMutex camera_mtx;
+    cv::VideoCapture camera;
+
 private:
     bool detect_with_roi();
     bool detect_without_roi();
@@ -81,8 +96,6 @@ private:
     void set_detector_params();
     void cycle_detection_params();
 
-    cv::VideoCapture camera;
-    QMutex camera_mtx;
     QMutex mtx;
     std::unique_ptr<cv_video_widget> videoWidget;
     std::unique_ptr<QHBoxLayout> layout;
@@ -135,6 +148,8 @@ public:
     void register_tracker(ITracker * x) override { tracker = static_cast<aruco_tracker*>(x); }
     void unregister_tracker() override { tracker = nullptr; }
 private:
+    void make_fps_combobox();
+
     Ui::Form ui;
     aruco_tracker* tracker;
     settings s;

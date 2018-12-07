@@ -28,6 +28,7 @@
 #include <QDebug>
 
 #include <vector>
+#include <tuple>
 #include <cstdio>
 #include <cmath>
 #include <algorithm>
@@ -134,26 +135,35 @@ bool aruco_tracker::detect_without_roi()
     return markers.size() == 1 && markers[0].size() == 4;
 }
 
+static int enum_to_fps(int value)
+{
+    int fps;
+
+    switch (value)
+    {
+    default: eval_once(qDebug() << "aruco: invalid fps enum value");
+    [[fallthrough]];
+    case fps_default:   fps = 0; break;
+    case fps_30:        fps = 30; break;
+    case fps_60:        fps = 60; break;
+    case fps_75:        fps = 75; break;
+    case fps_125:       fps = 125; break;
+    case fps_200:       fps = 200; break;
+    case fps_50:        fps = 50; break;
+    case fps_100:       fps = 100; break;
+    case fps_120:       fps = 120; break;
+    }
+
+    return fps;
+};
+
 bool aruco_tracker::open_camera()
 {
     int rint = s.resolution;
     if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
         rint = 0;
     resolution_tuple res = resolution_choices[rint];
-    int fps;
-    switch (*s.force_fps)
-    {
-    default:
-    case 0: fps = 0; break;
-    case 1: fps = 30; break;
-    case 2: fps = 50; break;
-    case 3: fps = 60; break;
-    case 4: fps = 75; break;
-    case 5: fps = 100; break;
-    case 6: fps = 120; break;
-    case 7: fps = 125; break;
-    case 8: fps = 200; break;
-    }
+    int fps = enum_to_fps(s.force_fps);
 
     QMutexLocker l(&camera_mtx);
 
@@ -442,17 +452,52 @@ void aruco_tracker::data(double *data)
     data[TZ] = pose[TZ];
 }
 
+void aruco_dialog::make_fps_combobox()
+{
+    std::vector<std::tuple<int, int>> resolutions;
+    resolutions.reserve(fps_MAX);
+
+    for (int k = 0; k < fps_MAX; k++)
+    {
+        int hz = enum_to_fps(k);
+        resolutions.emplace_back(k, hz);
+    }
+
+    std::sort(resolutions.begin(), resolutions.end(), [](const auto& a, const auto& b) {
+        auto [idx1, hz1] = a;
+        auto [idx2, hz2] = b;
+
+        return hz1 < hz2;
+    });
+
+    for (auto [idx, hz] : resolutions)
+    {
+        QString name;
+
+        if (hz == 0)
+            name = tr("Default");
+        else
+            name = QString::number(hz);
+
+        ui.cameraFPS->addItem(name, idx);
+    }
+}
+
 aruco_dialog::aruco_dialog() :
     calibrator(1, 0)
 {
+    ui.setupUi(this);
+    //setAttribute(Qt::WA_NativeWindow, true);
+
+    make_fps_combobox();
+    tie_setting(s.force_fps, ui.cameraFPS);
+
     tracker = nullptr;
     calib_timer.setInterval(100);
-    ui.setupUi(this);
-    setAttribute(Qt::WA_NativeWindow, true);
     ui.cameraName->addItems(get_camera_names());
+
     tie_setting(s.camera_name, ui.cameraName);
     tie_setting(s.resolution, ui.resolution);
-    tie_setting(s.force_fps, ui.cameraFPS);
     tie_setting(s.fov, ui.cameraFOV);
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
@@ -536,5 +581,7 @@ void aruco_dialog::update_camera_settings_state(const QString& name)
     (void)name;
     ui.camera_settings->setEnabled(true);
 }
+
+settings::settings() : opts("aruco-tracker") {}
 
 OPENTRACK_DECLARE_TRACKER(aruco_tracker, aruco_dialog, aruco_metadata)
