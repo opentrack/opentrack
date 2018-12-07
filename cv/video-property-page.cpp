@@ -48,7 +48,7 @@ struct prop_settings_worker final : QThread
 
 prop_settings_worker::prop_settings_worker(int idx)
 {
-    int ret = cap.get(cv::CAP_PROP_SETTINGS);
+    int ret = (int)cap.get(cv::CAP_PROP_SETTINGS);
 
     if (ret != 0)
         run_in_thread_async(qApp, [] {

@@ -94,7 +94,7 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
     const euler_t ypr = rmat_to_euler(r) * r2d;
 
     auto array_index = [](double val, double spacing) {
-        return iround((val + 180)/spacing);
+        return (unsigned)iround((val + 180)/spacing);
     };
 
     const unsigned yaw_k = array_index(ypr(yaw_rdof), yaw_spacing_in_degrees);

@@ -20,4 +20,4 @@ struct mouse_settings : opts {
 
 } // ns mouse_impl
 
-using mouse_impl::mouse_settings;
+using mouse_settings = mouse_impl::mouse_settings;

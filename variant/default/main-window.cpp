@@ -637,6 +637,38 @@ void main_window::show_pose()
     display_pose(mapped, raw);
 }
 
+void show_window(QWidget& d, bool fresh)
+{
+    if (fresh)
+    {
+        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
+        d.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+        d.show();
+        d.adjustSize();
+        d.raise();
+    }
+    else
+    {
+        d.show();
+        d.raise();
+    }
+}
+
+template<typename t, typename F>
+bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
+{
+    bool fresh = false;
+
+    if (!d)
+        d = fun(), fresh = !!d;
+
+    if (d)
+        show_window(*d, fresh);
+
+    return fresh;
+}
+
 template<typename t, typename... Args>
 bool mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
@@ -656,38 +688,6 @@ bool mk_dialog(std::unique_ptr<t>& place, const std::shared_ptr<dylib>& lib)
         else
             return u{};
     });
-}
-
-template<typename t, typename F>
-bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
-{
-    bool fresh = false;
-
-    if (!d)
-        d = fun(), fresh = !!d;
-
-    if (d)
-        show_window(*d, fresh);
-
-    return fresh;
-}
-
-void show_window(QWidget& d, bool fresh)
-{
-    if (fresh)
-    {
-        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
-        d.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-        d.show();
-        d.adjustSize();
-        d.raise();
-    }
-    else
-    {
-        d.show();
-        d.raise();
-    }
 }
 
 void main_window::show_tracker_settings()

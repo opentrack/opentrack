@@ -1,5 +1,7 @@
 #include "axis-opts.hpp"
 
+namespace axis_opts_impl {
+
 using max_clamp = axis_opts::max_clamp;
 
 static max_clamp get_max_x(Axis k)
@@ -43,3 +45,5 @@ QString axis_opts::n(QString const& pfx, QString const& name)
 {
     return QString("%1-%2").arg(pfx, name);
 }
+
+} // ns axis_opts_impl

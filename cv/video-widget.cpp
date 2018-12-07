@@ -53,7 +53,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         else
             img = &_frame2;
 
-        const unsigned nbytes = 4 * img->rows * img->cols;
+        const unsigned nbytes = unsigned(4 * img->rows * img->cols);
 
         vec.resize(nbytes);
 
@@ -70,7 +70,7 @@ void cv_video_widget::update_image(const QImage& img)
     if (freshp)
         return;
 
-    const unsigned nbytes = img.bytesPerLine() * img.height();
+    const unsigned nbytes = unsigned(img.bytesPerLine() * img.height());
 
     vec.resize(nbytes);
 

@@ -9,9 +9,8 @@
 
 namespace affine_impl {
 
-Affine::Affine() : R(mat33::eye()), t(0,0,0) {}
-
-Affine::Affine(const mat33& R, const vec3& t) : R(R),t(t) {}
+Affine::Affine() = default;
+Affine::Affine(const mat33& R, const vec3& t) : R(R), t(t) {}
 
 Affine operator*(const Affine& X, const Affine& Y)
 {

@@ -20,8 +20,8 @@ public:
     Affine();
     Affine(const mat33& R, const vec3& t);
 
-    mat33 R;
-    vec3 t;
+    mat33 R { mat33::eye() };
+    vec3 t { 0, 0, 0 };
 };
 
 Affine operator*(const Affine& X, const Affine& Y);
@@ -31,5 +31,5 @@ vec3 operator*(const Affine& X, const vec3& v);
 
 } // ns affine_impl
 
-using affine_impl::Affine;
-using affine_impl::operator *;
+using Affine = affine_impl::Affine;
+//using affine_impl::operator *;

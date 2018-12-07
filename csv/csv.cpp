@@ -137,43 +137,32 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
 
                 const QByteArray id_cstr = gameLine[7].toLatin1();
 
-                if (proto == QStringLiteral("V160"))
-                {
-                    /* nothing */
-                }
-                else if (id_cstr.length() != 22 ||
-                         sscanf(id_cstr.constData(),
-                                "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-                                fuzz + 2,
-                                fuzz + 0,
-                                tmp + 3,
-                                tmp + 2,
-                                tmp + 1,
-                                tmp + 0,
-                                tmp + 7,
-                                tmp + 6,
-                                tmp + 5,
-                                tmp + 4,
-                                fuzz + 1) != 11)
-                {
+                auto do_scanf = [&]() {
+                    return sscanf(id_cstr.constData(),
+                                  "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                                  fuzz + 2,
+                                  fuzz + 0,
+                                  tmp + 3, tmp + 2, tmp + 1, tmp + 0,
+                                  tmp + 7, tmp + 6, tmp + 5, tmp + 4,
+                                  fuzz + 1);
+                };
+
+                if (proto == QStringLiteral("V160") || id_cstr.length() != 22)
+                    (void)0;
+                else if (id_cstr.length() != 22 || do_scanf() != 11)
                     qDebug() << "scanf failed" << lineno;
-                }
                 else
                 {
+                    using uchar = unsigned char;
                     for (int i = 0; i < 8; i++)
-                    {
-                        using t = unsigned char;
-                        table[i] = t(tmp[i]);
-                    }
+                        table[i] = uchar(tmp[i]);
                 }
                 gamename = std::move(name);
                 return true;
             }
         }
         else
-        {
             qDebug() << "malformed csv line" << lineno;
-        }
     }
 
     if (id)

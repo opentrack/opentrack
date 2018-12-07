@@ -277,8 +277,8 @@ void pose_transform::project_quad_texture()
 
     Triangle t(pt[0], pt[1], pt[2]);
 
-    const unsigned orig_pitch = tex.bytesPerLine();
-    const unsigned dest_pitch = image.bytesPerLine();
+    const unsigned orig_pitch = (unsigned)tex.bytesPerLine();
+    const unsigned dest_pitch = (unsigned)image.bytesPerLine();
 
     unsigned char const* __restrict orig = tex.constBits();
     unsigned char* __restrict dest = image.bits();

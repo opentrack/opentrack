@@ -2,7 +2,28 @@
 
 #include <utility>
 
-using namespace plugin_api::detail;
+namespace plugin_api::detail {
+
+BaseDialog::BaseDialog() = default;
+void BaseDialog::closeEvent(QCloseEvent*)
+{
+    if (isVisible())
+    {
+        hide();
+        emit closing();
+    }
+}
+
+void BaseDialog::done(int)
+{
+    if (isVisible())
+    {
+        hide();
+        close();
+    }
+}
+
+} // ns plugin_api::detail
 
 // these exist so that vtable is emitted in a single compilation unit, not all of them.
 
@@ -14,17 +35,6 @@ IExtension::~IExtension() = default;
 
 void ITrackerDialog::register_tracker(ITracker*) {}
 void ITrackerDialog::unregister_tracker() {}
-
-BaseDialog::BaseDialog() = default;
-
-void BaseDialog::closeEvent(QCloseEvent*)
-{
-    if (isVisible())
-    {
-        hide();
-        emit closing();
-    }
-}
 
 bool ITracker::center() { return false; }
 
@@ -46,15 +56,6 @@ IProtocolDialog::IProtocolDialog() = default;
 ITracker::ITracker() = default;
 ITrackerDialog::ITrackerDialog() = default;
 
-void BaseDialog::done(int)
-{
-    if (isVisible())
-    {
-        hide();
-        close();
-    }
-}
-
 IExtensionDialog::~IExtensionDialog() = default;
 
 bool module_status::is_ok() const
@@ -71,6 +72,7 @@ module_status module_status_mixin::error(const QString& error)
     return module_status(error.isEmpty() ? "Unknown error" : error);
 }
 
-
 Metadata::Metadata() = default;
 Metadata::~Metadata() = default;
+
+

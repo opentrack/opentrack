@@ -50,7 +50,7 @@ template<typename t, typename u, typename v>
 inline auto clamp(const t& val, const u& min, const v& max)
 {
     using w = cv_qualified<decltype(val + min + max)>;
-    return ::util_detail::clamp<w>::clamp_(val, min, max);
+    return util_detail::clamp<w>::clamp_(val, min, max);
 }
 
 template<typename t>

@@ -20,39 +20,40 @@ class mouse : public TR, public IProtocol
 {
     Q_OBJECT
 
+    static int get_delta(int val, int prev);
+    static int get_value(double val, double sensitivity, bool is_rotation);
+
+    int last_x = 0, last_y = 0;
+    mouse_settings s;
+
 public:
     mouse() = default;
     module_status initialize() override { return status_ok(); }
     void pose(const double* headpose) override;
     QString game_name() override;
-
-    int last_x = 0, last_y = 0;
-private:
-    static int get_delta(int val, int prev);
-    static int get_value(double val, double sensitivity, bool is_rotation);
-
-    struct mouse_settings s;
 };
 
 class MOUSEControls: public IProtocolDialog
 {
     Q_OBJECT
-public:
-    MOUSEControls();
-    void register_protocol(IProtocol *) {}
-    void unregister_protocol() {}
-private:
+
     Ui::UICMOUSEControls ui;
     mouse_settings s;
+
 private slots:
     void doOK();
     void doCancel();
+
+public:
+    MOUSEControls();
+    void register_protocol(IProtocol *) override {}
+    void unregister_protocol() override {}
 };
 
 class mouseDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("mouse emulation"); }
-    QIcon icon() { return QIcon(":/images/mouse.png"); }
+    QString name() override { return tr("mouse emulation"); }
+    QIcon icon() override { return QIcon(":/images/mouse.png"); }
 };

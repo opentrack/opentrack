@@ -49,7 +49,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
 
         auto& joy_handle = j->joy_handle;
         bool ok = false;
-        HRESULT hr;
+        HRESULT hr = S_OK; (void)hr;
 
         if (SUCCEEDED(hr = joy_handle->Poll()))
             ok = true;
@@ -84,7 +84,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
             js.rglSlider[1]
         };
 
-        for (int i = 0; i < 8; i++)
+        for (unsigned i = 0; i < 8; i++)
             axes[i] = values[i];
 
         return true;
@@ -184,7 +184,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
         default:
             if (event.dwOfs >= BUTTON_OFFSET(0) && event.dwOfs <= BUTTON_OFFSET(max_buttons - 1))
             {
-                i = event.dwOfs - BUTTON_OFFSET(0);
+                i = int(event.dwOfs - BUTTON_OFFSET(0));
                 i /= sizeof(DIJOYSTATE2().rgbButtons[0]);
                 i %= max_buttons; // defensive programming
             }

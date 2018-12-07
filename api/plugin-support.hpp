@@ -31,8 +31,10 @@
 
 #define OPENTRACK_SOLIB_PREFIX ""
 
-extern "C" typedef void* (*OPENTRACK_CTOR_FUNPTR)(void);
-extern "C" typedef Metadata_* (*OPENTRACK_METADATA_FUNPTR)(void);
+extern "C" {
+    using module_ctor_t = void* (*)(void);
+    using module_metadata_t = Metadata_* (*)(void);
+}
 
 struct dylib final
 {
@@ -63,26 +65,25 @@ struct dylib final
         if (check(!handle.load()))
             return;
 
-        if (check((Dialog = (OPENTRACK_CTOR_FUNPTR) handle.resolve("GetDialog"), !Dialog)))
+        if (check((Dialog = (module_ctor_t) handle.resolve("GetDialog"), !Dialog)))
             return;
 
-        if (check((Constructor = (OPENTRACK_CTOR_FUNPTR) handle.resolve("GetConstructor"), !Constructor)))
+        if (check((Constructor = (module_ctor_t) handle.resolve("GetConstructor"), !Constructor)))
             return;
 
-        if (check((Meta = (OPENTRACK_METADATA_FUNPTR) handle.resolve("GetMetadata"), !Meta)))
+        if (check((Meta = (module_metadata_t) handle.resolve("GetMetadata"), !Meta)))
             return;
 
-        auto m = std::unique_ptr<Metadata_>(Meta());
+        std::unique_ptr<Metadata_> m{Meta()};
 
         icon = m->icon();
         name = m->name();
 
         type = t;
     }
-    ~dylib()
-    {
-        // QLibrary refcounts the .dll's so don't forcefully unload
-    }
+
+    // QLibrary refcounts the .dll's so don't forcefully unload
+    ~dylib() = default;
 
     static QList<std::shared_ptr<dylib>> enum_libraries(const QString& library_path)
     {
@@ -134,9 +135,9 @@ struct dylib final
     QIcon icon;
     QString name;
 
-    OPENTRACK_CTOR_FUNPTR Dialog;
-    OPENTRACK_CTOR_FUNPTR Constructor;
-    OPENTRACK_METADATA_FUNPTR Meta;
+    module_ctor_t Dialog;
+    module_ctor_t Constructor;
+    module_metadata_t Meta;
 private:
     QLibrary handle;
 
@@ -242,6 +243,6 @@ static inline std::shared_ptr<t> make_dylib_instance(const std::shared_ptr<dylib
 {
     std::shared_ptr<t> ret;
     if (lib != nullptr && lib->Constructor)
-        ret = std::shared_ptr<t>(reinterpret_cast<t*>(reinterpret_cast<OPENTRACK_CTOR_FUNPTR>(lib->Constructor)()));
+        ret = std::shared_ptr<t>(reinterpret_cast<t*>(reinterpret_cast<module_ctor_t>(lib->Constructor)()));
     return ret;
 }

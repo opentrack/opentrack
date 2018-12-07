@@ -39,7 +39,7 @@ event_handler::event_handler(Modules::dylib_list const& extensions) : ext_bundle
     {
         std::shared_ptr<IExtension> ext(reinterpret_cast<IExtension*>(lib->Constructor()));
         std::shared_ptr<IExtensionDialog> dlg(reinterpret_cast<IExtensionDialog*>(lib->Dialog()));
-        std::shared_ptr<Metadata_> m(reinterpret_cast<Metadata_*>(lib->Meta()));
+        std::shared_ptr<Metadata_> m(lib->Meta());
 
         const ext_mask mask = ext->hook_types();
 

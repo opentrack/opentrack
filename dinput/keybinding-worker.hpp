@@ -41,6 +41,9 @@ struct OTR_DINPUT_EXPORT KeybindingWorker : private QThread
 {
     using fun = std::function<void(const Key&)>;
 
+    KeybindingWorker(const KeybindingWorker&) = delete;
+    KeybindingWorker& operator=(KeybindingWorker&) = delete;
+
 private:
     LPDIRECTINPUTDEVICE8 dinkeyboard { nullptr };
     win32_joy_ctx joy_ctx;
@@ -62,13 +65,10 @@ private:
     static KeybindingWorker& make();
     fun* _add_receiver(fun &receiver);
     void remove_receiver(fun* pos);
-    ~KeybindingWorker();
+    ~KeybindingWorker() override;
 
     static constexpr int num_keyboard_states = 64;
     DIDEVICEOBJECTDATA keyboard_states[num_keyboard_states] {};
-
-    KeybindingWorker(const KeybindingWorker&) = delete;
-    KeybindingWorker& operator=(KeybindingWorker&) = delete;
 public:
     class Token
     {

@@ -8,13 +8,15 @@
 #include "point_tracker.h"
 #include "compat/math-imports.hpp"
 
-using namespace types;
-
 #include <vector>
 #include <algorithm>
 #include <cmath>
 
 #include <QDebug>
+
+namespace pt_module {
+
+using namespace types;
 
 static void get_row(const mat33& m, int i, vec3& v)
 {
@@ -414,3 +416,4 @@ void PointTracker::reset_state()
     init_phase = true;
 }
 
+} // ns pt_module
