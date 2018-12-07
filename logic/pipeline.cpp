@@ -31,9 +31,6 @@
 
 namespace pipeline_impl {
 
-static constexpr inline double r2d = 180 / M_PI;
-static constexpr inline double d2r = M_PI / 180;
-
 reltrans::reltrans() = default;
 
 void reltrans::on_center()
@@ -99,6 +96,8 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
         // only when looking behind or downward
         if (in_zone)
         {
+            constexpr double d2r = M_PI / 180;
+
             const rmat R = euler_to_rmat(
                                euler_t(value(Yaw)   * d2r * !disable(Yaw),
                                        value(Pitch) * d2r * !disable(Pitch),
@@ -614,7 +613,7 @@ void bits::set(bit_flags flag, bool val)
     unsigned b_ = 0;
 
     for (;;)
-        if (b.compare_exchange_weak(b_, unsigned((b_ & ~flag_) | (flag_ * val_))))
+        if (b.compare_exchange_weak(b_, (b_ & ~flag_) | (flag_ * val_)))
             break;
 }
 
