@@ -19,7 +19,7 @@ if(LINUX OR APPLE)
                          LINK_FLAGS "-rdynamic -nodefaultlibs -fPIC ")
         endif()
 
-        if(CMAKE_COMPILER_IS_GNUCXX AND NOT CMAKE_COMPILER_IS_CLANG)
+        if(CMAKE_COMPILER_IS_GNUCXX AND NOT CMAKE_COMPILER_IS_CLANGXX)
             set_property(TARGET opentrack-xplane-plugin APPEND_STRING PROPERTY
                          LINK_FLAGS "-undefined_warning ")
         endif()

@@ -40,12 +40,12 @@ if(APPLE)
 endif()
 
 if(MSVC AND MSVC_VERSION LESS "1915" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
-    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 Preview or newer.")
+    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 or newer.")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_GNUCXX TRUE)
-    set(CMAKE_COMPILER_IS_CLANG TRUE)
+    set(CMAKE_COMPILER_IS_CLANGXX TRUE)
 endif()
 
 if(CMAKE_C_COMPILER_ID STREQUAL "Clang")

@@ -61,7 +61,7 @@ set(cc "")
 #set(cc "-fdump-statistics-details -fdump-ipa-cgraph")
 
 set(clang-warns "")
-if(CMAKE_COMPILER_IS_CLANG)
+if(CMAKE_COMPILER_IS_CLANGXX)
     set(clang-warns "-Wweak-vtables")
 endif()
 
