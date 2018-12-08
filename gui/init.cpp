@@ -164,10 +164,8 @@ static void add_win32_path()
 
 static void attach_parent_console()
 {
-    std::fflush(stdin);
-    std::fflush(stderr);
-
-    (void)qInstallMessageHandler(qdebug_to_console);
+    fflush(stdin);
+    fflush(stderr);
 
     if (AttachConsole(ATTACH_PARENT_PROCESS))
     {
@@ -176,12 +174,14 @@ static void attach_parent_console()
         _wfreopen(L"CON", L"r", stdin);
         freopen("CON", "w", stdout);
         freopen("CON", "w", stderr);
-        freopen("CON", "w", stderr);
+        freopen("CON", "r", stdin);
 
         // skip prompt in cmd.exe window
         fprintf(stderr, "\n");
         fflush(stderr);
     }
+
+    (void)qInstallMessageHandler(qdebug_to_console);
 }
 
 #endif
