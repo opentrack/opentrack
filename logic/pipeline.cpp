@@ -233,7 +233,7 @@ template<typename... xs>
 static cc_noinline
 bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 {
-    bool ret = (is_nan(vals) || ... || true);
+    bool ret = (is_nan(vals) || ... || false);
 
     if (ret)
         emit_nan_check_msg(text, fun, line);
