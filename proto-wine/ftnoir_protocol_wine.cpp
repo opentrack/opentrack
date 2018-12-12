@@ -7,28 +7,23 @@
 #include <sys/mman.h>
 #include <sys/stat.h>        /* For mode constants */
 #include <fcntl.h>           /* For O_* constants */
-#include "csv/csv.h"
+#ifndef OTR_WINE_NO_WRAPPER
+#   include "csv/csv.h"
+#endif
 #include "compat/macros.hpp"
 #include "compat/library-path.hpp"
 
-wine::wine() : lck_shm(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM)), shm(NULL), gameid(0)
-{
-    if (lck_shm.success()) {
-        shm = (WineSHM*) lck_shm.ptr();
-        memset(shm, 0, sizeof(*shm));
-    }
-    static const QString library_path(QCoreApplication::applicationDirPath() + OPENTRACK_LIBRARY_PATH);
-    wrapper.setWorkingDirectory(QCoreApplication::applicationDirPath());
-    wrapper.start("wine", QStringList() << (library_path + "opentrack-wrapper-wine.exe.so"));
-}
+wine::wine() = default;
 
 wine::~wine()
 {
+#ifndef OTR_WINE_NO_WRAPPER
     if (shm) {
         shm->stop = true;
         wrapper.waitForFinished(100);
     }
-    wrapper.close();
+    wrapper.kill();
+#endif
     //shm_unlink("/" WINE_SHM_NAME);
 }
 
@@ -38,9 +33,10 @@ void wine::pose( const double *headpose )
     {
         lck_shm.lock();
         for (int i = 3; i < 6; i++)
-            shm->data[i] = headpose[i] / (180 / M_PI );
+            shm->data[i] = (headpose[i] * M_PI) / 180;
         for (int i = 0; i < 3; i++)
             shm->data[i] = headpose[i] * 10;
+#ifndef OTR_WINE_NO_WRAPPER
         if (shm->gameid != gameid)
         {
             QString gamename;
@@ -51,16 +47,29 @@ void wine::pose( const double *headpose )
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
         }
+#endif
         lck_shm.unlock();
     }
 }
 
 module_status wine::initialize()
 {
+#ifndef OTR_WINE_NO_WRAPPER
+    static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
+    wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
+    wrapper.start("wine", { library_path + "opentrack-wrapper-wine.exe.so" });
+#endif
+
+    if (lck_shm.success())
+    {
+        shm = (WineSHM*) lck_shm.ptr();
+        memset(shm, 0, sizeof(*shm));
+    }
+
     if (lck_shm.success())
         return status_ok();
     else
         return error(tr("Can't open shared memory mapping"));
 }
 
-OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wineDll)
+OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wine_metadata)

@@ -1,16 +1,16 @@
 #pragma once
 
-#include "ui_ftnoir_winecontrols.h"
-#include <QMessageBox>
-#include <QProcess>
-#include <QDebug>
-#include <QMutex>
-#include <QMutexLocker>
-#include <QFile>
 #include "api/plugin-api.hpp"
 #include "compat/shm.h"
 #include "wine-shm.h"
-#include "compat/tr.hpp"
+
+#include "ui_ftnoir_winecontrols.h"
+
+#include <QString>
+#include <QProcess>
+#include <QMutex>
+
+#include <QDebug>
 
 class wine : TR, public IProtocol
 {
@@ -25,21 +25,29 @@ public:
 
     QString game_name() override
     {
+#ifndef OTR_WINE_NO_WRAPPER
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
+#else
+        return QStringLiteral("X-Plane");
+#endif
     }
 private:
-    shm_wrapper lck_shm;
-    WineSHM* shm;
+    shm_wrapper lck_shm { WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM) };
+    WineSHM* shm = nullptr;
+
+#ifndef OTR_WINE_NO_WRAPPER
     QProcess wrapper;
-    int gameid;
+    int gameid = 0;
     QString connected_game;
     QMutex game_name_mutex;
+#endif
 };
 
 class FTControls: public IProtocolDialog
 {
     Q_OBJECT
+
 public:
     FTControls();
     void register_protocol(IProtocol *) override {}
@@ -53,11 +61,16 @@ private slots:
     void doCancel();
 };
 
-class wineDll : public Metadata
+class wine_metadata : public Metadata
 {
     Q_OBJECT
 
 public:
+#ifndef OTR_WINE_NO_WRAPPER
     QString name() override { return tr("Wine -- Windows layer for Unix"); }
     QIcon icon() override { return QIcon(":/images/wine.png"); }
+#else
+    QString name() override { return tr("X-Plane"); }
+    QIcon icon() override { return {}; }
+#endif
 };

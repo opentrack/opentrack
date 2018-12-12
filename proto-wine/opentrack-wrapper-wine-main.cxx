@@ -1,9 +1,9 @@
 #include <cerrno>
+
 // OSX sdk 10.8 build error otherwise
-#ifdef _LIBCPP_MSVCRT
-#   undef _LIBCPP_MSVCRT
-#endif
+#undef _LIBCPP_MSVCRT
 #include <cstdio>
+
 #include "freetrackclient/fttypes.h"
 #include "wine-shm.h"
 #include "compat/export.hpp"
@@ -48,11 +48,11 @@ int main(void)
     ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
     ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTHeap));
     if(!lck_posix.success()) {
-        printf("Can't open posix map: %d\n", errno);
+        fprintf(stderr, "Can't open posix map: %d\n", errno);
         return 1;
     }
     if(!lck_wine.success()) {
-        printf("Can't open Wine map\n");
+        fprintf(stderr, "Can't open Wine map\n");
         return 1;
     }
     WineSHM* shm_posix = (WineSHM*) lck_posix.ptr();

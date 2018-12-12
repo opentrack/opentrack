@@ -1,10 +1,16 @@
 if(NOT WIN32)
-    set(SDK_WINE_PREFIX "" CACHE PATH "Wine install prefix")
-    set(SDK_WINE_NO_WRAPPER FALSE CACHE BOOL "disable Wine wrapper -- use Wine only for X-Plane")
-    if(SDK_WINE_PREFIX)
+    set(SDK_WINE "" CACHE BOOL "Build for Wine")
+    set(no-wrapper FALSE)
+    if(NOT SDK_WINE AND SDK_XPLANE)
+        set(no-wrapper TRUE)
+    endif()
+    if(SDK_WINE OR no-wrapper)
+        if(no-wrapper)
+            add_definitions(-DOTR_WINE_NO_WRAPPER)
+        endif()
         otr_module(proto-wine)
-        target_link_libraries(opentrack-proto-wine opentrack-csv)
-        if(NOT SDK_WINE_NO_WRAPPER)
+        if(NOT no-wrapper)
+            target_link_libraries(opentrack-proto-wine opentrack-csv)
             set(my-rt -lrt)
             if(APPLE)
                 set(my-rt)
@@ -14,11 +20,11 @@ if(NOT WIN32)
             add_custom_command(
               OUTPUT opentrack-wrapper-wine.exe.so
               DEPENDS ${wine-deps}
-              COMMAND ${SDK_WINE_PREFIX}/bin/wineg++ -g -DNOMINMAX -O2 -m32 -std=c++17 -fPIC -o
+              COMMAND wineg++ -g -DNOMINMAX -O2 -m32 -std=c++17 -fPIC -o
                       opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}" -I "${CMAKE_BINARY_DIR}"
                       ${wine-deps}
                       ${my-rt})
-            add_custom_target(wine-wrapper ALL DEPENDS opentrack-wrapper-wine.exe.so)
+            add_custom_target(wine-wrapper DEPENDS opentrack-wrapper-wine.exe.so)
             add_dependencies(opentrack-proto-wine wine-wrapper)
             add_dependencies(wine-wrapper opentrack-compat)
             install(FILES "${CMAKE_CURRENT_BINARY_DIR}/opentrack-wrapper-wine.exe.so" DESTINATION ${opentrack-hier-pfx})

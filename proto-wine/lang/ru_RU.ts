@@ -28,9 +28,13 @@
     </message>
 </context>
 <context>
-    <name>wineDll</name>
+    <name>wine_metadata</name>
     <message>
         <source>Wine -- Windows layer for Unix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>X-Plane</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
