@@ -159,6 +159,15 @@ static int TranslationToggleHandler(XPLMCommandRef inCommand,
     return 0;
 }
 
+static inline
+void volatile_explicit_bzero(void volatile* restrict ptr, size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+        *((char volatile* restrict)ptr + i) = 0;
+
+    asm volatile("" ::: "memory");
+}
+
 PLUGIN_API OTR_GENERIC_EXPORT
 int XPluginStart (char* outName, char* outSignature, char* outDescription) {
     view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
@@ -189,7 +198,7 @@ int XPluginStart (char* outName, char* outSignature, char* outDescription) {
             return 0;
         }
         shm_posix = lck_posix->mem;
-        memset(shm_posix, 0, sizeof(WineSHM));
+        volatile_explicit_bzero(shm_posix, sizeof(WineSHM));
         strcpy(outName, "opentrack");
         strcpy(outSignature, "opentrack - freetrack lives!");
         strcpy(outDescription, "head tracking view control");
