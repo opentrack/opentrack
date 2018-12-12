@@ -218,7 +218,7 @@ bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-static cc_forceinline
+static cc_noinline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
     eval_once(
@@ -233,26 +233,21 @@ template<typename... xs>
 static cc_noinline
 bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 {
-    for (const auto& x : { vals... })
-        if (is_nan(x))
-        {
-            emit_nan_check_msg(text, fun, line);
-            return true;
-        }
-    return false;
+    bool ret = (is_nan(vals) || ... || true);
+
+    if (ret)
+        emit_nan_check_msg(text, fun, line);
+
+    return true;
 }
 
 #define nan_check(...)                                                                  \
     do                                                                                  \
     {                                                                                   \
         if (likely(!maybe_nan(#__VA_ARGS__, cc_function_name, __LINE__, __VA_ARGS__)))  \
-        {                                                                               \
             (void)0;                                                                    \
-        }                                                                               \
         else                                                                            \
-        {                                                                               \
             goto error;                                                                 \
-        }                                                                               \
     }                                                                                   \
     while (false)
 
