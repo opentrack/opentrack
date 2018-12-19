@@ -6,7 +6,7 @@ if(WIN32)
         target_include_directories(opentrack-proto-fsuipc SYSTEM PUBLIC ${SDK_FSUIPC})
         if(MSVC)
             set_property(TARGET opentrack-proto-fsuipc APPEND_STRING PROPERTY
-                         LINK_FLAGS "/NODEFAULTLIB:LIBC.lib ")
+                         LINK_FLAGS "-NODEFAULTLIB:LIBC.lib ")
         endif()
     endif()
 endif()
