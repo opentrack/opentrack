@@ -1,3 +1,3 @@
-if(WIN32)
+if(WIN32 AND opentrack-intel)
     otr_module(proto-simconnect)
 endif()

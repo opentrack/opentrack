@@ -1,4 +1,4 @@
-if(WIN32)
+if(WIN32 AND NOT opentrack-64bit AND opentrack-intel)
     set(SDK_FSUIPC "" CACHE PATH "FSUIPC for older MS FSX path")
     if(SDK_FSUIPC)
         otr_module(proto-fsuipc)

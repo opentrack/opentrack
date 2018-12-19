@@ -1,4 +1,4 @@
-if(WIN32)
+if(WIN32 AND opentrack-intel)
     set(SDK_VJOYSTICK "" CACHE PATH "vjoystick SDK path")
     if(SDK_VJOYSTICK)
         if(opentrack-64bit)
