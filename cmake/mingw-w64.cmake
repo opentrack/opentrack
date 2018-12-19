@@ -3,14 +3,9 @@
 # mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../cmake/mingw-w64.cmake
 # -sh 20140922
 
-if((NOT CMAKE_BUILD_TYPE STREQUAL "DEBUG") AND (NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE"))
-    set(CMAKE_BUILD_TYPE "DEBUG" CACHE STRING "" FORCE)
-endif()
+include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 
-string(TOUPPER "${CMAKE_BUILD_TYPE}" __build_type)
-if(NOT __build_type STREQUAL CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "${__build_type}" CACHE STRING "" FORCE)
-endif()
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 
 if(NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "" FORCE)
