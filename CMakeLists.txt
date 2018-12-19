@@ -41,7 +41,6 @@ set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
 
 set(opentrack_all-translations "nl_NL;ru_RU;stub;zh_CN")
 
-include(opentrack-word-size)
 include(opentrack-hier)
 include(opentrack-platform)
 include(opentrack-i18n)

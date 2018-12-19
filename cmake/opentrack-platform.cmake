@@ -39,6 +39,12 @@ else()
     set(opentrack-intel FALSE)
 endif()
 
+if(CMAKE_SIZEOF_VOID_P GREATER_EQUAL 8)
+    set(opentrack-64bit TRUE)
+else()
+    set(opentrack-64bit FALSE)
+endif()
+
 if(APPLE)
     if(NOT CMAKE_OSX_ARCHITECTURES)
         set(CMAKE_OSX_ARCHITECTURES  "x86_64")
