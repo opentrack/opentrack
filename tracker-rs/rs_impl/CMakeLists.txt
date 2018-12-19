@@ -5,7 +5,7 @@ if(WIN32)
     target_link_libraries(opentrack-tracker-rs-impl advapi32)
 
     # for SDK headers
-    if(CMAKE_COMPILER_IS_GNUCC)
+    if(CMAKE_COMPILER_IS_GNUCXX)
         add_definitions(-fpermissive -Wno-error -w
                         #-Wno-missing-field-initializers -Wno-switch -Wno-sign-compare
                         #-Wno-unknown-pragmas -Wno-attributes

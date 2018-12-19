@@ -1,5 +1,5 @@
 if(LINUX OR APPLE)
-    set(SDK_XPLANE "" CACHE PATH "Path to X-Plane SDK")
+    set(SDK_XPLANE "" CACHE PATH "Path to the X-Plane SDK")
 
     if(SDK_XPLANE)
         otr_module(xplane-plugin NO-QT)
@@ -19,7 +19,7 @@ if(LINUX OR APPLE)
                          LINK_FLAGS "-rdynamic -nodefaultlibs -fPIC ")
         endif()
 
-        if(CMAKE_COMPILER_IS_GNUCXX AND NOT CMAKE_COMPILER_IS_CLANGXX)
+        if(CMAKE_COMPILER_IS_GNUCC AND NOT CMAKE_COMPILER_IS_CLANG)
             set_property(TARGET opentrack-xplane-plugin APPEND_STRING PROPERTY
                          LINK_FLAGS "-undefined_warning ")
         endif()

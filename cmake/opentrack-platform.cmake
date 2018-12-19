@@ -64,11 +64,6 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_CLANG TRUE)
 endif()
 
-if((NOT CMAKE_COMPILER_IS_GNUCXX) EQUAL (NOT (NOT CMAKE_COMPILER_IS_GNUCC)))
-    # this build system has logic errors otherwise
-    message(FATAL_ERROR "use either use both gcc and g++ or neither")
-endif()
-
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(LINUX TRUE)
 endif()
