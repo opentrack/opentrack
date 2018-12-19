@@ -22,7 +22,7 @@ if(NOT WIN32)
               DEPENDS ${wine-deps}
               COMMAND wineg++ -g -DNOMINMAX -O2 -m32 -std=c++17 -fPIC -o
                       opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}" -I "${CMAKE_BINARY_DIR}"
-                      ${wine-deps}
+                      ${wine-deps} -Wall -Wextra -Wpedantic
                       ${my-rt})
             add_custom_target(wine-wrapper DEPENDS opentrack-wrapper-wine.exe.so)
             add_dependencies(opentrack-proto-wine wine-wrapper)
