@@ -33,6 +33,12 @@ endif()
 string(TOUPPER "${CMAKE_BUILD_TYPE}" __build_type)
 set(CMAKE_BUILD_TYPE "${__build_type}" CACHE STRING "" FORCE)
 
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*|i[0-9]86.*|x86.*")
+    set(opentrack-intel TRUE)
+else()
+    set(opentrack-intel FALSE)
+endif()
+
 if(APPLE)
     if(NOT CMAKE_OSX_ARCHITECTURES)
         set(CMAKE_OSX_ARCHITECTURES  "x86_64")
