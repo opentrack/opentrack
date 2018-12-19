@@ -30,11 +30,6 @@ set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 47
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
-    foreach(k CMP0020 CMP0022 CMP0058 CMP0028 CMP0042 CMP0063 CMP0053 CMP0011 CMP0054 CMP0012)
-        if(POLICY ${k})
-            cmake_policy(SET ${k} NEW)
-        endif()
-    endforeach()
 
     # C4265: class has virtual functions, but destructor is not virtual
     set(warns 4265)
