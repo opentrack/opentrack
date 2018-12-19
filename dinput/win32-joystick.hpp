@@ -40,7 +40,7 @@ static constexpr inline unsigned max_buttons_and_pov_hats = max_buttons + max_po
 // XXX how many axis update events can we reasonably get in a short time frame?
 static constexpr inline unsigned num_buffers = 16;
 
-#define WIN32_JOY_DEBUG
+//#define WIN32_JOY_DEBUG
 
 struct OTR_DINPUT_EXPORT win32_joy_ctx final
 {
