@@ -238,7 +238,7 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
     if (ret)
         emit_nan_check_msg(text, fun, line);
 
-    return true;
+    return ret;
 }
 
 #define nan_check(...)                                                                  \
