@@ -27,9 +27,6 @@
 
 #include <dshow.h>
 
-#define CHECK(expr) if (FAILED(hr = (expr))) { qDebug() << QLatin1String(#expr) << hr; goto done; }
-#define CHECK2(expr) if (!(expr)) { qDebug() << QLatin1String(#expr); goto done; }
-
 bool video_property_page::show_from_capture(cv::VideoCapture& cap, int /*index */)
 {
     return cap.set(cv::CAP_PROP_SETTINGS, 0);
@@ -39,14 +36,16 @@ struct prop_settings_worker final : QThread
 {
     explicit prop_settings_worker(int idx);
     ~prop_settings_worker() override;
-    void _open_prop_page();
+
+private:
+    void open_prop_page();
     void run() override;
 
     cv::VideoCapture cap;
-    int _idx = -1;
+    int idx = -1;
 };
 
-prop_settings_worker::prop_settings_worker(int idx)
+prop_settings_worker::prop_settings_worker(int idx_)
 {
     int ret = (int)cap.get(cv::CAP_PROP_SETTINGS);
 
@@ -60,16 +59,16 @@ prop_settings_worker::prop_settings_worker(int idx)
         });
     else
     {
-        _idx = idx;
+        idx = idx_;
         // DON'T MOVE IT
         // ps3 eye will reset to default settings if done from another thread
-        _open_prop_page();
+        open_prop_page();
     }
 }
 
-void prop_settings_worker::_open_prop_page()
+void prop_settings_worker::open_prop_page()
 {
-    cap.open(_idx);
+    cap.open(idx);
 
     if (cap.isOpened())
     {
@@ -87,14 +86,14 @@ void prop_settings_worker::_open_prop_page()
     }
 
     qDebug() << "property-page: can't open camera";
-    _idx = -1;
+    idx = -1;
 
     return;
 
 ok:
     portable::sleep(100);
 
-    qDebug() << "property-page: opening for" << _idx;
+    qDebug() << "property-page: opening for" << idx;
 
     if (!cap.set(cv::CAP_PROP_SETTINGS, 0))
     {
@@ -110,7 +109,7 @@ ok:
 
 prop_settings_worker::~prop_settings_worker()
 {
-    if (_idx != -1)
+    if (idx != -1)
     {
         // ax filter is race condition-prone
         portable::sleep(250);
@@ -118,13 +117,13 @@ prop_settings_worker::~prop_settings_worker()
         // idem
         portable::sleep(250);
 
-        qDebug() << "property-page: closed" << _idx;
+        qDebug() << "property-page: closed" << idx;
     }
 }
 
 void prop_settings_worker::run()
 {
-    if (_idx != -1)
+    if (idx != -1)
     {
         while (cap.get(cv::CAP_PROP_SETTINGS) > 0)
             portable::sleep(1000);

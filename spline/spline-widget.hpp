@@ -48,10 +48,10 @@ public:
     void set_preview_only(bool val);
     bool is_preview_only() const;
 
-    double x_step() const { return _x_step; }
-    double y_step() const { return _y_step; }
-    void set_x_step(double val) { _x_step = std::fmax(1., val); }
-    void set_y_step(double val) { _y_step = std::fmax(1., val); }
+    double x_step() const { return x_step_; }
+    double y_step() const { return y_step_; }
+    void set_x_step(double val) { x_step_ = std::fmax(1., val); }
+    void set_y_step(double val) { y_step_ = std::fmax(1., val); }
 
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }
     void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
@@ -85,10 +85,10 @@ private:
     static double snap(double x, double snap_value);
 
     QPointF c;
-    base_spline* _config = nullptr;
+    base_spline* config = nullptr;
 
-    QPixmap _background;
-    QPixmap _function;
+    QPixmap background_img;
+    QPixmap spline_img;
     QColor spline_color;
     QColor widget_bg_color = palette().background().color();
 
@@ -98,9 +98,9 @@ private:
     QMetaObject::Connection connection;
 
     double snap_x = 0, snap_y = 0;
-    double _x_step = 10, _y_step = 10;
+    double x_step_ = 10, y_step_ = 10;
     int moving_control_point_idx = -1;
-    bool _draw_function = true, _preview_only = false;
+    bool draw_function = true, preview_only = false;
 
     // point's circle radius on the widget
     static constexpr inline int point_size_in_pixels_ = 4;

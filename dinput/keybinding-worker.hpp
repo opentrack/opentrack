@@ -63,7 +63,7 @@ private:
     KeybindingWorker();
 
     static KeybindingWorker& make();
-    fun* _add_receiver(fun &receiver);
+    fun* add_receiver(fun& receiver);
     void remove_receiver(fun* pos);
     ~KeybindingWorker() override;
 
@@ -83,7 +83,7 @@ public:
         }
         Token(fun receiver)
         {
-            pos = make()._add_receiver(receiver);
+            pos = make().add_receiver(receiver);
         }
     };
 };

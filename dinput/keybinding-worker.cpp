@@ -210,7 +210,7 @@ bool KeybindingWorker::run_joystick_nolock()
     return true;
 }
 
-KeybindingWorker::fun* KeybindingWorker::_add_receiver(fun& receiver)
+KeybindingWorker::fun* KeybindingWorker::add_receiver(fun& receiver)
 {
     QMutexLocker l(&mtx);
     receivers.push_back(std::make_unique<fun>(receiver));

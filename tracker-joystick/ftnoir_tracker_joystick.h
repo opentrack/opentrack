@@ -63,7 +63,7 @@ public:
         QString name;
         QString guid;
     };
-    QList<joys> _joys;
+    QList<joys> joys_;
 private slots:
     void doOK();
     void doCancel();

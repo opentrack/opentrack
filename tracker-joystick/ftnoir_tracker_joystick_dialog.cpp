@@ -12,18 +12,18 @@ dialog_joystick::dialog_joystick() : tracker(nullptr)
     {
         win32_joy_ctx joy_ctx;
 
-        _joys = QList<joys>();
+        joys_ = {};
 
-        for (auto j : joy_ctx.get_joy_info())
-            _joys.push_back(joys { j.name, j.guid });
+        for (const auto& j : joy_ctx.get_joy_info())
+            joys_.push_back(joys { j.name, j.guid });
     }
 
     {
         const QString guid = s.guid;
         int idx = 0;
-        for (int i = 0; i < _joys.size(); i++)
+        for (int i = 0; i < joys_.size(); i++)
         {
-            const joys& j = _joys[i];
+            const joys& j = joys_[i];
             if (j.guid == guid)
                 idx = i;
             ui.joylist->addItem(j.name + " " + j.guid);
@@ -41,8 +41,8 @@ dialog_joystick::dialog_joystick() : tracker(nullptr)
 
 void dialog_joystick::doOK() {
     int idx = ui.joylist->currentIndex();
-    joys def { "", "" };
-    auto val = _joys.value(idx, def);
+    static const joys def { {}, {} };
+    auto val = joys_.value(idx, def);
     s.guid = val.guid;
     s.b->save();
     close();

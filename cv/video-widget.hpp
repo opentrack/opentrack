@@ -40,7 +40,7 @@ private:
     QImage texture;
     std::vector<unsigned char> vec;
     QTimer timer;
-    cv::Mat _frame, _frame2, _frame3;
+    cv::Mat frame1, frame2, frame3;
     int width = 320, height = 240;
     bool freshp = false;
 };

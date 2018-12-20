@@ -29,29 +29,29 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         if (width < 1 || height < 1)
             return;
 
-        if (_frame.cols != frame.cols || _frame.rows != frame.rows)
-            _frame = cv::Mat(frame.rows, frame.cols, CV_8UC3);
-        frame.copyTo(_frame);
+        if (frame1.cols != frame.cols || frame1.rows != frame.rows)
+            frame1 = cv::Mat(frame.rows, frame.cols, CV_8UC3);
+        frame.copyTo(frame1);
         freshp = true;
 
-        if (_frame2.cols != _frame.cols || _frame2.rows != _frame.rows)
-            _frame2 = cv::Mat(_frame.rows, _frame.cols, CV_8UC4);
+        if (frame2.cols != frame1.cols || frame2.rows != frame1.rows)
+            frame2 = cv::Mat(frame1.rows, frame1.cols, CV_8UC4);
 
-        if (_frame3.cols != width || _frame3.rows != height)
-            _frame3 = cv::Mat(height, width, CV_8UC4);
+        if (frame3.cols != width || frame3.rows != height)
+            frame3 = cv::Mat(height, width, CV_8UC4);
 
-        cv::cvtColor(_frame, _frame2, cv::COLOR_BGR2BGRA);
+        cv::cvtColor(frame1, frame2, cv::COLOR_BGR2BGRA);
 
         const cv::Mat* img;
 
-        if (_frame.cols != width || _frame.rows != height)
+        if (frame1.cols != width || frame1.rows != height)
         {
-            cv::resize(_frame2, _frame3, cv::Size(width, height), 0, 0, cv::INTER_NEAREST);
+            cv::resize(frame2, frame3, cv::Size(width, height), 0, 0, cv::INTER_NEAREST);
 
-            img = &_frame3;
+            img = &frame3;
         }
         else
-            img = &_frame2;
+            img = &frame2;
 
         const unsigned nbytes = unsigned(4 * img->rows * img->cols);
 
@@ -101,9 +101,9 @@ void cv_video_widget::paintEvent(QPaintEvent*)
 
         width = W, height = H;
 
-        _frame = cv::Mat();
-        _frame2 = cv::Mat();
-        _frame3 = cv::Mat();
+        frame1 = cv::Mat();
+        frame2 = cv::Mat();
+        frame3 = cv::Mat();
     }
 }
 
