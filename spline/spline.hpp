@@ -102,7 +102,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
 
     void disconnect_signals();
 
-    mutex _mutex { mutex::Recursive };
+    mutex mtx { mutex::Recursive };
     std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection conn_changed, conn_maxx, conn_maxy;
     mutable std::vector<float> data = std::vector<float>(value_count, float(-16));
