@@ -24,7 +24,7 @@
 #include <bthsdpdef.h>
 #include <bluetoothapis.h>
 
-using namespace pt_module;
+namespace pt_module {
 
 WIICamera::WIICamera(const QString& module_name) : s { module_name }
 {
@@ -332,3 +332,5 @@ void WIICamera::on_state_change(wiimote &remote,
 		remote.SetReportType(wiimote::IN_BUTTONS_ACCEL_IR);
 	}
 }
+
+} // ns pt_module

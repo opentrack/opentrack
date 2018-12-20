@@ -31,8 +31,8 @@
 #include <QDebug>
 
 using namespace types;
-using namespace pt_module;
 
+namespace pt_module {
 
 WIIPointExtractor::WIIPointExtractor(const QString& module_name) : s(module_name)
 {
@@ -125,3 +125,4 @@ void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& previ
     }
 }
 
+} // ns pt_module
