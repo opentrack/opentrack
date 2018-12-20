@@ -9,6 +9,6 @@ class Q_DECL_EXPORT wii_metadata_pt : public Metadata
 {
     Q_OBJECT
 
-    QString name();
-    QIcon icon();
+    QString name() override;
+    QIcon icon() override;
 };

@@ -120,6 +120,8 @@ void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& previ
         draw_bg(preview_frame, wii);
         draw_points(preview_frame, wii, points);
         break;
+    default:
+        break;
     }
 }
 
