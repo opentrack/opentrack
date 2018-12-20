@@ -42,12 +42,12 @@ WIICamera::~WIICamera()
 
 QString WIICamera::get_desired_name() const
 {
-    return desired_name;
+    return {};
 }
 
 QString WIICamera::get_active_name() const
 {
-    return active_name;
+    return {};
 }
 
 void WIICamera::show_camera_settings()
@@ -106,8 +106,6 @@ void WIICamera::stop()
 		m_pDev = nullptr;
 	}
 
-    desired_name = QString();
-    active_name = QString();
     cam_info = pt_camera_info();
     cam_desired = pt_camera_info();
 }

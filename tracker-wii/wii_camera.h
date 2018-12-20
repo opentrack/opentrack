@@ -45,30 +45,23 @@ struct WIICamera final : pt_camera
     void show_camera_settings() override;
 
 private:
-	std::unique_ptr<wiimote> m_pDev;
 	static void on_state_change(wiimote &remote,
 		state_change_flags changed,
 		const wiimote_state &new_state);
-	bool onExit = false;
-	pt_frame internalframe;
-	
-
-    double dt_mean = 0;
-
-    Timer t;
     wii_camera_status pair();
     wii_camera_status get_frame_(cv::Mat& Frame);
     bool get_points(struct wii_info& wii);
     void get_status(struct wii_info& wii);
 
+    std::unique_ptr<wiimote> m_pDev;
+
     pt_camera_info cam_info;
     pt_camera_info cam_desired;
-    QString desired_name, active_name;
+
     struct { float p = 0, r = 0; } horizon;
 
     pt_settings s;
-
-    static constexpr inline double dt_eps = 1./384;
+    bool onExit = false;
 };
 
 } // ns pt_module

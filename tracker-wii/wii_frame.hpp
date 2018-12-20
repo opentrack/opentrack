@@ -57,9 +57,8 @@ struct WIIPreview final : pt_preview
 private:
     static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
-    bool fresh = true;
-    cv::Mat frame_copy, frame_color, frame_resize, frame_out;
-	wii_camera_status status = wii_cam_wait_for_dongle;
+    cv::Mat frame_copy, frame_out;
+    wii_camera_status status = wii_cam_wait_for_dongle;
 };
 
 } // ns pt_module
