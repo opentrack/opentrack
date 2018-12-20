@@ -75,11 +75,6 @@ float spline::get_value(double x)
 
 float spline::get_value_no_save(double x) const
 {
-    return const_cast<spline&>(*this).get_value_no_save_internal(x);
-}
-
-float spline::get_value_no_save_internal(double x)
-{
     QMutexLocker foo(&_mutex);
 
     float  q  = float(x * bucket_size_coefficient(points));
@@ -98,7 +93,7 @@ bool spline::get_last_value(QPointF& point)
     return activep;
 }
 
-float spline::get_value_internal(int x)
+float spline::get_value_internal(int x) const
 {
     if (!validp)
     {
@@ -110,12 +105,6 @@ float spline::get_value_internal(int x)
     x = std::abs(x);
     const float ret_ = data[std::min(unsigned(x), unsigned(value_count)-1u)];
     return sign * clamp(ret_, 0, 1000);
-}
-
-void spline::add_lone_point()
-{
-    points = { QPointF(s->opts.clamp_x_, s->opts.clamp_y_) };
-    s->points = points;
 }
 
 QPointF spline::ensure_in_bounds(const QList<QPointF>& points, int i)
@@ -148,7 +137,7 @@ bool spline::sort_fn(const QPointF& one, const QPointF& two)
     return one.x() < two.x();
 }
 
-void spline::update_interp_data()
+void spline::update_interp_data() const
 {
     points_t list = points;
     ensure_valid(list);
@@ -208,7 +197,7 @@ void spline::update_interp_data()
             };
 
             // multiplier helps fill in all the x's needed
-            const unsigned end = int(c_interp * (p2_x - p1_x)) + 1;
+            const unsigned end{int(c_interp * (p2_x - p1_x)) + 1u};
 
             for (unsigned k = 0; k <= end; k++)
             {
@@ -363,7 +352,7 @@ double spline::max_output() const
     return std::fabs(clamp.to<double>());
 }
 
-void spline::ensure_valid(points_t& list)
+void spline::ensure_valid(points_t& list) const
 {
     QMutexLocker foo(&_mutex);
 

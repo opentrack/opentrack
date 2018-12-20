@@ -1,18 +1,19 @@
 #include "copyable-mutex.hpp"
+#include <cstdlib>
 
-mutex& mutex::operator=(const mutex& datum)
+mutex& mutex::operator=(const mutex& rhs)
 {
-    inner.emplace(datum->isRecursive() ? QMutex::Recursive : QMutex::NonRecursive);
+    if (rhs->isRecursive() != inner.isRecursive())
+        std::abort();
+
     return *this;
 }
 
-mutex::mutex(const mutex& datum)
+mutex::mutex(const mutex& datum) : mutex{datum.inner.isRecursive() ? Recursive : NonRecursive}
 {
-    *this = datum;
 }
 
-mutex::mutex(mutex::mode m) :
-    inner { std::in_place, static_cast<QMutex::RecursionMode>(int(m)) }
+mutex::mutex(RecursionMode m) : inner{m}
 {
 }
 
@@ -21,13 +22,12 @@ QMutex* mutex::operator&() const
     return *this;
 }
 
+mutex::operator QMutex*() const
+{
+    return &inner;
+}
+
 QMutex* mutex::operator->() const
 {
     return *this;
 }
-
-mutex::operator QMutex*() const
-{
-    return const_cast<QMutex*>(&inner.value());
-}
-

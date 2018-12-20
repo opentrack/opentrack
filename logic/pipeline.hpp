@@ -81,7 +81,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 {
     Q_OBJECT
 
-    QMutex mtx;
+    mutable QMutex mtx;
     main_settings s;
     Mappings& m;
     event_handler& ev;

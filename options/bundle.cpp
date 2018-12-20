@@ -20,15 +20,7 @@ using namespace options::globals;
 
 namespace options::detail {
 
-mutex::mutex(QMutex::RecursionMode mode) : QMutex(mode) {}
-
-mutex::operator QMutex*() const
-{
-    return const_cast<QMutex*>(static_cast<const QMutex*>(this));
-}
-
 bundle::bundle(const QString& group_name) :
-      mtx(QMutex::Recursive),
       group_name(group_name),
       saved(group_name),
       transient(saved)
@@ -82,13 +74,13 @@ void bundle::store_kv(const QString& name, const QVariant& new_value)
 
 QVariant bundle::get_variant(const QString& name) const
 {
-    QMutexLocker l(mtx);
+    QMutexLocker l(&mtx);
     return transient.get_variant(name);
 }
 
 bool bundle::contains(const QString &name) const
 {
-    QMutexLocker l(mtx);
+    QMutexLocker l(&mtx);
     return transient.contains(name);
 }
 

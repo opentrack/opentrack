@@ -357,7 +357,6 @@ Pose pipeline::maybe_apply_filter(const Pose& value) const
 
 Pose pipeline::apply_zero_pos(Pose value) const
 {
-    // custom zero position
     for (int i = 0; i < 6; i++)
         value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
 
@@ -579,7 +578,7 @@ void pipeline::run()
 
 void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
 {
-    QMutexLocker foo(&const_cast<pipeline&>(*this).mtx);
+    QMutexLocker foo(&mtx);
 
     for (int i = 0; i < 6; i++)
     {

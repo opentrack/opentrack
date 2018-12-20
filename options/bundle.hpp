@@ -29,13 +29,6 @@
 #include "export.hpp"
 
 namespace options::detail {
-    class OTR_OPTIONS_EXPORT mutex final : public QMutex
-    {
-    public:
-        explicit mutex(QMutex::RecursionMode mode);
-        cc_noinline operator QMutex*() const; // NOLINT
-    };
-
     class bundle;
 } // ns options::detail
 
@@ -51,7 +44,7 @@ class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
 {
     Q_OBJECT
 
-    mutex mtx;
+    mutable QMutex mtx { QMutex::Recursive };
     const QString group_name;
     group saved;
     group transient;
@@ -65,7 +58,7 @@ public:
     bundle(const bundle&) = delete;
     bundle& operator=(const bundle&) = delete;
 
-    QMutex* get_mtx() const override { return mtx; }
+    QMutex* get_mtx() const override { return &mtx; }
     QString name() const { return group_name; }
 
     explicit bundle(const QString& group_name);
@@ -100,8 +93,8 @@ private:
     friend OTR_OPTIONS_EXPORT
     std::shared_ptr<v> options::make_bundle(const QString& name);
 
-    [[nodiscard]] std::shared_ptr<v> make_bundle_(const k& key);
-    [[nodiscard]] static bundler& bundler_singleton();
+    std::shared_ptr<v> make_bundle_(const k& key);
+    static bundler& bundler_singleton();
 
     bundler();
     ~bundler();

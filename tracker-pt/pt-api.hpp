@@ -42,16 +42,13 @@ struct pt_frame : pt_pixel_pos_mixin
     template<typename t>
     t* as() &
     {
-        using u = remove_cvref_t<t>;
-        static_assert(std::is_convertible_v<u*, pt_frame*>, "must be derived from pt_frame");
-
         return static_cast<t*>(this);
     }
 
     template<typename t>
     t const* as_const() const&
     {
-        return const_cast<pt_frame*>(this)->as<const t>();
+        return static_cast<t const*>(this);
     }
 };
 

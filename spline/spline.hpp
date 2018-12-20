@@ -8,12 +8,10 @@
 
 #pragma once
 
-#include "compat/copyable-mutex.hpp"
 #include "options/options.hpp"
-
 #include "axis-opts.hpp"
-
 #include "export.hpp"
+#include "compat/copyable-mutex.hpp"
 
 #include <cstddef>
 #include <vector>
@@ -95,10 +93,8 @@ struct OTR_SPLINE_EXPORT base_spline : base_spline_, spline_modify_mixin, spline
 class OTR_SPLINE_EXPORT spline : public base_spline
 {
     double bucket_size_coefficient(const QList<QPointF>& points) const;
-    void update_interp_data();
-    float get_value_internal(int x);
-    void add_lone_point();
-    float get_value_no_save_internal(double x);
+    void update_interp_data() const;
+    float get_value_internal(int x) const;
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
     static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
@@ -106,21 +102,20 @@ class OTR_SPLINE_EXPORT spline : public base_spline
 
     void disconnect_signals();
 
+    mutex _mutex { mutex::Recursive };
     std::shared_ptr<spline_detail::settings> s;
     QMetaObject::Connection conn_changed, conn_maxx, conn_maxy;
+    mutable std::vector<float> data = std::vector<float>(value_count, float(-16));
+    mutable QPointF last_input_value;
+    mutable bool activep = false;
+    mutable bool validp = false;
 
-    static constexpr inline std::size_t value_count = 4096;
-
-    std::vector<float> data = std::vector<float>(value_count, float(-16));
-
-    mutex _mutex { mutex::recursive };
-    QPointF last_input_value;
     std::shared_ptr<QObject> ctx { std::make_shared<QObject>() };
 
-    bool activep = false;
-    bool validp = false;
+    // cached s->points
+    mutable points_t points;
 
-    points_t points;
+    static constexpr inline std::size_t value_count = 4096;
 
 public:
     void invalidate_settings();
@@ -153,7 +148,7 @@ public:
 
     void set_tracking_active(bool value) override;
     bundle get_bundle();
-    void ensure_valid(points_t& in_out);
+    void ensure_valid(points_t& in_out) const;
 
     std::shared_ptr<spline_detail::base_settings> get_settings() override;
     std::shared_ptr<const spline_detail::base_settings> get_settings() const override;
