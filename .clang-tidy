@@ -42,6 +42,8 @@ Checks:
     -cert-flp30-c,
     -modernize-redundant-void-arg,
     -hicpp-explicit-conversions,
+    -readability-function-size,
+    -cppcoreguidelines-avoid-goto,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
