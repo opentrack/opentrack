@@ -11,7 +11,7 @@
 #include "options/options.hpp"
 #include "axis-opts.hpp"
 #include "export.hpp"
-#include "compat/copyable-mutex.hpp"
+#include "compat/mutex.hpp"
 
 #include <cstddef>
 #include <vector>

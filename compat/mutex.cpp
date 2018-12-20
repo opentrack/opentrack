@@ -1,4 +1,4 @@
-#include "copyable-mutex.hpp"
+#include "mutex.hpp"
 #include <cstdlib>
 
 mutex& mutex::operator=(const mutex& rhs)
