@@ -64,6 +64,7 @@ private:
     pt_camera_info cam_info;
     pt_camera_info cam_desired;
     QString desired_name, active_name;
+    struct { float p = 0, r = 0; } horizon;
 
     pt_settings s;
 
