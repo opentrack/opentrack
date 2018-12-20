@@ -37,7 +37,7 @@ struct Camera final : pt_camera
     void show_camera_settings() override;
 
 private:
-    [[nodiscard]] bool _get_frame(cv::Mat& Frame);
+    [[nodiscard]] bool get_frame_(cv::Mat& frame);
 
     double dt_mean = 0, fov = 30;
     Timer t;

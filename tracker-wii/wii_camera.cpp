@@ -67,7 +67,7 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
     cv::Mat& frame = frame_.as<WIIFrame>()->mat;
 	struct wii_info& wii = frame_.as<WIIFrame>()->wii;
 
-    const wii_camera_status new_frame = _get_frame(frame);
+    const wii_camera_status new_frame = get_frame_(frame);
 	//create a fake blank frame
 	frame = cv::Mat(cam_info.res_x, cam_info.res_y, CV_8UC3, cv::Scalar(0, 0, 0));
 	wii.status = new_frame;
@@ -75,8 +75,8 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
     switch (new_frame)
     {
 	case wii_cam_data_change:
-		_get_status(wii);
-		_get_points(wii);
+        get_status(wii);
+        get_points(wii);
 		break;
 	case wii_cam_data_no_change:
         return { false, cam_info };
@@ -112,7 +112,7 @@ void WIICamera::stop()
     cam_desired = pt_camera_info();
 }
 
-wii_camera_status WIICamera::_pair()
+wii_camera_status WIICamera::pair()
 {
 #if defined __MINGW32__
         // missing prototypes and implib entries
@@ -204,14 +204,14 @@ wii_camera_status WIICamera::_pair()
 #endif
 }
 
-wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
+wii_camera_status WIICamera::get_frame_(cv::Mat& frame)
 {
 	(void)frame;
 	wii_camera_status ret = wii_cam_wait_for_connect;
 
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
-		ret = _pair();
+		ret = pair();
 		switch (ret) {
 		case wii_cam_wait_for_sync:
 			m_pDev->Disconnect();
@@ -244,7 +244,7 @@ goodbye:
 	return ret;
 }
 
-bool WIICamera::_get_points(struct wii_info& wii)
+bool WIICamera::get_points(struct wii_info& wii)
 {
 	bool dot_sizes = (m_pDev->IR.Mode == wiimote_state::ir::EXTENDED);
 	bool ret = false;
@@ -275,7 +275,7 @@ bool WIICamera::_get_points(struct wii_info& wii)
 	return ret;
 }
 
-void WIICamera::_get_status(struct wii_info& wii)
+void WIICamera::get_status(struct wii_info& wii)
 {
 	//draw battery status
 	wii.BatteryPercent = m_pDev->BatteryPercent;

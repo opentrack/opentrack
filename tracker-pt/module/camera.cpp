@@ -56,7 +56,7 @@ Camera::result Camera::get_frame(pt_frame& frame_)
 {
     cv::Mat& frame = frame_.as<Frame>()->mat;
 
-    const bool new_frame = _get_frame(frame);
+    const bool new_frame = get_frame_(frame);
 
     if (new_frame)
     {
@@ -120,7 +120,7 @@ bool Camera::start(int idx, int fps, int res_x, int res_y)
 
                 cv::Mat tmp;
 
-                if (_get_frame(tmp))
+                if (get_frame_(tmp))
                 {
                     t.start();
                     return true;
@@ -147,7 +147,7 @@ void Camera::stop()
     cam_desired = pt_camera_info();
 }
 
-bool Camera::_get_frame(cv::Mat& frame)
+bool Camera::get_frame_(cv::Mat& frame)
 {
     if (cap && cap->isOpened())
     {
