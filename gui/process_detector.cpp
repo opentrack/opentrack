@@ -174,14 +174,14 @@ void process_detector::remove()
 
 bool process_detector_worker::should_stop()
 {
-    if (last_exe_name == "")
+    if (last_exe_name == QString())
         return false;
 
     proc_detector_settings s;
 
     if (!s.is_enabled())
     {
-        last_exe_name = "";
+        last_exe_name = QString{};
         return false;
     }
 
@@ -190,7 +190,7 @@ bool process_detector_worker::should_stop()
     if (exe_list.contains(last_exe_name))
         return false;
 
-    last_exe_name = "";
+    last_exe_name = QString{};
 
     return true;
 }
@@ -200,7 +200,7 @@ bool process_detector_worker::config_to_start(QString& str)
     proc_detector_settings s;
     if (!s.is_enabled())
     {
-        last_exe_name = "";
+        last_exe_name = QString{};
         return false;
     }
 
@@ -218,9 +218,9 @@ bool process_detector_worker::config_to_start(QString& str)
     {
         if (filenames.contains(name))
         {
-            last_exe_name = name;
             str = filenames[name];
-            return str != "";
+            last_exe_name = std::move(name);
+            return str != QString{};
         }
     }
 
