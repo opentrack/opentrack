@@ -7,7 +7,7 @@ set(opentrack-perms-dir WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EX
 set(opentrack-perms-exec "${opentrack-perms-dir}")
 
 set(new-hier-path "#pragma once
-#ifndef OPENTRACK_NO_QT_PATH
+#ifdef QT_CORE_LIB
 #   include <QCoreApplication>
 #   include <QString>
 #   include \"compat/base-path.hpp\"

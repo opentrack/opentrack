@@ -155,7 +155,7 @@ static int enum_to_fps(int value)
     }
 
     return fps;
-};
+}
 
 bool aruco_tracker::open_camera()
 {

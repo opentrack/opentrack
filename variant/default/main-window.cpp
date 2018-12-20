@@ -855,12 +855,7 @@ void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
     setVisible(is_minimized);
     setHidden(!is_minimized);
 
-    setWindowState(typed_progn(Qt::WindowStates,
-        if (is_minimized)
-           return windowState() & ~Qt::WindowMinimized;
-        else
-           return Qt::WindowNoState;
-    ));
+    setWindowState(is_minimized ? windowState() & ~Qt::WindowMinimized : Qt::WindowNoState);
 
     if (is_minimized)
     {

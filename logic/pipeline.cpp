@@ -204,8 +204,7 @@ double pipeline::map(double pos, Map& axis)
 #ifndef NO_NAN_CHECK
 
 template<int u, int w>
-static cc_forceinline
-bool is_nan(const dmat<u,w>& r)
+static inline bool is_nan(const dmat<u,w>& r)
 {
     for (unsigned i = 0; i < u; i++)
         for (unsigned j = 0; j < w; j++)

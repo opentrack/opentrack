@@ -7,10 +7,6 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#if defined(Q_CREATOR_RUN)
-#   pragma clang diagnostic ignored "-Wmain"
-#endif
-
 #include "migration/migration.hpp"
 #include "options/options.hpp"
 using namespace options;

@@ -106,7 +106,7 @@ int process_detector::add_row(QString const& exe_name, QString const& profile)
     {
         BrowseButton* b = new BrowseButton(twi);
         b->setText("...");
-        QObject::connect(b, SIGNAL(clicked()), b, SLOT(browse()));
+        QObject::connect(b, &BrowseButton::clicked, b, &BrowseButton::browse);
         ui.tableWidget->setCellWidget(i, 2, b);
     }
 

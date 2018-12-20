@@ -90,9 +90,7 @@ constexpr cc_forceinline void static_warn<true>() {}
 #define static_warning(cond)            \
         static_warn<(cond)>();          \
 
-#define typed_progn(type, ...) ([&]() -> type { __VA_ARGS__ }())
 #define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
 
 // end c++-only macros
 #endif
-
