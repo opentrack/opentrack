@@ -11,9 +11,6 @@
 #define DEBUG_PRINT
 #ifdef DEBUG_PRINT
 #   include <cstdio>
-#   include <cwchar>
-    using std::fwprintf;
-    using std::fflush;
 #endif
 
 namespace correlation_calibrator_impl {
@@ -40,9 +37,9 @@ static constexpr double spacing[6] =
     roll_spacing_in_degrees,
 };
 
-static constexpr wchar_t const* const names[6] {
-    L"x", L"y", L"z",
-    L"yaw", L"pitch", L"roll",
+static constexpr char const* const names[6] {
+    "x", "y", "z",
+    "yaw", "pitch", "roll",
 };
 
 bool correlation_calibrator::check_buckets(const vec6& data)
@@ -129,18 +126,18 @@ mat66 correlation_calibrator::get_coefficients() const
     cs = cs * (1./(data.size() - 1));
 
 #if defined DEBUG_PRINT
-    fwprintf(stderr, L"v:change-of h:due-to\n");
-    fwprintf(stderr, L"%10s ", L"");
-    for (wchar_t const* k : names)
-        fwprintf(stderr, L"%10s", k);
-    fwprintf(stderr, L"\n");
+    fprintf(stderr, "v:change-of h:due-to\n");
+    fprintf(stderr, "%10s ", "");
+    for (char const* k : names)
+        fprintf(stderr, "%10s", k);
+    fprintf(stderr, "\n");
 
     for (unsigned i = 0; i < 6; i++)
     {
-        fwprintf(stderr, L"%10s ", names[i]);
+        fprintf(stderr, "%10s ", names[i]);
         for (unsigned k = 0; k < 6; k++)
-            fwprintf(stderr, L"%10.3f", cs(i, k));
-        fwprintf(stderr, L"\n");
+            fprintf(stderr, "%10.3f", cs(i, k));
+        fprintf(stderr, "\n");
     }
     fflush(stderr);
 #endif
