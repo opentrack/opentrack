@@ -24,10 +24,11 @@ void set_is_visible(const QWidget& w, bool force)
 
     timer.start();
 
-    const HWND id = (HWND) w.winId();
+    HWND id = (HWND) w.winId();
     const QPoint pt = w.mapToGlobal({ 0, 0 });
+    const QPoint pt2 = w.mapToGlobal({ w.width(), w.height() });
 
-    const int W = w.width(), H = w.height();
+    const int W = pt2.x(), H = pt2.y();
 
     const QPoint points[] =
     {
