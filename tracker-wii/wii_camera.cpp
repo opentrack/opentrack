@@ -28,10 +28,10 @@ namespace pt_module {
 
 WIICamera::WIICamera(const QString& module_name) : s { module_name }
 {
-	cam_info.fps = 70;
-	cam_info.res_x = 1024;
-	cam_info.res_y = 768;
-	cam_info.fov = 42.0f;
+    cam_info.fps = 70;
+    cam_info.res_x = 1024;
+    cam_info.res_y = 768;
+    cam_info.fov = 42;
     cam_info.idx = 0;
 }
 

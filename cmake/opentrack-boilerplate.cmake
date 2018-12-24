@@ -133,8 +133,6 @@ function(otr_module n_)
     endif()
 
     set(n "opentrack-${n_}")
-    # XXX TODO update callers to use instead of long name -sh 20180527
-    set(self "${n}" PARENT_SCOPE)
 
     if(NOT arg_SUBDIRS)
         otr_glob_sources(${n} .)
@@ -175,6 +173,8 @@ function(otr_module n_)
         set_property(TARGET "${n}" PROPERTY PREFIX "")
     endif()
 
+    set(self "${n}" PARENT_SCOPE)
+
     if(NOT arg_RELINK)
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)
     else()
@@ -204,6 +204,10 @@ function(otr_module n_)
     endif()
 
     otr_compat(${n})
+
+    if(CMAKE_COMPILER_IS_CLANG AND (arg_EXECUTABLE OR (NOT arg_BIN AND NOT arg_STATIC)))
+        set_property(TARGET "${n}" APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-weak-vtables ")
+    endif()
 
     if(NOT arg_NO-INSTALL)
         if(arg_BIN AND WIN32)

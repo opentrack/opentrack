@@ -48,7 +48,7 @@ public:
 struct pose_transform final : QThread
 {
     pose_transform(QWidget* dst);
-    ~pose_transform();
+    ~pose_transform() override;
 
     void rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z);
     void rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z);
@@ -76,14 +76,13 @@ struct pose_transform final : QThread
     QImage front, back;
     QImage image, image2;
 
-    struct uv_
+    struct uv_ // NOLINT(cppcoreguidelines-pro-type-member-init)
     {
         vec2 coords;
         int i;
     };
 
     std::vector<uv_> uv_vec;
-
     std::atomic<bool> fresh;
 
     static constexpr inline int w = 320, h = 240;
@@ -93,7 +92,7 @@ class OTR_POSE_WIDGET_EXPORT pose_widget final : public QWidget
 {
 public:
     pose_widget(QWidget *parent = nullptr);
-    ~pose_widget();
+    ~pose_widget() override;
     void rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z);
     void rotate_sync(double xAngle, double yAngle, double zAngle, double x, double y, double z);
 

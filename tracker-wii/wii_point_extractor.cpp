@@ -72,8 +72,8 @@ bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_inf
 		if (dot.bvis) {
 			//qDebug() << "wii:" << dot.RawX << "+" << dot.RawY;
 			//anti-clockwise rotate the 2D point
-			const float RX = W - dot.ux;
-			const float RY = H - dot.uy;
+			const double RX = W - dot.ux;
+			const double RY = H - dot.uy;
 			//vec2 dt((dot.RawX - W / 2.0f) / W, -(dot.RawY - H / 2.0f) / W);
 			//vec2 dt((RX - W / 2.0f) / W, -(RY - H / 2.0f) / W);
 			//vec2 dt((2.0f*RX - W) / W, -(2.0f*RY - H ) / W);
@@ -99,8 +99,8 @@ void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& w
 		2);
 
 	//draw horizon
-	int pdelta = iround((preview_frame.rows / 4) * tan((wii.Pitch)* M_PI / 180.0f));
-	int rdelta = iround((preview_frame.cols / 4) * tan((wii.Roll)* M_PI / 180.0f));
+	int pdelta = iround((preview_frame.rows / 4.) * tan(((double)wii.Pitch)* M_PI / 180.));
+	int rdelta = iround((preview_frame.cols / 4.) * tan(((double)wii.Roll)* M_PI / 180.));
 
 	cv::line(preview_frame,
 		cv::Point(0, preview_frame.rows / 2 + rdelta - pdelta),

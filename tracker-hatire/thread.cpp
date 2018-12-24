@@ -304,7 +304,7 @@ void hatire_thread::serial_info_impl()
 
 void hatire_thread::on_serial_read()
 {
-    const int sz = com_port.read(buf, sizeof(buf));
+    const int sz = (int)com_port.read(buf, sizeof(buf));
 
     if (sz > 0)
     {

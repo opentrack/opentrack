@@ -16,7 +16,7 @@
     using std::fflush;
 #endif
 
-using namespace correlation_calibrator_impl;
+namespace correlation_calibrator_impl {
 
 static constexpr unsigned nbuckets[6] =
 {
@@ -53,7 +53,7 @@ bool correlation_calibrator::check_buckets(const vec6& data)
     for (unsigned k = 0; k < 6; k++)
     {
         const double val = clamp(data[k], min[k], max[k]);
-        pos[k] = (val-min[k])/spacing[k];
+        pos[k] = unsigned((val-min[k])/spacing[k]);
 
         if (pos[k] >= nbuckets[k])
         {
@@ -158,3 +158,5 @@ unsigned correlation_calibrator::sample_count() const
 {
     return data.size();
 }
+
+} // ns correlation_calibrator_impl

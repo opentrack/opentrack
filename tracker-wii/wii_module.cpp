@@ -20,7 +20,12 @@
 
 static const QString module_name = "tracker-wii-pt";
 
-using namespace pt_module;
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
+
+namespace pt_module {
 
 struct wii_pt_module_traits final : pt_runtime_traits
 {
@@ -63,6 +68,12 @@ struct wii_dialog_pt : TrackerDialog_PT
     wii_dialog_pt();
 };
 
+} // ns pt_module
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
+
 QString wii_metadata_pt::name()
 {
     return tr("WiiPointTracker 1.1");
@@ -73,13 +84,11 @@ QIcon wii_metadata_pt::icon()
     return QIcon(":/Resources/wii.png");
 }
 
-// ns pt_module
-
 using namespace pt_module;
 
 wii_dialog_pt::wii_dialog_pt() : TrackerDialog_PT(module_name)
 {
-	ui.tabWidget->removeTab(0);
+    ui.tabWidget->removeTab(0);
 }
 
 OPENTRACK_DECLARE_TRACKER(wii_tracker_pt, wii_dialog_pt, wii_metadata_pt)

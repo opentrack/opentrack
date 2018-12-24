@@ -10,12 +10,12 @@ diptr di_t::init_di_()
     CoInitialize(nullptr);
 
     diptr di = nullptr;
-    if (HRESULT hr = DirectInput8Create(GetModuleHandle(nullptr),
-                                        DIRECTINPUT_VERSION,
-                                        IID_IDirectInput8,
-                                        (void**)&di,
-                                        nullptr);
-        !SUCCEEDED(hr))
+    HRESULT hr = DirectInput8Create(GetModuleHandle(nullptr),
+                                    DIRECTINPUT_VERSION,
+                                    IID_IDirectInput8,
+                                    (void**)&di,
+                                    nullptr);
+    if (!SUCCEEDED(hr))
     {
         qDebug() << "can't make dinput:" << (void*)(LONG_PTR)hr;
         qDebug() << "crashing!";
@@ -32,7 +32,8 @@ di_t::di_t()
 
 void di_t::ref_di()
 {
-    while (init_lock.test_and_set()) { /* busy loop */ }
+    while (init_lock.test_and_set())
+        (void)0;
 
     if (!handle)
         handle = init_di_();
@@ -48,7 +49,8 @@ void di_t::unref_di()
 
     if (refcnt_ == 0)
     {
-        while (init_lock.test_and_set()) { /* busy loop */ }
+        while (init_lock.test_and_set())
+            (void)0;
 
         qDebug() << "exit: di handle";
         handle->Release();

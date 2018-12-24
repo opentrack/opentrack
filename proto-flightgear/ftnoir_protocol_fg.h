@@ -44,8 +44,8 @@ class flightgear : TR, public IProtocol
     Q_OBJECT
 
 public:
-    void pose(const double *headpose);
-    QString game_name() { return tr("FlightGear"); }
+    void pose(const double *headpose) override;
+    QString game_name() override { return tr("FlightGear"); }
     module_status initialize() override;
 private:
     settings s;
@@ -59,8 +59,8 @@ class FGControls: public IProtocolDialog
     Q_OBJECT
 public:
     FGControls();
-    void register_protocol(IProtocol *) {}
-    void unregister_protocol() {}
+    void register_protocol(IProtocol *) override {}
+    void unregister_protocol() override {}
 private:
     Ui::UICFGControls ui;
     settings s;
@@ -73,6 +73,6 @@ class flightgearDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("FlightGear"); }
-    QIcon icon() { return QIcon(":/images/flightgear.png"); }
+    QString name() override { return tr("FlightGear"); }
+    QIcon icon() override { return QIcon(":/images/flightgear.png"); }
 };

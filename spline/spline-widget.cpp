@@ -107,7 +107,7 @@ void spline_widget::drawBackground()
 
     const QPen pen(color__, 1, Qt::SolidLine, Qt::FlatCap);
 
-    const int ystep = y_step_, xstep = x_step_;
+    const int ystep = std::ceil(y_step_), xstep = std::ceil(x_step_);
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
@@ -505,7 +505,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     double x = value.x(), y = value.y();
 
     if (preview_only)
-        y = config->get_value_no_save(x);
+        y = (double)config->get_value_no_save((float)x);
 
     const int x_ = iround(x), y_ = iround(y);
 
@@ -515,7 +515,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
         y = y_;
 
     // the style on OSX has different offsets
-    static const bool is_fusion =
+    constexpr bool is_fusion =
 #if defined __APPLE__
             true;
 #else
@@ -535,8 +535,8 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
 
 bool spline_widget::is_in_bounds(const QPointF& pos) const
 {
-    const int grace = point_size_in_pixels * 3;
-    const int bottom_grace = int(point_size_in_pixels * 1.5);
+    const int grace = (int)std::ceil(point_size_in_pixels * 3);
+    const int bottom_grace = (int)std::ceil(point_size_in_pixels * 1.5);
     return (pos.x() + grace        > pixel_bounds.left() &&
             pos.x() - grace        < pixel_bounds.right() &&
             pos.y() + grace        > pixel_bounds.top() &&

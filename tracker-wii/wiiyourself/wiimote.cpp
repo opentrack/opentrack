@@ -10,16 +10,10 @@
 
 #include "warns-begin.hpp"
 
-// VC-specifics:
-#ifdef _MSC_VER 
- // disable warning "C++ exception handler used, but unwind semantics are not enabled."
- //				     in <xstring> (I don't use it - or just enable C++ exceptions)
-# pragma warning(disable: 4530)
-//  auto-link with the necessary libs
-//# pragma comment(lib, "setupapi.lib")
-//# pragma comment(lib, "hid.lib")		// for HID API (from DDK)
-//# pragma comment(lib, "winmm.lib")		// for timeGetTime()
-#endif // _MSC_VER
+#include <cmath>
+#include <new>
+#include <cstring>
+#include <cstdio>
 
 #include "wiimote.h"
 #include <setupapi.h>
@@ -29,8 +23,6 @@ extern "C" {
 
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
-#include <cstring>
-#include <cstdio>
 #include <process.h>	// for _beginthreadex()
 #include <math.h>		// for orientation
 #include <mmreg.h>		// for WAVEFORMATEXTENSIBLE
@@ -251,8 +243,9 @@ bool wiimote::Connect(unsigned wiimote_index, bool force_hidwrites)
 
 		// (bizarre way of doing it) create a buffer large enough to hold the
 		//  fixed-size detail struct components, and the variable string size
-		SP_DEVICE_INTERFACE_DETAIL_DATA *didetail =
-			(SP_DEVICE_INTERFACE_DETAIL_DATA*) new BYTE[req_size];
+                using spdidd = SP_DEVICE_INTERFACE_DETAIL_DATA;
+		constexpr std::align_val_t align { alignof(spdidd) };
+                spdidd *didetail = (spdidd*)operator new(req_size, align);
 		_ASSERT(didetail);
 		didetail->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
 
@@ -1203,7 +1196,7 @@ bool wiimote::EstimateOrientationFrom(wiimote_state::acceleration &accel)
 
 		// wiimote seems to be stationary:  normalize the current acceleration
 		//  (ie. the assumed gravity vector)
-		float inv_len = 1.f / sqrt(length_sq);
+		float inv_len = 1.f / std::sqrt(length_sq);
 		float x = accel.X * inv_len;
 		float y = accel.Y * inv_len;
 		float z = accel.Z * inv_len;
@@ -1215,9 +1208,9 @@ bool wiimote::EstimateOrientationFrom(wiimote_state::acceleration &accel)
 
 		// and extract pitch & roll from them:
 		// (may not be optimal)
-		float pitch = -asin(y)    * 57.2957795f;
+		float pitch = -std::asin(y)    * 57.2957795f;
 		//		float roll  =  asin(x)    * 57.2957795f;
-		float roll = atan2(x, z) * 57.2957795f;
+		float roll = std::atan2(x, z) * 57.2957795f;
 		if (z < 0) {
 			pitch = (y < 0) ? 180 - pitch : -180 - pitch;
 			roll = (x < 0) ? -180 - roll : 180 - roll;

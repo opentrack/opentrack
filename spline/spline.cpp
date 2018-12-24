@@ -25,7 +25,12 @@
 
 #include <QDebug>
 
-using namespace spline_detail;
+namespace spline_detail {
+
+base_spline_::~base_spline_() = default;
+base_spline::~base_spline() = default;
+spline_modify_mixin::~spline_modify_mixin() = default;
+spline_settings_mixin::~spline_settings_mixin() = default;
 
 spline::spline(const QString& name, const QString& axis_name, Axis axis)
 {
@@ -220,7 +225,7 @@ void spline::update_interp_data() const
     {
         if (data[i] == magic_fill_value)
             data[i] = last;
-        data[i] = (float)clamp(data[i], 0, maxy);
+        data[i] = clamp(data[i], 0, (float)maxy);
         last = data[i];
     }
 }
@@ -361,7 +366,7 @@ void spline::ensure_valid(points_t& list) const
     const int sz = list.size();
 
     QList<QPointF> all_points, tmp;
-    all_points.reserve(sz), tmp.reserve(sz);
+    all_points.reserve(sz); tmp.reserve(sz);
 
     const double maxx = max_input();
 
@@ -445,13 +450,11 @@ void spline::disconnect_signals()
 {
     if (conn_changed)
     {
-        QObject::disconnect(conn_changed), conn_changed = {};
-        QObject::disconnect(conn_maxx), conn_maxx = {};
-        QObject::disconnect(conn_maxy), conn_maxy = {};
+        QObject::disconnect(conn_changed); conn_changed = {};
+        QObject::disconnect(conn_maxx); conn_maxx = {};
+        QObject::disconnect(conn_maxy); conn_maxy = {};
     }
 }
-
-namespace spline_detail {
 
 settings::settings(bundle const& b, const QString& axis_name, Axis idx):
     b(b ? b : make_bundle("")),
@@ -460,5 +463,4 @@ settings::settings(bundle const& b, const QString& axis_name, Axis idx):
 
 settings::~settings() = default;
 
-}
-
+} // ns spline_detail

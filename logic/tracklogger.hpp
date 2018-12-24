@@ -13,7 +13,7 @@ class OTR_LOGIC_EXPORT TrackLogger
 
 public:
     TrackLogger() = default;
-    virtual ~TrackLogger() = default;
+    virtual ~TrackLogger();
 
     virtual void write(const char *) {}
     virtual void write(const double *, int) {}

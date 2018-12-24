@@ -17,8 +17,9 @@ bool is_portable_installation()
     // must keep consistent between invocations
     static const bool ret = QFile::exists(OPENTRACK_BASE_PATH + "/portable.txt");
     return ret;
-#endif
+#else
     return false;
+#endif
 }
 
 saver_::~saver_()

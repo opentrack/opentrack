@@ -15,6 +15,7 @@
 #include <QVariant>
 #include <QDebug>
 
+#if 0
 win_key const windows_key_mods[] {
         {DIK_LCONTROL, Qt::Key_Control},
         {DIK_RCONTROL, Qt::Key_Control},
@@ -25,6 +26,7 @@ win_key const windows_key_mods[] {
         {DIK_LWIN, Qt::Key_Super_L},
         {DIK_RWIN, Qt::Key_Super_R},
 };
+#endif
 
 static const win_key windows_key_sequences[] {
        { DIK_F1, Qt::Key_F1 },
@@ -164,7 +166,7 @@ bool win_key::from_qt(const QKeySequence& qt_, int& dik, Qt::KeyboardModifiers& 
 #if 0
     const unsigned qt = QVariant(qt_).toInt(); // verbose
 #endif
-    const unsigned qt = int(qt_); // deprecated
+    const unsigned qt = (unsigned)int(qt_); // deprecated
     const unsigned our_mods = qt & Qt::KeyboardModifierMask;
 
     if (qt == 0)

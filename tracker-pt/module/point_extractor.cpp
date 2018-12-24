@@ -30,7 +30,6 @@
 #include <QDebug>
 
 using namespace types;
-using namespace pt_module;
 
 // meanshift code written by Michael Welter
 
@@ -83,6 +82,8 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
     else
         return current_center;
 }
+
+namespace pt_module {
 
 PointExtractor::PointExtractor(const QString& module_name) : s(module_name)
 {
@@ -352,7 +353,9 @@ end:
 
         const f overlay_size = dpi > 1.5 ? 2 : 1;
 
-        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract), circle_color, overlay_size, cv::LINE_AA, fract_bits);
+        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract),
+                   circle_color, (int)overlay_size,
+                   cv::LINE_AA, fract_bits);
 
         char buf[16];
         buf[sizeof(buf)-1] = '\0';
@@ -387,3 +390,5 @@ blob::blob(f radius, const vec2& pos, f brightness, const cv::Rect& rect) :
 {
     //qDebug() << "radius" << radius << "pos" << pos[0] << pos[1];
 }
+
+} // ns pt_module

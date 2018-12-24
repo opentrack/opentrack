@@ -119,8 +119,8 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
         {
             const double dt = interp_timer.elapsed_seconds();
 
-            static constexpr float RC_stages[] = { 2, 1, .5, .1, .05 };
-            static constexpr float RC_time_deltas[] = { 1, .25, .25, 2 };
+            static constexpr double RC_stages[] = { 2, 1, .5, .1, .05 };
+            static constexpr double RC_time_deltas[] = { 1, .25, .25, 2 };
 
             interp_timer.start();
 

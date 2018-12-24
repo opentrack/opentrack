@@ -35,11 +35,8 @@ class udp : public QObject, public IProtocol
 public:
     udp();
     module_status initialize() override;
-    void pose(const double *headpose);
-    QString game_name()
-    {
-        return tr("UDP over network");
-    }
+    void pose(const double *headpose) override;
+    QString game_name() override { return tr("UDP over network"); }
 private:
     QUdpSocket outSocket;
     settings s;
@@ -58,8 +55,8 @@ class FTNControls: public IProtocolDialog
 
 public:
     FTNControls();
-    void register_protocol(IProtocol *) {}
-    void unregister_protocol() {}
+    void register_protocol(IProtocol *) override {}
+    void unregister_protocol() override {}
 private:
     Ui::UICFTNControls ui;
     settings s;
@@ -72,6 +69,6 @@ class udp_sender_dll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("UDP over network"); }
-    QIcon icon() { return QIcon(":/images/opentrack.png"); }
+    QString name() override { return tr("UDP over network"); }
+    QIcon icon() override { return QIcon(":/images/opentrack.png"); }
 };

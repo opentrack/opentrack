@@ -23,8 +23,6 @@ freetrack::~freetrack()
 static_assert(sizeof(LONG) == sizeof(std::int32_t));
 static_assert(sizeof(LONG) == 4u);
 
-static constexpr inline float d2r = float(M_PI/180);
-
 cc_noinline void store(float volatile& place, const float value)
 {
     union
@@ -55,15 +53,17 @@ static std::int32_t load(std::int32_t volatile& place)
 
 void freetrack::pose(const double* headpose)
 {
-    const float yaw = -headpose[Yaw] * d2r;
-    const float roll = headpose[Roll] * d2r;
+    constexpr double d2r = M_PI/180;
+
+    const float yaw = float(-headpose[Yaw] * d2r);
+    const float roll = float(headpose[Roll] * d2r);
     const float tx = float(headpose[TX] * 10);
     const float ty = float(headpose[TY] * 10);
     const float tz = float(headpose[TZ] * 10);
 
     // HACK: Falcon BMS makes a "bump" if pitch is over the value -sh 20170615
     const bool is_crossing_90 = std::fabs(headpose[Pitch] - 90) < .15;
-    const float pitch = -d2r * (is_crossing_90 ? 89.86 : headpose[Pitch]);
+    const float pitch = float(-d2r * (is_crossing_90 ? 89.86 : headpose[Pitch]));
 
     FTHeap* const ft = pMemData;
     FTData* const data = &ft->data;

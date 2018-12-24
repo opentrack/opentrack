@@ -61,12 +61,13 @@ void tracker_freepie::run() {
             continue;
             case flag_Raw | flag_Orient:
                 for (int i = 0; i < 3; i++)
-                    orient[i] = tmp.fl[i+9];
+                    orient[i] = (double)tmp.fl[i+9];
             break;
             case flag_Orient:
                 for (int i = 0; i < 3; i++)
-                    orient[i] = tmp.fl[i];
+                    orient[i] = (double)tmp.fl[i];
             break;
+            default: goto fail;
             }
 
             filled = true;
@@ -100,6 +101,7 @@ void tracker_freepie::run() {
                 pose[Yaw + i] = r2d * orient[axis] + add;
             }
         }
+fail:
         usleep(4000);
     }
 }

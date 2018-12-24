@@ -19,6 +19,7 @@
 #include <cstdlib>
 
 using namespace pt_module;
+namespace pt_module {
 
 Camera::Camera(const QString& module_name) : s { module_name }
 {
@@ -141,10 +142,10 @@ bool Camera::start(int idx, int fps, int res_x, int res_y)
 void Camera::stop()
 {
     cap = nullptr;
-    desired_name = QString();
-    active_name = QString();
-    cam_info = pt_camera_info();
-    cam_desired = pt_camera_info();
+    desired_name = QString{};
+    active_name = QString{};
+    cam_info = {};
+    cam_desired = {};
 }
 
 bool Camera::get_frame_(cv::Mat& frame)
@@ -171,3 +172,4 @@ void Camera::camera_deleter::operator()(cv::VideoCapture* cap)
     }
 }
 
+} // ns pt_module

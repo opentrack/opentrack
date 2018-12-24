@@ -13,8 +13,8 @@ class OTR_GENERIC_EXPORT metadata_pt : public Metadata
 {
     Q_OBJECT
 
-    QString name();
-    QIcon icon();
+    QString name() override;
+    QIcon icon() override;
 };
 
 } // ns pt_module

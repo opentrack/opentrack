@@ -3,6 +3,8 @@
 
 #include <QMessageBox>
 
+TrackLogger::~TrackLogger() = default;
+
 void TrackLogger::write_pose(const double* p)
 {
     write(p, 6);

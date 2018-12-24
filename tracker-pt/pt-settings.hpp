@@ -19,6 +19,11 @@ namespace pt_settings_detail {
 
 using namespace options;
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
+
 struct pt_settings final : options::opts
 {
     using slider_value = options::slider_value;
@@ -57,8 +62,12 @@ struct pt_settings final : options::opts
     value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };
 
     explicit pt_settings(const QString& name) : opts(name) {}
-    ~pt_settings() = default;
+    ~pt_settings() override = default;
 };
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
 
 } // ns pt_settings_detail
 

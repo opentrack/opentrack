@@ -53,7 +53,6 @@ private:
     di_t din;
 
     bool keystate[256] {};
-    bool old_keystate[256] {};
 
     void run() override;
     bool run_keyboard_nolock();

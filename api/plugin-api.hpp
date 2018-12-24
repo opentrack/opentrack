@@ -84,7 +84,7 @@ class OTR_API_EXPORT Metadata : public TR, public Metadata_
 
 public:
     Metadata();
-    ~Metadata();
+    ~Metadata() override;
 };
 
 struct OTR_API_EXPORT module_status final
@@ -104,6 +104,7 @@ struct OTR_API_EXPORT module_status_mixin
     static module_status error(const QString& error); // return error message on init failure
 
     virtual module_status initialize() = 0; // where to return from
+    virtual ~module_status_mixin();
 };
 
 // implement this in filters
@@ -125,6 +126,7 @@ struct OTR_API_EXPORT IFilter : module_status_mixin
 struct OTR_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 {
     IFilterDialog();
+    ~IFilterDialog() override;
 
     // optional destructor
     //~IFilterDialog() override;
@@ -142,12 +144,11 @@ struct OTR_API_EXPORT IFilterDialog : public plugin_api::detail::BaseDialog
 struct OTR_API_EXPORT IProtocol : module_status_mixin
 {
     IProtocol();
+    ~IProtocol() override;
 
     IProtocol(const IProtocol&) = delete;
     IProtocol& operator=(const IProtocol&) = delete;
 
-    // optional destructor
-    virtual ~IProtocol();
     // called 250 times a second with XYZ yaw pitch roll pose
     // try not to perform intense computation here. use a thread.
     virtual void pose(const double* headpose) = 0;
@@ -165,6 +166,7 @@ struct OTR_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog
     virtual void unregister_protocol() = 0;
 
     IProtocolDialog();
+    ~IProtocolDialog() override;
 };
 
 // call once with your chosen class names in the plugin
@@ -203,6 +205,7 @@ struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
     virtual void unregister_tracker();
 
     ITrackerDialog();
+    ~ITrackerDialog() override;
 };
 
 // call once with your chosen class names in the plugin
@@ -231,7 +234,7 @@ struct OTR_API_EXPORT IExtension : module_status_mixin
     };
 
     IExtension() = default;
-    virtual ~IExtension();
+    ~IExtension() override;
 
     virtual event_mask hook_types() = 0;
 

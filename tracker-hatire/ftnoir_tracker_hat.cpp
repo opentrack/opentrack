@@ -141,7 +141,7 @@ void hatire::data(double *data)
     };
 
     for (auto& k : spec)
-        k.place = (k.sign ? -1 : 1) * (k.enable ? k.input : 0);
+        k.place = (k.sign ? -1 : 1) * (k.enable ? (double)k.input : 0);
 }
 
 #include "ftnoir_tracker_hat_dialog.h"

@@ -111,13 +111,12 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
 
     CSV csv(&file);
 
-    int lineno = 0;
     unsigned tmp[8];
     unsigned fuzz[3];
 
     QStringList gameLine;
 
-    while (lineno++, csv.parseLine(gameLine))
+    for (int lineno = 0; csv.parseLine(gameLine); lineno++)
     {
         //qDebug() << "Column 0: " << gameLine.at(0);		// No.
         //qDebug() << "Column 1: " << gameLine.at(1);		// Game Name

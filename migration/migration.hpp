@@ -71,24 +71,18 @@ namespace detail {
 #define OPENTRACK_MIGRATION(type) \
     MIGRATE_EXPANDED1(type, MIGRATE_EXPAND1(__COUNTER__))
 
-#ifdef Q_CREATOR_RUN
-#   pragma clang diagnostic ignored "-Wweak-vtables"
-#endif
-
 struct migration
 {
-    migration() = default;
+    migration();
     migration(const migration&) = delete;
     migration& operator=(const migration&) = delete;
 
-    inline virtual ~migration();
+    virtual ~migration();
     virtual QString unique_date() const = 0;
     virtual QString name() const = 0;
     virtual bool should_run() const = 0;
     virtual void run() = 0;
 };
-
-inline migration::~migration() {}
 
 } // ns migrations
 

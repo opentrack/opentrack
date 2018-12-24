@@ -5,6 +5,11 @@
 #include <opencv2/core.hpp>
 #include <QImage>
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
+
 namespace pt_module {
 
 struct Frame final : pt_frame
@@ -29,8 +34,11 @@ struct Preview final : pt_preview
 private:
     static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
-    bool fresh = true;
-    cv::Mat frame_copy, frame_color, frame_out, frame_out2;
+    cv::Mat frame_copy, frame_out;
 };
 
 } // ns pt_module
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif

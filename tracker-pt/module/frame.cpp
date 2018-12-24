@@ -4,7 +4,7 @@
 
 #include <opencv2/imgproc.hpp>
 
-using namespace pt_module;
+namespace pt_module {
 
 Preview& Preview::operator=(const pt_frame& frame_)
 {
@@ -76,3 +76,5 @@ void Preview::ensure_size(cv::Mat& frame, int w, int h, int type)
     if (frame.cols != w || frame.rows != h)
         frame = cv::Mat(h, w, type);
 }
+
+} // ns pt_module

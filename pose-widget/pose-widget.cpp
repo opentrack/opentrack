@@ -182,7 +182,7 @@ bool Triangle::barycentric_coords(const vec2& px, vec2& uv, int& i) const
 
 std::pair<vec2i, vec2i> pose_transform::get_bounds(const vec2& size)
 {
-    const int x = size.x(), y = size.y();
+    const num x = size.x(), y = size.y();
 
     const vec3 corners[] = {
         { -x, -y, 0 },
@@ -350,8 +350,8 @@ void pose_transform::project_quad_texture()
                 const unsigned px_ = fx + 1;
                 const unsigned py_ = fy + 1;
 #endif
-                const unsigned px = fx;
-                const unsigned py = fy;
+                const unsigned px = (unsigned)fx;
+                const unsigned py = (unsigned)fy;
 
                 const unsigned orig_pos = py * orig_pitch + px * const_depth;
 #if defined BILINEAR_FILTER
@@ -380,7 +380,7 @@ void pose_transform::project_quad_texture()
                         dest[pos + k] = orig[orig_pos + k];
                 else
                     for (int k = 0; k < 3; k++)
-                        dest[pos + k] = bgcolor(k);
+                        dest[pos + k] = (unsigned char)bgcolor(k);
             }
         }
     }

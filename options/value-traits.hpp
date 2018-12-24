@@ -79,26 +79,13 @@ struct value_traits : default_value_traits<t> {};
 template<>
 struct value_traits<double> : default_value_traits<double>
 {
-    static bool is_equal(value_type x, value_type y)
-    {
-        if (x == y)
-            return true;
-        else
-        {
-            using I = std::int64_t;
-            constexpr int K = 1000;
-
-            value_type x_, y_;
-
-            return I(std::modf(x, &x_) * K) == I(std::modf(y, &y_) * K) &&
-                   I(x_) == I(y_);
-        }
-    }
+    static bool is_equal(value_type x, value_type y) { return std::fabs(x - y) < 1e-6; }
 };
 
-template<> struct value_traits<float> : value_traits<float, double>
+template<>
+struct value_traits<float> : default_value_traits<float>
 {
-    static constexpr inline value_type pass_value(const value_type& x) { return x; }
+    static bool is_equal(value_type x, value_type y) { return std::fabs(x - y) < 1e-6f; }
 };
 
 template<>

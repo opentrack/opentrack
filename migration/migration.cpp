@@ -24,9 +24,7 @@ using namespace options::globals;
 
 // individual migrations are run in the UI thread. they can be interactive if necessary.
 
-namespace migrations {
-
-namespace detail {
+namespace migrations::detail {
 
 static std::vector<mptr> migration_list;
 static std::vector<mfun> migration_thunks;
@@ -180,9 +178,14 @@ std::vector<QString> migrator::run()
     return done;
 }
 
-}
+} // ns migrations::detail
 
-} // ns
+namespace migrations {
+
+migration::migration() = default;
+migration::~migration() = default;
+
+} // ns migrations
 
 std::vector<QString> run_migrations()
 {

@@ -51,7 +51,6 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx final
         LPDIRECTINPUTDEVICE8 joy_handle;
         QString guid, name;
         bool last_state[max_buttons_and_pov_hats] {};
-        Timer first_timer;
 
         static DIDEVICEOBJECTDATA keystate_buffers[num_buffers];
 

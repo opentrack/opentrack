@@ -13,6 +13,11 @@
 
 #include <QImage>
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
+
 struct pt_camera_info final
 {
     using f = types::f;
@@ -107,3 +112,7 @@ struct pt_runtime_traits
 
 template<typename t>
 using pt_pointer = typename pt_runtime_traits::pointer<t>;
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif

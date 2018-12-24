@@ -472,7 +472,7 @@ volatile int	 MotionPlusDetectCount;		  // waiting for the result
 		volatile DWORD	 AsyncRumbleTimeout;
 		// orientation estimation
 		unsigned		 WiimoteNearGUpdates;
-		unsigned		 NunchukNearGUpdates;
+		//unsigned		 NunchukNearGUpdates;
 		// audio
 		HANDLE			 SampleThread;
 		const wiimote_sample* volatile CurrentSample;	// otherwise playing square wave

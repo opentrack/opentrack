@@ -339,9 +339,15 @@ main_window::~main_window()
     if (work)
     {
         stop_tracker_();
-        QEventLoop ev;
-        ev.processEvents();
-        portable::sleep(2000);
+
+        constexpr int inc = 100, max = 2000;
+
+        for (int k = 0; k < max; k += inc)
+        {
+            QEventLoop ev;
+            ev.processEvents();
+            portable::sleep(inc);
+        }
     }
 
     exit();

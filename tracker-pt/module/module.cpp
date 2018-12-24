@@ -12,7 +12,11 @@
 
 static const QString module_name = "tracker-pt";
 
-using namespace pt_module;
+#ifdef __clang__
+#   pragma clang diagnostic ignored "-Wweak-vtables"
+#endif
+
+namespace pt_module {
 
 struct pt_module_traits final : pt_runtime_traits
 {
@@ -54,13 +58,15 @@ struct dialog_pt : TrackerDialog_PT
     dialog_pt();
 };
 
-// ns pt_module
-
-using namespace pt_module;
-
 dialog_pt::dialog_pt() : TrackerDialog_PT(module_name) {}
 
 QString metadata_pt::name() { return tr("PointTracker 1.1"); }
 QIcon metadata_pt::icon() { return QIcon(":/Resources/Logo_IR.png"); }
+
+}
+
+// ns pt_module
+
+using namespace pt_module;
 
 OPENTRACK_DECLARE_TRACKER(tracker_pt, dialog_pt, metadata_pt)

@@ -48,7 +48,8 @@ public:
 
 struct OTR_SPLINE_EXPORT base_spline_
 {
-    virtual inline ~base_spline_();
+    virtual ~base_spline_();
+    base_spline_& operator=(const base_spline_&) = default;
 
     virtual float get_value(double x) = 0;
     virtual float get_value_no_save(double x) const = 0;
@@ -72,7 +73,7 @@ struct OTR_SPLINE_EXPORT spline_settings_mixin
     virtual std::shared_ptr<spline_detail::base_settings> get_settings() = 0;
     virtual std::shared_ptr<const spline_detail::base_settings> get_settings() const = 0;
 
-    virtual inline ~spline_settings_mixin();
+    virtual ~spline_settings_mixin();
 };
 
 struct OTR_SPLINE_EXPORT spline_modify_mixin
@@ -83,11 +84,12 @@ struct OTR_SPLINE_EXPORT spline_modify_mixin
     virtual void remove_point(int i) = 0;
     virtual void clear() = 0;
 
-    virtual inline ~spline_modify_mixin();
+    virtual ~spline_modify_mixin();
 };
 
 struct OTR_SPLINE_EXPORT base_spline : base_spline_, spline_modify_mixin, spline_settings_mixin
 {
+    ~base_spline() override;
 };
 
 class OTR_SPLINE_EXPORT spline : public base_spline
@@ -157,10 +159,6 @@ public:
 
     using settings = spline_detail::settings;
 };
-
-inline base_spline_::~base_spline_() = default;
-inline spline_modify_mixin::~spline_modify_mixin() = default;
-inline spline_settings_mixin::~spline_settings_mixin() = default;
 
 } // ns spline_detail
 
