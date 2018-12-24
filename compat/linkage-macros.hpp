@@ -11,7 +11,7 @@
 #   define OTR_GENERIC_IMPORT __attribute__((visibility ("default")))
 #endif
 
-#if defined __APPLE__ || (defined __MINGW32__ && defined _WIN64)
+#if defined __APPLE__ || (defined __MINGW32__ && (defined __clang__ || defined _WIN64))
 #   define OTR_NO_TMPL_INST // link failure on both targets
 #endif
 
