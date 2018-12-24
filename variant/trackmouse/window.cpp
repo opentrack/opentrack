@@ -184,6 +184,7 @@ main_window::~main_window()
     if (work)
     {
         stop_tracker_();
+        close();
 
         constexpr int inc = 100, max = 2000;
 
