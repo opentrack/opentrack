@@ -32,7 +32,7 @@ using to_const_ref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvref
 #define eval_once2(expr, ctr)                                       \
     ([&] {                                                          \
         [[maybe_unused]]                                            \
-        static auto PP_CAT(eval_once_, ctr) = (((void)(expr)), 0);  \
+        static auto PP_CAT(init, ctr) = (((void)(expr)), 0);  \
     }())
 
 template<typename t>
