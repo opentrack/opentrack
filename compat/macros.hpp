@@ -21,7 +21,7 @@ template<typename t>
 using remove_cvref_t = typename cxx20_compat::remove_cvref<t>::type;
 
 template<typename t>
-using to_const_cvref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>;
+using to_const_ref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>;
 
 // causes ICE in Visual Studio 2017 Preview. the ICE was reported and they handle them seriously in due time.
 // the ICE is caused by decltype(auto) and const& return value
@@ -38,16 +38,7 @@ using to_const_cvref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvr
 template<typename t>
 using cv_qualified = std::conditional_t<std::is_fundamental_v<remove_cvref_t<t>>,
                                         remove_cvref_t<t>,
-                                        to_const_cvref_t<t>>;
-
-template<bool>
-[[deprecated]] constexpr cc_forceinline void static_warn() {}
-
-template<>
-constexpr cc_forceinline void static_warn<true>() {}
-
-#define static_warning(cond)            \
-        static_warn<(cond)>();          \
+                                        to_const_ref_t<t>>;
 
 #define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
 
