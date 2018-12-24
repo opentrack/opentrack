@@ -15,7 +15,7 @@
 #include <accctrl.h>
 #include <aclapi.h>
 
-#if !defined __WINE__
+#ifdef QT_CORE_LIB
 #   include <QDebug>
 #   define warn(str, ...) (qDebug() << "shm:" str ": " << __VA_ARGS__)
 #else
