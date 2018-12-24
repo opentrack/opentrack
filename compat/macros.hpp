@@ -27,16 +27,13 @@ using to_const_cvref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvr
 // the ICE is caused by decltype(auto) and const& return value
 //#define eval_once(expr) ([&]() -> decltype(auto) { static decltype(auto) ret___1132 = (expr); return (decltype(ret___1132) const&) ret___1132; }())
 
-#define eval_once(expr) eval_once__2(expr, PP_CAT(_EVAL_ONCE__, __COUNTER__))
-#define eval_once__2(expr, ident) eval_once__3(expr, ident)
+#define eval_once(expr) eval_once2(expr, __COUNTER__)
 
-#define eval_once__3(expr, ident)                                                               \
-    ([&]() -> decltype(auto) {                                                                  \
-        static auto INIT##ident = (expr);                                                       \
-        return static_cast<to_const_cvref_t<decltype(INIT##ident)>>(INIT##ident);    \
+#define eval_once2(expr, ctr)                                       \
+    ([&] {                                                          \
+        [[maybe_unused]]                                            \
+        static auto PP_CAT(eval_once_, ctr) = (((void)(expr)), 0);  \
     }())
-
-#include <type_traits>
 
 template<typename t>
 using cv_qualified = std::conditional_t<std::is_fundamental_v<remove_cvref_t<t>>,
