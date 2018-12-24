@@ -14,9 +14,9 @@ if(LINUX OR APPLE)
                          LINK_FLAGS "-F${SDK_XPLANE}/Libraries/Mac/ -framework XPLM -framework XPWidgets ")
         elseif(CMAKE_COMPILER_IS_GNUCXX)
             set_property(TARGET opentrack-xplane-plugin APPEND_STRING PROPERTY
-                         COMPILE_FLAGS "-fPIC -DLIN -DXPLM200 -DXPLM210 ")
+                         COMPILE_FLAGS "-DLIN -DXPLM200 -DXPLM210 ")
             set_property(TARGET opentrack-xplane-plugin APPEND_STRING PROPERTY
-                         LINK_FLAGS "-rdynamic -nodefaultlibs -fPIC ")
+                         LINK_FLAGS "-rdynamic -nodefaultlibs ")
         endif()
 
         if(CMAKE_COMPILER_IS_GNUCC AND NOT CMAKE_COMPILER_IS_CLANG)
