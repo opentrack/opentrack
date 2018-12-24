@@ -27,6 +27,10 @@ set(CMAKE_C_LINKER_PREFERENCE_PROPAGATES OFF)
 set(CMAKE_CXX_LINKER_PREFERENCE_PROPAGATES ON)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+include(CMakeDetermineCCompiler)
+include(CMakeDetermineCXXCompiler)
+include(CMakeParseArguments)
 include(opentrack-mrproper)
 
 project(opentrack)

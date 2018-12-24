@@ -3,7 +3,7 @@ set(CMAKE_BUILD_TYPE_INIT RELEASE)
 set(CMAKE_CXX_FLAGS "-arch x86_64 -stdlib=libc++" CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS "-arch x86_64" CACHE STRING "" FORCE)
 
-set(CMAKE_C_FLAGS_RELEASE "-ffast-math -O3 -flto -fvisibility=hidden -g" CACHE STRING "" FORCE)
+set(CMAKE_C_FLAGS_RELEASE "-ffast-math -O3 -flto -g" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE " ${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "" FORCE)
 
 set(cmake-link-common "-stdlib=libc++ -arch x86_64")

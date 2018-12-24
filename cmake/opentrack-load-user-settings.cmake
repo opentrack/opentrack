@@ -20,9 +20,6 @@ else()
     endif()
 endif()
 
-include(CMakeDetermineCCompiler)
-include(CMakeDetermineCXXCompiler)
-
 if(NOT CMAKE_SYSTEM_NAME STREQUAL CMAKE_HOST_SYSTEM_NAME)
     set(__sdk_host_os "${CMAKE_HOST_SYSTEM_NAME}-cross-")
 else()

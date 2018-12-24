@@ -169,7 +169,6 @@ serial_result hatire_thread::init_serial_port_impl()
             && com_port.setStopBits((QSerialPort::StopBits)s.pStopBits)
             && com_port.setFlowControl((QSerialPort::FlowControl)s.pFlowControl)
             && com_port.clear(QSerialPort::AllDirections)
-            && com_port.setDataErrorPolicy(QSerialPort::IgnorePolicy)
            )
         {
             Log(tr("Port Parameters set"));

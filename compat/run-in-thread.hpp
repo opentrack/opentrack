@@ -108,8 +108,8 @@ template<typename F>
 void run_in_thread_async(QObject* obj, F&& fun)
 {
     QObject src;
-    QThread* t(obj->thread());
-    assert(t);
+    QThread* t = obj->thread();
+    if (!t) abort();
     src.moveToThread(t);
     QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
 }

@@ -121,7 +121,7 @@ static const win_key windows_key_sequences[] {
        { DIK_PAUSE, Qt::Key_Pause},
        { DIK_NUMLOCK, Qt::Key_NumLock},
        { DIK_CAPSLOCK, Qt::Key_CapsLock},
-#define key_mod(x, y) Qt::Key(int(x) | int((y)))
+#define key_mod(x, y) Qt::Key(int((x)) | int((y)))
        { DIK_NUMPAD0,      key_mod(Qt::Key_0,        Qt::KeypadModifier)},
        { DIK_NUMPAD0,      key_mod(Qt::Key_0,        Qt::KeypadModifier)},
        { DIK_NUMPAD1,      key_mod(Qt::Key_1,        Qt::KeypadModifier)},
@@ -163,26 +163,22 @@ bool win_key::to_qt(const Key& k, QKeySequence& qt_, Qt::KeyboardModifiers &mods
 bool win_key::from_qt(const QKeySequence& qt_, int& dik, Qt::KeyboardModifiers& mods)
 {
     // CAVEAT don't use QVariant::toUInt() or conversion fails
-#if 0
-    const unsigned qt = QVariant(qt_).toInt(); // verbose
-#endif
-    const unsigned qt = (unsigned)int(qt_); // deprecated
-    const unsigned our_mods = qt & Qt::KeyboardModifierMask;
+    const unsigned qt = (unsigned)QVariant(qt_).toInt();
+    const unsigned our_mods = qt & (unsigned)Qt::KeyboardModifierMask;
 
     if (qt == 0)
         return false;
 
+    for (const win_key& wk : windows_key_sequences)
     {
-        for (const win_key& wk : windows_key_sequences)
+        if (unsigned(wk.qt) == qt)
         {
-            if (unsigned(wk.qt) == qt)
-            {
-                dik = wk.win;
-                mods = Qt::NoModifier;
-                return true;
-            }
+            dik = wk.win;
+            mods = Qt::NoModifier;
+            return true;
         }
     }
+
     {
         const unsigned key = qt & ~Qt::KeyboardModifierMask;
         for (const win_key& wk : windows_key_sequences)

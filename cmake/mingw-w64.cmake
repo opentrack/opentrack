@@ -81,7 +81,7 @@ if(WARNINGS_ENABLE)
     set(_CXX_WARNS "${_C_WARNS} ${usual-warns} ${noisy-warns} ${missing-override}")
 endif()
 
-set(ccflags-common "-fvisibility=hidden -pipe -g3")
+set(ccflags-common "-pipe -g3")
 set(_CXXFLAGS "${ccflags-common} ${_CXX_WARNS}")
 set(_CFLAGS "${ccflags-common} -std=c11 ${_C_WARNS}")
 set(_CFLAGS_RELEASE "${cpu} ${fpu} ${lto} ${sections} ${cc}")

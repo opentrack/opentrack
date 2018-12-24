@@ -1,39 +1,43 @@
+#undef NDEBUG
+#include <cassert>
+
 #include "keyboard.h"
 
 #include <QDebug>
 
 #ifdef _WIN32
-auto keyboard_listener::make_token()
+
+void keyboard_listener::receive_key(const Key& k)
 {
-    return [this](const Key& k) {
-        if(!k.guid.isEmpty())
-        {
-            int mods = 0;
-            if (k.alt) mods |= Qt::AltModifier;
-            if (k.shift) mods |= Qt::ShiftModifier;
-            if (k.ctrl) mods |= Qt::ControlModifier;
-            emit joystick_button_pressed(k.guid, k.keycode | mods, k.held);
-        }
-        else
-        {
-            Qt::KeyboardModifiers m;
-            QKeySequence k_;
-            if (win_key::to_qt(k, k_, m))
-                emit key_pressed({ int(m) | int(k_) });
-        }
-    };
+    if(!k.guid.isEmpty())
+    {
+        int mods = 0;
+        if (k.alt) mods |= Qt::AltModifier;
+        if (k.shift) mods |= Qt::ShiftModifier;
+        if (k.ctrl) mods |= Qt::ControlModifier;
+
+        emit joystick_button_pressed(k.guid, k.keycode | mods, k.held);
+    }
+    else
+    {
+        Qt::KeyboardModifiers m;
+        QKeySequence k_;
+
+        if (win_key::to_qt(k, k_, m))
+            for (unsigned i = 0; i < (unsigned)k_.count(); i++)
+                emit key_pressed(QKeySequence(int(m) | k_[i]));
+    }
 }
 
 #endif
 
-keyboard_listener::keyboard_listener(QWidget* parent) :
-    QDialog(parent)
-#ifdef _WIN32
-    , token(make_token())
-#endif
+keyboard_listener::keyboard_listener(QWidget* parent) : QDialog(parent)
 {
     ui.setupUi(this);
     setFocusPolicy(Qt::StrongFocus);
+#ifdef _WIN32
+    (void)token;
+#endif
 }
 
 #if !defined _WIN32

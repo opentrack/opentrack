@@ -23,6 +23,10 @@
 
 include_guard(GLOBAL)
 
+if(MSVC AND MSVC_VERSION LESS "1915" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
+    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 or newer.")
+endif()
+
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
 endif()
@@ -34,26 +38,28 @@ endif()
 string(TOUPPER "${CMAKE_BUILD_TYPE}" __build_type)
 set(CMAKE_BUILD_TYPE "${__build_type}" CACHE STRING "" FORCE)
 
+include_directories("${CMAKE_SOURCE_DIR}")
+
+set(opentrack_maintainer-mode FALSE CACHE INTERNAL "Select if developing core code (not modules)")
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_DEFAULT 17)
+set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
+
+set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+set(CMAKE_SKIP_RPATH FALSE)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 
-if (CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*|i[0-9]86.*|x86.*")
-    set(opentrack-intel TRUE)
-else()
-    set(opentrack-intel FALSE)
-endif()
+set(CMAKE_C_VISIBILITY_PRESET hidden)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-if(CMAKE_SIZEOF_VOID_P GREATER_EQUAL 8)
-    set(opentrack-64bit TRUE)
-else()
-    set(opentrack-64bit FALSE)
-endif()
-
-if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
-    set(CMAKE_OSX_ARCHITECTURES  "x86_64")
-endif()
-
-if(MSVC AND MSVC_VERSION LESS "1915" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUAL ".Clang")
-    message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 or newer.")
+if(NOT WIN32 AND NOT APPLE)
+    include(opentrack-pkg-config)
 endif()
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -66,12 +72,39 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_CLANG TRUE)
 endif()
 
+if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64")
+    set(opentrack-intel TRUE)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*|i[0-9]86.*|x86.*")
+    set(opentrack-intel TRUE)
+else()
+    set(opentrack-intel FALSE)
+endif()
+
+if(CMAKE_SIZEOF_VOID_P GREATER_EQUAL 8)
+    set(opentrack-64bit TRUE)
+else()
+    set(opentrack-64bit FALSE)
+endif()
+
 IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(LINUX TRUE)
 endif()
 
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-cxa-atexit")
+    # assume binutils
+    foreach (i SHARED MODULE EXE)
+        set(CMAKE_${i}_LINKER_FLAGS "-Wl,-z,relro,-z,now,--exclude-libs,ALL ${CMAKE_${i}_LINKER_FLAGS}")
+    endforeach()
+endif()
+
 if(WIN32)
-    add_definitions(-D_USE_MATH_DEFINES=1)
+    add_definitions(-D_USE_MATH_DEFINES=1 -DSTRSAFE_NO_DEPRECATE)
+endif()
+
+if(MINGW)
+    add_definitions(-DMINGW_HAS_SECURE_API)
 endif()
 
 if(MSVC)
@@ -85,7 +118,7 @@ if(MSVC)
 
     set(__stuff "-permissive- -diagnostics:caret")
     set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_C_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
+    set(CMAKE_C_FLAGS "${__stuff} ${CMAKE_C_FLAGS}")
 
     if(opentrack-64bit)
         set(ent "-HIGHENTROPYVA")
@@ -99,67 +132,14 @@ if(MSVC)
     endforeach()
 endif()
 
-if(WIN32)
-  if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_RC_COMPILER_INIT i686-w64-mingw32-windres)
-    set(CMAKE_RC_COMPILE_OBJECT "<CMAKE_RC_COMPILER> --use-temp-file -O coff <DEFINES> -i <SOURCE> -o <OBJECT>")
-  endif()
-  enable_language(RC)
-endif()
-
-if(opentrack-install-rpath)
-    set(CMAKE_INSTALL_RPATH "${opentrack-install-rpath}")
-else()
-    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}")
-endif()
-
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_SKIP_INSTALL_RPATH FALSE)
-set(CMAKE_SKIP_RPATH FALSE)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC OFF)
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-
-include_directories("${CMAKE_SOURCE_DIR}")
-
-if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    set(_common "-fvisibility=hidden")
-    set(CMAKE_C_FLAGS "${_common} ${CMAKE_C_FLAGS}")
-    set(CMAKE_CXX_FLAGS "${_common} -fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
-endif()
-
 if(APPLE)
     set(CMAKE_MACOSX_RPATH OFF)
-    set(apple-frameworks "-stdlib=libc++ -framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
-    set(CMAKE_SHARED_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_SHARED_LINKER_FLAGS}")
-    #set(CMAKE_STATIC_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_STATIC_LINKER_FLAGS}")
-    set(CMAKE_EXE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_EXE_LINKER_FLAGS}")
-    set(CMAKE_MODULE_LINKER_FLAGS " ${apple-frameworks} ${CMAKE_MODULE_LINKER_FLAGS}")
+    set(apple-frameworks "-framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
+    foreach (k SHARED EXE MODULE)
+        set(CMAKE_${k}_LINKER_FLAGS "-stdlib=libc++ ${CMAKE_${k}_LINKER_FLAGS} ${apple-frameworks}")
+    endforeach()
     set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_DEFAULT 17)
-set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
-set(CMAKE_CXX_EXTENSIONS FALSE)
 
-foreach(k _RELEASE _DEBUG _RELWITHDEBINFO _MINSIZEREL)
-    set(CMAKE_C_FLAGS${k} "${CMAKE_C_FLAGS${k}} -UNDEBUG")
-    set(CMAKE_CXX_FLAGS${k} "${CMAKE_CXX_FLAGS${k}} -UNDEBUG")
-endforeach()
 
-if(MINGW)
-    add_definitions(-DMINGW_HAS_SECURE_API)
-    add_definitions(-DSTRSAFE_NO_DEPRECATE)
-endif()
-
-# assume binutils
-if(UNIX AND NOT APPLE)
-    foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS "-Wl,-z,relro,-z,now,--exclude-libs,ALL ${CMAKE_${i}_LINKER_FLAGS}")
-    endforeach()
-    include(opentrack-pkg-config)
-endif()
-
-set(opentrack_maintainer-mode FALSE CACHE BOOL "Select if developing core code (not modules)")

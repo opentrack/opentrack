@@ -10,6 +10,8 @@
 
 #pragma once
 
+#undef NDEBUG
+
 #include "warns-begin.hpp"
 
 #undef WIN32_LEAN_AND_MEAN

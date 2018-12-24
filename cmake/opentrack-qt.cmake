@@ -59,8 +59,14 @@ function(otr_qt n)
         list(APPEND ${n}-all ${${n}-${i}})
     endforeach()
     set(${n}-all "${${n}-all}" PARENT_SCOPE)
-    include_directories(SYSTEM ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS})
-    add_definitions(${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS})
-    add_definitions(-DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT)
-    add_definitions(-DQT_DEPRECATED -DQT_DISABLE_DEPRECATED_BEFORE=-1)
+endfunction()
+
+function(otr_qt2 n)
+    target_include_directories("${n}" PRIVATE SYSTEM
+        ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS}
+    )
+    target_compile_definitions("${n}" PRIVATE
+        ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS}
+        -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
+    )
 endfunction()

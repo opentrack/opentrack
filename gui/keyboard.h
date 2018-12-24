@@ -22,13 +22,17 @@
 class OTR_GUI_EXPORT keyboard_listener : public QDialog
 {
     Q_OBJECT
-    Ui_keyboard_listener ui;
+
 #ifdef _WIN32
-    auto make_token();
-    KeybindingWorker::Token token;
+    void receive_key(const Key& k);
+
+    KeybindingWorker::Token token{[this](const Key& k) {receive_key(k);}};
 #else
     void keyPressEvent(QKeyEvent* event) override;
 #endif
+
+    Ui_keyboard_listener ui;
+
 public:
     keyboard_listener(QWidget* parent = nullptr);
 signals:

@@ -6,6 +6,8 @@
  * notice appear in all copies.
  */
 
+#undef NDEBUG
+
 #include "fusion.h"
 #include "compat/library-path.hpp"
 

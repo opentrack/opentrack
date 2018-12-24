@@ -20,14 +20,14 @@ class hatire : public QObject, public ITracker
 
 public:
     hatire();
-    ~hatire();
+    ~hatire() override;
 
-    module_status start_tracker(QFrame*);
-    void data(double *data);
+    module_status start_tracker(QFrame*) override;
+    void data(double *data) override;
     //void center();
     //bool notifyZeroed();
     void reset();
-    void get_info( int *tps );
+    void get_info(int *tps);
     void serial_info();
     void send_serial_command(const QByteArray& x);
 
@@ -50,6 +50,6 @@ class hatire_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Hatire Arduino"); }
-    QIcon icon() { return QIcon(":/images/hat.png"); }
+    QString name() override { return tr("Hatire Arduino"); }
+    QIcon icon() override { return QIcon(":/images/hat.png"); }
 };

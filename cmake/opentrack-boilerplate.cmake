@@ -117,8 +117,6 @@ function(otr_install_pdb_current_project target)
     endif()
 endfunction()
 
-include(CMakeParseArguments)
-
 function(otr_module n_)
     message(STATUS "module ${n_}")
     cmake_parse_arguments(arg
@@ -171,6 +169,10 @@ function(otr_module n_)
         endif()
         add_library(${n} ${link-mode} "${${n}-all}")
         set_property(TARGET "${n}" PROPERTY PREFIX "")
+    endif()
+
+    if(NOT arg_NO-QT)
+        otr_qt2("${n}")
     endif()
 
     set(self "${n}" PARENT_SCOPE)

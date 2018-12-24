@@ -54,3 +54,5 @@ if(APPLE)
 elseif(WIN32)
     set(opentrack-binary-suffix ".exe")
 endif()
+
+set(CMAKE_INSTALL_RPATH "${opentrack-install-rpath}")

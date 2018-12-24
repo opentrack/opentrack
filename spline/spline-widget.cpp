@@ -107,7 +107,7 @@ void spline_widget::drawBackground()
 
     const QPen pen(color__, 1, Qt::SolidLine, Qt::FlatCap);
 
-    const int ystep = std::ceil(y_step_), xstep = std::ceil(x_step_);
+    const int ystep = (int)std::ceil(y_step_), xstep = (int)std::ceil(x_step_);
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
@@ -135,9 +135,9 @@ void spline_widget::drawBackground()
                  QPointF(x, pixel_bounds.y() + pixel_bounds.height()),
                  pen);
         const QString text = QString::number(i);
-        painter.drawText(QRectF(x - metrics.width(text)/2.,
+        painter.drawText(QRectF(x - metrics.horizontalAdvance(text)/2.,
                                 pixel_bounds.height() + 10 + metrics.height(),
-                                metrics.width(text),
+                                metrics.horizontalAdvance(text),
                                 metrics.height()),
                          text);
     }
@@ -505,7 +505,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     double x = value.x(), y = value.y();
 
     if (preview_only)
-        y = (double)config->get_value_no_save((float)x);
+        y = (double)config->get_value_no_save(x);
 
     const int x_ = iround(x), y_ = iround(y);
 
@@ -514,15 +514,12 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     if (std::fabs(y_ - y) < 1e-3)
         y = y_;
 
-    // the style on OSX has different offsets
-    constexpr bool is_fusion =
+    // the native OSX style doesn't look right otherwise
 #if defined __APPLE__
-            true;
+    constexpr int off_x = 0, off_y = 0;
 #else
-            false;
+    constexpr int off_x = 25, off_y = 15;
 #endif
-
-    const int off_x = (is_fusion ? 25 : 0), off_y = (is_fusion ? 15 : 0);
 
     const QPoint pix(pos.x() + off_x, pos.y() + off_y);
 

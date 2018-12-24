@@ -6,6 +6,8 @@
  * notice appear in all copies.
  */
 
+#undef NDEBUG
+
 #include "timer.hpp"
 #include <cassert>
 #include <cmath>
