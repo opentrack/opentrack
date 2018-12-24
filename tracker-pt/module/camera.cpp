@@ -18,7 +18,6 @@
 
 #include <cstdlib>
 
-using namespace pt_module;
 namespace pt_module {
 
 Camera::Camera(const QString& module_name) : s { module_name }

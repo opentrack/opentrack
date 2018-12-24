@@ -49,11 +49,7 @@ Tracker_PT::~Tracker_PT()
 
 void Tracker_PT::run()
 {
-#ifdef PT_PERF_LOG
-    QFile log_file(OPENTRACK_BASE_PATH + "/PointTrackerPerformance.txt");
-    if (!log_file.open(QIODevice::WriteOnly | QIODevice::Text)) return;
-    QTextStream log_stream(&log_file);
-#endif
+    maybe_reopen_camera();
 
     while(!isInterruptionRequested())
     {
@@ -120,7 +116,6 @@ void Tracker_PT::run()
             center_flag.clear();
         }
     }
-    qDebug() << "pt: thread stopped";
 }
 
 bool Tracker_PT::maybe_reopen_camera()
@@ -148,9 +143,6 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
     video_frame->setLayout(layout.get());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
-
-    if (!maybe_reopen_camera())
-        return { tr("Can't open camera") };
 
     start(QThread::HighPriority);
 
