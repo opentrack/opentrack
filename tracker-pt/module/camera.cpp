@@ -104,10 +104,12 @@ bool Camera::start(int idx, int fps, int res_x, int res_y)
 
             cap = camera_ptr(new cv::VideoCapture(idx));
 
-            if (cam_desired.res_x)
+            if (cam_desired.res_x > 0 && cam_desired.res_y > 0)
+            {
                 cap->set(cv::CAP_PROP_FRAME_WIDTH,  res_x);
-            if (cam_desired.res_y)
                 cap->set(cv::CAP_PROP_FRAME_HEIGHT, res_y);
+            }
+
             if (fps > 0)
                 cap->set(cv::CAP_PROP_FPS, fps);
 
