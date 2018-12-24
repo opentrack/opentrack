@@ -184,9 +184,15 @@ main_window::~main_window()
     if (work)
     {
         stop_tracker_();
-        QEventLoop ev;
-        ev.processEvents();
-        portable::sleep(2000);
+
+        constexpr int inc = 100, max = 2000;
+
+        for (int k = 0; k < max; k += inc)
+        {
+            QEventLoop ev;
+            ev.processEvents();
+            portable::sleep(inc);
+        }
     }
 
     exit();
@@ -309,9 +315,6 @@ void main_window::stop_tracker_()
     update_button_state(false, false);
     set_title();
     ui.btnStartTracker->setFocus();
-
-    // ps3 eye issues
-    portable::sleep(1000);
 }
 
 void main_window::set_title(const QString& game_title)
