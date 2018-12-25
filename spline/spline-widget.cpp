@@ -97,8 +97,10 @@ void spline_widget::drawBackground()
 
     QFont font;
     font.setPointSize(8);
+    font.setStyleHint(QFont::Monospace, QFont::PreferAntialias);
     painter.setFont(font);
-    QFontMetricsF metrics(font);
+    const QFontMetricsF metrics(font);
+    const double height = metrics.height();
 
     QColor color__(176, 190, 209, 127);
 
@@ -111,7 +113,7 @@ void spline_widget::drawBackground()
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
-    // horizontal grid
+    // vertical grid
     for (int i = 0; i <= maxy; i += ystep)
     {
         const double y = pixel_bounds.height() - i * c.y() + pixel_bounds.y();
@@ -120,13 +122,13 @@ void spline_widget::drawBackground()
                  QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
                  pen);
         painter.drawText(QRectF(10,
-                                y - metrics.height()/2.,
+                                y - height/2,
                                 pixel_bounds.left(),
-                                metrics.height()),
+                                height),
                          QString::number(i));
     }
 
-    // vertical grid
+    // horizontal grid
     for (int i = 0; i <= maxx; i += xstep)
     {
         const double x = pixel_bounds.x() + i * c.x();
@@ -134,11 +136,18 @@ void spline_widget::drawBackground()
                  QPointF(x, pixel_bounds.y()),
                  QPointF(x, pixel_bounds.y() + pixel_bounds.height()),
                  pen);
+
         const QString text = QString::number(i);
-        painter.drawText(QRectF(x - metrics.horizontalAdvance(text)/2.,
-                                pixel_bounds.height() + 10 + metrics.height(),
-                                metrics.horizontalAdvance(text),
-                                metrics.height()),
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
+        const double width = metrics.horizontalAdvance(text);
+#else
+        // XXX remove after Linux upgrades -sh 20181225
+        const double width = metrics.width(text);
+#endif
+        painter.drawText(QRectF{x - width/2,
+                                pixel_bounds.height() + 10 + height,
+                                width, height},
                          text);
     }
 }
