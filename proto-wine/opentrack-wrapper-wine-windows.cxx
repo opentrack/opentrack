@@ -9,9 +9,11 @@
 
 #include "wine-shm.h"
 #include "compat/library-path.hpp"
+
 #include <cstring>
 
-using std::strcat;
+#include <windows.h>
+#include <winreg.h>
 
 static void write_path(const char* key, const char* subkey)
 {

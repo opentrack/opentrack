@@ -13,15 +13,29 @@ SHMXX_TYPE_NAME& SHMXX_TYPE_NAME::operator=(SHMXX_TYPE_NAME&&) noexcept = defaul
 // NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
 SHMXX_TYPE_NAME::SHMXX_TYPE_NAME(const char* shm_name, const char* mutex_name, int map_size)
 {
-    shm_mem_impl_init(&impl, shm_name, mutex_name, map_size);
+    SHM_FUN_NAME(init)(&impl, shm_name, mutex_name, map_size);
 }
 
 SHMXX_TYPE_NAME::~SHMXX_TYPE_NAME()
 {
-    shm_mem_impl_free(&impl);
+    SHM_FUN_NAME(free)(&impl);
 }
 
-bool SHMXX_TYPE_NAME::success() noexcept { return shm_mem_impl_success(&impl); }
-void SHMXX_TYPE_NAME::lock() noexcept { shm_mem_impl_lock(&impl); }
-void SHMXX_TYPE_NAME::unlock() noexcept { shm_mem_impl_unlock(&impl); }
-void* SHMXX_TYPE_NAME::ptr() noexcept { return shm_mem_impl_ptr(&impl); }
+bool SHMXX_TYPE_NAME::success() noexcept
+{
+    return SHM_FUN_NAME(success)(&impl);
+}
+void SHMXX_TYPE_NAME::lock() noexcept
+{
+    SHM_FUN_NAME(lock)(&impl);
+}
+
+void SHMXX_TYPE_NAME::unlock() noexcept
+{
+    SHM_FUN_NAME(unlock)(&impl);
+}
+
+void* SHMXX_TYPE_NAME::ptr() noexcept
+{
+    return SHM_FUN_NAME(ptr)(&impl);
+}

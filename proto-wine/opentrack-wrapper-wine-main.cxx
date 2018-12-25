@@ -30,7 +30,7 @@ enum Axis {
 #define SHM_TYPE_NAME shm_impl_unix
 #define SHM_FUN_PREFIX shm_impl_unix_
 #define SHMXX_TYPE_NAME mem_unix
-#define SHM_WIN32_INIT
+#define SHM_WIN32_INIT 0
 #include "compat/shm.hpp"
 
 void create_registry_key(void);
@@ -56,7 +56,7 @@ int main(void)
 
     while (!mem_unix.stop)
     {
-        MEMBAR();
+        COMPILER_BARRIER();
         data.Yaw = -mem_unix.data[Yaw];
         data.Pitch = -mem_unix.data[Pitch];
         data.Roll = mem_unix.data[Roll];
@@ -68,7 +68,7 @@ int main(void)
         mem_unix.gameid = mem_wine.GameID;
         for (int i = 0; i < 8; i++)
             mem_wine.table[i] = mem_wine.table[i];
-        MEMBAR();
+        COMPILER_BARRIER();
         (void)usleep(4 * 1000);
     }
 }

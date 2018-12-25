@@ -16,7 +16,7 @@
 
 class OTR_COMPAT_EXPORT SHMXX_TYPE_NAME final
 {
-    shm_mem_impl impl;
+    SHM_TYPE_NAME impl;
 
 public:
     SHMXX_TYPE_NAME(const char* shm_name, const char* mutex_name, int map_size);
