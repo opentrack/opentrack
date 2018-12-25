@@ -200,8 +200,10 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_w
 {
     set_fp_mask();
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_X11InitThreads, true);
+#endif
+    QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
 
     QApplication app(argc, argv);
 
