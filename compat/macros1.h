@@ -39,3 +39,12 @@
 #   define PP_EXPAND__2(x) PP_EXPAND__3(x) x
 #   define PP_EXPAND__3(x) x
 #endif
+
+#ifdef _MSC_VER
+//#   include <windows.h>
+//#   define FULL_BARRIER MemoryBarrier()
+#   define COMPILER_BARRIER() _ReadWriteBarrier()
+#else
+//#   define FULL_BARRIER() __sync_synchronize()
+#   define COMPILER_BARRIER() asm volatile("" ::: "memory")
+#endif

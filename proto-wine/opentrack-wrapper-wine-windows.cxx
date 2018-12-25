@@ -2,9 +2,11 @@
 #   error "bad cross"
 #endif
 
-#define shm_wrapper ShmWine
-#include "compat/shm.h"
+#define SHM_TYPE_NAME shm_impl_winelib
+#define SHM_FUN_PREFIX shm_impl_winelib_
+#define SHMXX_TYPE_NAME mem_winelib
 #include "compat/shm.cpp"
+
 #include "wine-shm.h"
 #include "compat/library-path.hpp"
 #include <cstring>

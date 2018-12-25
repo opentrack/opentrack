@@ -5,133 +5,23 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "shm.h"
+#define BUILD_SHM
+#include "shm.hpp"
 
-#if defined _WIN32
+SHMXX_TYPE_NAME& SHMXX_TYPE_NAME::operator=(SHMXX_TYPE_NAME&&) noexcept = default;
 
-#include <cstring>
-#include <cstdio>
-
-#include <accctrl.h>
-#include <aclapi.h>
-
-#ifdef QT_CORE_LIB
-#   include <QDebug>
-#   define warn(str, ...) (qDebug() << "shm:" str ": " << __VA_ARGS__)
-#else
-#   define warn(str, ...) (void)0
-#endif
-
-shm_wrapper::shm_wrapper(const char* shm_name, const char* mutex_name, int map_size)
+// NOLINTNEXTLINE(cppcoreguidelines-pro-type-member-init)
+SHMXX_TYPE_NAME::SHMXX_TYPE_NAME(const char* shm_name, const char* mutex_name, int map_size)
 {
-    if (mutex_name == nullptr)
-        mutex = nullptr;
-    else
-    {
-        mutex = CreateMutexA(nullptr, false, mutex_name);
-
-        if (!mutex)
-        {
-            warn("CreateMutexA", (int) GetLastError());
-            return;
-        }
-    }
-
-    mapped_file = CreateFileMappingA(
-                 INVALID_HANDLE_VALUE,
-                 nullptr,
-                 PAGE_READWRITE,
-                 0,
-                 map_size,
-                 shm_name);
-
-    if (!mapped_file)
-    {
-        warn("CreateFileMappingA", (int) GetLastError());
-
-        return;
-    }
-
-    mem = MapViewOfFile(mapped_file,
-                        FILE_MAP_WRITE,
-                        0,
-                        0,
-                        map_size);
-
-    if (!mem)
-        warn("MapViewOfFile:", (int) GetLastError());
+    shm_mem_impl_init(&impl, shm_name, mutex_name, map_size);
 }
 
-shm_wrapper::~shm_wrapper()
+SHMXX_TYPE_NAME::~SHMXX_TYPE_NAME()
 {
-    if (mem && !UnmapViewOfFile(mem))
-        goto fail;
-
-    if (mapped_file && !CloseHandle(mapped_file))
-        goto fail;
-
-    if (mutex && !CloseHandle(mutex))
-        goto fail;
-
-    return;
-
-fail:
-    warn("failed to close mapping", (int) GetLastError());
+    shm_mem_impl_free(&impl);
 }
 
-bool shm_wrapper::lock()
-{
-    if (mutex)
-        return WaitForSingleObject(mutex, INFINITE) == WAIT_OBJECT_0;
-    else
-        return false;
-}
-
-bool shm_wrapper::unlock()
-{
-    if (mutex)
-        return ReleaseMutex(mutex);
-    else
-        return false;
-}
-#else
-
-#include <limits.h>
-
-#pragma GCC diagnostic ignored "-Wunused-result"
-shm_wrapper::shm_wrapper(const char *shm_name, const char* /*mutex_name*/, int map_size) : size(map_size)
-{
-    char filename[PATH_MAX+2] {};
-    strcpy(filename, "/");
-    strcat(filename, shm_name);
-    fd = shm_open(filename, O_RDWR | O_CREAT, 0600);
-    (void) ftruncate(fd, map_size);
-    mem = mmap(NULL, map_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
-}
-
-shm_wrapper::~shm_wrapper()
-{
-    (void) munmap(mem, size);
-    (void) close(fd);
-}
-
-bool shm_wrapper::lock()
-{
-    return flock(fd, LOCK_EX) == 0;
-}
-
-bool shm_wrapper::unlock()
-{
-    return flock(fd, LOCK_UN) == 0;
-}
-#endif
-
-bool shm_wrapper::success()
-{
-#ifndef _WIN32
-    return mem != (void*) -1;
-#else
-    return mem != nullptr;
-#endif
-}
-
+bool SHMXX_TYPE_NAME::success() noexcept { return shm_mem_impl_success(&impl); }
+void SHMXX_TYPE_NAME::lock() noexcept { shm_mem_impl_lock(&impl); }
+void SHMXX_TYPE_NAME::unlock() noexcept { shm_mem_impl_unlock(&impl); }
+void* SHMXX_TYPE_NAME::ptr() noexcept { return shm_mem_impl_ptr(&impl); }
