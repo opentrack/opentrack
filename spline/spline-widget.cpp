@@ -139,12 +139,14 @@ void spline_widget::drawBackground()
 
         const QString text = QString::number(i);
 
+        const double width =
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-        const double width = metrics.horizontalAdvance(text);
+            metrics.horizontalAdvance(text);
 #else
         // XXX remove after Linux upgrades -sh 20181225
-        const double width = metrics.width(text);
+            metrics.width(text);
 #endif
+
         painter.drawText(QRectF{x - width/2,
                                 pixel_bounds.height() + 10 + height,
                                 width, height},

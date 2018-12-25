@@ -204,7 +204,6 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_w
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QCoreApplication::setAttribute(Qt::AA_X11InitThreads);
-    QCoreApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QApplication app(argc, argv);
