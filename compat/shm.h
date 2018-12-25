@@ -49,14 +49,16 @@ struct SHM_TYPE_NAME {
 };
 
 #define SHM_FUN_NAME(f) PP_CAT(SHM_FUN_PREFIX, f)
-#define SHM_FUN(r, f, ...) SHM_EXTERN SHM_EXPORT r SHM_FUN_NAME(f)(SHM_TYPE_NAME* __restrict self, __VA_ARGS__)
+#define SHM_FUN_(r, f)SHM_EXTERN SHM_EXPORT r SHM_FUN_NAME(f)
+#define SHM_FUN(r, f, ...) SHM_FUN_(r, f)(SHM_TYPE_NAME* self, __VA_ARGS__)
+#define SHM_FUN0(r, f) SHM_FUN_(r, f)(SHM_TYPE_NAME* self)
 
 SHM_FUN(void, init, const char* shm_name, const char* mutex_name, int map_size);
-SHM_FUN(void, free);
-SHM_FUN(void, lock);
-SHM_FUN(void, unlock);
-SHM_FUN(void*,ptr);
-SHM_FUN(bool, success);
+SHM_FUN0(void, free);
+SHM_FUN0(void, lock);
+SHM_FUN0(void, unlock);
+SHM_FUN0(void*,ptr);
+SHM_FUN0(bool, success);
 
 #ifndef BUILD_SHM
 #   undef SHM_FUN

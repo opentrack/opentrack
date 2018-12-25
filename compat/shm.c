@@ -41,7 +41,7 @@ fail:
     SHM_FUN_NAME(free)(self);
 }
 
-SHM_FUN(void, free)
+SHM_FUN0(void, free)
 {
     if (self->mem)
         (void) UnmapViewOfFile(self->mem);
@@ -57,18 +57,18 @@ SHM_FUN(void, free)
     self->mutex = NULL;
 }
 
-SHM_FUN(void, lock)
+SHM_FUN0(void, lock)
 {
     if (self->mutex)
         (void)(WaitForSingleObject(self->mutex, INFINITE) == WAIT_OBJECT_0);
 }
 
-SHM_FUN(void, unlock)
+SHM_FUN0(void, unlock)
 {
     (void) ReleaseMutex(self->mutex);
 }
 
-SHM_FUN(bool, success)
+SHM_FUN0(bool, success)
 {
     return self->mem != NULL;
 }
@@ -115,7 +115,7 @@ fail:
     SHM_FUN_NAME(free)(self);
 }
 
-SHM_FUN(void, free)
+SHM_FUN0(void, free)
 {
     if (self->mem != (void*)-1)
         (void)munmap(self->mem, self->size);
@@ -127,24 +127,24 @@ SHM_FUN(void, free)
     self->size = 0;
 }
 
-SHM_FUN(void, lock)
+SHM_FUN0(void, lock)
 {
-    return flock(self->fd, LOCK_EX) == 0;
+    flock(self->fd, LOCK_EX);
 }
 
-SHM_FUN(void, unlock)
+SHM_FUN0(void, unlock)
 {
-    return flock(self->fd, LOCK_UN) == 0;
+    flock(self->fd, LOCK_UN);
 }
 
-SHM_FUN(bool, success)
+SHM_FUN0(bool, success)
 {
     return self->mem != (void*) -1;
 }
 
 #endif
 
-SHM_FUN(void*, ptr)
+SHM_FUN0(void*, ptr)
 {
     return self->mem;
 }
