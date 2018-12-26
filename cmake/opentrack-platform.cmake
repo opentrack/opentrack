@@ -95,10 +95,17 @@ endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-cxa-atexit")
+
     # assume binutils
     foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS "-Wl,-z,relro,-z,now,--exclude-libs,ALL ${CMAKE_${i}_LINKER_FLAGS}")
+        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -Wl,--exclude-libs,ALL")
     endforeach()
+
+    if(UNIX)
+        foreach (i SHARED MODULE EXE)
+            set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -Wl,-z,relro,-z,now")
+        endforeach()
+    endif()
 endif()
 
 if(WIN32)
