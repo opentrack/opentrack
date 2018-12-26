@@ -5,7 +5,8 @@
 #include "options/options.hpp"
 using namespace options;
 
-struct settings : opts {
+struct settings : opts
+{
     settings() :
         opts("tracker-hydra")
     {}
@@ -15,7 +16,7 @@ class Hydra_Tracker : public ITracker
 {
 public:
     Hydra_Tracker();
-    ~Hydra_Tracker();
+    ~Hydra_Tracker() override;
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 
@@ -29,8 +30,8 @@ class dialog_hydra: public ITrackerDialog
     Q_OBJECT
 public:
     dialog_hydra();
-    void register_tracker(ITracker *) {}
-    void unregister_tracker() {}
+    void register_tracker(ITracker *) override {}
+    void unregister_tracker() override {}
 private:
     settings s;
     Ui::UIHydraControls ui;
@@ -43,7 +44,7 @@ class hydraDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return QString("Razer Hydra -- inertial device"); }
-    QIcon icon() { return QIcon(":/images/opentrack.png"); }
+    QString name() override { return QString("Razer Hydra -- inertial device"); }
+    QIcon icon() override { return QIcon(":/images/opentrack.png"); }
 };
 

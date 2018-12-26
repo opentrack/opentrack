@@ -108,13 +108,18 @@ if(MINGW)
 endif()
 
 if(MSVC)
-    add_definitions(-DNOMINMAX -D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -D_NO_DEBUG_HEAP)
+    add_definitions(-DNOMINMAX)
+    add_definitions(-DWIN32_LEAN_AND_MEAN)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
+    add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
+
     add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
-    add_definitions(-DWIN32_LEAN_AND_MEAN)
 
     set(__stuff "-permissive- -diagnostics:caret")
     set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")

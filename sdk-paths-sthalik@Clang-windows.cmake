@@ -101,7 +101,7 @@ set(_cxxflags
     -Wpragmas
     -Wreorder
     -Wreturn-std-move
-    -Wself-assign-field
+    -Wself-assign
     -Wself-move
     -Wshadow-field-in-constructor-modified
     -Wsometimes-uninitialized
@@ -123,6 +123,7 @@ set(_cxxflags
     -Wno-exit-time-destructors
     -Wno-deprecated
     -Wno-comma
+    -Wno-self-assign-overloaded
 )
 set(base-cxxflags "")
 foreach(k ${_cxxflags})
