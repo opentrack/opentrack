@@ -33,6 +33,10 @@ using namespace options;
 #include <cfloat>
 #include <cfenv>
 
+#ifdef __MINGW32__
+extern "C" __declspec(dllimport) unsigned __cdecl _controlfp(unsigned, unsigned);
+#endif
+
 static void set_fp_mask()
 {
 #if defined OTR_ARCH_DENORM_DAZ
@@ -50,6 +54,19 @@ static void set_fp_mask()
 #endif
 
 #ifdef _WIN32
+#   ifdef __clang__
+#       pragma clang diagnostic push
+#       pragma clang diagnostic ignored "-Wreserved-id-macro"
+#   endif
+#   ifndef _DN_FLUSH
+#       define _DN_FLUSH 0x01000000
+#   endif
+#   ifndef _MCW_DN
+#       define _MCW_DN 0x03000000
+#   endif
+#   ifdef __clang__
+#       pragma clang diagnostic pop
+#   endif
     _controlfp(_DN_FLUSH, _MCW_DN);
 #endif
 }
