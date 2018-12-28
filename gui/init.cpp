@@ -95,20 +95,39 @@ static void set_qt_style()
 
 #ifdef _WIN32
 
+#include <atomic>
+#include <cstring>
+#include <cwchar>
+#include <windows.h>
+
 static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
 {
-    const unsigned short* const str_ = msg.utf16();
-    const auto str = reinterpret_cast<wchar_t const*>(str_);
-    static_assert(sizeof(*str_) == sizeof(*str));
+    const auto str = (const wchar_t*)msg.utf16();
+    static_assert(sizeof(*str) == sizeof(wchar_t));
 
-    std::fflush(stderr);
-    if (ctx.function)
-        std::fprintf(stderr, "[%s:%d%s]: %ls\n", ctx.file, ctx.line, ctx.function, str);
-    else if (ctx.file)
-        std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, str);
+    if (IsDebuggerPresent())
+    {
+        static std::atomic_flag lock = ATOMIC_FLAG_INIT;
+
+        while (!lock.test_and_set())
+            (void)0;
+
+        OutputDebugStringW(str);
+        OutputDebugStringW(L"\n");
+
+        lock.clear();
+    }
     else
-        std::fprintf(stderr, "%ls\n", str);
-    std::fflush(stderr);
+    {
+        std::fflush(stderr);
+        if (ctx.function)
+            std::fprintf(stderr, "[%s:%d%s]: %ls\n", ctx.file, ctx.line, ctx.function, str);
+        else if (ctx.file)
+            std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, str);
+        else
+            std::fprintf(stderr, "%ls\n", str);
+        std::fflush(stderr);
+    }
 }
 
 static void add_win32_path()
@@ -161,10 +180,11 @@ static void add_win32_path()
     }
 }
 
-#include <windows.h>
-
 static void attach_parent_console()
 {
+    if (GetConsoleWindow() != nullptr)
+        return;
+
     fflush(stdin);
     fflush(stderr);
 
