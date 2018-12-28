@@ -149,6 +149,8 @@ function(otr_module n_)
     if(NOT arg_NO-QT)
         set_property(SOURCE ${${n}-moc} ${${n}-uih} PROPERTY GENERATED TRUE)
         add_custom_target(moc-${n} DEPENDS ${${n}-moc} ${${n}-uih} ${${n}-rc} COMMENT "")
+        set_property(TARGET moc-${n} PROPERTY GENERATED TRUE)
+        set_property(TARGET moc-${n} PROPERTY FOLDER "moc")
         add_dependencies(moc "moc-${n}")
     endif()
 
