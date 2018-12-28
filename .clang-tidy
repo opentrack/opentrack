@@ -44,6 +44,7 @@ Checks:
     -hicpp-explicit-conversions,
     -readability-function-size,
     -cppcoreguidelines-avoid-goto,
+    -modernize-use-using,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
