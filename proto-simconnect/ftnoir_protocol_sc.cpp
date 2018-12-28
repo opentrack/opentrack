@@ -42,12 +42,12 @@ void simconnect::run()
             }
 
             Timer tm;
-            should_reconnect = false;
+            reconnect = false;
 
             if (SUCCEEDED(hr))
                 while (!isInterruptionRequested())
                 {
-                    if (should_reconnect)
+                    if (reconnect)
                         break;
 
                     if (WaitForSingleObject(event, 100) == WAIT_OBJECT_0)
@@ -60,17 +60,17 @@ void simconnect::run()
                             break;
                         }
                     }
+
+                    if (reconnect)
+                        break;
+
                     else
                     {
-                        const int idle_seconds = tm.elapsed_seconds();
-
+                        const int idle_seconds = (int)tm.elapsed_seconds();
                         constexpr int max_idle_seconds = 2;
 
                         if (idle_seconds >= max_idle_seconds)
-                        {
-                            qDebug() << "simconnect: reconnect";
                             break;
-                        }
                     }
                 }
 
@@ -203,11 +203,11 @@ void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWO
         break;
     case SIMCONNECT_RECV_ID_EXCEPTION:
         qDebug() << "simconnect: got exception";
-        //self.should_reconnect = true;
+        //self.reconnect = true;
         break;
     case SIMCONNECT_RECV_ID_QUIT:
         qDebug() << "simconnect: got quit event";
-        self.should_reconnect = true;
+        self.reconnect = true;
         break;
     case SIMCONNECT_RECV_ID_EVENT_FRAME:
         self.handle();

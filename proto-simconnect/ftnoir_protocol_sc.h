@@ -87,7 +87,7 @@ private:
     importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
 
     HANDLE hSimConnect = nullptr;
-    std::atomic<bool> should_reconnect = false;
+    std::atomic<bool> reconnect = false;
     static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
     QLibrary SCClientLib;
