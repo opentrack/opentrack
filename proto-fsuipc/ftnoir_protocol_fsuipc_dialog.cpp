@@ -14,23 +14,30 @@
 FSUIPCControls::FSUIPCControls()
 {
     ui.setupUi( this );
+#if 0
     connect(ui.btnOK, SIGNAL(clicked()), this, SLOT(doOK()));
     connect(ui.btnCancel, SIGNAL(clicked()), this, SLOT(doCancel()));
     connect(ui.btnFindDLL, SIGNAL(clicked()), this, SLOT(getLocationOfDLL()));
-
     tie_setting(s.LocationOfDLL, ui.txtLocationOfDLL);
+#else
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &FSUIPCControls::doCancel);
+#endif
 }
 
-void FSUIPCControls::doOK() {
+#if 0
+void FSUIPCControls::doOK()
+{
     s.b->save();
     close();
 }
+#endif
 
 void FSUIPCControls::doCancel()
 {
     close();
 }
 
+#if 0
 void FSUIPCControls::getLocationOfDLL()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Locate file"),
@@ -40,4 +47,4 @@ void FSUIPCControls::getLocationOfDLL()
         s.LocationOfDLL = fileName;
     }
 }
-
+#endif

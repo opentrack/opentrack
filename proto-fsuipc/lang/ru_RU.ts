@@ -15,27 +15,7 @@
 <context>
     <name>UICFSUIPCControls</name>
     <message>
-        <source>FSUIPC settings FaceTrackNoIR</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Location of FSUIPC.dll</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The DLL should be located in the Modules/ directory of MS FS 2004</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>...</source>
+        <source>FSUIPC</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

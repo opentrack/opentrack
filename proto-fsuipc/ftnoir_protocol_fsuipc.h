@@ -27,6 +27,7 @@
 #include "options/options.hpp"
 using namespace options;
 
+#if 0
 #define FSUIPC_FILENAME "C:\\Program Files\\Microsoft Games\\Flight Simulator 9\\Modules\\FSUIPC.dll"
 
 struct settings : opts {
@@ -36,13 +37,14 @@ struct settings : opts {
         LocationOfDLL(b, "dll-location", FSUIPC_FILENAME)
     {}
 };
+#endif
 
 #pragma pack(push,1) // All fields in structure must be unaligned
-typedef struct
+struct state
 {
     int Control; // Control identifier
     int Value;   // Value of DOF
-} TFSState;
+};
 #pragma pack(pop)
 
 class fsuipc : public TR, public IProtocol
@@ -56,12 +58,16 @@ public:
     void pose(const double* headpose) override;
     QString game_name() override { return tr("Microsoft Flight Simulator X"); }
 private:
+#if 0
     QLibrary FSUIPCLib;
-    double prevPosX, prevPosY, prevPosZ, prevRotX, prevRotY, prevRotZ;
+
+    double prevPosX = 0, prevPosY = 0, prevPosZ = 0,
+           prevRotX = 0, prevRotY = 0, prevRotZ = 0;
     settings s;
+#endif
 
     template<typename t>
-    static int scale2AnalogLimits(t x, t min_x, t max_x );
+    static int scale(t x, t min_x, t max_x);
 };
 
 class FSUIPCControls: public IProtocolDialog
@@ -73,11 +79,15 @@ public:
     void unregister_protocol() override {}
 private:
     Ui::UICFSUIPCControls ui;
+#if 0
     settings s;
+#endif
 private slots:
-    void doOK();
     void doCancel();
+#if 0
+    void doOK();
     void getLocationOfDLL();
+#endif
 };
 
 class fsuipcDll : public Metadata
