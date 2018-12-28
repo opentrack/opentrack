@@ -72,7 +72,6 @@ class value final : public value_
     }
 
 public:
-    cc_noinline
     void notify() const override
     {
         if (!self_name.isEmpty())
@@ -89,19 +88,16 @@ public:
     static constexpr inline Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
     static constexpr inline Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    cc_noinline
     value(bundle b, const QString& name, t def) :
         value_(b, name), def(std::move(def))
     {
     }
 
-    cc_noinline
     t default_value() const
     {
         return def;
     }
 
-    cc_noinline
     void set_to_default() override
     {
         *this = def;
