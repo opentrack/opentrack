@@ -18,8 +18,9 @@
 #include <cstdio>
 #include <cmath>
 #ifdef _WIN32
+#   undef WIN32
+#   define WIN32
 #   define SIXENSE_STATIC_LIB
-#   define SIXENSE_UTILS_STATIC_LIB
 #endif
 #include <sixense.h>
 
