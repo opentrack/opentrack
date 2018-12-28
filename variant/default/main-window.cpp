@@ -338,6 +338,7 @@ main_window::~main_window()
     // stupid ps3 eye has LED issues
     if (work)
     {
+        hide();
         stop_tracker_();
         close();
 
