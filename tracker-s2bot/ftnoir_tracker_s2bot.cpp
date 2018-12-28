@@ -28,8 +28,10 @@ static constexpr int add_cbx[] =
 };
 
 void tracker_s2bot::run() {
-    if (s.freq == 0) s.freq = 10;
-    timer.setInterval(1000.0/s.freq);
+    int freq = s.freq;
+    if (freq <= 0)
+        freq = 10;
+    timer.setInterval((int)(1000./freq));
     timer.setSingleShot(false);
     connect(&timer, &QTimer::timeout, [this] {
         auto reply = m_nam->get(QNetworkRequest(QUrl("http://localhost:17317/poll")));
