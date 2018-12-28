@@ -285,7 +285,7 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
             // XXX we could go to the next scanline unless the points are really small.
             // i'd expect each point being present on at least one unique scanline
             // but it turns out some people are using 2px points -sh 20180110
-#if BROKEN && 0
+#if defined BROKEN && 0
             break;
 #endif
         }

@@ -52,14 +52,13 @@ enum aruco_fps
 };
 
 struct settings : opts {
-    value<QString> camera_name { b, "camera-name", ""};
-    value<int> fov { b, "field-of-view", 56 };
-
     value<double> headpos_x { b, "headpos-x", 0 },
                   headpos_y { b, "headpos-y", 0 },
                   headpos_z { b, "headpos-z", 0 };
 
+    value<QString> camera_name { b, "camera-name", ""};
     value<int> resolution { b, "force-resolution", 0 };
+    value<int> fov { b, "field-of-view", 56 };
     value<aruco_fps> force_fps { b, "force-fps", fps_default };
 
     settings();
@@ -102,19 +101,19 @@ private:
     settings s;
     double pose[6] {}, fps = 0;
     double no_detection_timeout = 0;
-    cv::Mat frame, grayscale, color;
     cv::Matx33d r;
-    std::vector<cv::Point3f> obj_points {4};
     cv::Matx33d intrinsics = cv::Matx33d::eye();
-    aruco::MarkerDetector detector;
-    std::vector<aruco::Marker> markers;
     cv::Vec3d t;
     cv::Vec3d rvec, tvec;
-    std::vector<cv::Point2f> roi_projection;
-    std::vector<cv::Point2f> repr2;
     cv::Matx33d m_r, m_q, rmat = cv::Matx33d::eye();
     cv::Vec3d euler;
     std::vector<cv::Point3f> roi_points {4};
+    std::vector<cv::Point2f> roi_projection;
+    std::vector<cv::Point2f> repr2;
+    std::vector<cv::Point3f> obj_points {4};
+    aruco::MarkerDetector detector;
+    std::vector<aruco::Marker> markers;
+    cv::Mat frame, grayscale, color;
     cv::Rect last_roi { 65535, 65535, 0, 0 };
     Timer fps_timer, last_detection_timer;
     unsigned adaptive_size_pos { 0 };
@@ -129,8 +128,8 @@ private:
     static constexpr inline double timeout = .35;
     static constexpr inline double timeout_backoff_c = .25;
 
-    static constexpr inline float size_min = 0.05;
-    static constexpr inline float size_max = 0.5;
+    static constexpr inline float size_min = 0.05f;
+    static constexpr inline float size_max = 0.5f;
 
     static constexpr inline double RC = .25;
 
@@ -168,6 +167,6 @@ private Q_SLOTS:
 class aruco_metadata : public Metadata
 {
     Q_OBJECT
-    QString name() { return QString("aruco -- paper marker tracker"); }
-    QIcon icon() { return QIcon(":/images/aruco.png"); }
+    QString name() override { return QString("aruco -- paper marker tracker"); }
+    QIcon icon() override { return QIcon(":/images/aruco.png"); }
 };

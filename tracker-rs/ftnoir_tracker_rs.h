@@ -20,7 +20,7 @@ class RSTracker : public QObject, public ITracker
 
 public:
     RSTracker();
-    ~RSTracker();
+    ~RSTracker() override;
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 
@@ -50,6 +50,6 @@ class RSTrackerMetaData : public Metadata
 {
     Q_OBJECT
 
-    QString name();
-    QIcon icon();
+    QString name() override;
+    QIcon icon() override;
 };

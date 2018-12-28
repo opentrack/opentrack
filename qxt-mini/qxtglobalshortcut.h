@@ -46,8 +46,8 @@ class QXT_GUI_EXPORT QxtGlobalShortcut : public QObject
     bool keystate;
 
 public:
-    explicit QxtGlobalShortcut(QObject* parent = 0);
-    explicit QxtGlobalShortcut(const QKeySequence& shortcut, QObject* parent = 0);
+    explicit QxtGlobalShortcut(QObject* parent = nullptr);
+    explicit QxtGlobalShortcut(const QKeySequence& shortcut, QObject* parent = nullptr);
     ~QxtGlobalShortcut() override;
 
     QKeySequence shortcut() const;

@@ -6,8 +6,6 @@
 
 #include "export.hpp"
 
-#include <atomic>
-
 namespace options {
 
 struct OTR_OPTIONS_EXPORT with_tracker_teardown final
@@ -26,11 +24,12 @@ struct OTR_OPTIONS_EXPORT opts
 
     bundle b;
 
-    virtual ~opts();
-    explicit opts(const QString& name);
-
     opts& operator=(const opts&) = delete;
     opts(const opts&) = delete;
+
+protected:
+    explicit opts(const QString& name);
+    ~opts();
 };
 
 }

@@ -7,8 +7,19 @@
 */
 
 // silence #pragma deprecated in bluetoothapis.h
+
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+
 #undef _WIN32_WINNT
 #define _WIN32_WINNT _WIN32_WINNT_VISTA
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
+
 #undef NTDDI_VERSION
 #define NTDDI_VERSION NTDDI_VISTASP1
 

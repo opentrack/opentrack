@@ -109,8 +109,6 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     QMetaObject::Connection conn_changed, conn_maxx, conn_maxy;
     mutable std::vector<float> data = std::vector<float>(value_count, float(-16));
     mutable QPointF last_input_value;
-    mutable bool activep = false;
-    mutable bool validp = false;
 
     std::shared_ptr<QObject> ctx { std::make_shared<QObject>() };
 
@@ -118,6 +116,9 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     mutable points_t points;
 
     static constexpr inline std::size_t value_count = 4096;
+
+    mutable bool activep = false;
+    mutable bool validp = false;
 
 public:
     void invalidate_settings();

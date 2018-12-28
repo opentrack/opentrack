@@ -10,3 +10,11 @@
 #       pragma GCC diagnostic ignored "-Wcast-function-type"
 #   endif
 #endif
+
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
+#   pragma clang diagnostic ignored "-Wextra-semi"
+#   pragma clang diagnostic ignored "-Wshadow-field"
+#   pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif

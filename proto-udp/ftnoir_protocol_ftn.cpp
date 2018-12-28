@@ -27,7 +27,7 @@ void udp::pose(const double *headpose) {
 
 void udp::set_dest_address()
 {
-    dest_port = s.port;
+    dest_port = (unsigned short)s.port;
     dest_ip = QHostAddress((s.ip1.to<unsigned>() & 0xff) << 24 |
                            (s.ip2.to<unsigned>() & 0xff) << 16 |
                            (s.ip3.to<unsigned>() & 0xff) << 8  |

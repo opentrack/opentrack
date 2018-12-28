@@ -1,4 +1,7 @@
 if(WIN32)
     otr_module(wiiyourself STATIC NO-COMPAT NO-QT)
     target_link_libraries(${self} setupapi hid winmm)
+    if(CMAKE_COMPILER_IS_CLANGXX OR CMAKE_COMPILER_IS_GNUCXX)
+        target_compile_options(${self} PRIVATE -Wno-error)
+    endif()
 endif()

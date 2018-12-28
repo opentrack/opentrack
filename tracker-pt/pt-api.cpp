@@ -45,7 +45,7 @@ std::tuple<double, double> pt_pixel_pos_mixin::to_pixel_pos(double x, double y, 
 
 std::tuple<double, double> pt_pixel_pos_mixin::to_screen_pos(double px, double py, int w, int h)
 {
-    px *= w/(w-1.), py *= h/(h-1.);
+    px *= w/(w-1.); py *= h/(h-1.);
     return std::make_tuple((px - w/2.)/w, -(py - h/2.)/w);
 }
 

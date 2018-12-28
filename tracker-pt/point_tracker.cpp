@@ -182,7 +182,7 @@ bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const pt_c
             if (cnt1 + cnt2)
             {
                 qDebug() << "old-order" << ((cnt1 * 100) / f(cnt1 + cnt2)) << "nsamples" << (cnt1 + cnt2);
-                cnt1 = 0, cnt2 = 0;
+                cnt1 = 0; cnt2 = 0;
             }
         }
         if (validp)
@@ -247,6 +247,11 @@ PointTracker::PointOrder PointTracker::find_correspondences(const vec2* points, 
 
     return p;
 }
+
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wfloat-equal"
+#endif
 
 int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f focal_length)
 {
@@ -398,6 +403,10 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     return i;
 }
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
 
 vec2 PointTracker::project(const vec3& v_M, f focal_length)
 {

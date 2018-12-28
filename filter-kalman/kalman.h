@@ -109,15 +109,19 @@ public:
     void center() override { reset(); }
     module_status initialize() override { return status_ok(); }
 
-    PoseVector last_input;
-    Timer timer;
-    bool first_run;
     double dt_since_last_input;
-    settings s;
+    PoseVector last_input;
     KalmanFilter kf;
     KalmanProcessNoiseScaler kf_adaptive_process_noise_cov;
     DeadzoneFilter dz_filter;
-    slider_value prev_slider_pos[2];
+    settings s;
+    slider_value prev_slider_pos[2] {
+        *s.noise_pos_slider_value,
+        *s.noise_rot_slider_value,
+    };
+    Timer timer;
+
+    bool first_run = true;
 };
 
 class kalmanDll : public Metadata

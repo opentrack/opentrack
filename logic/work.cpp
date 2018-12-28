@@ -53,7 +53,7 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
                     QMessageBox::Ok, QMessageBox::NoButton);
             }
             else
-                return logger;
+                return std::move(logger);
         }
     }
 

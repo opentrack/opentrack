@@ -99,7 +99,8 @@ void cv_video_widget::paintEvent(QPaintEvent*)
         texture = QImage(W, H, QImage::Format_ARGB32);
         texture.setDevicePixelRatio(dpr);
 
-        width = W, height = H;
+        width = W;
+        height = H;
 
         frame1 = cv::Mat();
         frame2 = cv::Mat();
@@ -125,5 +126,6 @@ void cv_video_widget::get_preview_size(int& w, int& h)
 {
     QMutexLocker l(&mtx);
 
-    w = width, h = height;
+    w = width;
+    h = height;
 }

@@ -221,6 +221,12 @@ void spline::update_interp_data() const
 
     double maxy = max_output();
     float last = 0;
+
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wfloat-equal"
+#endif
+
     for (unsigned i = 0; i < unsigned(value_count); i++)
     {
         if (data[i] == magic_fill_value)
@@ -228,6 +234,10 @@ void spline::update_interp_data() const
         data[i] = clamp(data[i], 0, (float)maxy);
         last = data[i];
     }
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
 }
 
 void spline::remove_point(int i)

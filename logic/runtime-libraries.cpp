@@ -12,6 +12,11 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 
     with_tracker_teardown sentinel;
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wcomma"
+#endif
+
     pProtocol = make_dylib_instance<IProtocol>(p);
 
     if (!pProtocol)
@@ -56,6 +61,10 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
                  .arg(t->name, status.error);
         goto end;
     }
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
 
     correct = true;
     return;

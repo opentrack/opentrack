@@ -207,8 +207,14 @@ function(otr_module n_)
 
     otr_compat(${n})
 
-    if(CMAKE_COMPILER_IS_CLANG AND (arg_EXECUTABLE OR (NOT arg_BIN AND NOT arg_STATIC)))
-        set_property(TARGET "${n}" APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-weak-vtables ")
+    if(CMAKE_COMPILER_IS_CLANGXX AND (arg_EXECUTABLE OR NOT arg_BIN))
+        set(opts
+            weak-vtables
+            header-hygiene
+        )
+        foreach(k ${opts})
+            set_property(TARGET "${n}" APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-${k} ")
+        endforeach()
     endif()
 
     if(NOT arg_NO-INSTALL)

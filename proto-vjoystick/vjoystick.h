@@ -68,6 +68,6 @@ class vjoystick_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Joystick emulation -- vjoystick"); }
-    QIcon icon() { return QIcon(":/images/vjoystick.png"); }
+    QString name() override { return tr("Joystick emulation -- vjoystick"); }
+    QIcon icon() override { return QIcon(":/images/vjoystick.png"); }
 };

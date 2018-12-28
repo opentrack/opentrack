@@ -108,7 +108,7 @@ void Tracker_PT::run()
                 video_widget->get_preview_size(w, h);
                 if (w != preview_width || h != preview_height)
                 {
-                    preview_width = w, preview_height = h;
+                    preview_width = w; preview_height = h;
                     preview_frame = traits->make_preview(w, h);
                 }
             }

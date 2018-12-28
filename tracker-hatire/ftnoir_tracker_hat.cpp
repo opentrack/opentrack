@@ -126,18 +126,18 @@ void hatire::data(double *data)
 
     const struct
     {
+        double& place;
+        float input;
         bool enable;
         bool sign;
-        float input;
-        double& place;
     } spec[] =
     {
-        { s.EnableX, s.InvertX, HAT.Trans[s.XAxis], data[TX] },
-        { s.EnableY, s.InvertY, HAT.Trans[s.YAxis], data[TY] },
-        { s.EnableZ, s.InvertZ, HAT.Trans[s.ZAxis], data[TZ] },
-        { s.EnableYaw, s.InvertYaw, HAT.Rot[s.YawAxis], data[Yaw] },
-        { s.EnablePitch, s.InvertPitch, HAT.Rot[s.PitchAxis], data[Pitch] },
-        { s.EnableRoll, s.InvertRoll, HAT.Rot[s.RollAxis], data[Roll] },
+        { data[TX],    HAT.Trans[s.XAxis],   s.EnableX,     s.InvertX, },
+        { data[TY],    HAT.Trans[s.YAxis],   s.EnableY,     s.InvertY, },
+        { data[TZ],    HAT.Trans[s.ZAxis],   s.EnableZ,     s.InvertZ, },
+        { data[Yaw],   HAT.Rot[s.YawAxis],   s.EnableYaw,   s.InvertYaw },
+        { data[Pitch], HAT.Rot[s.PitchAxis], s.EnablePitch, s.InvertPitch },
+        { data[Roll],  HAT.Rot[s.RollAxis],  s.EnableRoll,  s.InvertRoll },
     };
 
     for (auto& k : spec)

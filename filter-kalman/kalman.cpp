@@ -192,7 +192,6 @@ void kalman::reset()
     for (int i = 0; i < 6; i++) {
         last_input[i] = 0;
     }
-    first_run = true;
     dt_since_last_input = 0;
 
     prev_slider_pos[0] = s.noise_pos_slider_value;
@@ -311,7 +310,7 @@ double settings::map_slider_value(const slider_value& v_)
                    |
                    left_side_log10
         */
-    const int k = v * num_divisions; // in which division are we?!
+    const int k = int(v * num_divisions); // in which division are we?!
     const double f = v * num_divisions - k; // where in the division are we?!
     const double ff = f * 9. + 1.;
     const double multiplier = int(ff * 10.) / 10.;

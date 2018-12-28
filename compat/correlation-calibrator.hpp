@@ -33,14 +33,14 @@ static constexpr inline double yaw_spacing_in_degrees = 1.5;
 static constexpr inline double pitch_spacing_in_degrees = 1;
 static constexpr inline double roll_spacing_in_degrees = 1;
 
-static constexpr inline unsigned yaw_nbuckets   = 1+ 360./yaw_spacing_in_degrees;
-static constexpr inline unsigned pitch_nbuckets = 1+ 360./pitch_spacing_in_degrees;
-static constexpr inline unsigned roll_nbuckets  = 1+ 360./roll_spacing_in_degrees;
+static constexpr inline unsigned yaw_nbuckets   = unsigned(1+ 360./yaw_spacing_in_degrees);
+static constexpr inline unsigned pitch_nbuckets = unsigned(1+ 360./pitch_spacing_in_degrees);
+static constexpr inline unsigned roll_nbuckets  = unsigned(1+ 360./roll_spacing_in_degrees);
 
 static constexpr inline double translation_spacing = .25;
-static constexpr inline unsigned x_nbuckets = 1+ (max[0]-min[0])/translation_spacing;
-static constexpr inline unsigned y_nbuckets = 1+ (max[1]-min[1])/translation_spacing;
-static constexpr inline unsigned z_nbuckets = 1+ (max[2]-min[2])/translation_spacing;
+static constexpr inline unsigned x_nbuckets = unsigned(1+ (max[0]-min[0])/translation_spacing);
+static constexpr inline unsigned y_nbuckets = unsigned(1+ (max[1]-min[1])/translation_spacing);
+static constexpr inline unsigned z_nbuckets = unsigned(1+ (max[2]-min[2])/translation_spacing);
 
 using vec6 = Mat<double, 6, 1>;
 using mat66 = Mat<double, 6, 6>;

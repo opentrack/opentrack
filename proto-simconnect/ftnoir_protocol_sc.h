@@ -41,15 +41,14 @@ public:
     simconnect() = default;
     ~simconnect() override;
     module_status initialize() override;
-    void pose(const double* headpose);
+    void pose(const double* headpose) override;
     void handle();
-    QString game_name()
+    QString game_name() override
     {
         return tr("FS2004/FSX");
     }
 private:
     enum {
-        SIMCONNECT_RECV_ID_NULL,
         SIMCONNECT_RECV_ID_EXCEPTION = 2,
         SIMCONNECT_RECV_ID_QUIT = 3,
         SIMCONNECT_RECV_ID_EVENT_FRAME = 7,
@@ -99,8 +98,8 @@ class SCControls: public IProtocolDialog
     Q_OBJECT
 public:
     SCControls();
-    void register_protocol(IProtocol *) {}
-    void unregister_protocol() {}
+    void register_protocol(IProtocol *) override {}
+    void unregister_protocol() override {}
 private:
     Ui::UICSCControls ui;
     settings s;
@@ -113,6 +112,6 @@ class simconnectDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Microsoft FSX SimConnect"); }
-    QIcon icon() { return QIcon(":/images/fsx.png"); }
+    QString name() override { return tr("Microsoft FSX SimConnect"); }
+    QIcon icon() override { return QIcon(":/images/fsx.png"); }
 };

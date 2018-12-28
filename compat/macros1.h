@@ -35,9 +35,9 @@
 #endif
 
 #ifndef PP_EXPAND
-#   define PP_EXPAND(x) PP_EXPAND__2(x)
-#   define PP_EXPAND__2(x) PP_EXPAND__3(x) x
-#   define PP_EXPAND__3(x) x
+#   define PP_EXPAND(x) PP_EXPAND2(x)
+#   define PP_EXPAND2(x) PP_EXPAND3(x) x
+#   define PP_EXPAND3(x) x
 #endif
 
 #ifdef _MSC_VER

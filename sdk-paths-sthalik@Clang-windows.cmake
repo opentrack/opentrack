@@ -31,110 +31,41 @@ setq(SDK_VJOYSTICK "vjoystick")
 
 setq(SDK_REALSENSE "RSSDK-R2")
 
-set(__compat
-    -Wno-unknown-warning-option
-    -Wno-ignored-optimization-argument
-    -Wno-unused-command-line-option
-
-    -Wall -Wextra -Wpedantic
-    -Wstrict-aliasing=3
-    -Wstrict-overflow=4
-    -Wdelete-non-virtual-dtor
-    -Wno-odr
-    -Wattributes
-)
-set(_compat "")
-foreach(k ${__compat})
-    set(_compat "${_compat} ${k}")
-endforeach()
-
-set(base-flags "-Wall -Wextra -Wpedantic ${_compat}")
-set(base-cxxflags "")
 # WARNING: this is utter experimental nonsense
 set(_cxxflags
-    -Wweak-vtables
-    -Wlifetime
-    -Wfloat-overflow-conversion
-    -Wabstract-vbase-init
-    -Wduplicated-branches
-    -Wduplicated-cond
-    -Wnon-virtual-dtor
-    -Wassign-enum
-    -Watomic-implicit-seq-cst
-    -Watomic-properties
-    -Wbitfield-enum-conversion
-    -Wc++11-narrowing
-    -Wc++98-c++11-c++14-c++17-compat-pedantic
-    -Wc++2a-compat-pedantic
-    -Wc99-compat
-    -Wc99-extensions
-    -Wcast-qual
-    -Wchar-subscripts
-    -Wconsumed
-    -Wdouble-conversion
-    -Wdouble-promotion
-    -Wnon-literal-null-conversion
-    -Wshorten-64-to-32
-    -Wdelete-non-virtual-dtor
-    -Wfloat-equal
-    -Wfloat-overflow-conversion
-    -Wfloat-zero-conversion
-    -Wformat-non-iso
-    -Wformat-nonliteral
-    -Wgcc-compat
-    -Wignored-qualifiers
-    -Wimplicit
-    -Wimplicit-fallthrough
-    -Winconsistent-missing-destructor-override
-    -Winconsistent-missing-override
-    -Winfinite-recursion
-    -Wkeyword-macro
-    -Wkeyword-compat
-    -Wloop-analysis
-    -Wmain
-    -Wmethod-signatures
-    -Wmismatched-tags
-    -Wmissing-braces
-    -Wmove
-    -Woverriding-method-mismatch
-    -Wpacked
-    -Wpragmas
-    -Wreorder
-    -Wreturn-std-move
-    -Wself-assign
-    -Wself-move
-    -Wshadow-field-in-constructor-modified
-    -Wsometimes-uninitialized
-    -Wstrict-prototypes
-    -Wsuspicious-memaccess
-    -Wtautological-compare
-    -Wthread-safety
-    -Wundefined-reinterpret-cast
-    -Wundefined-var-template
-    -Wunguarded-availability
-    -Wunneeded-internal-declaration
-    -Wunneeded-member-function
-    -Wunreachable-code-aggressive
-    -Wunused
+    -Weverything
 
-    -Wmost
-
-    -Wno-float-conversion
+    -Wno-global-constructors
     -Wno-exit-time-destructors
     -Wno-deprecated
-    -Wno-comma
     -Wno-self-assign-overloaded
+    -Wno-double-promotion
+    -Wno-c++98-compat-pedantic
+    -Wno-old-style-cast
+    -Wno-shadow
+    -Wno-sign-conversion
+    -Wno-used-but-marked-unused
+    -Wno-covered-switch-default
+    -Wno-missing-prototypes
+    -Wno-padded
+    -Wno-switch-enum
+
+    -Werror
+    -Werror=inconsistent-missing-destructor-override
+    #-Wno-error=padded
+
+    -fdiagnostics-color=always
 )
 set(base-cxxflags "")
 foreach(k ${_cxxflags})
     set(base-cxxflags "${base-cxxflags} ${k}")
 endforeach()
 
-set(CMAKE_C_FLAGS "-std=c11 ${base-flags} ${CMAKE_C_FLAGS}")
-set(CMAKE_CXX_FLAGS "-std=c++17 ${base-flags} ${base-cxxflags} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${base-cxxflags}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${base-cxxflags}")
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -ffast-math ${CMAKE_CXX_FLAGS_RELEASE}")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -ffast-math ${CMAKE_C_FLAGS_RELEASE}")
+set(CMAKE_CXX_FLAGS_RELEASE "-ffast-math ${CMAKE_CXX_FLAGS_RELEASE}")
+set(CMAKE_C_FLAGS_RELEASE "-ffast-math ${CMAKE_C_FLAGS_RELEASE}")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb ${CMAKE_CXX_FLAGS_DEBUG}")
 set(CMAKE_C_FLAGS_DEBUG "-ggdb ${CMAKE_C_FLAGS_DEBUG}")

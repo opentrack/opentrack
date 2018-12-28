@@ -123,10 +123,16 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
         int w = s.cam_res_x, h = s.cam_res_y;
 
         if (w * h <= 0)
-            w = 640, h = 480;
+        {
+            w = 640;
+            h = 480;
+        }
 
         if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
-            w = info.res_x, h = info.res_y;
+        {
+            w = info.res_x;
+            h = info.res_y;
+        }
 
         double value = pt_point_extractor::threshold_radius_value(w, h, threshold_value);
 

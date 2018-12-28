@@ -1,4 +1,5 @@
 #include <QMetaType>
+#include "compat/macros.hpp"
 
 namespace options::detail {
 
@@ -13,19 +14,15 @@ int declare_metatype_for_type(const char* str)
 
 } // ns options::detail
 
-#define OPENTRACK_DEFINE_METATYPE2(t, ctr)                                                          \
-    OPENTRACK_DEFINE_METATYPE3(t, ctr)
-
-#define OPENTRACK_DEFINE_METATYPE3(t, ctr)                                                          \
-    OPENTRACK_DEFINE_METATYPE4(t, init_metatype_ ## ctr)
-
-#define OPENTRACK_DEFINE_METATYPE4(t, sym)                                                          \
-    class sym { /* NOLINT */                                                                        \
-        static const int dribble;                                                                   \
-    } sym; /* NOLINT */                                                                             \
+#define OPENTRACK_DEFINE_METATYPE2(t, sym)                                  \
+    class sym { /* NOLINT */                                                \
+        static const int dribble;                                           \
+    }; /* NOLINT */                                                         \
+    static sym sym;                                                         \
     const int sym :: dribble = ::options::detail::declare_metatype_for_type<t>(#t);
 
-#define OPENTRACK_DEFINE_METATYPE(t) OPENTRACK_DEFINE_METATYPE2(t, __COUNTER__)
+#define OPENTRACK_DEFINE_METATYPE(t) \
+    OPENTRACK_DEFINE_METATYPE2(t, PP_CAT(init, __COUNTER__))
 
 #define OPENTRACK_METATYPE_(x) OPENTRACK_DEFINE_METATYPE(x)
 #include "metatype.hpp"

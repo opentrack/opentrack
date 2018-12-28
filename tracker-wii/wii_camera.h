@@ -21,7 +21,7 @@
 
 #include <QString>
 
-#include <wiiyourself/wiimote.h>
+#include <wiimote.h>
 #include "wii_frame.hpp"
 
 namespace pt_module {

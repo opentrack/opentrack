@@ -1432,7 +1432,7 @@ int wiimote::ParseExtension(BYTE *buff, unsigned offset)
 			float raw_x = buff[offset + 0];
 			float raw_y = buff[offset + 1];
 
-			if ((raw_x != joy.RawX) || (raw_y != joy.RawY))
+			if (std::fabs(raw_x - joy.RawX) < 1e-6f || std::fabs(raw_y - joy.RawY) < 1e-6f)
 				changed |= NUNCHUK_JOYSTICK_CHANGED;
 
 			joy.RawX = raw_x;

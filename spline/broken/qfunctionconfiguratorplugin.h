@@ -16,7 +16,7 @@ class QFunctionConfiguratorPlugin : public QObject, public QDesignerCustomWidget
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
 public:
-    QFunctionConfiguratorPlugin(QObject *parent = 0);
+    QFunctionConfiguratorPlugin(QObject *parent = nullptr);
 
     bool isContainer() const;
     bool isInitialized() const;

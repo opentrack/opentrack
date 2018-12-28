@@ -62,7 +62,6 @@ struct pt_settings final : options::opts
     value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };
 
     explicit pt_settings(const QString& name) : opts(name) {}
-    ~pt_settings() override = default;
 };
 
 #ifdef __clang__

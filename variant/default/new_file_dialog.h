@@ -11,7 +11,7 @@ class new_file_dialog : public QDialog
 {
     Q_OBJECT
 public:
-    new_file_dialog(QWidget* parent = 0);
+    new_file_dialog(QWidget* parent = nullptr);
     bool is_ok(QString& name_);
 
 private:

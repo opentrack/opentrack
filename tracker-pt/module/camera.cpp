@@ -88,7 +88,7 @@ bool Camera::start(int idx, int fps, int res_x, int res_y)
     if (idx >= 0 && fps >= 0 && res_x >= 0 && res_y >= 0)
     {
         if (cam_desired.idx != idx ||
-            cam_desired.fps != fps ||
+            (int)cam_desired.fps != fps ||
             cam_desired.res_x != res_x ||
             cam_desired.res_y != res_y ||
             !cap || !cap->isOpened() || !cap->grab())

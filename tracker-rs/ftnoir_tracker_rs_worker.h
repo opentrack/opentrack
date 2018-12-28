@@ -16,7 +16,7 @@ class RSTrackerWorkerThread : public QThread
 
 public:
     RSTrackerWorkerThread();
-    ~RSTrackerWorkerThread();
+    ~RSTrackerWorkerThread() override;
 
     void getPose(double* pose);
     const QImage getPreview();

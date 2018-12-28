@@ -62,6 +62,11 @@ struct dylib final
         handle.setFileName(filename_);
         handle.setLoadHints(QLibrary::DeepBindHint | QLibrary::PreventUnloadHint | QLibrary::ResolveAllSymbolsHint);
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wcomma"
+#endif
+
         if (check(!handle.load()))
             return;
 
@@ -80,6 +85,9 @@ struct dylib final
         name = m->name();
 
         type = t;
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
     }
 
     // QLibrary refcounts the .dll's so don't forcefully unload

@@ -110,7 +110,7 @@ public:
 
     operator t() const { return get(); } // NOLINT
 
-    template<typename w, typename = decltype(static_cast<w>(std::declval<t>()))>
+    template<typename w>
     explicit cc_forceinline operator w() const { return to<w>(); }
 
     auto operator->() const

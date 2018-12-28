@@ -5,7 +5,7 @@
 #   include <windows.h>
 #endif
 
-#if defined Q_CREATOR_RUN
+#ifdef __clang__
 #   pragma GCC diagnostic ignored "-Wmain"
 #endif
 

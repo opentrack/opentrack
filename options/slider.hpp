@@ -34,11 +34,11 @@ namespace options
 
         slider_value& operator=(const slider_value& v) = default;
         slider_value(const slider_value& v) = default;
-        slider_value() : slider_value{0, 0, 0} {};
+        slider_value() : slider_value{0, 0, 0} {}
 
         bool operator==(const slider_value& v) const;
         bool operator!=(const slider_value& v) const;
-        operator double() const { return cur_; }
+        constexpr operator double() const { return cur_; }
         double cur() const { return cur_; }
         double min() const { return min_; }
         double max() const { return max_; }
