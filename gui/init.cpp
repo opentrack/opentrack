@@ -1,5 +1,3 @@
-#include "init.hpp"
-
 /* Copyright (c) 2013-2017 Stanislaw Halik
  *
  * Permission to use, copy, modify, and/or distribute this software for any
@@ -7,6 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#include "init.hpp"
 #include "migration/migration.hpp"
 #include "options/options.hpp"
 using namespace options;
@@ -27,9 +26,12 @@ using namespace options;
 #include <QFile>
 #include <QFileDialog>
 #include <QString>
-#include <QSysInfo>
+#include <QOperatingSystemVersion>
 
 #include <QDebug>
+
+#include <cfloat>
+#include <cfenv>
 
 static void set_fp_mask()
 {
@@ -54,24 +56,22 @@ static void set_fp_mask()
 
 static void set_qt_style()
 {
-#if defined _WIN32
-    if (QSysInfo::WindowsVersion == QSysInfo::WV_XP)
-        return;
-#endif
-
 #if defined _WIN32 || defined __APPLE__
     // our layouts on OSX make some control wrongly sized -sh 20160908
     {
-        const char* const preferred[] { "fusion", "windowsvista", "macintosh" };
+        const char* const preferred[] {
+#ifdef __APPLE__
+            "macintosh", "fusion", "windowsvista", "windows",
+#else
+            "fusion", "windowsvista", "windows", "windowsxp",
+#endif
+        };
         for (const char* style_name : preferred)
-        {
-            QStyle* s = QStyleFactory::create(style_name);
-            if (s)
+            if (QStyle* s = QStyleFactory::create(style_name); s != nullptr)
             {
                 QApplication::setStyle(s);
                 break;
             }
-        }
     }
 #endif
 }
