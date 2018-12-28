@@ -48,6 +48,3 @@
 #   define OTR_ARCH_FPU_MASK
 #   include <xmmintrin.h>
 #endif
-
-#include <cfloat>
-#include <cfenv>
