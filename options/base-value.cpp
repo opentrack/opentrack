@@ -13,13 +13,9 @@ value_::~value_()
     b->on_value_destructed(this);
 }
 
-void value_::notify() const
-{
-    bundle_value_changed();
-}
-
 namespace options::detail {
 
+// necessary due to circular dependency
 void set_value_to_default(value_* val)
 {
     val->set_to_default();

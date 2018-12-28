@@ -57,13 +57,6 @@ class value final : public value_
         return traits::pass_value(traits::value_with_default(traits::value_from_qvariant(variant), def));
     }
 
-    friend class detail::connector;
-    void bundle_value_changed() const override
-    {
-        if (!self_name.isEmpty())
-            emit valueChanged(traits::storage_from_value(get()));
-    }
-
     void store_variant(const QVariant& value) override
     {
         if (self_name.isEmpty())
@@ -80,6 +73,12 @@ class value final : public value_
 
 public:
     cc_noinline
+    void notify() const override
+    {
+        if (!self_name.isEmpty())
+            emit valueChanged(traits::storage_from_value(get()));
+    }
+
     value<u>& operator=(const t& datum)
     {
         store_variant(traits::qvariant_from_value(traits::pass_value(datum)));

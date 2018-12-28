@@ -68,14 +68,14 @@ void connector::notify_values(const QString& name) const
     auto it = connected_values.find(name);
     if (it != connected_values.cend())
         for (value_type val : it->second)
-            val->bundle_value_changed();
+            val->notify();
 }
 
 void connector::notify_all_values() const
 {
     for (const auto& [k, v] : connected_values)
         for (value_type val : v)
-            val->bundle_value_changed();
+            val->notify();
 }
 
 } // ns options::detail

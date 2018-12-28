@@ -26,8 +26,6 @@ class OTR_OPTIONS_EXPORT value_ : public QObject
 {
     Q_OBJECT
 
-    friend class detail::connector;
-
     template<typename t>
     using signal_sig = void(value_::*)(cv_qualified<t>) const;
 
@@ -91,10 +89,8 @@ public slots:
     OTR_OPTIONS_SLOT(const QList<slider_value>&)
     OTR_OPTIONS_SLOT(const QList<QPointF>&)
 
-    virtual void bundle_value_changed() const = 0;
     virtual void set_to_default() = 0;
-
-    void notify() const;
+    virtual void notify() const = 0;
 
     friend void ::options::detail::set_value_to_default(value_* val);
 };
