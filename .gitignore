@@ -1,5 +1,7 @@
-/build*
+/build*/
 /installer/Output
 .DS_Store
 /.idea/
 /sdk-paths-*.cmake
+/.vs/
+/CMakeSettings.json
