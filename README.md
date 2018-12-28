@@ -1,6 +1,8 @@
 ## Intro
 
-opentrack project home at <<http://github.com/opentrack/opentrack>>.
+[<img src="https://ci.appveyor.com/api/projects/status/n0j9h38jnif5qbe9/branch/unstable?svg=true"/>](https://ci.appveyor.com/project/sthalik/opentrack/branch/unstable)
+
+opentrack project home is located at <<http://github.com/opentrack/opentrack>>.
 
 For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>> Download an `.exe` installer or a `.7z` archive. Currently installers and portable versions for Windows are available for each release. It supports [USB stick truly "portable" installations](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
 
