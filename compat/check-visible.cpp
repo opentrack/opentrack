@@ -76,3 +76,9 @@ bool check_is_visible()
     return visible;
 }
 
+void force_is_visible(bool value)
+{
+    spinlock_guard l(lock);
+    visible = value;
+}
+

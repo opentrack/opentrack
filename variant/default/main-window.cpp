@@ -560,6 +560,7 @@ void main_window::stop_tracker_()
     if (!work)
         return;
 
+    force_is_visible(true);
     with_tracker_teardown sentinel;
 
     pose_update_timer.stop();
