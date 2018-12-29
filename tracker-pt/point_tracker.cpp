@@ -142,6 +142,8 @@ bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_i
     const f cx = std_width / info.res_x;
     const f cy = std_height / info.res_y;
 
+    bool validp = false;
+
     for (unsigned k = 0; k < 3; k++)
     {
         // note, the .y component is actually scaled by width
@@ -149,25 +151,46 @@ bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_i
         scaled_order[k][1] = std_width * cy * order[k][1];
     }
 
-    f sum = 0;
-
-    for (unsigned k = 0; k < 3; k++)
+    if (prev_positions_valid)
     {
-        vec2 tmp = prev_scaled_order[k] - scaled_order[k];
-        sum += std::sqrt(tmp.dot(tmp));
+        f sum = 0;
+
+        for (unsigned k = 0; k < 3; k++)
+        {
+            vec2 tmp = prev_positions[k] - scaled_order[k];
+            sum += std::sqrt(tmp.dot(tmp));
+        }
+
+        // CAVEAT don't increase too much, it visibly loses precision
+        constexpr f max_dist = f(.04 * PointModel::N_POINTS);
+
+        // whether previous positions fit current data
+        validp = sum < max_dist;
     }
 
-    // CAVEAT don't increase too much, it visibly loses precision
-    constexpr f max_dist = f(.13);
+    // positions are valid as long as the points barely moved
+    // (1) old positions is invalid according to new data
+    // - establish new positions but return `false' so that
+    //   the next iteration tries it prior to running POSIT
+    // - if we returned `true', the identity pose would
+    //   get returned forever
+    // (2) old positions were and still are valid
+    // - reuse the old pose, but don't overwrite the positions
+    // - if they were overwritten, we'd get slow movements
+    //   resulting in no new pose being computed at all
+    // - we return `true' so that POSIT isn't invoked
+    // (3) old positions were marked invalid from the start
+    // - only possible if POSIT returns any NaN value,
+    //   tracking just got started, or center is requested
+    // - proceed as in (1)
 
-    const bool validp = sum < max_dist;
-
-    prev_order_valid &= validp;
-
-    if (!prev_order_valid)
+    if (!validp)
     {
-        prev_order = order;
-        prev_scaled_order = scaled_order;
+        // if last order doesn't fit, establish a new one based on
+        // the pose that's just about the be computed, but
+        // return false so we don't reuse the same identity pose (d'oh)
+        prev_positions = scaled_order;
+        prev_positions_valid = true;
     }
 
 #if 0
@@ -179,7 +202,7 @@ bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_i
             tt.start();
             if (cnt1 + cnt2)
             {
-                qDebug() << "old-order" << ((cnt1 * 100) / f(cnt1 + cnt2)) << "nsamples" << (cnt1 + cnt2);
+                qDebug() << "old-order" << ((cnt1 * 100.) / (cnt1 + cnt2)) << "nsamples" << (cnt1 + cnt2);
                 cnt1 = 0; cnt2 = 0;
             }
         }
@@ -190,8 +213,7 @@ bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_i
     }
 #endif
 
-    prev_order_valid = validp;
-
+    // whether previous *and* current pose have valid positions
     return validp;
 }
 
@@ -203,23 +225,24 @@ void PointTracker::track(const std::vector<vec2>& points,
     const double fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointOrder order;
 
-    if (init_phase_timeout > 0 && t.elapsed_ms() > init_phase_timeout)
+    if (init_phase_timeout <= 0 || init_phase || t.elapsed_ms() > init_phase_timeout)
+    {
+        init_phase = true;
+        order = find_correspondences(points.data(), model);
+    }
+    else
     {
         t.start();
-        init_phase = true;
+        order = find_correspondences_previous(points.data(), model, info);
     }
 
-    if (!(init_phase_timeout > 0 && !init_phase))
-        order = find_correspondences(points.data(), model);
-    else
-        order = find_correspondences_previous(points.data(), model, info);
-
-    if (maybe_use_old_point_order(order, info) ||
-        POSIT(model, order, fx) != -1)
+    if (maybe_use_old_pose(order, info) || POSIT(model, order, fx) != -1)
     {
         init_phase = false;
         t.start();
     }
+    else
+        reset_state();
 }
 
 PointTracker::PointOrder PointTracker::find_correspondences(const vec2* points, const PointModel& model)
@@ -418,7 +441,7 @@ vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
 
 void PointTracker::reset_state()
 {
-    prev_order_valid = false;
+    prev_positions_valid = false;
     init_phase = true;
 }
 
