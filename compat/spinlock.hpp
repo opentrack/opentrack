@@ -1,9 +1,10 @@
 #pragma once
 
+#include "export.hpp"
 #include "macros1.h"
 #include <atomic>
 
-struct spinlock_guard final
+struct OTR_COMPAT_EXPORT spinlock_guard final
 {
     spinlock_guard(const spinlock_guard&) = delete;
     spinlock_guard& operator=(const spinlock_guard&) = delete;
