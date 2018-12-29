@@ -95,7 +95,8 @@ static void set_qt_style()
 
 #ifdef _WIN32
 
-#include <atomic>
+#include "compat/spinlock.hpp"
+
 #include <cstring>
 #include <cwchar>
 #include <windows.h>
@@ -108,14 +109,10 @@ static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QS
     if (IsDebuggerPresent())
     {
         static std::atomic_flag lock = ATOMIC_FLAG_INIT;
-
-        while (!lock.test_and_set())
-            (void)0;
+        spinlock_guard l(lock);
 
         OutputDebugStringW(str);
         OutputDebugStringW(L"\n");
-
-        lock.clear();
     }
     else
     {

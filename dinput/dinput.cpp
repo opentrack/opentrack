@@ -1,8 +1,9 @@
 #include "dinput.hpp"
+#include "compat/spinlock.hpp"
 #include <QDebug>
 
-std::atomic<int> di_t::refcnt;
-std::atomic_flag di_t::init_lock = ATOMIC_FLAG_INIT;
+int di_t::refcnt{0};
+std::atomic_flag di_t::lock = ATOMIC_FLAG_INIT;
 diptr di_t::handle;
 
 diptr di_t::init_di_()
@@ -32,30 +33,24 @@ di_t::di_t()
 
 void di_t::ref_di()
 {
-    while (init_lock.test_and_set())
-        (void)0;
+    spinlock_guard l(lock);
 
     if (!handle)
         handle = init_di_();
 
     ++refcnt;
-
-    init_lock.clear();
 }
 
 void di_t::unref_di()
 {
+    spinlock_guard l(lock);
+
     const int refcnt_ = --refcnt;
 
     if (refcnt_ == 0)
     {
-        while (init_lock.test_and_set())
-            (void)0;
-
         qDebug() << "exit: di handle";
         handle->Release();
-
-        init_lock.clear();
     }
 }
 

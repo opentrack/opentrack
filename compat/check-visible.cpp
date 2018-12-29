@@ -1,31 +1,33 @@
 #include "check-visible.hpp"
 
-#if defined _WIN32
-
+#include "macros.hpp"
 #include "timer.hpp"
-#include "math.hpp"
+#include "spinlock.hpp"
 
-#include <QMutex>
+#include <QWidget>
 #include <QDebug>
-
-#include <windows.h>
 
 constexpr int visible_timeout = 1000;
 constexpr int invisible_timeout = 250;
 
 static Timer timer;
-static QMutex mtx;
+static std::atomic_flag lock = ATOMIC_FLAG_INIT;
 static bool visible = true;
+
+#if defined _WIN32
+
+#include <windows.h>
 
 void set_is_visible(const QWidget& w, bool force)
 {
-    QMutexLocker l(&mtx);
+    spinlock_guard l(lock);
+
+    HWND hwnd = (HWND)w.winId();
 
     if (!force && timer.elapsed_ms() < (visible ? visible_timeout : invisible_timeout))
         return;
 
     timer.start();
-    HWND hwnd = (HWND)w.winId();
 
     if (RECT r; GetWindowRect(hwnd, &r))
     {
@@ -56,22 +58,21 @@ void set_is_visible(const QWidget& w, bool force)
     }
 }
 
-bool check_is_visible()
-{
-    QMutexLocker l(&mtx);
-
-    return visible;
-}
-
 #else
 
 void set_is_visible(const QWidget&, bool)
 {
 }
 
-bool check_is_visible()
+void check_is_visible(bool)
 {
-    return true;
 }
 
 #endif
+
+bool check_is_visible()
+{
+    spinlock_guard l(lock);
+    return visible;
+}
+

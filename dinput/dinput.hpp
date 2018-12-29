@@ -25,8 +25,8 @@ class OTR_DINPUT_EXPORT di_t final
     static void ref_di();
 
     static diptr handle;
-    static std::atomic<int> refcnt;
-    static std::atomic_flag init_lock;
+    static int refcnt;
+    static std::atomic_flag lock;
     static diptr init_di_();
 
 public:

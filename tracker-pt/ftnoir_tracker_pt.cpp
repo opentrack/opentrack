@@ -10,6 +10,7 @@
 #include "cv/video-widget.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
+#include "compat/spinlock.hpp"
 
 #include "pt-api.hpp"
 
@@ -65,8 +66,7 @@ void Tracker_PT::run()
 
         if (new_frame)
         {
-            while (center_flag.test_and_set())
-                (void)0;
+            spinlock_guard l(center_flag);
 
             *preview_frame = *frame;
 
@@ -112,8 +112,6 @@ void Tracker_PT::run()
                     preview_frame = traits->make_preview(w, h);
                 }
             }
-
-            center_flag.clear();
         }
     }
 }
@@ -189,13 +187,9 @@ void Tracker_PT::data(double *data)
 
 bool Tracker_PT::center()
 {
-    while (center_flag.test_and_set())
-        (void)0;
+    spinlock_guard l(center_flag);
 
     point_tracker.reset_state();
-
-    center_flag.clear();
-
     return false;
 }
 
