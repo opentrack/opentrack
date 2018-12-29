@@ -128,7 +128,7 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
             h = 480;
         }
 
-        if (tracker && tracker->get_cam_info(&info) && info.res_x * info.res_y != 0)
+        if (tracker && tracker->get_cam_info(info) && info.res_x * info.res_y != 0)
         {
             w = info.res_x;
             h = info.res_y;
@@ -199,7 +199,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
 void TrackerDialog_PT::poll_tracker_info_impl()
 {
     pt_camera_info info;
-    if (tracker && tracker->get_cam_info(&info))
+    if (tracker && tracker->get_cam_info(info))
     {
         ui.caminfo_label->setText(tr("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(iround(info.fps)));
 

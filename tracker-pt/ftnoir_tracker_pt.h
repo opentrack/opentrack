@@ -45,9 +45,9 @@ public:
     void data(double* data) override;
     bool center() override;
 
-    Affine pose();
     int  get_n_points();
-    bool get_cam_info(pt_camera_info* info);
+    [[nodiscard]] bool get_cam_info(pt_camera_info& info);
+    Affine pose() const;
 public slots:
     bool maybe_reopen_camera();
     void set_fov(int value);
@@ -57,7 +57,6 @@ private:
     pointer<pt_runtime_traits> traits;
 
     QMutex camera_mtx;
-    QMutex data_mtx;
 
     PointTracker point_tracker;
 
@@ -76,10 +75,8 @@ private:
 
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success { false };
-    std::atomic_flag center_flag = ATOMIC_FLAG_INIT;
-
-    static constexpr inline f rad2deg = f(180/M_PI);
-    //static constexpr float deg2rad = float(M_PI/180);
+    mutable std::atomic_flag center_flag = ATOMIC_FLAG_INIT;
+    mutable std::atomic_flag data_lock = ATOMIC_FLAG_INIT;
 };
 
 } // ns pt_impl

@@ -66,40 +66,38 @@ void Tracker_PT::run()
 
         if (new_frame)
         {
-            spinlock_guard l(center_flag);
-
             *preview_frame = *frame;
 
             point_extractor->extract_points(*frame, *preview_frame, points);
             point_count = points.size();
 
             const double fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
-
             const bool success = points.size() >= PointModel::N_POINTS;
 
-            if (success)
-            {
-                point_tracker.track(points,
-                                    PointModel(s),
-                                    info,
-                                    s.dynamic_pose ? s.init_phase_timeout : 0);
-                ever_success = true;
-            }
+            Affine X_CM;
 
             {
-                Affine X_CM;
+                spinlock_guard l(center_flag);
+
+                if (success)
                 {
-                    QMutexLocker l(&data_mtx);
-                    X_CM = point_tracker.pose();
+                    point_tracker.track(points,
+                                        PointModel(s),
+                                        info,
+                                        s.dynamic_pose ? s.init_phase_timeout : 0);
+                    ever_success = true;
                 }
 
-                // just copy pasted these lines from below
-                Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
-                Affine X_GH = X_CM * X_MH;
-                vec3 p = X_GH.t; // head (center?) position in global space
-
-                preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
+                spinlock_guard l2(data_lock);
+                X_CM = point_tracker.pose();
             }
+
+            // just copy pasted these lines from below
+            Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+            Affine X_GH = X_CM * X_MH;
+            vec3 p = X_GH.t; // head (center?) position in global space
+
+            preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
 
             video_widget->update_image(preview_frame->get_bitmap());
 
@@ -151,32 +149,36 @@ void Tracker_PT::data(double *data)
 {
     if (ever_success)
     {
-        Affine X_CM = pose();
+        Affine X_CM;
+        {
+            spinlock_guard l(&data_lock);
+            X_CM = point_tracker.pose();
+        }
 
         Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
-        Affine X_GH = X_CM * X_MH;
+        Affine X_GH(X_CM * X_MH);
 
         // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
         // -z -> x, y -> z, x -> -y
         mat33 R_EG(0, 0,-1,
                    -1, 0, 0,
                    0, 1, 0);
-        mat33 R = R_EG *  X_GH.R * R_EG.t();
+        mat33 R(R_EG *  X_GH.R * R_EG.t());
 
         // get translation(s)
         const vec3& t = X_GH.t;
 
         // extract rotation angles
-        {
-            f alpha, beta, gamma;
-            beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-            alpha = atan2( R(1,0), R(0,0));
-            gamma = atan2( R(2,1), R(2,2));
+        f alpha, beta, gamma;
+        beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+        alpha = atan2( R(1,0), R(0,0) );
+        gamma = atan2( R(2,1), R(2,2) );
 
-            data[Yaw] = rad2deg * alpha;
-            data[Pitch] = -rad2deg * beta;
-            data[Roll] = rad2deg * gamma;
-        }
+        constexpr f rad2deg = f(180/M_PI);
+
+        data[Yaw] = rad2deg * alpha;
+        data[Pitch] = -rad2deg * beta;
+        data[Roll] = rad2deg * gamma;
 
         // convert to cm
         data[TX] = t[0] / 10;
@@ -193,25 +195,24 @@ bool Tracker_PT::center()
     return false;
 }
 
-Affine Tracker_PT::pose()
-{
-    QMutexLocker l(&data_mtx);
-
-    return point_tracker.pose();
-}
-
 int Tracker_PT::get_n_points()
 {
     return int(point_count);
 }
 
-bool Tracker_PT::get_cam_info(pt_camera_info* info)
+bool Tracker_PT::get_cam_info(pt_camera_info& info)
 {
-    QMutexLocker lock(&camera_mtx);
+    QMutexLocker l(&camera_mtx);
     bool ret;
 
-    std::tie(ret, *info) = camera->get_info();
+    std::tie(ret, info) = camera->get_info();
     return ret;
+}
+
+Affine Tracker_PT::pose() const
+{
+    spinlock_guard l(data_lock);
+    return point_tracker.pose();
 }
 
 } // ns pt_module

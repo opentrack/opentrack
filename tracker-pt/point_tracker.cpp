@@ -96,12 +96,12 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     p[2] = project(model.M02, fx);
 
     const int diagonal = int(std::sqrt(f(info.res_x*info.res_x + info.res_y*info.res_y)));
-    constexpr int div = 100;
-    const int max_dist = diagonal / div; // 8 pixels for 640x480
+    constexpr int div = 80;
+    const int max_dist = diagonal / div; // 10 pixels for 640x480
 
     // set correspondences by minimum distance to projected model point
     bool point_taken[PointModel::N_POINTS];
-    for (unsigned i=0; i<PointModel::N_POINTS; ++i)
+    for (unsigned i=0; i<PointModel::N_POINTS; ++i) // NOLINT(modernize-loop-convert)
         point_taken[i] = false;
 
     for (unsigned i=0; i<PointModel::N_POINTS; ++i)
@@ -113,17 +113,15 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
         {
             vec2 d = p[i]-points[j];
             f sdist = d.dot(d);
-            if (sdist < min_sdist || j==0)
+            if (sdist < min_sdist || j == 0)
             {
                 min_idx = j;
                 min_sdist = sdist;
             }
         }
-        if (min_sdist > max_dist)
-            return find_correspondences(points, model);
 
         // if one point is closest to more than one model point, fallback
-        if (point_taken[min_idx])
+        if (min_sdist > max_dist || point_taken[min_idx])
         {
             init_phase = true;
             return find_correspondences(points, model);
@@ -135,7 +133,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     return p;
 }
 
-bool PointTracker::maybe_use_old_point_order(const PointOrder& order, const pt_camera_info& info)
+bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_info& info)
 {
     constexpr f std_width = 640, std_height = 480;
 
@@ -226,15 +224,14 @@ void PointTracker::track(const std::vector<vec2>& points,
 
 PointTracker::PointOrder PointTracker::find_correspondences(const vec2* points, const PointModel& model)
 {
-    static const Affine a(mat33::eye(), vec3(0, 0, 1));
     // We do a simple freetrack-like sorting in the init phase...
     unsigned point_d_order[PointModel::N_POINTS];
     unsigned model_d_order[PointModel::N_POINTS];
-    // sort points
-    vec2 d(model.M01[0]-model.M02[0], model.M01[1]-model.M02[1]);
-    model.get_d_order(points, point_d_order, d);
     // calculate d and d_order for simple freetrack-like point correspondence
-    vec2 pts[3] = {
+    vec2 d(model.M01[0]-model.M02[0], model.M01[1]-model.M02[1]);
+    // sort points
+    model.get_d_order(points, point_d_order, d);
+    vec2 pts[PointModel::N_POINTS] {
         vec2(0, 0),
         vec2(model.M01[0], model.M01[1]),
         vec2(model.M02[0], model.M02[1])
@@ -358,7 +355,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
         // check for convergence condition
         const f delta = fabs(epsilon_1 - old_epsilon_1) + fabs(epsilon_2 - old_epsilon_2);
 
-        if (!(delta > constants::eps))
+        if (delta < constants::eps)
             break;
 
         old_epsilon_1 = epsilon_1;
@@ -383,7 +380,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
             }
         }
 
-    for (unsigned i = 0; i < 3; i++)
+    for (unsigned i = 0; i < 3; i++) // NOLINT(modernize-loop-convert)
     {
         int ret = std::fpclassify(t[i]);
         if (ret == FP_NAN || ret == FP_INFINITE)

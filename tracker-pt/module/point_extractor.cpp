@@ -120,13 +120,6 @@ void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, 
     cv::mixChannels(&orig_frame, 1, &dest, 1, from_to, 1);
 }
 
-void PointExtractor::extract_channels(const cv::Mat& orig_frame, const int* order, int order_npairs)
-{
-    ensure_channel_buffers(orig_frame);
-
-    cv::mixChannels(&orig_frame, 1, (cv::Mat*) ch, order_npairs, order, order_npairs);
-}
-
 void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
 {
     switch (s.blob_color)
@@ -148,10 +141,10 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     }
     case pt_color_average:
     {
-        const int W = frame.cols, H = frame.rows;
-        const cv::Mat tmp = frame.reshape(1, W * H);
-        cv::Mat output_ = output.reshape(1, W * H);
-        cv::reduce(tmp, output_, 1, cv::REDUCE_AVG);
+        const int W = frame.cols, H = frame.rows, sz = W*H;
+        cv::reduce(frame.reshape(1, sz),
+                   output.reshape(1, sz),
+                   1, cv::REDUCE_AVG);
         break;
     }
     default:

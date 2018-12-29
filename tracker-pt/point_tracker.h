@@ -61,7 +61,7 @@ public:
     // f : (focal length)/(sensor width)
     // dt : time since last call
     void track(const std::vector<vec2>& projected_points, const PointModel& model, const pt_camera_info& info, int init_phase_timeout);
-    Affine pose() { return X_CM; }
+    Affine pose() const { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);
     void reset_state();
@@ -70,7 +70,7 @@ private:
     // the points in model order
     using PointOrder = std::array<vec2, 3>;
 
-    bool maybe_use_old_point_order(const PointOrder& order, const pt_camera_info& info);
+    bool maybe_use_old_pose(const PointOrder& order, const pt_camera_info& info);
 
     PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const pt_camera_info& info);
@@ -78,9 +78,9 @@ private:
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);
 
     Affine X_CM; // transform from model to camera
-    PointOrder prev_order, prev_scaled_order;
+    PointOrder prev_positions;
     Timer t;
-    bool init_phase = true, prev_order_valid = false;
+    bool init_phase = true, prev_positions_valid = false;
 };
 
 } // ns pt_module
