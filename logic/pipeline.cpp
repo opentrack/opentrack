@@ -275,7 +275,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
     return false;
 }
 
-void pipeline::set_center_pose(const Pose& value, bool own_center_logic)
+void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 {
     if (b.get(f_center | f_held_center))
     {
@@ -414,7 +414,7 @@ void pipeline::logic()
 
     {
         maybe_enable_center_on_tracking_started();
-        set_center_pose(value, own_center_logic);
+        maybe_set_center_pose(value, own_center_logic);
         value = apply_center(value);
 
         // "corrected" - after various transformations to account for camera position

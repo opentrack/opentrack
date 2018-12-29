@@ -111,7 +111,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     void logic();
     void run() override;
     bool maybe_enable_center_on_tracking_started();
-    void set_center_pose(const Pose& value, bool own_center_logic);
+    void maybe_set_center_pose(const Pose& value, bool own_center_logic);
     Pose clamp_value(Pose value) const;
     Pose apply_center(Pose value) const;
     std::tuple<Pose, Pose, vec6_bool> get_selected_axis_values(const Pose& newpose) const;
