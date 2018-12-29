@@ -7,6 +7,7 @@
 #include "mappings.hpp"
 #include "compat/euler.hpp"
 #include "compat/enum-operators.hpp"
+#include "compat/spinlock.hpp"
 #include "runtime-libraries.hpp"
 #include "extensions.hpp"
 
@@ -58,6 +59,7 @@ public:
 using namespace time_units;
 
 enum bit_flags : unsigned {
+    f_none           = 0,
     f_center         = 1 << 0,
     f_held_center    = 1 << 1,
     f_enabled_h      = 1 << 2,
@@ -67,7 +69,8 @@ enum bit_flags : unsigned {
 
 struct OTR_LOGIC_EXPORT bits
 {
-    std::atomic<unsigned> b;
+    bit_flags flags{0};
+    std::atomic_flag lock = ATOMIC_FLAG_INIT;
 
     void set(bit_flags flag, bool val);
     void negate(bit_flags flag);

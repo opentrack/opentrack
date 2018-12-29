@@ -601,31 +601,28 @@ void pipeline::toggle_enabled() { b.negate(f_enabled_p); }
 
 void bits::set(bit_flags flag, bool val)
 {
-    const unsigned flag_ = unsigned(flag);
-    const unsigned val_ = unsigned(val);
-    unsigned b_ = 0;
+    spinlock_guard l(lock);
 
-    for (;;)
-        if (b.compare_exchange_weak(b_, (b_ & ~flag_) | (flag_ * val_)))
-            break;
+    flags &= ~flag;
+    if (val)
+        flags |= flag;
 }
 
 void bits::negate(bit_flags flag)
 {
-    const unsigned flag_= flag;
-    unsigned b_ = 0;
+    spinlock_guard l(lock);
 
-    for (;;)
-        if (b.compare_exchange_weak(b_, b_ ^ flag_))
-            break;
+    flags ^= flag;
 }
 
 bool bits::get(bit_flags flag)
 {
-    return !!(b & flag);
+    spinlock_guard l(lock);
+
+    return !!(flags & flag);
 }
 
-bits::bits() : b(0u)
+bits::bits()
 {
     set(f_center, false);
     set(f_held_center, false);
