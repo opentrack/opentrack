@@ -16,7 +16,7 @@
     inline type operator op (type x)                                    \
     {                                                                   \
         using t__ = std::underlying_type_t<type>;                       \
-        return static_cast<type>(t__((x)));                             \
+        return type(op t_((x)));                                        \
     } // end
 
 #define DEFINE_ENUM_OPERATORS(type)                                     \
