@@ -35,6 +35,8 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for clang
+
 string(TOUPPER "${CMAKE_BUILD_TYPE}" __build_type)
 set(CMAKE_BUILD_TYPE "${__build_type}" CACHE STRING "" FORCE)
 
