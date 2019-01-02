@@ -45,9 +45,9 @@ struct WIICamera final : pt_camera
     void show_camera_settings() override;
 
 private:
-	static void on_state_change(wiimote &remote,
-		state_change_flags changed,
-		const wiimote_state &new_state);
+    static void on_state_change(wiimote &remote,
+                                state_change_flags changed,
+                                const wiimote_state &new_state);
     wii_camera_status pair();
     wii_camera_status get_frame_(cv::Mat& Frame);
     bool get_points(struct wii_info& wii);
