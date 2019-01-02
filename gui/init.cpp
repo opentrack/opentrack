@@ -98,6 +98,9 @@ static void set_qt_style()
 
 #ifdef _WIN32
 #   include <windows.h>
+#   include <malloc.h>
+#else
+#   include <alloca.h>
 #endif
 
 static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
@@ -118,19 +121,23 @@ static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QS
     else
 #endif
     {
-        QByteArray bytes{msg.toUtf8()};
-
-        std::fflush(stderr);
-        const char* const s = bytes.constData();
+#if defined _WIN32 && 1
+        const wchar_t* const bytes = (const wchar_t*)msg.utf16();
+#else
+        unsigned len = (unsigned)msg.size()+1;
+        wchar_t* const bytes = (wchar_t*)alloca(len * sizeof(wchar_t));
+        bytes[len-1] = 0;
+        (void)msg.toWCharArray(bytes);
+#endif
         {
             spinlock_guard l(lock);
 
             if (ctx.function)
-                std::fprintf(stderr, "[%s:%d] %s: %s\n", ctx.file, ctx.line, ctx.function, s);
+                std::fprintf(stderr, "[%s:%d] %s: %ls\n", ctx.file, ctx.line, ctx.function, bytes);
             else if (ctx.file)
-                std::fprintf(stderr, "[%s:%d]: %s\n", ctx.file, ctx.line, s);
+                std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, bytes);
             else
-                std::fprintf(stderr, "%s\n", s);
+                std::fprintf(stderr, "%ls\n", bytes);
         }
         std::fflush(stderr);
     }
