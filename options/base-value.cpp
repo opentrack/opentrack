@@ -2,7 +2,7 @@
 
 using namespace options;
 
-value_::value_(bundle const& b, const QString& name) :
+value_::value_(bundle const& b, const QString& name) noexcept :
     b(b), self_name(name)
 {
     b->on_value_created(this);

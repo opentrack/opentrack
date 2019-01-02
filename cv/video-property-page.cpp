@@ -25,8 +25,6 @@
 
 #include <QDebug>
 
-#include <dshow.h>
-
 bool video_property_page::show_from_capture(cv::VideoCapture& cap, int /*index */)
 {
     return cap.set(cv::CAP_PROP_SETTINGS, 0);
@@ -165,4 +163,3 @@ bool video_property_page::show_from_capture(cv::VideoCapture&, int idx)
 bool video_property_page::show(int) { return false; }
 bool video_property_page::show_from_capture(cv::VideoCapture&, int) { return false; }
 #endif
-

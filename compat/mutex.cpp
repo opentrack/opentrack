@@ -17,17 +17,17 @@ mutex::mutex(RecursionMode m) : inner{m}
 {
 }
 
-QMutex* mutex::operator&() const
-{
-    return *this;
-}
-
-mutex::operator QMutex*() const
+QMutex* mutex::operator&() const noexcept
 {
     return &inner;
 }
 
-QMutex* mutex::operator->() const
+mutex::operator QMutex*() const noexcept
 {
-    return *this;
+    return &inner;
+}
+
+QMutex* mutex::operator->() const noexcept
+{
+    return &inner;
 }

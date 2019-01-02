@@ -1,6 +1,6 @@
 find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
     otr_module(cv STATIC)
-    target_link_libraries(${self} opencv_core opencv_videoio)
+    target_link_libraries(${self} opencv_videoio opencv_core)
     target_include_directories(${self} SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
 endif()

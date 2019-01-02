@@ -5,9 +5,8 @@
 namespace types {
     using f = double;
 
-    namespace constants {
-        static constexpr inline f eps = f(1e-8);
-    }
+    static constexpr inline f eps = f(1e-8);
+    static constexpr inline f pi = f(M_PI);
 
     template<int n> using vec = cv::Vec<f, n>;
     using vec2 = vec<2>;

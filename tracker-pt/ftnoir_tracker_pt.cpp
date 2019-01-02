@@ -174,7 +174,7 @@ void Tracker_PT::data(double *data)
         alpha = atan2( R(1,0), R(0,0) );
         gamma = atan2( R(2,1), R(2,2) );
 
-        constexpr f rad2deg = f(180/M_PI);
+        constexpr f rad2deg = f(180/pi);
 
         data[Yaw] = rad2deg * alpha;
         data[Pitch] = -rad2deg * beta;

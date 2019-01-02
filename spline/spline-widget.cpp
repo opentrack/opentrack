@@ -31,7 +31,10 @@ spline_widget::spline_widget(QWidget *parent) : QWidget(parent)
 spline_widget::~spline_widget()
 {
     if (connection)
+    {
         QObject::disconnect(connection);
+        connection = {};
+    }
 }
 
 void spline_widget::setConfig(base_spline* spl)
@@ -39,7 +42,7 @@ void spline_widget::setConfig(base_spline* spl)
     if (connection)
     {
         QObject::disconnect(connection);
-        connection = QMetaObject::Connection();
+        connection = {};
     }
 
     config = spl;

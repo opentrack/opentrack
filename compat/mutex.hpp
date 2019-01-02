@@ -17,7 +17,7 @@ public:
     mutex(const mutex& datum);
     explicit mutex(RecursionMode m);
 
-    QMutex* operator&() const;
-    operator QMutex*() const;
-    QMutex* operator->() const;
+    QMutex* operator&() const noexcept;
+    explicit operator QMutex*() const noexcept;
+    QMutex* operator->() const noexcept;
 };

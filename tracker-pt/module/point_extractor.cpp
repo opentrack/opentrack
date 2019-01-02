@@ -182,20 +182,20 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
         const f radius = (f) threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
 
         float const* const __restrict ptr = hist.ptr<float>(0);
-        const unsigned area = uround(3 * M_PI * radius*radius);
+        const unsigned area = uround(3 * pi * radius*radius);
         const unsigned sz = unsigned(hist.cols * hist.rows);
         constexpr unsigned min_thres = 64;
         unsigned thres = min_thres;
         for (unsigned i = sz-1, cnt = 0; i > 32; i--)
         {
-            cnt += ptr[i];
+            cnt += (unsigned)ptr[i];
             if (cnt >= area)
                 break;
             thres = i;
         }
 
         if (thres > min_thres)
-            thres *= .8;
+            thres = uround(thres * .8);
 
         cv::threshold(frame_gray, output, thres, 255, cv::THRESH_BINARY);
     }
@@ -263,12 +263,12 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
                 }
             }
 
-            const double radius = std::sqrt(cnt / M_PI);
+            const double radius = std::sqrt(cnt / pi);
             if (radius > region_size_max || radius < region_size_min)
                 continue;
 
             blobs.emplace_back(radius,
-                               vec2(rect.width/2., rect.height/2.),
+                               vec2(rect.width/f(2), rect.height/f(2)),
                                std::pow(f(norm), f(1.1))/cnt,
                                rect);
 
@@ -294,7 +294,7 @@ end:
 
     for (idx = 0; idx < sz; ++idx)
     {
-        blob &b = blobs[idx];
+        blob& b = blobs[idx];
         cv::Rect rect = b.rect;
 
         rect.x -= rect.width / 2;

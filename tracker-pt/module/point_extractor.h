@@ -19,7 +19,7 @@ namespace pt_module {
 
 using namespace types;
 
-struct blob
+struct blob final
 {
     f radius, brightness;
     vec2 pos;

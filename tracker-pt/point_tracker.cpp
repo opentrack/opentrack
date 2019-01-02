@@ -67,18 +67,19 @@ void PointModel::set_model(const pt_settings& s)
 
 void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const
 {
+    constexpr unsigned cnt = PointModel::N_POINTS;
     // fit line to orthographically projected points
     using t = std::pair<f,unsigned>;
-    t d_vals[3];
+    t d_vals[cnt];
     // get sort indices with respect to d scalar product
-    for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
+    for (unsigned i = 0; i < cnt; ++i)
         d_vals[i] = t(d.dot(points[i]), i);
 
     std::sort(d_vals,
               d_vals + 3u,
               [](const t& a, const t& b) { return a.first < b.first; });
 
-    for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
+    for (unsigned i = 0; i < cnt; ++i)
         d_order[i] = d_vals[i].second;
 }
 
@@ -98,18 +99,19 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     const int diagonal = int(std::sqrt(f(info.res_x*info.res_x + info.res_y*info.res_y)));
     constexpr int div = 80;
     const int max_dist = diagonal / div; // 10 pixels for 640x480
+    constexpr unsigned sz = PointModel::N_POINTS;
 
     // set correspondences by minimum distance to projected model point
-    bool point_taken[PointModel::N_POINTS];
-    for (unsigned i=0; i<PointModel::N_POINTS; ++i) // NOLINT(modernize-loop-convert)
+    bool point_taken[sz];
+    for (unsigned i=0; i < sz; ++i) // NOLINT(modernize-loop-convert)
         point_taken[i] = false;
 
-    for (unsigned i=0; i<PointModel::N_POINTS; ++i)
+    for (unsigned i=0; i < sz; ++i)
     {
         f min_sdist = 0;
         unsigned min_idx = 0;
         // find closest point to projected model point i
-        for (unsigned j=0; j<PointModel::N_POINTS; ++j)
+        for (unsigned j=0; j < sz; ++j)
         {
             vec2 d = p[i]-points[j];
             f sdist = d.dot(d);
@@ -328,14 +330,14 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
         // CAVEAT don't change to comparison with an epsilon -sh 20160423
         if (JJ0 == II0) {
             rho = sqrt(fabs(2*IJ0));
-            theta = -M_PI/4;
+            theta = -pi/4;
             if (IJ0<0) theta *= -1;
         }
         else {
             rho = sqrt(sqrt( (JJ0-II0)*(JJ0-II0) + 4*IJ0*IJ0 ));
             theta = atan( -2*IJ0 / (JJ0-II0) );
             // avoid branch misprediction
-            theta += (JJ0 - II0 < 0) * M_PI;
+            theta += (JJ0 - II0 < 0) * pi;
             theta *= f(.5);
         }
 
@@ -378,7 +380,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
         // check for convergence condition
         const f delta = fabs(epsilon_1 - old_epsilon_1) + fabs(epsilon_2 - old_epsilon_2);
 
-        if (delta < constants::eps)
+        if (delta < eps)
             break;
 
         old_epsilon_1 = epsilon_1;

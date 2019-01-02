@@ -99,8 +99,8 @@ void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& w
 		2);
 
 	//draw horizon
-	int pdelta = iround((preview_frame.rows / 4.) * tan(((double)wii.Pitch)* M_PI / 180.));
-	int rdelta = iround((preview_frame.cols / 4.) * tan(((double)wii.Roll)* M_PI / 180.));
+	int pdelta = iround((preview_frame.rows / 4.) * tan(((double)wii.Pitch)* pi / f(180)));
+	int rdelta = iround((preview_frame.cols / 4.) * tan(((double)wii.Roll)* pi / f(180)));
 
 	cv::line(preview_frame,
 		cv::Point(0, preview_frame.rows / 2 + rdelta - pdelta),

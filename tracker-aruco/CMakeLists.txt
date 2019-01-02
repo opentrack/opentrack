@@ -15,7 +15,7 @@ if(OpenCV_FOUND)
 
         maybe_add_static_define()
 
-        set(modules "${SDK_ARUCO_LIBPATH}" opencv_core opencv_calib3d opencv_imgproc opencv_videoio)
+        set(modules "${SDK_ARUCO_LIBPATH}" opencv_calib3d opencv_imgproc opencv_core)
 
         get_filename_component(dir "${SDK_ARUCO_LIBPATH}" DIRECTORY)
         get_filename_component(dir "${dir}" ABSOLUTE)

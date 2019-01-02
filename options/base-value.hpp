@@ -31,7 +31,7 @@ class OTR_OPTIONS_EXPORT value_ : public QObject
 
 public:
     QString name() const { return self_name; }
-    value_(bundle const& b, const QString& name);
+    value_(bundle const& b, const QString& name) noexcept;
     ~value_() override;
 
     // no C++17 "constexpr inline" for data declarations in MSVC
@@ -63,7 +63,7 @@ protected:
     bundle b;
     QString self_name;
 
-    virtual void store_variant(const QVariant& x) = 0;
+    virtual void store_variant(const QVariant& x) noexcept = 0;
 
     template<typename t>
     void store_(const t& datum)

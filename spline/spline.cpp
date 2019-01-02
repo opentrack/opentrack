@@ -127,7 +127,7 @@ QPointF spline::ensure_in_bounds(const QList<QPointF>& points, int i)
 
 int spline::element_count(const QList<QPointF>& points, double max_input)
 {
-    const unsigned sz = points.size();
+    const unsigned sz = (unsigned)points.size();
     for (unsigned k = 0; k < sz; k++)
     {
         const QPointF& pt = points[k];
@@ -310,9 +310,6 @@ void spline::save()
 
 void spline::invalidate_settings()
 {
-    // we're holding the mutex to allow signal disconnection in spline dtor
-    // before this slot gets called for the next time
-
     {
         QMutexLocker l(&mtx);
         validp = false;
@@ -373,19 +370,19 @@ void spline::ensure_valid(points_t& list) const
 
     std::stable_sort(list.begin(), list.end(), sort_fn);
 
-    const int sz = list.size();
+    const unsigned sz = (unsigned)list.size();
 
-    QList<QPointF> all_points, tmp;
-    all_points.reserve(sz); tmp.reserve(sz);
+    QList<QPointF> tmp_points, all_points;
+    tmp_points.reserve(sz); all_points.reserve(sz);
 
     const double maxx = max_input();
 
-    for (int i = 0; i < sz; i++)
+    for (unsigned i = 0; i < sz; i++)
     {
         QPointF& pt{list[i]};
 
         bool overlap = false;
-        for (int j = i+1; j < sz; j++)
+        for (unsigned j = i+1; j < sz; j++)
         {
             const QPointF& pt2{list[j]};
             const QPointF tmp(pt - pt2);
@@ -400,27 +397,27 @@ void spline::ensure_valid(points_t& list) const
 
         if (!overlap)
         {
-            tmp.append(pt); // all points total
+            all_points.append(pt); // all points total
 
             // points within selected limit, for use in `update_interp_data'
             if (pt.x() - 1e-4 <= maxx && pt.x() >= 0)
-                all_points.push_back(pt);
+                tmp_points.push_back(pt);
         }
     }
 
     // simply storing to s->points fires bundle::changed leading to a livelock
     // hence only store if we can't help it
 
-    if (tmp.size() < points.size())
+    if (all_points.size() < points.size())
     {
         // all points that don't overlap
-        points = std::move(tmp);
+        points = std::move(all_points);
         s->points = points;
     }
 
-    if (all_points.size() < list.size())
+    if (tmp_points.size() < list.size())
         // points that are within currently-specified bounds
-        list = std::move(all_points);
+        list = std::move(tmp_points);
 
     last_input_value = {};
     activep = false;

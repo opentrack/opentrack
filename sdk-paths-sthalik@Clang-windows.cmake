@@ -53,8 +53,9 @@ set(_cxxflags
     -Werror
     -Werror=inconsistent-missing-destructor-override
     #-Wno-error=padded
-
     -fdiagnostics-color=always
+
+    -fno-exceptions -fno-rtti # get rid of evil
 )
 set(base-cxxflags "")
 foreach(k ${_cxxflags})

@@ -44,7 +44,7 @@ class value final : public value_
     using traits = detail::value_traits<t>;
 
     cc_noinline
-    t get() const
+    t get() const noexcept
     {
         if (self_name.isEmpty() || !b->contains(self_name))
             return traits::pass_value(def);
@@ -57,7 +57,8 @@ class value final : public value_
         return traits::pass_value(traits::value_with_default(traits::value_from_qvariant(variant), def));
     }
 
-    void store_variant(const QVariant& value) override
+    cc_noinline
+    void store_variant(const QVariant& value) noexcept override
     {
         if (self_name.isEmpty())
             return;
@@ -78,7 +79,7 @@ public:
             emit valueChanged(traits::storage_from_value(get()));
     }
 
-    value<u>& operator=(const t& datum)
+    value<u>& operator=(const t& datum) noexcept
     {
         store_variant(traits::qvariant_from_value(traits::pass_value(datum)));
 
@@ -88,10 +89,11 @@ public:
     static constexpr inline Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
     static constexpr inline Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    value(bundle b, const QString& name, t def) :
-        value_(b, name), def(std::move(def))
+    value(bundle b, const QString& name, t def) noexcept : value_(b, name), def(std::move(def))
     {
     }
+
+    value(const value<u>& other) noexcept : value{other.b, other.self_name, other.def} {}
 
     t default_value() const
     {
@@ -108,16 +110,16 @@ public:
     template<typename w>
     explicit cc_forceinline operator w() const { return to<w>(); }
 
-    auto operator->() const
+    auto operator->() const noexcept
     {
         return detail::dereference_wrapper<t>{get()};
     }
 
-    cc_forceinline t operator()() const { return get(); }
-    cc_forceinline t operator*() const { return get(); }
+    cc_forceinline t operator()() const noexcept { return get(); }
+    cc_forceinline t operator*() const noexcept { return get(); }
 
     template<typename w>
-    w to() const
+    w to() const noexcept
     {
         return static_cast<w>(get());
     }

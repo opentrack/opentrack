@@ -18,15 +18,19 @@ udp::udp()
 
     QObject::connect(s.b.get(), &bundle_::changed,
                      this, &udp::set_dest_address,
-                     Qt::QueuedConnection);
+                     Qt::DirectConnection);
 }
 
 void udp::pose(const double *headpose) {
+    spinlock_guard l(spl);
+
     outSocket.writeDatagram((const char *) headpose, sizeof(double[6]), dest_ip, dest_port);
 }
 
 void udp::set_dest_address()
 {
+    spinlock_guard l(spl);
+
     dest_port = (unsigned short)s.port;
     dest_ip = QHostAddress((s.ip1.to<unsigned>() & 0xff) << 24 |
                            (s.ip2.to<unsigned>() & 0xff) << 16 |
