@@ -93,39 +93,55 @@ static void set_qt_style()
 #endif
 }
 
-#ifdef _WIN32
-
 #include "compat/spinlock.hpp"
+#include <string>
 
-#include <cstring>
-#include <cwchar>
-#include <windows.h>
+#ifdef _WIN32
+#   include <windows.h>
+#endif
 
 static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
 {
-    const auto str = (const wchar_t*)msg.utf16();
-    static_assert(sizeof(*str) == sizeof(wchar_t));
+    static std::atomic_flag lock = ATOMIC_FLAG_INIT;
+    const auto bytes{msg.toUtf8()};
 
-    if (IsDebuggerPresent())
-    {
-        static std::atomic_flag lock = ATOMIC_FLAG_INIT;
-        spinlock_guard l(lock);
+    constexpr bool is_win32 =
+#ifdef _WIN32
+        true;
+#else
+        false;
+#endif
 
-        OutputDebugStringW(str);
-        OutputDebugStringW(L"\n");
-    }
-    else
+
+    if constexpr (is_win32)
     {
-        std::fflush(stderr);
-        if (ctx.function)
-            std::fprintf(stderr, "[%s:%d%s]: %ls\n", ctx.file, ctx.line, ctx.function, str);
-        else if (ctx.file)
-            std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, str);
+        if (IsDebuggerPresent())
+        {
+            spinlock_guard l(lock);
+
+            OutputDebugStringA(bytes.constData());
+            OutputDebugStringA("\n");
+        }
         else
-            std::fprintf(stderr, "%ls\n", str);
-        std::fflush(stderr);
+        {
+            std::fflush(stderr);
+            const char* const s = bytes.constData();
+            {
+                spinlock_guard l(lock);
+
+                if (ctx.function)
+                    std::fprintf(stderr, "[%s:%d] %s: %s\n", ctx.file, ctx.line, ctx.function, s);
+                else if (ctx.file)
+                    std::fprintf(stderr, "[%s:%d]: %s\n", ctx.file, ctx.line, s);
+                else
+                    std::fprintf(stderr, "%s\n", s);
+            }
+            std::fflush(stderr);
+        }
     }
 }
+
+#ifdef _WIN32
 
 static void add_win32_path()
 {
@@ -198,8 +214,6 @@ static void attach_parent_console()
         fprintf(stderr, "\n");
         fflush(stderr);
     }
-
-    (void)qInstallMessageHandler(qdebug_to_console);
 }
 
 #endif
@@ -234,6 +248,8 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_w
     add_win32_path();
     attach_parent_console();
 #endif
+
+    (void)qInstallMessageHandler(qdebug_to_console);
 
     QDir::setCurrent(OPENTRACK_BASE_PATH);
 
