@@ -103,41 +103,36 @@ static void set_qt_style()
 static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
 {
     static std::atomic_flag lock = ATOMIC_FLAG_INIT;
-    const auto bytes{msg.toUtf8()};
 
-    constexpr bool is_win32 =
 #ifdef _WIN32
-        true;
-#else
-        false;
-#endif
-
-
-    if constexpr (is_win32)
+    if (IsDebuggerPresent())
     {
-        if (IsDebuggerPresent())
+        spinlock_guard l(lock);
+
+        static_assert(sizeof(wchar_t) == sizeof(decltype(*msg.utf16())));
+        const wchar_t* const bytes = (const wchar_t*)msg.utf16();
+
+        OutputDebugStringW(bytes);
+        OutputDebugStringW(L"\n");
+    }
+    else
+#endif
+    {
+        QByteArray bytes{msg.toUtf8()};
+
+        std::fflush(stderr);
+        const char* const s = bytes.constData();
         {
             spinlock_guard l(lock);
 
-            OutputDebugStringA(bytes.constData());
-            OutputDebugStringA("\n");
+            if (ctx.function)
+                std::fprintf(stderr, "[%s:%d] %s: %s\n", ctx.file, ctx.line, ctx.function, s);
+            else if (ctx.file)
+                std::fprintf(stderr, "[%s:%d]: %s\n", ctx.file, ctx.line, s);
+            else
+                std::fprintf(stderr, "%s\n", s);
         }
-        else
-        {
-            std::fflush(stderr);
-            const char* const s = bytes.constData();
-            {
-                spinlock_guard l(lock);
-
-                if (ctx.function)
-                    std::fprintf(stderr, "[%s:%d] %s: %s\n", ctx.file, ctx.line, ctx.function, s);
-                else if (ctx.file)
-                    std::fprintf(stderr, "[%s:%d]: %s\n", ctx.file, ctx.line, s);
-                else
-                    std::fprintf(stderr, "%s\n", s);
-            }
-            std::fflush(stderr);
-        }
+        std::fflush(stderr);
     }
 }
 
