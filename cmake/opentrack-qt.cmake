@@ -68,5 +68,6 @@ function(otr_qt2 n)
     target_compile_definitions("${n}" PRIVATE
         ${Qt5Core_DEFINITIONS} ${Qt5Gui_DEFINITIONS} ${Qt5Widgets_DEFINITIONS} ${Qt5Network_DEFINITIONS}
         -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
+        -DQT_MESSAGELOGCONTEXT
     )
 endfunction()
