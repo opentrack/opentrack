@@ -96,9 +96,6 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     p[1] = project(model.M01, fx);
     p[2] = project(model.M02, fx);
 
-    const int diagonal = int(std::sqrt(f(info.res_x*info.res_x + info.res_y*info.res_y)));
-    constexpr int div = 80;
-    const int max_dist = diagonal / div; // 10 pixels for 640x480
     constexpr unsigned sz = PointModel::N_POINTS;
 
     // set correspondences by minimum distance to projected model point
@@ -123,7 +120,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
         }
 
         // if one point is closest to more than one model point, fallback
-        if (min_sdist > max_dist || point_taken[min_idx])
+        if (point_taken[min_idx])
         {
             init_phase = true;
             return find_correspondences(points, model);
