@@ -108,17 +108,13 @@ bool WIICamera::start(int, int, int, int)
 
 void WIICamera::stop()
 {
-	onExit = true;
-	m_pDev->ChangedCallback = nullptr;
-	m_pDev->Disconnect();
-	Beep(1000, 200);
-	if (m_pDev) {
-		m_pDev=nullptr;
-		m_pDev = nullptr;
-	}
+    m_pDev->ChangedCallback = nullptr;
+    m_pDev->Disconnect();
+    Beep(1000, 200);
+    m_pDev = nullptr;
 
-    cam_info = pt_camera_info();
-    cam_desired = pt_camera_info();
+    cam_info = {};
+    cam_desired = {};
 }
 
 wii_camera_status WIICamera::pair()

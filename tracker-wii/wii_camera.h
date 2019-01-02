@@ -61,7 +61,6 @@ private:
     struct { float p = 0, r = 0; } horizon;
 
     pt_settings s;
-    bool onExit = false;
 };
 
 } // ns pt_module
