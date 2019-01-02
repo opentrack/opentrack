@@ -2369,11 +2369,7 @@ bool wiimote::Load16bitMonoSampleWAV(const TCHAR* filepath, wiimote_sample &out)
 	TRACE(_T("Loading '%s'"), filepath);
 
 	FILE *file;
-#if (_MSC_VER >= 1400) // VC 2005+
 	_tfopen_s(&file, filepath, _T("rb"));
-#else
-	file = _tfopen(filepath, _T("rb"));
-#endif
 	_ASSERT(file);
 	if (!file) {
 		WARN(_T("Couldn't open '%s"), filepath);
@@ -2562,11 +2558,7 @@ bool wiimote::Load16BitMonoSampleRAW(const TCHAR*   filepath,
 	// load them
 	FILE *file;
 	bool res;
-#if (_MSC_VER >= 1400) // VC 2005+
 	_tfopen_s(&file, filepath, _T("rb"));
-#else
-	file = _tfopen(filepath, _T("rb"));
-#endif
 	_ASSERT(file);
 	if (!file) {
 		TRACE(_T("Couldn't open '%s"), filepath);

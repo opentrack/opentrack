@@ -17,4 +17,8 @@
 #   pragma clang diagnostic ignored "-Wextra-semi"
 #   pragma clang diagnostic ignored "-Wshadow-field"
 #   pragma clang diagnostic ignored "-Wreserved-id-macro"
+#   pragma clang diagnostic ignored "-Wconversion"
+#   pragma clang diagnostic ignored "-Wfloat-equal"
+#   pragma clang diagnostic ignored "-Wunused-macros"
+#   pragma clang diagnostic ignored "-Wcast-qual"
 #endif
