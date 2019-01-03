@@ -55,7 +55,7 @@ void PointModel::set_model(const pt_settings& s)
         M02 = vec3(0, -s.clip_by, -s.clip_bz);
         break;
     case Cap:
-        M01 = vec3(-s.cap_x, s.cap_y, -s.cap_z);
+        M01 = vec3(-s.cap_x, -s.cap_y, -s.cap_z);
         M02 = vec3(s.cap_x, -s.cap_y, -s.cap_z);
         break;
     case Custom:
