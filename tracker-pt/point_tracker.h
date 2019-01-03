@@ -77,7 +77,8 @@ private:
     // The POSIT algorithm, returns the number of iterations
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);
 
-    Affine X_CM; // transform from model to camera
+    Affine X_CM;  // transform from model to camera
+    Affine X_CM_expected;
     PointOrder prev_positions;
     Timer t;
     bool init_phase = true, prev_positions_valid = false;

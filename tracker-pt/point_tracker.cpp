@@ -288,7 +288,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     // The expected rotation used for resolving the ambiguity in POSIT:
     // In every iteration step the rotation closer to R_expected is taken
-    static const mat33 R_expected(X_CM.R);
+    const mat33& R_expected{X_CM_expected.R};
 
     // initial pose = last (predicted) pose
     vec3 k;
@@ -308,8 +308,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     constexpr int max_iter = 100;
 
-    int i=1;
-    for (; i<max_iter; ++i)
+    int i;
+    for (i = 1; i < max_iter; ++i)
     {
         epsilon_1 = k.dot(model.M01)/Z0;
         epsilon_2 = k.dot(model.M02)/Z0;
@@ -404,8 +404,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
             int ret = std::fpclassify(r(i, j));
             if (ret == FP_NAN || ret == FP_INFINITE)
             {
-                qDebug() << "posit nan -- R";
-                return -1;
+                qDebug() << "posit nan R";
+                goto fail;
             }
         }
 
@@ -414,8 +414,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
         int ret = std::fpclassify(t[i]);
         if (ret == FP_NAN || ret == FP_INFINITE)
         {
-            qDebug() << "posit nan -- T";
-            return -1;
+            qDebug() << "posit nan T";
+            goto fail;
         }
     }
 
@@ -425,9 +425,14 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
     X_CM.t[1] = t[1];
     X_CM.t[2] = t[2];
 
+    X_CM_expected = X_CM;
+
     //qDebug() << "iter:" << i;
 
     return i;
+fail:
+    X_CM_expected = {};
+    return -1;
 }
 
 #ifdef __clang__
@@ -449,6 +454,7 @@ void PointTracker::reset_state()
 {
     prev_positions_valid = false;
     init_phase = true;
+    X_CM_expected = {};
 }
 
 } // ns pt_module
