@@ -415,7 +415,7 @@ void pipeline::logic()
     {
         maybe_enable_center_on_tracking_started();
         maybe_set_center_pose(value, own_center_logic);
-        value = apply_center(value);
+        value = clamp_value(apply_center(value));
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
