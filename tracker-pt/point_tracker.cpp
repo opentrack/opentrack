@@ -50,6 +50,9 @@ void PointModel::set_model(const pt_settings& s)
 {
     switch (s.active_model_panel)
     {
+    default:
+        eval_once(qDebug() << "pt: wrong model type selected");
+        [[fallthrough]];
     case Clip:
         M01 = vec3(0, s.clip_ty, -s.clip_tz);
         M02 = vec3(0, -s.clip_by, -s.clip_bz);
@@ -76,7 +79,7 @@ void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& 
         d_vals[i] = t(d.dot(points[i]), i);
 
     std::sort(d_vals,
-              d_vals + 3u,
+              d_vals + 3,
               [](const t& a, const t& b) { return a.first < b.first; });
 
     for (unsigned i = 0; i < cnt; ++i)
@@ -134,6 +137,9 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
 
 bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_info& info)
 {
+    if ((int)info.res_x == 0 || (int)info.res_y == 0)
+        return false;
+
     constexpr f std_width = 640, std_height = 480;
 
     PointOrder scaled_order;
@@ -160,7 +166,7 @@ bool PointTracker::maybe_use_old_pose(const PointOrder& order, const pt_camera_i
             sum += std::sqrt(tmp.dot(tmp));
         }
 
-        // CAVEAT don't increase too much, it visibly loses precision
+        // CAVEAT don't increase too much, visibly loses precision
         constexpr f max_dist = f(.04 * PointModel::N_POINTS);
 
         // whether previous positions fit current data
@@ -246,22 +252,24 @@ void PointTracker::track(const std::vector<vec2>& points,
 
 PointTracker::PointOrder PointTracker::find_correspondences(const vec2* points, const PointModel& model)
 {
+    constexpr unsigned cnt = PointModel::N_POINTS;
     // We do a simple freetrack-like sorting in the init phase...
-    unsigned point_d_order[PointModel::N_POINTS];
-    unsigned model_d_order[PointModel::N_POINTS];
+    unsigned point_d_order[cnt];
+    unsigned model_d_order[cnt];
     // calculate d and d_order for simple freetrack-like point correspondence
     vec2 d(model.M01[0]-model.M02[0], model.M01[1]-model.M02[1]);
     // sort points
     model.get_d_order(points, point_d_order, d);
-    vec2 pts[PointModel::N_POINTS] {
-        vec2(0, 0),
-        vec2(model.M01[0], model.M01[1]),
-        vec2(model.M02[0], model.M02[1])
+    vec2 pts[cnt] {
+        { 0, 0 },
+        { model.M01[0], model.M01[1] },
+        { model.M02[0], model.M02[1] },
     };
     model.get_d_order(pts, model_d_order, d);
+
     // set correspondences
     PointOrder p;
-    for (unsigned i = 0; i < PointModel::N_POINTS; ++i)
+    for (unsigned i = 0; i < cnt; ++i)
         p[model_d_order[i]] = points[point_d_order[i]];
 
     return p;
@@ -289,8 +297,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
     f old_epsilon_1 = 0;
     f old_epsilon_2 = 0;
-    f epsilon_1 = 1;
-    f epsilon_2 = 1;
+    f epsilon_1, epsilon_2;
 
     vec3 I0, J0;
     vec2 I0_coeff, J0_coeff;
