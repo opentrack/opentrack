@@ -236,10 +236,7 @@ void PointTracker::track(const std::vector<vec2>& points,
         order = find_correspondences(points.data(), model);
     }
     else
-    {
-        t.start();
         order = find_correspondences_previous(points.data(), model, info);
-    }
 
     if (maybe_use_old_pose(order, info) || POSIT(model, order, fx) != -1)
     {
