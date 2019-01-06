@@ -70,8 +70,6 @@ private:
     // the points in model order
     using PointOrder = std::array<vec2, 3>;
 
-    bool maybe_use_old_pose(const PointOrder& order, const pt_camera_info& info);
-
     PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const pt_camera_info& info);
     // The POSIT algorithm, returns the number of iterations
@@ -81,7 +79,7 @@ private:
     Affine X_CM_expected;
     PointOrder prev_positions;
     Timer t;
-    bool init_phase = true, prev_positions_valid = false;
+    bool init_phase = true;
 };
 
 } // ns pt_module
