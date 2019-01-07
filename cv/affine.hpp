@@ -12,7 +12,7 @@
 
 namespace affine_impl {
 
-using namespace types;
+using namespace numeric_types;
 
 class Affine final
 {

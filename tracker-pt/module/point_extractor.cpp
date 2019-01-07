@@ -29,7 +29,7 @@
 
 #include <QDebug>
 
-using namespace types;
+using namespace numeric_types;
 
 // meanshift code written by Michael Welter
 

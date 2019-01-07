@@ -28,7 +28,7 @@ class cv_video_widget;
 
 namespace pt_module {
 
-using namespace types;
+using namespace numeric_types;
 
 class Tracker_PT : public QThread, public ITracker
 {

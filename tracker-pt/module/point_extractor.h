@@ -17,7 +17,7 @@
 
 namespace pt_module {
 
-using namespace types;
+using namespace numeric_types;
 
 struct blob final
 {

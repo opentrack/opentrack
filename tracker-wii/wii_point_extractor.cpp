@@ -30,7 +30,7 @@
 
 #include <QDebug>
 
-using namespace types;
+using namespace numeric_types;
 
 namespace pt_module {
 

@@ -1,7 +1,7 @@
 #include "pt-api.hpp"
 #include "cv/numeric.hpp"
 
-using namespace types;
+using namespace numeric_types;
 
 pt_camera_info::pt_camera_info() = default;
 

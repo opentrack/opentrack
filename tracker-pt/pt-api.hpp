@@ -20,7 +20,7 @@
 
 struct pt_camera_info final
 {
-    using f = types::f;
+    using f = numeric_types::f;
 
     pt_camera_info();
     static f get_focal_length(f fov, int res_x, int res_y);
@@ -35,7 +35,7 @@ struct pt_camera_info final
 
 struct pt_pixel_pos_mixin
 {
-    using f = types::f;
+    using f = numeric_types::f;
 
     static std::tuple<f, f> to_pixel_pos(f x, f y, int w, int h);
     static std::tuple<f, f> to_screen_pos(f px, f py, int w, int h);
@@ -69,7 +69,7 @@ struct pt_preview : pt_frame
 struct pt_camera
 {
     using result = std::tuple<bool, pt_camera_info>;
-    using f = types::f;
+    using f = numeric_types::f;
 
     pt_camera();
     virtual ~pt_camera();
@@ -90,8 +90,8 @@ struct pt_camera
 
 struct pt_point_extractor : pt_pixel_pos_mixin
 {
-    using vec2 = types::vec2;
-    using f = types::f;
+    using vec2 = numeric_types::vec2;
+    using f = numeric_types::f;
 
     pt_point_extractor();
     virtual ~pt_point_extractor();

@@ -3,7 +3,7 @@
 #include <type_traits>
 #include <opencv2/core.hpp>
 
-namespace types {
+namespace numeric_types {
     using f = float;
 
     static_assert(std::is_floating_point_v<f>);

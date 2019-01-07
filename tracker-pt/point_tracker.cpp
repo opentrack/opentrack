@@ -16,7 +16,7 @@
 
 namespace pt_module {
 
-using namespace types;
+using namespace numeric_types;
 
 static void get_row(const mat33& m, int i, vec3& v)
 {

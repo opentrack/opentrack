@@ -28,7 +28,7 @@ namespace pt_module {
 // nomenclature as in
 // [Denis Oberkampf, Daniel F. DeMenthon, Larry S. Davis: "Iterative Pose Estimation Using Coplanar Feature Points"]
 
-using namespace types;
+using namespace numeric_types;
 
 struct PointModel final
 {
