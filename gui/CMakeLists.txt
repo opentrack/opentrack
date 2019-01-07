@@ -15,3 +15,7 @@ elseif(LINUX)
     otr_pkgconfig(${self} libprocps)
 endif()
 
+if(NOT APPLE AND NOT WIN32)
+    target_compile_definitions(${self} PRIVATE -DOTR_X11_THREADS)
+    otr_pkgconfig(${self} x11)
+endif()

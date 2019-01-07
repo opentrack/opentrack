@@ -71,6 +71,14 @@ static void set_fp_mask()
 #endif
 }
 
+#ifdef OTR_X11_THREADS
+#include <X11/Xlib.h>
+static void enable_x11_threads()
+{
+    (void)XInitThreads();
+}
+#endif
+
 static void set_qt_style()
 {
 #if defined _WIN32 || defined __APPLE__
@@ -237,6 +245,9 @@ static int run_window(std::unique_ptr<QWidget> main_window)
 int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_window)
 {
     set_fp_mask();
+#ifdef OTR_X11_THREADS
+    enable_x11_threads();
+#endif
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
