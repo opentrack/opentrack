@@ -60,12 +60,12 @@ Camera::result Camera::get_frame(pt_frame& frame_)
 
     if (new_frame)
     {
-        const double dt = t.elapsed_seconds();
+        const f dt = (f)t.elapsed_seconds();
         t.start();
 
         // measure fps of valid frames
-        constexpr double RC = .1; // seconds
-        const double alpha = dt/(dt + RC);
+        constexpr f RC = f{1}/10; // seconds
+        const f alpha = dt/(dt + RC);
 
         if (dt_mean < dt_eps)
             dt_mean = dt;

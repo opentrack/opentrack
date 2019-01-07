@@ -41,7 +41,7 @@ struct WIICamera final : pt_camera
     QString get_desired_name() const override;
     QString get_active_name() const override;
 
-    void set_fov(double value) override { (void)value; }
+    void set_fov(f value) override { (void)value; }
     void show_camera_settings() override;
 
 private:

@@ -26,7 +26,7 @@ struct Preview final : pt_preview
 
     Preview& operator=(const pt_frame& frame) override;
     QImage get_bitmap() override;
-    void draw_head_center(double x, double y) override;
+    void draw_head_center(f x, f y) override;
 
     operator cv::Mat&() { return frame_copy; }
     operator cv::Mat const&() const { return frame_copy; }

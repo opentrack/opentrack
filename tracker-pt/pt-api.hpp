@@ -23,10 +23,10 @@ struct pt_camera_info final
     using f = types::f;
 
     pt_camera_info();
-    static double get_focal_length(f fov, int res_x, int res_y);
+    static f get_focal_length(f fov, int res_x, int res_y);
 
-    double fov = 0;
-    double fps = 0;
+    f fov = 0;
+    f fps = 0;
 
     int res_x = 0;
     int res_y = 0;
@@ -35,8 +35,10 @@ struct pt_camera_info final
 
 struct pt_pixel_pos_mixin
 {
-    static std::tuple<double, double> to_pixel_pos(double x, double y, int w, int h);
-    static std::tuple<double, double> to_screen_pos(double px, double py, int w, int h);
+    using f = types::f;
+
+    static std::tuple<f, f> to_pixel_pos(f x, f y, int w, int h);
+    static std::tuple<f, f> to_screen_pos(f px, f py, int w, int h);
 };
 
 struct pt_frame : pt_pixel_pos_mixin
@@ -61,12 +63,13 @@ struct pt_preview : pt_frame
 {
     virtual pt_preview& operator=(const pt_frame&) = 0;
     virtual QImage get_bitmap() = 0;
-    virtual void draw_head_center(double x, double y) = 0;
+    virtual void draw_head_center(f x, f y) = 0;
 };
 
 struct pt_camera
 {
     using result = std::tuple<bool, pt_camera_info>;
+    using f = types::f;
 
     pt_camera();
     virtual ~pt_camera();
@@ -81,19 +84,20 @@ struct pt_camera
     virtual QString get_desired_name() const = 0;
     virtual QString get_active_name() const = 0;
 
-    virtual void set_fov(double value) = 0;
+    virtual void set_fov(f value) = 0;
     virtual void show_camera_settings() = 0;
 };
 
 struct pt_point_extractor : pt_pixel_pos_mixin
 {
     using vec2 = types::vec2;
+    using f = types::f;
 
     pt_point_extractor();
     virtual ~pt_point_extractor();
     virtual void extract_points(const pt_frame& image, pt_preview& preview_frame, std::vector<vec2>& points) = 0;
 
-    static double threshold_radius_value(int w, int h, int threshold);
+    static f threshold_radius_value(int w, int h, int threshold);
 };
 
 struct pt_runtime_traits

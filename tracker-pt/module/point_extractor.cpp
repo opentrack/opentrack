@@ -52,7 +52,7 @@ algorithm for tracking single particles with variable size and shape." (2008).
 static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &current_center, f filter_width)
 {
     // Most amazingly this function runs faster with doubles than with floats.
-    const f s = 1.0 / filter_width;
+    const f s = 1 / filter_width;
 
     f m = 0;
     vec2 com { 0, 0  };
@@ -62,12 +62,12 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
         for (int j = 0; j < frame_gray.cols; j++)
         {
             f val = frame_ptr[j];
-            val = val * val; // taking the square wights brighter parts of the image stronger.
+            val = val * val; // taking the square weighs brighter parts of the image stronger.
             {
                 f dx = (j - current_center[0])*s;
                 f dy = (i - current_center[1])*s;
-                f f = std::fmax(0, 1 - dx*dx - dy*dy);
-                val *= f;
+                f max = std::fmax(f{0}, 1 - dx*dx - dy*dy);
+                val *= max;
             }
             m += val;
             com[0] += j * val;
@@ -76,7 +76,7 @@ static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &curre
     }
     if (m > f(.1))
     {
-        com *= f(1) / m;
+        com *= 1 / m;
         return com;
     }
     else
@@ -93,7 +93,7 @@ PointExtractor::PointExtractor(const QString& module_name) : s(module_name)
 void PointExtractor::ensure_channel_buffers(const cv::Mat& orig_frame)
 {
     if (ch[0].rows != orig_frame.rows || ch[0].cols != orig_frame.cols)
-        for (unsigned k = 0; k < 3; k++)
+        for (unsigned k = 0; k < 3; k++) // NOLINT(modernize-loop-convert)
             ch[k] = cv::Mat1b(orig_frame.rows, orig_frame.cols);
 }
 
@@ -176,7 +176,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
                      cv::noArray(),
                      hist,
                      1,
-                     (int const*) &hist_size,
+                     &hist_size,
                      &ranges);
 
         const f radius = (f) threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
@@ -217,8 +217,8 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
     threshold_image(frame_gray_unmasked, frame_bin);
     frame_gray_unmasked.copyTo(frame_gray, frame_bin);
 
-    const f region_size_min = s.min_point_size;
-    const f region_size_max = s.max_point_size;
+    const f region_size_min = (f)s.min_point_size;
+    const f region_size_max = (f)s.max_point_size;
 
     unsigned idx = 0;
 
@@ -309,7 +309,7 @@ end:
         static constexpr f radius_c = f(1.75);
 
         const f kernel_radius = b.radius * radius_c;
-        vec2 pos(rect.width/2., rect.height/2.); // position relative to ROI.
+        vec2 pos(rect.width/f{2}, rect.height/f{2}); // position relative to ROI.
 
         for (int iter = 0; iter < 10; ++iter)
         {
@@ -329,7 +329,7 @@ end:
         blob& b = blobs[k];
 
         const f dpi = preview_frame.cols / f(320);
-        const f offx = 10 * dpi, offy = 7.5 * dpi;
+        const f offx = 10 * dpi, offy = f{7.5} * dpi;
 
         const f cx = preview_frame.cols / f(frame.cols),
                 cy = preview_frame.rows / f(frame.rows),

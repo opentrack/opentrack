@@ -52,7 +52,7 @@ QImage Preview::get_bitmap()
                   QImage::Format_ARGB32);
 }
 
-void Preview::draw_head_center(double x, double y)
+void Preview::draw_head_center(f x, f y)
 {
     auto [px_, py_] = to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
 

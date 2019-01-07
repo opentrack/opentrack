@@ -93,7 +93,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
                                                                      const PointModel& model,
                                                                      const pt_camera_info& info)
 {
-    const double fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
+    const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointTracker::PointOrder p;
     p[0] = project(vec3(0,0,0), fx);
     p[1] = project(model.M01, fx);
@@ -140,7 +140,7 @@ void PointTracker::track(const std::vector<vec2>& points,
                          const pt_camera_info& info,
                          int init_phase_timeout)
 {
-    const double fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
+    const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointOrder order;
 
     if (init_phase_timeout <= 0 || t.elapsed_ms() > init_phase_timeout || init_phase)
@@ -262,7 +262,7 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
         J_1 = J0 + rho*sin(theta)*model.u;
         J_2 = J0 - rho*sin(theta)*model.u;
 
-        f norm_const = 1/cv::norm(I_1); // all have the same norm
+        f norm_const = (f)(1/cv::norm(I_1)); // all have the same norm
 
         // create rotation matrices
         I_1 *= norm_const; J_1 *= norm_const;
@@ -281,8 +281,8 @@ int PointTracker::POSIT(const PointModel& model, const PointOrder& order, f foca
 
         // pick the rotation solution closer to the expected one
         // in simple metric d(A,B) = || I - A * B^T ||
-        f R_1_deviation = cv::norm(mat33::eye() - R_expected * R_1.t());
-        f R_2_deviation = cv::norm(mat33::eye() - R_expected * R_2.t());
+        f R_1_deviation = (f)(cv::norm(mat33::eye() - R_expected * R_1.t()));
+        f R_2_deviation = (f)(cv::norm(mat33::eye() - R_expected * R_2.t()));
 
         if (R_1_deviation < R_2_deviation)
             R_current = &R_1;

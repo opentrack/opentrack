@@ -33,13 +33,13 @@ struct Camera final : pt_camera
     QString get_desired_name() const override;
     QString get_active_name() const override;
 
-    void set_fov(double value) override { fov = value; }
+    void set_fov(f value) override { fov = value; }
     void show_camera_settings() override;
 
 private:
     [[nodiscard]] bool get_frame_(cv::Mat& frame);
 
-    double dt_mean = 0, fov = 30;
+    f dt_mean = 0, fov = 30;
     Timer t;
     pt_camera_info cam_info;
     pt_camera_info cam_desired;
@@ -56,7 +56,7 @@ private:
 
     pt_settings s;
 
-    static constexpr inline double dt_eps = 1./256;
+    static constexpr inline f dt_eps = f{1}/256;
 };
 
 } // ns pt_module

@@ -44,8 +44,8 @@ void WIIPointExtractor::draw_point(cv::Mat& preview_frame, const vec2& p, const 
 {
 	static constexpr int len = 9;
 
-	cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols / 2),
-		iround(-p[1] * preview_frame.cols + preview_frame.rows / 2));
+	cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols / f{2}),
+		     iround(-p[1] * preview_frame.cols + preview_frame.rows / f{2}));
 
 	cv::line(preview_frame,
 		cv::Point(p2.x - len, p2.y),
@@ -66,14 +66,14 @@ bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_inf
 	points.reserve(4);
 	points.clear();
 
-	for (unsigned index = 0; index < 4; index++)
+	for (unsigned index = 0; index < 4; index++) // NOLINT(modernize-loop-convert)
 	{
 		const struct wii_info_points &dot = wii.Points[index];
 		if (dot.bvis) {
 			//qDebug() << "wii:" << dot.RawX << "+" << dot.RawY;
 			//anti-clockwise rotate the 2D point
-			const double RX = W - dot.ux;
-			const double RY = H - dot.uy;
+			const f RX = W - dot.ux;
+			const f RY = H - dot.uy;
 			//vec2 dt((dot.RawX - W / 2.0f) / W, -(dot.RawY - H / 2.0f) / W);
 			//vec2 dt((RX - W / 2.0f) / W, -(RY - H / 2.0f) / W);
 			//vec2 dt((2.0f*RX - W) / W, -(2.0f*RY - H ) / W);
@@ -99,8 +99,8 @@ void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& w
 		2);
 
 	//draw horizon
-	int pdelta = iround((preview_frame.rows / 4.) * tan(((double)wii.Pitch)* pi / f(180)));
-	int rdelta = iround((preview_frame.cols / 4.) * tan(((double)wii.Roll)* pi / f(180)));
+	int pdelta = iround((preview_frame.rows / f{4}) * tan(((double)wii.Pitch)* pi / f(180)));
+	int rdelta = iround((preview_frame.cols / f{4}) * tan(((double)wii.Roll)* pi / f(180)));
 
 	cv::line(preview_frame,
 		cv::Point(0, preview_frame.rows / 2 + rdelta - pdelta),
