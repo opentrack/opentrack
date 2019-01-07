@@ -26,8 +26,8 @@ using namespace pose_widget_impl;
 
 pose_transform::pose_transform(QWidget* dst) :
     dst(dst),
-    front(":/images/side1.png", nullptr),
-    back(":/images/side6.png", nullptr),
+    front(QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)),
+    back(QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)),
     image(w, h, QImage::Format_ARGB32),
     image2(w, h, QImage::Format_ARGB32),
     fresh(false)
@@ -193,7 +193,7 @@ std::pair<vec2i, vec2i> pose_transform::get_bounds(const vec2& size)
 
     vec2 min(w-1, h-1), max(0, 0);
 
-    for (unsigned k = 0; k < 4; k++)
+    for (unsigned k = 0; k < 4; k++) // NOLINT(modernize-loop-convert)
     {
         const vec2 pt = project(corners[k]) + vec2(w/2, h/2);
 
@@ -275,8 +275,6 @@ void pose_transform::project_quad_texture()
 
     const QImage& tex = dir < 0 ? back : front;
 
-    Triangle t(pt[0], pt[1], pt[2]);
-
     const unsigned orig_pitch = (unsigned)tex.bytesPerLine();
     const unsigned dest_pitch = (unsigned)image.bytesPerLine();
 
@@ -285,7 +283,7 @@ void pose_transform::project_quad_texture()
 
     const int orig_depth = tex.depth() / 8;
     const int dest_depth = image.depth() / 8;
-    constexpr int const_depth = 4;
+    constexpr unsigned const_depth = 4;
 
     if (unlikely(orig_depth != const_depth || dest_depth != const_depth))
     {
@@ -294,10 +292,13 @@ void pose_transform::project_quad_texture()
         return;
     }
 
-    const vec2u dist(max.x() - min.x(), max.y() - min.y());
+    Triangle t(pt[0], pt[1], pt[2]);
 
-    if (int(uv_vec.size()) < dist.x() * dist.y())
-        uv_vec.resize(dist.x() * dist.y());
+    const vec2u dist(max.x() - min.x(), max.y() - min.y());
+    unsigned len = (unsigned)(dist.x() * dist.y());
+
+    if (uv_vec.size() < len)
+        uv_vec.resize(len);
 
     for (int y = 0; y < dist.y(); y++)
         for (int x = 0; x < dist.x(); x++)
@@ -337,42 +338,14 @@ void pose_transform::project_quad_texture()
                 vec2 const& uv = uv__->coords;
                 int const i = uv__->i;
 
-                float fx = origs[i][0].x()
-                           + uv.x() * origs[i][2].x()
-                           + uv.y() * origs[i][1].x();
-                float fy = origs[i][0].y()
-                           + uv.x() * origs[i][2].y()
-                           + uv.y() * origs[i][1].y();
-
-//#define BILINEAR_FILTER
-
-#if defined BILINEAR_FILTER
-                const unsigned px_ = fx + 1;
-                const unsigned py_ = fy + 1;
-#endif
-                const unsigned px = (unsigned)fx;
-                const unsigned py = (unsigned)fy;
+                unsigned px = (unsigned)(origs[i][0].x() +
+                                         uv.x() * origs[i][2].x() +
+                                         uv.y() * origs[i][1].x());
+                unsigned py = (unsigned)(origs[i][0].y() +
+                                         uv.x() * origs[i][2].y() +
+                                         uv.y() * origs[i][1].y());
 
                 const unsigned orig_pos = py * orig_pitch + px * const_depth;
-#if defined BILINEAR_FILTER
-                const unsigned orig_pos_ = py_ * orig_pitch + px_ * const_depth;
-                const unsigned orig_pos__ = py * orig_pitch + px_ * const_depth;
-                const unsigned orig_pos___ = py_ * orig_pitch + px * const_depth;
-#endif
-
-                // 1, 0 -- ax_, ay
-                // 0, 1 -- ax, ay_
-                // 1, 1 -- ax_, ay_
-                // 0, 0 -- ax, ay
-                //const uc alpha = (a1 * ax + a3 * ax_) * ay + (a4 * ax + a2 * ax_) * ay_;
-
-#if defined BILINEAR_FILTER
-                const float ax_ = fx - unsigned(fx);
-                const float ay_ = fy - unsigned(fy);
-                const float ax = 1 - ax_;
-                const float ay = 1 - ay_;
-#endif
-
                 const unsigned pos = y * dest_pitch + x * const_depth;
 
                 if (orig[orig_pos + 3] == uc(255)) // alpha
