@@ -21,10 +21,15 @@
 
 using Pose = Mat<double, 6, 1>;
 
-enum Axis {
-    TX, TY, TZ, Yaw, Pitch, Roll,
-
+enum Axis : int
+{
     NonAxis = -1,
+    TX = 0, TY = 1, TZ = 2,
+
+    Yaw = 3, Pitch = 4, Roll = 5,
+    Axis_MIN = TX, Axis_MAX = 5,
+
+    AXIS_COUNT = 6,
 };
 
 namespace plugin_api::detail {
