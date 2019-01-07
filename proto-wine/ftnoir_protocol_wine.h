@@ -1,7 +1,7 @@
 #pragma once
 
 #include "api/plugin-api.hpp"
-#include "compat/shm.hpp"
+#include "compat/shm.h"
 #include "wine-shm.h"
 
 #include "ui_ftnoir_winecontrols.h"
@@ -33,7 +33,7 @@ public:
 #endif
     }
 private:
-    mem lck_shm { WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM) };
+    shm_wrapper lck_shm { WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM) };
     WineSHM* shm = nullptr;
 
 #ifndef OTR_WINE_NO_WRAPPER

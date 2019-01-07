@@ -1,74 +1,80 @@
 #include <cerrno>
-#include <unistd.h> // usleep
 
-#include "compat/macros1.h"
+// OSX sdk 10.8 build error otherwise
+#undef _LIBCPP_MSVCRT
+#include <cstdio>
+
 #include "freetrackclient/fttypes.h"
 #include "wine-shm.h"
+#include "compat/export.hpp"
 
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
-#undef SHM_HEADER_GUARD
-#undef SHMXX_HEADER_GUARD
-#undef SHM_TYPE_NAME
-#undef SHM_FUN_PREFIX
-#undef SHMXX_TYPE_NAME
-#undef SHM_WIN32_INIT
-#define SHM_TYPE_NAME shm_impl_winelib
-#define SHM_FUN_PREFIX shm_impl_winelib_
-#define SHMXX_TYPE_NAME mem_winelib
-#define SHM_WIN32_INIT 1
-#include "compat/shm.hpp"
-
-#undef SHM_HEADER_GUARD
-#undef SHMXX_HEADER_GUARD
-#undef SHM_TYPE_NAME
-#undef SHM_FUN_PREFIX
-#undef SHMXX_TYPE_NAME
-#undef SHM_WIN32_INIT
-#define SHM_TYPE_NAME shm_impl_unix
-#define SHM_FUN_PREFIX shm_impl_unix_
-#define SHMXX_TYPE_NAME mem_unix
-#define SHM_WIN32_INIT 0
-#include "compat/shm.hpp"
+#include "compat/shm.h"
 
 void create_registry_key(void);
 
+class ShmPosix {
+public:
+    ShmPosix(const char *shmName, const char *mutexName, int mapSize);
+    ~ShmPosix();
+    void lock();
+    void unlock();
+    bool success();
+    inline void* ptr() { return mem; }
+private:
+    void* mem;
+    int fd, size;
+};
+
+class ShmWine {
+public:
+    ShmWine(const char *shmName, const char *mutexName, int mapSize);
+    ~ShmWine();
+    void lock();
+    void unlock();
+    bool success();
+    inline void* ptr() { return mem; }
+private:
+    void* mem;
+    void *hMutex, *hMapFile;
+};
+#include <windows.h>
+
 int main(void)
 {
-    mem_unix lck_unix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
-    mem_winelib lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTHeap));
-
-    if(!lck_unix.success())
+    ShmPosix lck_posix(WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM));
+    ShmWine lck_wine("FT_SharedMem", "FT_Mutext", sizeof(FTHeap));
+    if(!lck_posix.success()) {
+        fprintf(stderr, "Can't open posix map: %d\n", errno);
         return 1;
-    if(!lck_wine.success())
+    }
+    if(!lck_wine.success()) {
+        fprintf(stderr, "Can't open Wine map\n");
         return 1;
-
+    }
+    WineSHM* shm_posix = (WineSHM*) lck_posix.ptr();
+    FTHeap* shm_wine = (FTHeap*) lck_wine.ptr();
+    FTData* data = &shm_wine->data;
     create_registry_key();
-
-    WineSHM& mem_unix = *(WineSHM*) lck_unix.ptr();
-    FTHeap& mem_wine = *(FTHeap*) lck_wine.ptr();
-    FTData& data = mem_wine.data;
-
-    data.CamWidth = 250;
-    data.CamHeight = 100;
-
-    while (!mem_unix.stop)
-    {
-        COMPILER_BARRIER();
-        data.Yaw = -mem_unix.data[Yaw];
-        data.Pitch = -mem_unix.data[Pitch];
-        data.Roll = mem_unix.data[Roll];
-        data.X = mem_unix.data[TX];
-        data.Y = mem_unix.data[TY];
-        data.Z = mem_unix.data[TZ];
-        data.DataID = 1;
-        mem_wine.GameID2 = mem_unix.gameid2;
-        mem_unix.gameid = mem_wine.GameID;
+    while (1) {
+        if (shm_posix->stop)
+            break;
+        data->Yaw = -shm_posix->data[Yaw];
+        data->Pitch = -shm_posix->data[Pitch];
+        data->Roll = shm_posix->data[Roll];
+        data->X = shm_posix->data[TX];
+        data->Y = shm_posix->data[TY];
+        data->Z = shm_posix->data[TZ];
+        data->DataID++;
+        data->CamWidth = 250;
+        data->CamHeight = 100;
+        shm_wine->GameID2 = shm_posix->gameid2;
+        shm_posix->gameid = shm_wine->GameID;
         for (int i = 0; i < 8; i++)
-            mem_wine.table[i] = mem_wine.table[i];
-        COMPILER_BARRIER();
-        (void)usleep(4 * 1000);
+            shm_wine->table[i] = shm_posix->table[i];
+        (void) Sleep(4);
     }
 }

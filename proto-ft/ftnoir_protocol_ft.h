@@ -19,7 +19,7 @@
 #include <cinttypes>
 #include "freetrackclient/fttypes.h"
 
-#include "compat/shm.hpp"
+#include "compat/shm.h"
 #include "options/options.hpp"
 
 #include <memory>
@@ -46,7 +46,7 @@ public:
     QString game_name() override;
 private:
     settings s;
-    mem shm { FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap) };
+    shm_wrapper shm { FREETRACK_HEAP, FREETRACK_MUTEX, sizeof(FTHeap) };
     FTHeap* pMemData { (FTHeap*) shm.ptr() };
 
     QProcess dummyTrackIR;
@@ -66,8 +66,8 @@ class FTControls: public IProtocolDialog
     Q_OBJECT
 public:
     FTControls();
-    void register_protocol(IProtocol *) override {}
-    void unregister_protocol() override {}
+    void register_protocol(IProtocol *) {}
+    void unregister_protocol() {}
 private:
     Ui::UICFTControls ui;
     settings s;

@@ -2,18 +2,14 @@
 #   error "bad cross"
 #endif
 
-#define SHM_TYPE_NAME shm_impl_winelib
-#define SHM_FUN_PREFIX shm_impl_winelib_
-#define SHMXX_TYPE_NAME mem_winelib
+#define shm_wrapper ShmWine
+#include "compat/shm.h"
 #include "compat/shm.cpp"
-
 #include "wine-shm.h"
 #include "compat/library-path.hpp"
-
 #include <cstring>
 
-#include <windows.h>
-#include <winreg.h>
+using std::strcat;
 
 static void write_path(const char* key, const char* subkey)
 {
