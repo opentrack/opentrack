@@ -1,9 +1,12 @@
 #pragma once
 
+#include <type_traits>
 #include <opencv2/core.hpp>
 
 namespace types {
-    using f = double;
+    using f = float;
+
+    static_assert(std::is_floating_point_v<f>);
 
     static constexpr inline f eps = f(1e-8);
     static constexpr inline f pi = f(M_PI);
