@@ -3,11 +3,10 @@
 #include "slider.hpp"
 #include "export.hpp"
 
-#include <QString>
-
 #include <cmath>
-#include <cinttypes>
 #include <type_traits>
+
+#include <QString>
 
 namespace options::detail {
 

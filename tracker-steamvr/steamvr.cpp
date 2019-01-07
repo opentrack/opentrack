@@ -59,13 +59,13 @@ void device_list::fill_device_specs(QList<device_spec>& list)
         {
             if (v->GetTrackedDeviceClass(k) == vr::ETrackedDeviceClass::TrackedDeviceClass_Invalid)
             {
-                qDebug() << "no device with index";
+                qDebug() << "steamvr: no device with index";
                 continue;
             }
 
             if (!device_states[k].bDeviceIsConnected)
             {
-                qDebug() << "device not connected but proceeding";
+                qDebug() << "steamvr: device not connected but proceeding";
                 continue;
             }
 

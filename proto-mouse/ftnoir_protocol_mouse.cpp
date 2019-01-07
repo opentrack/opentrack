@@ -29,33 +29,31 @@ void mouse::pose(const double* headpose)
 
     int mouse_x = 0, mouse_y = 0;
 
-    if (axis_x >= 0 && axis_x < 6)
-    {
+    if (axis_x == clamp(axis_x, Axis_MIN, Axis_MAX))
         mouse_x = get_value(headpose[axis_x] * invert[axis_x],
-                            s.sensitivity_x(),
+                            *s.sensitivity_x,
                             axis_x >= 3);
-    }
 
-    if (axis_y >= 0 && axis_y < 6)
+    if (axis_y == clamp(axis_y, Axis_MIN, Axis_MAX))
         mouse_y = get_value(headpose[axis_y] * invert[axis_y],
-                            s.sensitivity_y(),
+                            *s.sensitivity_y,
                             axis_y >= 3);
 
-    MOUSEINPUT mi;
-    mi.dx = get_delta(mouse_x, last_x);
-    mi.dy = get_delta(mouse_y, last_y);
-    mi.mouseData = 0;
-    mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_MOVE_NOCOALESCE;
-    mi.time = 0;
-    mi.dwExtraInfo = 0;
-    INPUT input;
-    input.type = INPUT_MOUSE;
-    input.mi = mi;
-    if (mi.dx || mi.dy)
+    const int dx = get_delta(mouse_x, last_x),
+              dy = get_delta(mouse_y, last_y);
+
+    if (dx || dy)
     {
-        (void) SendInput(1, &input, sizeof(INPUT));
-        last_x = mouse_x;
-        last_y = mouse_y;
+        INPUT input;
+        input.type = INPUT_MOUSE;
+        MOUSEINPUT& mi = input.mi;
+        mi = {};
+        mi.dx = dx;
+        mi.dy = dy;
+        mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_MOVE_NOCOALESCE;
+
+        (void)SendInput(1, &input, sizeof(input));
+        last_x = mouse_x; last_y = mouse_y;
     }
 }
 
@@ -66,9 +64,7 @@ QString mouse::game_name()
 
 int mouse::get_delta(int val, int prev)
 {
-    using std::abs;
-
-    const int a = abs(val - prev), b = abs(val + prev);
+    const int a = std::abs(val - prev), b = std::abs(val + prev);
     if (b < a)
         return val + prev;
     else

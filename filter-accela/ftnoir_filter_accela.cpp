@@ -139,8 +139,7 @@ void accela::filter(const double* input, double *output)
 
 void settings_accela::make_splines(spline& rot, spline& pos)
 {
-    rot = spline();
-    pos = spline();
+    rot.clear(); pos.clear();
 
     for (const auto& val : rot_gains)
         rot.add_point(QPointF(val.x, val.y));
@@ -150,4 +149,3 @@ void settings_accela::make_splines(spline& rot, spline& pos)
 }
 
 OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)
-
