@@ -49,7 +49,7 @@ corresponding location is a good candidate for the extracted point.
 The idea similar to the window scaling suggested in  Berglund et al. "Fast, bias-free 
 algorithm for tracking single particles with variable size and shape." (2008).
 */
-static cv::Vec2d MeanShiftIteration(const cv::Mat &frame_gray, const vec2 &current_center, f filter_width)
+static vec2 MeanShiftIteration(const cv::Mat1b &frame_gray, const vec2 &current_center, f filter_width)
 {
     // Most amazingly this function runs faster with doubles than with floats.
     const f s = 1 / filter_width;
@@ -109,7 +109,7 @@ void PointExtractor::ensure_buffers(const cv::Mat& frame)
     }
 }
 
-void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, cv::Mat& dest)
+void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, cv::Mat1b& dest)
 {
     ensure_channel_buffers(orig_frame);
 
