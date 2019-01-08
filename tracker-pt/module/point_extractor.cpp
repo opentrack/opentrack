@@ -201,10 +201,55 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
     }
 }
 
+static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblobs, cv::Size size)
+{
+    for (unsigned k = 0; k < nblobs; k++)
+    {
+        const blob& b = blobs[k];
+
+        if (b.radius < 0)
+            continue;
+
+        const f dpi = preview_frame.cols / f(320);
+        const f offx = 10 * dpi, offy = f{7.5} * dpi;
+
+        const f cx = preview_frame.cols / f(size.width),
+            cy = preview_frame.rows / f(size.height),
+            c_ = (cx+cy)/2;
+
+        static constexpr unsigned fract_bits = 16;
+        static constexpr double c_fract(1 << fract_bits);
+
+        cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
+
+        auto circle_color = k >= PointModel::N_POINTS
+                            ? cv::Scalar(192, 192, 192)
+                            : cv::Scalar(255, 255, 0);
+
+        const f overlay_size = dpi > 1.5 ? 2 : 1;
+
+        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract),
+                   circle_color, (int)overlay_size,
+                   cv::LINE_AA, fract_bits);
+
+        char buf[16];
+        buf[sizeof(buf)-1] = '\0';
+        std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", b.radius);
+
+        auto text_color = k >= PointModel::N_POINTS
+                          ? cv::Scalar(160, 160, 160)
+                          : cv::Scalar(0, 0, 255);
+
+        cv::Point pos(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy));
+        cv::putText(preview_frame, buf, pos,
+                    cv::FONT_HERSHEY_PLAIN, overlay_size, text_color,
+                    1);
+    }
+}
+
 void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
 {
     const cv::Mat& frame = frame_.as_const<Frame>()->mat;
-    cv::Mat& preview_frame = *preview_frame_.as<Preview>();
 
     ensure_buffers(frame);
     color_to_grayscale(frame, frame_gray_unmasked);
@@ -278,9 +323,7 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
             // XXX we could go to the next scanline unless the points are really small.
             // i'd expect each point being present on at least one unique scanline
             // but it turns out some people are using 2px points -sh 20180110
-#if defined BROKEN && 0
-            break;
-#endif
+            //break;
         }
     }
 end:
@@ -324,45 +367,10 @@ end:
         b.pos[1] = pos[1] + rect.y;
     }
 
-    for (unsigned k = 0; k < blobs.size(); k++)
-    {
-        blob& b = blobs[k];
+    draw_blobs(preview_frame_.as<Frame>()->mat,
+               blobs.data(), blobs.size(),
+               frame_gray.size());
 
-        const f dpi = preview_frame.cols / f(320);
-        const f offx = 10 * dpi, offy = f{7.5} * dpi;
-
-        const f cx = preview_frame.cols / f(frame.cols),
-                cy = preview_frame.rows / f(frame.rows),
-                c_ = (cx+cy)/2;
-
-        static constexpr unsigned fract_bits = 16;
-        static constexpr double c_fract(1 << fract_bits);
-
-        cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
-
-        auto circle_color = k >= PointModel::N_POINTS
-                            ? cv::Scalar(192, 192, 192)
-                            : cv::Scalar(255, 255, 0);
-
-        const f overlay_size = dpi > 1.5 ? 2 : 1;
-
-        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract),
-                   circle_color, (int)overlay_size,
-                   cv::LINE_AA, fract_bits);
-
-        char buf[16];
-        buf[sizeof(buf)-1] = '\0';
-        std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", b.radius);
-
-        auto text_color = k >= PointModel::N_POINTS
-                          ? cv::Scalar(160, 160, 160)
-                          : cv::Scalar(0, 0, 255);
-
-        cv::Point pos(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy));
-        cv::putText(preview_frame, buf, pos,
-                    cv::FONT_HERSHEY_PLAIN, overlay_size, text_color,
-                    1);
-    }
 
     // End of mean shift code. At this point, blob positions are updated with hopefully less noisy less biased values.
     points.reserve(max_blobs);
