@@ -359,7 +359,7 @@ end:
             vec2 com_new = MeanShiftIteration(frame_roi, pos, kernel_radius);
             vec2 delta = com_new - pos;
             pos = com_new;
-            if (delta.dot(delta) < 1e-2)
+            if (delta.dot(delta) < f(1e-3))
                 break;
         }
 
