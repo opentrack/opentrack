@@ -113,14 +113,14 @@ static void set_qt_style()
 
 static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
 {
-    static std::atomic_flag lock = ATOMIC_FLAG_INIT;
-
 #ifdef _WIN32
+    static_assert(sizeof(wchar_t) == sizeof(decltype(*msg.utf16())));
+
     if (IsDebuggerPresent())
     {
+        static std::atomic_flag lock = ATOMIC_FLAG_INIT;
         spinlock_guard l(lock);
 
-        static_assert(sizeof(wchar_t) == sizeof(decltype(*msg.utf16())));
         const wchar_t* const bytes = (const wchar_t*)msg.utf16();
 
         OutputDebugStringW(bytes);
@@ -138,11 +138,7 @@ static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QS
         (void)msg.toWCharArray(bytes);
 #endif
         {
-            spinlock_guard l(lock);
-
-            if (ctx.function)
-                std::fprintf(stderr, "[%s:%d] %s: %ls\n", ctx.file, ctx.line, ctx.function, bytes);
-            else if (ctx.file)
+            if (ctx.file)
                 std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, bytes);
             else
                 std::fprintf(stderr, "%ls\n", bytes);
