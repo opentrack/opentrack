@@ -119,8 +119,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 
         connect(ui.iconcomboTrackerSource,
                 &QComboBox::currentTextChanged,
-                this,
-                [&](const QString&) { pFilterDialog = nullptr; });
+                this, [&](const QString&) { pFilterDialog = nullptr; });
 
         connect(&m.tracker_dll, value_::value_changed<QString>(),
                 this, &main_window::save_modules,
@@ -734,7 +733,7 @@ void main_window::show_options_dialog()
         // also doesn't work when switching profiles with options dialog open
         // move shortcuts to a separate bundle and add a migration -sh 20180218
         connect(options_widget.get(), &options_dialog::closing,
-                  this, &main_window::register_shortcuts);
+                this, &main_window::register_shortcuts);
     }
 }
 
