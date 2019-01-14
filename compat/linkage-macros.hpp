@@ -5,10 +5,10 @@
 #   define OTR_GENERIC_IMPORT __declspec(dllimport)
 #elif defined _WIN32 && !defined __WINE__
 #   define OTR_GENERIC_EXPORT __attribute__((dllexport, visibility ("default")))
-#   define OTR_GENERIC_IMPORT __attribute__((dllimport, visibility ("default")))
+#   define OTR_GENERIC_IMPORT __attribute__((dllimport))
 #else
 #   define OTR_GENERIC_EXPORT __attribute__((visibility ("default")))
-#   define OTR_GENERIC_IMPORT __attribute__((visibility ("default")))
+#   define OTR_GENERIC_IMPORT
 #endif
 
 #if defined __APPLE__ || (defined __MINGW32__ && (defined __clang__ || defined _WIN64))
