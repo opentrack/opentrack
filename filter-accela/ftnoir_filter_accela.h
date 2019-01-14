@@ -17,6 +17,8 @@
 #include <QMutex>
 #include <QTimer>
 
+//#define DEBUG_ACCELA
+
 class accela : public IFilter
 {
 public:
@@ -57,6 +59,6 @@ class accelaDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Accela"); }
-    QIcon icon() { return QIcon(":/images/filter-16.png"); }
+    QString name() override { return tr("Accela"); }
+    QIcon icon() override { return QIcon(":/images/filter-16.png"); }
 };

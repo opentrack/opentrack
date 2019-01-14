@@ -31,7 +31,7 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
         dist += deltas[k]*deltas[k];
     dist = sqrt(dist);
 
-    const double value = double(fun(dist));
+    const double value = fun(dist);
 
     for (unsigned k = 0; k < N; k++)
     {
@@ -82,14 +82,14 @@ void accela::filter(const double* input, double *output)
         return;
     }
 
-    const double rot_thres { s.rot_smoothing };
-    const double pos_thres { s.pos_smoothing };
+    const double rot_thres{s.rot_smoothing};
+    const double pos_thres{s.pos_smoothing};
 
     const double dt = t.elapsed_seconds();
     t.start();
 
-    const double rot_dz = s.rot_deadzone.to<double>();
-    const double pos_dz = s.pos_deadzone.to<double>();
+    const double rot_dz{ s.rot_deadzone};
+    const double pos_dz{ s.pos_deadzone};
 
     // rot
 
@@ -142,10 +142,10 @@ void settings_accela::make_splines(spline& rot, spline& pos)
     rot.clear(); pos.clear();
 
     for (const auto& val : rot_gains)
-        rot.add_point(QPointF(val.x, val.y));
+        rot.add_point({ val.x, val.y });
 
     for (const auto& val : pos_gains)
-        pos.add_point(QPointF(val.x, val.y));
+        pos.add_point({ val.x, val.y });
 }
 
 OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)

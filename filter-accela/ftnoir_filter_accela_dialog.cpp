@@ -42,7 +42,7 @@ dialog_accela::dialog_accela()
         QDialog dr;
         spline_widget r(&dr);
         dr.setWindowTitle("Accela rotation gain"); r.set_preview_only(true); r.setEnabled(true);
-        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); r.setConfig(&rot);
+        r.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); r.set_config(&rot);
         r.setFixedSize(1024, 600);
         dr.show();
         dr.exec();
@@ -52,7 +52,7 @@ dialog_accela::dialog_accela()
         QDialog dt;
         spline_widget t(&dt);
         dt.setWindowTitle("Accela translation gain"); t.set_preview_only(true); t.setEnabled(true);
-        dt.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); t.setConfig(&pos);
+        dt.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); t.set_config(&pos);
         t.setFixedSize(1024, 600);
         dt.show();
         dt.exec();

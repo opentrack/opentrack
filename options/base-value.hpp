@@ -17,7 +17,7 @@
 
 #include <utility>
 
-#define OTR_OPTIONS_SLOT(t) void setValue(t datum) { store_(datum); }
+#define OTR_OPTIONS_SLOT(t) void setValue(t datum) noexcept { store_(datum); }
 #define OTR_OPTIONS_SIGNAL(t) void valueChanged(t) const
 
 namespace options {

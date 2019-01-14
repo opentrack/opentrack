@@ -45,7 +45,7 @@ public:
     void data(double *data);
     settings s;
     QString guid;
-    static constexpr inline int AXIS_MAX = win32_joy_ctx::joy_axis_size;
+    static constexpr int AXIS_MAX = win32_joy_ctx::joy_axis_size;
     win32_joy_ctx joy_ctx;
 };
 

@@ -39,23 +39,11 @@ protected:
     void notify_values(const QString& name) const;
     void notify_all_values() const;
     virtual QMutex* get_mtx() const = 0;
-
-    template<typename F>
-    void forall(F&& fun)
-    {
-        QMutexLocker l(get_mtx());
-
-        for (auto& pair : connected_values)
-            for (auto& val : pair.second)
-                fun(val);
-    }
+    void set_all_to_default_();
 
 public:
     connector();
     virtual ~connector();
-
-    connector(const connector&) = default;
-    connector& operator=(const connector&) = default;
 };
 
 } // ns options::detail

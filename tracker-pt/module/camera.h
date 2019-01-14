@@ -56,7 +56,7 @@ private:
 
     pt_settings s;
 
-    static constexpr inline f dt_eps = f{1}/256;
+    static constexpr f dt_eps = f{1}/256;
 };
 
 } // ns pt_module

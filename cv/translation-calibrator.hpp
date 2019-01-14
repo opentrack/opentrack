@@ -41,8 +41,8 @@ public:
     // we're bringing in 3DOF samples but the calibrator only
     // checks yaw and pitch
 
-    static constexpr inline unsigned num_cal_axis = 3;
-    static constexpr inline unsigned num_nsample_axis = 2;
+    static constexpr unsigned num_cal_axis = 3;
+    static constexpr unsigned num_nsample_axis = 2;
 
     using cv_cal_vec = cv::Vec<float, num_cal_axis>;
     using cv_nsample_vec = cv::Vec<unsigned, num_nsample_axis>;
@@ -51,6 +51,6 @@ public:
     // get the current estimate for t_MH
     tt get_estimate();
 
-    static constexpr inline double yaw_spacing_in_degrees = 2;
-    static constexpr inline double pitch_spacing_in_degrees = 1.5;
+    static constexpr double yaw_spacing_in_degrees = 2;
+    static constexpr double pitch_spacing_in_degrees = 1.5;
 };

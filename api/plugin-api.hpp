@@ -120,7 +120,7 @@ struct OTR_API_EXPORT IFilter : module_status_mixin
     IFilter();
 
     // optional destructor
-    virtual ~IFilter();
+    ~IFilter() override;
     // perform filtering step.
     // you have to take care of dt on your own, try "opentrack-compat/timer.hpp"
     virtual void filter(const double *input, double *output) = 0;

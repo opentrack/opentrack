@@ -20,8 +20,8 @@
 #include <QSettings>
 #include <QtEvents>
 
-static constexpr inline auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
-static constexpr inline auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_
+static constexpr auto RECORD_SEPARATOR = QChar(char(0x1e));  // RS ^]
+static constexpr auto UNIT_SEPARATOR = QChar(char(0x1f));    // US ^_
 
 using namespace options;
 using namespace options::globals;

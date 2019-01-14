@@ -45,8 +45,7 @@ struct default_value_traits
         return self::qvariant_from_storage(self::storage_from_value(val));
     }
 
-    static constexpr inline
-    value_type pass_value(const value_type& x)
+    static constexpr value_type pass_value(const value_type& x)
     {
         if constexpr(std::is_same_v<value_type, stored_type>)
             return x;

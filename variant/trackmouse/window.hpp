@@ -70,7 +70,7 @@ class main_window final : public QMainWindow, private State
     bool maybe_die_on_config_not_writable(const QString& current);
     void die_on_config_not_writable();
 
-    static constexpr inline int save_settings_interval_ms = 2500;
+    static constexpr int save_settings_interval_ms = 2500;
 
 private slots:
     void save_modules();

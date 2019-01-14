@@ -80,7 +80,7 @@ tt TranslationCalibrator::get_estimate()
     };
 }
 
-static constexpr inline double r2d = 180/M_PI;
+static constexpr double r2d = 180/M_PI;
 
 bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
 {

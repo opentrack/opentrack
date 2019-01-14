@@ -78,4 +78,11 @@ void connector::notify_all_values() const
             val->notify();
 }
 
+void connector::set_all_to_default_()
+{
+    for (auto& pair : connected_values)
+        for (auto& val : pair.second)
+            val->set_to_default();
+}
+
 } // ns options::detail

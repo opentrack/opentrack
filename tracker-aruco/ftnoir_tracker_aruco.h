@@ -67,7 +67,7 @@ struct settings : opts {
 class aruco_tracker : protected virtual QThread, public ITracker
 {
     Q_OBJECT
-    static constexpr inline float c_search_window = 1.3f;
+    static constexpr float c_search_window = 1.3f;
 public:
     aruco_tracker();
     ~aruco_tracker() override;
@@ -120,21 +120,21 @@ private:
     bool use_otsu = false;
 
 #if !defined USE_EXPERIMENTAL_CANNY
-    static constexpr inline int adaptive_thres = 6;
+    static constexpr int adaptive_thres = 6;
 #else
-    static constexpr inline int adaptive_thres = 3;
+    static constexpr int adaptive_thres = 3;
 #endif
 
-    static constexpr inline double timeout = .35;
-    static constexpr inline double timeout_backoff_c = .25;
+    static constexpr double timeout = .35;
+    static constexpr double timeout_backoff_c = .25;
 
-    static constexpr inline float size_min = 0.05f;
-    static constexpr inline float size_max = 0.5f;
+    static constexpr float size_min = 0.05f;
+    static constexpr float size_max = 0.5f;
 
-    static constexpr inline double RC = .25;
+    static constexpr double RC = .25;
 
 #ifdef DEBUG_UNSHARP_MASKING
-    static constexpr inline double gauss_kernel_size = 3;
+    static constexpr double gauss_kernel_size = 3;
     cv::Mat blurred;
 #endif
 };

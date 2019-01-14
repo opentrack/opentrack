@@ -26,8 +26,8 @@ using namespace options;
 #include <QString>
 #include <QWidget>
 
-static constexpr inline int NUM_STATE_DOF = 12;
-static constexpr inline int NUM_MEASUREMENT_DOF = 6;
+static constexpr int NUM_STATE_DOF = 12;
+static constexpr int NUM_MEASUREMENT_DOF = 6;
 // These vectors are compile time fixed size, stack allocated
 using StateToMeasureMatrix = Eigen::Matrix<double, NUM_MEASUREMENT_DOF, NUM_STATE_DOF>;
 using StateMatrix = Eigen::Matrix<double, NUM_STATE_DOF, NUM_STATE_DOF>;
@@ -86,11 +86,11 @@ struct settings : opts {
     value<slider_value> noise_rot_slider_value { b, "noise-rotation-slider", { .5, 0, 1 } };
     value<slider_value> noise_pos_slider_value { b, "noise-position-slider", { .5, 0, 1 } };
 
-    static constexpr inline double adaptivity_window_length = 0.25; // seconds
-    static constexpr inline double deadzone_scale = 8;
-    static constexpr inline double deadzone_exponent = 2.0;
-    static constexpr inline double process_sigma_pos = 0.5;
-    static constexpr inline double process_sigma_rot = 0.5;
+    static constexpr double adaptivity_window_length = 0.25; // seconds
+    static constexpr double deadzone_scale = 8;
+    static constexpr double deadzone_exponent = 2.0;
+    static constexpr double process_sigma_pos = 0.5;
+    static constexpr double process_sigma_rot = 0.5;
 
     static double map_slider_value(const slider_value &v);
 
