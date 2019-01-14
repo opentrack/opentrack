@@ -45,6 +45,7 @@ Checks:
     -readability-function-size,
     -cppcoreguidelines-avoid-goto,
     -modernize-use-using,
+    -cppcoreguidelines-c-copy-assignment-signature,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
