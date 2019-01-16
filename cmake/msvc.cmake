@@ -53,7 +53,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     set(CMAKE_RC_FLAGS "/nologo /DWIN32")
 endif()
 
-set(base-cflags "-MT -Zi -Zf -Zo -W4 -Zo -bigobj -cgthreads1 -diagnostics:caret ${warns_}")
+set(base-cflags "-MT -Zi -Zf -Zo -W4 -bigobj -cgthreads1 -diagnostics:caret ${warns_}")
 #set(base-cflags "${base-cflags} -d2cgsummary")
 
 set(_CFLAGS "${base-cflags}")
