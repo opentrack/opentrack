@@ -13,7 +13,7 @@
 #include <cstdlib>
 
 #include <QThread>
-#include <QApplication>
+#include <QCoreApplication>
 
 using namespace options;
 using namespace options::globals;
@@ -31,52 +31,51 @@ bundle::~bundle() = default;
 
 void bundle::reload()
 {
-    if (!group_name.isEmpty())
+    if (group_name.isEmpty())
+        return;
+
     {
-        QMutexLocker l(&mtx);
+        QMutexLocker l{&mtx};
 
         saved = group(group_name);
         transient = saved;
 
         connector::notify_all_values();
-        emit reloading();
-        emit changed();
     }
+
+    emit reloading();
+    emit changed();
 }
 
 void bundle::set_all_to_default()
 {
-    QMutexLocker l(&mtx);
-
-    forall([](value_* val) {
-        set_value_to_default(val);
-    });
+    connector::set_all_to_default_();
 }
 
 void bundle::store_kv(const QString& name, const QVariant& new_value)
 {
-    QMutexLocker l(&mtx);
+    if (group_name.isEmpty())
+        return;
 
-    if (!group_name.isEmpty())
     {
-        transient.put(name, new_value);
-
         mark_ini_modified();
-
+        QMutexLocker l{&mtx};
+        transient.put(name, new_value);
         connector::notify_values(name);
-        emit changed();
     }
+
+    emit changed();
 }
 
 QVariant bundle::get_variant(const QString& name) const
 {
-    QMutexLocker l(&mtx);
+    QMutexLocker l{&mtx};
     return transient.get_variant(name);
 }
 
 bool bundle::contains(const QString &name) const
 {
-    QMutexLocker l(&mtx);
+    QMutexLocker l{&mtx};
     return transient.contains(name);
 }
 
@@ -89,8 +88,7 @@ void bundle::save()
         return;
 
     {
-        QMutexLocker l(&mtx);
-
+        QMutexLocker l{&mtx};
         saved = transient;
         saved.save();
     }
@@ -127,7 +125,6 @@ std::shared_ptr<bundler::v> bundler::make_bundle_(const k& key)
     QMutexLocker l(&implsgl_mtx);
 
     using iter = decltype(implsgl_data.cbegin());
-
     const iter it = implsgl_data.find(key);
 
     if (it != implsgl_data.end())

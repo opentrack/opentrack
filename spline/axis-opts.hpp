@@ -9,8 +9,14 @@ namespace axis_opts_impl {
 
 using namespace options;
 
-struct OTR_SPLINE_EXPORT axis_opts final
+class OTR_SPLINE_EXPORT axis_opts final
 {
+    QString prefix_;
+    Axis axis_;
+
+    static inline QString n(QString const& pfx, QString const& name);
+
+public:
     enum max_clamp
     {
         r180 = 180,
@@ -37,8 +43,8 @@ struct OTR_SPLINE_EXPORT axis_opts final
     };
 
     // note, these two bundles can be the same value with no issues
-    bundle b_settings_window = make_bundle("opentrack-ui");
-    bundle b_mapping_window = make_bundle("opentrack-mappings");
+    bundle b_settings_window{ make_bundle(axis_ == Axis(-1) ? QString() : "opentrack-ui") };
+    bundle b_mapping_window{ make_bundle(axis_ == Axis(-1) ? QString() : "opentrack-mappings") };
     value<double> zero;
     value<int> src;
     value<bool> invert, altp;
@@ -49,11 +55,6 @@ struct OTR_SPLINE_EXPORT axis_opts final
 
     QString const& prefix() const;
     Axis axis() const;
-private:
-    static inline QString n(QString const& pfx, QString const& name);
-
-    QString prefix_;
-    Axis axis_;
 };
 
 } // ns axis_opts_impl

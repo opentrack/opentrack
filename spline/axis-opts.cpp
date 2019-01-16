@@ -27,14 +27,14 @@ static max_clamp get_max_y(Axis k)
 }
 
 axis_opts::axis_opts(QString pfx, Axis idx) :
+    prefix_(pfx),
+    axis_(idx),
     zero(b_settings_window, n(pfx, "zero-pos"), 0),
     src(b_settings_window, n(pfx, "source-index"), idx),
     invert(b_settings_window, n(pfx, "invert-sign"), false),
     altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
     clamp_x_(b_mapping_window, n(pfx, "max-value"), get_max_x(idx)),
-    clamp_y_(b_mapping_window, n(pfx, "max-output-value"), get_max_y(idx)),
-    prefix_(pfx),
-    axis_(idx)
+    clamp_y_(b_mapping_window, n(pfx, "max-output-value"), get_max_y(idx))
 {}
 
 QString const& axis_opts::prefix() const { return prefix_; }

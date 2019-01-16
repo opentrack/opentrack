@@ -105,7 +105,7 @@ void mapping_dialog::load()
 
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
         for (a y : { a::t30, a::t20, a::t15, a::t10, a::t100 })
-            x->addItem(QStringLiteral("%1 cm").arg(int(y)), y);
+            x->addItem(tr("%1 cm").arg(int(y)), y);
 
     // XXX TODO add tie_setting overload for spline_widget!!! -sh 20171020
 
@@ -121,10 +121,8 @@ void mapping_dialog::load()
         {
             connect(&axis.opts.altp,
                     value_::value_changed<bool>(),
-                    this,
-                    [&](bool f) {qfc.setEnabled(f); qfc.force_redraw();});
+                    this, [&](bool f) { qfc.setEnabled(f); });
             qfc.setEnabled(axis.opts.altp);
-            qfc.force_redraw();
         }
 
         using c = axis_opts::max_clamp;
@@ -163,7 +161,7 @@ void mapping_dialog::load()
         connect(&axis.opts.clamp_y_, value_::value_changed<int>(), &qfc, update_ystep);
 
         // force signal to avoid duplicating the slot's logic
-        qfc.setConfig(&conf);
+        qfc.set_config(&conf);
 
         update_xstep(axis.opts.clamp_x_);
         update_ystep(axis.opts.clamp_y_);

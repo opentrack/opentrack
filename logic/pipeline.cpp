@@ -195,7 +195,7 @@ double pipeline::map(double pos, Map& axis)
     axis.spline_main.set_tracking_active(!altp);
     axis.spline_alt.set_tracking_active(altp);
     auto& fc = altp ? axis.spline_alt : axis.spline_main;
-    return double(fc.get_value(pos));
+    return fc.get_value(pos);
 }
 
 //#define NO_NAN_CHECK

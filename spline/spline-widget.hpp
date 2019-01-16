@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2016 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2012-2019 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -34,12 +34,11 @@ class OTR_SPLINE_EXPORT spline_widget final : public QWidget
     Q_PROPERTY(int x_step READ x_step WRITE set_x_step)
     Q_PROPERTY(int y_step READ y_step WRITE set_y_step)
 
-    using points_t = base_spline::points_t;
 public:
     explicit spline_widget(QWidget *parent = nullptr);
     ~spline_widget() override;
 
-    void setConfig(base_spline* spl);
+    void set_config(base_spline* spl);
 
     QColor colorBezier() const;
     void setColorBezier(QColor const& color);
@@ -78,6 +77,7 @@ private:
 
     bool is_on_pt(const QPointF& pos, int* pt = nullptr);
     void update_range();
+    void changeEvent(QEvent* e) override;
 
     QPointF pixel_to_point(const QPointF& point);
     QPointF point_to_pixel(const QPointF& point);
@@ -103,7 +103,7 @@ private:
     bool draw_function = true, preview_only = false;
 
     // point's circle radius on the widget
-    static constexpr inline int point_size_in_pixels_ = 4;
+    static constexpr int point_size_in_pixels_ = 4;
 
     const double point_size_in_pixels = point_size_in_pixels_ * std::fmax(1, devicePixelRatioF() * .66);
 };

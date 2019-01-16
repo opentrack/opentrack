@@ -46,7 +46,7 @@ class value final : public value_
     cc_noinline
     t get() const noexcept
     {
-        if (self_name.isEmpty() || !b->contains(self_name))
+        if (!b->contains(self_name))
             return traits::pass_value(def);
 
         QVariant variant = b->get_variant(self_name);
@@ -58,11 +58,8 @@ class value final : public value_
     }
 
     cc_noinline
-    void store_variant(const QVariant& value) noexcept override
+    void store_variant(QVariant&& value) noexcept override
     {
-        if (self_name.isEmpty())
-            return;
-
         if (traits::is_equal(get(), traits::value_from_qvariant(value)))
             return;
 
@@ -72,10 +69,30 @@ class value final : public value_
             b->store_kv(self_name, traits::qvariant_from_value(def));
     }
 
+    cc_noinline
+    void store_variant(const QVariant& value) noexcept override
+    {
+        QVariant copy{value};
+        store_variant(std::move(copy));
+    }
+
+    bool is_null() const
+    {
+        return self_name.isEmpty() || b->name().isEmpty();
+    }
+
 public:
+    QVariant get_variant() const noexcept override
+    {
+        if (QVariant ret{b->get_variant(self_name)}; ret.isValid() && !ret.isNull())
+            return ret;
+
+        return traits::qvariant_from_value(def);
+    }
+
     void notify() const override
     {
-        if (!self_name.isEmpty())
+        if (!is_null())
             emit valueChanged(traits::storage_from_value(get()));
     }
 
@@ -100,7 +117,7 @@ public:
         return def;
     }
 
-    void set_to_default() override
+    void set_to_default() noexcept override
     {
         *this = def;
     }

@@ -17,7 +17,6 @@ connector::~connector() = default;
 void connector::on_value_destructed(value_type val)
 {
     const QString& name = val->name();
-
     QMutexLocker l(get_mtx());
 
     const auto it = connected_values.find(name);

@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2016, Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2012-2019, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -17,7 +17,6 @@
 #include <vector>
 #include <limits>
 #include <memory>
-#include <functional>
 
 #include <QObject>
 #include <QPointF>
@@ -26,6 +25,7 @@
 
 namespace spline_detail {
 
+using points_t = QList<QPointF>;
 using namespace options;
 
 class OTR_SPLINE_EXPORT base_settings : public QObject
@@ -49,10 +49,9 @@ public:
 struct OTR_SPLINE_EXPORT base_spline_
 {
     virtual ~base_spline_();
-    base_spline_& operator=(const base_spline_&) = default;
 
-    virtual float get_value(double x) = 0;
-    virtual float get_value_no_save(double x) const = 0;
+    virtual double get_value(double x) const = 0;
+    virtual double get_value_no_save(double x) const = 0;
 
     [[nodiscard]] virtual bool get_last_value(QPointF& point) = 0;
     virtual void set_tracking_active(bool value) = 0;
@@ -60,18 +59,14 @@ struct OTR_SPLINE_EXPORT base_spline_
     virtual double max_input() const = 0;
     virtual double max_output() const = 0;
 
-    using points_t = QList<QPointF>;
-
-    virtual points_t const& get_points() const = 0;
+    virtual const points_t& get_points() const = 0;
     virtual int get_point_count() const = 0;
 };
 
 struct OTR_SPLINE_EXPORT spline_settings_mixin
 {
-    using base_settings = spline_detail::base_settings;
-
-    virtual std::shared_ptr<spline_detail::base_settings> get_settings() = 0;
-    virtual std::shared_ptr<const spline_detail::base_settings> get_settings() const = 0;
+    virtual std::shared_ptr<base_settings> get_settings() = 0;
+    virtual std::shared_ptr<const base_settings> get_settings() const = 0;
 
     virtual ~spline_settings_mixin();
 };
@@ -94,31 +89,34 @@ struct OTR_SPLINE_EXPORT base_spline : base_spline_, spline_modify_mixin, spline
 
 class OTR_SPLINE_EXPORT spline : public base_spline
 {
+    using f = float;
+
     double bucket_size_coefficient(const QList<QPointF>& points) const;
     void update_interp_data() const;
-    float get_value_internal(int x) const;
+    double get_value_internal(int x) const;
     static bool sort_fn(const QPointF& one, const QPointF& two);
 
-    static QPointF ensure_in_bounds(const QList<QPointF>& points, int i);
+    static void ensure_in_bounds(const QList<QPointF>& points, int i, f& x, f& y);
     static int element_count(const QList<QPointF>& points, double max_input);
 
     void disconnect_signals();
+    void invalidate_settings_();
 
     mutex mtx { mutex::Recursive };
-    std::shared_ptr<spline_detail::settings> s;
-    QMetaObject::Connection conn_changed, conn_maxx, conn_maxy;
-    mutable std::vector<float> data = std::vector<float>(value_count, float(-16));
-    mutable QPointF last_input_value;
+    std::shared_ptr<settings> s;
+    QMetaObject::Connection conn_points, conn_maxx, conn_maxy;
 
     std::shared_ptr<QObject> ctx { std::make_shared<QObject>() };
 
-    // cached s->points
+    mutable QPointF last_input_value{-1, -1};
+    mutable std::vector<float> data = std::vector<float>(value_count, magic_fill_value);
     mutable points_t points;
-
-    static constexpr inline std::size_t value_count = 4096;
-
+    mutable axis_opts::max_clamp clamp_x = axis_opts::x1000, clamp_y = axis_opts::x1000;
     mutable bool activep = false;
-    mutable bool validp = false;
+
+    static constexpr unsigned value_count = 8192;
+    static constexpr float magic_fill_value = -(1 << 24) + 1;
+    static constexpr double c_interp = 5;
 
 public:
     void invalidate_settings();
@@ -134,11 +132,10 @@ public:
     spline(const QString& name, const QString& axis_name, Axis axis);
     ~spline() override;
 
-    spline& operator=(const spline&) = default;
     spline(const spline&) = default;
 
-    float get_value(double x) override;
-    float get_value_no_save(double x) const override;
+    double get_value(double x) const override;
+    double get_value_no_save(double x) const override;
     [[nodiscard]] bool get_last_value(QPointF& point) override;
 
     void add_point(QPointF pt) override;
@@ -147,18 +144,16 @@ public:
     void remove_point(int i) override;
     void clear() override;
 
-    points_t const& get_points() const override;
+    const points_t& get_points() const override;
 
     void set_tracking_active(bool value) override;
     bundle get_bundle();
     void ensure_valid(points_t& in_out) const;
 
-    std::shared_ptr<spline_detail::base_settings> get_settings() override;
-    std::shared_ptr<const spline_detail::base_settings> get_settings() const override;
+    std::shared_ptr<base_settings> get_settings() override;
+    std::shared_ptr<const base_settings> get_settings() const override;
 
     int get_point_count() const override;
-
-    using settings = spline_detail::settings;
 };
 
 } // ns spline_detail

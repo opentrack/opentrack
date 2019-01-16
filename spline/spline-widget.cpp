@@ -1,10 +1,3 @@
-/* Copyright (c) 2012-2016 Stanislaw Halik <sthalik@misaki.pl>
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- */
-
 #include "spline-widget.hpp"
 #include "compat/math.hpp"
 #include "compat/macros.hpp"
@@ -19,7 +12,7 @@
 
 #include <QDebug>
 
-using namespace spline_detail;
+namespace spline_detail {
 
 spline_widget::spline_widget(QWidget *parent) : QWidget(parent)
 {
@@ -37,7 +30,7 @@ spline_widget::~spline_widget()
     }
 }
 
-void spline_widget::setConfig(base_spline* spl)
+void spline_widget::set_config(base_spline* spl)
 {
     if (connection)
     {
@@ -49,13 +42,13 @@ void spline_widget::setConfig(base_spline* spl)
 
     if (spl)
     {
-        update_range();
-
-        std::shared_ptr<base_spline::base_settings> s = spl->get_settings();
-        connection = connect(s.get(), &base_spline::base_settings::recomputed,
+        std::shared_ptr<base_settings> s = spl->get_settings();
+        connection = connect(s.get(), &base_settings::recomputed,
                              this, [this] { reload_spline(); },
                              Qt::QueuedConnection);
     }
+
+    reload_spline();
 }
 
 QColor spline_widget::colorBezier() const
@@ -71,7 +64,7 @@ void spline_widget::setColorBezier(QColor const& color)
 
 void spline_widget::force_redraw()
 {
-    background_img = QPixmap();
+    background_img = {};
     repaint();
 }
 
@@ -146,7 +139,6 @@ void spline_widget::drawBackground()
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
             metrics.horizontalAdvance(text);
 #else
-        // XXX remove after Linux upgrades -sh 20181225
             metrics.width(text);
 #endif
 
@@ -162,7 +154,7 @@ void spline_widget::drawFunction()
     QPainter painter(&spline_img);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    const points_t points = config->get_points();
+    const points_t& points = config->get_points();
 
     if (moving_control_point_idx >= 0 &&
         moving_control_point_idx < points.size())
@@ -170,7 +162,7 @@ void spline_widget::drawFunction()
         const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
         const QPointF prev_ = point_to_pixel({});
         QPointF prev(iround(prev_.x()), iround(prev_.y()));
-        for (auto point : points)
+        for (const auto& point : points)
         {
             const QPointF tmp = point_to_pixel(point);
             drawLine(painter, prev, tmp, pen);
@@ -219,9 +211,9 @@ void spline_widget::drawFunction()
 
     for (double k = 0; k < maxx; k += step*3) // NOLINT
     {
-        const auto next_1 = (double) config->get_value_no_save(k + step*1);
-        const auto next_2 = (double) config->get_value_no_save(k + step*2);
-        const auto next_3 = (double) config->get_value_no_save(k + step*3);
+        const auto next_1 = config->get_value_no_save(k + step*1);
+        const auto next_2 = config->get_value_no_save(k + step*2);
+        const auto next_3 = config->get_value_no_save(k + step*3);
 
         QPointF b(clamp(point_to_pixel({k + step*1, next_1}))),
                 c(clamp(point_to_pixel({k + step*2, next_2}))),
@@ -235,14 +227,14 @@ void spline_widget::drawFunction()
     QPointF prev = point_to_pixel({});
     for (double i = 0; i < maxx; i += step) // NOLINT
     {
-        const auto val = (double) config->get_value_no_save(i);
+        const auto val = config->get_value_no_save(i);
         const QPointF cur = point_to_pixel({i, val});
         painter.drawLine(prev, cur);
         prev = cur;
     }
     {
         const double maxx = config->max_input();
-        const double maxy = double(config->get_value_no_save(maxx));
+        const double maxy = config->get_value_no_save(maxx);
         painter.drawLine(prev, point_to_pixel({ maxx, maxy }));
     }
 #endif
@@ -281,10 +273,12 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     if (background_img.size() != QSize(W, H))
     {
-        background_img = QPixmap(W, H);
+        update_range();
+
+        background_img = { W, H };
         background_img.setDevicePixelRatio(dpr);
-        draw_function = true;
         drawBackground();
+        draw_function = true;
     }
 
     if (draw_function)
@@ -333,7 +327,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
 
     moving_control_point_idx = -1;
 
-    points_t points = config->get_points();
+    const points_t& points = config->get_points();
 
     if (e->button() == Qt::LeftButton)
     {
@@ -409,7 +403,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
     }
 
     const int i = moving_control_point_idx;
-    const points_t points = config->get_points();
+    const points_t& points = config->get_points();
     const int sz = points.size();
 
     if (i >= 0 && i < sz)
@@ -501,7 +495,7 @@ void spline_widget::mouseReleaseEvent(QMouseEvent *e)
 void spline_widget::reload_spline()
 {
     // don't recompute here as the value's about to be recomputed in the callee
-    update_range();
+    background_img = {};
     update();
 }
 
@@ -519,7 +513,7 @@ void spline_widget::show_tooltip(const QPoint& pos, const QPointF& value_)
     double x = value.x(), y = value.y();
 
     if (preview_only)
-        y = (double)config->get_value_no_save(x);
+        y = config->get_value_no_save(x);
 
     const int x_ = iround(x), y_ = iround(y);
 
@@ -563,14 +557,15 @@ void spline_widget::update_range()
     const int mwl = 40, mhl = 20;
     const int mwr = 15, mhr = 35;
 
-    pixel_bounds = QRect(mwl, mhl, (w - mwl - mwr), (h - mhl - mhr));
-    c = { pixel_bounds.width() / config->max_input(), pixel_bounds.height() / config->max_output() };
+    pixel_bounds = { mwl, mhl, (w - mwl - mwr), (h - mhl - mhr) };
+    c = {
+        pixel_bounds.width() / std::fmax(1, config->max_input()),
+        pixel_bounds.height() / std::fmax(1, config->max_output())
+    };
+
     draw_function = true;
-
-    background_img = QPixmap();
-    spline_img = QPixmap();
-
-    repaint();
+    background_img = {};
+    spline_img = {};
 }
 
 bool spline_widget::point_within_pixel(const QPointF& pt, const QPointF& pixel)
@@ -631,7 +626,7 @@ QPointF spline_widget::point_to_pixel(const QPointF& point)
 
 void spline_widget::resizeEvent(QResizeEvent *)
 {
-    update_range();
+    reload_spline();
 }
 
 bool spline_widget::is_on_pt(const QPointF& pos, int* pt)
@@ -643,7 +638,7 @@ bool spline_widget::is_on_pt(const QPointF& pos, int* pt)
         return false;
     }
 
-    const points_t points = config->get_points();
+    const points_t& points = config->get_points();
 
     for (int i = 0; i < points.size(); i++)
     {
@@ -659,3 +654,17 @@ bool spline_widget::is_on_pt(const QPointF& pos, int* pt)
         *pt = -1;
     return false;
 }
+
+void spline_widget::changeEvent(QEvent* e)
+{
+    switch (e->type())
+    {
+    case QEvent::EnabledChange:
+        background_img = {}; spline_img = {};
+        update();
+        break;
+    default:
+        break;
+    }
+}
+} // ns spline_detail
