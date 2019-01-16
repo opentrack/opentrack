@@ -14,7 +14,7 @@ namespace portable
         {
 #ifdef _WIN32
 
-            Sleep(milliseconds);
+            Sleep((unsigned)milliseconds);
 #else
             usleep(unsigned(milliseconds) * 1000U); // takes microseconds
 #endif

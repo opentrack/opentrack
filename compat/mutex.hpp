@@ -16,6 +16,7 @@ public:
     mutex& operator=(const mutex& datum);
     mutex(const mutex& datum);
     explicit mutex(RecursionMode m);
+    mutex() : mutex{NonRecursive} {}
 
     QMutex* operator&() const noexcept;
     explicit operator QMutex*() const noexcept;

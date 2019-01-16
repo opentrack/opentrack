@@ -22,7 +22,11 @@ using namespace options::globals;
 
 group::group(const QString& name) : name(name)
 {
-    if (name == "")
+    constexpr unsigned reserved_buckets = 64;
+    kvs.reserve(reserved_buckets);
+    kvs.max_load_factor(0.4375);
+
+    if (name.isEmpty())
         return;
 
     with_settings_object([&](QSettings& conf) {
@@ -35,7 +39,7 @@ group::group(const QString& name) : name(name)
 
 void group::save() const
 {
-    if (name == "")
+    if (name.isEmpty())
         return;
 
     with_settings_object([&](QSettings& s) {
@@ -63,7 +67,7 @@ QVariant group::get_variant(const QString& name) const
     if (it != kvs.cend())
         return it->second;
 
-    return QVariant();
+    return {};
 }
 
 } // ns options::detail

@@ -20,10 +20,12 @@ accela::accela()
     s.make_splines(spline_rot, spline_pos);
 }
 
-template<int N = 3, typename F>
+template<typename F>
 cc_noinline
 static void do_deltas(const double* deltas, double* output, F&& fun)
 {
+    constexpr unsigned N = 3;
+
     double norm[N];
     double dist = 0;
 
@@ -40,17 +42,17 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
     }
 
     double n = 0;
-    for (unsigned k = 0; k < N; k++)
+    for (unsigned k = 0; k < N; k++) // NOLINT(modernize-loop-convert)
         n += norm[k];
 
     if (n > 1e-6)
     {
         const double ret = 1./n;
-        for (unsigned k = 0; k < N; k++)
+        for (unsigned k = 0; k < N; k++) // NOLINT(modernize-loop-convert)
             norm[k] *= ret;
     }
     else
-        for (unsigned k = 0; k < N; k++)
+        for (unsigned k = 0; k < N; k++) // NOLINT(modernize-loop-convert)
             norm[k] = 0;
 
     for (unsigned k = 0; k < N; k++)

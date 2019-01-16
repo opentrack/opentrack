@@ -35,10 +35,6 @@ void bundle::reload()
     {
         QMutexLocker l(&mtx);
 
-        // XXX what do we do when values are and aren't equal?
-        // see QPointF -sh 20180830
-
-        // XXX we could probably skip assigning to `saved' -sh 20180830
         saved = group(group_name);
         transient = saved;
 

@@ -1,8 +1,8 @@
 #pragma once
 
+#include "spline/spline.hpp"
 #include "options/options.hpp"
 using namespace options;
-#include "spline/spline.hpp"
 
 // ------------------------------------
 // debug knobs
@@ -19,8 +19,7 @@ struct settings_accela : opts
         double x, y;
     };
 
-    static constexpr inline gains const rot_gains[16] =
-    {
+    static constexpr gains const rot_gains[] {
         { 9, 300 },
         { 8, 200 },
         { 5, 100 },
@@ -30,8 +29,7 @@ struct settings_accela : opts
         { .5, .4 },
     };
 
-    static constexpr inline gains const pos_gains[16] =
-    {
+    static constexpr gains const pos_gains[] {
         { 9, 200 },
         { 8, 150 },
         { 7, 110 },

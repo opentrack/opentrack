@@ -63,7 +63,8 @@ protected:
     bundle b;
     QString self_name;
 
-    virtual void store_variant(const QVariant& x) noexcept = 0;
+    virtual void store_variant(QVariant&&) noexcept = 0;
+    virtual void store_variant(const QVariant&) noexcept = 0;
 
     template<typename t>
     void store_(const t& datum)
@@ -89,10 +90,9 @@ public slots:
     OTR_OPTIONS_SLOT(const QList<slider_value>&)
     OTR_OPTIONS_SLOT(const QList<QPointF>&)
 
-    virtual void set_to_default() = 0;
+    virtual void set_to_default() noexcept = 0;
     virtual void notify() const = 0;
-
-    friend void ::options::detail::set_value_to_default(value_* val);
+    virtual QVariant get_variant() const noexcept = 0;
 };
 
 } //ns options

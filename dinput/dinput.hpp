@@ -36,16 +36,6 @@ public:
     di_t& operator=(const di_t&) = default;
 
     diptr operator->() const { return handle; }
-    operator bool() { return handle != nullptr; }
-
-    // for debugging bad usages. must use a dependent name.
-    template<typename t = void>
-    explicit operator void*() const
-    {
-        static_assert(sizeof(t) == -1);
-        static_assert(sizeof(t) == 0);
-
-        return nullptr;
-    }
+    operator bool() const { return handle != nullptr; }
+    operator diptr() const { return handle; }
 };
-

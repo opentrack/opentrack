@@ -17,9 +17,9 @@ key_opts& key_opts::operator=(const key_opts& x)
 {
     if (&x != this)
     {
-        keycode = *x.keycode;
-        guid = *x.guid;
-        button = *x.button;
+        keycode = x.keycode;
+        guid = x.guid;
+        button = x.button;
     }
 
     return *this;
