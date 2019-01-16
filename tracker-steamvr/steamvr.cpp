@@ -170,14 +170,19 @@ tt device_list::vr_init_()
 
 QString device_list::error_string(vr_error_t err)
 {
-    const char* str(vr::VR_GetVRInitErrorAsSymbol(err));
-    return QString(str ? str : "No description");
+    const char* str = vr::VR_GetVRInitErrorAsSymbol(err);
+    const char* desc = vr::VR_GetVRInitErrorAsEnglishDescription(err);
+
+    if (!desc)
+        desc = "No description";
+
+    if (str)
+        return QStringLiteral("%1: %2").arg(str, desc);
+    else
+        return { "Unknown error" };
 }
 
-steamvr::steamvr() : device_index(-1)
-{
-}
-
+steamvr::steamvr() = default;
 steamvr::~steamvr() = default;
 
 module_status steamvr::start_tracker(QFrame*)

@@ -76,7 +76,7 @@ class steamvr : public QObject, public ITracker
     static void matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result);
 
     settings s;
-    int device_index;
+    unsigned device_index{UINT_MAX};
 
 public:
     steamvr();
