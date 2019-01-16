@@ -35,16 +35,15 @@ namespace options::detail {
 
 namespace options {
 
-template<typename u>
+template<typename t>
 class value final : public value_
 {
-    using t = remove_cvref_t<u>;
+    static_assert(std::is_same_v<t, remove_cvref_t<t>>);
     const t def;
-
     using traits = detail::value_traits<t>;
 
     cc_noinline
-    t get() const noexcept
+    auto get() const noexcept
     {
         if (!b->contains(self_name))
             return traits::pass_value(def);
@@ -96,20 +95,20 @@ public:
             emit valueChanged(traits::storage_from_value(get()));
     }
 
-    value<u>& operator=(t&& datum) noexcept
+    auto& operator=(t&& datum) noexcept
     {
         store_variant(traits::qvariant_from_value(traits::pass_value(datum)));
         return *this;
     }
 
-    value<u>& operator=(const t& datum) noexcept
+    auto& operator=(const t& datum) noexcept
     {
         t copy{datum};
         *this = std::move(copy);
         return *this;
     }
 
-    value<u>& operator=(const value<u>& datum) noexcept
+    auto& operator=(const value<t>& datum) noexcept
     {
         *this = *datum;
         return *this;
@@ -122,7 +121,7 @@ public:
     {
     }
 
-    value(const value<u>& other) noexcept : value{other.b, other.self_name, other.def} {}
+    value(const value<t>& other) noexcept : value{other.b, other.self_name, other.def} {}
 
     t default_value() const
     {
@@ -136,21 +135,21 @@ public:
 
     operator t() const { return get(); }
 
-    template<typename w>
-    explicit cc_forceinline operator w() const { return to<w>(); }
+    template<typename u>
+    explicit cc_forceinline operator u() const { return to<u>(); }
 
     auto operator->() const noexcept
     {
-        return detail::dereference_wrapper<t>{get()};
+        return detail::dereference_wrapper{get()};
     }
 
-    cc_forceinline t operator()() const noexcept { return get(); }
-    cc_forceinline t operator*() const noexcept { return get(); }
+    cc_forceinline auto operator()() const noexcept { return get(); }
+    cc_forceinline auto operator*() const noexcept { return get(); }
 
-    template<typename w>
-    w to() const noexcept
+    template<typename u>
+    u to() const noexcept
     {
-        return static_cast<w>(get());
+        return static_cast<u>(get());
     }
 };
 
