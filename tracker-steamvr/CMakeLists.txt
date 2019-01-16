@@ -21,8 +21,13 @@ if(WIN32)
     set(steamvr-lib "openvr_api.lib")
 endif()
 
-if(APPLE AND NOT opentrack-64bit)
-    set(steamvr-dir "osx32")
+if(APPLE)
+    # expect user compiled it as a non-framework version
+    if(opentrack-64bit)
+        set(steamvr-dir "osx64")
+    else()
+        set(steamvr-dir "osx32")
+    endif()
     set(steamvr-dll "libopenvr_api.dylib")
 endif()
 
