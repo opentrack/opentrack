@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Stanislaw Halik <sthalik@misaki.pl>
+/* Copyright (c) 2015, 2019 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -10,10 +10,10 @@
 #include "ui_ftnoir_mousecontrols.h"
 
 #include "mouse-settings.hpp"
-#include "compat/tr.hpp"
+#include "api/plugin-api.hpp"
 
 #include <QDebug>
-#include "api/plugin-api.hpp"
+
 using namespace options;
 
 class mouse : public TR, public IProtocol
@@ -37,7 +37,7 @@ class MOUSEControls: public IProtocolDialog
 {
     Q_OBJECT
 
-    Ui::UICMOUSEControls ui;
+    Ui::UI_mouse ui;
     mouse_settings s;
 
 private slots:
@@ -46,7 +46,7 @@ private slots:
 
 public:
     MOUSEControls();
-    void register_protocol(IProtocol *) override {}
+    void register_protocol(IProtocol*) override {}
     void unregister_protocol() override {}
 };
 

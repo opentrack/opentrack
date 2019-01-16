@@ -10,13 +10,13 @@
 #include "api/plugin-api.hpp"
 #include "compat/macros.hpp"
 
-#include <windows.h>
+#include <optional>
 
-enum state : signed char
+enum class state : int
 {
-    state_notent = -1,
-    state_fail = -2,
-    state_success = 1,
+    notent = -1,
+    fail = -2,
+    success = 1,
 };
 
 class handle final
@@ -26,23 +26,22 @@ public:
     static const unsigned char axis_ids[axis_count];
 
 private:
-    state joy_state;
-    LONG axis_min[6] {};
-    LONG axis_max[6] {};
-
-    void init();
+    state joy_state = state::notent;
+    long axis_min[6] {};
+    long axis_max[6] {};
+    [[nodiscard]] bool init();
 public:
     handle();
     ~handle();
-    state get_state() { return joy_state; }
-    LONG to_axis_value(unsigned axis_id, double val);
+    state get_state() const { return joy_state; }
+    [[nodiscard]] bool to_axis_value(unsigned axis_id, double val, int& ret) const;
 };
 
 class vjoystick_proto : public TR, public IProtocol
 {
     Q_OBJECT
 
-    handle h;
+    std::optional<handle> h;
 public:
     vjoystick_proto();
     ~vjoystick_proto() override;

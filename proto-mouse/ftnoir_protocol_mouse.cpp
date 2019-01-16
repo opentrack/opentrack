@@ -9,13 +9,10 @@
 
 #include "api/plugin-api.hpp"
 #include "compat/math.hpp"
+
 #include <cmath>
 #include <algorithm>
 #include <windows.h>
-
-#ifndef MOUSEEVENTF_MOVE_NOCOALESCE
-#   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000
-#endif
 
 static const double invert[] = {
     1., 1., 1.,
@@ -24,8 +21,8 @@ static const double invert[] = {
 
 void mouse::pose(const double* headpose)
 {
-    const int axis_x = s.Mouse_X - 1;
-    const int axis_y = s.Mouse_Y - 1;
+    const int axis_x = s.mouse_x - 1;
+    const int axis_y = s.mouse_y - 1;
 
     int mouse_x = 0, mouse_y = 0;
 
@@ -42,18 +39,38 @@ void mouse::pose(const double* headpose)
     const int dx = get_delta(mouse_x, last_x),
               dy = get_delta(mouse_y, last_y);
 
+    last_x = mouse_x; last_y = mouse_y;
+
     if (dx || dy)
     {
-        INPUT input;
-        input.type = INPUT_MOUSE;
-        MOUSEINPUT& mi = input.mi;
-        mi = {};
-        mi.dx = dx;
-        mi.dy = dy;
-        mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_MOVE_NOCOALESCE;
+        switch (s.input_method)
+        {
+        default:
+            eval_once(qDebug() << "proto/mouse: invalid input method");
+            [[fallthrough]];
+        case input_direct:
+        {
+            INPUT input;
+            input.type = INPUT_MOUSE;
+            MOUSEINPUT& mi = input.mi;
+            mi = {};
+            mi.dx = dx;
+            mi.dy = dy;
+            mi.dwFlags = MOUSEEVENTF_MOVE;
 
-        (void)SendInput(1, &input, sizeof(input));
-        last_x = mouse_x; last_y = mouse_y;
+            (void)SendInput(1, &input, sizeof(input));
+
+            break;
+        }
+        case input_legacy:
+        {
+            POINT pt{};
+            (void)GetCursorPos(&pt);
+            (void)SetCursorPos(pt.x + dx, pt.y + dy);
+
+            break;
+        }
+        }
     }
 }
 

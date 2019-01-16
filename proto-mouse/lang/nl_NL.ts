@@ -2,21 +2,13 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nl_NL">
 <context>
-    <name>UICMOUSEControls</name>
+    <name>UI_mouse</name>
     <message>
-        <source>Mouse protocol settings</source>
+        <source>Mouse protocol</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Map mouse X to:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Map mouse Y to:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Select Number</source>
+        <source>X axis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -48,11 +40,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>X axis sensitivity</source>
+        <source>Y axis</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Y axis sensitivity</source>
+        <source>Sensitivity</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Method</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Direct input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Legacy</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

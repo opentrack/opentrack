@@ -39,7 +39,7 @@ const unsigned char handle::axis_ids[6] =
 //    HID_USAGE_WHL,
 };
 
-static const double val_minmax[6] =
+static constexpr double val_minmax[6] =
 {
     50,
     50,
@@ -49,56 +49,54 @@ static const double val_minmax[6] =
     180
 };
 
-void handle::init()
+bool handle::init()
 {
+    if (!AcquireVJD(OPENTRACK_VJOYSTICK_ID))
+        return false;
+
+    unsigned cnt = 0;
+    bool status = true;
+
     for (unsigned i = 0; i < axis_count; i++)
     {
         if (!GetVJDAxisExist(OPENTRACK_VJOYSTICK_ID, axis_ids[i]))
-        {
-            // avoid floating point division by zero
-            axis_min[i] = 0;
-            axis_max[i] = 1;
             continue;
-        }
-        GetVJDAxisMin(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_min[i]);
-        GetVJDAxisMax(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_max[i]);
+        cnt++;
+        status &= !!GetVJDAxisMin(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_min[i]);
+        status &= !!GetVJDAxisMax(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_max[i]);
     }
-    (void) ResetVJD(OPENTRACK_VJOYSTICK_ID);
+    //(void)ResetVJD(OPENTRACK_VJOYSTICK_ID);
+
+    return status && cnt;
 }
 
 handle::handle()
 {
-    const bool ret = AcquireVJD(OPENTRACK_VJOYSTICK_ID);
-    if (!ret)
-    {
-        if (!isVJDExists(OPENTRACK_VJOYSTICK_ID))
-            joy_state = state_notent;
-        else
-            joy_state = state_fail;
-    }
+    if (!isVJDExists(OPENTRACK_VJOYSTICK_ID))
+        joy_state = state::notent;
+    else if (init())
+        joy_state = state::success;
     else
-    {
-        joy_state = state_success;
-        init();
-    }
+        joy_state = state::fail;
 }
 
 handle::~handle()
 {
-    if (joy_state == state_success)
-    {
-        (void) RelinquishVJD(OPENTRACK_VJOYSTICK_ID);
-        joy_state = state_fail;
-    }
+    if (joy_state == state::success)
+        RelinquishVJD(OPENTRACK_VJOYSTICK_ID);
 }
 
-LONG handle::to_axis_value(unsigned axis_id, double val)
+bool handle::to_axis_value(unsigned axis_id, double val, int& ret) const
 {
+    if (!axis_min[axis_id] && !axis_max[axis_id])
+        return false;
+
     const double minmax = val_minmax[axis_id];
     const double min = axis_min[axis_id];
     const double max = axis_max[axis_id];
 
-    return LONG(clamp((val+minmax) * max / (2*minmax) - min, min, max));
+    ret = int(clamp((val+minmax) * max / (2*minmax) - min, min, max));
+    return true;
 }
 
 vjoystick_proto::vjoystick_proto() = default;
@@ -106,7 +104,9 @@ vjoystick_proto::~vjoystick_proto() = default;
 
 module_status vjoystick_proto::initialize()
 {
-    if (h.get_state() != state_success)
+    h = handle{};
+
+    if (h->get_state() != state::success)
     {
         QMessageBox msgbox;
         msgbox.setIcon(QMessageBox::Critical);
@@ -131,27 +131,29 @@ module_status vjoystick_proto::initialize()
         }
     }
 
-    switch (h.get_state())
+    switch (h->get_state())
     {
-    case state_notent:
-        return error(tr("vjoystick not installed or disabled"));
-    case state_fail:
-        return error(tr("can't initialize vjoystick"));
-    case state_success:
-        return status_ok();
     default:
-        return error(tr("unknown error"));
+    case state::notent:
+        return error(tr("vjoystick not installed or disabled"));
+    case state::fail:
+        return error(tr("can't initialize vjoystick"));
+    case state::success:
+        return status_ok();
     }
 }
 
 void vjoystick_proto::pose(const double *pose)
 {
-    if (h.get_state() != state_success)
+    if (h->get_state() != state::success)
         return;
 
     for (unsigned i = 0; i < handle::axis_count; i++)
     {
-        SetAxis(h.to_axis_value(i, pose[i]), OPENTRACK_VJOYSTICK_ID, handle::axis_ids[i]);
+        int val;
+        if (!h->to_axis_value(i, pose[i], val))
+            continue;
+        SetAxis(val, OPENTRACK_VJOYSTICK_ID, handle::axis_ids[i]);
     }
 }
 

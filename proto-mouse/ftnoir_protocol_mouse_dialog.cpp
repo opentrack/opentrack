@@ -3,19 +3,25 @@
 
 MOUSEControls::MOUSEControls()
 {
-    ui.setupUi( this );
+    ui.setupUi(this);
 
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &MOUSEControls::doOK);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &MOUSEControls::doCancel);
 
-    tie_setting(s.Mouse_X, ui.cbxSelectMouse_X);
-    tie_setting(s.Mouse_Y, ui.cbxSelectMouse_Y);
+    tie_setting(s.mouse_x, ui.axis_x);
+    tie_setting(s.mouse_y, ui.axis_y);
 
     tie_setting(s.sensitivity_x, ui.sensitivity_x);
     tie_setting(s.sensitivity_y, ui.sensitivity_y);
+
+    const int data[] = { input_direct, input_legacy };
+    for (unsigned k = 0; k < std::size(data); k++)
+        ui.input_method->setItemData(k, data[k]);
+    tie_setting(s.input_method, ui.input_method);
 }
 
-void MOUSEControls::doOK() {
+void MOUSEControls::doOK()
+{
     s.b->save();
     close();
 }
@@ -24,4 +30,3 @@ void MOUSEControls::doCancel()
 {
     close();
 }
-

@@ -46,10 +46,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>unknown error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Virtual joystick</source>
         <translation type="unfinished"></translation>
     </message>
