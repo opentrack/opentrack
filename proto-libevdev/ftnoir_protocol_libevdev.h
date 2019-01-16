@@ -21,16 +21,9 @@ class evdev : public TR, public IProtocol
 public:
     evdev();
     ~evdev() override;
-    bool correct() {
-        return dev != NULL;
-    }
-    void pose(const double *headpose);
-
-    QString game_name()
-    {
-        return tr("Virtual joystick for Linux");
-    }
-
+    bool correct() override { return dev != NULL; }
+    void pose(const double *headpose) override;
+    QString game_name() override { return tr("Virtual joystick for Linux"); }
     module_status initialize() override;
 
 private:
@@ -60,6 +53,6 @@ class evdevDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("libevdev joystick receiver"); }
-    QIcon icon() { return QIcon(":/images/linux.png"); }
+    QString name() override { return tr("libevdev joystick receiver"); }
+    QIcon icon() override { return QIcon(":/images/linux.png"); }
 };
