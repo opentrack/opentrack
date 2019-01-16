@@ -122,6 +122,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>%1°</source>
         <translation></translation>
     </message>
+    <message>
+        <source>%1 cm</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>options_dialog</name>

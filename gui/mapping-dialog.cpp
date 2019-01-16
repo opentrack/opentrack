@@ -130,9 +130,9 @@ void mapping_dialog::load()
         auto update_xstep = [&qfc](int clamp_x) {
             int value;
 
-            if (clamp_x <= c::r20)
+            if (clamp_x <= c::r30)
                 value = 1;
-            else if (clamp_x <= c::r30)
+            else if (clamp_x <= c::r45)
                 value = 5;
             else
                 value = 10;
@@ -146,7 +146,7 @@ void mapping_dialog::load()
             {
             default:
             case c::o_r180:
-                value = 15; break;
+                value = 20; break;
             case c::o_r90:
                 value = 10; break;
             case c::o_t75:
