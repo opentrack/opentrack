@@ -20,7 +20,7 @@ endfunction()
 set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 set(opentrack_maintainer-mode TRUE CACHE INTERNAL "" FORCE)
 
-setq(Qt5_DIR "../qt-5.11.2/lib/cmake/Qt5")
+setq(Qt5_DIR "../qt-5.12.0/lib/cmake/Qt5")
 setq(OpenCV_DIR "opencv/build")
 
 setq(SDK_ARUCO_LIBPATH "aruco/build/src/aruco.lib")
