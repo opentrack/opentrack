@@ -20,10 +20,8 @@
 
 #include "api/plugin-api.hpp"
 
-#include <cstdlib>
 #include <cmath>
-#include <type_traits>
-#include <algorithm>
+#include <cstdlib>
 
 #include <QMessageBox>
 #include <QDebug>
@@ -205,18 +203,16 @@ module_status steamvr::start_tracker(QFrame*)
         if (sz == 0)
             err = tr("No HMD connected");
 
-        device_index = -1;
-
         for (const device_spec& spec : specs)
         {
             if (serial == "" || serial == spec.to_string())
             {
-                device_index = int(spec.k);
+                device_index = spec.k;
                 break;
             }
         }
 
-        if (device_index == -1 && err.isEmpty())
+        if (device_index == UINT_MAX && err.isEmpty())
             err = tr("Can't find device with that serial");
 
         if (err.isEmpty())
@@ -228,7 +224,7 @@ module_status steamvr::start_tracker(QFrame*)
 
 void steamvr::data(double* data)
 {
-    if (device_index != -1)
+    if (device_index != UINT_MAX)
     {
         auto [ok, pose] = device_list::get_pose(device_index);
         if (ok)
@@ -274,15 +270,11 @@ bool steamvr::center()
 
 void steamvr::matrix_to_euler(double& yaw, double& pitch, double& roll, const vr::HmdMatrix34_t& result)
 {
-    using std::atan2;
-    using std::sqrt;
-    using std::asin;
-
     using d = double;
 
-    yaw = atan2(d(result.m[2][0]), d(result.m[0][0]));
-    pitch = atan2(-d(result.m[1][2]), d(result.m[1][1]));
-    roll = asin(d(result.m[1][0]));
+    yaw = std::atan2(d(result.m[2][0]), d(result.m[0][0]));
+    pitch = std::atan2(-d(result.m[1][2]), d(result.m[1][1]));
+    roll = std::asin(d(result.m[1][0]));
 }
 
 steamvr_dialog::steamvr_dialog()

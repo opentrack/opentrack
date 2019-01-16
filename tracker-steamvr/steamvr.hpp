@@ -1,25 +1,19 @@
 #pragma once
-#include "api/plugin-api.hpp"
+
 #include "ui_dialog.h"
+#include "api/plugin-api.hpp"
 #include "options/options.hpp"
 
-#include "compat/euler.hpp"
-
-#include <openvr.h>
-
-#include <cmath>
-#include <memory>
 #include <tuple>
+#include <climits>
 
 #include <QString>
 #include <QMutex>
-#include <QMutexLocker>
 #include <QList>
 
-using namespace options;
+#include <openvr.h>
 
-using rmat = euler::rmat;
-using euler_t = euler::euler_t;
+using namespace options;
 
 using vr_error_t = vr::EVRInitError;
 using vr_t = vr::IVRSystem*;
