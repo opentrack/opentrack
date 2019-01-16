@@ -1,10 +1,9 @@
 #include "dinput.hpp"
-#include "compat/spinlock.hpp"
 #include <QDebug>
 
 int di_t::refcnt{0};
-std::atomic_flag di_t::lock = ATOMIC_FLAG_INIT;
 diptr di_t::handle;
+QMutex di_t::lock;
 
 diptr di_t::init_di_()
 {
@@ -33,7 +32,7 @@ di_t::di_t()
 
 void di_t::ref_di()
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
 
     if (!handle)
         handle = init_di_();
@@ -43,7 +42,7 @@ void di_t::ref_di()
 
 void di_t::unref_di()
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
 
     const int refcnt_ = --refcnt;
 

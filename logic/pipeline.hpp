@@ -7,7 +7,6 @@
 #include "mappings.hpp"
 #include "compat/euler.hpp"
 #include "compat/enum-operators.hpp"
-#include "compat/spinlock.hpp"
 #include "runtime-libraries.hpp"
 #include "extensions.hpp"
 
@@ -70,7 +69,7 @@ enum bit_flags : unsigned {
 struct OTR_LOGIC_EXPORT bits
 {
     bit_flags flags{0};
-    std::atomic_flag lock = ATOMIC_FLAG_INIT;
+    QMutex lock;
 
     void set(bit_flags flag, bool val);
     void negate(bit_flags flag);

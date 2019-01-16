@@ -601,7 +601,7 @@ void pipeline::toggle_enabled() { b.negate(f_enabled_p); }
 
 void bits::set(bit_flags flag, bool val)
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
 
     flags &= ~flag;
     if (val)
@@ -610,14 +610,14 @@ void bits::set(bit_flags flag, bool val)
 
 void bits::negate(bit_flags flag)
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
 
     flags ^= flag;
 }
 
 bool bits::get(bit_flags flag)
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
 
     return !!(flags & flag);
 }

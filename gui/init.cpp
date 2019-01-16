@@ -27,6 +27,7 @@ using namespace options;
 #include <QFileDialog>
 #include <QString>
 #include <QOperatingSystemVersion>
+#include <QMutex>
 
 #include <QDebug>
 
@@ -101,7 +102,6 @@ static void set_qt_style()
 #endif
 }
 
-#include "compat/spinlock.hpp"
 #include <string>
 
 #ifdef _WIN32
@@ -118,8 +118,8 @@ static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QS
 
     if (IsDebuggerPresent())
     {
-        static std::atomic_flag lock = ATOMIC_FLAG_INIT;
-        spinlock_guard l(lock);
+        static QMutex lock;
+        QMutexLocker l(&lock);
 
         const wchar_t* const bytes = (const wchar_t*)msg.utf16();
 

@@ -1,11 +1,10 @@
 #include "check-visible.hpp"
 
+#include <QMutex>
 #include <QWidget>
 #include <QDebug>
 
-#include "spinlock.hpp"
-
-static std::atomic_flag lock = ATOMIC_FLAG_INIT;
+static QMutex lock;
 static bool visible = true;
 
 #if defined _WIN32
@@ -22,7 +21,7 @@ constexpr int invisible_timeout = 250;
 
 void set_is_visible(const QWidget& w, bool force)
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
 
     if (w.isHidden() || w.windowState() & Qt::WindowMinimized)
     {
@@ -78,12 +77,12 @@ void set_is_visible(const QWidget& w, bool)
 
 bool check_is_visible()
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
     return visible;
 }
 
 void force_is_visible(bool value)
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
     visible = value;
 }

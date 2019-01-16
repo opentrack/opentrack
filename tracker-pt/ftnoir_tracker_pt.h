@@ -75,8 +75,7 @@ private:
 
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success { false };
-    mutable std::atomic_flag center_flag = ATOMIC_FLAG_INIT;
-    mutable std::atomic_flag data_lock = ATOMIC_FLAG_INIT;
+    mutable QMutex center_lock, data_lock;
 };
 
 } // ns pt_impl

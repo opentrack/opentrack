@@ -8,9 +8,9 @@
 
 #pragma once
 
-#include "export.hpp"
+#include <QMutex>
 
-#include <atomic>
+#include "export.hpp"
 
 #undef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION 0x800
@@ -26,7 +26,7 @@ class OTR_DINPUT_EXPORT di_t final
 
     static diptr handle;
     static int refcnt;
-    static std::atomic_flag lock;
+    static QMutex lock;
     static diptr init_di_();
 
 public:

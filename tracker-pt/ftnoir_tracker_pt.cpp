@@ -10,11 +10,8 @@
 #include "cv/video-widget.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
-#include "compat/spinlock.hpp"
 
 #include "pt-api.hpp"
-
-#include <cmath>
 
 #include <QHBoxLayout>
 #include <QDebug>
@@ -77,7 +74,7 @@ void Tracker_PT::run()
             Affine X_CM;
 
             {
-                spinlock_guard l(center_flag);
+                QMutexLocker l(&center_lock);
 
                 if (success)
                 {
@@ -88,7 +85,7 @@ void Tracker_PT::run()
                     ever_success = true;
                 }
 
-                spinlock_guard l2(data_lock);
+                QMutexLocker l2(&data_lock);
                 X_CM = point_tracker.pose();
             }
 
@@ -151,7 +148,7 @@ void Tracker_PT::data(double *data)
     {
         Affine X_CM;
         {
-            spinlock_guard l(&data_lock);
+            QMutexLocker l(&data_lock);
             X_CM = point_tracker.pose();
         }
 
@@ -189,7 +186,7 @@ void Tracker_PT::data(double *data)
 
 bool Tracker_PT::center()
 {
-    spinlock_guard l(center_flag);
+    QMutexLocker l(&center_lock);
 
     point_tracker.reset_state();
     return false;
@@ -211,7 +208,7 @@ bool Tracker_PT::get_cam_info(pt_camera_info& info)
 
 Affine Tracker_PT::pose() const
 {
-    spinlock_guard l(data_lock);
+    QMutexLocker l(&data_lock);
     return point_tracker.pose();
 }
 

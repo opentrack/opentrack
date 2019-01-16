@@ -12,7 +12,6 @@
 
 #include "ui_ftnoir_ftncontrols.h"
 #include "api/plugin-api.hpp"
-#include "compat/spinlock.hpp"
 #include "options/options.hpp"
 using namespace options;
 #include <QUdpSocket>
@@ -42,7 +41,7 @@ private:
     QUdpSocket outSocket;
     settings s;
 
-    mutable std::atomic_flag spl = ATOMIC_FLAG_INIT;
+    mutable QMutex lock;
 
     QHostAddress dest_ip { 127u << 24 | 1u };
     unsigned short dest_port = 65535;
