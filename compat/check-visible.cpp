@@ -38,15 +38,15 @@ void set_is_visible(const QWidget& w, bool force)
 
     if (RECT r; GetWindowRect(hwnd, &r))
     {
-        const int x = r.left+1, y = r.top+1;
-        const int w = r.right - x - 1, h = r.bottom - y - 1;
+        const int x = r.left, y = r.top;
+        const int w = r.right - x, h = r.bottom - y;
 
         const POINT xs[] {
-            { x + w, y },
-            { x, y + h },
-            { x + w, h + y },
-            { x, y },
-            { x + w/2, y + h/2 },
+            { x + w - 1, y + 1     },
+            { x + 1,     y + h - 1 },
+            { x + w - 1, y + h - 1 },
+            { x + 1,     y + 1     },
+            { x + w/2,   y + h/2   },
         };
 
         visible = false;
@@ -54,6 +54,7 @@ void set_is_visible(const QWidget& w, bool force)
         for (const POINT& pt : xs)
             if (WindowFromPoint(pt) == hwnd)
             {
+
                 visible = true;
                 break;
             }
@@ -69,7 +70,7 @@ void set_is_visible(const QWidget& w, bool force)
 
 void set_is_visible(const QWidget& w, bool)
 {
-    spinlock_guard l(lock);
+    QMutexLocker l(&lock);
     visible = !(w.isHidden() || w.windowState() & Qt::WindowMinimized);
 }
 
