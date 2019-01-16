@@ -47,7 +47,7 @@ public:
 
 struct pose_transform final : QThread
 {
-    pose_transform(QWidget* dst);
+    pose_transform(QWidget* dst, double device_pixel_ratio);
     ~pose_transform() override;
 
     void rotate_async(double xAngle, double yAngle, double zAngle, double x, double y, double z);
@@ -63,8 +63,7 @@ struct pose_transform final : QThread
     void project_quad_texture();
     std::pair<vec2i, vec2i> get_bounds(const vec2& size);
 
-    template<typename F>
-    inline void with_image_lock(F&& fun);
+    template<typename F> inline void with_image_lock(F&& fun);
 
     rmat rotation, rotation_;
     vec3 translation, translation_;
@@ -73,8 +72,10 @@ struct pose_transform final : QThread
 
     QWidget* dst;
 
-    QImage front, back;
-    QImage image, image2;
+    QImage front{QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)};
+    QImage back{QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)};
+    QImage image{w, h, QImage::Format_ARGB32};
+    QImage image2{w, h, QImage::Format_ARGB32};
 
     struct uv_ // NOLINT(cppcoreguidelines-pro-type-member-init)
     {
@@ -83,7 +84,7 @@ struct pose_transform final : QThread
     };
 
     std::vector<uv_> uv_vec;
-    std::atomic<bool> fresh;
+    std::atomic<bool> fresh{false};
 
     static constexpr int w = 320, h = 240;
 };
@@ -103,4 +104,4 @@ private:
 
 }
 
-using pose_widget_impl::pose_widget;
+using pose_widget = pose_widget_impl::pose_widget;

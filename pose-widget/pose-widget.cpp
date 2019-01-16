@@ -24,14 +24,11 @@
 
 using namespace pose_widget_impl;
 
-pose_transform::pose_transform(QWidget* dst) :
-    dst(dst),
-    front(QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)),
-    back(QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)),
-    image(w, h, QImage::Format_ARGB32),
-    image2(w, h, QImage::Format_ARGB32),
-    fresh(false)
+pose_transform::pose_transform(QWidget* dst, double dpr) : dst(dst)
 {
+    for (QImage* img : { &image, &image2, &front, &back })
+        img->setDevicePixelRatio(dpr);
+
     image.fill(Qt::transparent);
     image2.fill(Qt::transparent);
 }
@@ -79,7 +76,7 @@ end:
     }
 }
 
-pose_widget::pose_widget(QWidget* parent) : QWidget(parent), xform(this)
+pose_widget::pose_widget(QWidget* parent) : QWidget(parent), xform{this, devicePixelRatioF()}
 {
     rotate_sync(0,0,0, 0,0,0);
 }
