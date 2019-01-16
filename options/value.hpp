@@ -96,15 +96,27 @@ public:
             emit valueChanged(traits::storage_from_value(get()));
     }
 
-    value<u>& operator=(const t& datum) noexcept
+    value<u>& operator=(t&& datum) noexcept
     {
         store_variant(traits::qvariant_from_value(traits::pass_value(datum)));
-
         return *this;
     }
 
-    static constexpr inline Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
-    static constexpr inline Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
+    value<u>& operator=(const t& datum) noexcept
+    {
+        t copy{datum};
+        *this = std::move(copy);
+        return *this;
+    }
+
+    value<u>& operator=(const value<u>& datum) noexcept
+    {
+        *this = *datum;
+        return *this;
+    }
+
+    static constexpr Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
+    static constexpr Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
     value(bundle b, const QString& name, t def) noexcept : value_(b, name), def(std::move(def))
     {
@@ -122,7 +134,7 @@ public:
         *this = def;
     }
 
-    operator t() const { return get(); } // NOLINT
+    operator t() const { return get(); }
 
     template<typename w>
     explicit cc_forceinline operator w() const { return to<w>(); }
