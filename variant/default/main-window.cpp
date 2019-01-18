@@ -148,7 +148,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 
             for (list& type : types)
             {
-                list& t = type;
+                list t = type;
                 tie_setting(t.place, t.input,
                             [t](const QString& name) {
                                 auto [ptr, idx] = module_by_name(name, t.libs);
