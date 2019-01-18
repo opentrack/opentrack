@@ -234,7 +234,7 @@ private:
     dylib_list filter(dylib::Type t)
     {
         QList<std::shared_ptr<dylib>> ret;
-        for (auto x : module_list)
+        for (const auto& x : module_list)
             if (x->type == t)
                 ret.push_back(x);
 
@@ -243,7 +243,7 @@ private:
 };
 
 template<typename t>
-static inline std::shared_ptr<t> make_dylib_instance(const std::shared_ptr<dylib>& lib)
+std::shared_ptr<t> make_dylib_instance(const std::shared_ptr<dylib>& lib)
 {
     std::shared_ptr<t> ret;
     if (lib != nullptr && lib->Constructor)
