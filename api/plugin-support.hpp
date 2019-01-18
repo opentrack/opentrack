@@ -43,8 +43,8 @@ struct dylib final
         Filter = 0xdeadbabeu,
         Tracker = 0xcafebeefu,
         Protocol = 0xdeadf00du,
-        Extension = 0xdeadf001u,
-        Invalid = 0xcafebabeu,
+        Extension = 0xcafebabeu,
+        Invalid = (unsigned)-1,
     };
 
     dylib(const QString& filename_, Type t) :
