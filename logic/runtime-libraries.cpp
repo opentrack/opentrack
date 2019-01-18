@@ -41,7 +41,7 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
         goto end;
     }
 
-    if (f && !pFilter)
+    if (f && f->Constructor && !pFilter)
     {
         qDebug() << "filter load failure";
         goto end;

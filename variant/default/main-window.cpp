@@ -64,7 +64,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 
     // fill dylib comboboxen
     {
-        modules.filters().push_front(std::make_shared<dylib>(QString(), dylib::Filter));
+        modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
 
         for (dylib_ptr& x : modules.trackers())
             ui.iconcomboTrackerSource->addItem(x->icon, x->name, x->module_name);

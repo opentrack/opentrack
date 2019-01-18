@@ -183,7 +183,7 @@ private:
                 }
             }
         }
-        return QString();
+        return {""};
     }
 
     bool check(bool fail)
