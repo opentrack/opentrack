@@ -48,15 +48,11 @@ struct dylib final
     };
 
     dylib(const QString& filename_, Type t) :
-        type(Invalid),
         full_filename(filename_),
-        module_name(trim_filename(filename_)),
-        Dialog(nullptr),
-        Constructor(nullptr),
-        Meta(nullptr)
+        module_name(trim_filename(filename_))
     {
         // otherwise dlopen opens the calling executable
-        if (filename_.size() == 0 || module_name.size() == 0)
+        if (filename_.isEmpty() || module_name.isEmpty())
             return;
 
         handle.setFileName(filename_);
@@ -136,16 +132,16 @@ struct dylib final
         return ret;
     }
 
-    Type type;
+    Type type{Invalid};
     QString full_filename;
     QString module_name;
 
     QIcon icon;
     QString name;
 
-    module_ctor_t Dialog;
-    module_ctor_t Constructor;
-    module_metadata_t Meta;
+    module_ctor_t Dialog{nullptr};
+    module_ctor_t Constructor{nullptr};
+    module_metadata_t Meta{nullptr};
 private:
     QLibrary handle;
 
