@@ -26,7 +26,7 @@ public:
     std::shared_ptr<IProtocol> pProtocol;
 
     runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f);
-    runtime_libraries() : pTracker(nullptr), pFilter(nullptr), pProtocol(nullptr), correct(false) {}
+    runtime_libraries() = default;
 
     bool correct = false;
 };
