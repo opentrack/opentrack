@@ -1,7 +1,5 @@
 include_guard(GLOBAL)
 
-add_custom_target(moc COMMENT "Qt temporary files")
-
 set(opentrack-perms-file WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 set(opentrack-perms-dir WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
 set(opentrack-perms-exec "${opentrack-perms-dir}")
@@ -144,14 +142,6 @@ function(otr_module n_)
         otr_qt(${n})
     else()
         set(arg_NO-COMPAT TRUE)
-    endif()
-
-    if(NOT arg_NO-QT)
-        set_property(SOURCE ${${n}-moc} ${${n}-uih} PROPERTY GENERATED TRUE)
-        add_custom_target(moc-${n} DEPENDS ${${n}-moc} ${${n}-uih} ${${n}-rc} COMMENT "")
-        set_property(TARGET moc-${n} PROPERTY GENERATED TRUE)
-        set_property(TARGET moc-${n} PROPERTY FOLDER "moc")
-        add_dependencies(moc "moc-${n}")
     endif()
 
     if(NOT WIN32)
