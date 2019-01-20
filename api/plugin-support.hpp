@@ -40,10 +40,10 @@ struct dylib final
 {
     enum Type : unsigned
     {
-        Filter = 0xdeadbabeu,
-        Tracker = 0xcafebeefu,
-        Protocol = 0xdeadf00du,
-        Extension = 0xcafebabeu,
+        Filter = 0xdeadbabe,
+        Tracker = 0xcafebeef,
+        Protocol = 0xdeadf00d,
+        Extension = 0xcafebabe,
         Invalid = (unsigned)-1,
     };
 
@@ -96,7 +96,7 @@ struct dylib final
 
         using str = QLatin1String;
 
-        static const struct filter_ {
+        const struct filter_ {
             Type type;
             QLatin1String glob;
         } filters[] = {
@@ -164,7 +164,7 @@ private:
                 in = in.mid(pfx_len);
                 in = in.left(in.size() - rst_len);
 
-                static constexpr const char* const names[] =
+                const char* const names[] =
                 {
                     "opentrack-tracker-",
                     "opentrack-proto-",
@@ -218,6 +218,7 @@ struct Modules final
     dylib_list& trackers() { return tracker_modules; }
     dylib_list& protocols() { return protocol_modules; }
     dylib_list& extensions() { return extension_modules; }
+
 private:
     dylib_list module_list;
     dylib_list filter_modules;
