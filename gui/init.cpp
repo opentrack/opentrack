@@ -238,7 +238,7 @@ static int run_window(std::unique_ptr<QWidget> main_window)
     return status;
 }
 
-int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_window)
+int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> const& make_main_window)
 {
     set_fp_mask();
 #ifdef OTR_X11_THREADS
@@ -286,7 +286,7 @@ int otr_main(int argc, char** argv, std::function<QWidget*()> const& make_main_w
         }
     }
 
-    int ret = run_window(std::unique_ptr<QWidget>(make_main_window()));
+    int ret = run_window(make_main_window());
 
 #if 0
     // msvc crashes in Qt plugin system's dtor

@@ -11,7 +11,7 @@
 
 int main(int argc, char** argv)
 {
-    return run_application(argc, argv, [] { return new main_window; });
+    return run_application(argc, argv, [] { return std::make_unique<main_window>(); });
 }
 
 #if defined _MSC_VER
