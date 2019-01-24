@@ -48,3 +48,9 @@
 //#   define FULL_BARRIER() __sync_synchronize()
 #   define COMPILER_BARRIER() asm volatile("" ::: "memory")
 #endif
+
+#ifdef _MSC_VER
+#   define unreachable() __assume(0)
+#else
+#   define unreachable() __builtin_unreachable()
+#endif
