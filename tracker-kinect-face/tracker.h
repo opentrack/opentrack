@@ -32,10 +32,9 @@ public:
 	~KinectFaceTracker() override;
 	module_status start_tracker(QFrame *) override;
 	void data(double *data) override;
+	bool center() override;
 
 private:
-	static const double incr[6];
-	double last_x[6]{};
 	Timer t;
 
 	// Kinect stuff
@@ -62,7 +61,7 @@ private:
 	HRESULT InitializeDefaultSensor();
 	void ProcessFaces();
 	HRESULT UpdateBodyData(IBody** ppBodies);
-	void ExtractFaceRotationInDegrees(const Vector4* pQuaternion, double* pPitch, double* pYaw, double* pRoll);
+	void ExtractFaceRotationInDegrees(const Vector4* pQuaternion, float* pPitch, float* pYaw, float* pRoll);
 
 	// Current Kinect
 	IKinectSensor*         m_pKinectSensor;
@@ -77,14 +76,21 @@ private:
 	IBodyFrameReader*      m_pBodyFrameReader;
 
 	// Face sources
-	IFaceFrameSource*	   m_pFaceFrameSources[BODY_COUNT];
+	IHighDefinitionFaceFrameSource*	   m_pFaceFrameSource;
 
 	// Face readers
-	IFaceFrameReader*	   m_pFaceFrameReaders[BODY_COUNT];
+	IHighDefinitionFaceFrameReader*	   m_pFaceFrameReader;
 
 	//
 	RGBQUAD*               m_pColorRGBX;
 
-	Vector4 faceRotation;
+	CameraSpacePoint iLastFacePosition;
+	CameraSpacePoint iFacePosition;
+	CameraSpacePoint iFacePositionCenter;
 
+	Vector4 iFaceRotationQuaternion;
+	// As Yaw, Pitch, Roll
+	CameraSpacePoint iLastFaceRotation;
+	CameraSpacePoint iFaceRotation;
+	CameraSpacePoint iFaceRotationCenter;
 };

@@ -3,11 +3,81 @@
 #include "tracker.h"
 
 
-const double KinectFaceTracker::incr[6] =
+
+///
+bool IsValidRect(const RectI& aRect)
 {
-	50, 40, 80,
-	70, 5, 3
-};
+	if (aRect.Bottom != 0)
+	{
+		return true;
+	}
+
+	if (aRect.Left != 0)
+	{
+		return true;
+	}
+
+	if (aRect.Right != 0)
+	{
+		return true;
+	}
+
+	if (aRect.Top != 0)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+///
+bool IsNullVetor(const Vector4& aVector)
+{
+	if (aVector.w != 0)
+	{
+		return false;
+	}
+
+	if (aVector.y != 0)
+	{
+		return false;
+	}
+
+	if (aVector.y != 0)
+	{
+		return false;
+	}
+
+	if (aVector.z != 0)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+///
+bool IsNullPoint(const CameraSpacePoint& aPoint)
+{
+	if (aPoint.X != 0)
+	{
+		return false;
+	}
+
+	if (aPoint.Y != 0)
+	{
+		return false;
+	}
+
+	if (aPoint.Z != 0)
+	{
+		return false;
+	}
+
+
+	return true;
+}
+
 
 KinectFaceTracker::KinectFaceTracker():
 	m_pKinectSensor(nullptr),
@@ -17,11 +87,8 @@ KinectFaceTracker::KinectFaceTracker():
 	m_pBodyFrameReader(nullptr)
 
 {
-	for (int i = 0; i < BODY_COUNT; i++)
-	{
-		m_pFaceFrameSources[i] = nullptr;
-		m_pFaceFrameReaders[i] = nullptr;
-	}
+	m_pFaceFrameSource = nullptr;
+	m_pFaceFrameReader = nullptr;
 
 	// create heap storage for color pixel data in RGBX format
 	m_pColorRGBX = new RGBQUAD[cColorWidth * cColorHeight];
@@ -39,11 +106,8 @@ KinectFaceTracker::~KinectFaceTracker()
 	//SafeRelease(m_pD2DFactory);
 
 	// done with face sources and readers
-	for (int i = 0; i < BODY_COUNT; i++)
-	{
-		SafeRelease(m_pFaceFrameSources[i]);
-		SafeRelease(m_pFaceFrameReaders[i]);
-	}
+	SafeRelease(m_pFaceFrameSource);
+	SafeRelease(m_pFaceFrameReader);
 
 	// done with body frame reader
 	SafeRelease(m_pBodyFrameReader);
@@ -79,46 +143,43 @@ module_status KinectFaceTracker::start_tracker(QFrame*)
 #   include <cstdlib>
 #endif
 
+bool KinectFaceTracker::center()
+{
+	iFacePositionCenter = iFacePosition;
+	iFaceRotationCenter = iFaceRotation;
+	//TODO: Rotation center too
+	return true;
+}
+
+
 void KinectFaceTracker::data(double *data)
 {
 	const double dt = t.elapsed_seconds();
 	t.start();
 
-#ifdef EMIT_NAN
-	if ((rand() % 4) == 0)
-	{
-		for (int i = 0; i < 6; i++)
-			data[i] = 0. / 0.;
-	}
-	else
-#endif
-		for (int i = 0; i < 6; i++)
-		{
-			double x = last_x[i] + incr[i] * dt;
-			if (x > 180)
-				x = -360 + x;
-			else if (x < -180)
-				x = 360 + x;
-			x = copysign(fmod(fabs(x), 360), x);
-			last_x[i] = x;
-
-			if (i >= 3)
-			{
-				data[i] = x;
-			}
-			else
-			{
-				data[i] = x * 100 / 180.;
-			}
-		}
-
 
 	Update();
 	//TODO: check if data is valid
-	data[0] = 0;
-	data[1] = 0;
-	data[2] = 0;
-	ExtractFaceRotationInDegrees(&faceRotation,&data[3], &data[4], &data[5]);
+
+	ExtractFaceRotationInDegrees(&iFaceRotationQuaternion, &iFaceRotation.X, &iFaceRotation.Y, &iFaceRotation.Z);
+
+	if (!IsNullPoint(iFacePosition) && !IsNullPoint(iFaceRotation))
+	{
+		// We have valid tracking retain position and rotation
+		iLastFacePosition = iFacePosition;
+		iLastFaceRotation = iFaceRotation;
+	}
+	
+	// Feed our framework our last valid position and rotation
+	data[0] = (iLastFacePosition.X - iFacePositionCenter.X) * 100; // Convert to centimer to be in a range that suites OpenTrack.
+	data[1] = (iLastFacePosition.Y - iFacePositionCenter.Y) * 100;
+	data[2] = (iLastFacePosition.Z - iFacePositionCenter.Z) * 100;
+
+	// Yaw, picth, Roll
+	data[3] = 0-(iLastFaceRotation.X - iFaceRotationCenter.X); // Invert to be compatible with ED out-of-the-box
+	data[4] = (iLastFaceRotation.Y - iFaceRotationCenter.Y);
+	data[5] = (iLastFaceRotation.Z - iFaceRotationCenter.Z);
+
 
 }
 
@@ -131,7 +192,7 @@ void KinectFaceTracker::data(double *data)
 /// <param name="pPitch">rotation about the X-axis</param>
 /// <param name="pYaw">rotation about the Y-axis</param>
 /// <param name="pRoll">rotation about the Z-axis</param>
-void KinectFaceTracker::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, double* pYaw, double* pPitch, double* pRoll)
+void KinectFaceTracker::ExtractFaceRotationInDegrees(const Vector4* pQuaternion, float* pYaw, float* pPitch, float* pRoll)
 {
 	double x = pQuaternion->x;
 	double y = pQuaternion->y;
@@ -215,12 +276,12 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 				if (SUCCEEDED(hr))
 				{
 					// create the face frame source by specifying the required face frame features
-					hr = CreateFaceFrameSource(m_pKinectSensor, 0, c_FaceFrameFeatures, &m_pFaceFrameSources[i]);
+					hr = CreateHighDefinitionFaceFrameSource(m_pKinectSensor, &m_pFaceFrameSource);
 				}
 				if (SUCCEEDED(hr))
 				{
 					// open the corresponding reader
-					hr = m_pFaceFrameSources[i]->OpenReader(&m_pFaceFrameReaders[i]);
+					hr = m_pFaceFrameSource->OpenReader(&m_pFaceFrameReader);
 				}
 			}
 		}
@@ -348,12 +409,43 @@ void KinectFaceTracker::ProcessFaces()
 	IBody* ppBodies[BODY_COUNT] = { 0 };
 	bool bHaveBodyData = SUCCEEDED(UpdateBodyData(ppBodies));
 
+	if (!bHaveBodyData)
+	{
+		return;
+	}
+
+	// TODO: Select closest body
+	// Just use the first body we find
+	BOOLEAN tracked;
+	int i = 0;
+	while (i < BODY_COUNT)
+	{
+		hr = ppBodies[i]->get_IsTracked(&tracked);
+		UINT64 trackingId = 0;
+
+		if (SUCCEEDED(hr) && tracked)
+		{
+			hr = ppBodies[i]->get_TrackingId(&trackingId);
+
+			if (SUCCEEDED(hr))
+			{
+				// Tell our face source to use the given body id
+				hr = m_pFaceFrameSource->put_TrackingId(trackingId);
+				break;
+			}
+
+		}
+
+		i++;
+	}
+
+
 	// iterate through each face reader
 	for (int iFace = 0; iFace < BODY_COUNT; ++iFace)
 	{
 		// retrieve the latest face frame from this reader
-		IFaceFrame* pFaceFrame = nullptr;
-		hr = m_pFaceFrameReaders[iFace]->AcquireLatestFrame(&pFaceFrame);
+		IHighDefinitionFaceFrame* pFaceFrame = nullptr;
+		hr = m_pFaceFrameReader->AcquireLatestFrame(&pFaceFrame);
 
 		BOOLEAN bFaceTracked = false;
 		if (SUCCEEDED(hr) && nullptr != pFaceFrame)
@@ -366,47 +458,54 @@ void KinectFaceTracker::ProcessFaces()
 		{
 			if (bFaceTracked)
 			{
-				IFaceFrameResult* pFaceFrameResult = nullptr;
-				RectI faceBox = { 0 };
-				PointF facePoints[FacePointType::FacePointType_Count];				
-				DetectionResult faceProperties[FaceProperty::FaceProperty_Count];
-				//D2D1_POINT_2F faceTextLayout;
+				OutputDebugStringA("Tracking face!\n");
 
-				hr = pFaceFrame->get_FaceFrameResult(&pFaceFrameResult);
+				//IFaceFrameResult* pFaceFrameResult = nullptr;
+				IFaceAlignment* pFaceAlignment = nullptr;
+				CreateFaceAlignment(&pFaceAlignment); // TODO: check return?
+				RectI faceBox = { 0 };
+				//D2D1_POINT_2F faceTextLayout;				
+
+				//hr = pFaceFrame->get_FaceFrameResult(&pFaceFrameResult);
+
+				hr = pFaceFrame->GetAndRefreshFaceAlignmentResult(pFaceAlignment);
 
 				// need to verify if pFaceFrameResult contains data before trying to access it
-				if (SUCCEEDED(hr) && pFaceFrameResult != nullptr)
+				if (SUCCEEDED(hr) && pFaceAlignment != nullptr)
 				{
-					hr = pFaceFrameResult->get_FaceBoundingBoxInColorSpace(&faceBox);
+					hr = pFaceAlignment->get_FaceBoundingBox(&faceBox);
+					//pFaceFrameResult->get_FaceBoundingBoxInColorSpace();
 
 					if (SUCCEEDED(hr))
 					{
-						hr = pFaceFrameResult->GetFacePointsInColorSpace(FacePointType::FacePointType_Count, facePoints);
+						//hr = pFaceFrameResult->GetFacePointsInColorSpace(FacePointType::FacePointType_Count, facePoints);
+						hr = pFaceAlignment->get_HeadPivotPoint(&iFacePosition);
 					}
 
 					if (SUCCEEDED(hr))
 					{
-						hr = pFaceFrameResult->get_FaceRotationQuaternion(&faceRotation);
+						//hr = pFaceFrameResult->get_FaceRotationQuaternion(&faceRotation);
+						hr = pFaceAlignment->get_FaceOrientation(&iFaceRotationQuaternion);
 					}
 
 					if (SUCCEEDED(hr))
 					{
-						hr = pFaceFrameResult->GetFaceProperties(FaceProperty::FaceProperty_Count, faceProperties);
+						//hr = pFaceFrameResult->GetFaceProperties(FaceProperty::FaceProperty_Count, faceProperties);
 					}
 
 					if (SUCCEEDED(hr))
 					{
-						//hr = GetFaceTextPositionInColorSpace(ppBodies[iFace], &faceTextLayout);
+						//hr = GetFaceTextPositionInColorSpace(ppBodies[0], &faceTextLayout);
 					}
 
 					if (SUCCEEDED(hr))
 					{
 						// draw face frame results
-						//m_pDrawDataStreams->DrawFaceFrameResults(iFace, &faceBox, facePoints, &faceRotation, faceProperties, &faceTextLayout);
+						//m_pDrawDataStreams->DrawFaceFrameResults(0, &faceBox, facePoints, &faceRotation, faceProperties, &faceTextLayout);
 					}
 				}
 
-				SafeRelease(pFaceFrameResult);
+				SafeRelease(pFaceAlignment);
 			}
 			else
 			{
@@ -430,7 +529,7 @@ void KinectFaceTracker::ProcessFaces()
 							if (SUCCEEDED(hr))
 							{
 								// update the face frame source with the tracking ID
-								m_pFaceFrameSources[iFace]->put_TrackingId(bodyTId);
+								m_pFaceFrameSource->put_TrackingId(bodyTId);
 							}
 						}
 					}
@@ -449,3 +548,5 @@ void KinectFaceTracker::ProcessFaces()
 		}
 	}
 }
+
+
