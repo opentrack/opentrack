@@ -38,21 +38,6 @@ private:
 	Timer t;
 
 	// Kinect stuff
-
-	// define the face frame features required to be computed by this application
-	static const DWORD c_FaceFrameFeatures =
-		FaceFrameFeatures::FaceFrameFeatures_BoundingBoxInColorSpace
-		| FaceFrameFeatures::FaceFrameFeatures_PointsInColorSpace
-		| FaceFrameFeatures::FaceFrameFeatures_RotationOrientation
-		| FaceFrameFeatures::FaceFrameFeatures_Happy
-		| FaceFrameFeatures::FaceFrameFeatures_RightEyeClosed
-		| FaceFrameFeatures::FaceFrameFeatures_LeftEyeClosed
-		| FaceFrameFeatures::FaceFrameFeatures_MouthOpen
-		| FaceFrameFeatures::FaceFrameFeatures_MouthMoved
-		| FaceFrameFeatures::FaceFrameFeatures_LookingAway
-		| FaceFrameFeatures::FaceFrameFeatures_Glasses
-		| FaceFrameFeatures::FaceFrameFeatures_FaceEngagement;
-
 	static const int       cColorWidth = 1920;
 	static const int       cColorHeight = 1080;
 

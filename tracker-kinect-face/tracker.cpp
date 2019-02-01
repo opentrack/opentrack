@@ -84,8 +84,13 @@ KinectFaceTracker::KinectFaceTracker():
 	m_pCoordinateMapper(nullptr),
 	m_pColorFrameReader(nullptr),
 	m_pColorRGBX(nullptr),
-	m_pBodyFrameReader(nullptr)
-
+	m_pBodyFrameReader(nullptr),
+	iLastFacePosition{0,0,0},
+	iFacePositionCenter{ 0,0,0 },
+	iFacePosition{ 0,0,0 },
+	iLastFaceRotation{ 0,0,0 },
+	iFaceRotationCenter{ 0,0,0 },
+	iFaceRotation{ 0,0,0 }
 {
 	m_pFaceFrameSource = nullptr;
 	m_pFaceFrameReader = nullptr;
@@ -175,7 +180,7 @@ void KinectFaceTracker::data(double *data)
 	data[1] = (iLastFacePosition.Y - iFacePositionCenter.Y) * 100;
 	data[2] = (iLastFacePosition.Z - iFacePositionCenter.Z) * 100;
 
-	// Yaw, picth, Roll
+	// Yaw, Picth, Roll
 	data[3] = 0-(iLastFaceRotation.X - iFaceRotationCenter.X); // Invert to be compatible with ED out-of-the-box
 	data[4] = (iLastFaceRotation.Y - iFaceRotationCenter.Y);
 	data[5] = (iLastFaceRotation.Z - iFaceRotationCenter.Z);
