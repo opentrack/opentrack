@@ -26,40 +26,50 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
     if (!freshp)
     {
-        if (width < 1 || height < 1)
+        if (width < 1 || height < 1 || frame.rows < 1 || frame.cols < 1)
             return;
 
-        if (frame1.cols != frame.cols || frame1.rows != frame.rows)
-            frame1 = cv::Mat(frame.rows, frame.cols, CV_8UC3);
-        frame.copyTo(frame1);
         freshp = true;
 
-        if (frame2.cols != frame1.cols || frame2.rows != frame1.rows)
-            frame2 = cv::Mat(frame1.rows, frame1.cols, CV_8UC4);
+        if (frame2.cols != frame.cols || frame2.rows != frame.rows)
+            frame2 = cv::Mat(frame.rows, frame.cols, CV_8UC4);
 
         if (frame3.cols != width || frame3.rows != height)
             frame3 = cv::Mat(height, width, CV_8UC4);
 
-        cv::cvtColor(frame1, frame2, cv::COLOR_BGR2BGRA);
+        switch (frame.channels())
+        {
+        case 1:
+            cv::cvtColor(frame, frame2, cv::COLOR_GRAY2BGRA);
+            break;
+        case 3:
+            cv::cvtColor(frame, frame2, cv::COLOR_BGR2BGRA);
+            break;
+        case 4:
+            frame2.setTo(frame);
+            break;
+        default:
+            *(volatile int*)nullptr = 0; // NOLINT(clang-analyzer-core.NullDereference)
+            unreachable();
+        }
 
         const cv::Mat* img;
 
-        if (frame1.cols != width || frame1.rows != height)
+        if (frame2.cols != width || frame2.rows != height)
         {
             cv::resize(frame2, frame3, cv::Size(width, height), 0, 0, cv::INTER_NEAREST);
-
             img = &frame3;
         }
         else
             img = &frame2;
 
         const unsigned nbytes = unsigned(4 * img->rows * img->cols);
-
         vec.resize(nbytes);
-
         std::memcpy(vec.data(), img->data, nbytes);
 
         texture = QImage((const unsigned char*) vec.data(), width, height, QImage::Format_ARGB32);
+        double dpr = devicePixelRatioF();
+        texture.setDevicePixelRatio(dpr);
     }
 }
 
@@ -69,16 +79,15 @@ void cv_video_widget::update_image(const QImage& img)
 
     if (freshp)
         return;
+    freshp = true;
 
     const unsigned nbytes = unsigned(img.bytesPerLine() * img.height());
-
     vec.resize(nbytes);
-
     std::memcpy(vec.data(), img.constBits(), nbytes);
 
     texture = QImage((const unsigned char*) vec.data(), img.width(), img.height(), img.format());
-
-    freshp = true;
+    double dpr = devicePixelRatioF();
+    texture.setDevicePixelRatio(dpr);
 }
 
 void cv_video_widget::paintEvent(QPaintEvent*)
@@ -89,20 +98,16 @@ void cv_video_widget::paintEvent(QPaintEvent*)
 
     double dpr = devicePixelRatioF();
 
-    int W = iround(QWidget::width() * dpr);
-    int H = iround(QWidget::height() * dpr);
+    width = iround(QWidget::width() * dpr);
+    height = iround(QWidget::height() * dpr);
 
     painter.drawImage(rect(), texture);
 
-    if (texture.width() != W || texture.height() != H)
+    if (texture.width() != width || texture.height() != height)
     {
-        texture = QImage(W, H, QImage::Format_ARGB32);
+        texture = QImage(width, height, QImage::Format_ARGB32);
         texture.setDevicePixelRatio(dpr);
 
-        width = W;
-        height = H;
-
-        frame1 = cv::Mat();
         frame2 = cv::Mat();
         frame3 = cv::Mat();
     }
@@ -122,10 +127,15 @@ void cv_video_widget::update_and_repaint()
     }
 }
 
+void cv_video_widget::resizeEvent(QResizeEvent*)
+{
+    QMutexLocker l(&mtx);
+    width  = iround(QWidget::width() * devicePixelRatioF());
+    height = iround(QWidget::height() * devicePixelRatioF());
+}
+
 void cv_video_widget::get_preview_size(int& w, int& h)
 {
     QMutexLocker l(&mtx);
-
-    w = width;
-    h = height;
+    w = width; h = height;
 }

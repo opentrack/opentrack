@@ -8,6 +8,8 @@
 
 #pragma once
 
+#include "compat/math.hpp"
+
 #include <memory>
 #include <vector>
 
@@ -32,6 +34,7 @@ public:
     void update_image(const cv::Mat& frame);
     void update_image(const QImage& image);
     void get_preview_size(int& w, int& h);
+    void resizeEvent(QResizeEvent*) override;
 private slots:
     void paintEvent(QPaintEvent*) override;
     void update_and_repaint();
@@ -40,7 +43,9 @@ private:
     QImage texture;
     std::vector<unsigned char> vec;
     QTimer timer;
-    cv::Mat frame1, frame2, frame3;
-    int width = 320, height = 240;
+    cv::Mat frame2, frame3;
     bool freshp = false;
+
+    int width  = iround(QWidget::width() * devicePixelRatioF());
+    int height = iround(QWidget::height() * devicePixelRatioF());
 };
