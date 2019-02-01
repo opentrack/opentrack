@@ -44,7 +44,6 @@ auto with_settings_object_(ini_ctx& ini, F&& fun)
 
 OTR_OPTIONS_EXPORT ini_ctx& cur_settings();
 OTR_OPTIONS_EXPORT ini_ctx& global_settings();
-OTR_OPTIONS_EXPORT bool is_portable_installation();
 
 } // ns options::globals::detail
 

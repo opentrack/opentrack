@@ -11,7 +11,7 @@ namespace options::globals::detail {
 
 ini_ctx::ini_ctx() = default;
 
-bool is_portable_installation()
+static bool is_portable_installation()
 {
 #if defined _WIN32
     // must keep consistent between invocations
@@ -143,7 +143,7 @@ void mark_ini_modified(bool value)
     ini.mtx.unlock();
 }
 
-QString ini_directory()
+static QString ini_directory_()
 {
     QString dir;
 
@@ -170,6 +170,12 @@ QString ini_directory()
         dir += OPENTRACK_ORG;
     }
 
+    return dir;
+}
+
+QString ini_directory()
+{
+    static const QString dir = ini_directory_();
     return dir;
 }
 
