@@ -94,10 +94,10 @@ void mapping_dialog::load()
         { nullptr, Yaw, nullptr, false }
     };
 
-    ui.max_pitch_output->setItemData(0, int(axis_opts::o_r180));
-    ui.max_pitch_output->setItemData(1, int(axis_opts::o_r90));
-
     using a = axis_opts::max_clamp;
+
+    ui.max_pitch_output->setItemData(0, int(a::o_r180));
+    ui.max_pitch_output->setItemData(1, int(a::o_r90));
 
     for (QComboBox* x : { ui.max_yaw_rotation, ui.max_pitch_rotation, ui.max_roll_rotation })
         for (a y : { a::r180, a::r90, a::r60, a::r45, a::r30, a::r25, a::r20, a::r15, a::r10 })
@@ -106,8 +106,6 @@ void mapping_dialog::load()
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
         for (a y : { a::t30, a::t20, a::t15, a::t10, a::t100 })
             x->addItem(tr("%1 cm").arg(int(y)), y);
-
-    // XXX TODO add tie_setting overload for spline_widget!!! -sh 20171020
 
     for (int i = 0; qfcs[i].qfc; i++)
     {
@@ -125,14 +123,12 @@ void mapping_dialog::load()
             qfc.setEnabled(axis.opts.altp);
         }
 
-        using c = axis_opts::max_clamp;
-
         auto update_xstep = [&qfc](int clamp_x) {
             int value;
 
-            if (clamp_x <= c::r30)
+            if (clamp_x <= a::r30)
                 value = 1;
-            else if (clamp_x <= c::r45)
+            else if (clamp_x <= a::r45)
                 value = 5;
             else
                 value = 10;
@@ -145,11 +141,11 @@ void mapping_dialog::load()
             switch (clamp_y)
             {
             default:
-            case c::o_r180:
+            case a::o_r180:
                 value = 20; break;
-            case c::o_r90:
+            case a::o_r90:
                 value = 10; break;
-            case c::o_t75:
+            case a::o_t75:
                 value = 5; break;
             }
             qfc.set_y_step(value);
