@@ -89,13 +89,11 @@ void Tracker_PT::run()
                 X_CM = point_tracker.pose();
             }
 
-            // just copy pasted these lines from below
             Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
             Affine X_GH = X_CM * X_MH;
             vec3 p = X_GH.t; // head (center?) position in global space
 
             preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
-
             video_widget->update_image(preview_frame->get_bitmap());
 
             {
@@ -166,21 +164,21 @@ void Tracker_PT::data(double *data)
         const vec3& t = X_GH.t;
 
         // extract rotation angles
-        f alpha, beta, gamma;
-        beta  = atan2( -R(2,0), sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-        alpha = atan2( R(1,0), R(0,0) );
-        gamma = atan2( R(2,1), R(2,2) );
+        double alpha, beta, gamma;
+        beta  = atan2( (double)-R(2,0), (double)sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
+        alpha = atan2( (double)R(1,0),  (double)R(0,0) );
+        gamma = atan2( (double)R(2,1),  (double)R(2,2) );
 
-        constexpr f rad2deg = f(180/pi);
+        constexpr double rad2deg = 180/M_PI;
 
-        data[Yaw] = rad2deg * alpha;
+        data[Yaw]   = rad2deg * alpha;
         data[Pitch] = -rad2deg * beta;
-        data[Roll] = rad2deg * gamma;
+        data[Roll]  = rad2deg * gamma;
 
         // convert to cm
-        data[TX] = t[0] / 10;
-        data[TY] = t[1] / 10;
-        data[TZ] = t[2] / 10;
+        data[TX] = (double)t[0] / 10;
+        data[TY] = (double)t[1] / 10;
+        data[TZ] = (double)t[2] / 10;
     }
 }
 
