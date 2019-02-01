@@ -22,7 +22,7 @@
 // XXX this needs rewriting in terms of scanline rendering -sh 20180105
 // see: <https://mikro.naprvyraz.sk/docs/Coding/2/TEXTURE4.TXT>
 
-using namespace pose_widget_impl;
+namespace pose_widget_impl {
 
 pose_transform::pose_transform(QWidget* dst, double dpr) : dst(dst)
 {
@@ -391,3 +391,5 @@ inline void pose_transform::with_image_lock(F&& fun)
 
     fun(image2);
 }
+
+} // ns pose_widget_impl
