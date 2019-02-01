@@ -12,7 +12,7 @@
 #include "compat/tr.hpp"
 #include "export.hpp"
 
-#include <QFrame>
+class QFrame;
 
 class OTR_LOGIC_EXPORT runtime_libraries final : public TR
 {

@@ -3,19 +3,20 @@
 #include <QMessageBox>
 #include <QDebug>
 
+#ifdef __clang__
+#   pragma clang diagnostic ignored "-Wcomma"
+#endif
+
 runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dylibptr f)
 {
+    auto error = [](const QString& msg) { return module_status_mixin::error(msg); };
+
     module_status status =
-            module_status_mixin::error(tr("Library load failure"));
+        error(tr("Library load failure"));
 
     using namespace options;
 
     with_tracker_teardown sentinel;
-
-#ifdef __clang__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wcomma"
-#endif
 
     pProtocol = make_dylib_instance<IProtocol>(p);
 
@@ -27,8 +28,8 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
 
     if(status = pProtocol->initialize(), !status.is_ok())
     {
-        status = tr("Error occurred while loading protocol %1\n\n%2\n")
-                 .arg(p->name, status.error);
+        status = error(tr("Error occurred while loading protocol %1\n\n%2\n")
+                       .arg(p->name, status.error));
         goto end;
     }
 
@@ -50,21 +51,17 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
     if (pFilter)
         if(status = pFilter->initialize(), !status.is_ok())
         {
-            status = tr("Error occurred while loading filter %1\n\n%2\n")
-                     .arg(f->name, status.error);
+            status = error(tr("Error occurred while loading filter %1\n\n%2\n")
+                           .arg(f->name, status.error));
             goto end;
         }
 
     if (status = pTracker->start_tracker(frame), !status.is_ok())
     {
-        status = tr("Error occurred while loading tracker %1\n\n%2\n")
-                 .arg(t->name, status.error);
+        status = error(tr("Error occurred while loading tracker %1\n\n%2\n")
+                       .arg(t->name, status.error));
         goto end;
     }
-
-#ifdef __clang__
-#   pragma clang diagnostic pop
-#endif
 
     correct = true;
     return;
@@ -75,6 +72,8 @@ end:
     pProtocol = nullptr;
 
     if (!status.is_ok())
-        QMessageBox::critical(nullptr, tr("Startup failure"), status.error, QMessageBox::Cancel, QMessageBox::NoButton);
+        QMessageBox::critical(nullptr,
+                              tr("Startup failure"), status.error,
+                              QMessageBox::Cancel, QMessageBox::NoButton);
 }
 

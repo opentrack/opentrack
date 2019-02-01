@@ -56,7 +56,8 @@ bool module_status::is_ok() const
 }
 
 module_status_mixin::~module_status_mixin() = default;
-module_status::module_status(QString error) : error(std::move(error)) {}
+module_status::module_status(const QString& error) : error(error) {}
+module_status::module_status() = default;
 module_status module_status_mixin::status_ok() { return {}; }
 
 module_status module_status_mixin::error(const QString& error)
