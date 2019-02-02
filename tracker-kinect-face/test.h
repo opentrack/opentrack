@@ -22,7 +22,7 @@ class test_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Kinect Face"); }
-    QIcon icon() { return QIcon(":/images/opentrack.png"); }
+    QString name() { return tr("Kinect Face - v0.1"); }
+    QIcon icon() { return QIcon(":/images/kinect.png"); }
 };
 
