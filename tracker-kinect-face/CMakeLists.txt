@@ -25,7 +25,12 @@ if (WIN32)
 		endif()
 	
 		# Link against Kinect SDK libraries
-		target_link_libraries(opentrack-tracker-kinect-face ${KINECTSDK20_DIR}/lib/${kinect-arch-dir}/kinect20.lib ${KINECTSDK20_DIR}/lib/${kinect-arch-dir}/kinect20.face.lib)
+		target_link_libraries(opentrack-tracker-kinect-face ${KINECTSDK20_DIR}/lib/${kinect-arch-dir}/Kinect20.lib ${KINECTSDK20_DIR}/lib/${kinect-arch-dir}/Kinect20.Face.lib)
+
+		# Install Kinect Face DLL
+		install(FILES ${KINECTSDK20_DIR}/Redist/Face/${kinect-arch-dir}/Kinect20.Face.dll DESTINATION ./modules/ PERMISSIONS ${opentrack-perms-exec})
+		# Install Kinect Face Database
+		install(DIRECTORY ${KINECTSDK20_DIR}/Redist/Face/${kinect-arch-dir}/NuiDatabase DESTINATION ./modules/)
 
 	endif()
 
