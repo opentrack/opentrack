@@ -38,7 +38,7 @@ bool IsNullVetor(const Vector4& aVector)
 		return false;
 	}
 
-	if (aVector.y != 0)
+	if (aVector.x != 0)
 	{
 		return false;
 	}
@@ -73,7 +73,6 @@ bool IsNullPoint(const CameraSpacePoint& aPoint)
 	{
 		return false;
 	}
-
 
 	return true;
 }
@@ -150,9 +149,9 @@ module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 
 bool KinectFaceTracker::center()
 {
+	// Mark our center
 	iFacePositionCenter = iFacePosition;
 	iFaceRotationCenter = iFaceRotation;
-	//TODO: Rotation center too
 	return true;
 }
 
@@ -181,11 +180,9 @@ void KinectFaceTracker::data(double *data)
 	data[2] = (iLastFacePosition.Z - iFacePositionCenter.Z) * 100;
 
 	// Yaw, Picth, Roll
-	data[3] = 0-(iLastFaceRotation.X - iFaceRotationCenter.X); // Invert to be compatible with ED out-of-the-box
+	data[3] = -(iLastFaceRotation.X - iFaceRotationCenter.X); // Invert to be compatible with ED out-of-the-box
 	data[4] = (iLastFaceRotation.Y - iFaceRotationCenter.Y);
 	data[5] = (iLastFaceRotation.Z - iFaceRotationCenter.Z);
-
-
 }
 
 
@@ -463,7 +460,7 @@ void KinectFaceTracker::ProcessFaces()
 		{
 			if (bFaceTracked)
 			{
-				OutputDebugStringA("Tracking face!\n");
+				//OutputDebugStringA("Tracking face!\n");
 
 				//IFaceFrameResult* pFaceFrameResult = nullptr;
 				IFaceAlignment* pFaceAlignment = nullptr;

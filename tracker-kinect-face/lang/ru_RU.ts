@@ -4,7 +4,7 @@
 <context>
     <name>test_metadata</name>
     <message>
-        <source>Kinect Face - v0.1</source>
+        <source>Kinect Face 0.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
