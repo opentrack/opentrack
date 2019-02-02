@@ -2,6 +2,9 @@
 
 #include "tracker.h"
 
+#include <QLayout>
+#include <QPainter>
+
 
 
 ///
@@ -137,6 +140,15 @@ module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 
 	if (SUCCEEDED(InitializeDefaultSensor()))
 	{
+		// Setup our video preview widget
+		iVideoWidget = std::make_unique<cv_video_widget>(aFrame);
+		iLayout = std::make_unique<QHBoxLayout>(aFrame);
+		iLayout->setContentsMargins(0, 0, 0, 0);
+		iLayout->addWidget(iVideoWidget.get());
+		aFrame->setLayout(iLayout.get());
+		//video_widget->resize(video_frame->width(), video_frame->height());
+		aFrame->show();
+
 		return status_ok();
 	}
 
@@ -161,12 +173,11 @@ void KinectFaceTracker::data(double *data)
 	const double dt = t.elapsed_seconds();
 	t.start();
 
-
 	Update();
-	//TODO: check if data is valid
 
 	ExtractFaceRotationInDegrees(&iFaceRotationQuaternion, &iFaceRotation.X, &iFaceRotation.Y, &iFaceRotation.Z);
 
+	//Check if data is valid
 	if (!IsNullPoint(iFacePosition) && !IsNullPoint(iFaceRotation))
 	{
 		// We have valid tracking retain position and rotation
@@ -218,8 +229,6 @@ void KinectFaceTracker::ExtractFaceRotationInDegrees(const Vector4* pQuaternion,
 	*pPitch = dPitch;
 	*pYaw = dYaw;
 	*pRoll = dRoll;
-
-
 }
 
 
@@ -348,7 +357,8 @@ void KinectFaceTracker::Update()
 
 		if (SUCCEEDED(hr))
 		{
-			if (imageFormat == ColorImageFormat_Bgra)
+			// Fetch color buffer
+			if (imageFormat == ColorImageFormat_Rgba)
 			{
 				hr = pColorFrame->AccessRawUnderlyingBuffer(&nBufferSize, reinterpret_cast<BYTE**>(&pBuffer));
 			}
@@ -356,18 +366,37 @@ void KinectFaceTracker::Update()
 			{
 				pBuffer = m_pColorRGBX;
 				nBufferSize = cColorWidth * cColorHeight * sizeof(RGBQUAD);
-				hr = pColorFrame->CopyConvertedFrameDataToArray(nBufferSize, reinterpret_cast<BYTE*>(pBuffer), ColorImageFormat_Bgra);
+				hr = pColorFrame->CopyConvertedFrameDataToArray(nBufferSize, reinterpret_cast<BYTE*>(pBuffer), ColorImageFormat_Rgba);				
 			}
 			else
 			{
 				hr = E_FAIL;
 			}
+
 		}
 
 		if (SUCCEEDED(hr))
 		{
 			//DrawStreams(nTime, pBuffer, nWidth, nHeight);
 			ProcessFaces();
+		}
+
+		if (SUCCEEDED(hr))
+		{			
+			// Setup our image 
+			QImage image((const unsigned char*)pBuffer, cColorWidth, cColorHeight, sizeof(RGBQUAD)*cColorWidth, QImage::Format_RGBA8888);
+			if (IsValidRect(iFaceBox))
+			{
+				// Draw our face bounding box
+				QPainter painter(&image);
+				painter.setBrush(Qt::NoBrush);
+				painter.setPen(QPen(Qt::red, 8));
+				painter.drawRect(iFaceBox.Left, iFaceBox.Top, iFaceBox.Right - iFaceBox.Left, iFaceBox.Bottom - iFaceBox.Top);
+				bool bEnd = painter.end();
+			}
+
+			// Update our video preview
+			iVideoWidget->update_image(image);
 		}
 
 		SafeRelease(pFrameDescription);
@@ -465,7 +494,6 @@ void KinectFaceTracker::ProcessFaces()
 				//IFaceFrameResult* pFaceFrameResult = nullptr;
 				IFaceAlignment* pFaceAlignment = nullptr;
 				CreateFaceAlignment(&pFaceAlignment); // TODO: check return?
-				RectI faceBox = { 0 };
 				//D2D1_POINT_2F faceTextLayout;				
 
 				//hr = pFaceFrame->get_FaceFrameResult(&pFaceFrameResult);
@@ -475,7 +503,7 @@ void KinectFaceTracker::ProcessFaces()
 				// need to verify if pFaceFrameResult contains data before trying to access it
 				if (SUCCEEDED(hr) && pFaceAlignment != nullptr)
 				{
-					hr = pFaceAlignment->get_FaceBoundingBox(&faceBox);
+					hr = pFaceAlignment->get_FaceBoundingBox(&iFaceBox);
 					//pFaceFrameResult->get_FaceBoundingBoxInColorSpace();
 
 					if (SUCCEEDED(hr))

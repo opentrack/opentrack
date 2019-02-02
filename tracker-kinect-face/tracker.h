@@ -6,6 +6,7 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "compat/macros.hpp"
+#include "cv/video-widget.hpp"
 
 // Kinect Header files
 #include <Kinect.h>
@@ -69,6 +70,8 @@ private:
 	//
 	RGBQUAD*               m_pColorRGBX;
 
+	RectI iFaceBox = { 0 };
+
 	CameraSpacePoint iLastFacePosition;
 	CameraSpacePoint iFacePosition;
 	CameraSpacePoint iFacePositionCenter;
@@ -78,4 +81,7 @@ private:
 	CameraSpacePoint iLastFaceRotation;
 	CameraSpacePoint iFaceRotation;
 	CameraSpacePoint iFaceRotationCenter;
+	//
+	std::unique_ptr<cv_video_widget> iVideoWidget;
+	std::unique_ptr<QLayout> iLayout;
 };
