@@ -11,11 +11,14 @@
 #include "compat/math.hpp"
 
 #include <cstring>
-
 #include <opencv2/imgproc.hpp>
 
 cv_video_widget::cv_video_widget(QWidget* parent) : QWidget(parent)
 {
+    texture = QImage(width(), height(), QImage::Format_ARGB32);
+    texture.fill(Qt::gray);
+    texture.setDevicePixelRatio(devicePixelRatioF());
+
     connect(&timer, SIGNAL(timeout()), this, SLOT(update_and_repaint()), Qt::DirectConnection);
     timer.start(65);
 }
@@ -26,7 +29,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
     if (!freshp)
     {
-        if (width < 1 || height < 1 || frame.rows < 1 || frame.cols < 1)
+        if (W < 1 || H < 1 || frame.rows < 1 || frame.cols < 1)
             return;
 
         freshp = true;
@@ -34,8 +37,8 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         if (frame2.cols != frame.cols || frame2.rows != frame.rows)
             frame2 = cv::Mat(frame.rows, frame.cols, CV_8UC4);
 
-        if (frame3.cols != width || frame3.rows != height)
-            frame3 = cv::Mat(height, width, CV_8UC4);
+        if (frame3.cols != W || frame3.rows != H)
+            frame3 = cv::Mat(H, W, CV_8UC4);
 
         switch (frame.channels())
         {
@@ -55,9 +58,9 @@ void cv_video_widget::update_image(const cv::Mat& frame)
 
         const cv::Mat* img;
 
-        if (frame2.cols != width || frame2.rows != height)
+        if (frame2.cols != W || frame2.rows != H)
         {
-            cv::resize(frame2, frame3, cv::Size(width, height), 0, 0, cv::INTER_NEAREST);
+            cv::resize(frame2, frame3, cv::Size(W, H), 0, 0, cv::INTER_NEAREST);
             img = &frame3;
         }
         else
@@ -67,9 +70,8 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         vec.resize(nbytes);
         std::memcpy(vec.data(), img->data, nbytes);
 
-        texture = QImage((const unsigned char*) vec.data(), width, height, QImage::Format_ARGB32);
-        double dpr = devicePixelRatioF();
-        texture.setDevicePixelRatio(dpr);
+        texture = QImage((const unsigned char*) vec.data(), W, H, QImage::Format_ARGB32);
+        texture.setDevicePixelRatio(devicePixelRatioF());
     }
 }
 
@@ -86,8 +88,7 @@ void cv_video_widget::update_image(const QImage& img)
     std::memcpy(vec.data(), img.constBits(), nbytes);
 
     texture = QImage((const unsigned char*) vec.data(), img.width(), img.height(), img.format());
-    double dpr = devicePixelRatioF();
-    texture.setDevicePixelRatio(dpr);
+    texture.setDevicePixelRatio(devicePixelRatioF());
 }
 
 void cv_video_widget::paintEvent(QPaintEvent*)
@@ -97,15 +98,14 @@ void cv_video_widget::paintEvent(QPaintEvent*)
     QPainter painter(this);
 
     double dpr = devicePixelRatioF();
-
-    width = iround(QWidget::width() * dpr);
-    height = iround(QWidget::height() * dpr);
+    W = iround(width() * dpr);
+    H = iround(height() * dpr);
 
     painter.drawImage(rect(), texture);
 
-    if (texture.width() != width || texture.height() != height)
+    if (texture.width() != W || texture.height() != H)
     {
-        texture = QImage(width, height, QImage::Format_ARGB32);
+        texture = QImage(W, H, QImage::Format_ARGB32);
         texture.setDevicePixelRatio(dpr);
 
         frame2 = cv::Mat();
@@ -130,12 +130,12 @@ void cv_video_widget::update_and_repaint()
 void cv_video_widget::resizeEvent(QResizeEvent*)
 {
     QMutexLocker l(&mtx);
-    width  = iround(QWidget::width() * devicePixelRatioF());
-    height = iround(QWidget::height() * devicePixelRatioF());
+    W = iround(width() * devicePixelRatioF());
+    H = iround(height() * devicePixelRatioF());
 }
 
 void cv_video_widget::get_preview_size(int& w, int& h)
 {
     QMutexLocker l(&mtx);
-    w = width; h = height;
+    w = W; h = H;
 }

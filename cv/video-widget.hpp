@@ -46,6 +46,6 @@ private:
     cv::Mat frame2, frame3;
     bool freshp = false;
 
-    int width  = iround(QWidget::width() * devicePixelRatioF());
-    int height = iround(QWidget::height() * devicePixelRatioF());
+    int W  = iround(QWidget::width() * devicePixelRatioF());
+    int H = iround(QWidget::height() * devicePixelRatioF());
 };
