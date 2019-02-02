@@ -132,7 +132,7 @@ KinectFaceTracker::~KinectFaceTracker()
 	SafeRelease(m_pKinectSensor);
 }
 
-module_status KinectFaceTracker::start_tracker(QFrame*)
+module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 {
 	t.start();
 

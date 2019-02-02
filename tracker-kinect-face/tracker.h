@@ -30,7 +30,7 @@ class KinectFaceTracker : public ITracker
 public:
 	KinectFaceTracker();
 	~KinectFaceTracker() override;
-	module_status start_tracker(QFrame *) override;
+	module_status start_tracker(QFrame* aFrame) override;
 	void data(double *data) override;
 	bool center() override;
 
