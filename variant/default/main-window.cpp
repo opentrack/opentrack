@@ -31,7 +31,11 @@ extern "C" const char* const opentrack_version;
 using namespace options::globals;
 using namespace options;
 
-main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
+main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
+    start_tracker{this, &main_window::start_tracker_, Qt::QueuedConnection},
+    stop_tracker{this, &main_window::stop_tracker_, Qt::QueuedConnection},
+    toggle_tracker{this, &main_window::toggle_tracker_, Qt::QueuedConnection},
+    restart_tracker{this, &main_window::restart_tracker_, Qt::QueuedConnection}
 {
     ui.setupUi(this);
 
@@ -57,30 +61,15 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     else
         setVisible(false);
 
-    connect(&pose_update_timer, &QTimer::timeout, this, &main_window::show_pose, Qt::DirectConnection);
-
-    connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
+    connect(&pose_update_timer, &QTimer::timeout,
+            this, &main_window::show_pose, Qt::DirectConnection);
+    connect(&det_timer, &QTimer::timeout,
+            this, &main_window::maybe_start_profile_from_executable);
     det_timer.start(1000);
 }
 
 void main_window::init_shortcuts()
 {
-    connect(this, &main_window::start_tracker,
-            this, [&] { qDebug() << "start tracker"; start_tracker_(); },
-            Qt::QueuedConnection);
-
-    connect(this, &main_window::stop_tracker,
-            this, [&] { qDebug() << "stop tracker"; stop_tracker_(); },
-            Qt::QueuedConnection);
-
-    connect(this, &main_window::toggle_tracker,
-            this, [&] { qDebug() << "toggle tracker"; if (work) stop_tracker_(); else start_tracker_(); },
-            Qt::QueuedConnection);
-
-    connect(this, &main_window::restart_tracker,
-            this, [&] { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
-            Qt::QueuedConnection);
-
     register_shortcuts();
 
     // ctrl+q exits
@@ -164,16 +153,16 @@ void main_window::init_profiles()
     set_profile(ini_filename());
 
     // profile menu
-    profile_menu.addAction(tr("Create new empty config"), this, SLOT(make_empty_config()));
-    profile_menu.addAction(tr("Create new copied config"), this, SLOT(make_copied_config()));
-    profile_menu.addAction(tr("Open configuration directory"), this, SLOT(open_config_directory()));
+    profile_menu.addAction(tr("Create new empty config"), this, &main_window::make_empty_config);
+    profile_menu.addAction(tr("Create new copied config"), this, &main_window::make_copied_config);
+    profile_menu.addAction(tr("Open configuration directory"), this, &main_window::open_config_directory);
     ui.profile_button->setMenu(&profile_menu);
 
-    connect(&config_list_timer, &QTimer::timeout, this, [this] { refresh_config_list(); });
+    connect(&config_list_timer, &QTimer::timeout, this, &main_window::refresh_config_list);
     config_list_timer.start(1000 * 5);
 
     connect(ui.iconcomboProfile, &QComboBox::currentTextChanged,
-            this, [this](const QString& x) { set_profile(x); });
+            this, [this](const QString& x) { main_window::set_profile(x); });
 }
 
 void main_window::init_tray_menu()
@@ -232,8 +221,7 @@ void main_window::init_tray_menu()
     QObject::connect(&menu_action_exit, &QAction::triggered, this, &main_window::exit);
     tray_menu.addAction(&menu_action_exit);
 
-    connect(&s.tray_enabled,
-            static_cast<void (value_::*)(bool) const>(&value_::valueChanged),
+    connect(&s.tray_enabled, value_::value_changed<bool>(),
             this, &main_window::ensure_tray);
 
     ensure_tray();
@@ -242,13 +230,13 @@ void main_window::init_tray_menu()
 void main_window::init_buttons()
 {
     update_button_state(false, false);
-    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(show_mapping_window()));
-    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
-    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(show_tracker_settings()));
-    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(show_proto_settings()));
-    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(show_filter_settings()));
-    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
-    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
+    connect(ui.btnEditCurves, &QPushButton::clicked, this, &main_window::show_mapping_window);
+    connect(ui.btnShortcuts, &QPushButton::clicked, this, &main_window::show_options_dialog);
+    connect(ui.btnShowEngineControls, &QPushButton::clicked, this, &main_window::show_tracker_settings);
+    connect(ui.btnShowServerControls, &QPushButton::clicked, this, &main_window::show_proto_settings);
+    connect(ui.btnShowFilterControls, &QPushButton::clicked, this, &main_window::show_filter_settings);
+    connect(ui.btnStartTracker, &QPushButton::clicked, this, &main_window::start_tracker_);
+    connect(ui.btnStopTracker, &QPushButton::clicked, this, &main_window::stop_tracker_);
 }
 
 void main_window::register_shortcuts()
@@ -925,6 +913,24 @@ void main_window::set_profile_in_registry(const QString &profile)
     with_global_settings_object([&](QSettings& s) {
         s.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
     });
+}
+
+void main_window::restart_tracker_()
+{
+    qDebug() << "restart tracker";
+
+    stop_tracker_();
+    start_tracker_();
+}
+
+void main_window::toggle_tracker_()
+{
+    qDebug() << "toggle tracker";
+
+    if (work)
+        stop_tracker_();
+    else
+        start_tracker_();
 }
 
 #if !defined _WIN32

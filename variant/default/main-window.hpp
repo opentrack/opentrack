@@ -18,6 +18,7 @@
 #include "logic/work.hpp"
 #include "logic/state.hpp"
 #include "options/options.hpp"
+#include "compat/qt-signal.hpp"
 
 #include <QApplication>
 #include <QMainWindow>
@@ -39,7 +40,7 @@
 
 class main_window final : public QMainWindow, private State
 {
-    Q_OBJECT
+    Q_DECLARE_TR_FUNCTIONS(main_window)
 
     Ui::main_window ui;
 
@@ -95,12 +96,13 @@ class main_window final : public QMainWindow, private State
     void init_shortcuts();
     void init_buttons();
 
-    void changeEvent(QEvent* e) override;
-    bool event(QEvent *event) override;
-    bool maybe_hide_to_tray(QEvent* e);
 #if !defined _WIN32
     void annoy_if_root();
 #endif
+
+    void changeEvent(QEvent* e) override;
+    bool event(QEvent *event) override;
+    bool maybe_hide_to_tray(QEvent* e);
 
     void closeEvent(QCloseEvent *event) override;
 
@@ -108,11 +110,11 @@ class main_window final : public QMainWindow, private State
     bool is_tray_enabled();
     bool start_in_tray();
 
-private slots:
-    void save_modules();
-    void exit(int status = EXIT_SUCCESS);
+    void refresh_config_list();
 
-    void set_profile(const QString& new_name, bool migrate = true);
+    void make_empty_config();
+    void make_copied_config();
+    void open_config_directory();
 
     void show_tracker_settings();
     void show_proto_settings();
@@ -121,26 +123,26 @@ private slots:
     void show_mapping_window();
     void show_pose();
 
-    void maybe_start_profile_from_executable();
-
-    void make_empty_config();
-    void make_copied_config();
-    void open_config_directory();
-    void refresh_config_list();
-
     void start_tracker_();
     void stop_tracker_();
+    void restart_tracker_();
+    void toggle_tracker_();
+
+    void set_profile(const QString& new_name, bool migrate = true);
+    void maybe_start_profile_from_executable();
 
     void ensure_tray();
-
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
+
+    void save_modules();
+    void exit(int status = EXIT_SUCCESS);
+
     static void set_working_directory();
 
-signals:
-    void start_tracker();
-    void stop_tracker();
-    void toggle_tracker();
-    void restart_tracker();
+    qt_sig::nullary start_tracker;
+    qt_sig::nullary stop_tracker;
+    qt_sig::nullary toggle_tracker;
+    qt_sig::nullary restart_tracker;
 
 public:
     main_window();
