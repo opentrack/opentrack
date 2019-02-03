@@ -5,6 +5,7 @@
 #include <QLayout>
 #include <QPainter>
 
+#include "compat/check-visible.hpp"
 
 
 ///
@@ -308,6 +309,8 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 	return hr;
 }
 
+
+
 /// <summary>
 /// Main processing function
 /// </summary>
@@ -355,47 +358,54 @@ void KinectFaceTracker::Update()
 
 		if (SUCCEEDED(hr))
 		{
-			// Fetch color buffer
-			if (imageFormat == ColorImageFormat_Rgba)
-			{
-				hr = pColorFrame->AccessRawUnderlyingBuffer(&nBufferSize, reinterpret_cast<BYTE**>(&pBuffer));
-			}
-			else if (m_pColorRGBX)
-			{
-				pBuffer = m_pColorRGBX;
-				nBufferSize = cColorWidth * cColorHeight * sizeof(RGBQUAD);
-				hr = pColorFrame->CopyConvertedFrameDataToArray(nBufferSize, reinterpret_cast<BYTE*>(pBuffer), ColorImageFormat_Rgba);				
-			}
-			else
-			{
-				hr = E_FAIL;
-			}
-
-		}
-
-		if (SUCCEEDED(hr))
-		{
 			//DrawStreams(nTime, pBuffer, nWidth, nHeight);
 			ProcessFaces();
 		}
 
-		if (SUCCEEDED(hr))
-		{			
-			// Setup our image 
-			QImage image((const unsigned char*)pBuffer, cColorWidth, cColorHeight, sizeof(RGBQUAD)*cColorWidth, QImage::Format_RGBA8888);
-			if (IsValidRect(iFaceBox))
+		if (check_is_visible())
+		{
+			//OutputDebugStringA("Widget visible!\n");
+			// If our widget is visible we feed it our frame
+			if (SUCCEEDED(hr))
 			{
-				// Draw our face bounding box
-				QPainter painter(&image);
-				painter.setBrush(Qt::NoBrush);
-				painter.setPen(QPen(Qt::red, 8));
-				painter.drawRect(iFaceBox.Left, iFaceBox.Top, iFaceBox.Right - iFaceBox.Left, iFaceBox.Bottom - iFaceBox.Top);
-				bool bEnd = painter.end();
+				// Fetch color buffer
+				if (imageFormat == ColorImageFormat_Rgba)
+				{
+					hr = pColorFrame->AccessRawUnderlyingBuffer(&nBufferSize, reinterpret_cast<BYTE**>(&pBuffer));
+				}
+				else if (m_pColorRGBX)
+				{
+					pBuffer = m_pColorRGBX;
+					nBufferSize = cColorWidth * cColorHeight * sizeof(RGBQUAD);
+					hr = pColorFrame->CopyConvertedFrameDataToArray(nBufferSize, reinterpret_cast<BYTE*>(pBuffer), ColorImageFormat_Rgba);
+				}
+				else
+				{
+					hr = E_FAIL;
+				}
+
 			}
 
-			// Update our video preview
-			iVideoWidget->update_image(image);
+			if (SUCCEEDED(hr))
+			{
+				// Setup our image 
+				QImage image((const unsigned char*)pBuffer, cColorWidth, cColorHeight, sizeof(RGBQUAD)*cColorWidth, QImage::Format_RGBA8888);
+				if (IsValidRect(iFaceBox))
+				{
+					// Draw our face bounding box
+					QPainter painter(&image);
+					painter.setBrush(Qt::NoBrush);
+					painter.setPen(QPen(Qt::red, 8));
+					painter.drawRect(iFaceBox.Left, iFaceBox.Top, iFaceBox.Right - iFaceBox.Left, iFaceBox.Bottom - iFaceBox.Top);
+					bool bEnd = painter.end();
+				}
+
+				// Update our video preview
+				iVideoWidget->update_image(image);
+			}
+
 		}
+
 
 		SafeRelease(pFrameDescription);
 	}
