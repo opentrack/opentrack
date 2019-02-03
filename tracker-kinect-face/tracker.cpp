@@ -232,6 +232,7 @@ void KinectFaceTracker::ExtractFaceRotationInDegrees(const Vector4* pQuaternion,
 }
 
 
+
 /// <summary>
 /// Initializes the default Kinect sensor
 /// </summary>
@@ -248,9 +249,9 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 
 	if (m_pKinectSensor)
 	{
-		// Initialize Kinect and get color, body and face readers
-		IColorFrameSource* pColorFrameSource = nullptr;
-		IBodyFrameSource* pBodyFrameSource = nullptr;
+		// Initialize Kinect and get color, body and face readers		
+		UniqueInterface<IBodyFrameSource> pBodyFrameSource;
+		UniqueInterface<IColorFrameSource> pColorFrameSource;
 
 		hr = m_pKinectSensor->Open();
 
@@ -261,17 +262,23 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 
 		if (SUCCEEDED(hr))
 		{
-			hr = m_pKinectSensor->get_ColorFrameSource(&pColorFrameSource);
+			hr = m_pKinectSensor->get_ColorFrameSource(pColorFrameSource.PtrPtr());
+			pColorFrameSource.Reset();
 		}
+		
+		//std::unique_ptr<IColorFrameSource, decltype(&SafeRelease)> colorFrameSource(pColorFrameSource, SafeRelease);
 
 		if (SUCCEEDED(hr))
 		{
+			//hr = (*pColorFrameSource.PtrPtr())->OpenReader(&m_pColorFrameReader);
 			hr = pColorFrameSource->OpenReader(&m_pColorFrameReader);
 		}
 
+
 		if (SUCCEEDED(hr))
 		{
-			hr = m_pKinectSensor->get_BodyFrameSource(&pBodyFrameSource);
+			hr = m_pKinectSensor->get_BodyFrameSource(pBodyFrameSource.PtrPtr());
+			pBodyFrameSource.Reset();
 		}
 
 		if (SUCCEEDED(hr))
@@ -297,8 +304,13 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 			}
 		}
 
-		SafeRelease(pColorFrameSource);
-		SafeRelease(pBodyFrameSource);
+		//pColorFrameSource.Free();
+		//pBodyFrameSource.Free();
+		//SafeRelease(pColorFrameSource);
+		//SafeRelease(pBodyFrameSource);
+		
+		//SafeRelease(*pBodyFrameSource.PtrPtr());
+		//SafeRelease(*pColorFrameSource.PtrPtr());
 	}
 
 	if (!m_pKinectSensor || FAILED(hr))

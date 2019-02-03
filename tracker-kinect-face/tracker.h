@@ -14,7 +14,7 @@
 
 #pragma once
 
-// Safe release for interfaces
+// @deprecated Use UniqueInterface instead. Remove it at some point.
 template<class Interface>
 inline void SafeRelease(Interface *& pInterfaceToRelease)
 {
@@ -24,6 +24,32 @@ inline void SafeRelease(Interface *& pInterfaceToRelease)
 		pInterfaceToRelease = nullptr;
 	}
 }
+
+template<class Interface>
+inline void ReleaseInterface(Interface* pInterfaceToRelease)
+{
+	if (pInterfaceToRelease != nullptr)
+	{
+		pInterfaceToRelease->Release();
+	}
+}
+
+// Safely use Microsoft interfaces.
+template<typename T>
+class UniqueInterface : public std::unique_ptr<T, decltype(&ReleaseInterface<T>)> ///**/
+{
+public:
+	UniqueInterface() : std::unique_ptr<T, decltype(&ReleaseInterface<T>)>(nullptr, ReleaseInterface<T>){}
+	// Access pointer, typically for creation
+	T** PtrPtr() { return &iPtr; };
+	// Called this once the pointer was created
+	void Reset() { std::unique_ptr<T, decltype(&ReleaseInterface<T>)>::reset(iPtr); }
+	// If ever you want to release that interface before the object is deleted
+	void Free() { iPtr = nullptr; Reset(); }	
+private:
+	T* iPtr = nullptr;
+};
+
 
 
 class KinectFaceTracker : public ITracker
