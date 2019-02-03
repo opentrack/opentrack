@@ -186,6 +186,11 @@ void KinectFaceTracker::data(double *data)
 		iLastFacePosition = iFacePosition;
 		iLastFaceRotation = iFaceRotation;
 	}
+	else
+	{
+		//TODO: after like 5s without tracking reset position to zero
+		//TODO: Instead of hardcoding that delay add it to our settings
+	}
 	
 	// Feed our framework our last valid position and rotation
 	data[0] = (iLastFacePosition.X - iFacePositionCenter.X) * 100; // Convert to centimer to be in a range that suites OpenTrack.
