@@ -143,8 +143,8 @@ void main_window::init_dylibs()
 
 void main_window::init_profiles()
 {
-    refresh_config_list();
-    // config directory should be implicitly created by `refresh_config_list'
+    refresh_profile_list();
+    // implicitly created by `ini_directory()'
     if (ini_directory().isEmpty() || !QDir(ini_directory()).isReadable())
         die_on_config_not_writable();
 
@@ -156,7 +156,7 @@ void main_window::init_profiles()
     profile_menu.addAction(tr("Open configuration directory"), this, &main_window::open_config_directory);
     ui.profile_button->setMenu(&profile_menu);
 
-    connect(&config_list_timer, &QTimer::timeout, this, &main_window::refresh_config_list);
+    connect(&config_list_timer, &QTimer::timeout, this, &main_window::refresh_profile_list);
     config_list_timer.start(1000 * 5);
 
     connect(ui.iconcomboProfile, &QComboBox::currentTextChanged,
@@ -287,7 +287,7 @@ main_window::~main_window()
         stop_tracker_();
         close();
 
-        constexpr int inc = 100, max = 2000;
+        constexpr int inc = 25, max = 1000;
 
         for (int k = 0; k < max; k += inc)
         {
@@ -311,13 +311,15 @@ void main_window::make_empty_config()
     if (get_new_config_name_from_dialog(name))
     {
         QFile(ini_combine(name)).open(QFile::ReadWrite);
-        refresh_config_list();
+        refresh_profile_list();
 
-        QSignalBlocker q(ui.iconcomboProfile);
+        if (profile_list.contains(name))
+        {
+            QSignalBlocker q(ui.iconcomboProfile);
 
-        set_profile(name, false);
-        if (config_listed(name))
+            set_profile(name, false);
             mark_config_as_not_needing_migration();
+        }
     }
 }
 
@@ -331,13 +333,15 @@ void main_window::make_copied_config()
         (void) QFile::remove(new_name);
         QFile::copy(cur, new_name);
 
-        refresh_config_list();
+        refresh_profile_list();
 
-        QSignalBlocker q(ui.iconcomboProfile);
+        if (profile_list.contains(name))
+        {
+            QSignalBlocker q(ui.iconcomboProfile);
 
-        set_profile(name, false);
-        if (config_listed(name))
+            set_profile(name, false);
             mark_config_as_not_needing_migration();
+        }
     }
 
 }
@@ -347,7 +351,7 @@ void main_window::open_config_directory()
     QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(ini_directory()));
 }
 
-void main_window::refresh_config_list()
+void main_window::refresh_profile_list()
 {
     if (work)
         return;
@@ -355,28 +359,13 @@ void main_window::refresh_config_list()
     QStringList list = ini_list();
     QString current = ini_filename();
 
+    if (list == profile_list)
+        return;
+
     if (!list.contains(current))
         current = OPENTRACK_DEFAULT_CONFIG;
-    else
-    {
-        const bool exact_same = progn(
-            if (list.size() == ui.iconcomboProfile->count())
-            {
-                const int sz = list.size();
-                for (int i = 0; i < sz; i++)
-                {
-                    if (list[i] != ui.iconcomboProfile->itemText(i))
-                        return false;
-                }
-                return true;
-            }
 
-            return false;
-        );
-
-        if (exact_same)
-            return;
-    }
+    profile_list = list;
 
     static const QIcon icon(":/images/settings16.png");
 
@@ -473,7 +462,7 @@ void main_window::stop_tracker_()
     work = nullptr;
 
     {
-        double p[6] = {0,0,0, 0,0,0};
+        double p[6] {};
         show_pose_(p, p);
     }
 
@@ -663,28 +652,36 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
 {
     QString new_name = new_name_;
 
-    if (!config_listed(new_name))
+    QSignalBlocker b(ui.iconcomboProfile);
+
+    if (!profile_list.contains(new_name))
     {
         new_name = OPENTRACK_DEFAULT_CONFIG;
-        refresh_config_list();
-        if (!config_listed(new_name))
+        refresh_profile_list();
+        if (!profile_list.contains(new_name))
             migrate = false;
     }
 
-    ui.iconcomboProfile->setCurrentText(new_name);
-    set_profile_in_registry(new_name);
+    if (new_name != ini_filename())
+    {
+        ui.iconcomboProfile->setCurrentText(new_name);
+        set_profile_in_registry(new_name);
 
-    // XXX workaround migration breakage -sh 20180428
-    QSignalBlocker b1(ui.iconcomboTrackerSource);
-    QSignalBlocker b2(ui.iconcomboProtocol);
-    QSignalBlocker b3(ui.iconcomboFilter);
+        options::detail::bundler::refresh_all_bundles();
+    }
 
-    options::detail::bundler::refresh_all_bundles();
-
+    // this needs to run on app start -sh 20190203
     if (migrate)
+    {
+        // workaround migration breakage -sh 20180428
+        QSignalBlocker b1(ui.iconcomboTrackerSource);
+        QSignalBlocker b2(ui.iconcomboProtocol);
+        QSignalBlocker b3(ui.iconcomboFilter);
+
         // migrations are for config layout changes and other user-visible
         // incompatibilities in future versions
         run_migrations();
+    }
     else
         mark_config_as_not_needing_migration();
 
@@ -797,7 +794,7 @@ void main_window::maybe_start_profile_from_executable()
     if (!work)
     {
         QString profile;
-        if (det.config_to_start(profile) && config_listed(profile))
+        if (det.config_to_start(profile) && profile_list.contains(profile))
         {
             set_profile(profile);
             start_tracker_();
@@ -820,16 +817,6 @@ void main_window::set_keys_enabled(bool flag)
     }
     else
         register_shortcuts();
-}
-
-bool main_window::config_listed(const QString& name)
-{
-    // XXX TODO store profile list outside this widget as an authoritative source -sh 20190123
-    const int sz = ui.iconcomboProfile->count();
-    for (int i = 0; i < sz; i++)
-        if (ui.iconcomboProfile->itemText(i) == name)
-            return true;
-    return false;
 }
 
 void main_window::changeEvent(QEvent* e)

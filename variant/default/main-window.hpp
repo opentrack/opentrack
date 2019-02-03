@@ -32,6 +32,7 @@
 #include <QAction>
 #include <QEvent>
 #include <QCloseEvent>
+#include <QList>
 
 #include <tuple>
 #include <memory>
@@ -63,6 +64,8 @@ class main_window final : public QMainWindow, private State
 
     process_detector_worker det;
     QMenu profile_menu;
+
+    QList<QString> profile_list;
 
     QAction menu_action_header   { &tray_menu },
             menu_action_show     { &tray_menu },
@@ -118,8 +121,7 @@ class main_window final : public QMainWindow, private State
 
     void set_profile(const QString& new_name, bool migrate = true);
     void set_profile_in_registry(const QString& profile);
-    void refresh_config_list();
-    bool config_listed(const QString& name);
+    void refresh_profile_list();
     void die_on_config_not_writable();
     void maybe_start_profile_from_executable();
     [[nodiscard]] static bool get_new_config_name_from_dialog(QString &ret);
