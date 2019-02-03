@@ -374,7 +374,10 @@ void aruco_tracker::run()
             QMutexLocker l(&camera_mtx);
 
             if (!camera.read(color))
+            {
+                portable::sleep(100);
                 continue;
+            }
         }
 
         cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
