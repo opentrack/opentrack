@@ -44,16 +44,21 @@ class main_window final : public QMainWindow, private State
 
     Ui::main_window ui;
 
-    Shortcuts global_shortcuts;
     module_settings m;
+
     std::unique_ptr<QSystemTrayIcon> tray;
     QMenu tray_menu { this };
+
     QTimer pose_update_timer { this };
     QTimer det_timer;
     QTimer config_list_timer;
+
+    Shortcuts global_shortcuts;
+    QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
+
     std::unique_ptr<options_dialog> options_widget;
     std::unique_ptr<mapping_dialog> mapping_widget;
-    QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
+
     std::unique_ptr<IFilterDialog> pFilterDialog;
     std::unique_ptr<IProtocolDialog> pProtocolDialog;
     std::unique_ptr<ITrackerDialog> pTrackerDialog;
@@ -84,47 +89,36 @@ class main_window final : public QMainWindow, private State
     qt_sig::nullary toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
     qt_sig::nullary restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
 
-    void update_button_state(bool running, bool inertialp);
-    void display_pose(const double* mapped, const double* raw);
-    void set_title(const QString& game_title = QString());
-    [[nodiscard]] static bool get_new_config_name_from_dialog(QString &ret);
-    void set_profile_in_registry(const QString& profile);
-    void register_shortcuts();
-    void set_keys_enabled(bool flag);
-    bool config_listed(const QString& name);
-
     void init_dylibs();
     void init_tray_menu();
     void init_profiles();
-    void init_shortcuts();
     void init_buttons();
+
+    void init_shortcuts();
+    void register_shortcuts();
+    void set_keys_enabled(bool flag);
+
+    void update_button_state(bool running, bool inertialp);
 
 #if !defined _WIN32
     void annoy_if_root();
 #endif
 
     void changeEvent(QEvent* e) override;
-    bool event(QEvent *event) override;
     bool maybe_hide_to_tray(QEvent* e);
-
     void closeEvent(QCloseEvent *event) override;
-
-    void die_on_config_not_writable();
-    bool is_tray_enabled();
-    bool start_in_tray();
-
-    void refresh_config_list();
-
-    void make_empty_config();
-    void make_copied_config();
-    void open_config_directory();
+    bool event(QEvent *event) override;
 
     void show_tracker_settings();
     void show_proto_settings();
     void show_filter_settings();
+
     void show_options_dialog();
     void show_mapping_window();
+
     void show_pose();
+    void show_pose_(const double* mapped, const double* raw);
+    void set_title(const QString& game_title = QString());
 
     void start_tracker_();
     void stop_tracker_();
@@ -132,17 +126,26 @@ class main_window final : public QMainWindow, private State
     void toggle_tracker_();
 
     void set_profile(const QString& new_name, bool migrate = true);
+    void set_profile_in_registry(const QString& profile);
+    void refresh_config_list();
+    bool config_listed(const QString& name);
+    void die_on_config_not_writable();
     void maybe_start_profile_from_executable();
+    [[nodiscard]] static bool get_new_config_name_from_dialog(QString &ret);
+
+    void make_empty_config();
+    void make_copied_config();
+    void open_config_directory();
 
     void ensure_tray();
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
+    bool tray_enabled();
+    bool start_in_tray();
 
     void save_modules();
     static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
 
     void exit(int status = EXIT_SUCCESS);
-
-    static void set_working_directory();
 
 public:
     main_window();

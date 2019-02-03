@@ -298,11 +298,6 @@ main_window::~main_window()
     exit();
 }
 
-void main_window::set_working_directory()
-{
-    QDir::setCurrent(OPENTRACK_BASE_PATH);
-}
-
 void main_window::save_modules()
 {
     m.b->save();
@@ -454,7 +449,7 @@ void main_window::start_tracker_()
 
     {
         double p[6] = {0,0,0, 0,0,0};
-        display_pose(p, p);
+        show_pose_(p, p);
     }
 
     work = std::make_shared<Work>(pose, ev, ui.video_frame, current_tracker(), current_protocol(), current_filter());
@@ -508,7 +503,7 @@ void main_window::stop_tracker_()
 
     {
         double p[6] = {0,0,0, 0,0,0};
-        display_pose(p, p);
+        show_pose_(p, p);
     }
 
     update_button_state(false, false);
@@ -516,7 +511,7 @@ void main_window::stop_tracker_()
     ui.btnStartTracker->setFocus();
 }
 
-void main_window::display_pose(const double *mapped, const double *raw)
+void main_window::show_pose_(const double* mapped, const double* raw)
 {
     ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                                   mapped[TX], mapped[TY], mapped[TZ]);
@@ -572,10 +567,10 @@ void main_window::show_pose()
 
     work->pipeline_.raw_and_mapped_pose(mapped, raw);
 
-    display_pose(mapped, raw);
+    show_pose_(mapped, raw);
 }
 
-void show_window(QWidget& d, bool fresh)
+static void show_window(QWidget& d, bool fresh)
 {
     if (fresh)
     {
@@ -594,7 +589,7 @@ void show_window(QWidget& d, bool fresh)
 }
 
 template<typename t, typename F>
-bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
+static bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
 {
     bool fresh = false;
 
@@ -608,7 +603,7 @@ bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
 }
 
 template<typename t, typename... Args>
-bool mk_window(std::unique_ptr<t>& place, Args&&... params)
+static bool mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
     return mk_window_common(place, [&] {
         return std::make_unique<t>(params...);
@@ -616,7 +611,7 @@ bool mk_window(std::unique_ptr<t>& place, Args&&... params)
 }
 
 template<typename t>
-bool mk_dialog(std::unique_ptr<t>& place, const std::shared_ptr<dylib>& lib)
+static bool mk_dialog(std::unique_ptr<t>& place, const std::shared_ptr<dylib>& lib)
 {
     using u = std::unique_ptr<t>;
 
@@ -784,7 +779,7 @@ void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 
     ensure_tray();
 
-    const bool is_minimized = isHidden() || !is_tray_enabled();
+    const bool is_minimized = isHidden() || !tray_enabled();
 
     menu_action_show.setText(!isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
 
@@ -809,7 +804,7 @@ bool main_window::maybe_hide_to_tray(QEvent* e)
 {
     if (e->type() == QEvent::WindowStateChange &&
         (windowState() & Qt::WindowMinimized) &&
-        is_tray_enabled())
+        tray_enabled())
     {
         e->accept();
         ensure_tray();
@@ -894,14 +889,14 @@ bool main_window::event(QEvent* event)
     return QMainWindow::event(event);
 }
 
-bool main_window::is_tray_enabled()
+bool main_window::tray_enabled()
 {
     return s.tray_enabled && QSystemTrayIcon::isSystemTrayAvailable();
 }
 
 bool main_window::start_in_tray()
 {
-    return is_tray_enabled() && s.tray_start;
+    return tray_enabled() && s.tray_start;
 }
 
 void main_window::set_profile_in_registry(const QString &profile)
