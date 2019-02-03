@@ -12,6 +12,21 @@ struct module_names : migration
     using dylib_ptr = Modules::dylib_ptr;
     using dylib_list = Modules::dylib_list;
 
+    struct module_type {
+        QString name, def;
+        dylib_list const& list;
+    };
+
+    Modules m { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH };
+
+    module_type types[3] {
+        { "tracker-dll", "pt", m.trackers() },
+        { "protocol-dll", "freetrack", m.protocols() },
+        { "filter-dll", "accela", m.filters() },
+    };
+
+    bundle b { make_bundle("modules") };
+
     QString unique_date() const override
     {
         return "20180428_00";
@@ -24,46 +39,39 @@ struct module_names : migration
 
     bool should_run() const override
     {
-        return true;
+        for (const module_type& type : types)
+        {
+            if (!b->contains(type.name))
+                continue;
+
+            const QString value = b->get_variant(type.name).value<QString>();
+
+            for (const dylib_ptr& lib : type.list)
+            {
+                if (value == lib->name && value != lib->module_name)
+                    return true;
+            }
+        }
+
+        return false;
     }
 
     void run() override
     {
-        struct module_type {
-            QString name, def;
-            dylib_list const& list;
-        };
-
-        Modules m { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH };
-
-        module_type types[3] {
-            { "tracker-dll", "pt", m.trackers() },
-            { "protocol-dll", "freetrack", m.protocols() },
-            { "filter-dll", "accela", m.filters() },
-        };
-
-        bundle b = make_bundle("modules");
-
         for (module_type& type : types)
         {
-            QByteArray n = type.name.toUtf8();
-
             if (!b->contains(type.name))
-            {
-                qDebug() << n.constData() << "=>" << "EMPTY";
-                b->store_kv(type.name, type.def);
                 continue;
-            }
 
-            QString value = b->get_variant(type.name).value<QString>();
+            const QString value = b->get_variant(type.name).value<QString>();
 
             bool found = false;
 
-            for (dylib_ptr lib : type.list)
+            for (const dylib_ptr& lib : type.list)
             {
-                if (value == lib->name)
+                if (value == lib->name && value != lib->module_name)
                 {
-                    qDebug() << n.constData() << "=>" << lib->module_name;
+                    qDebug() << type.name << value << "=>" << lib->module_name;
                     b->store_kv(type.name, lib->module_name);
                     found = true;
                     break;
@@ -72,8 +80,8 @@ struct module_names : migration
 
             if (!found)
             {
-                qDebug() << n.constData() << "=>" << "not found" << value;
-                b->store_kv(type.name, type.def);
+                qDebug() << type.name << value << "not found";
+                b->store_kv(type.name, QVariant());
             }
         }
 
