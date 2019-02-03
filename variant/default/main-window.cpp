@@ -407,17 +407,17 @@ void main_window::start_tracker_()
     if (work)
         return;
 
-    {
-        double p[6] = {0,0,0, 0,0,0};
-        show_pose_(p, p);
-    }
-
     work = std::make_shared<Work>(pose, ev, ui.video_frame, current_tracker(), current_protocol(), current_filter());
 
     if (!work->is_ok())
     {
         work = nullptr;
         return;
+    }
+
+    {
+        double p[6] = {0,0,0, 0,0,0};
+        show_pose_(p, p);
     }
 
     if (pTrackerDialog)

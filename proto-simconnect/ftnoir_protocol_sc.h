@@ -30,7 +30,7 @@ struct settings : opts {
     value<int> sxs_manifest;
     settings() :
         opts("proto-simconnect"),
-        sxs_manifest(b, "simconnect-manifest", 2)
+        sxs_manifest(b, "simconnect-manifest", 0)
     {}
 };
 
