@@ -34,9 +34,9 @@ void simconnect::run()
     {
         HRESULT hr;
 
-        if (SUCCEEDED(hr = simconnect_open(&hSimConnect, "opentrack", nullptr, 0, event, 0)))
+        if (SUCCEEDED(hr = simconnect_open(&handle, "opentrack", nullptr, 0, event, 0)))
         {
-            if (!SUCCEEDED(hr = simconnect_subscribetosystemevent(hSimConnect, 0, "Frame")))
+            if (!SUCCEEDED(hr = simconnect_subscribetosystemevent(handle, 0, "Frame")))
             {
                 qDebug() << "simconnect: can't subscribe to frame event:" << hr;
             }
@@ -54,7 +54,7 @@ void simconnect::run()
                     {
                         tm.start();
 
-                        if (!SUCCEEDED(hr = simconnect_calldispatch(hSimConnect, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
+                        if (!SUCCEEDED(hr = simconnect_calldispatch(handle, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
                         {
                             qDebug() << "simconnect: calldispatch failed:" << hr;
                             break;
@@ -74,7 +74,7 @@ void simconnect::run()
                     }
                 }
 
-            (void) simconnect_close(hSimConnect);
+            (void) simconnect_close(handle);
         }
         else
             qDebug() << "simconnect: can't open handle:" << hr;
@@ -101,96 +101,101 @@ void simconnect::pose( const double *headpose )
     virtSCPosZ = float(-headpose[TZ]/100);
 }
 
-#ifdef __GNUC__
-#   pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-#endif
-
 class ActivationContext
 {
 public:
-    explicit ActivationContext(int resid)
-    {
-        ACTCTXA actx = {};
-        actx.cbSize = sizeof(actx);
-        actx.lpResourceName = MAKEINTRESOURCEA(resid);
-        actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
-        static const QString prefix = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
-        QString path = prefix + "lib" "opentrack-proto-simconnect.dll";
-        QByteArray name = QFile::encodeName(path);
-        actx.lpSource = name.constData();
-        hactctx = CreateActCtxA(&actx);
-        if (hactctx != INVALID_HANDLE_VALUE)
-        {
-            if (!ActivateActCtx(hactctx, &actctx_cookie))
-            {
-                qDebug() << "simconnect: can't set win32 activation context" << GetLastError();
-                ReleaseActCtx(hactctx);
-                hactctx = INVALID_HANDLE_VALUE;
-            }
-            else
-                ok = true;
-        } else {
-            qDebug() << "simconnect: can't create win32 activation context" << GetLastError();
-        }
-    }
-    ~ActivationContext() {
-        if (hactctx != INVALID_HANDLE_VALUE)
-        {
-            DeactivateActCtx(0, actctx_cookie);
-            ReleaseActCtx(hactctx);
-        }
-    }
+    explicit ActivationContext(int resid);
+    ~ActivationContext();
+
     bool is_ok() const { return ok; }
 
 private:
-    ULONG_PTR actctx_cookie = 0;
-    HANDLE hactctx = INVALID_HANDLE_VALUE;
+    ULONG_PTR cookie = 0;
+    HANDLE handle = INVALID_HANDLE_VALUE;
     bool ok = false;
 };
 
+ActivationContext::ActivationContext(int resid)
+{
+    ACTCTXA actx = {};
+    actx.cbSize = sizeof(actx);
+    actx.lpResourceName = MAKEINTRESOURCEA(resid);
+    actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
+    static const QString prefix = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
+    QString path = prefix + OPENTRACK_LIBRARY_PREFIX "opentrack-proto-simconnect." OPENTRACK_LIBRARY_EXTENSION;
+    QByteArray name = QFile::encodeName(path);
+    actx.lpSource = name.constData();
+    handle = CreateActCtxA(&actx);
+    if (handle != INVALID_HANDLE_VALUE)
+    {
+        if (!ActivateActCtx(handle, &cookie))
+        {
+            qDebug() << "simconnect: can't set win32 activation context" << GetLastError();
+            ReleaseActCtx(handle);
+            handle = INVALID_HANDLE_VALUE;
+        }
+        else
+            ok = true;
+    } else {
+        qDebug() << "simconnect: can't create win32 activation context" << GetLastError();
+    }
+}
+
+ActivationContext::~ActivationContext()
+{
+    if (handle != INVALID_HANDLE_VALUE)
+    {
+        DeactivateActCtx(0, cookie);
+        ReleaseActCtx(handle);
+    }
+}
+
 module_status simconnect::initialize()
 {
-    if (!SCClientLib.isLoaded())
+    if (!library.isLoaded())
     {
         ActivationContext ctx(142 + s.sxs_manifest);
 
         if (ctx.is_ok())
         {
-            SCClientLib.setFileName("SimConnect.dll");
-            SCClientLib.setLoadHints(QLibrary::PreventUnloadHint | QLibrary::ResolveAllSymbolsHint);
-            if (!SCClientLib.load())
-                return error(tr("dll load failed -- %1").arg(SCClientLib.errorString()));
+            library.setFileName("SimConnect.dll");
+            library.setLoadHints(QLibrary::PreventUnloadHint | QLibrary::ResolveAllSymbolsHint);
+            if (!library.load())
+                return error(tr("dll load failed: %1").arg(library.errorString()));
         }
         else
-            return error(tr("can't load SDK -- check selected simconnect version"));
+            // XXX TODO add instructions for fsx and p3d -sh 20190128
+            return error(tr("install FSX SDK"));
     }
 
-    simconnect_open = (importSimConnect_Open) SCClientLib.resolve("SimConnect_Open");
-    if (!simconnect_open)
-        return error("Open function not found in DLL!");
-    simconnect_set6DOF = (importSimConnect_CameraSetRelative6DOF) SCClientLib.resolve("SimConnect_CameraSetRelative6DOF");
-    if (!simconnect_set6DOF)
-        return error("CameraSetRelative6DOF function not found in DLL!");
-    simconnect_close = (importSimConnect_Close) SCClientLib.resolve("SimConnect_Close");
-    if (!simconnect_close)
-        return error("Close function not found in DLL!");
+    using ptr = void(*)();
 
-    simconnect_calldispatch = (importSimConnect_CallDispatch) SCClientLib.resolve("SimConnect_CallDispatch");
-    if (!simconnect_calldispatch)
-        return error("CallDispatch function not found in DLL!");
+    struct {
+        const char* name;
+        ptr& place;
+    } list[] = {
+        { "SimConnect_Open", (ptr&)simconnect_open },
+        { "SimConnect_CameraSetRelative6DOF", (ptr&)simconnect_set6DOF },
+        { "SimConnect_Close", (ptr&)simconnect_close },
+        { "SimConnect_CallDispatch", (ptr&)simconnect_calldispatch },
+        { "SimConnect_SubscribeToSystemEvent", (ptr&)simconnect_subscribetosystemevent },
+    };
 
-    simconnect_subscribetosystemevent = (importSimConnect_SubscribeToSystemEvent) SCClientLib.resolve("SimConnect_SubscribeToSystemEvent");
-    if (!simconnect_subscribetosystemevent)
-        return error("SubscribeToSystemEvent function not found in DLL!");
+    for (auto& x : list)
+    {
+        x.place = (ptr)library.resolve(x.name);
+        if (!x.place)
+            return error(tr("can't import %1: %2").arg(x.name, library.errorString()));
+    }
 
     start();
 
-    return status_ok();
+    return {};
 }
 
-void simconnect::handle()
+void simconnect::handler()
 {
-    (void) simconnect_set6DOF(hSimConnect, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
+    (void) simconnect_set6DOF(handle, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
 }
 
 void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *self_)
@@ -203,16 +208,21 @@ void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWO
         break;
     case SIMCONNECT_RECV_ID_EXCEPTION:
         qDebug() << "simconnect: got exception";
-        //self.reconnect = true;
+        self.reconnect = true;
         break;
     case SIMCONNECT_RECV_ID_QUIT:
         qDebug() << "simconnect: got quit event";
         self.reconnect = true;
         break;
     case SIMCONNECT_RECV_ID_EVENT_FRAME:
-        self.handle();
+        self.handler();
         break;
     }
 }
 
-OPENTRACK_DECLARE_PROTOCOL(simconnect, SCControls, simconnectDll)
+QString simconnect::game_name()
+{
+    return tr("FS2004/FSX");
+}
+
+OPENTRACK_DECLARE_PROTOCOL(simconnect, simconnect_ui, simconnect_metadata)

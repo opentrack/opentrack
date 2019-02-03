@@ -24,39 +24,43 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Prepar3d SP2 XPACK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Steam FSX (older)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Steam FSX (new)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>You need to install SimConnect SDK for your FSX version. For the Steam version, choose SP1 in the above combo box.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Prepar3d / SP2 XPACK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam FSX (newer)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>simconnect</name>
     <message>
-        <source>dll load failed -- %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>can&apos;t load SDK -- check selected simconnect version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>FS2004/FSX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>dll load failed: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>install FSX SDK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>can&apos;t import %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>simconnectDll</name>
+    <name>simconnect_metadata</name>
     <message>
         <source>Microsoft FSX SimConnect</source>
         <translation type="unfinished"></translation>

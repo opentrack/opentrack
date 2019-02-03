@@ -10,6 +10,16 @@ set(new-hier-path "#pragma once
 #   include <QString>
 #   include \"compat/base-path.hpp\"
 #endif
+
+#if defined __APPLE__
+#   define OPENTRACK_LIBRARY_EXTENSION \"dylib\"
+#elif defined _WIN32
+#   define OPENTRACK_LIBRARY_EXTENSION \"dll\"
+#else
+#   define OPENTRACK_LIBRARY_EXTENSION \"so\"
+#endif
+
+#define OPENTRACK_LIBRARY_PREFIX \"\"
 #define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
 #define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"
 #define OPENTRACK_CONTRIB_PATH \"${opentrack-hier-doc}contrib/\"

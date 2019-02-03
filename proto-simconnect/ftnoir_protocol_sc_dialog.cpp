@@ -12,23 +12,23 @@
 #include <QDebug>
 #include "api/plugin-api.hpp"
 
-SCControls::SCControls()
+simconnect_ui::simconnect_ui()
 {
-    ui.setupUi( this );
+    ui.setupUi(this);
 
-    // Connect Qt signals to member-functions
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
     tie_setting(s.sxs_manifest, ui.comboBox);
 }
 
-void SCControls::doOK() {
+void simconnect_ui::doOK()
+{
     s.b->save();
     close();
 }
 
-void SCControls::doCancel()
+void simconnect_ui::doCancel()
 {
     close();
 }

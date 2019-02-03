@@ -8,6 +8,7 @@
 #pragma once
 
 #include "plugin-api.hpp"
+#include "compat/library-path.hpp"
 
 #include <memory>
 #include <algorithm>
@@ -20,16 +21,6 @@
 #include <QDir>
 #include <QList>
 #include <QIcon>
-
-#if defined(__APPLE__)
-#   define OPENTRACK_SOLIB_EXT "dylib"
-#elif defined(_WIN32)
-#   define OPENTRACK_SOLIB_EXT "dll"
-#else
-#   define OPENTRACK_SOLIB_EXT "so"
-#endif
-
-#define OPENTRACK_SOLIB_PREFIX ""
 
 extern "C" {
     using module_ctor_t = void* (*)(void);
@@ -100,10 +91,10 @@ struct dylib final
             Type type;
             QLatin1String glob;
         } filters[] = {
-            { Filter, str(OPENTRACK_SOLIB_PREFIX "opentrack-filter-*." OPENTRACK_SOLIB_EXT), },
-            { Tracker, str(OPENTRACK_SOLIB_PREFIX "opentrack-tracker-*." OPENTRACK_SOLIB_EXT), },
-            { Protocol, str(OPENTRACK_SOLIB_PREFIX "opentrack-proto-*." OPENTRACK_SOLIB_EXT), },
-            { Extension, str(OPENTRACK_SOLIB_PREFIX "opentrack-ext-*." OPENTRACK_SOLIB_EXT), },
+            { Filter, str(OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Tracker, str(OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Protocol, str(OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Extension, str(OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION), },
         };
 
         for (const filter_& filter : filters)
@@ -155,21 +146,21 @@ private:
         {
             in = in.mid(idx + 1);
 
-            if (in.startsWith(OPENTRACK_SOLIB_PREFIX) &&
-                in.endsWith("." OPENTRACK_SOLIB_EXT))
+            if (in.startsWith(OPENTRACK_LIBRARY_PREFIX) &&
+                in.endsWith("." OPENTRACK_LIBRARY_EXTENSION))
             {
-                constexpr unsigned pfx_len = sizeof(OPENTRACK_SOLIB_PREFIX) - 1;
-                constexpr unsigned rst_len = sizeof("." OPENTRACK_SOLIB_EXT) - 1;
+                constexpr unsigned pfx_len = sizeof(OPENTRACK_LIBRARY_PREFIX) - 1;
+                constexpr unsigned rst_len = sizeof("." OPENTRACK_LIBRARY_EXTENSION) - 1;
 
                 in = in.mid(pfx_len);
                 in = in.left(in.size() - rst_len);
 
                 const char* const names[] =
                 {
-                    "opentrack-tracker-",
-                    "opentrack-proto-",
-                    "opentrack-filter-",
-                    "opentrack-ext-",
+                    OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-",
+                    OPENTRACK_LIBRARY_PREFIX "opentrack-proto-",
+                    OPENTRACK_LIBRARY_PREFIX "opentrack-filter-",
+                    OPENTRACK_LIBRARY_PREFIX "opentrack-ext-",
                 };
 
                 for (auto name : names)

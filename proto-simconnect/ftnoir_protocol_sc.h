@@ -42,26 +42,24 @@ public:
     ~simconnect() override;
     module_status initialize() override;
     void pose(const double* headpose) override;
-    void handle();
-    QString game_name() override
-    {
-        return tr("FS2004/FSX");
-    }
+    QString game_name() override;
+    void run() override;
+
 private:
+    void handler();
+
     enum {
         SIMCONNECT_RECV_ID_EXCEPTION = 2,
         SIMCONNECT_RECV_ID_QUIT = 3,
         SIMCONNECT_RECV_ID_EVENT_FRAME = 7,
     };
 
-    #pragma pack(push, 1)
     struct SIMCONNECT_RECV
     {
         DWORD   dwSize;
         DWORD   dwVersion;
         DWORD   dwID;
     };
-    #pragma pack(pop)
 
     typedef void (CALLBACK *DispatchProc)(SIMCONNECT_RECV*, DWORD, void*);
 
@@ -71,8 +69,6 @@ private:
     typedef HRESULT (WINAPI *importSimConnect_CallDispatch)(HANDLE hSimConnect, DispatchProc pfcnDispatch, void * pContext);
     typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, DWORD EventID, const char * SystemEventName);
 
-    void run() override;
-
     std::atomic<float> virtSCPosX {0};
     std::atomic<float> virtSCPosY {0};
     std::atomic<float> virtSCPosZ {0};
@@ -80,35 +76,37 @@ private:
     std::atomic<float> virtSCRotY {0};
     std::atomic<float> virtSCRotZ {0};
 
-    importSimConnect_Open simconnect_open;
-    importSimConnect_Close simconnect_close;
-    importSimConnect_CameraSetRelative6DOF simconnect_set6DOF;
-    importSimConnect_CallDispatch simconnect_calldispatch;
-    importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent;
+    importSimConnect_Open simconnect_open = nullptr;
+    importSimConnect_Close simconnect_close = nullptr;
+    importSimConnect_CameraSetRelative6DOF simconnect_set6DOF = nullptr;
+    importSimConnect_CallDispatch simconnect_calldispatch = nullptr;
+    importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent = nullptr;
 
-    HANDLE hSimConnect = nullptr;
+    HANDLE handle = nullptr;
     std::atomic<bool> reconnect = false;
     static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
     settings s;
-    QLibrary SCClientLib;
+    QLibrary library;
 };
 
-class SCControls: public IProtocolDialog
+class simconnect_ui: public IProtocolDialog
 {
     Q_OBJECT
-public:
-    SCControls();
-    void register_protocol(IProtocol *) override {}
-    void unregister_protocol() override {}
-private:
+
     Ui::UICSCControls ui;
     settings s;
+
+public:
+    simconnect_ui();
+    void register_protocol(IProtocol *) override {}
+    void unregister_protocol() override {}
+
 private slots:
     void doOK();
     void doCancel();
 };
 
-class simconnectDll : public Metadata
+class simconnect_metadata : public Metadata
 {
     Q_OBJECT
 
