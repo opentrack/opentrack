@@ -155,9 +155,6 @@ module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 	return error("Kinect init failed!");
 }
 
-#ifdef EMIT_NAN
-#   include <cstdlib>
-#endif
 
 bool KinectFaceTracker::center()
 {
