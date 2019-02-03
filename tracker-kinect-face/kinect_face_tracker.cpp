@@ -7,6 +7,8 @@
 
 #include "compat/check-visible.hpp"
 
+static const int KColorWidth = 1920;
+static const int KColorHeight = 1080;
 
 ///
 bool IsValidRect(const RectI& aRect)
@@ -82,62 +84,48 @@ bool IsNullPoint(const CameraSpacePoint& aPoint)
 }
 
 
-KinectFaceTracker::KinectFaceTracker():
-	m_pKinectSensor(nullptr),
-	m_pCoordinateMapper(nullptr),
-	m_pColorFrameReader(nullptr),
-	m_pColorRGBX(nullptr),
-	m_pBodyFrameReader(nullptr),
-	iLastFacePosition{0,0,0},
-	iFacePositionCenter{ 0,0,0 },
-	iFacePosition{ 0,0,0 },
-	iLastFaceRotation{ 0,0,0 },
-	iFaceRotationCenter{ 0,0,0 },
-	iFaceRotation{ 0,0,0 }
+KinectFaceTracker::KinectFaceTracker()
 {
-	m_pFaceFrameSource = nullptr;
-	m_pFaceFrameReader = nullptr;
-
 	// create heap storage for color pixel data in RGBX format
-	m_pColorRGBX = new RGBQUAD[cColorWidth * cColorHeight];
+	iColorRGBX = new RGBQUAD[KColorWidth * KColorHeight];
 }
 
 KinectFaceTracker::~KinectFaceTracker()
 {
-	if (m_pColorRGBX)
+	if (iColorRGBX)
 	{
-		delete[] m_pColorRGBX;
-		m_pColorRGBX = nullptr;
+		delete[] iColorRGBX;
+		iColorRGBX = nullptr;
 	}
 
 	// clean up Direct2D
 	//SafeRelease(m_pD2DFactory);
 
 	// done with face sources and readers
-	SafeRelease(m_pFaceFrameSource);
-	SafeRelease(m_pFaceFrameReader);
+	SafeRelease(iFaceFrameSource);
+	SafeRelease(iFaceFrameReader);
 
 	// done with body frame reader
-	SafeRelease(m_pBodyFrameReader);
+	SafeRelease(iBodyFrameReader);
 
 	// done with color frame reader
-	SafeRelease(m_pColorFrameReader);
+	SafeRelease(iColorFrameReader);
 
 	// done with coordinate mapper
-	SafeRelease(m_pCoordinateMapper);
+	SafeRelease(iCoordinateMapper);
 
 	// close the Kinect Sensor
-	if (m_pKinectSensor)
+	if (iKinectSensor)
 	{
-		m_pKinectSensor->Close();
+		iKinectSensor->Close();
 	}
 
-	SafeRelease(m_pKinectSensor);
+	SafeRelease(iKinectSensor);
 }
 
 module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 {
-	t.start();
+	iTimer.start();
 
 	if (SUCCEEDED(InitializeDefaultSensor()))
 	{
@@ -170,12 +158,12 @@ bool KinectFaceTracker::center()
 //
 void KinectFaceTracker::data(double *data)
 {
-	const double dt = t.elapsed_seconds();
+	const double dt = iTimer.elapsed_seconds();
 
 	const double KMinDelayInSeconds = 1.0 / 30.0; // Pointless running faster than Kinect hardware itself
 	if (dt > KMinDelayInSeconds)
 	{
-		t.start(); // Reset our timer
+		iTimer.start(); // Reset our timer
 		//OutputDebugStringA("Updating frame!\n");
 		Update();
 		ExtractFaceRotationInDegrees(&iFaceRotationQuaternion, &iFaceRotation.X, &iFaceRotation.Y, &iFaceRotation.Z);
@@ -254,28 +242,28 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 	HRESULT hr;
 
 	// Get and open Kinect sensor
-	hr = GetDefaultKinectSensor(&m_pKinectSensor);
+	hr = GetDefaultKinectSensor(&iKinectSensor);
 	if (SUCCEEDED(hr))
 	{
-		hr = m_pKinectSensor->Open();
+		hr = iKinectSensor->Open();
 	}
 
 	// TODO: check if we still need that guy
 	if (SUCCEEDED(hr))
 	{
-		hr = m_pKinectSensor->get_CoordinateMapper(&m_pCoordinateMapper);
+		hr = iKinectSensor->get_CoordinateMapper(&iCoordinateMapper);
 	}
 
 	// Create color frame reader	
 	if (SUCCEEDED(hr))
 	{
 		UniqueInterface<IColorFrameSource> colorFrameSource;
-		hr = m_pKinectSensor->get_ColorFrameSource(colorFrameSource.PtrPtr());
+		hr = iKinectSensor->get_ColorFrameSource(colorFrameSource.PtrPtr());
 		colorFrameSource.Reset();
 
 		if (SUCCEEDED(hr))
 		{
-			hr = colorFrameSource->OpenReader(&m_pColorFrameReader);
+			hr = colorFrameSource->OpenReader(&iColorFrameReader);
 		}
 	}
 		
@@ -283,12 +271,12 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 	if (SUCCEEDED(hr))
 	{
 		UniqueInterface<IBodyFrameSource> bodyFrameSource;
-		hr = m_pKinectSensor->get_BodyFrameSource(bodyFrameSource.PtrPtr());
+		hr = iKinectSensor->get_BodyFrameSource(bodyFrameSource.PtrPtr());
 		bodyFrameSource.Reset();
 
 		if (SUCCEEDED(hr))
 		{
-			hr = bodyFrameSource->OpenReader(&m_pBodyFrameReader);
+			hr = bodyFrameSource->OpenReader(&iBodyFrameReader);
 		}
 	}
 
@@ -296,14 +284,14 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 	if (SUCCEEDED(hr))
 	{
 		// create the face frame source by specifying the required face frame features
-		hr = CreateHighDefinitionFaceFrameSource(m_pKinectSensor, &m_pFaceFrameSource);
+		hr = CreateHighDefinitionFaceFrameSource(iKinectSensor, &iFaceFrameSource);
 	}
 
 	// Create HD face frame reader
 	if (SUCCEEDED(hr))
 	{
 		// open the corresponding reader
-		hr = m_pFaceFrameSource->OpenReader(&m_pFaceFrameReader);
+		hr = iFaceFrameSource->OpenReader(&iFaceFrameReader);
 	}
 
 	return hr;
@@ -316,13 +304,13 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 /// </summary>
 void KinectFaceTracker::Update()
 {
-	if (!m_pColorFrameReader || !m_pBodyFrameReader)
+	if (!iColorFrameReader || !iBodyFrameReader)
 	{
 		return;
 	}
 
 	IColorFrame* pColorFrame = nullptr;
-	HRESULT hr = m_pColorFrameReader->AcquireLatestFrame(&pColorFrame);
+	HRESULT hr = iColorFrameReader->AcquireLatestFrame(&pColorFrame);
 
 	if (SUCCEEDED(hr))
 	{
@@ -373,10 +361,10 @@ void KinectFaceTracker::Update()
 				{
 					hr = pColorFrame->AccessRawUnderlyingBuffer(&nBufferSize, reinterpret_cast<BYTE**>(&pBuffer));
 				}
-				else if (m_pColorRGBX)
+				else if (iColorRGBX)
 				{
-					pBuffer = m_pColorRGBX;
-					nBufferSize = cColorWidth * cColorHeight * sizeof(RGBQUAD);
+					pBuffer = iColorRGBX;
+					nBufferSize = KColorWidth * KColorHeight * sizeof(RGBQUAD);
 					hr = pColorFrame->CopyConvertedFrameDataToArray(nBufferSize, reinterpret_cast<BYTE*>(pBuffer), ColorImageFormat_Rgba);
 				}
 				else
@@ -389,7 +377,7 @@ void KinectFaceTracker::Update()
 			if (SUCCEEDED(hr))
 			{
 				// Setup our image 
-				QImage image((const unsigned char*)pBuffer, cColorWidth, cColorHeight, sizeof(RGBQUAD)*cColorWidth, QImage::Format_RGBA8888);
+				QImage image((const unsigned char*)pBuffer, KColorWidth, KColorHeight, sizeof(RGBQUAD)*KColorWidth, QImage::Format_RGBA8888);
 				if (IsValidRect(iFaceBox))
 				{
 					// Draw our face bounding box
@@ -423,10 +411,10 @@ HRESULT KinectFaceTracker::UpdateBodyData(IBody** ppBodies)
 {
 	HRESULT hr = E_FAIL;
 
-	if (m_pBodyFrameReader != nullptr)
+	if (iBodyFrameReader != nullptr)
 	{
 		IBodyFrame* pBodyFrame = nullptr;
-		hr = m_pBodyFrameReader->AcquireLatestFrame(&pBodyFrame);
+		hr = iBodyFrameReader->AcquireLatestFrame(&pBodyFrame);
 		if (SUCCEEDED(hr))
 		{
 			hr = pBodyFrame->GetAndRefreshBodyData(BODY_COUNT, ppBodies);
@@ -539,7 +527,7 @@ void KinectFaceTracker::ProcessFaces()
 			if (SUCCEEDED(hr))
 			{
 				// Tell our face source to use the given body id
-				hr = m_pFaceFrameSource->put_TrackingId(iTrackingId);
+				hr = iFaceFrameSource->put_TrackingId(iTrackingId);
 				//OutputDebugStringA("Tracking new body!\n");
 			}
 		}
@@ -549,7 +537,7 @@ void KinectFaceTracker::ProcessFaces()
 	IHighDefinitionFaceFrame* pFaceFrame = nullptr;
 	if (SUCCEEDED(hr))
 	{
-		hr = m_pFaceFrameReader->AcquireLatestFrame(&pFaceFrame);
+		hr = iFaceFrameReader->AcquireLatestFrame(&pFaceFrame);
 	}
 
 	BOOLEAN bFaceTracked = false;

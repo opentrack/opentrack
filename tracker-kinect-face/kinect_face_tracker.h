@@ -64,13 +64,9 @@ public:
 	bool center() override;
 
 private:
-	Timer t;
+	
 
 	// Kinect stuff
-	static const int       cColorWidth = 1920;
-	static const int       cColorHeight = 1080;
-
-
 	void Update();
 	HRESULT InitializeDefaultSensor();
 	void ProcessFaces();
@@ -78,39 +74,43 @@ private:
 	void ExtractFaceRotationInDegrees(const Vector4* pQuaternion, float* pPitch, float* pYaw, float* pRoll);
 	static IBody* FindClosestBody(IBody** aBodies);
 	static IBody* FindTrackedBodyById(IBody** aBodies,UINT64 aTrackingId);
+	
+	//
+	Timer iTimer;
 
 	// Current Kinect
-	IKinectSensor*         m_pKinectSensor;
+	IKinectSensor* iKinectSensor = nullptr;
 
 	// Coordinate mapper
-	ICoordinateMapper*     m_pCoordinateMapper;
+	ICoordinateMapper* iCoordinateMapper = nullptr;
 
 	// Color reader
-	IColorFrameReader*     m_pColorFrameReader;
+	IColorFrameReader* iColorFrameReader = nullptr;
 
 	// Body reader
-	IBodyFrameReader*      m_pBodyFrameReader;
+	IBodyFrameReader* iBodyFrameReader = nullptr;
 
 	// Face sources
-	IHighDefinitionFaceFrameSource*	   m_pFaceFrameSource;
+	IHighDefinitionFaceFrameSource*	iFaceFrameSource = nullptr;
 
 	// Face readers
-	IHighDefinitionFaceFrameReader*	   m_pFaceFrameReader;
+	IHighDefinitionFaceFrameReader*	iFaceFrameReader = nullptr;
 
 	//
-	RGBQUAD*               m_pColorRGBX;
+	RGBQUAD* iColorRGBX = nullptr;
 
 	RectI iFaceBox = { 0 };
 
-	CameraSpacePoint iLastFacePosition;
-	CameraSpacePoint iFacePosition;
-	CameraSpacePoint iFacePositionCenter;
+	// Face position
+	CameraSpacePoint iLastFacePosition = { 0 };
+	CameraSpacePoint iFacePosition = { 0 };
+	CameraSpacePoint iFacePositionCenter = { 0 };
 
-	Vector4 iFaceRotationQuaternion;
+	Vector4 iFaceRotationQuaternion = { 0 };
 	// As Yaw, Pitch, Roll
-	CameraSpacePoint iLastFaceRotation;
-	CameraSpacePoint iFaceRotation;
-	CameraSpacePoint iFaceRotationCenter;
+	CameraSpacePoint iLastFaceRotation = { 0 };
+	CameraSpacePoint iFaceRotation = { 0 };
+	CameraSpacePoint iFaceRotationCenter = { 0 };
 	//
 	std::unique_ptr<cv_video_widget> iVideoWidget;
 	std::unique_ptr<QLayout> iLayout;
