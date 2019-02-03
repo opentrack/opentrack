@@ -83,13 +83,17 @@ class main_window final : public QMainWindow, private State
     void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
     void set_title(const QString& game_title = QString());
-    static bool get_new_config_name_from_dialog(QString &ret);
+    [[nodiscard]] static bool get_new_config_name_from_dialog(QString &ret);
     void set_profile_in_registry(const QString& profile);
     void register_shortcuts();
     void set_keys_enabled(bool flag);
-    bool is_config_listed(const QString& name);
+    bool config_listed(const QString& name);
 
-    void init_tray();
+    void init_dylibs();
+    void init_tray_menu();
+    void init_profiles();
+    void init_shortcuts();
+    void init_buttons();
 
     void changeEvent(QEvent* e) override;
     bool event(QEvent *event) override;
@@ -100,7 +104,6 @@ class main_window final : public QMainWindow, private State
 
     void closeEvent(QCloseEvent *event) override;
 
-    bool maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list);
     void die_on_config_not_writable();
     bool is_tray_enabled();
     bool start_in_tray();
@@ -108,7 +111,8 @@ class main_window final : public QMainWindow, private State
 private slots:
     void save_modules();
     void exit(int status = EXIT_SUCCESS);
-    bool set_profile(const QString& new_name);
+
+    void set_profile(const QString& new_name, bool migrate = true);
 
     void show_tracker_settings();
     void show_proto_settings();
@@ -122,7 +126,7 @@ private slots:
     void make_empty_config();
     void make_copied_config();
     void open_config_directory();
-    bool refresh_config_list();
+    void refresh_config_list();
 
     void start_tracker_();
     void stop_tracker_();

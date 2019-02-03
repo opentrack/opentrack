@@ -39,132 +39,32 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     annoy_if_root();
 #endif
 
-    update_button_state(false, false);
+    init_profiles();
+    init_buttons();
+    init_tray_menu();
+    init_dylibs();
+    init_shortcuts();
 
-    if (ini_directory().isEmpty())
+    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    adjustSize();
+
+    if (!start_in_tray())
     {
-        die_on_config_not_writable();
-        return;
+        setVisible(true);
+        show();
     }
+    else
+        setVisible(false);
 
-    if (!refresh_config_list())
-    {
-        exit(EX_OSFILE);
-        return;
-    }
-
-    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(show_mapping_window()));
-    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
-    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(show_tracker_settings()));
-    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(show_proto_settings()));
-    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(show_filter_settings()));
-    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
-    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
-    connect(ui.iconcomboProfile, &QComboBox::currentTextChanged, this, [&](const QString& x) { set_profile(x); });
-
-    // fill dylib comboboxen
-    {
-        modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
-
-        for (dylib_ptr& x : modules.trackers())
-            ui.iconcomboTrackerSource->addItem(x->icon, x->name, x->module_name);
-
-        for (dylib_ptr& x : modules.protocols())
-            ui.iconcomboProtocol->addItem(x->icon, x->name, x->module_name);
-
-        for (dylib_ptr& x : modules.filters())
-            ui.iconcomboFilter->addItem(x->icon, x->name, x->module_name);
-    }
-
-    // timers
-    connect(&config_list_timer, &QTimer::timeout, this, [this] { refresh_config_list(); });
     connect(&pose_update_timer, &QTimer::timeout, this, &main_window::show_pose, Qt::DirectConnection);
+
     connect(&det_timer, SIGNAL(timeout()), this, SLOT(maybe_start_profile_from_executable()));
+    det_timer.start(1000);
+}
 
-    // ctrl+q exits
-    connect(&kbd_quit, &QShortcut::activated, this, [this]() { main_window::exit(EXIT_SUCCESS); }, Qt::DirectConnection);
-
-    // profile menu
-    {
-        profile_menu.addAction(tr("Create new empty config"), this, SLOT(make_empty_config()));
-        profile_menu.addAction(tr("Create new copied config"), this, SLOT(make_copied_config()));
-        profile_menu.addAction(tr("Open configuration directory"), this, SLOT(open_config_directory()));
-        ui.profile_button->setMenu(&profile_menu);
-    }
-
-    {
-        const QString cur = ini_filename();
-        bool ok = is_config_listed(cur) ? set_profile(cur) : set_profile(OPENTRACK_DEFAULT_CONFIG);
-        if (!ok)
-        {
-            exit(EX_OSFILE);
-            return;
-        }
-    }
-
-    // only tie and connect main screen options after migrations are done
-    // below is fine, set_profile() is called already
-
-    // dylibs
-    {
-        connect(ui.iconcomboTrackerSource,
-                &QComboBox::currentTextChanged,
-                this,
-                [&](const QString&) { pTrackerDialog = nullptr; });
-
-        connect(ui.iconcomboProtocol,
-                &QComboBox::currentTextChanged,
-                this,
-                [&](const QString&) { pProtocolDialog = nullptr; });
-
-        connect(ui.iconcomboFilter,
-                &QComboBox::currentTextChanged,
-                this, [&](const QString&) { pFilterDialog = nullptr; });
-
-        connect(&m.tracker_dll, value_::value_changed<QString>(),
-                this, &main_window::save_modules,
-                Qt::DirectConnection);
-
-        connect(&m.protocol_dll, value_::value_changed<QString>(),
-                this, &main_window::save_modules,
-                Qt::DirectConnection);
-
-        connect(&m.filter_dll, value_::value_changed<QString>(),
-                this, &main_window::save_modules,
-                Qt::DirectConnection);
-
-        {
-            struct list {
-                dylib_list& libs;
-                QComboBox* input;
-                value<QString>& place;
-            };
-
-            list types[] {
-                { modules.trackers(), ui.iconcomboTrackerSource, m.tracker_dll },
-                { modules.protocols(), ui.iconcomboProtocol, m.protocol_dll },
-                { modules.filters(), ui.iconcomboFilter, m.filter_dll },
-            };
-
-            for (list& type : types)
-            {
-                list t = type;
-                tie_setting(t.place, t.input,
-                            [t](const QString& name) {
-                                auto [ptr, idx] = module_by_name(name, t.libs);
-                                return idx;
-                            },
-                            [t](int, const QVariant& userdata) {
-                                auto [ptr, idx] = module_by_name(userdata.toString(), t.libs);
-                                if (ptr)
-                                    return ptr->module_name;
-                                else
-                                    return QString();
-                            });
-            }
-        }
-    }
-
+void main_window::init_shortcuts()
+{
     connect(this, &main_window::start_tracker,
             this, [&] { qDebug() << "start tracker"; start_tracker_(); },
             Qt::QueuedConnection);
@@ -181,36 +81,108 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
             this, [&] { qDebug() << "restart tracker"; stop_tracker_(); start_tracker_(); },
             Qt::QueuedConnection);
 
-    init_tray();
-    ensure_tray();
-
     register_shortcuts();
-    det_timer.start(1000);
-    config_list_timer.start(1000 * 5);
+
+    // ctrl+q exits
+    connect(&kbd_quit, &QShortcut::activated, this, [this]() { main_window::exit(EXIT_SUCCESS); }, Qt::DirectConnection);
     kbd_quit.setEnabled(true);
-
-    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    adjustSize();
-
-    if (!start_in_tray())
-    {
-        setVisible(true);
-        show();
-    }
-    else
-        setVisible(false);
 }
 
-void main_window::init_tray()
+void main_window::init_dylibs()
+{
+    modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
+
+    for (dylib_ptr& x : modules.trackers())
+        ui.iconcomboTrackerSource->addItem(x->icon, x->name, x->module_name);
+
+    for (dylib_ptr& x : modules.protocols())
+        ui.iconcomboProtocol->addItem(x->icon, x->name, x->module_name);
+
+    for (dylib_ptr& x : modules.filters())
+        ui.iconcomboFilter->addItem(x->icon, x->name, x->module_name);
+
+    connect(ui.iconcomboTrackerSource, &QComboBox::currentTextChanged,
+            this, [&](const QString&) { pTrackerDialog = nullptr; });
+
+    connect(ui.iconcomboProtocol, &QComboBox::currentTextChanged,
+            this, [&](const QString&) { pProtocolDialog = nullptr; });
+
+    connect(ui.iconcomboFilter, &QComboBox::currentTextChanged,
+            this, [&](const QString&) { pFilterDialog = nullptr; });
+
+    connect(&m.tracker_dll, value_::value_changed<QString>(),
+            this, &main_window::save_modules,
+            Qt::DirectConnection);
+
+    connect(&m.protocol_dll, value_::value_changed<QString>(),
+            this, &main_window::save_modules,
+            Qt::DirectConnection);
+
+    connect(&m.filter_dll, value_::value_changed<QString>(),
+            this, &main_window::save_modules,
+            Qt::DirectConnection);
+
+    {
+        struct list {
+            dylib_list& libs;
+            QComboBox* input;
+            value<QString>& place;
+        };
+
+        list types[] {
+            { modules.trackers(), ui.iconcomboTrackerSource, m.tracker_dll },
+            { modules.protocols(), ui.iconcomboProtocol, m.protocol_dll },
+            { modules.filters(), ui.iconcomboFilter, m.filter_dll },
+        };
+
+        for (list& type : types)
+        {
+            list t = type;
+            tie_setting(t.place, t.input,
+                        [t](const QString& name) {
+                            auto [ptr, idx] = module_by_name(name, t.libs);
+                            return idx;
+                        },
+                        [t](int, const QVariant& userdata) {
+                            auto [ptr, idx] = module_by_name(userdata.toString(), t.libs);
+                            if (ptr)
+                                return ptr->module_name;
+                            else
+                                return QString();
+                        });
+        }
+    }
+}
+
+void main_window::init_profiles()
+{
+    refresh_config_list();
+    // config directory should be implicitly created by `refresh_config_list'
+    if (ini_directory().isEmpty() || !QDir(ini_directory()).isReadable())
+        die_on_config_not_writable();
+
+    set_profile(ini_filename());
+
+    // profile menu
+    profile_menu.addAction(tr("Create new empty config"), this, SLOT(make_empty_config()));
+    profile_menu.addAction(tr("Create new copied config"), this, SLOT(make_copied_config()));
+    profile_menu.addAction(tr("Open configuration directory"), this, SLOT(open_config_directory()));
+    ui.profile_button->setMenu(&profile_menu);
+
+    connect(&config_list_timer, &QTimer::timeout, this, [this] { refresh_config_list(); });
+    config_list_timer.start(1000 * 5);
+
+    connect(ui.iconcomboProfile, &QComboBox::currentTextChanged,
+            this, [this](const QString& x) { set_profile(x); });
+}
+
+void main_window::init_tray_menu()
 {
     tray_menu.clear();
 
     QString display_name(opentrack_version);
     if (display_name.startsWith("opentrack-"))
-    {
         display_name = tr("opentrack") + " " + display_name.mid(sizeof("opentrack-") - 1);
-    }
     if (display_name.endsWith("-DEBUG"))
         display_name.replace(display_name.size() - int(sizeof("DEBUG")), display_name.size(), tr(" (debug)"));
 
@@ -262,8 +234,21 @@ void main_window::init_tray()
 
     connect(&s.tray_enabled,
             static_cast<void (value_::*)(bool) const>(&value_::valueChanged),
-            this,
-            &main_window::ensure_tray);
+            this, &main_window::ensure_tray);
+
+    ensure_tray();
+}
+
+void main_window::init_buttons()
+{
+    update_button_state(false, false);
+    connect(ui.btnEditCurves, SIGNAL(clicked()), this, SLOT(show_mapping_window()));
+    connect(ui.btnShortcuts, SIGNAL(clicked()), this, SLOT(show_options_dialog()));
+    connect(ui.btnShowEngineControls, SIGNAL(clicked()), this, SLOT(show_tracker_settings()));
+    connect(ui.btnShowServerControls, SIGNAL(clicked()), this, SLOT(show_proto_settings()));
+    connect(ui.btnShowFilterControls, SIGNAL(clicked()), this, SLOT(show_filter_settings()));
+    connect(ui.btnStartTracker, SIGNAL(clicked()), this, SLOT(start_tracker_()));
+    connect(ui.btnStopTracker, SIGNAL(clicked()), this, SLOT(stop_tracker_()));
 }
 
 void main_window::register_shortcuts()
@@ -298,31 +283,6 @@ void main_window::die_on_config_not_writable()
                           QMessageBox::Close, QMessageBox::NoButton);
 
     exit(EX_OSFILE);
-}
-
-bool main_window::maybe_die_on_config_not_writable(const QString& current, QStringList* ini_list_)
-{
-    const bool writable =
-        with_settings_object([&](QSettings& s) {
-            return s.isWritable();
-        });
-
-    if (writable)
-        return false;
-
-    const bool open = QFile(ini_combine(current)).open(QFile::ReadWrite);
-    QStringList list = ini_list();
-
-    if (!list.contains(current) || !open)
-    {
-        die_on_config_not_writable();
-        return true;
-    }
-
-    if (ini_list_ != nullptr)
-        *ini_list_ = std::move(list);
-
-    return false;
 }
 
 bool main_window::get_new_config_name_from_dialog(QString& ret)
@@ -370,18 +330,13 @@ void main_window::make_empty_config()
     if (get_new_config_name_from_dialog(name))
     {
         QFile(ini_combine(name)).open(QFile::ReadWrite);
+        refresh_config_list();
 
-        if (!refresh_config_list())
-            return;
+        QSignalBlocker q(ui.iconcomboProfile);
 
-        if (is_config_listed(name))
-        {
-            QSignalBlocker q(ui.iconcomboProfile);
-
-            if (!set_profile(name))
-                return;
+        set_profile(name, false);
+        if (config_listed(name))
             mark_config_as_not_needing_migration();
-        }
     }
 }
 
@@ -389,23 +344,19 @@ void main_window::make_copied_config()
 {
     const QString cur = ini_pathname();
     QString name;
-    if (cur != "" && get_new_config_name_from_dialog(name))
+    if (!cur.isEmpty() && get_new_config_name_from_dialog(name))
     {
         const QString new_name = ini_combine(name);
         (void) QFile::remove(new_name);
         QFile::copy(cur, new_name);
 
-        if (!refresh_config_list())
-            return;
+        refresh_config_list();
 
-        if (is_config_listed(name))
-        {
-            QSignalBlocker q(ui.iconcomboProfile);
+        QSignalBlocker q(ui.iconcomboProfile);
 
-            if (!set_profile(name))
-                return;
+        set_profile(name, false);
+        if (config_listed(name))
             mark_config_as_not_needing_migration();
-        }
     }
 
 }
@@ -415,41 +366,38 @@ void main_window::open_config_directory()
     QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(ini_directory()));
 }
 
-bool main_window::refresh_config_list()
+void main_window::refresh_config_list()
 {
     if (work)
-        return true;
+        return;
 
     QStringList list = ini_list();
-
-    // check for sameness
-    const bool exact_same = !list.empty() && progn(
-        if (list.size() == ui.iconcomboProfile->count())
-        {
-            const int sz = list.size();
-            for (int i = 0; i < sz; i++)
-            {
-                if (list[i] != ui.iconcomboProfile->itemText(i))
-                    return false;
-            }
-            return true;
-        }
-
-        return false;
-    );
-
     QString current = ini_filename();
 
     if (!list.contains(current))
         current = OPENTRACK_DEFAULT_CONFIG;
+    else
+    {
+        const bool exact_same = progn(
+            if (list.size() == ui.iconcomboProfile->count())
+            {
+                const int sz = list.size();
+                for (int i = 0; i < sz; i++)
+                {
+                    if (list[i] != ui.iconcomboProfile->itemText(i))
+                        return false;
+                }
+                return true;
+            }
 
-    if (maybe_die_on_config_not_writable(current, &list))
-        return false;
+            return false;
+        );
 
-    if (exact_same)
-        return true;
+        if (exact_same)
+            return;
+    }
 
-    const QIcon icon(":/images/settings16.png");
+    static const QIcon icon(":/images/settings16.png");
 
     QSignalBlocker l(ui.iconcomboProfile);
 
@@ -460,8 +408,6 @@ bool main_window::refresh_config_list()
         ui.iconcomboProfile->setItemIcon(i, icon);
 
     ui.iconcomboProfile->setCurrentText(current);
-
-    return true;
 }
 
 std::tuple<main_window::dylib_ptr, int> main_window::module_by_name(const QString& name, Modules::dylib_list& list)
@@ -763,18 +709,17 @@ void main_window::exit(int status)
     QApplication::exit(status);
 }
 
-bool main_window::set_profile(const QString& new_name_)
+void main_window::set_profile(const QString& new_name_, bool migrate)
 {
-    if (!refresh_config_list())
-        return false;
-
     QString new_name = new_name_;
 
-    if (!is_config_listed(new_name))
+    if (!config_listed(new_name))
+    {
         new_name = OPENTRACK_DEFAULT_CONFIG;
-
-    if (maybe_die_on_config_not_writable(new_name, nullptr))
-        return false;
+        refresh_config_list();
+        if (!config_listed(new_name))
+            migrate = false;
+    }
 
     ui.iconcomboProfile->setCurrentText(new_name);
     set_profile_in_registry(new_name);
@@ -786,13 +731,14 @@ bool main_window::set_profile(const QString& new_name_)
 
     options::detail::bundler::refresh_all_bundles();
 
-    // migrations are for config layout changes and other user-visible
-    // incompatibilities in future versions
-    run_migrations();
+    if (migrate)
+        // migrations are for config layout changes and other user-visible
+        // incompatibilities in future versions
+        run_migrations();
+    else
+        mark_config_as_not_needing_migration();
 
     set_title();
-
-    return true;
 }
 
 void main_window::ensure_tray()
@@ -822,9 +768,7 @@ void main_window::ensure_tray()
     }
     else
     {
-        const bool is_hidden = isHidden() || !isVisible();
-
-        if (is_hidden)
+        if (!isVisible())
         {
             show();
             setVisible(true);
@@ -902,10 +846,10 @@ void main_window::maybe_start_profile_from_executable()
 {
     if (!work)
     {
-        QString prof;
-        if (det.config_to_start(prof))
+        QString profile;
+        if (det.config_to_start(profile) && config_listed(profile))
         {
-            set_profile(prof);
+            set_profile(profile);
             start_tracker_();
         }
     }
@@ -925,13 +869,12 @@ void main_window::set_keys_enabled(bool flag)
         global_shortcuts.reload({});
     }
     else
-    {
         register_shortcuts();
-    }
 }
 
-bool main_window::is_config_listed(const QString& name)
+bool main_window::config_listed(const QString& name)
 {
+    // XXX TODO store profile list outside this widget as an authoritative source -sh 20190123
     const int sz = ui.iconcomboProfile->count();
     for (int i = 0; i < sz; i++)
         if (ui.iconcomboProfile->itemText(i) == name)
@@ -974,7 +917,7 @@ bool main_window::is_tray_enabled()
 
 bool main_window::start_in_tray()
 {
-    return s.tray_enabled && s.tray_start && QSystemTrayIcon::isSystemTrayAvailable();
+    return is_tray_enabled() && s.tray_start;
 }
 
 void main_window::set_profile_in_registry(const QString &profile)
