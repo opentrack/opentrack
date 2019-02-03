@@ -12,7 +12,12 @@
 
 #include <cmath>
 #include <algorithm>
+
 #include <windows.h>
+
+#ifndef MOUSEEVENTF_MOVE_NOCOALESCE
+#   define MOUSEEVENTF_MOVE_NOCOALESCE 0x2000
+#endif
 
 static const double invert[] = {
     1., 1., 1.,
@@ -56,7 +61,7 @@ void mouse::pose(const double* headpose)
             mi = {};
             mi.dx = dx;
             mi.dy = dy;
-            mi.dwFlags = MOUSEEVENTF_MOVE;
+            mi.dwFlags = MOUSEEVENTF_MOVE | MOUSEEVENTF_MOVE_NOCOALESCE;
 
             (void)SendInput(1, &input, sizeof(input));
 
