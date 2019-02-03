@@ -29,20 +29,35 @@ bundle::bundle(const QString& group_name) :
 
 bundle::~bundle() = default;
 
-void bundle::reload()
+void bundle::reload_no_notify()
 {
     if (group_name.isEmpty())
         return;
 
+    QMutexLocker l{&mtx};
+
+    saved = group(group_name);
+    transient = saved;
+}
+
+void bundle::notify()
+{
     {
-        QMutexLocker l{&mtx};
-
-        saved = group(group_name);
-        transient = saved;
-
+        QMutexLocker l(&mtx);
         connector::notify_all_values();
     }
 
+    emit reloading();
+    emit changed();
+}
+
+void bundle::reload()
+{
+    {
+        QMutexLocker l{&mtx};
+        reload_no_notify();
+        connector::notify_all_values();
+    }
     emit reloading();
     emit changed();
 }
@@ -96,7 +111,7 @@ void bundle::save()
     emit saving();
 }
 
-void bundler::after_profile_changed_()
+void bundler::reload_no_notify_()
 {
     QMutexLocker l(&implsgl_mtx);
 
@@ -107,15 +122,37 @@ void bundler::after_profile_changed_()
         if (bundle_)
         {
             //qDebug() << "bundle: reverting" << kv.first << "due to profile change";
-            bundle_->reload();
+            bundle_->reload_no_notify();
         }
     }
 }
 
-void bundler::refresh_all_bundles()
+void bundler::notify_()
 {
-    bundler_singleton().after_profile_changed_();
+    QMutexLocker l(&implsgl_mtx);
+
+    for (auto& kv : implsgl_data)
+    {
+        weak bundle = kv.second;
+        shared bundle_ = bundle.lock();
+        if (bundle_)
+        {
+            //qDebug() << "bundle: reverting" << kv.first << "due to profile change";
+            bundle_->notify();
+        }
+    }
 }
+
+void bundler::reload_()
+{
+    QMutexLocker l(&implsgl_mtx);
+    notify_();
+    reload_no_notify_();
+}
+
+void bundler::notify() { singleton().notify_(); }
+void bundler::reload_no_notify() { singleton().reload_no_notify_(); }
+void bundler::reload() { singleton().reload_(); }
 
 bundler::bundler() = default;
 bundler::~bundler() = default;
@@ -153,7 +190,7 @@ std::shared_ptr<bundler::v> bundler::make_bundle_(const k& key)
     return shr;
 }
 
-bundler& bundler::bundler_singleton()
+bundler& bundler::singleton()
 {
     static bundler ret;
     return ret;
@@ -166,7 +203,7 @@ namespace options {
 std::shared_ptr<bundle_> make_bundle(const QString& name)
 {
     if (!name.isEmpty())
-        return detail::bundler::bundler_singleton().make_bundle_(name);
+        return detail::bundler::singleton().make_bundle_(name);
     else
         return std::make_shared<bundle_>(QString());
 }

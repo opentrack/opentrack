@@ -30,6 +30,7 @@
 
 namespace options::detail {
     class bundle;
+    struct bundler;
 } // ns options::detail
 
 namespace options {
@@ -44,10 +45,14 @@ class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
 {
     Q_OBJECT
 
+    friend struct bundler;
+
     mutable QMutex mtx { QMutex::Recursive };
     const QString group_name;
     group saved;
     group transient;
+
+    void reload_no_notify();
 
 signals:
     void reloading();
@@ -68,6 +73,7 @@ public:
     bool contains(const QString& name) const;
 
     QVariant get_variant(const QString& name) const;
+    void notify();
 
 public slots:
     void save();
@@ -82,19 +88,25 @@ struct OTR_OPTIONS_EXPORT bundler final
     using weak = std::weak_ptr<v>;
     using shared = std::shared_ptr<v>;
 
-    static void refresh_all_bundles();
+    static void notify();
+    static void reload_no_notify();
+
+    void reload();
 
 private:
     QMutex implsgl_mtx { QMutex::Recursive };
     std::unordered_map<k, weak> implsgl_data {};
 
-    void after_profile_changed_();
+    void notify_();
+    void reload_no_notify_();
 
-    friend OTR_OPTIONS_EXPORT
+    void reload_();
+
+    friend
     std::shared_ptr<v> options::make_bundle(const QString& name);
 
     std::shared_ptr<v> make_bundle_(const k& key);
-    static bundler& bundler_singleton();
+    static bundler& singleton();
 
     bundler();
     ~bundler();

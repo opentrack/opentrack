@@ -650,42 +650,39 @@ void main_window::exit(int status)
 
 void main_window::set_profile(const QString& new_name_, bool migrate)
 {
-    QString new_name = new_name_;
-
     QSignalBlocker b(ui.iconcomboProfile);
+
+    QString new_name = new_name_;
 
     if (!profile_list.contains(new_name))
     {
         new_name = OPENTRACK_DEFAULT_PROFILE;
-        refresh_profile_list();
         if (!profile_list.contains(new_name))
             migrate = false;
     }
 
-    if (new_name != ini_filename())
-    {
-        ui.iconcomboProfile->setCurrentText(new_name);
+    const bool status = new_name != ini_filename();
+
+    if (status)
         set_profile_in_registry(new_name);
 
-        options::detail::bundler::refresh_all_bundles();
-    }
+    using bundler = options::detail::bundler;
 
-    // this needs to run on app start -sh 20190203
+    bundler::reload_no_notify();
+
     if (migrate)
-    {
-        // workaround migration breakage -sh 20180428
-        QSignalBlocker b1(ui.iconcomboTrackerSource);
-        QSignalBlocker b2(ui.iconcomboProtocol);
-        QSignalBlocker b3(ui.iconcomboFilter);
-
         // migrations are for config layout changes and other user-visible
         // incompatibilities in future versions
         run_migrations();
-    }
     else
         mark_profile_as_not_needing_migration();
 
+    bundler::notify();
+
     set_title();
+
+    if (status)
+        ui.iconcomboProfile->setCurrentText(new_name);
 }
 
 void main_window::ensure_tray()
