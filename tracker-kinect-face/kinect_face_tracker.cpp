@@ -167,7 +167,9 @@ bool KinectFaceTracker::center()
 	return true;
 }
 
-
+//
+//
+//
 void KinectFaceTracker::data(double *data)
 {
 	const double dt = t.elapsed_seconds();
@@ -178,7 +180,7 @@ void KinectFaceTracker::data(double *data)
 	ExtractFaceRotationInDegrees(&iFaceRotationQuaternion, &iFaceRotation.X, &iFaceRotation.Y, &iFaceRotation.Z);
 
 	//Check if data is valid
-	if (!IsNullPoint(iFacePosition) && !IsNullPoint(iFaceRotation))
+	if (IsValidRect(iFaceBox))
 	{
 		// We have valid tracking retain position and rotation
 		iLastFacePosition = iFacePosition;
