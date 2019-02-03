@@ -79,7 +79,10 @@ class main_window final : public QMainWindow, private State
     dylib_ptr current_protocol();
     dylib_ptr current_filter();
 
-    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
+    qt_sig::nullary start_tracker { this, &main_window::start_tracker_, Qt::QueuedConnection };
+    qt_sig::nullary stop_tracker { this, &main_window::stop_tracker_, Qt::QueuedConnection };
+    qt_sig::nullary toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
+    qt_sig::nullary restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
 
     void update_button_state(bool running, bool inertialp);
     void display_pose(const double* mapped, const double* raw);
@@ -135,14 +138,11 @@ class main_window final : public QMainWindow, private State
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);
 
     void save_modules();
+    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
+
     void exit(int status = EXIT_SUCCESS);
 
     static void set_working_directory();
-
-    qt_sig::nullary start_tracker { this, &main_window::start_tracker_, Qt::QueuedConnection };
-    qt_sig::nullary stop_tracker { this, &main_window::stop_tracker_, Qt::QueuedConnection };
-    qt_sig::nullary toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
-    qt_sig::nullary restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
 
 public:
     main_window();
