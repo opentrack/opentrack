@@ -47,7 +47,7 @@ class main_window final : public QMainWindow, private State
     Shortcuts global_shortcuts;
     module_settings m;
     std::unique_ptr<QSystemTrayIcon> tray;
-    QMenu tray_menu;
+    QMenu tray_menu { this };
     QTimer pose_update_timer { this };
     QTimer det_timer;
     QTimer config_list_timer;
@@ -139,10 +139,10 @@ class main_window final : public QMainWindow, private State
 
     static void set_working_directory();
 
-    qt_sig::nullary start_tracker;
-    qt_sig::nullary stop_tracker;
-    qt_sig::nullary toggle_tracker;
-    qt_sig::nullary restart_tracker;
+    qt_sig::nullary start_tracker { this, &main_window::start_tracker_, Qt::QueuedConnection };
+    qt_sig::nullary stop_tracker { this, &main_window::stop_tracker_, Qt::QueuedConnection };
+    qt_sig::nullary toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
+    qt_sig::nullary restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
 
 public:
     main_window();

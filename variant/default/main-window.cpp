@@ -31,11 +31,7 @@ extern "C" const char* const opentrack_version;
 using namespace options::globals;
 using namespace options;
 
-main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH),
-    start_tracker{this, &main_window::start_tracker_, Qt::QueuedConnection},
-    stop_tracker{this, &main_window::stop_tracker_, Qt::QueuedConnection},
-    toggle_tracker{this, &main_window::toggle_tracker_, Qt::QueuedConnection},
-    restart_tracker{this, &main_window::restart_tracker_, Qt::QueuedConnection}
+main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
 
