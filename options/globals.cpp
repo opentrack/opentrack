@@ -117,7 +117,7 @@ QString ini_pathname()
     const auto dir = ini_directory();
     if (dir.isEmpty())
         return {};
-    return dir + "/" + ini_filename();
+    return dir + QStringLiteral("/") + ini_filename();
 }
 
 QString ini_combine(const QString& filename)
@@ -129,9 +129,9 @@ QStringList ini_list()
 {
     const auto dirname = ini_directory();
     if (dirname == "")
-        return QStringList();
+        return {};
     QDir settings_dir(dirname);
-    QStringList list = settings_dir.entryList( QStringList { "*.ini" } , QDir::Files, QDir::Name );
+    QStringList list = settings_dir.entryList( QStringList { QStringLiteral("*.ini") } , QDir::Files, QDir::Name );
     std::sort(list.begin(), list.end());
     return list;
 }

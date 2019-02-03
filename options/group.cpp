@@ -50,12 +50,15 @@ void group::save() const
     });
 }
 
-void group::put(const QString &s, const QVariant &d)
+void group::put(const QString& s, const QVariant& d)
 {
-    kvs[s] = d;
+    if (d.isNull())
+        kvs.erase(s);
+    else
+        kvs[s] = d;
 }
 
-bool group::contains(const QString &s) const
+bool group::contains(const QString& s) const
 {
     const auto it = kvs.find(s);
     return it != kvs.cend();
