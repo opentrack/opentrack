@@ -63,7 +63,7 @@ class OTR_GUI_EXPORT process_detector_worker : QObject
     proc_detector_settings s;
     QString last_exe_name;
 public:
-    bool config_to_start(QString& s);
+    bool profile_to_start(QString& str);
     bool should_stop();
 };
 

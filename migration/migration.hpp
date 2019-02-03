@@ -28,7 +28,7 @@ namespace detail {
     {
         static std::vector<QString> run();
         static void add_migration_thunk(std::function<mptr()>& thunk);
-        static void mark_config_as_not_needing_migration();
+        static void mark_profile_as_not_needing_migration();
 
     private:
         static void sort_migrations();
@@ -87,4 +87,4 @@ struct migration
 } // ns migrations
 
 OTR_MIGRATION_EXPORT std::vector<QString> run_migrations();
-OTR_MIGRATION_EXPORT void mark_config_as_not_needing_migration();
+OTR_MIGRATION_EXPORT void mark_profile_as_not_needing_migration();

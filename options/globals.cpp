@@ -105,9 +105,9 @@ bool is_ini_modified()
 QString ini_filename()
 {
     return with_global_settings_object([&](QSettings& settings) {
-        const QString ret = settings.value(OPENTRACK_CONFIG_FILENAME_KEY, OPENTRACK_DEFAULT_CONFIG).toString();
+        const QString ret = settings.value(OPENTRACK_PROFILE_FILENAME_KEY, OPENTRACK_DEFAULT_PROFILE).toString();
         if (ret.size() == 0)
-            return QStringLiteral(OPENTRACK_DEFAULT_CONFIG);
+            return QStringLiteral(OPENTRACK_DEFAULT_PROFILE);
         return ret;
     });
 }

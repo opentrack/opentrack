@@ -50,7 +50,7 @@ class main_window final : public QMainWindow, private State
 
     QTimer pose_update_timer { this };
     QTimer det_timer;
-    QTimer config_list_timer;
+    QTimer profile_list_timer;
 
     Shortcuts global_shortcuts;
     QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
@@ -122,13 +122,13 @@ class main_window final : public QMainWindow, private State
     void set_profile(const QString& new_name, bool migrate = true);
     void set_profile_in_registry(const QString& profile);
     void refresh_profile_list();
-    void die_on_config_not_writable();
+    void die_on_profile_not_writable();
     void maybe_start_profile_from_executable();
-    [[nodiscard]] static bool get_new_config_name_from_dialog(QString &ret);
+    [[nodiscard]] static bool profile_name_from_dialog(QString& ret);
 
-    void make_empty_config();
-    void make_copied_config();
-    void open_config_directory();
+    void create_empty_profile();
+    void create_copied_profile();
+    void open_profile_directory();
 
     void ensure_tray();
     void toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e);

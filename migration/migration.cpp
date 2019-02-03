@@ -172,7 +172,7 @@ std::vector<QString> migrator::run()
                 done.push_back(m->name());
             }
         }
-        mark_config_as_not_needing_migration();
+        mark_profile_as_not_needing_migration();
     });
 
     return done;
@@ -192,14 +192,14 @@ std::vector<QString> run_migrations()
     return migrations::detail::migrator::run();
 }
 
-void mark_config_as_not_needing_migration()
+void mark_profile_as_not_needing_migration()
 {
     using m = migrations::detail::migrator;
 
-    m::mark_config_as_not_needing_migration();
+    m::mark_profile_as_not_needing_migration();
 }
 
-void migrations::detail::migrator::mark_config_as_not_needing_migration()
+void migrations::detail::migrator::mark_profile_as_not_needing_migration()
 {
     set_last_migration_time(time_after_migrations());
 }

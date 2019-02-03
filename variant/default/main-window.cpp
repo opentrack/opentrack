@@ -146,18 +146,18 @@ void main_window::init_profiles()
     refresh_profile_list();
     // implicitly created by `ini_directory()'
     if (ini_directory().isEmpty() || !QDir(ini_directory()).isReadable())
-        die_on_config_not_writable();
+        die_on_profile_not_writable();
 
     set_profile(ini_filename());
 
     // profile menu
-    profile_menu.addAction(tr("Create new empty config"), this, &main_window::make_empty_config);
-    profile_menu.addAction(tr("Create new copied config"), this, &main_window::make_copied_config);
-    profile_menu.addAction(tr("Open configuration directory"), this, &main_window::open_config_directory);
+    profile_menu.addAction(tr("Create new empty config"), this, &main_window::create_empty_profile);
+    profile_menu.addAction(tr("Create new copied config"), this, &main_window::create_copied_profile);
+    profile_menu.addAction(tr("Open configuration directory"), this, &main_window::open_profile_directory);
     ui.profile_button->setMenu(&profile_menu);
 
-    connect(&config_list_timer, &QTimer::timeout, this, &main_window::refresh_profile_list);
-    config_list_timer.start(1000 * 5);
+    connect(&profile_list_timer, &QTimer::timeout, this, &main_window::refresh_profile_list);
+    profile_list_timer.start(1000 * 5);
 
     connect(ui.iconcomboProfile, &QComboBox::currentTextChanged,
             this, [this](const QString& x) { main_window::set_profile(x); });
@@ -257,7 +257,7 @@ void main_window::register_shortcuts()
         work->reload_shortcuts();
 }
 
-void main_window::die_on_config_not_writable()
+void main_window::die_on_profile_not_writable()
 {
     stop_tracker_();
 
@@ -271,7 +271,7 @@ void main_window::die_on_config_not_writable()
     exit(EX_OSFILE);
 }
 
-bool main_window::get_new_config_name_from_dialog(QString& ret)
+bool main_window::profile_name_from_dialog(QString& ret)
 {
     new_file_dialog dlg;
     dlg.exec();
@@ -305,10 +305,10 @@ void main_window::save_modules()
     m.b->save();
 }
 
-void main_window::make_empty_config()
+void main_window::create_empty_profile()
 {
     QString name;
-    if (get_new_config_name_from_dialog(name))
+    if (profile_name_from_dialog(name))
     {
         QFile(ini_combine(name)).open(QFile::ReadWrite);
         refresh_profile_list();
@@ -318,16 +318,16 @@ void main_window::make_empty_config()
             QSignalBlocker q(ui.iconcomboProfile);
 
             set_profile(name, false);
-            mark_config_as_not_needing_migration();
+            mark_profile_as_not_needing_migration();
         }
     }
 }
 
-void main_window::make_copied_config()
+void main_window::create_copied_profile()
 {
     const QString cur = ini_pathname();
     QString name;
-    if (!cur.isEmpty() && get_new_config_name_from_dialog(name))
+    if (!cur.isEmpty() && profile_name_from_dialog(name))
     {
         const QString new_name = ini_combine(name);
         (void) QFile::remove(new_name);
@@ -340,13 +340,13 @@ void main_window::make_copied_config()
             QSignalBlocker q(ui.iconcomboProfile);
 
             set_profile(name, false);
-            mark_config_as_not_needing_migration();
+            mark_profile_as_not_needing_migration();
         }
     }
 
 }
 
-void main_window::open_config_directory()
+void main_window::open_profile_directory()
 {
     QDesktopServices::openUrl("file:///" + QDir::toNativeSeparators(ini_directory()));
 }
@@ -363,7 +363,7 @@ void main_window::refresh_profile_list()
         return;
 
     if (!list.contains(current))
-        current = OPENTRACK_DEFAULT_CONFIG;
+        current = OPENTRACK_DEFAULT_PROFILE;
 
     profile_list = list;
 
@@ -656,7 +656,7 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
 
     if (!profile_list.contains(new_name))
     {
-        new_name = OPENTRACK_DEFAULT_CONFIG;
+        new_name = OPENTRACK_DEFAULT_PROFILE;
         refresh_profile_list();
         if (!profile_list.contains(new_name))
             migrate = false;
@@ -683,7 +683,7 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
         run_migrations();
     }
     else
-        mark_config_as_not_needing_migration();
+        mark_profile_as_not_needing_migration();
 
     set_title();
 }
@@ -794,7 +794,7 @@ void main_window::maybe_start_profile_from_executable()
     if (!work)
     {
         QString profile;
-        if (det.config_to_start(profile) && profile_list.contains(profile))
+        if (det.profile_to_start(profile) && profile_list.contains(profile))
         {
             set_profile(profile);
             start_tracker_();
@@ -860,7 +860,7 @@ bool main_window::start_in_tray()
 void main_window::set_profile_in_registry(const QString &profile)
 {
     with_global_settings_object([&](QSettings& s) {
-        s.setValue(OPENTRACK_CONFIG_FILENAME_KEY, profile);
+        s.setValue(OPENTRACK_PROFILE_FILENAME_KEY, profile);
     });
 }
 

@@ -195,7 +195,7 @@ bool process_detector_worker::should_stop()
     return true;
 }
 
-bool process_detector_worker::config_to_start(QString& str)
+bool process_detector_worker::profile_to_start(QString& str)
 {
     proc_detector_settings s;
     if (!s.is_enabled())
