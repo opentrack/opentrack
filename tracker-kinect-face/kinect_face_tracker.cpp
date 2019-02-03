@@ -417,141 +417,178 @@ HRESULT KinectFaceTracker::UpdateBodyData(IBody** ppBodies)
 }
 
 
+float VectorLengthSquared(CameraSpacePoint point)
+{
+	float lenghtSquared = pow(point.X, 2) + pow(point.Y, 2) + pow(point.Z, 2);
+
+	//result = Math.Sqrt(result);
+	return lenghtSquared;
+}
+
+//
+// Finds the closest body from the sensor if any
+//
+IBody* KinectFaceTracker::FindClosestBody(IBody** aBodies)
+{
+	IBody* result = nullptr;
+	float closestBodyDistance = std::numeric_limits<float>::max();
+
+	for(int i=0;i<BODY_COUNT;i++)
+	{
+		BOOLEAN tracked;
+		aBodies[i]->get_IsTracked(&tracked);
+
+		if (tracked)
+		{
+			Joint joints[JointType_Count];
+			HRESULT hr = aBodies[i]->GetJoints(JointType_Count,joints);
+			if (FAILED(hr))
+			{
+				continue;
+			}
+
+			auto currentLocation = joints[JointType_SpineBase].Position;
+			auto currentDistance = VectorLengthSquared(currentLocation);
+
+			if (result == nullptr || currentDistance < closestBodyDistance)
+			{
+				result = aBodies[i];
+				closestBodyDistance = currentDistance;
+			}
+		}
+	}
+
+	return result;
+}
+
+//
+// Search our list of body for the one matching our id
+//
+IBody* KinectFaceTracker::FindTrackedBodyById(IBody** aBodies, UINT64 aTrackingId)
+{
+	float closestBodyDistance = std::numeric_limits<float>::max();
+	
+	for (int i = 0; i < BODY_COUNT; i++)
+	{
+		BOOLEAN tracked;
+		HRESULT hr = aBodies[i]->get_IsTracked(&tracked);
+
+		if (tracked)
+		{
+			if (SUCCEEDED(hr) && tracked)
+			{
+				UINT64 trackingId = 0;
+				hr = aBodies[i]->get_TrackingId(&trackingId);
+
+				if (SUCCEEDED(hr) && aTrackingId == trackingId)
+				{
+					return aBodies[i];
+				}
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 
 /// <summary>
 /// Processes new face frames
 /// </summary>
 void KinectFaceTracker::ProcessFaces()
 {
-	HRESULT hr;
-	IBody* ppBodies[BODY_COUNT] = { 0 };
-	bool bHaveBodyData = SUCCEEDED(UpdateBodyData(ppBodies));
-
+	HRESULT hr=0;
+	IBody* bodies[BODY_COUNT] = { 0 }; // Each bodies will need to be released
+	bool bHaveBodyData = SUCCEEDED(UpdateBodyData(bodies));
 	if (!bHaveBodyData)
 	{
 		return;
 	}
 
-	// TODO: Select closest body
-	// Just use the first body we find
-	BOOLEAN tracked;
-	int i = 0;
-	while (i < BODY_COUNT)
+	// Try keep tracking the same body
+	IBody* body = FindTrackedBodyById(bodies, iTrackingId);
+	if (body == nullptr)
 	{
-		hr = ppBodies[i]->get_IsTracked(&tracked);
-		UINT64 trackingId = 0;
-
-		if (SUCCEEDED(hr) && tracked)
+		// The body we were tracking is gone, try tracking the closest body if any
+		body = FindClosestBody(bodies);
+		if (body != nullptr)
 		{
-			hr = ppBodies[i]->get_TrackingId(&trackingId);
-
+			// Update our face source with our new body id
+			hr = body->get_TrackingId(&iTrackingId);
 			if (SUCCEEDED(hr))
 			{
 				// Tell our face source to use the given body id
-				hr = m_pFaceFrameSource->put_TrackingId(trackingId);
-				break;
+				hr = m_pFaceFrameSource->put_TrackingId(iTrackingId);
+				//OutputDebugStringA("Tracking new body!\n");
 			}
-
 		}
-
-		i++;
 	}
 
-
-	// iterate through each face reader
-	for (int iFace = 0; iFace < BODY_COUNT; ++iFace)
+	// retrieve the latest face frame from this reader
+	IHighDefinitionFaceFrame* pFaceFrame = nullptr;
+	if (SUCCEEDED(hr))
 	{
-		// retrieve the latest face frame from this reader
-		IHighDefinitionFaceFrame* pFaceFrame = nullptr;
 		hr = m_pFaceFrameReader->AcquireLatestFrame(&pFaceFrame);
+	}
 
-		BOOLEAN bFaceTracked = false;
-		if (SUCCEEDED(hr) && nullptr != pFaceFrame)
-		{
-			// check if a valid face is tracked in this face frame
-			hr = pFaceFrame->get_IsTrackingIdValid(&bFaceTracked);
-		}
+	BOOLEAN bFaceTracked = false;
+	if (SUCCEEDED(hr) && nullptr != pFaceFrame)
+	{
+		// check if a valid face is tracked in this face frame
+		hr = pFaceFrame->get_IsTrackingIdValid(&bFaceTracked);
+	}
 
-		if (SUCCEEDED(hr))
+	if (SUCCEEDED(hr))
+	{
+		if (bFaceTracked)
 		{
-			if (bFaceTracked)
+			//OutputDebugStringA("Tracking face!\n");
+
+			//IFaceFrameResult* pFaceFrameResult = nullptr;
+			IFaceAlignment* pFaceAlignment = nullptr;
+			CreateFaceAlignment(&pFaceAlignment); // TODO: check return?
+			//D2D1_POINT_2F faceTextLayout;				
+
+			//hr = pFaceFrame->get_FaceFrameResult(&pFaceFrameResult);
+
+			hr = pFaceFrame->GetAndRefreshFaceAlignmentResult(pFaceAlignment);
+
+			// need to verify if pFaceFrameResult contains data before trying to access it
+			if (SUCCEEDED(hr) && pFaceAlignment != nullptr)
 			{
-				//OutputDebugStringA("Tracking face!\n");
+				hr = pFaceAlignment->get_FaceBoundingBox(&iFaceBox);
+				//pFaceFrameResult->get_FaceBoundingBoxInColorSpace();
 
-				//IFaceFrameResult* pFaceFrameResult = nullptr;
-				IFaceAlignment* pFaceAlignment = nullptr;
-				CreateFaceAlignment(&pFaceAlignment); // TODO: check return?
-				//D2D1_POINT_2F faceTextLayout;				
-
-				//hr = pFaceFrame->get_FaceFrameResult(&pFaceFrameResult);
-
-				hr = pFaceFrame->GetAndRefreshFaceAlignmentResult(pFaceAlignment);
-
-				// need to verify if pFaceFrameResult contains data before trying to access it
-				if (SUCCEEDED(hr) && pFaceAlignment != nullptr)
+				if (SUCCEEDED(hr))
 				{
-					hr = pFaceAlignment->get_FaceBoundingBox(&iFaceBox);
-					//pFaceFrameResult->get_FaceBoundingBoxInColorSpace();
-
-					if (SUCCEEDED(hr))
-					{
-						//hr = pFaceFrameResult->GetFacePointsInColorSpace(FacePointType::FacePointType_Count, facePoints);
-						hr = pFaceAlignment->get_HeadPivotPoint(&iFacePosition);
-					}
-
-					if (SUCCEEDED(hr))
-					{
-						//hr = pFaceFrameResult->get_FaceRotationQuaternion(&faceRotation);
-						hr = pFaceAlignment->get_FaceOrientation(&iFaceRotationQuaternion);
-					}
-
-					if (SUCCEEDED(hr))
-					{
-						//hr = pFaceFrameResult->GetFaceProperties(FaceProperty::FaceProperty_Count, faceProperties);
-					}
-
-					if (SUCCEEDED(hr))
-					{
-						//hr = GetFaceTextPositionInColorSpace(ppBodies[0], &faceTextLayout);
-					}
-
-					if (SUCCEEDED(hr))
-					{
-						// draw face frame results
-						//m_pDrawDataStreams->DrawFaceFrameResults(0, &faceBox, facePoints, &faceRotation, faceProperties, &faceTextLayout);
-					}
+					//hr = pFaceFrameResult->GetFacePointsInColorSpace(FacePointType::FacePointType_Count, facePoints);
+					hr = pFaceAlignment->get_HeadPivotPoint(&iFacePosition);
 				}
 
-				SafeRelease(pFaceAlignment);
-			}
-			else
-			{
-				// face tracking is not valid - attempt to fix the issue
-				// a valid body is required to perform this step
-				if (bHaveBodyData)
+				if (SUCCEEDED(hr))
 				{
-					// check if the corresponding body is tracked 
-					// if this is true then update the face frame source to track this body
-					IBody* pBody = ppBodies[iFace];
-					if (pBody != nullptr)
-					{
-						BOOLEAN bTracked = false;
-						hr = pBody->get_IsTracked(&bTracked);
+					//hr = pFaceFrameResult->get_FaceRotationQuaternion(&faceRotation);
+					hr = pFaceAlignment->get_FaceOrientation(&iFaceRotationQuaternion);
+				}
 
-						UINT64 bodyTId;
-						if (SUCCEEDED(hr) && bTracked)
-						{
-							// get the tracking ID of this body
-							hr = pBody->get_TrackingId(&bodyTId);
-							if (SUCCEEDED(hr))
-							{
-								// update the face frame source with the tracking ID
-								m_pFaceFrameSource->put_TrackingId(bodyTId);
-							}
-						}
-					}
+				if (SUCCEEDED(hr))
+				{
+					//hr = pFaceFrameResult->GetFaceProperties(FaceProperty::FaceProperty_Count, faceProperties);
+				}
+
+				if (SUCCEEDED(hr))
+				{
+					//hr = GetFaceTextPositionInColorSpace(ppBodies[0], &faceTextLayout);
+				}
+
+				if (SUCCEEDED(hr))
+				{
+					// draw face frame results
+					//m_pDrawDataStreams->DrawFaceFrameResults(0, &faceBox, facePoints, &faceRotation, faceProperties, &faceTextLayout);
 				}
 			}
+
+			SafeRelease(pFaceAlignment);
 		}
 
 		SafeRelease(pFaceFrame);
@@ -559,9 +596,9 @@ void KinectFaceTracker::ProcessFaces()
 
 	if (bHaveBodyData)
 	{
-		for (int i = 0; i < _countof(ppBodies); ++i)
+		for (int i = 0; i < _countof(bodies); ++i)
 		{
-			SafeRelease(ppBodies[i]);
+			SafeRelease(bodies[i]);
 		}
 	}
 }

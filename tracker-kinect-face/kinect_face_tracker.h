@@ -74,6 +74,8 @@ private:
 	void ProcessFaces();
 	HRESULT UpdateBodyData(IBody** ppBodies);
 	void ExtractFaceRotationInDegrees(const Vector4* pQuaternion, float* pPitch, float* pYaw, float* pRoll);
+	static IBody* FindClosestBody(IBody** aBodies);
+	static IBody* FindTrackedBodyById(IBody** aBodies,UINT64 aTrackingId);
 
 	// Current Kinect
 	IKinectSensor*         m_pKinectSensor;
@@ -110,4 +112,7 @@ private:
 	//
 	std::unique_ptr<cv_video_widget> iVideoWidget;
 	std::unique_ptr<QLayout> iLayout;
+
+	// Id of the body currently being tracked
+	UINT64 iTrackingId = 0;
 };
