@@ -6,8 +6,8 @@
  * notice appear in all copies.
  */
 
-#include "test.h"
-#include "tracker.h"
+#include "kinect_face_settings.h"
+#include "kinect_face_tracker.h"
 #include "api/plugin-api.hpp"
 #include "compat/math-imports.hpp"
 

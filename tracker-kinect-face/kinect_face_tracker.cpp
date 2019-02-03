@@ -1,6 +1,6 @@
 
 
-#include "tracker.h"
+#include "kinect_face_tracker.h"
 
 #include <QLayout>
 #include <QPainter>
