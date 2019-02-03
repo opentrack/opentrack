@@ -241,82 +241,57 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 {
 	HRESULT hr;
 
+	// Get and open Kinect sensor
 	hr = GetDefaultKinectSensor(&m_pKinectSensor);
-	if (FAILED(hr))
+	if (SUCCEEDED(hr))
 	{
-		return hr;
-	}
-
-	if (m_pKinectSensor)
-	{
-		// Initialize Kinect and get color, body and face readers		
-		UniqueInterface<IBodyFrameSource> pBodyFrameSource;
-		UniqueInterface<IColorFrameSource> pColorFrameSource;
-
 		hr = m_pKinectSensor->Open();
-
-		if (SUCCEEDED(hr))
-		{
-			hr = m_pKinectSensor->get_CoordinateMapper(&m_pCoordinateMapper);
-		}
-
-		if (SUCCEEDED(hr))
-		{
-			hr = m_pKinectSensor->get_ColorFrameSource(pColorFrameSource.PtrPtr());
-			pColorFrameSource.Reset();
-		}
-		
-		//std::unique_ptr<IColorFrameSource, decltype(&SafeRelease)> colorFrameSource(pColorFrameSource, SafeRelease);
-
-		if (SUCCEEDED(hr))
-		{
-			//hr = (*pColorFrameSource.PtrPtr())->OpenReader(&m_pColorFrameReader);
-			hr = pColorFrameSource->OpenReader(&m_pColorFrameReader);
-		}
-
-
-		if (SUCCEEDED(hr))
-		{
-			hr = m_pKinectSensor->get_BodyFrameSource(pBodyFrameSource.PtrPtr());
-			pBodyFrameSource.Reset();
-		}
-
-		if (SUCCEEDED(hr))
-		{
-			hr = pBodyFrameSource->OpenReader(&m_pBodyFrameReader);
-		}
-
-		if (SUCCEEDED(hr))
-		{
-			// create a face frame source + reader to track each body in the fov
-			for (int i = 0; i < BODY_COUNT; i++)
-			{
-				if (SUCCEEDED(hr))
-				{
-					// create the face frame source by specifying the required face frame features
-					hr = CreateHighDefinitionFaceFrameSource(m_pKinectSensor, &m_pFaceFrameSource);
-				}
-				if (SUCCEEDED(hr))
-				{
-					// open the corresponding reader
-					hr = m_pFaceFrameSource->OpenReader(&m_pFaceFrameReader);
-				}
-			}
-		}
-
-		//pColorFrameSource.Free();
-		//pBodyFrameSource.Free();
-		//SafeRelease(pColorFrameSource);
-		//SafeRelease(pBodyFrameSource);
-		
-		//SafeRelease(*pBodyFrameSource.PtrPtr());
-		//SafeRelease(*pColorFrameSource.PtrPtr());
 	}
 
-	if (!m_pKinectSensor || FAILED(hr))
+	// TODO: check if we still need that guy
+	if (SUCCEEDED(hr))
 	{
-		//SetStatusMessage(L"No ready Kinect found!", 10000, true);
-		return E_FAIL;
+		hr = m_pKinectSensor->get_CoordinateMapper(&m_pCoordinateMapper);
+	}
+
+	// Create color frame reader	
+	if (SUCCEEDED(hr))
+	{
+		UniqueInterface<IColorFrameSource> colorFrameSource;
+		hr = m_pKinectSensor->get_ColorFrameSource(colorFrameSource.PtrPtr());
+		colorFrameSource.Reset();
+
+		if (SUCCEEDED(hr))
+		{
+			hr = colorFrameSource->OpenReader(&m_pColorFrameReader);
+		}
+	}
+		
+	// Create body frame reader	
+	if (SUCCEEDED(hr))
+	{
+		UniqueInterface<IBodyFrameSource> bodyFrameSource;
+		hr = m_pKinectSensor->get_BodyFrameSource(bodyFrameSource.PtrPtr());
+		bodyFrameSource.Reset();
+
+		if (SUCCEEDED(hr))
+		{
+			hr = bodyFrameSource->OpenReader(&m_pBodyFrameReader);
+		}
+	}
+
+	// Create HD face frame source
+	if (SUCCEEDED(hr))
+	{
+		// create the face frame source by specifying the required face frame features
+		hr = CreateHighDefinitionFaceFrameSource(m_pKinectSensor, &m_pFaceFrameSource);
+	}
+
+	// Create HD face frame reader
+	if (SUCCEEDED(hr))
+	{
+		// open the corresponding reader
+		hr = m_pFaceFrameSource->OpenReader(&m_pFaceFrameReader);
 	}
 
 	return hr;
