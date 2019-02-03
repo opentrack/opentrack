@@ -2,20 +2,20 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>test_metadata</name>
+    <name>KinectFaceMetadata</name>
     <message>
         <source>Kinect Face 0.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>test_ui</name>
+    <name>KinectFaceUi</name>
     <message>
-        <source>Sine wave</source>
+        <source>Kinect Face Tracker</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pressing &quot;Abort&quot; will immediately crash the application.</source>
+        <source>Start OpenTrack to check if Kinect Face Tracker is working.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

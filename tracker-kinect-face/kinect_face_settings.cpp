@@ -17,29 +17,31 @@
 #include <QDebug>
 
 
-test_dialog::test_dialog()
+KinectFaceSettings::KinectFaceSettings()
 {
     ui.setupUi(this);
 
     connect(ui.buttonBox, &QDialogButtonBox::clicked, [this](QAbstractButton* btn) {
-        if (btn == ui.buttonBox->button(QDialogButtonBox::Abort))
-            // NOLINTNEXTLINE
-            *(volatile int*)nullptr = 0;
+		if (btn == ui.buttonBox->button(QDialogButtonBox::Abort))
+		{
+			// NOLINTNEXTLINE
+			//*(volatile int*)nullptr = 0;
+		}
     });
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
 
-void test_dialog::doOK()
+void KinectFaceSettings::doOK()
 {
     //s.b->save();
     close();
 }
 
-void test_dialog::doCancel()
+void KinectFaceSettings::doCancel()
 {
     close();
 }
 
-OPENTRACK_DECLARE_TRACKER(KinectFaceTracker, test_dialog, test_metadata)
+OPENTRACK_DECLARE_TRACKER(KinectFaceTracker, KinectFaceSettings, KinectFaceMetadata)

@@ -51,7 +51,9 @@ private:
 };
 
 
-
+//
+//
+//
 class KinectFaceTracker : public ITracker
 {
 public:

@@ -1,16 +1,16 @@
 #pragma once
-#include "ui_test.h"
+#include "ui_kinect_face_settings.h"
 #include "compat/macros.hpp"
 #include "api/plugin-api.hpp"
 
 
-class test_dialog : public ITrackerDialog
+class KinectFaceSettings : public ITrackerDialog
 {
     Q_OBJECT
 
-    Ui::test_ui ui;
+    Ui::KinectFaceUi ui;
 public:
-    test_dialog();
+    KinectFaceSettings();
     void register_tracker(ITracker *) override {}
     void unregister_tracker() override {}
 private slots:
@@ -18,7 +18,7 @@ private slots:
     void doCancel();
 };
 
-class test_metadata : public Metadata
+class KinectFaceMetadata : public Metadata
 {
     Q_OBJECT
 

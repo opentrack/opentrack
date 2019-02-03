@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>test_ui</class>
- <widget class="QWidget" name="test_ui">
+ <class>KinectFaceUi</class>
+ <widget class="QWidget" name="KinectFaceUi">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -14,11 +14,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Sine wave</string>
+   <string>Kinect Face Tracker</string>
   </property>
   <property name="windowIcon">
    <iconset>
-    <normaloff>../gui/images/opentrack.png</normaloff>../gui/images/opentrack.png</iconset>
+    <normaloff>:/images/kinect.png</normaloff>:/images/kinect.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -36,7 +36,7 @@
       </sizepolicy>
      </property>
      <property name="text">
-      <string>Pressing &quot;Abort&quot; will immediately crash the application.</string>
+      <string>Start OpenTrack to check if Kinect Face Tracker is working.</string>
      </property>
     </widget>
    </item>

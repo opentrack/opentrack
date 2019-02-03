@@ -170,25 +170,32 @@ bool KinectFaceTracker::center()
 void KinectFaceTracker::data(double *data)
 {
 	const double dt = t.elapsed_seconds();
-	t.start();
 
-	Update();
-
-	ExtractFaceRotationInDegrees(&iFaceRotationQuaternion, &iFaceRotation.X, &iFaceRotation.Y, &iFaceRotation.Z);
-
-	//Check if data is valid
-	if (IsValidRect(iFaceBox))
+	const double KMinDelayInSeconds = 1.0 / 30.0; // Pointless running faster than Kinect hardware itself
+	if (dt > KMinDelayInSeconds)
 	{
-		// We have valid tracking retain position and rotation
-		iLastFacePosition = iFacePosition;
-		iLastFaceRotation = iFaceRotation;
+		t.start(); // Reset our timer
+		//OutputDebugStringA("Updating frame!\n");
+		Update();
+		ExtractFaceRotationInDegrees(&iFaceRotationQuaternion, &iFaceRotation.X, &iFaceRotation.Y, &iFaceRotation.Z);
+		//Check if data is valid
+		if (IsValidRect(iFaceBox))
+		{
+			// We have valid tracking retain position and rotation
+			iLastFacePosition = iFacePosition;
+			iLastFaceRotation = iFaceRotation;
+		}
+		else
+		{
+			//TODO: after like 5s without tracking reset position to zero
+			//TODO: Instead of hardcoding that delay add it to our settings
+		}
 	}
 	else
 	{
-		//TODO: after like 5s without tracking reset position to zero
-		//TODO: Instead of hardcoding that delay add it to our settings
+		//OutputDebugStringA("Skipping frame!\n");
 	}
-	
+		
 	// Feed our framework our last valid position and rotation
 	data[0] = (iLastFacePosition.X - iFacePositionCenter.X) * 100; // Convert to centimer to be in a range that suites OpenTrack.
 	data[1] = (iLastFacePosition.Y - iFacePositionCenter.Y) * 100;
@@ -344,7 +351,7 @@ void KinectFaceTracker::Update()
 		if (SUCCEEDED(hr))
 		{
 			hr = pColorFrame->get_RawColorImageFormat(&imageFormat);
-		}
+		}		
 
 		if (SUCCEEDED(hr))
 		{
