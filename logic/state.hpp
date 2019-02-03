@@ -14,19 +14,27 @@
 #include "mappings.hpp"
 #include "extensions.hpp"
 #include "work.hpp"
-#include <vector>
+#include "export.hpp"
+
+#include <memory>
 #include <QString>
 
-struct State
+struct OTR_LOGIC_EXPORT State
 {
-    explicit State(const QString& library_path) :
-        modules(library_path),
-        ev(modules.extensions()),
-        pose(s.all_axis_opts)
-    {}
+    using dylib_ptr = Modules::dylib_ptr;
+    using dylib_list = Modules::dylib_list;
+
+    explicit State(const QString& library_path);
+    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, dylib_list& list);
+
+    dylib_ptr current_tracker();
+    dylib_ptr current_protocol();
+    dylib_ptr current_filter();
+
     Modules modules;
     event_handler ev;
     main_settings s;
+    module_settings m;
     Mappings pose;
     std::shared_ptr<Work> work;
 };

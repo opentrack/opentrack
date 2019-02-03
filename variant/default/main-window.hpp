@@ -44,8 +44,6 @@ class main_window final : public QMainWindow, private State
 
     Ui::main_window ui;
 
-    module_settings m;
-
     std::unique_ptr<QSystemTrayIcon> tray;
     QMenu tray_menu { this };
 
@@ -76,13 +74,6 @@ class main_window final : public QMainWindow, private State
             menu_action_mappings { &tray_menu };
 
     bool exiting_already { false };
-
-    using dylib_ptr = Modules::dylib_ptr;
-    using dylib_list = Modules::dylib_list;
-
-    dylib_ptr current_tracker();
-    dylib_ptr current_protocol();
-    dylib_ptr current_filter();
 
     qt_sig::nullary start_tracker { this, &main_window::start_tracker_, Qt::QueuedConnection };
     qt_sig::nullary stop_tracker { this, &main_window::stop_tracker_, Qt::QueuedConnection };
@@ -143,7 +134,6 @@ class main_window final : public QMainWindow, private State
     bool start_in_tray();
 
     void save_modules();
-    static std::tuple<dylib_ptr, int> module_by_name(const QString& name, Modules::dylib_list& list);
 
     void exit(int status = EXIT_SUCCESS);
 

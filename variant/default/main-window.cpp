@@ -19,7 +19,6 @@
 #include "compat/sysexits.hpp"
 
 #include <algorithm>
-#include <iterator>
 #include <utility>
 
 #include <QMessageBox>
@@ -75,6 +74,9 @@ void main_window::init_shortcuts()
 
 void main_window::init_dylibs()
 {
+    using dylib_ptr = Modules::dylib_ptr;
+    using dylib_list = Modules::dylib_list;
+
     modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
 
     for (dylib_ptr& x : modules.trackers())
@@ -389,38 +391,7 @@ void main_window::refresh_config_list()
     ui.iconcomboProfile->setCurrentText(current);
 }
 
-std::tuple<main_window::dylib_ptr, int> main_window::module_by_name(const QString& name, Modules::dylib_list& list)
-{
-    auto it = std::find_if(list.cbegin(), list.cend(), [&name](const dylib_ptr& lib) {
-        if (!lib)
-            return name.isEmpty();
-        else
-            return name == lib->module_name;
-    });
 
-    if (it == list.cend())
-        return { nullptr, -1 };
-    else
-        return { *it, int(std::distance(list.cbegin(), it)) };
-}
-
-main_window::dylib_ptr main_window::current_tracker()
-{
-    auto [ptr, idx] = module_by_name(m.tracker_dll, modules.trackers());
-    return ptr;
-}
-
-main_window::dylib_ptr main_window::current_protocol()
-{
-    auto [ptr, idx] = module_by_name(m.protocol_dll, modules.protocols());
-    return ptr;
-}
-
-main_window::dylib_ptr main_window::current_filter()
-{
-    auto [ptr, idx] = module_by_name(m.filter_dll, modules.filters());
-    return ptr;
-}
 
 void main_window::update_button_state(bool running, bool inertialp)
 {
