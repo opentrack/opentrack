@@ -111,9 +111,6 @@ KinectFaceTracker::~KinectFaceTracker()
 	// done with color frame reader
 	SafeRelease(iColorFrameReader);
 
-	// done with coordinate mapper
-	SafeRelease(iCoordinateMapper);
-
 	// close the Kinect Sensor
 	if (iKinectSensor)
 	{
@@ -246,12 +243,6 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 	if (SUCCEEDED(hr))
 	{
 		hr = iKinectSensor->Open();
-	}
-
-	// TODO: check if we still need that guy
-	if (SUCCEEDED(hr))
-	{
-		hr = iKinectSensor->get_CoordinateMapper(&iCoordinateMapper);
 	}
 
 	// Create color frame reader	

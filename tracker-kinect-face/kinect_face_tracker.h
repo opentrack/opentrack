@@ -81,9 +81,6 @@ private:
 	// Current Kinect
 	IKinectSensor* iKinectSensor = nullptr;
 
-	// Coordinate mapper
-	ICoordinateMapper* iCoordinateMapper = nullptr;
-
 	// Color reader
 	IColorFrameReader* iColorFrameReader = nullptr;
 
