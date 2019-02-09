@@ -28,7 +28,7 @@ set(new-hier-path "#pragma once
 
 include_directories("${CMAKE_BINARY_DIR}")
 
-set(hier-path-filename "${CMAKE_BINARY_DIR}/__opentrack-library-path.h")
+set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.hxx")
 set(orig-hier-path "")
 if(EXISTS "${hier-path-filename}")
     file(READ ${hier-path-filename} orig-hier-path)

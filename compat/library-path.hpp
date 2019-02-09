@@ -1,4 +1,4 @@
 #pragma once
 
 // from build directory
-#include "__opentrack-library-path.h"
+#include "opentrack-library-path.hxx"
