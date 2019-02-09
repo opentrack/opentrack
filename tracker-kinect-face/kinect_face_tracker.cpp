@@ -377,6 +377,7 @@ void KinectFaceTracker::Update()
 					painter.setPen(QPen(Qt::red, 8));
 					painter.drawRect(iFaceBox.Left, iFaceBox.Top, iFaceBox.Right - iFaceBox.Left, iFaceBox.Bottom - iFaceBox.Top);
 					bool bEnd = painter.end();
+					(void)bEnd;
 				}
 
 				// Update our video preview
@@ -467,7 +468,8 @@ IBody* KinectFaceTracker::FindClosestBody(IBody** aBodies)
 IBody* KinectFaceTracker::FindTrackedBodyById(IBody** aBodies, UINT64 aTrackingId)
 {
 	float closestBodyDistance = std::numeric_limits<float>::max();
-	
+	(void)closestBodyDistance;
+
 	for (int i = 0; i < BODY_COUNT; i++)
 	{
 		BOOLEAN tracked;
