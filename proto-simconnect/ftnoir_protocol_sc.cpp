@@ -161,8 +161,8 @@ void simconnect::event_handler(SIMCONNECT_RECV* pData, DWORD, void* self_)
     default:
         break;
     case SIMCONNECT_RECV_ID_EXCEPTION:
-        qDebug() << "simconnect: got exception";
-        self.reconnect = true;
+        // CAVEAT: can't reconnect here, it breaks Prepar3D.
+        // the timer on the event handle will take care of failures.
         break;
     case SIMCONNECT_RECV_ID_QUIT:
         qDebug() << "fsx: got quit event";
