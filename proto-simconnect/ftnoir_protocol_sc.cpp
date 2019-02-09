@@ -76,8 +76,12 @@ void simconnect::run()
             (void)simconnect_close(handle);
         }
 
-        if (!isInterruptionRequested())
-            Sleep(sleep_time * 1000);
+        for (unsigned k = 0; k < sleep_time * 25; k++)
+        {
+            if (isInterruptionRequested())
+                break;
+            Sleep(1000 / 25);
+        }
     }
 
     qDebug() << "simconnect: exit";
