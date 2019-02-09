@@ -82,14 +82,6 @@ bool KeybindingWorker::init()
         }
     }
 
-    if (dinkeyboard->Acquire() != DI_OK)
-    {
-        dinkeyboard->Release();
-        dinkeyboard = nullptr;
-        qDebug() << "dinput: acquire keyboard failed" << GetLastError();
-        return false;
-    }
-
     return true;
 }
 
@@ -142,12 +134,15 @@ bool KeybindingWorker::run_keyboard_nolock()
      * Key-up events work on my end.
      */
 
-    DWORD sz = num_keyboard_states;
-    const HRESULT hr = dinkeyboard->GetDeviceData(sizeof(*keyboard_states), keyboard_states, &sz, 0);
+    if (!di_t::poll_device(dinkeyboard))
+        eval_once(qDebug() << "dinput: keyboard poll failed");
 
-    if (hr != DI_OK)
+    DWORD sz = num_keyboard_states;
+    HRESULT hr = dinkeyboard->GetDeviceData(sizeof(*keyboard_states), keyboard_states, &sz, 0);
+
+    if (FAILED(hr))
     {
-        eval_once(qDebug() << "dinput: keyboard GetDeviceData" << hr);
+        eval_once(qDebug() << "dinput: keyboard GetDeviceData failed" << (void*)hr);
         return false;
     }
 

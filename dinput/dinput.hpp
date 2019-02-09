@@ -17,6 +17,10 @@
 
 #include <dinput.h>
 
+// XXX TODO -sh 20190209
+// keybinding_worker and joystick context are badly named
+// add namespaces and rename, including inner joystick device struct
+
 using diptr = IDirectInput8A*;
 
 class OTR_DINPUT_EXPORT di_t final
@@ -38,4 +42,6 @@ public:
     diptr operator->() const { return handle; }
     operator bool() const { return handle != nullptr; }
     operator diptr() const { return handle; }
+
+    static bool poll_device(LPDIRECTINPUTDEVICE8 dev);
 };

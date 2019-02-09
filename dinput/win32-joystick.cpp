@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <algorithm>
 #include <cmath>
+#include <iterator>
 
 #include <QWidget>
 #include <QDebug>
@@ -46,29 +47,15 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
             return false;
 
         auto& j = iter->second;
-
         auto& joy_handle = j->joy_handle;
-        bool ok = false;
-        HRESULT hr = S_OK; (void)hr;
-
-        if (SUCCEEDED(hr = joy_handle->Poll()))
-            ok = true;
-        else if (SUCCEEDED(hr = joy_handle->Acquire()) && SUCCEEDED(hr = joy_handle->Poll()))
-            ok = true;
-
-        if (!ok)
-        {
-            (void)joy_handle->Unacquire();
-            Sleep(0);
-            continue;
-        }
-
         DIJOYSTATE2 js = {};
 
-        if (FAILED(hr = joy_handle->GetDeviceState(sizeof(js), &js)))
+        if (!di_t::poll_device(joy_handle))
+            continue;
+
+        if (FAILED(joy_handle->GetDeviceState(sizeof(js), &js)))
         {
-            //qDebug() << "joy get state failed" << guid << hr;
-            Sleep(0);
+            //qDebug() << "joy get state failed" << guid;
             continue;
         }
 
@@ -84,7 +71,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
             js.rglSlider[1]
         };
 
-        for (unsigned i = 0; i < 8; i++)
+        for (unsigned i = 0; i < std::size(values); i++)
             axes[i] = values[i];
 
         return true;
@@ -147,19 +134,18 @@ bool win32_joy_ctx::joy::poll(fn const& f)
 {
     HRESULT hr;
 
-    (void) joy_handle->Acquire();
-
-    if (FAILED(hr = joy_handle->Poll()))
+    if (!di_t::poll_device(joy_handle))
     {
-        //qDebug() << "joy acquire failed" << guid << hr;
-        (void) joy_handle->Unacquire();
+        eval_once(qDebug() << "joy poll failed" << guid << (void*)hr);
+        //(void)joy_handle->Unacquire();
+        //Sleep(0);
         return false;
     }
 
     DWORD sz = num_buffers;
     if (FAILED(hr = joy_handle->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keystate_buffers, &sz, 0)))
     {
-        eval_once(qDebug() << "joy get state failed" << guid << hr);
+        eval_once(qDebug() << "joy GetDeviceData failed" << guid << (void*)hr);
         return false;
     }
 
@@ -254,7 +240,7 @@ void win32_joy_ctx::enum_state::refresh()
                                    this,
                                    DIEDFL_ATTACHEDONLY)))
     {
-        eval_once(qDebug() << "dinput: failed enum joysticks" << hr);
+        eval_once(qDebug() << "dinput: failed enum joysticks" << (void*)hr);
         return;
     }
 
@@ -287,12 +273,12 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
         LPDIRECTINPUTDEVICE8 h;
         if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
-            qDebug() << "dinput: joystick CreateDevice" << guid << hr;
+            qDebug() << "dinput: failed joystick CreateDevice" << guid << (void*)hr;
             goto end;
         }
-        if (FAILED(h->SetDataFormat(&c_dfDIJoystick2)))
+        if (FAILED(hr = h->SetDataFormat(&c_dfDIJoystick2)))
         {
-            qDebug() << "dinput: joystick SetDataFormat";
+            qDebug() << "dinput: failed joystick SetDataFormat" << (void*)hr;
             h->Release();
             goto end;
         }
@@ -341,8 +327,8 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
     if (pdidoi->dwType & DIDFT_AXIS)
     {
         DIPROPRANGE diprg = {};
-        diprg.diph.dwSize = sizeof( DIPROPRANGE );
-        diprg.diph.dwHeaderSize = sizeof( DIPROPHEADER );
+        diprg.diph.dwSize = sizeof(DIPROPRANGE);
+        diprg.diph.dwHeaderSize = sizeof(DIPROPHEADER);
         diprg.diph.dwHow = DIPH_BYID;
         diprg.diph.dwObj = pdidoi->dwType;
         diprg.lMax = joy_axis_size;
@@ -352,7 +338,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
 
         if (FAILED(hr = reinterpret_cast<LPDIRECTINPUTDEVICE8>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
         {
-            qDebug() << "dinput: joystick DIPROP_RANGE" << hr;
+            qDebug() << "dinput: failed joystick DIPROP_RANGE" << (void*)hr;
             return DIENUM_STOP;
         }
     }
@@ -373,5 +359,4 @@ win32_joy_ctx::joy::~joy()
 }
 
 } // ns win32_joy_impl
-
 #endif
