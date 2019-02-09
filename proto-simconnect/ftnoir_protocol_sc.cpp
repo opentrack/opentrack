@@ -13,6 +13,7 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "compat/library-path.hpp"
+#include "compat/activation-context.hpp"
 
 simconnect::~simconnect()
 {
@@ -101,62 +102,15 @@ void simconnect::pose( const double *headpose )
     virtSCPosZ = float(-headpose[TZ]/100);
 }
 
-class ActivationContext
-{
-public:
-    explicit ActivationContext(int resid);
-    ~ActivationContext();
-
-    bool is_ok() const { return ok; }
-
-private:
-    ULONG_PTR cookie = 0;
-    HANDLE handle = INVALID_HANDLE_VALUE;
-    bool ok = false;
-};
-
-ActivationContext::ActivationContext(int resid)
-{
-    ACTCTXA actx = {};
-    actx.cbSize = sizeof(actx);
-    actx.lpResourceName = MAKEINTRESOURCEA(resid);
-    actx.dwFlags = ACTCTX_FLAG_RESOURCE_NAME_VALID;
-    static const QString prefix = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
-    QString path = prefix + OPENTRACK_LIBRARY_PREFIX "opentrack-proto-simconnect." OPENTRACK_LIBRARY_EXTENSION;
-    QByteArray name = QFile::encodeName(path);
-    actx.lpSource = name.constData();
-    handle = CreateActCtxA(&actx);
-    if (handle != INVALID_HANDLE_VALUE)
-    {
-        if (!ActivateActCtx(handle, &cookie))
-        {
-            qDebug() << "simconnect: can't set win32 activation context" << GetLastError();
-            ReleaseActCtx(handle);
-            handle = INVALID_HANDLE_VALUE;
-        }
-        else
-            ok = true;
-    } else {
-        qDebug() << "simconnect: can't create win32 activation context" << GetLastError();
-    }
-}
-
-ActivationContext::~ActivationContext()
-{
-    if (handle != INVALID_HANDLE_VALUE)
-    {
-        DeactivateActCtx(0, cookie);
-        ReleaseActCtx(handle);
-    }
 }
 
 module_status simconnect::initialize()
 {
     if (!library.isLoaded())
     {
-        ActivationContext ctx(142 + s.sxs_manifest);
+        activation_context ctx("opentrack-proto-simconnect" "." OPENTRACK_LIBRARY_EXTENSION, 142 + s.sxs_manifest);
 
-        if (ctx.is_ok())
+        if (ctx)
         {
             library.setFileName("SimConnect.dll");
             library.setLoadHints(QLibrary::PreventUnloadHint | QLibrary::ResolveAllSymbolsHint);
