@@ -9,13 +9,13 @@
 #include "compat/macros.hpp"
 #include "value-traits.hpp"
 
+#include <utility>
+
 #include <QObject>
 #include <QString>
 #include <QList>
 #include <QPointF>
 #include <QVariant>
-
-#include <utility>
 
 #define OTR_OPTIONS_SLOT(t) void setValue(t datum) noexcept { store_(datum); }
 #define OTR_OPTIONS_SIGNAL(t) void valueChanged(t) const
@@ -34,7 +34,6 @@ public:
     value_(bundle const& b, const QString& name) noexcept;
     ~value_() override;
 
-    // no C++17 "constexpr inline" for data declarations in MSVC
     template<typename t>
     static constexpr auto value_changed()
     {
