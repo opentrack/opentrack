@@ -35,6 +35,7 @@ setq(SDK_VALVE_STEAMVR "steamvr")
 setq(SDK_VJOYSTICK "vjoystick")
 
 setq(SDK_REALSENSE "RSSDK-R2")
+setq(SDK_KINECT20 "Kinect-v2.0")
 
 if(CMAKE_GENERATOR STREQUAL "NMake Makefiles")
     set(CMAKE_MAKE_PROGRAM "jom" CACHE STRING "" FORCE)
