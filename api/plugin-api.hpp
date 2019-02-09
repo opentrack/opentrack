@@ -29,7 +29,7 @@ enum Axis : int
     Yaw = 3, Pitch = 4, Roll = 5,
     Axis_MIN = TX, Axis_MAX = 5,
 
-    AXIS_COUNT = 6,
+    Axis_COUNT = 6,
 };
 
 namespace plugin_api::detail {
