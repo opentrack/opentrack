@@ -16,6 +16,7 @@
 #include <atomic>
 
 #include <QThread>
+#include <QMutex>
 #include <QMessageBox>
 #include <QSettings>
 #include <QLibrary>
@@ -61,30 +62,26 @@ private:
         DWORD   dwID;
     };
 
-    typedef void (CALLBACK *DispatchProc)(SIMCONNECT_RECV*, DWORD, void*);
+    typedef void (CALLBACK *SC_DispatchProc)(SIMCONNECT_RECV*, DWORD, void*);
 
-    typedef HRESULT (WINAPI *importSimConnect_Open)(HANDLE * phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
-    typedef HRESULT (WINAPI *importSimConnect_Close)(HANDLE hSimConnect);
-    typedef HRESULT (WINAPI *importSimConnect_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
-    typedef HRESULT (WINAPI *importSimConnect_CallDispatch)(HANDLE hSimConnect, DispatchProc pfcnDispatch, void * pContext);
-    typedef HRESULT (WINAPI *importSimConnect_SubscribeToSystemEvent)(HANDLE hSimConnect, DWORD EventID, const char * SystemEventName);
+    typedef HRESULT (WINAPI *SC_Open)(HANDLE* phSimConnect, LPCSTR szName, HWND hWnd, DWORD UserEventWin32, HANDLE hEventHandle, DWORD ConfigIndex);
+    typedef HRESULT (WINAPI *SC_Close)(HANDLE hSimConnect);
+    typedef HRESULT (WINAPI *SC_CameraSetRelative6DOF)(HANDLE hSimConnect, float fDeltaX, float fDeltaY, float fDeltaZ, float fPitchDeg, float fBankDeg, float fHeadingDeg);
+    typedef HRESULT (WINAPI *SC_CallDispatch)(HANDLE hSimConnect, SC_DispatchProc pfcnDispatch, void * pContext);
+    typedef HRESULT (WINAPI *SC_SubscribeToSystemEvent)(HANDLE hSimConnect, DWORD EventID, const char * SystemEventName);
 
-    std::atomic<float> virtSCPosX {0};
-    std::atomic<float> virtSCPosY {0};
-    std::atomic<float> virtSCPosZ {0};
-    std::atomic<float> virtSCRotX {0};
-    std::atomic<float> virtSCRotY {0};
-    std::atomic<float> virtSCRotZ {0};
+    float data[6] {};
+    QMutex mtx;
 
-    importSimConnect_Open simconnect_open = nullptr;
-    importSimConnect_Close simconnect_close = nullptr;
-    importSimConnect_CameraSetRelative6DOF simconnect_set6DOF = nullptr;
-    importSimConnect_CallDispatch simconnect_calldispatch = nullptr;
-    importSimConnect_SubscribeToSystemEvent simconnect_subscribetosystemevent = nullptr;
+    SC_Open                    simconnect_open         = nullptr;
+    SC_Close                   simconnect_close        = nullptr;
+    SC_CameraSetRelative6DOF   simconnect_set6DOF      = nullptr;
+    SC_CallDispatch            simconnect_calldispatch = nullptr;
+    SC_SubscribeToSystemEvent  simconnect_subscribe    = nullptr;
 
     HANDLE handle = nullptr;
     std::atomic<bool> reconnect = false;
-    static void CALLBACK processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD cbData, void *pContext);
+    static void CALLBACK event_handler(SIMCONNECT_RECV* pData, DWORD cbData, void* pContext);
     settings s;
     QLibrary library;
 };

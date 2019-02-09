@@ -27,61 +27,57 @@ void simconnect::run()
 
     if (event == nullptr)
     {
-        qDebug() << "simconnect: event create" << GetLastError();
+        qDebug() << "fsx: create event failed, error code" << GetLastError();
         return;
     }
+
+    constexpr unsigned sleep_time = 5;
 
     while (!isInterruptionRequested())
     {
         HRESULT hr;
+        reconnect = false;
+        handle = nullptr;
 
-        if (SUCCEEDED(hr = simconnect_open(&handle, "opentrack", nullptr, 0, event, 0)))
+        if (!SUCCEEDED(hr = simconnect_open(&handle, "opentrack", nullptr, 0, event, 0)))
+            qDebug() << "fsx: connect failed, retry in" << sleep_time << "seconds...";
+        else
         {
-            if (!SUCCEEDED(hr = simconnect_subscribetosystemevent(handle, 0, "Frame")))
-            {
-                qDebug() << "simconnect: can't subscribe to frame event:" << hr;
-            }
-
             Timer tm;
-            reconnect = false;
 
-            if (SUCCEEDED(hr))
+            if (!SUCCEEDED(hr = simconnect_subscribe(handle, 0, "Frame")))
+                qDebug() << "fsx: can't subscribe to frame event:" << (void*)hr;
+            else
+            {
                 while (!isInterruptionRequested())
                 {
-                    if (reconnect)
-                        break;
+                    constexpr int max_idle_seconds = 2;
 
-                    if (WaitForSingleObject(event, 100) == WAIT_OBJECT_0)
-                    {
+                    if (WaitForSingleObject(event, 0) == WAIT_OBJECT_0)
                         tm.start();
 
-                        if (!SUCCEEDED(hr = simconnect_calldispatch(handle, processNextSimconnectEvent, reinterpret_cast<void*>(this))))
-                        {
-                            qDebug() << "simconnect: calldispatch failed:" << hr;
-                            break;
-                        }
+                    if ((int)tm.elapsed_seconds() > max_idle_seconds)
+                    {
+                        qDebug() << "fsx: timeout reached, reconnecting";
+                        break;
                     }
 
                     if (reconnect)
                         break;
 
-                    else
+                    if (!SUCCEEDED(hr = simconnect_calldispatch(handle, event_handler, (void*)this)))
                     {
-                        const int idle_seconds = (int)tm.elapsed_seconds();
-                        constexpr int max_idle_seconds = 2;
-
-                        if (idle_seconds >= max_idle_seconds)
-                            break;
+                        qDebug() << "fsx: calldispatch failed:" << (void*)hr;
+                        break;
                     }
-                }
+                 }
+            }
 
-            (void) simconnect_close(handle);
+            (void)simconnect_close(handle);
         }
-        else
-            qDebug() << "simconnect: can't open handle:" << (void*)hr;
 
         if (!isInterruptionRequested())
-            Sleep(3000);
+            Sleep(sleep_time * 1000);
     }
 
     qDebug() << "simconnect: exit";
@@ -89,26 +85,27 @@ void simconnect::run()
     CloseHandle(event);
 }
 
-void simconnect::pose( const double *headpose )
+void simconnect::pose(const double* pose)
 {
-    // euler degrees
-    virtSCRotX = float(-headpose[Pitch]);
-    virtSCRotY = float(headpose[Yaw]);
-    virtSCRotZ = float(headpose[Roll]);
+    QMutexLocker l(&mtx);
 
-    // cm to meters
-    virtSCPosX = float(-headpose[TX]/100);
-    virtSCPosY = float(headpose[TY]/100);
-    virtSCPosZ = float(-headpose[TZ]/100);
-}
+    data[Pitch] = (float)-pose[Pitch];
+    data[Yaw]   = (float)pose[Yaw];
+    data[Roll]  = (float)pose[Roll];
 
+    constexpr float to_meters = 1e-2f;
+    data[TX] = (float)-pose[TX] * to_meters;
+    data[TY] = (float)pose[TY]  * to_meters;
+    data[TZ] = (float)-pose[TZ] * to_meters;
 }
 
 module_status simconnect::initialize()
 {
     if (!library.isLoaded())
     {
-        activation_context ctx("opentrack-proto-simconnect" "." OPENTRACK_LIBRARY_EXTENSION, 142 + s.sxs_manifest);
+        constexpr int resource_offset = 142;
+        activation_context ctx("opentrack-proto-simconnect" "." OPENTRACK_LIBRARY_EXTENSION,
+                               resource_offset + s.sxs_manifest);
 
         if (ctx)
         {
@@ -119,25 +116,25 @@ module_status simconnect::initialize()
         }
         else
             // XXX TODO add instructions for fsx and p3d -sh 20190128
-            return error(tr("install FSX SDK"));
+            return error(tr("Install FSX/Prepar3D SimConnect SDK."));
     }
 
-    using ptr = void(*)();
+    using ptr = decltype(library.resolve(""));
 
     struct {
         const char* name;
         ptr& place;
     } list[] = {
-        { "SimConnect_Open", (ptr&)simconnect_open },
-        { "SimConnect_CameraSetRelative6DOF", (ptr&)simconnect_set6DOF },
-        { "SimConnect_Close", (ptr&)simconnect_close },
-        { "SimConnect_CallDispatch", (ptr&)simconnect_calldispatch },
-        { "SimConnect_SubscribeToSystemEvent", (ptr&)simconnect_subscribetosystemevent },
+        { "SimConnect_Open",                   (ptr&)simconnect_open },
+        { "SimConnect_CameraSetRelative6DOF",  (ptr&)simconnect_set6DOF },
+        { "SimConnect_Close",                  (ptr&)simconnect_close },
+        { "SimConnect_CallDispatch",           (ptr&)simconnect_calldispatch },
+        { "SimConnect_SubscribeToSystemEvent", (ptr&)simconnect_subscribe },
     };
 
     for (auto& x : list)
     {
-        x.place = (ptr)library.resolve(x.name);
+        x.place = library.resolve(x.name);
         if (!x.place)
             return error(tr("can't import %1: %2").arg(x.name, library.errorString()));
     }
@@ -149,10 +146,13 @@ module_status simconnect::initialize()
 
 void simconnect::handler()
 {
-    (void) simconnect_set6DOF(handle, virtSCPosX, virtSCPosY, virtSCPosZ, virtSCRotX, virtSCRotZ, virtSCRotY);
+    QMutexLocker l(&mtx);
+    (void)simconnect_set6DOF(handle,
+                             data[TX], data[TY], data[TZ],
+                             data[Pitch], data[Roll], data[Yaw]);
 }
 
-void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWORD, void *self_)
+void simconnect::event_handler(SIMCONNECT_RECV* pData, DWORD, void* self_)
 {
     simconnect& self = *reinterpret_cast<simconnect*>(self_);
 
@@ -165,7 +165,7 @@ void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWO
         self.reconnect = true;
         break;
     case SIMCONNECT_RECV_ID_QUIT:
-        qDebug() << "simconnect: got quit event";
+        qDebug() << "fsx: got quit event";
         self.reconnect = true;
         break;
     case SIMCONNECT_RECV_ID_EVENT_FRAME:
@@ -176,7 +176,7 @@ void CALLBACK simconnect::processNextSimconnectEvent(SIMCONNECT_RECV* pData, DWO
 
 QString simconnect::game_name()
 {
-    return tr("FS2004/FSX");
+    return tr("FSX / Prepar3D");
 }
 
 OPENTRACK_DECLARE_PROTOCOL(simconnect, simconnect_ui, simconnect_metadata)

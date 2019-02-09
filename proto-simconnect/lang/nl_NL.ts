@@ -51,11 +51,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>install FSX SDK</source>
+        <source>can&apos;t import %1: %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>can&apos;t import %1: %2</source>
+        <source>Install FSX/Prepar3D SimConnect SDK.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
