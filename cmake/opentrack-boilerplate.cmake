@@ -28,14 +28,18 @@ set(new-hier-path "#pragma once
 
 include_directories("${CMAKE_BINARY_DIR}")
 
-set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.hxx")
-set(orig-hier-path "")
-if(EXISTS "${hier-path-filename}")
-    file(READ ${hier-path-filename} orig-hier-path)
-endif()
-if(NOT (orig-hier-path STREQUAL new-hier-path))
-    file(WRITE "${hier-path-filename}" "${new-hier-path}")
-endif()
+function(otr_write_library_paths)
+    set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.hxx")
+    set(orig-hier-path "")
+    if(EXISTS "${hier-path-filename}")
+        file(READ ${hier-path-filename} orig-hier-path)
+    endif()
+    if(NOT (orig-hier-path STREQUAL new-hier-path))
+        file(WRITE "${hier-path-filename}" "${new-hier-path}")
+    endif()
+endfunction()
+
+otr_write_library_paths()
 
 function(otr_glob_sources var)
     set(basedir "${CMAKE_CURRENT_SOURCE_DIR}")
