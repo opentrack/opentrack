@@ -43,10 +43,6 @@
 <context>
     <name>simconnect</name>
     <message>
-        <source>FS2004/FSX</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>dll load failed: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -56,6 +52,10 @@
     </message>
     <message>
         <source>Install FSX/Prepar3D SimConnect SDK.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>FSX / Prepar3D</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
