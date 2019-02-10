@@ -75,6 +75,8 @@ bool di_t::poll_device(LPDIRECTINPUTDEVICE8 dev)
 
     switch (hr = dev->Acquire())
     {
+    default:
+        break;
     case DI_OK:
     case S_FALSE:
         switch (hr = dev->Poll())
@@ -83,9 +85,12 @@ bool di_t::poll_device(LPDIRECTINPUTDEVICE8 dev)
         case DI_NOEFFECT:
             return true;
         default:
-            eval_once(qDebug() << "dinput: device poll failed:" << (void*)hr);
+            break;
         }
+        break;
     }
+
+    eval_once(qDebug() << "dinput: device poll failed:" << (void*)hr);
 
     return false;
 }
