@@ -217,7 +217,7 @@ function(otr_module n_)
             header-hygiene
         )
         foreach(k ${opts})
-            set_property(TARGET "${n}" APPEND_STRING PROPERTY COMPILE_FLAGS "-Wno-${k} ")
+            target_compile_options(${n} PRIVATE "-Wno-${k}")
         endforeach()
     endif()
 
