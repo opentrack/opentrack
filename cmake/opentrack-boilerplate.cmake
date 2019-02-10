@@ -26,8 +26,6 @@ set(new-hier-path "#pragma once
 #define OPENTRACK_I18N_PATH \"${opentrack-i18n-path}\"
 ")
 
-include_directories("${CMAKE_BINARY_DIR}")
-
 function(otr_write_library_paths)
     set(hier-path-filename "${CMAKE_BINARY_DIR}/opentrack-library-path.hxx")
     set(orig-hier-path "")

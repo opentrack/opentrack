@@ -80,3 +80,5 @@ function(otr_qt2 n)
         -DQT_MESSAGELOGCONTEXT
     )
 endfunction()
+
+include_directories("${CMAKE_BINARY_DIR}")

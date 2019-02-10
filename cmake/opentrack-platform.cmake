@@ -37,8 +37,8 @@ endif()
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for clang
 
-string(TOUPPER "${CMAKE_BUILD_TYPE}" __build_type)
-set(CMAKE_BUILD_TYPE "${__build_type}" CACHE STRING "" FORCE)
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
+set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "" FORCE)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
@@ -156,6 +156,3 @@ if(APPLE)
     endforeach()
     set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
-
-
-
