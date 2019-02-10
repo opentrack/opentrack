@@ -32,6 +32,12 @@ include(opentrack-policy NO_POLICY_SCOPE)
 project(opentrack)
 cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
 
+if(POLICY CMP0083)
+    cmake_policy(SET CMP0083 NEW)
+    include(CheckPIESupported)
+    check_pie_supported()
+endif()
+
 include(CMakeDetermineCCompiler)
 include(CMakeDetermineCXXCompiler)
 include(CMakeParseArguments)
