@@ -6,4 +6,4 @@ set_target_properties(opentrack-executable PROPERTIES
     PREFIX ""
 )
 
-target_link_libraries(opentrack-executable opentrack-user-interface)
+target_link_libraries(${self} opentrack-user-interface opentrack-version)

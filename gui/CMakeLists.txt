@@ -5,7 +5,6 @@ target_link_libraries(${self}
     opentrack-logic
     opentrack-spline
     opentrack-pose-widget
-    opentrack-version
 )
 
 # for process detector

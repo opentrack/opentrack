@@ -22,7 +22,8 @@ function(otr_init_variant)
         "macosx"
         "cv"
         "migration"
-        "main-window")
+        "main-window"
+    )
 
     set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
 endfunction()
