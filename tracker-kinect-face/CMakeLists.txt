@@ -11,7 +11,7 @@ if (WIN32 AND opentrack-intel)
 
             if(MSVC)
                 # workaround warning in SDK
-                target_compile_options(${self} PUBLIC "-wd4471")
+                target_compile_options(${self} PRIVATE "-wd4471")
             endif()
 
 			# Add include path to Kinect SDK
