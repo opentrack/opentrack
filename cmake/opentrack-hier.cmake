@@ -42,8 +42,8 @@ else()
 endif()
 
 function(otr_escape_string var str)
-    string(REGEX REPLACE "([\$\\\"#])" "\\\\\\1" tmp__ "${str}")
-        set(${var} "${tmp__}" PARENT_SCOPE)
+    string(REGEX REPLACE "([^_A-Za-z0-9./:-])" "\\\\\\1" str "${str}")
+    set(${var} "${str}" PARENT_SCOPE)
 endfunction()
 
 set(opentrack-contrib-pfx "${opentrack-doc-pfx}/contrib")
