@@ -6,19 +6,9 @@ if(GIT_FOUND)
     git_describe(OPENTRACK_COMMIT --tags --always)
 endif()
 
-unset(_build_type)
-if(CMAKE_BUILD_TYPE)
-    string(TOUPPER ${CMAKE_BUILD_TYPE} _build_type)
-    if (NOT _build_type STREQUAL "DEBUG")
-        unset(_build_type)
-    else()
-        set(_build_type "-${_build_type}")
-    endif()
-endif()
+file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.hxx "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
 
-file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.h "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}${_build_type}\"")
-
-set(version-string "
+set(version-string "\
 #ifdef __cplusplus
 extern \"C\"
 #else
@@ -26,8 +16,7 @@ extern
 #endif
 
 const char* const opentrack_version;
-
-const char* const opentrack_version = \"${OPENTRACK_COMMIT}${_build_type}\";
+const char* const opentrack_version = \"${OPENTRACK_COMMIT}\";
 ")
 
 set(file "${CMAKE_CURRENT_BINARY_DIR}/version.cpp")
