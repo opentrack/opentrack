@@ -4,28 +4,6 @@
 <context>
     <name>vjoystick</name>
     <message>
-        <source>VJoy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to the &lt;a href=&quot;http://vjoystick.sourceforge.net/site/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;vjoystick&lt;/span&gt;&lt;/a&gt; project site or &lt;a href=&quot;https://sourceforge.net/projects/vjoystick/files/latest/download&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;download directly&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>vjoystick_metadata</name>
-    <message>
-        <source>Joystick emulation -- vjoystick</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>vjoystick_proto</name>
-    <message>
-        <source>vjoystick driver missing</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>vjoystick won&apos;t work without the driver installed.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -38,15 +16,54 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>vjoystick not installed or disabled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>can&apos;t initialize vjoystick</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Virtual joystick</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>driver/SDK version mismatch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>BUG: joystick claims it&apos;s in use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Virtual joystick already in use</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Device missing. Add joystick #1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error #%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vjoystick driver problem</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Driver problem.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>vjoystick</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to the &lt;a href=&quot;http://vjoystick.sourceforge.net/site/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;vjoystick&lt;/span&gt;&lt;/a&gt; project site or &lt;a href=&quot;https://sourceforge.net/projects/vjoystick/files/latest/download&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;download directly&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>vjoystick_metadata</name>
+    <message>
+        <source>Joystick emulation -- vjoystick</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

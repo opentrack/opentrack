@@ -10,45 +10,32 @@
 #include "api/plugin-api.hpp"
 #include "compat/macros.hpp"
 
-#include <optional>
-
-enum class state : int
+enum status
 {
-    notent = -1,
-    fail = -2,
-    success = 1,
 };
 
-class handle final
-{
-public:
-    static constexpr unsigned axis_count = 6;
-    static const unsigned char axis_ids[axis_count];
-
-private:
-    state joy_state = state::notent;
-    long axis_min[6] {};
-    long axis_max[6] {};
-    [[nodiscard]] bool init();
-public:
-    handle();
-    ~handle();
-    state get_state() const { return joy_state; }
-    [[nodiscard]] bool to_axis_value(unsigned axis_id, double val, int& ret) const;
-};
-
-class vjoystick_proto : public TR, public IProtocol
+class vjoystick : public TR, public IProtocol
 {
     Q_OBJECT
 
-    std::optional<handle> h;
 public:
-    vjoystick_proto();
-    ~vjoystick_proto() override;
+    vjoystick();
+    ~vjoystick() override;
     module_status initialize() override;
     void pose( const double *headpose ) override;
     QString game_name() override { return tr("Virtual joystick"); }
+
 private:
+    long axis_min[6] {};
+    long axis_max[6] {};
+    [[nodiscard]] bool init();
+    int to_axis_value(unsigned axis_id, double val) const;
+
+    static constexpr unsigned axis_count = 6;
+    static const unsigned char axis_ids[axis_count];
+
+    bool status = false;
+    bool first_run = true;
 };
 
 class vjoystick_dialog final : public IProtocolDialog

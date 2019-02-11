@@ -26,7 +26,7 @@
 
 #define OPENTRACK_VJOYSTICK_ID 1
 
-const unsigned char handle::axis_ids[6] =
+const unsigned char vjoystick::axis_ids[6] =
 {
     HID_USAGE_X,
     HID_USAGE_Y,
@@ -49,69 +49,96 @@ static constexpr double val_minmax[6] =
     180
 };
 
-bool handle::init()
+bool vjoystick::init()
 {
     if (!AcquireVJD(OPENTRACK_VJOYSTICK_ID))
         return false;
 
     unsigned cnt = 0;
-    bool status = true;
 
     for (unsigned i = 0; i < axis_count; i++)
     {
-        if (!GetVJDAxisExist(OPENTRACK_VJOYSTICK_ID, axis_ids[i]))
-            continue;
-        cnt++;
+        bool status = true;
+
+        status &= !!GetVJDAxisExist(OPENTRACK_VJOYSTICK_ID, axis_ids[i]);
         status &= !!GetVJDAxisMin(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_min[i]);
         status &= !!GetVJDAxisMax(OPENTRACK_VJOYSTICK_ID, axis_ids[i], &axis_max[i]);
+
+        if (!status)
+        {
+            axis_min[i] = 0;
+            axis_max[i] = 0;
+        }
+        else
+            cnt++;
     }
-    //(void)ResetVJD(OPENTRACK_VJOYSTICK_ID);
 
-    return status && cnt;
-}
-
-handle::handle()
-{
-    if (!isVJDExists(OPENTRACK_VJOYSTICK_ID))
-        joy_state = state::notent;
-    else if (init())
-        joy_state = state::success;
-    else
-        joy_state = state::fail;
-}
-
-handle::~handle()
-{
-    if (joy_state == state::success)
+    if (!cnt)
+    {
         RelinquishVJD(OPENTRACK_VJOYSTICK_ID);
+        return false;
+    }
+    else
+        return true;
 }
 
-bool handle::to_axis_value(unsigned axis_id, double val, int& ret) const
+int vjoystick::to_axis_value(unsigned axis_id, double val) const
 {
-    if (!axis_min[axis_id] && !axis_max[axis_id])
-        return false;
-
     const double minmax = val_minmax[axis_id];
     const double min = axis_min[axis_id];
     const double max = axis_max[axis_id];
 
-    ret = int(clamp((val+minmax) * max / (2*minmax) - min, min, max));
-    return true;
+    return (int)(clamp((val+minmax) * max / (2*minmax) - min, min, max));
 }
 
-vjoystick_proto::vjoystick_proto() = default;
-vjoystick_proto::~vjoystick_proto() = default;
-
-module_status vjoystick_proto::initialize()
+vjoystick::vjoystick() = default;
+vjoystick::~vjoystick()
 {
-    h = handle{};
+    if (status)
+        RelinquishVJD(OPENTRACK_VJOYSTICK_ID);
+}
 
-    if (h->get_state() != state::success)
+module_status vjoystick::initialize()
+{
+    QString msg;
+
+    if (!vJoyEnabled())
+        msg = tr("vjoystick won't work without the driver installed.");
+    else if (WORD VerDll, VerDrv; !DriverMatch(&VerDll, &VerDrv))
+        msg = tr("driver/SDK version mismatch");
+    else
+    {
+        int code;
+        switch (code = GetVJDStatus(OPENTRACK_VJOYSTICK_ID))
+        {
+        case VJD_STAT_OWN:
+            msg = tr("BUG: handle leak.");
+            break;
+        case VJD_STAT_FREE:
+            break;
+        case VJD_STAT_BUSY:
+            msg = tr("Virtual joystick already in use.");
+            break;
+        case VJD_STAT_MISS:
+            msg = tr("Device missing. Add joystick #1.");
+            break;
+        case VJD_STAT_UNKN:
+            msg = tr("Unknown error.");
+            break;
+        default:
+            msg = tr("Unknown error #%1.").arg(code);
+            break;
+        }
+    }
+
+    status = msg.isNull();
+
+    if (!status)
     {
         QMessageBox msgbox;
         msgbox.setIcon(QMessageBox::Critical);
-        msgbox.setText(tr("vjoystick driver missing"));
-        msgbox.setInformativeText(tr("vjoystick won't work without the driver installed."));
+        msgbox.setText(tr("vjoystick driver problem"));
+        msgbox.setInformativeText(msg);
 
         QPushButton* driver_button = msgbox.addButton(tr("Download the driver"), QMessageBox::ActionRole);
         QPushButton* project_site_button = msgbox.addButton(tr("Visit project site"), QMessageBox::ActionRole);
@@ -131,30 +158,32 @@ module_status vjoystick_proto::initialize()
         }
     }
 
-    switch (h->get_state())
-    {
-    default:
-    case state::notent:
-        return error(tr("vjoystick not installed or disabled"));
-    case state::fail:
-        return error(tr("can't initialize vjoystick"));
-    case state::success:
-        return status_ok();
-    }
+    if (!status)
+        return error(tr("Driver problem."));
+    else
+        return {};
 }
 
-void vjoystick_proto::pose(const double *pose)
+void vjoystick::pose(const double *pose)
 {
-    if (h->get_state() != state::success)
+    if (first_run)
+    {
+        status = init();
+        //status &= !!ResetVJD(OPENTRACK_VJOYSTICK_ID);
+        first_run = false;
+    }
+
+    if (!status)
         return;
 
-    for (unsigned i = 0; i < handle::axis_count; i++)
+    for (unsigned i = 0; i < vjoystick::axis_count; i++)
     {
-        int val;
-        if (!h->to_axis_value(i, pose[i], val))
+        if (axis_min[i] == axis_max[i])
             continue;
-        SetAxis(val, OPENTRACK_VJOYSTICK_ID, handle::axis_ids[i]);
+
+        int val = to_axis_value(i, pose[i]);
+        SetAxis(val, OPENTRACK_VJOYSTICK_ID, vjoystick::axis_ids[i]);
     }
 }
 
-OPENTRACK_DECLARE_PROTOCOL(vjoystick_proto, vjoystick_dialog, vjoystick_metadata)
+OPENTRACK_DECLARE_PROTOCOL(vjoystick, vjoystick_dialog, vjoystick_metadata)
