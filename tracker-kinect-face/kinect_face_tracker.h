@@ -6,7 +6,7 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "compat/macros.hpp"
-#include "cv/video-widget.hpp"
+#include "video/video-widget.hpp"
 
 // Kinect Header files
 #include <Kinect.h>

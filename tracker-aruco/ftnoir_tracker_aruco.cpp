@@ -5,7 +5,6 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "cv/video-widget.hpp"
 #include "ftnoir_tracker_aruco.h"
 #include "cv/video-property-page.hpp"
 #include "compat/camera-names.hpp"

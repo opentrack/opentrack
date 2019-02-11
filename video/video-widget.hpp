@@ -10,20 +10,15 @@
 
 #include "compat/math.hpp"
 
-#include <memory>
 #include <vector>
 
-#include <opencv2/core.hpp>
+#ifdef OTR_HAS_OPENCV
+#   include <opencv2/core.hpp>
+#endif
 
-#include <QObject>
 #include <QWidget>
-#include <QPainter>
-#include <QtEvents>
 #include <QTimer>
 #include <QMutex>
-#include <QMutexLocker>
-#include <QSize>
-#include <QDebug>
 
 class cv_video_widget final : public QWidget
 {
@@ -31,7 +26,10 @@ class cv_video_widget final : public QWidget
 
 public:
     cv_video_widget(QWidget *parent);
+
+#ifdef OTR_HAS_OPENCV
     void update_image(const cv::Mat& frame);
+#endif
     void update_image(const QImage& image);
     void get_preview_size(int& w, int& h);
     void resizeEvent(QResizeEvent*) override;
@@ -43,9 +41,14 @@ private:
     QImage texture;
     std::vector<unsigned char> vec;
     QTimer timer;
+
+#ifdef OTR_HAS_OPENCV
     cv::Mat frame2, frame3;
+#endif
     bool freshp = false;
 
     int W  = iround(QWidget::width() * devicePixelRatioF());
     int H = iround(QWidget::height() * devicePixelRatioF());
+
+    void init_image_nolock();
 };

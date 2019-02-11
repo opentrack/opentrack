@@ -11,7 +11,7 @@
 #include "options/options.hpp"
 #include "cv/translation-calibrator.hpp"
 #include "api/plugin-api.hpp"
-#include "cv/video-widget.hpp"
+#include "video/video-widget.hpp"
 #include "compat/timer.hpp"
 
 #include "aruco/markerdetector.h"

@@ -7,7 +7,7 @@
  */
 
 #include "ftnoir_tracker_pt.h"
-#include "cv/video-widget.hpp"
+#include "video/video-widget.hpp"
 #include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 

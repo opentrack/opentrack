@@ -1,7 +1,6 @@
 # Kinect SDK is Windows only
 if (WIN32 AND opentrack-intel)
-	find_package(OpenCV QUIET)
-	if(OpenCV_FOUND)
+	if(TRUE)
         # Setup cache variable to Kinect SDK path
 		set(SDK_KINECT20 "$ENV{KINECTSDK20_DIR}" CACHE PATH "Kinect SDK path")
 		# If we have a valid SDK path, try build that tracker
@@ -29,7 +28,7 @@ if (WIN32 AND opentrack-intel)
 			# Link against Kinect SDK libraries
 			target_link_libraries(${self} "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.lib" "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.Face.lib")
 			# Link against OpenCV stuff, needed for video preview
-			target_link_libraries(${self} opentrack-cv)
+			target_link_libraries(${self} opentrack-video)
 
 			# Install Kinect Face DLL
 			install(FILES "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/Kinect20.Face.dll" DESTINATION "${opentrack-hier-pfx}" PERMISSIONS ${opentrack-perms-exec})

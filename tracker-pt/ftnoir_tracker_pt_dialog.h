@@ -12,7 +12,7 @@
 #include "ftnoir_tracker_pt.h"
 #include "tracker-pt/ui_FTNoIR_PT_Controls.h"
 #include "cv/translation-calibrator.hpp"
-#include "cv/video-widget.hpp"
+#include "video/video-widget.hpp"
 
 #include <QTimer>
 #include <QMutex>

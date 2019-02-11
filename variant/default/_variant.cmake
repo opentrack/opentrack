@@ -23,6 +23,7 @@ function(otr_init_variant)
         "cv"
         "migration"
         "main-window"
+        "video"
     )
 
     set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
