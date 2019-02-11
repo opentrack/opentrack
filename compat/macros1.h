@@ -1,15 +1,15 @@
 #pragma once
 
 #if defined _MSC_VER
-#   define cc_noinline __declspec(noinline)
+#   define never_inline __declspec(noinline)
 #else
-#   define cc_noinline __attribute__((noinline))
+#   define never_inline __attribute__((noinline))
 #endif
 
 #if defined _MSC_VER
-#   define cc_forceinline __forceinline
+#   define force_inline __forceinline
 #else
-#   define cc_forceinline __attribute__((always_inline))
+#   define force_inline __attribute__((always_inline))
 #endif
 
 #if !defined likely
@@ -23,31 +23,18 @@
 #endif
 
 #if defined _MSC_VER
-#   define cc_function_name __FUNCSIG__
+#   define function_name __FUNCSIG__
 #else
-#   define cc_function_name __PRETTY_FUNCTION__
+#   define function_name __PRETTY_FUNCTION__
 #endif
 
-#if !defined PP_CAT
-#   define PP_CAT(x,y) PP_CAT1(x,y)
-#   define PP_CAT1(x,y) PP_CAT2(x,y)
-#   define PP_CAT2(x,y) x ## y
-#endif
+#define PP_CAT(x,y) PP_CAT1(x,y)
+#define PP_CAT1(x,y) PP_CAT2(x,y)
+#define PP_CAT2(x,y) x ## y
 
-#ifndef PP_EXPAND
-#   define PP_EXPAND(x) PP_EXPAND2(x)
-#   define PP_EXPAND2(x) PP_EXPAND3(x) x
-#   define PP_EXPAND3(x) x
-#endif
-
-#ifdef _MSC_VER
-//#   include <windows.h>
-//#   define FULL_BARRIER MemoryBarrier()
-#   define COMPILER_BARRIER() _ReadWriteBarrier()
-#else
-//#   define FULL_BARRIER() __sync_synchronize()
-#   define COMPILER_BARRIER() asm volatile("" ::: "memory")
-#endif
+#define PP_EXPAND(x) PP_EXPAND2(x)
+#define PP_EXPAND2(x) PP_EXPAND3(x) x
+#define PP_EXPAND3(x) x
 
 #ifdef _MSC_VER
 #   define unreachable() __assume(0)

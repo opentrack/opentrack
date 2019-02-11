@@ -23,7 +23,7 @@ freetrack::~freetrack()
 static_assert(sizeof(LONG) == sizeof(std::int32_t));
 static_assert(sizeof(LONG) == 4u);
 
-cc_noinline void store(float volatile& place, const float value)
+never_inline void store(float volatile& place, const float value)
 {
     union
     {

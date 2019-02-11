@@ -66,7 +66,7 @@ inline auto uround(t val) -> std::enable_if_t<std::is_floating_point_v<remove_cv
 }
 
 template <typename t>
-static cc_forceinline constexpr int signum(const t& x)
+static force_inline constexpr int signum(const t& x)
 {
     return x < t{0} ? -1 : 1;
 }

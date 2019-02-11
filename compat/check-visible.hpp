@@ -5,7 +5,7 @@
 
 class QWidget;
 
-cc_noinline OTR_COMPAT_EXPORT
+never_inline OTR_COMPAT_EXPORT
 void set_is_visible(QWidget const& w, bool force = false);
 
 OTR_COMPAT_EXPORT

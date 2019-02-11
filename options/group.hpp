@@ -31,7 +31,7 @@ namespace options::detail {
         void put(const QString& s, const QVariant& d);
         bool contains(const QString& s) const;
 
-        cc_noinline QVariant get_variant(const QString& name) const;
+        never_inline QVariant get_variant(const QString& name) const;
     };
 } // ns options::detail
 

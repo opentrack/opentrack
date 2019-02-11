@@ -21,7 +21,7 @@ accela::accela()
 }
 
 template<typename F>
-cc_noinline
+never_inline
 static void do_deltas(const double* deltas, double* output, F&& fun)
 {
     constexpr unsigned N = 3;

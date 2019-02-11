@@ -29,12 +29,12 @@ struct OTR_OPTIONS_EXPORT saver_ final
 {
     ini_ctx& ctx;
 
-    cc_noinline ~saver_();
-    explicit cc_noinline saver_(ini_ctx& ini);
+    never_inline ~saver_();
+    explicit never_inline saver_(ini_ctx& ini);
 };
 
 template<typename F>
-cc_noinline
+never_inline
 auto with_settings_object_(ini_ctx& ini, F&& fun)
 {
     saver_ saver { ini };

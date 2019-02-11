@@ -32,10 +32,10 @@ class OTR_COMPAT_EXPORT shm_wrapper final
 #endif
 
 public:
-    cc_noinline shm_wrapper(const char *shm_name, const char *mutex_name, int map_size);
-    cc_noinline ~shm_wrapper();
-    cc_noinline bool lock();
-    cc_noinline bool unlock();
-    cc_noinline bool success();
+    never_inline shm_wrapper(const char *shm_name, const char *mutex_name, int map_size);
+    never_inline ~shm_wrapper();
+    never_inline bool lock();
+    never_inline bool unlock();
+    never_inline bool success();
     inline void* ptr() { return mem; }
 };

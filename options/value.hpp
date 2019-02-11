@@ -42,7 +42,7 @@ class value final : public value_
     const t def;
     using traits = detail::value_traits<t>;
 
-    cc_noinline
+    never_inline
     auto get() const noexcept
     {
         if (!b->contains(self_name))
@@ -56,7 +56,7 @@ class value final : public value_
         return traits::pass_value(traits::value_with_default(traits::value_from_qvariant(variant), def));
     }
 
-    cc_noinline
+    never_inline
     void store_variant(QVariant&& value) noexcept override
     {
         if (traits::is_equal(get(), traits::value_from_qvariant(value)))
@@ -68,7 +68,7 @@ class value final : public value_
             b->store_kv(self_name, traits::qvariant_from_value(def));
     }
 
-    cc_noinline
+    never_inline
     void store_variant(const QVariant& value) noexcept override
     {
         QVariant copy{value};
@@ -136,15 +136,15 @@ public:
     operator t() const { return get(); }
 
     template<typename u>
-    explicit cc_forceinline operator u() const { return to<u>(); }
+    explicit force_inline operator u() const { return to<u>(); }
 
     auto operator->() const noexcept
     {
         return detail::dereference_wrapper{get()};
     }
 
-    cc_forceinline auto operator()() const noexcept { return get(); }
-    cc_forceinline auto operator*() const noexcept { return get(); }
+    force_inline auto operator()() const noexcept { return get(); }
+    force_inline auto operator*() const noexcept { return get(); }
 
     template<typename u>
     u to() const noexcept
