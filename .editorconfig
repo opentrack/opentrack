@@ -15,6 +15,3 @@ indent_style = tab
 
 [*.{bat,cmd}]
 end_of_line = crlf
-indent_style = space
-indent_size = 4
-
