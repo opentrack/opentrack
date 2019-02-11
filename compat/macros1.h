@@ -37,7 +37,7 @@
 #define PP_EXPAND3(x) x
 
 #ifdef _MSC_VER
-#   define unreachable() __assume(0)
+#   define unreachable() do { __assume(0); *(volatile int*)nullptr = 0; } while (0) /* NOLINT(clang-analyzer-core.NullDereference) */
 #else
-#   define unreachable() __builtin_unreachable()
+#   define unreachable() do { __builtin_unreachable(); *(volatile int*)nullptr = 0; } while (0) /* NOLINT(clang-analyzer-core.NullDereference) */
 #endif
