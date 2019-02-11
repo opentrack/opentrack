@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifdef OTR_HAS_OPENCV
+#ifdef OTR_VIDEO_HAS_OPENCV
 #   include <opencv2/imgproc.hpp>
 #endif
 
@@ -37,7 +37,7 @@ cv_video_widget::cv_video_widget(QWidget* parent) : QWidget(parent)
     timer.start(65);
 }
 
-#ifdef OTR_HAS_OPENCV
+#ifdef OTR_VIDEO_HAS_OPENCV
 void cv_video_widget::update_image(const cv::Mat& frame)
 {
     QMutexLocker l(&mtx);
