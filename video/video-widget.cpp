@@ -1,15 +1,5 @@
-/* Copyright (c) 2014-2016, 2019 Stanislaw Halik <sthalik@misaki.pl>
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- */
-
-#ifdef OTR_VIDEO_HAS_OPENCV
-#   include <opencv2/imgproc.hpp>
-#endif
-
 #include "video-widget.hpp"
+
 #include "compat/check-visible.hpp"
 #include "compat/math.hpp"
 
