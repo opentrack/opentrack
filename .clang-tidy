@@ -48,6 +48,8 @@ Checks:
     -cppcoreguidelines-c-copy-assignment-signature,
     -hicpp-avoid-goto,
     -readability-inconsistent-declaration-parameter-name,
+    -cppcoreguidelines-avoid-magic-numbers,
+    -readability-magic-numbers,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
