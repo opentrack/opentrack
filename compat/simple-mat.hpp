@@ -8,13 +8,11 @@
 
 #pragma once
 
-#include "export.hpp"
-
 #include <type_traits>
 #include <utility>
 #include <cmath>
 
-namespace simple_mat_detail {
+namespace simple_mat {
     // last param to fool SFINAE into overloading
     template<int i, int j, int>
     struct equals
@@ -67,17 +65,17 @@ public:
     // parameters w_ and h_ are rebound so that SFINAE occurs
     // removing them causes a compile-time error -sh 20150811
 
-    template<int Q = w_> std::enable_if_t<equals<Q, 1, 0>::value, num>
-    constexpr inline operator()(unsigned i) const& { return data[i][0]; }
+    template<typename t, int Q = w_> std::enable_if_t<equals<Q, 1, 0>::value, num>
+    constexpr inline operator()(t i) const& { return data[(unsigned)i][0]; }
 
-    template<int P = h_> std::enable_if_t<equals<P, 1, 1>::value, num>
-    constexpr inline operator()(unsigned i) const& { return data[0][i]; }
+    template<typename t, int P = h_> std::enable_if_t<equals<P, 1, 1>::value, num>
+    constexpr inline operator()(t i) const& { return data[0][(unsigned)i]; }
 
-    template<int Q = w_> std::enable_if_t<equals<Q, 1, 2>::value, num&>
-    constexpr inline operator()(unsigned i) & { return data[i][0]; }
+    template<typename t, int Q = w_> std::enable_if_t<equals<Q, 1, 2>::value, num&>
+    constexpr inline operator()(t i) & { return data[(unsigned)i][0]; }
 
-    template<int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
-    constexpr inline operator()(unsigned i) & { return data[0][i]; }
+    template<typename t, int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
+    constexpr inline operator()(t i) & { return data[0][(unsigned)i]; }
 
 #define OTR_MAT_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_)
 
@@ -105,34 +103,24 @@ public:
     constexpr inline z() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num&>
-
-    template<int h_pos, int w_pos>
-    constexpr Mat<num, h_ - h_pos, w_ - w_pos> slice() const
-    {
-        return (const double*)*this;
-    }
-
-    template<int off> std::enable_if_t<equals<h_, 1, 0>::value, Mat<num, 1, w_ - off>>
-    slice() const { return ((double const*)*this) + off; }
-
-    template<int off> std::enable_if_t<!equals<h_, 1, 2>::value && equals<w_, 1, 1>::value,
-    Mat<num, h_ - off, 1>>
-    slice() const { return ((double const*)*this) + off; }
     constexpr inline w() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(3); }
 
     template<int P = h_, int Q = w_>
-    std::enable_if_t<is_vector<P, Q>::value, num>
-    norm() const
+    constexpr auto norm_squared() const -> std::enable_if_t<is_vector<P, Q>::value, num>
     {
         static_assert(P == h_ && Q == w_);
 
         const num val = dot(*this);
+        constexpr num eps = num(1e-4);
 
-        if (val < num(1e-4))
+        if (val < eps)
             return num(0);
         else
-            return std::sqrt(val);
+            return val;
     }
+
+    template<int P = h_, int Q = w_>
+    inline auto norm() const { return num(std::sqrt(norm_squared())); }
 
     template<int R, int S, int P = h_, int Q = w_>
     std::enable_if_t<is_vector_pair<R, S, P, Q>::value, num>
@@ -152,7 +140,7 @@ public:
     constexpr cross(const Mat<num, R, S>& b) const
     {
         static_assert(P == h_ && Q == w_);
-        auto& a = *this;
+        const auto& a = *this;
 
         return Mat<num, R, S>(a.y()*b.z() - a.z()*b.y(),
                               a.z()*b.x() - a.x()*b.z(),
@@ -221,15 +209,10 @@ public:
     }
 
     template<typename t, typename u>
-    constexpr inline num operator()(t j, u i) const& { return data[(int) j][(int) i]; }
+    constexpr inline num operator()(t j, u i) const& { return data[(unsigned)j][(unsigned)i]; }
 
     template<typename t, typename u>
-    constexpr inline num& operator()(t j, u i) & { return data[(int) j][(int) i]; }
-
-#ifdef __GNUG__
-#   pragma GCC diagnostic push
-#   pragma GCC diagnostic ignored "-Wmissing-braces"
-#endif
+    constexpr inline num& operator()(t j, u i) & { return data[(unsigned)j][(unsigned)i]; }
 
     template<typename... ts, int h__ = h_, int w__ = w_,
              typename = std::enable_if_t<is_arglist_correct<num, h__, w__, ts...>::value>>
@@ -237,10 +220,6 @@ public:
     {
         static_assert(h__ == h_ && w__ == w_);
     }
-
-#ifdef __GNUG__
-#   pragma GCC diagnostic pop
-#endif
 
     constexpr Mat()
     {
@@ -256,8 +235,8 @@ public:
                 data[j][i] = mem[i*h_+j];
     }
 
-    operator num*() { return reinterpret_cast<num*>(data); }
-    operator const num*() const { return reinterpret_cast<const num*>(data); }
+    constexpr operator num*() & { return (num*)data; }
+    constexpr operator const num*() const& { return (const num*)data; }
 
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
@@ -287,6 +266,15 @@ public:
                 ret(i, j) = data[j][i];
 
         return ret;
+    }
+
+    constexpr Mat<num, w_, h_>& operator=(const Mat<num, w_, h_>& rhs)
+    {
+        for (unsigned j = 0; j < h_; j++)
+            for (unsigned i = 0; i < w_; i++)
+                data[j][i] = rhs(j, i);
+
+        return *this;
     }
 };
 
@@ -318,9 +306,7 @@ OTR_GENERIC_EXPORT inline void test()
 }
 #endif
 
-} // ns simple_mat_detail
+} // ns detail
 
 template<typename num, int h, int w>
-using Mat = simple_mat_detail::Mat<num, h, w>;
-
-
+using Mat = simple_mat::Mat<num, h, w>;
