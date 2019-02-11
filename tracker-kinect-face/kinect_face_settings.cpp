@@ -21,14 +21,6 @@ KinectFaceSettings::KinectFaceSettings()
 {
     ui.setupUi(this);
 
-    connect(ui.buttonBox, &QDialogButtonBox::clicked, [this](QAbstractButton* btn) {
-		if (btn == ui.buttonBox->button(QDialogButtonBox::Abort))
-		{
-			// NOLINTNEXTLINE
-			//*(volatile int*)nullptr = 0;
-		}
-    });
-
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 }
