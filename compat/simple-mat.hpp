@@ -79,33 +79,32 @@ public:
     template<int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
     constexpr inline operator()(unsigned i) & { return data[0][i]; }
 
-#define OPENTRACK_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_)
+#define OTR_MAT_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_)
 
     // const variants
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num>
-    constexpr inline x() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
+    constexpr inline x() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(0); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 2, 4>::value, num>
-    constexpr inline y() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
+    constexpr inline y() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(1); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 3, 4>::value, num>
-    constexpr inline z() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
+    constexpr inline z() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num>
-    constexpr inline w() const& { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
+    constexpr inline w() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(3); }
 
     // mutable variants
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num&>
-    constexpr inline x() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(0); }
+    constexpr inline x() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(0); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 2, 4>::value, num&>
-    constexpr inline y() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(1); }
+    constexpr inline y() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(1); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 3, 4>::value, num&>
-    constexpr inline z() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(2); }
+    constexpr inline z() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(2); }
 
     template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num&>
-    constexpr inline w() & { OPENTRACK_ASSERT_SWIZZLE; return operator()(3); }
 
     template<int h_pos, int w_pos>
     constexpr Mat<num, h_ - h_pos, w_ - w_pos> slice() const
@@ -119,6 +118,7 @@ public:
     template<int off> std::enable_if_t<!equals<h_, 1, 2>::value && equals<w_, 1, 1>::value,
     Mat<num, h_ - off, 1>>
     slice() const { return ((double const*)*this) + off; }
+    constexpr inline w() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(3); }
 
     template<int P = h_, int Q = w_>
     std::enable_if_t<is_vector<P, Q>::value, num>

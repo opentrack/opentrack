@@ -1,6 +1,5 @@
 // instantiate the "template class" value<t> symbols
 
-#include "compat/linkage-macros.hpp"
-#define OTR_INST_VALUE(x) OTR_TEMPLATE_EXPORT(x)
+#define OTR_OPTIONS_INST_VALUE OTR_TEMPLATE_EXPORT
 #include "value.hpp"
 
