@@ -109,7 +109,7 @@ private:
 	CameraSpacePoint iFaceRotation = { 0 };
 	CameraSpacePoint iFaceRotationCenter = { 0 };
 	//
-	std::unique_ptr<cv_video_widget> iVideoWidget;
+	std::unique_ptr<video_widget> iVideoWidget;
 	std::unique_ptr<QLayout> iLayout;
 
 	// Id of the body currently being tracked

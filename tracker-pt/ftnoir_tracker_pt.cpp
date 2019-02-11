@@ -94,11 +94,11 @@ void Tracker_PT::run()
             vec3 p = X_GH.t; // head (center?) position in global space
 
             preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
-            video_widget->update_image(preview_frame->get_bitmap());
+            widget->update_image(preview_frame->get_bitmap());
 
             {
                 int w = -1, h = -1;
-                video_widget->get_preview_size(w, h);
+                widget->get_preview_size(w, h);
                 if (w != preview_width || h != preview_height)
                 {
                     preview_width = w; preview_height = h;
@@ -127,10 +127,10 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
 {
     //video_frame->setAttribute(Qt::WA_NativeWindow);
 
-    video_widget = std::make_unique<cv_video_widget>(video_frame);
+    widget = std::make_unique<video_widget>(video_frame);
     layout = std::make_unique<QHBoxLayout>(video_frame);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(video_widget.get());
+    layout->addWidget(widget.get());
     video_frame->setLayout(layout.get());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();

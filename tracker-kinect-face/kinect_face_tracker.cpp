@@ -127,7 +127,7 @@ module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 	if (SUCCEEDED(InitializeDefaultSensor()))
 	{
 		// Setup our video preview widget
-		iVideoWidget = std::make_unique<cv_video_widget>(aFrame);
+		iVideoWidget = std::make_unique<video_widget>(aFrame);
 		iLayout = std::make_unique<QHBoxLayout>(aFrame);
 		iLayout->setContentsMargins(0, 0, 0, 0);
 		iLayout->addWidget(iVideoWidget.get());

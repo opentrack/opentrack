@@ -8,45 +8,38 @@
 #pragma once
 
 #include "compat/math.hpp"
+#include "export.hpp"
 
 #include <vector>
-
-#ifdef OTR_VIDEO_HAS_OPENCV
-#   include <opencv2/core.hpp>
-#endif
 
 #include <QWidget>
 #include <QTimer>
 #include <QMutex>
 
-class cv_video_widget final : public QWidget
+class OTR_VIDEO_EXPORT video_widget : public QWidget
 {
     Q_OBJECT
 
 public:
-    cv_video_widget(QWidget *parent);
+    video_widget(QWidget* parent = nullptr);
 
-#ifdef OTR_VIDEO_HAS_OPENCV
-    void update_image(const cv::Mat& frame);
-#endif
     void update_image(const QImage& image);
     void get_preview_size(int& w, int& h);
     void resizeEvent(QResizeEvent*) override;
-private slots:
+protected slots:
     void paintEvent(QPaintEvent*) override;
     void update_and_repaint();
 private:
+    QTimer timer;
+
+protected:
     QMutex mtx { QMutex::Recursive };
     QImage texture;
     std::vector<unsigned char> vec;
-    QTimer timer;
 
-#ifdef OTR_VIDEO_HAS_OPENCV
-    cv::Mat frame2, frame3;
-#endif
     bool freshp = false;
 
-    int W  = iround(QWidget::width() * devicePixelRatioF());
+    int W = iround(QWidget::width() * devicePixelRatioF());
     int H = iround(QWidget::height() * devicePixelRatioF());
 
     void init_image_nolock();

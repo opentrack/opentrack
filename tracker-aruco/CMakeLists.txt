@@ -39,6 +39,6 @@ if(OpenCV_FOUND)
         otr_module(tracker-aruco)
 
         target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS} "${dir}")
-        target_link_libraries(${self} opentrack-cv opentrack-video ${modules})
+        target_link_libraries(${self} opentrack-cv ${modules})
     endif()
 endif()

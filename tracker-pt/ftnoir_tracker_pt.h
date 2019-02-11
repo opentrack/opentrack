@@ -24,7 +24,7 @@
 #include <QLayout>
 
 class TrackerDialog_PT;
-class cv_video_widget;
+class video_widget;
 
 namespace pt_module {
 
@@ -69,7 +69,7 @@ private:
 
     pointer<pt_point_extractor> point_extractor;
     pointer<pt_camera> camera;
-    pointer<cv_video_widget> video_widget;
+    pointer<video_widget> widget;
     pointer<pt_frame> frame;
     pointer<pt_preview> preview_frame;
 
