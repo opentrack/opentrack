@@ -30,7 +30,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 include(opentrack-policy NO_POLICY_SCOPE)
 
 project(opentrack)
-cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 if(POLICY CMP0083)
     cmake_policy(SET CMP0083 NEW)
