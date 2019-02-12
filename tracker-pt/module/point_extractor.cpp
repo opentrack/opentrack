@@ -62,12 +62,10 @@ static vec2 MeanShiftIteration(const cv::Mat1b &frame_gray, const vec2 &current_
         {
             f val = frame_ptr[j];
             val = val * val; // taking the square weighs brighter parts of the image stronger.
-            {
-                f dx = (j - current_center[0])*s;
-                f dy = (i - current_center[1])*s;
-                f max = std::fmax(f(0), 1 - dx*dx - dy*dy);
-                val *= max;
-            }
+            f dx = (j - current_center[0])*s;
+            f dy = (i - current_center[1])*s;
+            f max = std::fmax(f(0), 1 - dx*dx - dy*dy);
+            val *= max;
             m += val;
             com[0] += j * val;
             com[1] += i * val;
