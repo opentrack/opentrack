@@ -114,8 +114,6 @@ module_status vjoystick::initialize()
         case VJD_STAT_OWN:
             msg = tr("BUG: handle leak.");
             break;
-        case VJD_STAT_FREE:
-            break;
         case VJD_STAT_BUSY:
             msg = tr("Virtual joystick already in use.");
             break;
@@ -128,10 +126,12 @@ module_status vjoystick::initialize()
         default:
             msg = tr("Unknown error #%1.").arg(code);
             break;
+        case VJD_STAT_FREE:
+            // we're good
+            status = true;
+            break;
         }
     }
-
-    status = msg.isNull();
 
     if (!status)
     {
