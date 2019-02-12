@@ -51,7 +51,6 @@ algorithm for tracking single particles with variable size and shape." (2008).
 */
 static vec2 MeanShiftIteration(const cv::Mat1b &frame_gray, const vec2 &current_center, f filter_width)
 {
-    // Most amazingly this function runs faster with doubles than with floats.
     const f s = 1 / filter_width;
 
     f m = 0;
