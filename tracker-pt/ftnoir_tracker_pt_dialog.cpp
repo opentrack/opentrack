@@ -134,7 +134,7 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
             h = info.res_y;
         }
 
-        double value = pt_point_extractor::threshold_radius_value(w, h, threshold_value);
+        double value = (double)pt_point_extractor::threshold_radius_value(w, h, threshold_value);
 
         return tr("LED radius %1 pixels").arg(value, 0, 'f', 2);
     }

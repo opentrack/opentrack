@@ -66,7 +66,7 @@ static vec2 MeanShiftIteration(const cv::Mat1b &frame_gray, const vec2 &current_
             {
                 f dx = (j - current_center[0])*s;
                 f dy = (i - current_center[1])*s;
-                f max = std::fmax(f{0}, 1 - dx*dx - dy*dy);
+                f max = std::fmax(f(0), 1 - dx*dx - dy*dy);
                 val *= max;
             }
             m += val;
@@ -179,7 +179,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
                      &hist_size,
                      &ranges);
 
-        const f radius = (f) threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
+        const f radius = threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
 
         float const* const __restrict ptr = hist.ptr<float>(0);
         const unsigned area = uround(3 * pi * radius*radius);
@@ -201,7 +201,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
     }
 }
 
-static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblobs, cv::Size size)
+static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblobs, const cv::Size& size)
 {
     for (unsigned k = 0; k < nblobs; k++)
     {
@@ -211,14 +211,14 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
             continue;
 
         const f dpi = preview_frame.cols / f(320);
-        const f offx = 10 * dpi, offy = f{7.5} * dpi;
+        const f offx = 10 * dpi, offy = f(7.5) * dpi;
 
         const f cx = preview_frame.cols / f(size.width),
-            cy = preview_frame.rows / f(size.height),
-            c_ = (cx+cy)/2;
+                cy = preview_frame.rows / f(size.height),
+                c = (cx+cy)/2;
 
-        static constexpr unsigned fract_bits = 16;
-        static constexpr double c_fract(1 << fract_bits);
+        constexpr unsigned fract_bits = 16;
+        constexpr int c_fract(1 << fract_bits);
 
         cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
 
@@ -226,15 +226,15 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
                             ? cv::Scalar(192, 192, 192)
                             : cv::Scalar(255, 255, 0);
 
-        const f overlay_size = dpi > 1.5 ? 2 : 1;
+        const int overlay_size = (double)dpi > 1.5 ? 2 : 1;
 
-        cv::circle(preview_frame, p, iround((b.radius + 3.3) * c_ * c_fract),
-                   circle_color, (int)overlay_size,
+        cv::circle(preview_frame, p, iround((b.radius + f(3.3)) * c * c_fract),
+                   circle_color, overlay_size,
                    cv::LINE_AA, fract_bits);
 
         char buf[16];
         buf[sizeof(buf)-1] = '\0';
-        std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", b.radius);
+        std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", (double)b.radius);
 
         auto text_color = k >= PointModel::N_POINTS
                           ? cv::Scalar(160, 160, 160)
@@ -271,7 +271,7 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
 
     for (int y=0; y < frame_bin.rows; y++)
     {
-        const unsigned char* ptr_bin = frame_bin.ptr(y);
+        const unsigned char* __restrict ptr_bin = frame_bin.ptr(y);
         for (int x=0; x < frame_bin.cols; x++)
         {
             if (ptr_bin[x] != 255)
@@ -308,7 +308,7 @@ void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_
                 }
             }
 
-            const double radius = std::sqrt(cnt / pi);
+            const f radius = std::sqrt(cnt / pi);
             if (radius > region_size_max || radius < region_size_min)
                 continue;
 
@@ -352,7 +352,7 @@ end:
         static constexpr f radius_c = f(1.75);
 
         const f kernel_radius = b.radius * radius_c;
-        vec2 pos(rect.width/f{2}, rect.height/f{2}); // position relative to ROI.
+        vec2 pos(rect.width/f(2), rect.height/f(2)); // position relative to ROI.
 
         for (int iter = 0; iter < 10; ++iter)
         {

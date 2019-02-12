@@ -67,7 +67,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         frame_color = frame_scaled;
 
     int stride = frame_color->step.p[0], rows = frame_color->rows;
-    int nbytes = rows * stride;
+    unsigned nbytes = (unsigned)(rows * stride);
     vec.resize(nbytes); vec.shrink_to_fit();
     std::memcpy(vec.data(), frame_color->data, nbytes);
 
