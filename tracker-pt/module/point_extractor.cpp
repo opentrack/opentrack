@@ -193,9 +193,6 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
             thres = i;
         }
 
-        if (thres > min_thres)
-            thres = uround(thres * .8);
-
         cv::threshold(frame_gray, output, thres, 255, cv::THRESH_BINARY);
     }
 }
