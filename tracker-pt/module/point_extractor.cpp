@@ -54,7 +54,7 @@ static vec2 MeanShiftIteration(const cv::Mat1b &frame_gray, const vec2 &current_
     const f s = 1 / filter_width;
 
     f m = 0;
-    vec2 com { 0, 0  };
+    vec2 com { 0, 0 };
     for (int i = 0; i < frame_gray.rows; i++)
     {
         uint8_t const* const __restrict frame_ptr = frame_gray.ptr(i);
