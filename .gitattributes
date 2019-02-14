@@ -1,11 +1,22 @@
-*.[ch]pp text=auto eol=lf
-*.[ch] text=auto eol=lf
-*.[ch]xx text=auto eol=lf
-*.txt text=auto eol=lf
-*.ui text=auto eol=lf
-*.qrc text=auto eol=lf
-*.cc text=auto eol=lf
-*.md text=auto eol=lf
-*.rc text=auto eol=lf
-*.csv text=auto eol=lf
-.[a-z]* text=auto eol=lf
+*.[ch]pp text eol=lf
+*.[ch] text eol=lf
+*.[ch]xx text eol=lf
+*.cc text eol=lf
+*.rc text eol=lf
+
+*.git?* text eol=lf
+
+*.txt text eol=lf
+*.cmake text eol=lf
+
+*.md text eol=lf
+*.csv text eol=lf
+*.json text eol=lf
+
+*.ui text eol=lf
+*.qrc text eol=lf
+*.ts text eol=lf
+*.in text eol=lf
+
+*.cmd text eol=crlf
+*.bat text eol=crlf
