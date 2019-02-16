@@ -22,7 +22,7 @@ class KinectFaceMetadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Kinect Face 0.1"); }
-    QIcon icon() { return QIcon(":/images/kinect.png"); }
+    QString name() override { return tr("Kinect Face 0.1"); }
+    QIcon icon() override { return QIcon(":/images/kinect.png"); }
 };
 
