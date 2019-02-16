@@ -43,12 +43,6 @@ void video_widget::paintEvent(QPaintEvent*)
 {
     QMutexLocker foo(&mtx);
 
-    if (texture.width() != W || texture.height() != H)
-    {
-        init_image_nolock();
-        texture.fill(Qt::gray);
-    }
-
     QPainter painter(this);
     painter.drawImage(rect(), texture);
 }
