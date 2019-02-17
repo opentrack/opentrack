@@ -16,17 +16,17 @@ if (WIN32 AND opentrack-intel)
 		target_include_directories(${self} SYSTEM PRIVATE "${SDK_KINECT20}/inc")
 
 		# Check processor architecture
-		if(NOT opentrack-64bit)
-			# 32 bits
-			set(kinect-arch-dir "x86")
-		else()
-			# 64 bits
+		if(opentrack-64bit)
+            # 64 bits
 			set(kinect-arch-dir "x64")
+		else()
+            # 32 bits
+			set(kinect-arch-dir "x86")
 		endif()
 
 		# Link against Kinect SDK libraries
 		target_link_libraries(${self} "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.lib" "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.Face.lib")
-		# Link against OpenCV stuff, needed for video preview
+		# Link against video utilities, needed for video preview
 		target_link_libraries(${self} opentrack-video)
 
 		# Install Kinect Face DLL
