@@ -25,11 +25,10 @@ video_widget::video_widget(QWidget* parent) : QWidget(parent)
 
 void video_widget::update_image(const QImage& img)
 {
-    QMutexLocker l(&mtx);
-
-    if (freshp)
+    if (freshp.load(std::memory_order_relaxed))
         return;
-    freshp = true;
+
+    QMutexLocker l(&mtx);
 
     unsigned nbytes = (unsigned)(img.bytesPerLine() * img.height());
     vec.resize(nbytes); vec.shrink_to_fit();
@@ -37,6 +36,8 @@ void video_widget::update_image(const QImage& img)
 
     texture = QImage((const unsigned char*) vec.data(), img.width(), img.height(), img.bytesPerLine(), img.format());
     texture.setDevicePixelRatio(devicePixelRatioF());
+
+    freshp.store(true, std::memory_order_relaxed);
 }
 
 void video_widget::paintEvent(QPaintEvent*)
@@ -49,16 +50,15 @@ void video_widget::paintEvent(QPaintEvent*)
 
 void video_widget::update_and_repaint()
 {
+    if (!freshp.load(std::memory_order_relaxed))
+        return;
+
     if (!check_is_visible())
         return;
 
     QMutexLocker l(&mtx);
-
-    if (freshp)
-    {
-        freshp = false;
-        repaint();
-    }
+    repaint();
+    freshp.store(false, std::memory_order_relaxed);
 }
 
 void video_widget::resizeEvent(QResizeEvent*)

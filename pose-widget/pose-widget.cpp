@@ -62,7 +62,7 @@ void pose_transform::run()
         {
             lock_guard l(mtx);
 
-            if (fresh)
+            if (fresh.load(std::memory_order_relaxed))
                 goto end;
 
             rotation = rotation_;
@@ -88,8 +88,7 @@ void pose_widget::rotate_async(double xAngle, double yAngle, double zAngle, doub
     if (!check_is_visible())
         return;
 
-    bool expected = true;
-    if (xform.fresh.compare_exchange_weak(expected, false))
+    if (bool X = true; xform.fresh.compare_exchange_weak(X, false, std::memory_order_relaxed))
     {
         repaint();
         xform.rotate_async(xAngle, yAngle, zAngle, x, y, z);
@@ -266,7 +265,7 @@ void pose_transform::project_quad_texture()
     {
         lock_guard l(mtx2);
         image.swap(image2);
-        fresh = true;
+        fresh.store(true, std::memory_order_relaxed);
         return;
     }
 
@@ -358,7 +357,7 @@ void pose_transform::project_quad_texture()
     {
         lock_guard l2(mtx2);
         image.swap(image2);
-        fresh = true;
+        fresh.store(true, std::memory_order_relaxed);
     }
 }
 

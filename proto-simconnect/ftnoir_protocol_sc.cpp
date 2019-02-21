@@ -62,7 +62,7 @@ void simconnect::run()
                         break;
                     }
 
-                    if (reconnect)
+                    if (reconnect.load(std::memory_order_relaxed))
                         break;
 
                     if (!SUCCEEDED(hr = simconnect_calldispatch(handle, event_handler, (void*)this)))

@@ -10,7 +10,7 @@
 namespace options {
 
 // XXX hack: the flag shouldn't be here as action at distance -sh 20160926
-static std::atomic<bool> teardown_flag{false};
+static std::atomic<bool> teardown_flag = false;
 [[nodiscard]] static bool set_teardown_flag(bool value);
 static void ensure_thread();
 static bool is_tracker_teardown();

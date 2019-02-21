@@ -84,7 +84,7 @@ struct pose_transform final : QThread
     };
 
     std::vector<uv_> uv_vec;
-    std::atomic<bool> fresh{false};
+    std::atomic<bool> fresh = false;
 
     static constexpr int w = 320, h = 240;
 };

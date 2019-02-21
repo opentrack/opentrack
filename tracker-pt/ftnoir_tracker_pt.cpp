@@ -70,7 +70,7 @@ void Tracker_PT::run()
             *preview_frame = *frame;
 
             point_extractor->extract_points(*frame, *preview_frame, points);
-            point_count = points.size();
+            point_count.store(points.size(), std::memory_order_relaxed);
 
             const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
             const bool success = points.size() >= PointModel::N_POINTS;
@@ -86,7 +86,7 @@ void Tracker_PT::run()
                                         PointModel(s),
                                         info,
                                         s.dynamic_pose ? s.init_phase_timeout : 0);
-                    ever_success = true;
+                    ever_success.store(true, std::memory_order_relaxed);
                 }
 
                 QMutexLocker l2(&data_lock);
@@ -146,7 +146,7 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
 
 void Tracker_PT::data(double *data)
 {
-    if (ever_success)
+    if (ever_success.load(std::memory_order_relaxed))
     {
         Affine X_CM;
         {
@@ -196,7 +196,7 @@ bool Tracker_PT::center()
 
 int Tracker_PT::get_n_points()
 {
-    return int(point_count);
+    return (int)point_count.load(std::memory_order_relaxed);
 }
 
 bool Tracker_PT::get_cam_info(pt_camera_info& info)
