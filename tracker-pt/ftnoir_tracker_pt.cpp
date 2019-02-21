@@ -31,8 +31,10 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     cv::setBreakOnError(true);
     cv::setNumThreads(1);
 
-    connect(s.b.get(), SIGNAL(saving()), this, SLOT(maybe_reopen_camera()), Qt::DirectConnection);
-    connect(&s.fov, SIGNAL(valueChanged(int)), this, SLOT(set_fov(int)), Qt::DirectConnection);
+    connect(s.b.get(), &bundle_::saving, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
+    connect(s.b.get(), &bundle_::reloading, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
+
+    connect(&s.fov, value_::value_changed<int>(), this, &Tracker_PT::set_fov, Qt::DirectConnection);
     set_fov(s.fov);
 }
 
