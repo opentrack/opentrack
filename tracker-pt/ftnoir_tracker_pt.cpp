@@ -18,7 +18,9 @@
 #include <QFile>
 #include <QCoreApplication>
 
-namespace pt_module {
+using namespace options;
+
+namespace pt_impl {
 
 Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
@@ -212,4 +214,4 @@ Affine Tracker_PT::pose() const
     return point_tracker.pose();
 }
 
-} // ns pt_module
+} // ns pt_impl

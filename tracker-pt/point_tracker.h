@@ -21,7 +21,7 @@
 
 #include <QObject>
 
-namespace pt_module {
+namespace pt_impl {
 
 // ----------------------------------------------------------------------------
 // Describes a 3-point model
@@ -82,7 +82,7 @@ private:
     bool init_phase = true;
 };
 
-} // ns pt_module
+} // ns pt_impl
 
-using PointTracker = pt_module::PointTracker;
-using PointModel = pt_module::PointModel;
+using PointTracker = pt_impl::PointTracker;
+using PointModel = pt_impl::PointModel;

@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-namespace pt_module {
+namespace pt_impl {
 
 using namespace numeric_types;
 
@@ -363,4 +363,4 @@ void PointTracker::reset_state()
     X_CM_expected = {};
 }
 
-} // ns pt_module
+} // ns pt_impl

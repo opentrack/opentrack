@@ -15,7 +15,7 @@ enum pt_color_type
     pt_color_green_only = 7,
 };
 
-namespace pt_settings_detail {
+namespace pt_impl {
 
 using namespace options;
 
@@ -68,6 +68,6 @@ struct pt_settings final : options::opts
 #   pragma clang diagnostic pop
 #endif
 
-} // ns pt_settings_detail
+} // ns pt_impl
 
-using pt_settings = pt_settings_detail::pt_settings;
+using pt_settings = pt_impl::pt_settings;

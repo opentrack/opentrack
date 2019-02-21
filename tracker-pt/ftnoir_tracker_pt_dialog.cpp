@@ -19,6 +19,8 @@
 
 using namespace options;
 
+namespace pt_impl {
+
 TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     s(module_name),
     tracker(nullptr),
@@ -277,3 +279,5 @@ void TrackerDialog_PT::unregister_tracker()
     poll_tracker_info();
     timer.stop();
 }
+
+} // ns pt_impl

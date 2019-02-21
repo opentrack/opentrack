@@ -12,6 +12,7 @@
 #include "pt-api.hpp"
 #include "point_tracker.h"
 #include "cv/numeric.hpp"
+#include "video/video-widget.hpp"
 
 #include <atomic>
 #include <memory>
@@ -23,10 +24,9 @@
 #include <QMutex>
 #include <QLayout>
 
-class TrackerDialog_PT;
-class video_widget;
+namespace pt_impl {
 
-namespace pt_module {
+class TrackerDialog_PT;
 
 using namespace numeric_types;
 
@@ -34,7 +34,7 @@ class Tracker_PT : public QThread, public ITracker
 {
     Q_OBJECT
 
-    friend class ::TrackerDialog_PT;
+    friend class TrackerDialog_PT;
 
 public:
     template<typename t> using pointer = pt_pointer<t>;
@@ -80,4 +80,4 @@ private:
 
 } // ns pt_impl
 
-using Tracker_PT = pt_module::Tracker_PT;
+using Tracker_PT = pt_impl::Tracker_PT;

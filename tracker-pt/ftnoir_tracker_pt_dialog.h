@@ -17,6 +17,8 @@
 #include <QTimer>
 #include <QMutex>
 
+namespace pt_impl {
+
 class TrackerDialog_PT : public ITrackerDialog
 {
     Q_OBJECT
@@ -47,3 +49,7 @@ protected:
 
     Ui::UICPTClientControls ui;
 };
+
+} // ns pt_impl
+
+using TrackerDialog_PT = pt_impl::TrackerDialog_PT;
