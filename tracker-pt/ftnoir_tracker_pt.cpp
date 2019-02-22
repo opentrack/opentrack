@@ -101,8 +101,7 @@ void Tracker_PT::run()
             widget->update_image(preview_frame->get_bitmap());
 
             {
-                int w = -1, h = -1;
-                widget->get_preview_size(w, h);
+                auto [ w, h ] = widget->preview_size();
                 if (w != preview_width || h != preview_height)
                 {
                     preview_width = w; preview_height = h;

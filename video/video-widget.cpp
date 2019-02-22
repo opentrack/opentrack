@@ -3,76 +3,86 @@
 #include "compat/check-visible.hpp"
 #include "compat/math.hpp"
 
-#include <cstddef>
 #include <cstring>
 
 #include <QPainter>
+#include <QtAlgorithms>
+#include <QDebug>
 
 void video_widget::init_image_nolock()
 {
-    texture = QImage(W, H, QImage::Format_ARGB32);
-    texture.setDevicePixelRatio(devicePixelRatioF());
+    double dpr = devicePixelRatioF();
+    size_.store({ iround(width() * dpr), iround(height() * dpr) },
+                std::memory_order_release);
 }
 
 video_widget::video_widget(QWidget* parent) : QWidget(parent)
 {
-    W = width(); H = height();
-    init_image_nolock(); texture.fill(Qt::gray);
-
-    connect(&timer, &QTimer::timeout, this, &video_widget::update_and_repaint, Qt::DirectConnection);
+    init_image_nolock();
+    connect(&timer, &QTimer::timeout, this, &video_widget::draw_image, Qt::DirectConnection);
     timer.start(65);
 }
 
 void video_widget::update_image(const QImage& img)
 {
-    if (freshp.load(std::memory_order_relaxed))
+    if (fresh())
         return;
 
+    set_image(img.constBits(), img.width(), img.height(),
+              img.bytesPerLine(), img.format());
+    set_fresh(true);
+}
+
+void video_widget::set_image(const unsigned char* src, int width, int height,
+                             unsigned stride, QImage::Format fmt)
+{
     QMutexLocker l(&mtx);
 
-    unsigned nbytes = (unsigned)(img.bytesPerLine() * img.height());
+    texture = QImage();
+    unsigned nbytes = stride * height;
     vec.resize(nbytes); vec.shrink_to_fit();
-    std::memcpy(vec.data(), img.constBits(), nbytes);
-
-    texture = QImage((const unsigned char*) vec.data(), img.width(), img.height(), img.bytesPerLine(), img.format());
-    texture.setDevicePixelRatio(devicePixelRatioF());
-
-    freshp.store(true, std::memory_order_relaxed);
+    std::memcpy(vec.data(), src, nbytes);
+    texture = QImage((const unsigned char*)vec.data(), width, height, stride, fmt);
 }
 
 void video_widget::paintEvent(QPaintEvent*)
 {
-    QMutexLocker foo(&mtx);
-
     QPainter painter(this);
+
+    QMutexLocker l(&mtx);
     painter.drawImage(rect(), texture);
 }
 
-void video_widget::update_and_repaint()
+void video_widget::draw_image()
 {
-    if (!freshp.load(std::memory_order_relaxed))
+    if (!fresh())
         return;
 
     if (!check_is_visible())
         return;
 
-    QMutexLocker l(&mtx);
     repaint();
-    freshp.store(false, std::memory_order_relaxed);
+    set_fresh(false);
 }
 
 void video_widget::resizeEvent(QResizeEvent*)
 {
     QMutexLocker l(&mtx);
-    double dpr = devicePixelRatioF();
-    W = iround(width() * dpr);
-    H = iround(height() * dpr);
     init_image_nolock();
 }
 
-void video_widget::get_preview_size(int& w, int& h)
+std::tuple<int, int> video_widget::preview_size() const
 {
-    QMutexLocker l(&mtx);
-    w = W; h = H;
+    QSize sz = size_.load(std::memory_order_acquire);
+    return { sz.width(), sz.height() };
 }
 
+bool video_widget::fresh() const
+{
+    return fresh_.load(std::memory_order_acquire);
+}
+
+void video_widget::set_fresh(bool x)
+{
+    fresh_.store(x, std::memory_order_release);
+}

@@ -12,7 +12,7 @@
 
 struct cv_video_widget final : video_widget
 {
-    cv_video_widget(QWidget* parent = nullptr);
+    using video_widget::video_widget;
     void update_image(const cv::Mat& frame);
 
 private:

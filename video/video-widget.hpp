@@ -11,36 +11,39 @@
 #include "export.hpp"
 
 #include <vector>
+#include <atomic>
+#include <tuple>
 
 #include <QWidget>
+#include <QImage>
 #include <QTimer>
+
 #include <QMutex>
 
-class OTR_VIDEO_EXPORT video_widget : public QWidget
+struct OTR_VIDEO_EXPORT video_widget : QWidget
 {
-    Q_OBJECT
-
-public:
     video_widget(QWidget* parent = nullptr);
 
     void update_image(const QImage& image);
-    void get_preview_size(int& w, int& h);
+    std::tuple<int, int> preview_size() const;
     void resizeEvent(QResizeEvent*) override;
-protected slots:
     void paintEvent(QPaintEvent*) override;
-    void update_and_repaint();
-private:
-    QTimer timer;
+    void draw_image();
 
 protected:
-    QMutex mtx { QMutex::Recursive };
+    mutable QMutex mtx { QMutex::NonRecursive };
     QImage texture;
     std::vector<unsigned char> vec;
+    bool fresh() const;
+    void set_fresh(bool x);
+    void set_image(const unsigned char* src, int width, int height, unsigned stride, QImage::Format fmt);
 
-    bool freshp = false;
-
-    int W = iround(QWidget::width() * devicePixelRatioF());
-    int H = iround(QWidget::height() * devicePixelRatioF());
-
+private:
     void init_image_nolock();
+    QTimer timer;
+
+    std::atomic<QSize> size_ = QSize(320, 240);
+    std::atomic<bool> fresh_ { false };
+
+    static_assert(decltype(fresh_)::is_always_lock_free);
 };
