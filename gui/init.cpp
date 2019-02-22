@@ -129,7 +129,7 @@ static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QS
     else
 #endif
     {
-#if defined _WIN32 && 1
+#if defined _WIN32
         const wchar_t* const bytes = (const wchar_t*)msg.utf16();
 #else
         unsigned len = (unsigned)msg.size()+1;
