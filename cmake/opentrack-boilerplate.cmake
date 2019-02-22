@@ -86,21 +86,6 @@ function(otr_compat target)
     if (".${TYPE}" STREQUAL ".EXECUTABLE")
         otr_fixup_subsystem(${target})
     endif()
-
-    if(CMAKE_COMPILER_IS_GNUCXX AND NOT MSVC)
-        # gives incorrect result
-        #get_property(linker-lang TARGET ${target} PROPERTY LINKER_LANGUAGE)
-
-        #set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fvisibility=hidden ")
-
-        #if (NOT ".${${target}-cxx}" STREQUAL ".") # not a C only target
-        #    set_property(TARGET ${target} APPEND_STRING PROPERTY COMPILE_FLAGS "-fuse-cxa-atexit ")
-        #endif()
-
-        #if(NOT APPLE)
-        #    set_property(TARGET ${target} APPEND_STRING PROPERTY LINK_FLAGS "-Wl,--as-needed ")
-        #endif()
-    endif()
 endfunction()
 
 function(otr_is_sln_generator var)
