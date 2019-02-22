@@ -86,18 +86,17 @@ otr_merge_translations()
 
 include(opentrack-install)
 
-
-string(TOUPPER __build_type "${CMAKE_BUILD_TYPE}")
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 message(STATUS "-- Compile flags:")
 #foreach(j C CXX)
 foreach(j CXX)
-    foreach(i "" "_${__build_type}")
+    foreach(i "" "_${CMAKE_BUILD_TYPE}")
         message(STATUS " ${j}${i}: ${CMAKE_${j}_FLAGS${i}}")
     endforeach()
 endforeach()
 
 message(STATUS "-- Link flags:")
-foreach(j "" "_${__build_type}")
+foreach(j "" "_${CMAKE_BUILD_TYPE}")
     #foreach(i EXE SHARED)
     foreach(i SHARED)
         message(STATUS " LINK_${i}${j}: ${CMAKE_${i}_LINKER_FLAGS${j}}")
@@ -105,8 +104,7 @@ foreach(j "" "_${__build_type}")
 endforeach()
 
 message(STATUS "-- Static archive flags:")
-foreach(k "" "_${__build_type}")
+foreach(k "" "_${CMAKE_BUILD_TYPE}")
     message(STATUS " STATIC${k}: ${CMAKE_STATIC_LINKER_FLAGS${k}}")
 endforeach()
 message(STATUS "--")
-
