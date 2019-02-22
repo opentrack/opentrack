@@ -60,6 +60,8 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+set(CMAKE_MACOSX_RPATH OFF)
+
 if(NOT WIN32 AND NOT APPLE)
     include(opentrack-pkg-config)
 endif()
@@ -96,17 +98,12 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fuse-cxa-atexit")
+    set(CMAKE_CXX_FLAGS "-fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
 
-    # assume binutils
-    foreach (i SHARED MODULE EXE)
-        set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -Wl,--exclude-libs,ALL")
-    endforeach()
-
-    if(UNIX)
-        foreach (i SHARED MODULE EXE)
-            set(CMAKE_${i}_LINKER_FLAGS "${CMAKE_${i}_LINKER_FLAGS} -Wl,-z,relro,-z,now")
-        endforeach()
+    if(LINUX) # assume binutils
+        add_link_options(-Wl,--exclude-libs,ALL)
+        add_link_options(-Wl,-z,relro,-z,now)
+        add_link_options(-Wl,--as-needed)
     endif()
 endif()
 
@@ -133,27 +130,22 @@ if(MSVC)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
 
-    set(__stuff "-permissive- -diagnostics:caret")
-    set(CMAKE_CXX_FLAGS "${__stuff} ${CMAKE_CXX_FLAGS}")
-    set(CMAKE_C_FLAGS "${__stuff} ${CMAKE_C_FLAGS}")
+    add_compile_options(-diagnostics:caret)
+    add_compile_options(-permissive-)
 
     if(opentrack-64bit)
-        set(ent "-HIGHENTROPYVA")
-    else()
-        set(ent "")
+        add_link_options(-HIGHENTROPYVA)
     endif()
 
-    foreach (i SHARED MODULE EXE)
-        # 4020 is compiler bug for opentrack-cv
-        set(CMAKE_${i}_LINKER_FLAGS "-DYNAMICBASE -NXCOMPAT -DEBUG -ignore:4020 ${ent} ${CMAKE_${i}_LINKER_FLAGS}")
-    endforeach()
+    add_link_options(-DYNAMICBASE -NXCOMPAT)
+    add_link_options(-WX)
+    add_link_options(-ignore:4020)
 endif()
 
 if(APPLE)
-    set(CMAKE_MACOSX_RPATH OFF)
-    set(apple-frameworks "-framework Cocoa -framework CoreFoundation -lobjc -lz -framework Carbon")
-    foreach (k SHARED EXE MODULE)
-        set(CMAKE_${k}_LINKER_FLAGS "-stdlib=libc++ ${CMAKE_${k}_LINKER_FLAGS} ${apple-frameworks}")
-    endforeach()
-    set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
+    add_compile_definitions(-stdlib=libc++)
+    add_link_options(-stdlib=libc++)
+
+    add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
+    link_libraries(objc z)
 endif()
