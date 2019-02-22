@@ -14,12 +14,11 @@
 #include <new>
 #include <cstring>
 #include <cstdio>
+#include <iterator>
 
 #include "wiimote.h"
 #include <setupapi.h>
-extern "C" {
 #include <hidsdi.h>// from WinDDK
-}
 
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
@@ -46,8 +45,8 @@ template<class T> inline T square(const T& val) { return val * val; }
 
 // comment these to auto-strip their code from the library:
 //  (they currently use OutputDebugString() via _TRACE() - change to suit)
-# define TRACE _TRACE
-# define WARN _TRACE
+# define TRACE trace_
+# define WARN trace_
 // uncomment any of these for deeper debugging:
 //#define DEEP_TRACE(fmt, ...) _TRACE(PREFIX _T("|") fmt _T("\n"), __VA_ARGS__)    // VC 2005+
 //#define DEEP_TRACE(fmt, ...) _TRACE(PREFIX _T("|") fmt _T("\n") , ##__VA_ARGS__) // mingw
@@ -67,21 +66,25 @@ template<class T> inline T square(const T& val) { return val * val; }
 # define WARN(...) (void)0
 #endif
 // ------------------------------------------------------------------------------------
-static void __cdecl _TRACE(const TCHAR* fmt, ...)
+static void trace_(const char* fmt, ...)
 {
-	static TCHAR buffer[256];
-	if (!fmt) return;
+	char buffer[256];
 
-	va_list	 argptr;
-	va_start(argptr, fmt);
-#ifdef _MSC_VER
-	_vsntprintf_s(buffer, ARRAY_ENTRIES(buffer), _TRUNCATE, fmt, argptr);
-#else
-	_vsntprintf(buffer, ARRAY_ENTRIES(buffer), fmt, argptr);
-#endif
-	va_end(argptr);
+	if (!fmt)
+	    return;
 
-	OutputDebugString(buffer);
+	va_list ap;
+	va_start(ap, fmt);
+	vsnprintf(buffer, std::size(buffer), fmt, ap);
+	va_end(ap);
+
+	if (IsDebuggerPresent())
+	    OutputDebugString(buffer);
+	else
+        {
+	    fprintf(stderr, "%s\n", buffer);
+	    fflush(stderr);
+        }
 }
 
 // ------------------------------------------------------------------------------------
