@@ -242,20 +242,22 @@ bool wiimote::Connect(unsigned wiimote_index, bool force_hidwrites)
 	{
 		// get the buffer size for this device detail instance
 		DWORD req_size = 0;
-		SetupDiGetDeviceInterfaceDetail(dev_info, &didata, NULL, 0, &req_size, NULL);
+		if (!SetupDiGetDeviceInterfaceDetail(dev_info, &didata, NULL, 0, &req_size, NULL))
+		{
+			WARN(_T("couldn't get devinterface info for %u"), index);
+			break;
+		}
 
 		// (bizarre way of doing it) create a buffer large enough to hold the
 		//  fixed-size detail struct components, and the variable string size
-                using spdidd = SP_DEVICE_INTERFACE_DETAIL_DATA;
-		constexpr std::align_val_t align { alignof(spdidd) };
-                spdidd *didetail = (spdidd*)operator new(req_size, align);
-		_ASSERT(didetail);
+		using spdidd = SP_DEVICE_INTERFACE_DETAIL_DATA;
+		spdidd *didetail = (spdidd*)operator new(req_size, (std::align_val_t)alignof(spdidd));
 		didetail->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
 
 		// now actually get the detail struct
 		if (!SetupDiGetDeviceInterfaceDetail(dev_info, &didata, didetail,
 			req_size, &req_size, NULL)) {
-			WARN(_T("couldn't get devinterface info for %u"), index);
+			WARN(_T("couldn't get devinterface info for %u #2"), index);
 			break;
 		}
 
