@@ -26,7 +26,6 @@
 namespace pipeline_impl {
 
 using namespace euler;
-using namespace time_units;
 
 using vec6_bool = Mat<bool, 6, 1>;
 using vec3_bool = Mat<bool, 6, 1>;
@@ -54,8 +53,6 @@ public:
     Pose apply_pipeline(reltrans_state state, const Pose& value,
                         const vec6_bool& disable, bool neck_enable, int neck_z);
 };
-
-using namespace time_units;
 
 enum bit_flags : unsigned {
     f_none           = 0,
@@ -102,7 +99,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     Pose center;
 
-    ns backlog_time {};
+    time_units::ns backlog_time {};
 
     bool tracking_started = false;
 

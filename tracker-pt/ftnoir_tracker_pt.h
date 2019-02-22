@@ -30,13 +30,10 @@ class TrackerDialog_PT;
 
 using namespace numeric_types;
 
-class Tracker_PT : public QThread, public ITracker
+struct Tracker_PT : QThread, ITracker
 {
-    Q_OBJECT
-
     friend class TrackerDialog_PT;
 
-public:
     template<typename t> using pointer = pt_pointer<t>;
 
     explicit Tracker_PT(pointer<pt_runtime_traits> const& pt_runtime_traits);
@@ -48,12 +45,13 @@ public:
     int  get_n_points();
     [[nodiscard]] bool get_cam_info(pt_camera_info& info);
     Affine pose() const;
-public slots:
+
+private:
+    void run() override;
+
     bool maybe_reopen_camera();
     void set_fov(int value);
-protected:
-    void run() override;
-private:
+
     pointer<pt_runtime_traits> traits;
 
     QMutex camera_mtx;
@@ -74,7 +72,7 @@ private:
     pointer<pt_preview> preview_frame;
 
     std::atomic<unsigned> point_count { 0 };
-    std::atomic<bool> ever_success { false };
+    std::atomic<bool> ever_success = false;
     mutable QMutex center_lock, data_lock;
 };
 

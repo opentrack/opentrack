@@ -285,7 +285,7 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
             libs.pFilter->center();
 
         if (own_center_logic)
-            center = {};
+            center = Pose();
         else
             center = value;
     }
@@ -520,6 +520,8 @@ void pipeline::run()
     while (!isInterruptionRequested())
     {
         logic();
+
+        using namespace time_units;
 
         constexpr ns const_sleep_ms(ms{4});
         const ns elapsed_nsecs = t.elapsed<ns>();
