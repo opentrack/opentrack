@@ -150,7 +150,7 @@ wii_camera_status WIICamera::pair()
 		if (ERROR_SUCCESS != BluetoothGetRadioInfo(hbtlist[i], &btinfo)) {break;}
 
 		HBLUETOOTH_DEVICE_FIND hbtdevfd;
-		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam;
+		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam {};
 		BLUETOOTH_DEVICE_INFO btdevinfo;
 
 		btdevinfo.dwSize = sizeof(btdevinfo);
