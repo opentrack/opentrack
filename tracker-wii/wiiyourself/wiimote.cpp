@@ -68,23 +68,23 @@ template<class T> inline T square(const T& val) { return val * val; }
 // ------------------------------------------------------------------------------------
 static void trace_(const char* fmt, ...)
 {
-	char buffer[256];
+    char buffer[256];
 
-	if (!fmt)
-	    return;
+    if (!fmt)
+        return;
 
-	va_list ap;
-	va_start(ap, fmt);
-	vsnprintf(buffer, std::size(buffer), fmt, ap);
-	va_end(ap);
+    va_list ap;
+    va_start(ap, fmt);
+    vsnprintf(buffer, std::size(buffer), fmt, ap);
+    va_end(ap);
 
-	if (IsDebuggerPresent())
-	    OutputDebugString(buffer);
-	else
-        {
-	    fprintf(stderr, "%s\n", buffer);
-	    fflush(stderr);
-        }
+    if (IsDebuggerPresent())
+        OutputDebugString(buffer);
+    else
+    {
+        fprintf(stderr, "%s\n", buffer);
+        fflush(stderr);
+    }
 }
 
 // ------------------------------------------------------------------------------------
