@@ -88,7 +88,7 @@ struct dylib final
         using str = QLatin1String;
 
         const struct filter_ {
-            Type type;
+            Type type{Invalid};
             QLatin1String glob;
         } filters[] = {
             { Filter, str(OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION), },
