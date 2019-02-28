@@ -51,8 +51,6 @@ Tracker_PT::~Tracker_PT()
 
 void Tracker_PT::run()
 {
-    cv::ipp::setUseIPP_NotExact(true);
-
     maybe_reopen_camera();
 
     while(!isInterruptionRequested())

@@ -361,8 +361,6 @@ void aruco_tracker::cycle_detection_params()
 
 void aruco_tracker::run()
 {
-    cv::ipp::setUseIPP_NotExact(true);
-
     if (!open_camera())
         return;
 
