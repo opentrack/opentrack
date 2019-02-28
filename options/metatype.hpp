@@ -10,7 +10,7 @@
 
 #include <QMetaType>
 
-#if !defined OPENTRACK_METATYPE_ || defined Q_CREATOR_RUN || defined __clang_analyzer__
+#if !defined OPENTRACK_METATYPE_
 #   define OPENTRACK_METATYPE(x) Q_DECLARE_METATYPE(x)
 #else
 #   define OPENTRACK_METATYPE(x) Q_DECLARE_METATYPE(x) OPENTRACK_METATYPE_(x)
