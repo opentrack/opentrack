@@ -45,7 +45,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\build-clion-msvc-dev\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
+Source: "..\build\install\*"; DestDir: "{app}"; Flags: ignoreversion createallsubdirs recursesubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
