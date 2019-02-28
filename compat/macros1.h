@@ -39,3 +39,9 @@
 #else
 #   define unreachable() do { __builtin_unreachable(); *(volatile int*)nullptr = 0; } while (0) /* NOLINT(clang-analyzer-core.NullDereference) */
 #endif
+
+#ifdef __cplusplus
+#   define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
+#   define eval_once(expr) eval_once2(expr, __COUNTER__)
+#   define eval_once2(expr, ctr) ([&] { [[maybe_unused]] static auto init ## ctr = (((void)(expr)), 0); }())
+#endif
