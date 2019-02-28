@@ -71,11 +71,11 @@ int slider_value::to_slider_pos(int q_min, int q_max) const
         return int(std::round(((cur() - min()) * q_diff / div) + q_min));
 }
 
-} // end ns options
+} // ns options
 
-using slider_value = options::slider_value;
+using options::slider_value;
 
-QDataStream& operator << (QDataStream& out, const options::slider_value& v)
+QDataStream& operator << (QDataStream& out, const slider_value& v)
 {
     out << v.cur()
         << v.min()
@@ -83,13 +83,13 @@ QDataStream& operator << (QDataStream& out, const options::slider_value& v)
     return out;
 }
 
-QDebug operator << (QDebug dbg, const options::slider_value& v)
+QDebug operator << (QDebug dbg, const slider_value& v)
 {
     return dbg << QStringLiteral("slider_value(cur=%1, min=%2, max=%3)")
                     .arg(v.cur()).arg(v.min()).arg(v.max()).toUtf8().constData();
 }
 
-QDataStream& operator >> (QDataStream& in, options::slider_value& v)
+QDataStream& operator >> (QDataStream& in, slider_value& v)
 {
     double cur = 0, min = 0, max = 0;
     in >> cur >> min >> max;
