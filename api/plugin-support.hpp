@@ -85,16 +85,14 @@ struct dylib final
         QDir module_directory(library_path);
         QList<std::shared_ptr<dylib>> ret;
 
-        using str = QLatin1String;
-
         const struct filter_ {
             Type type{Invalid};
-            QLatin1String glob;
+            QString glob;
         } filters[] = {
-            { Filter, str(OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Tracker, str(OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Protocol, str(OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Extension, str(OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Filter, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Tracker, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Protocol, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Extension, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION), },
         };
 
         for (const filter_& filter : filters)
