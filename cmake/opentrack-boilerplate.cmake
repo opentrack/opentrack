@@ -6,8 +6,6 @@ set(opentrack-perms-exec "${opentrack-perms-dir}")
 
 set(new-hier-path "#pragma once
 #ifdef QT_CORE_LIB
-#   include <QCoreApplication>
-#   include <QString>
 #   include \"compat/base-path.hpp\"
 #endif
 
