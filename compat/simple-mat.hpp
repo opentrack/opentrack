@@ -55,60 +55,60 @@ namespace simple_mat {
         enum { value = h * w == sizeof...(ts) };
     };
 
-template<typename num, int h_, int w_>
+template<typename num, int H, int W>
 class Mat
 {
-    static_assert(h_ > 0 && w_ > 0, "must have positive mat dimensions");
-    num data[h_][w_];
+    static_assert(H > 0 && W > 0, "must have positive mat dimensions");
+    num data[H][W];
 
 public:
-    // parameters w_ and h_ are rebound so that SFINAE occurs
+    // parameters W and H are rebound so that SFINAE occurs
     // removing them causes a compile-time error -sh 20150811
 
-    template<typename t, int Q = w_> std::enable_if_t<equals<Q, 1, 0>::value, num>
+    template<typename t, int Q = W> std::enable_if_t<equals<Q, 1, 0>::value, num>
     constexpr inline operator()(t i) const& { return data[(unsigned)i][0]; }
 
-    template<typename t, int P = h_> std::enable_if_t<equals<P, 1, 1>::value, num>
+    template<typename t, int P = H> std::enable_if_t<equals<P, 1, 1>::value, num>
     constexpr inline operator()(t i) const& { return data[0][(unsigned)i]; }
 
-    template<typename t, int Q = w_> std::enable_if_t<equals<Q, 1, 2>::value, num&>
+    template<typename t, int Q = W> std::enable_if_t<equals<Q, 1, 2>::value, num&>
     constexpr inline operator()(t i) & { return data[(unsigned)i][0]; }
 
-    template<typename t, int P = h_> std::enable_if_t<equals<P, 1, 3>::value, num&>
+    template<typename t, int P = H> std::enable_if_t<equals<P, 1, 3>::value, num&>
     constexpr inline operator()(t i) & { return data[0][(unsigned)i]; }
 
-#define OTR_MAT_ASSERT_SWIZZLE static_assert(P == h_ && Q == w_)
+#define OTR_MAT_ASSERT_SWIZZLE static_assert(P == H && Q == W)
 
     // const variants
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num>
     constexpr inline x() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(0); }
 
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 2, 4>::value, num>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 2, 4>::value, num>
     constexpr inline y() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(1); }
 
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 3, 4>::value, num>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 3, 4>::value, num>
     constexpr inline z() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(2); }
 
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num>
     constexpr inline w() const& { OTR_MAT_ASSERT_SWIZZLE; return operator()(3); }
 
     // mutable variants
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num&>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 1, 4>::value, num&>
     constexpr inline x() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(0); }
 
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 2, 4>::value, num&>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 2, 4>::value, num&>
     constexpr inline y() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(1); }
 
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 3, 4>::value, num&>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 3, 4>::value, num&>
     constexpr inline z() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(2); }
 
-    template<int P = h_, int Q = w_> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num&>
+    template<int P = H, int Q = W> std::enable_if_t<maybe_add_swizzle<P, Q, 4, 4>::value, num&>
     constexpr inline w() & { OTR_MAT_ASSERT_SWIZZLE; return operator()(3); }
 
-    template<int P = h_, int Q = w_>
+    template<int P = H, int Q = W>
     constexpr auto norm_squared() const -> std::enable_if_t<is_vector<P, Q>::value, num>
     {
-        static_assert(P == h_ && Q == w_);
+        static_assert(P == H && Q == W);
 
         const num val = dot(*this);
         constexpr num eps = num(1e-4);
@@ -121,11 +121,11 @@ public:
 
     inline auto norm() const { return num(std::sqrt(norm_squared())); }
 
-    template<int R, int S, int P = h_, int Q = w_>
+    template<int R, int S, int P = H, int Q = W>
     std::enable_if_t<is_vector_pair<R, S, P, Q>::value, num>
     constexpr dot(const Mat<num, R, S>& p2) const
     {
-        static_assert(P == h_ && Q == w_);
+        static_assert(P == H && Q == W);
 
         num ret = 0;
         constexpr int len = vector_len<R, S>::value;
@@ -134,11 +134,11 @@ public:
         return ret;
     }
 
-    template<int R, int S, int P = h_, int Q = w_>
+    template<int R, int S, int P = H, int Q = W>
     std::enable_if_t<is_dim3<P, Q, R, S>::value, Mat<num, is_dim3<P, Q, R, S>::P, is_dim3<P, Q, R, S>::Q>>
     constexpr cross(const Mat<num, R, S>& b) const
     {
-        static_assert(P == h_ && Q == w_);
+        static_assert(P == H && Q == W);
         const auto& a = *this;
 
         return Mat<num, R, S>(a.y()*b.z() - a.z()*b.y(),
@@ -146,62 +146,62 @@ public:
                               a.x()*b.y() - a.y()*b.x());
     }
 
-    constexpr Mat<num, h_, w_> operator+(const Mat<num, h_, w_>& other) const
+    constexpr Mat<num, H, W> operator+(const Mat<num, H, W>& other) const
     {
-        Mat<num, h_, w_> ret;
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        Mat<num, H, W> ret;
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 ret(j, i) = data[j][i] + other.data[j][i];
         return ret;
     }
 
-    constexpr Mat<num, h_, w_> operator-(const Mat<num, h_, w_>& other) const
+    constexpr Mat<num, H, W> operator-(const Mat<num, H, W>& other) const
     {
-        Mat<num, h_, w_> ret;
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        Mat<num, H, W> ret;
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 ret(j, i) = data[j][i] - other.data[j][i];
         return ret;
     }
 
-    constexpr Mat<num, h_, w_> operator+(const num other) const
+    constexpr Mat<num, H, W> operator+(const num other) const
     {
-        Mat<num, h_, w_> ret;
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        Mat<num, H, W> ret;
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 ret(j, i) = data[j][i] + other;
         return ret;
     }
 
-    constexpr Mat<num, h_, w_> operator-(const num other) const
+    constexpr Mat<num, H, W> operator-(const num other) const
     {
-        Mat<num, h_, w_> ret;
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        Mat<num, H, W> ret;
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 ret(j, i) = data[j][i] - other;
         return ret;
     }
 
     template<int p>
-    constexpr Mat<num, h_, p> operator*(const Mat<num, w_, p>& other) const
+    constexpr Mat<num, H, p> operator*(const Mat<num, W, p>& other) const
     {
-        Mat<num, h_, p> ret;
-        for (int k = 0; k < h_; k++)
+        Mat<num, H, p> ret;
+        for (int k = 0; k < H; k++)
             for (int i = 0; i < p; i++)
             {
                 ret(k, i) = 0;
-                for (int j = 0; j < w_; j++)
+                for (int j = 0; j < W; j++)
                     ret(k, i) += data[k][j] * other(j, i);
             }
         return ret;
     }
 
-    constexpr Mat<num, h_, w_> mult_elementwise(const Mat<num, h_, w_>& other) const&
+    constexpr Mat<num, H, W> mult_elementwise(const Mat<num, H, W>& other) const&
     {
-        Mat<num, h_, w_> ret;
+        Mat<num, H, W> ret;
 
-        for (unsigned j = 0; j < h_; j++)
-            for (unsigned i = 0; i < w_; i++)
+        for (unsigned j = 0; j < H; j++)
+            for (unsigned i = 0; i < W; i++)
                 ret(j, i) = data[j][i] * other.data[j][i];
 
         return ret;
@@ -213,11 +213,16 @@ public:
     template<typename t, typename u>
     constexpr inline num& operator()(t j, u i) & { return data[(unsigned)j][(unsigned)i]; }
 
-    template<typename... ts, int h__ = h_, int w__ = w_,
-             typename = std::enable_if_t<is_arglist_correct<num, h__, w__, ts...>::value>>
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wmissing-braces"
+#endif
+
+    template<typename... ts, int h2 = H, int w2 = W,
+             typename = std::enable_if_t<is_arglist_correct<num, h2, w2, ts...>::value>>
     constexpr Mat(const ts... xs) : data{static_cast<num>(xs)...}
     {
-        static_assert(h__ == h_ && w__ == w_);
+        static_assert(h2 == H && w2 == W);
     }
 
 #ifdef __clang__
@@ -226,16 +231,16 @@ public:
 
     constexpr Mat()
     {
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 data[j][i] = num(0);
     }
 
     Mat(const num* mem)
     {
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
-                data[j][i] = mem[i*h_+j];
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
+                data[j][i] = mem[i*H+j];
     }
 
     constexpr operator num*() & { return (num*)data; }
@@ -244,37 +249,37 @@ public:
     // XXX add more operators as needed, third-party dependencies mostly
     // not needed merely for matrix algebra -sh 20141030
 
-    template<int h__ = h_>
-    static std::enable_if_t<h_ == w_, Mat<num, h__, h__>> eye()
+    template<int H_ = H>
+    static std::enable_if_t<H == W, Mat<num, H_, H_>> eye()
     {
-        static_assert(h_ == h__);
+        static_assert(H == H_);
 
-        Mat<num, h_, h_> ret;
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        Mat<num, H, H> ret;
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 ret.data[j][i] = 0;
 
-        for (int i = 0; i < h_; i++)
+        for (int i = 0; i < H; i++)
             ret.data[i][i] = 1;
 
         return ret;
     }
 
-    constexpr Mat<num, w_, h_> t() const
+    constexpr Mat<num, W, H> t() const
     {
-        Mat<num, w_, h_> ret;
+        Mat<num, W, H> ret;
 
-        for (int j = 0; j < h_; j++)
-            for (int i = 0; i < w_; i++)
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
                 ret(i, j) = data[j][i];
 
         return ret;
     }
 
-    constexpr Mat<num, w_, h_>& operator=(const Mat<num, w_, h_>& rhs)
+    constexpr Mat<num, H, W>& operator=(const Mat<num, H, W>& rhs)
     {
-        for (unsigned j = 0; j < h_; j++)
-            for (unsigned i = 0; i < w_; i++)
+        for (unsigned j = 0; j < H; j++)
+            for (unsigned i = 0; i < W; i++)
                 data[j][i] = rhs(j, i);
 
         return *this;
@@ -287,12 +292,12 @@ constexpr Mat<num, h, w> operator*(num scalar, const Mat<num, h, w>& mat)
     return mat * scalar;
 }
 
-template<typename num, int h_, int w_>
-constexpr Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
+template<typename num, int H, int W>
+constexpr Mat<num, H, W> operator*(const Mat<num, H, W>& self, num other)
 {
-    Mat<num, h_, w_> ret;
-    for (int j = 0; j < h_; j++)
-        for (int i = 0; i < w_; i++)
+    Mat<num, H, W> ret;
+    for (int j = 0; j < H; j++)
+        for (int i = 0; i < W; i++)
             ret(j, i) = self(j, i) * other;
     return ret;
 }
