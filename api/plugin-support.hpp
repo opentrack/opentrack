@@ -101,7 +101,7 @@ struct dylib final
         {
             for (const QString& filename : module_directory.entryList({ filter.glob }, QDir::Files, QDir::Name))
             {
-                std::shared_ptr<dylib> lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path).arg(filename), filter.type);
+                auto lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path, filename), filter.type);
 
                 if (lib->type == Invalid)
                     continue;
