@@ -232,8 +232,8 @@ private:
 template<typename t>
 std::shared_ptr<t> make_dylib_instance(const std::shared_ptr<dylib>& lib)
 {
-    std::shared_ptr<t> ret;
     if (lib != nullptr && lib->Constructor)
-        ret = std::shared_ptr<t>(reinterpret_cast<t*>(reinterpret_cast<module_ctor_t>(lib->Constructor)()));
-    return ret;
+        return std::shared_ptr<t>{(t*)lib->Constructor()};
+    else
+        return nullptr;
 }
