@@ -49,7 +49,7 @@ namespace simple_mat {
         enum { Q = a == 1 ? 3 : 1 };
     };
 
-    template<typename num, int h, int w, typename...ts>
+    template<typename, int h, int w, typename...ts>
     struct is_arglist_correct
     {
         enum { value = h * w == sizeof...(ts) };
@@ -119,7 +119,6 @@ public:
             return val;
     }
 
-    template<int P = h_, int Q = w_>
     inline auto norm() const { return num(std::sqrt(norm_squared())); }
 
     template<int R, int S, int P = h_, int Q = w_>
@@ -220,6 +219,10 @@ public:
     {
         static_assert(h__ == h_ && w__ == w_);
     }
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
 
     constexpr Mat()
     {
