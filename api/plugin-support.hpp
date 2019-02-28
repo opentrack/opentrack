@@ -179,9 +179,6 @@ private:
         {
             qDebug() << "library" << module_name << "failed:" << handle.errorString();
 
-            if (handle.isLoaded())
-                (void) handle.unload();
-
             Constructor = nullptr;
             Dialog = nullptr;
             Meta = nullptr;
