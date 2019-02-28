@@ -286,6 +286,11 @@ public:
     }
 };
 
+} // ns simple_mat
+
+template<typename num, int h, int w>
+using Mat = simple_mat::Mat<num, h, w>;
+
 template<typename num, int h, int w>
 constexpr Mat<num, h, w> operator*(num scalar, const Mat<num, h, w>& mat)
 {
@@ -301,8 +306,3 @@ constexpr Mat<num, H, W> operator*(const Mat<num, H, W>& self, num other)
             ret(j, i) = self(j, i) * other;
     return ret;
 }
-
-} // ns simple_mat
-
-template<typename num, int h, int w>
-using Mat = simple_mat::Mat<num, h, w>;
