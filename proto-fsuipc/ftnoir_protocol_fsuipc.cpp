@@ -18,9 +18,6 @@ fsuipc::fsuipc() = default;
 fsuipc::~fsuipc()
 {
     FSUIPC_Close();
-#if 0
-    FSUIPCLib.unload();
-#endif
 }
 
 template<typename t>
