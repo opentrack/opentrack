@@ -297,19 +297,7 @@ constexpr Mat<num, h_, w_> operator*(const Mat<num, h_, w_>& self, num other)
     return ret;
 }
 
-#if 0
-OTR_GENERIC_EXPORT inline void test()
-{
-    Mat<double, 3, 3> x1 = Mat<double, 4, 4>::eye().slice<1, 1>();
-    Mat<double, 1, 3> x2 = Mat<double, 1, 4>().slice<1>();
-    Mat<double, 3, 1> x3 = Mat<double, 4, 1>().slice<1>();
-    //Mat<double, 3, 1> x4 = Mat<double, 4, 1>().slice<2>(); (void) x4;
-
-    (void) x1; (void) x2; (void) x3;
-}
-#endif
-
-} // ns detail
+} // ns simple_mat
 
 template<typename num, int h, int w>
 using Mat = simple_mat::Mat<num, h, w>;
