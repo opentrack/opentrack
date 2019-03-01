@@ -82,10 +82,14 @@ void Tracker_PT::run()
 
                 if (success)
                 {
+                    int dynamic_pose_ms = s.dynamic_pose && s.active_model_panel != PointModel::Clip
+                                          ? s.init_phase_timeout
+                                          : 0;
+
                     point_tracker.track(points,
                                         PointModel(s),
                                         info,
-                                        s.dynamic_pose ? s.init_phase_timeout : 0);
+                                        dynamic_pose_ms);
                     ever_success.store(true, std::memory_order_relaxed);
                 }
 
