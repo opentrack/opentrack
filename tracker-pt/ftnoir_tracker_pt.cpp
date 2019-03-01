@@ -171,10 +171,13 @@ void Tracker_PT::data(double *data)
         const vec3& t = X_GH.t;
 
         // extract rotation angles
-        double alpha, beta, gamma;
-        beta  = atan2( (double)-R(2,0), (double)sqrt(R(2,1)*R(2,1) + R(2,2)*R(2,2)) );
-        alpha = atan2( (double)R(1,0),  (double)R(0,0) );
-        gamma = atan2( (double)R(2,1),  (double)R(2,2) );
+        auto r00 = (double)R(0, 0);
+        auto r10 = (double)R(1,0), r20 = (double)R(2,0);
+        auto r21 = (double)R(2,1), r22 = (double)R(2,2);
+
+        double beta  = atan2(-r20, sqrt(r21*r21 + r22*r22));
+        double alpha = atan2(r10, r00);
+        double gamma = atan2(r21, r22);
 
         constexpr double rad2deg = 180/M_PI;
 
