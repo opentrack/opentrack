@@ -101,7 +101,8 @@ void Tracker_PT::run()
             Affine X_GH = X_CM * X_MH;
             vec3 p = X_GH.t; // head (center?) position in global space
 
-            preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
+            if (p[2] > f(.1))
+                preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
             widget->update_image(preview_frame->get_bitmap());
 
             {
