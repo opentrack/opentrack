@@ -19,6 +19,8 @@
 
 using namespace options;
 
+static void init_resources() { Q_INIT_RESOURCE(tracker_pt_base); }
+
 namespace pt_impl {
 
 TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
@@ -27,7 +29,7 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     timer(this),
     trans_calib(1, 2)
 {
-    Q_INIT_RESOURCE(tracker_pt_base);
+    init_resources();
 
     ui.setupUi(this);
 
