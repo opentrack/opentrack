@@ -14,6 +14,7 @@ void declare_metatype_for_type(const char* str)
 
 #define OPENTRACK_DEFINE_METATYPE2(t, ctr)                                  \
     namespace {                 /* NOLINT(cert-dcl59-cpp) */                \
+        [[maybe_unused]]                                                    \
         static const char ctr = /* NOLINT(misc-definitions-in-headers) */   \
             (::options::detail::declare_metatype_for_type<t>(#t), 0);       \
     } // anon ns
