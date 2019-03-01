@@ -50,12 +50,17 @@ void group::save() const
     });
 }
 
-void group::put(const QString& s, const QVariant& d)
+void group::put(const QString& s, QVariant&& d)
 {
     if (d.isNull())
         kvs.erase(s);
     else
         kvs[s] = d;
+}
+
+void group::put(const QString& s, const QVariant& d)
+{
+    put(s, QVariant{d});
 }
 
 bool group::contains(const QString& s) const

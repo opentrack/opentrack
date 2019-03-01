@@ -29,6 +29,7 @@ namespace options::detail {
         explicit group(const QString& name);
         void save() const;
         void put(const QString& s, const QVariant& d);
+        void put(const QString& s, QVariant&& d);
         bool contains(const QString& s) const;
 
         never_inline QVariant get_variant(const QString& name) const;

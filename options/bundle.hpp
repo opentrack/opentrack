@@ -69,6 +69,7 @@ public:
     explicit bundle(const QString& group_name);
     ~bundle() override;
 
+    void store_kv(const QString& name, QVariant&& datum);
     void store_kv(const QString& name, const QVariant& datum);
     bool contains(const QString& name) const;
 
@@ -90,8 +91,7 @@ struct OTR_OPTIONS_EXPORT bundler final
 
     static void notify();
     static void reload_no_notify();
-
-    void reload();
+    static void reload();
 
 private:
     QMutex implsgl_mtx { QMutex::Recursive };

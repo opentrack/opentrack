@@ -67,7 +67,7 @@ void bundle::set_all_to_default()
     connector::set_all_to_default_();
 }
 
-void bundle::store_kv(const QString& name, const QVariant& new_value)
+void bundle::store_kv(const QString& name, QVariant&& value)
 {
     if (group_name.isEmpty())
         return;
@@ -75,11 +75,19 @@ void bundle::store_kv(const QString& name, const QVariant& new_value)
     {
         mark_ini_modified();
         QMutexLocker l{&mtx};
-        transient.put(name, new_value);
+        transient.put(name, value);
         connector::notify_values(name);
     }
 
     emit changed();
+}
+
+void bundle::store_kv(const QString& name, const QVariant& value)
+{
+    if (group_name.isEmpty())
+        return;
+
+    store_kv(name, QVariant{value});
 }
 
 QVariant bundle::get_variant(const QString& name) const
