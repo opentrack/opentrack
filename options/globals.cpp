@@ -43,20 +43,14 @@ saver_::saver_(ini_ctx& ini) : ctx { ini }
 ini_ctx& cur_settings()
 {
     static ini_ctx ini;
-    const QString pathname = ini_pathname();
+    const QString filename = ini_filename();
 
     ini.mtx.lock();
 
-    if (pathname.isEmpty())
+    if (ini.pathname != filename)
     {
-        ini.qsettings.emplace();
-        ini.pathname = pathname;
-    }
-
-    if (ini.pathname != pathname)
-    {
-        ini.qsettings.emplace(pathname, QSettings::IniFormat);
-        ini.pathname = pathname;
+        ini.qsettings.emplace(ini_combine(filename), QSettings::IniFormat);
+        ini.pathname = filename;
     }
 
     return ini;
@@ -64,27 +58,22 @@ ini_ctx& cur_settings()
 
 ini_ctx& global_settings()
 {
-    static ini_ctx ini;
+    static ini_ctx& ret = progn(
+        static ini_ctx ini;
 
-    ini.mtx.lock();
-
-    if (ini.pathname.isEmpty())
-    {
         if (!is_portable_installation())
             // Windows registry or xdg on Linux
             ini.qsettings.emplace(OPENTRACK_ORG);
         else
-        {
-            static const QString pathname = OPENTRACK_BASE_PATH + QStringLiteral("/globals.ini");
             // file in executable's directory
-            ini.qsettings.emplace(pathname, QSettings::IniFormat);
-            ini.pathname = pathname;
-        }
+            ini.qsettings.emplace(OPENTRACK_BASE_PATH + QStringLiteral("/globals.ini"),
+                                  QSettings::IniFormat);
 
-        ini.pathname = "placeholder";
-    }
-
-    return ini;
+        ini.pathname = QStringLiteral(".");
+        return (ini_ctx&)ini;
+    );
+    ret.mtx.lock();
+    return ret;
 }
 
 } // ns options::globals::detail
@@ -105,8 +94,12 @@ bool is_ini_modified()
 QString ini_filename()
 {
     return with_global_settings_object([&](QSettings& settings) {
-        const QString ret = settings.value(OPENTRACK_PROFILE_FILENAME_KEY, OPENTRACK_DEFAULT_PROFILE).toString();
-        if (ret.size() == 0)
+        static_assert(sizeof(OPENTRACK_DEFAULT_PROFILE) > 1);
+        static_assert(sizeof(OPENTRACK_PROFILE_FILENAME_KEY) > 1);
+
+        const QString ret = settings.value(QStringLiteral(OPENTRACK_PROFILE_FILENAME_KEY),
+                                           QStringLiteral(OPENTRACK_DEFAULT_PROFILE)).toString();
+        if (ret.isEmpty())
             return QStringLiteral(OPENTRACK_DEFAULT_PROFILE);
         return ret;
     });
@@ -114,24 +107,19 @@ QString ini_filename()
 
 QString ini_pathname()
 {
-    const auto dir = ini_directory();
-    if (dir.isEmpty())
-        return {};
-    return dir + QStringLiteral("/") + ini_filename();
+    return ini_combine(ini_filename());
 }
 
 QString ini_combine(const QString& filename)
 {
-    return ini_directory() + QStringLiteral("/") + filename;
+    return QStringLiteral("%1/%2").arg(ini_directory(), filename);
 }
 
 QStringList ini_list()
 {
-    const auto dirname = ini_directory();
-    if (dirname == "")
-        return {};
-    QDir settings_dir(dirname);
-    QStringList list = settings_dir.entryList( QStringList { QStringLiteral("*.ini") } , QDir::Files, QDir::Name );
+    QDir settings_dir(ini_directory());
+    using f = QDir::Filter;
+    auto list = settings_dir.entryList({ QStringLiteral("*.ini") }, f::Files | f::Readable, QDir::Name);
     std::sort(list.begin(), list.end());
     return list;
 }
@@ -145,32 +133,23 @@ void mark_ini_modified(bool value)
 
 static QString ini_directory_()
 {
-    QString dir;
-
     if (detail::is_portable_installation())
     {
-        dir = OPENTRACK_BASE_PATH;
-
-        static const QString subdir = "ini";
-
-        if (!QDir(dir).mkpath(subdir))
-            return {};
-
-        return dir + '/' + subdir;
+fail:   constexpr const char* subdir = "ini";
+        QString dir = OPENTRACK_BASE_PATH;
+        if (dir.isEmpty())
+            dir = '.';
+        (void)QDir(dir).mkpath(subdir);
+        return QStringLiteral("%1/%2").arg(dir, subdir);
     }
     else
     {
-        dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
+        const QString dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
         if (dir.isEmpty())
-            return QString();
-        if (!QDir(dir).mkpath(OPENTRACK_ORG))
-            return QString();
-
-        dir += '/';
-        dir += OPENTRACK_ORG;
+            goto fail;
+        (void)QDir(dir).mkpath(OPENTRACK_ORG);
+        return QStringLiteral("%1/%2").arg(dir, OPENTRACK_ORG);
     }
-
-    return dir;
 }
 
 QString ini_directory()

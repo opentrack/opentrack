@@ -19,7 +19,7 @@ struct OTR_OPTIONS_EXPORT ini_ctx
     QString pathname;
     QMutex mtx { QMutex::Recursive };
 
-    int refcount = 0;
+    unsigned refcount = 0;
     bool modifiedp = false;
 
     ini_ctx();
