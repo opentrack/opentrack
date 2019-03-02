@@ -183,13 +183,13 @@ function(otr_module n_)
 
     string(REPLACE "-" "_" build-n ${n_})
     string(TOUPPER "${build-n}" build-n)
-    set_property(TARGET ${n} PROPERTY DEFINE_SYMBOL "BUILD_${build-n}")
+    target_compile_definitions(${n} PRIVATE "BUILD_${build-n}")
 
     get_property(ident GLOBAL PROPERTY opentrack-ident)
     if (".${ident}" STREQUAL ".")
         message(FATAL_ERROR "must set global property `opentrack-ident' in `opentrack-variant.cmake'")
     endif()
-    set_property(TARGET ${n} APPEND PROPERTY COMPILE_DEFINITIONS "OPENTRACK_ORG=\"${ident}\"")
+    target_compile_definitions(${n} PRIVATE OPENTRACK_ORG=\"${ident}\")
 
     if(arg_STATIC)
         set(arg_NO-INSTALL TRUE)
