@@ -116,6 +116,8 @@ if(MINGW)
 endif()
 
 if(MSVC)
+    set(CMAKE_RC_FLAGS "/nologo /DWIN32")
+
     add_definitions(-DNOMINMAX)
     add_definitions(-DWIN32_LEAN_AND_MEAN)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)

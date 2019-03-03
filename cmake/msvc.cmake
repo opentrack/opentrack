@@ -29,10 +29,6 @@ add_definitions(-diagnostics:caret)
 #add_compile_options(-Qvec-report:2)
 #add_compile_options(-d2cgsummary)
 
-if(NOT CMAKE_RC_FLAGS)
-    set(CMAKE_RC_FLAGS "/nologo /DWIN32")
-endif()
-
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 
