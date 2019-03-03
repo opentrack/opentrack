@@ -236,7 +236,7 @@ public:
                 data[j][i] = num(0);
     }
 
-    Mat(const num* mem)
+    constexpr Mat(const num* mem)
     {
         for (int j = 0; j < H; j++)
             for (int i = 0; i < W; i++)
@@ -250,7 +250,7 @@ public:
     // not needed merely for matrix algebra -sh 20141030
 
     template<int H_ = H>
-    static std::enable_if_t<H == W, Mat<num, H_, H_>> eye()
+    static constexpr std::enable_if_t<H == W, Mat<num, H_, H_>> eye()
     {
         static_assert(H == H_);
 
