@@ -85,6 +85,7 @@ Camera::result Camera::get_frame(pt_frame& frame_)
 
 bool Camera::start(int idx, int fps, int res_x, int res_y)
 {
+
     if (idx >= 0 && fps >= 0 && res_x >= 0 && res_y >= 0)
     {
         if (cam_desired.idx != idx ||
@@ -96,6 +97,11 @@ bool Camera::start(int idx, int fps, int res_x, int res_y)
             stop();
 
             desired_name = get_camera_names().value(idx);
+            bool kinectIRSensor = false;
+            if (desired_name.compare(KKinectIRSensor) == 0)
+            {
+                kinectIRSensor = true;
+            }
             cam_desired.idx = idx;
             cam_desired.fps = fps;
             cam_desired.res_x = res_x;

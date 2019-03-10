@@ -36,8 +36,14 @@ struct Tracker_PT : QThread, ITracker
 
     template<typename t> using pointer = pt_pointer<t>;
 
+    /// @deprecated Consider removing it
     explicit Tracker_PT(pointer<pt_runtime_traits> const& pt_runtime_traits);
+    Tracker_PT(const QString& aModuleName);
     ~Tracker_PT() override;
+
+    void init(pointer<pt_runtime_traits> const& traits);
+    virtual pointer<pt_runtime_traits> create_traits()=0;
+
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
     bool center() override;
@@ -45,6 +51,9 @@ struct Tracker_PT : QThread, ITracker
     int  get_n_points();
     [[nodiscard]] bool get_cam_info(pt_camera_info& info);
     Affine pose() const;
+
+protected:
+    pt_settings s;
 
 private:
     void run() override;
@@ -56,9 +65,7 @@ private:
 
     QMutex camera_mtx;
 
-    PointTracker point_tracker;
-
-    pt_settings s;
+    PointTracker point_tracker;    
 
     std::unique_ptr<QLayout> layout;
     std::vector<vec2> points;

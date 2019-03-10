@@ -2,6 +2,7 @@
 
 #include "module.hpp"
 #include "camera.h"
+#include "compat/camera-names.hpp"
 #include "frame.hpp"
 #include "point_extractor.h"
 #include "ftnoir_tracker_pt_dialog.h"
@@ -18,6 +19,7 @@ static const QString module_name = "tracker-pt";
 
 namespace pt_module {
 
+// Traits for OpenCV VideoCapture camera
 struct pt_module_traits final : pt_runtime_traits
 {
     pointer<pt_camera> make_camera() const override
@@ -48,9 +50,22 @@ struct pt_module_traits final : pt_runtime_traits
 
 struct tracker_pt : Tracker_PT
 {
-    tracker_pt() : Tracker_PT(pointer<pt_runtime_traits>(new pt_module_traits))
+    tracker_pt() : Tracker_PT(module_name)
     {
     }
+
+    pointer<pt_runtime_traits> create_traits() override
+    {
+        // Create different traits according to settings
+        if (s.camera_name().compare(KKinectIRSensor) == 0)
+        {
+            // Use Kinect IR trait
+            return pointer<pt_runtime_traits>(new pt_module_traits);
+        }
+
+        return pointer<pt_runtime_traits>(new pt_module_traits);
+    }
+
 };
 
 struct dialog_pt : TrackerDialog_PT

@@ -13,6 +13,11 @@
 
 #include "export.hpp"
 
+// Hard coding name of standard Kinect camera as returned from Windows API as used in ::get_camera_names
+static const char KKinectVideoSensor[] = "Kinect V2 Video Sensor";
+// Defining camera name for Kinect IR Sensor
+static const char KKinectIRSensor[] = "Kinect V2 IR Sensor";
+
 OTR_COMPAT_EXPORT QList<QString> get_camera_names();
 OTR_COMPAT_EXPORT int camera_name_to_index(const QString &name);
 

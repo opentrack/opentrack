@@ -57,9 +57,16 @@ struct wii_pt_module_traits final : pt_runtime_traits
 
 struct wii_tracker_pt : Tracker_PT
 {
-    wii_tracker_pt() : Tracker_PT(pointer<pt_runtime_traits>(new wii_pt_module_traits))
+    wii_tracker_pt() : Tracker_PT(module_name)
     {
+
     }
+
+    pointer<pt_runtime_traits> create_traits() override
+    {
+        return pointer<pt_runtime_traits>(new wii_pt_module_traits);
+    }
+  
 };
 
 

@@ -22,14 +22,29 @@ using namespace options;
 
 namespace pt_impl {
 
+/// @deprecated Consider removing it
 Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
-    traits { traits },
-    s { traits->get_module_name() },
-    point_extractor { traits->make_point_extractor() },
-    camera { traits->make_camera() },
-    frame { traits->make_frame() },
-    preview_frame { traits->make_preview(preview_width, preview_height) }
+    s { traits->get_module_name() }
 {
+    init(traits);
+}
+
+Tracker_PT::Tracker_PT(const QString& aModuleName) :
+    traits{ nullptr},
+    s { aModuleName }
+{
+
+}
+
+void Tracker_PT::init(pointer<pt_runtime_traits> const& aTraits)
+{
+    traits = aTraits;
+
+    point_extractor = traits->make_point_extractor();
+    camera = traits->make_camera();
+    frame = traits->make_frame();
+    preview_frame = traits->make_preview(preview_width, preview_height);
+
     cv::setBreakOnError(true);
     cv::setNumThreads(1);
 
@@ -39,6 +54,7 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     connect(&s.fov, value_::value_changed<int>(), this, &Tracker_PT::set_fov, Qt::DirectConnection);
     set_fov(s.fov);
 }
+
 
 Tracker_PT::~Tracker_PT()
 {
@@ -132,9 +148,17 @@ void Tracker_PT::set_fov(int value)
 }
 
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
-{
-    //video_frame->setAttribute(Qt::WA_NativeWindow);
+{    
+    if (traits == nullptr)
+    {
+        // Create traits according to settings
+        traits = create_traits();
+        init(traits);
+    }
 
+ 
+    //video_frame->setAttribute(Qt::WA_NativeWindow);
+  
     widget = std::make_unique<video_widget>(video_frame);
     layout = std::make_unique<QHBoxLayout>(video_frame);
     layout->setContentsMargins(0, 0, 0, 0);

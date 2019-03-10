@@ -66,6 +66,11 @@ struct pt_preview : pt_frame
     virtual void draw_head_center(f x, f y) = 0;
 };
 
+/// 
+/// Defines a camera interface.
+/// A camera can be started and stopped.
+/// Once started one can obtain frames through this interface.
+///
 struct pt_camera
 {
     using result = std::tuple<bool, pt_camera_info>;

@@ -49,6 +49,7 @@ QList<QString> get_camera_names()
         // Enumerate the monikers.
         IMoniker *pMoniker = nullptr;
         ULONG cFetched;
+        bool hasKinect = true;
         while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK)
         {
             IPropertyBag *pPropBag;
@@ -63,12 +64,26 @@ QList<QString> get_camera_names()
                     // Display the name in your UI somehow.
                     QString str((QChar*)var.bstrVal, int(std::wcslen(var.bstrVal)));
                     ret.append(str);
+                    if (!hasKinect && str.compare(KKinectVideoSensor)==0)
+                    {
+                        // We do have a Kinect V2 connected
+                        hasKinect = true;
+                    }
                 }
                 VariantClear(&var);
                 pPropBag->Release();
             }
             pMoniker->Release();
         }
+
+        if (hasKinect)
+        {
+            // Add Kinect V2 IR Sensor as an option then        
+            ret.append(QString(KKinectIRSensor));
+            // We made sure that extra camera is added at the end of our array so as not to mess up genuine camera indices...
+            // ...which we relly on to create our OpenCV VideoCapture object in Camera::start.
+        }
+
         pEnumCat->Release();
     }
     else

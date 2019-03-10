@@ -19,6 +19,9 @@
 
 namespace pt_module {
 
+///
+/// Implement our camera interface using OpenCV VideoCapture.
+///
 struct Camera final : pt_camera
 {
     Camera(const QString& module_name);
