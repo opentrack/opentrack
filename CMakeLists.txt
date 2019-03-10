@@ -54,7 +54,7 @@ include(opentrack-hier)
 include(opentrack-platform)
 include(opentrack-i18n)
 include(opentrack-boilerplate)
-
+include(opentrack-kinect)
 include(opentrack-qt)
 include(opentrack-version)
 include(opentrack-variant)

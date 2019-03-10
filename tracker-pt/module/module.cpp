@@ -2,6 +2,7 @@
 
 #include "module.hpp"
 #include "camera.h"
+#include "camera_kinect_ir.h"
 #include "compat/camera-names.hpp"
 #include "frame.hpp"
 #include "point_extractor.h"
@@ -19,7 +20,9 @@ static const QString module_name = "tracker-pt";
 
 namespace pt_module {
 
-// Traits for OpenCV VideoCapture camera
+///
+/// Traits for OpenCV VideoCapture camera
+///
 struct pt_module_traits final : pt_runtime_traits
 {
     pointer<pt_camera> make_camera() const override
@@ -48,6 +51,41 @@ struct pt_module_traits final : pt_runtime_traits
     }
 };
 
+#if __has_include(<Kinect.h>)
+///
+/// Traits for Kinect V2 IR Sensor
+///
+struct KinectIrTraits final : pt_runtime_traits
+{
+    pointer<pt_camera> make_camera() const override
+    {
+        return pointer<pt_camera>(new CameraKinectIr(module_name));
+    }
+
+    pointer<pt_point_extractor> make_point_extractor() const override
+    {
+        return pointer<pt_point_extractor>(new PointExtractor(module_name));
+    }
+
+    QString get_module_name() const override
+    {
+        return module_name;
+    }
+
+    pointer<pt_frame> make_frame() const override
+    {
+        return pointer<pt_frame>(new Frame);
+    }
+
+    pointer<pt_preview> make_preview(int w, int h) const override
+    {
+        return pointer<pt_preview>(new Preview(w, h));
+    }
+};
+#endif
+
+
+
 struct tracker_pt : Tracker_PT
 {
     tracker_pt() : Tracker_PT(module_name)
@@ -56,13 +94,14 @@ struct tracker_pt : Tracker_PT
 
     pointer<pt_runtime_traits> create_traits() override
     {
-        // Create different traits according to settings
+#if __has_include(<Kinect.h>)
+        // Create Kinect traits according to settings
         if (s.camera_name().compare(KKinectIRSensor) == 0)
         {
             // Use Kinect IR trait
-            return pointer<pt_runtime_traits>(new pt_module_traits);
+            return pointer<pt_runtime_traits>(new KinectIrTraits);
         }
-
+#endif
         return pointer<pt_runtime_traits>(new pt_module_traits);
     }
 

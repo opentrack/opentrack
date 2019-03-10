@@ -3,4 +3,6 @@ if(OpenCV_FOUND)
     otr_module(tracker-pt)
     target_link_libraries(${self} opentrack-tracker-pt-base)
     target_include_directories(${self} PUBLIC "${CMAKE_SOURCE_DIR}/tracker-pt")
+    # Add Kinect dependency if available
+    otr_kinect_setup()    
 endif()
