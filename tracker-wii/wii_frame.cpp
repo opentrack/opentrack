@@ -27,7 +27,7 @@ WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
 
     if (frame.channels() != 3)
     {
-        once_only(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
+        eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
         return *this;
     }
 
@@ -61,7 +61,7 @@ QImage WIIPreview::get_bitmap()
 
     if (stride < 64 || stride < frame_out.cols * 4)
     {
-        once_only(qDebug() << "bad stride" << stride
+        eval_once(qDebug() << "bad stride" << stride
                            << "for bitmap size" << frame_copy.cols << frame_copy.rows);
         return QImage();
     }
@@ -74,7 +74,7 @@ QImage WIIPreview::get_bitmap()
                   QImage::Format_ARGB32);
 }
 
-void WIIPreview::draw_head_center(double x, double y)
+void WIIPreview::draw_head_center(f x, f y)
 {
     double px_, py_;
 

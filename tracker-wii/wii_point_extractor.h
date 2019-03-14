@@ -16,7 +16,7 @@
 
 namespace pt_module {
 
-using namespace types;
+using namespace numeric_types;
 
 class WIIPointExtractor final : public pt_point_extractor
 {

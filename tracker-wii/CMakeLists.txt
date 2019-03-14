@@ -1,5 +1,5 @@
 if(WIN32)
-    find_package(OpenCV 3.0 QUIET)
+    find_package(OpenCV QUIET)
     if(OpenCV_FOUND)
         add_subdirectory(wiiyourself)
         otr_module(tracker-wii)
