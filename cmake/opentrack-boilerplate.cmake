@@ -50,7 +50,7 @@ function(otr_glob_sources var)
         endforeach()
         file(GLOB ${var}-ui "${dir}/*.ui")
         file(GLOB ${var}-rc "${dir}/*.qrc")
-        set(${var}-all ${${var}-cc} ${${var}-cxx} ${${var}-hh} ${${var}-rc} ${${var}-res})
+        set(${var}-all ${${var}-cc} ${${var}-cxx} ${${var}-hh} ${${var}-res})
         foreach(i ui rc res cc cxx hh all)
             set(${var}-${i} "${${var}-${i}}" PARENT_SCOPE)
         endforeach()
@@ -113,7 +113,7 @@ endfunction()
 function(otr_module n_)
     message(STATUS "module ${n_}")
     cmake_parse_arguments(arg
-        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;WIN32-CONSOLE;NO-INSTALL;RELINK"
+        "STATIC;NO-COMPAT;BIN;EXECUTABLE;NO-QT;NO-I18N;WIN32-CONSOLE;NO-INSTALL;RELINK"
         "LINK;COMPILE"
         "SOURCES;SUBDIRS"
         ${ARGN}
@@ -137,6 +137,7 @@ function(otr_module n_)
         otr_qt(${n})
     else()
         set(arg_NO-COMPAT TRUE)
+        set(arg_NO-I18N TRUE)
     endif()
 
     if(NOT WIN32)
@@ -221,7 +222,7 @@ function(otr_module n_)
         endif()
     endif()
 
-    if(NOT arg_NO-QT)
+    if(NOT arg_NO-I18N)
         otr_i18n_for_target_directory(${n_})
     endif()
 
