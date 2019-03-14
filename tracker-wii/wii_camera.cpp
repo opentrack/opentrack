@@ -7,19 +7,8 @@
 */
 
 // silence #pragma deprecated in bluetoothapis.h
-
-#ifdef __clang__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wreserved-id-macro"
-#endif
-
 #undef _WIN32_WINNT
 #define _WIN32_WINNT _WIN32_WINNT_VISTA
-
-#ifdef __clang__
-#   pragma clang diagnostic pop
-#endif
-
 #undef NTDDI_VERSION
 #define NTDDI_VERSION NTDDI_VISTASP1
 
@@ -32,17 +21,18 @@
 
 #include <opencv2/imgproc.hpp>
 
-#include <bthsdpdef.h>
+#include "cv/video-property-page.hpp"
+
 #include <bluetoothapis.h>
 
-namespace pt_module {
+using namespace pt_module;
 
 WIICamera::WIICamera(const QString& module_name) : s { module_name }
 {
-    cam_info.fps = 70;
-    cam_info.res_x = 1024;
-    cam_info.res_y = 768;
-    cam_info.fov = 42;
+	cam_info.fps = 70;
+	cam_info.res_x = 1024;
+	cam_info.res_y = 768;
+	cam_info.fov = 42.0f;
     cam_info.idx = 0;
 }
 
@@ -53,12 +43,12 @@ WIICamera::~WIICamera()
 
 QString WIICamera::get_desired_name() const
 {
-    return {};
+    return desired_name;
 }
 
 QString WIICamera::get_active_name() const
 {
-    return {};
+    return active_name;
 }
 
 void WIICamera::show_camera_settings()
@@ -69,8 +59,8 @@ void WIICamera::show_camera_settings()
 WIICamera::result WIICamera::get_info() const
 {
     if (cam_info.res_x == 0 || cam_info.res_y == 0)
-        return { false, {} };
-    return { true, cam_info };
+        return result(false, pt_camera_info());
+    return result(true, cam_info);
 }
 
 WIICamera::result WIICamera::get_frame(pt_frame& frame_)
@@ -78,7 +68,7 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
     cv::Mat& frame = frame_.as<WIIFrame>()->mat;
 	struct wii_info& wii = frame_.as<WIIFrame>()->wii;
 
-    const wii_camera_status new_frame = get_frame_(frame);
+    const wii_camera_status new_frame = _get_frame(frame);
 	//create a fake blank frame
 	frame = cv::Mat(cam_info.res_x, cam_info.res_y, CV_8UC3, cv::Scalar(0, 0, 0));
 	wii.status = new_frame;
@@ -86,43 +76,46 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
     switch (new_frame)
     {
 	case wii_cam_data_change:
-        get_status(wii);
-        get_points(wii);
+		_get_status(wii);
+		_get_points(wii);
 		break;
 	case wii_cam_data_no_change:
-        return { false, cam_info };
-	default:
-		break;
+		return result(false, cam_info);
 	}
 
-    return { true, cam_info };
+	return result(true, cam_info);
 }
 
-bool WIICamera::start(int, int, int, int)
+bool WIICamera::start(int idx, int fps, int res_x, int res_y)
 {
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;
-	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED|EXTENSION_CHANGED |MOTIONPLUS_CHANGED);
+	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED |
+		EXTENSION_CHANGED |
+		MOTIONPLUS_CHANGED);
         return true;
 }
 
 void WIICamera::stop()
 {
-    m_pDev->ChangedCallback = nullptr;
-    m_pDev->Disconnect();
-    Beep(1000, 200);
-    m_pDev = nullptr;
+	onExit = true;
+	m_pDev->ChangedCallback = NULL;
+	m_pDev->Disconnect();
+	Beep(1000, 200);
+	if (m_pDev) {
+		m_pDev=nullptr;
+		m_pDev = NULL;
+	}
 
-    cam_info = {};
-    cam_desired = {};
+    desired_name = QString();
+    active_name = QString();
+    cam_info = pt_camera_info();
+    cam_desired = pt_camera_info();
 }
 
-wii_camera_status WIICamera::pair()
+
+wii_camera_status WIICamera::_pair()
 {
-#if defined __MINGW32__
-        // missing prototypes and implib entries
-        return wii_cam_wait_for_connect;
-#else
 	wii_camera_status ret = wii_cam_wait_for_sync;
 	HBLUETOOTH_RADIO_FIND hbt;
 	BLUETOOTH_FIND_RADIO_PARAMS bt_param;
@@ -150,7 +143,7 @@ wii_camera_status WIICamera::pair()
 		if (ERROR_SUCCESS != BluetoothGetRadioInfo(hbtlist[i], &btinfo)) {break;}
 
 		HBLUETOOTH_DEVICE_FIND hbtdevfd;
-		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam {};
+		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam;
 		BLUETOOTH_DEVICE_INFO btdevinfo;
 
 		btdevinfo.dwSize = sizeof(btdevinfo);
@@ -190,7 +183,7 @@ wii_camera_status WIICamera::pair()
 			pwd[4] = btinfo.address.rgBytes[4];
 			pwd[5] = btinfo.address.rgBytes[5];
 
-			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(nullptr, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
+			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(NULL, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
 			DWORD servicecount = 32;
 			GUID guids[32];
 			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { error = true; continue; }
@@ -206,24 +199,20 @@ wii_camera_status WIICamera::pair()
 	}
 	if (wiifound) { ret = wii_cam_wait_for_connect; }
 	return ret;
-#endif
 }
 
-wii_camera_status WIICamera::get_frame_(cv::Mat& frame)
+wii_camera_status WIICamera::_get_frame(cv::Mat& frame)
 {
-	(void)frame;
 	wii_camera_status ret = wii_cam_wait_for_connect;
 
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
-		ret = pair();
-		switch (ret) {
+		ret = _pair();
+		switch(ret){
 		case wii_cam_wait_for_sync:
 			m_pDev->Disconnect();
 			goto goodbye;
 		case wii_cam_wait_for_connect:
-			break;
-		default:
 			break;
 		}
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {
@@ -249,7 +238,7 @@ goodbye:
 	return ret;
 }
 
-bool WIICamera::get_points(struct wii_info& wii)
+bool WIICamera::_get_points(struct wii_info& wii)
 {
 	bool dot_sizes = (m_pDev->IR.Mode == wiimote_state::ir::EXTENDED);
 	bool ret = false;
@@ -280,21 +269,23 @@ bool WIICamera::get_points(struct wii_info& wii)
 	return ret;
 }
 
-void WIICamera::get_status(struct wii_info& wii)
+void WIICamera::_get_status(struct wii_info& wii)
 {
 	//draw battery status
 	wii.BatteryPercent = m_pDev->BatteryPercent;
 	wii.bBatteryDrained = m_pDev->bBatteryDrained;
 
 	//draw horizon
+	static int p = 0;
+	static int r = 0;
 	if (m_pDev->Nunchuk.Acceleration.Orientation.UpdateAge < 10)
 	{
-		horizon.p = m_pDev->Acceleration.Orientation.Pitch;
-		horizon.r = m_pDev->Acceleration.Orientation.Roll;
+		p = m_pDev->Acceleration.Orientation.Pitch;
+		r = m_pDev->Acceleration.Orientation.Roll;
 	}
 
-	wii.Pitch = horizon.p;
-	wii.Roll = horizon.r;
+	wii.Pitch = p;
+	wii.Roll = r;
 }
 
 void WIICamera::on_state_change(wiimote &remote,
@@ -339,5 +330,3 @@ void WIICamera::on_state_change(wiimote &remote,
 		remote.SetReportType(wiimote::IN_BUTTONS_ACCEL_IR);
 	}
 }
-
-} // ns pt_module

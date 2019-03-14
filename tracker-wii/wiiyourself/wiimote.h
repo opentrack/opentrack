@@ -10,18 +10,15 @@
 
 #pragma once
 
-#undef NDEBUG
-
-#include "warns-begin.hpp"
-
-#undef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>		// auto Unicode/Ansi support
 #include <queue>		// for HID write method
 #include <list>			// for state recording
  
-typedef unsigned __int64 QWORD;
+#ifndef QWORD
+ typedef unsigned __int64 QWORD;
+#endif
 
 #ifdef _MSC_VER			   // VC-specific: _DEBUG build only _ASSERT() sanity checks
 # include <crtdbg.h>
@@ -184,7 +181,7 @@ class wiimote : public wiimote_state
 
 		// get the frequency from speaker_freq enum
 		static const unsigned	   FreqLookup [TOTAL_FREQUENCIES];
-		static unsigned	GetFreqLookup(unsigned index)
+		static const unsigned	GetFreqLookup (unsigned index)
 			{
 			_ASSERT(index < TOTAL_FREQUENCIES);
 			if(index >= TOTAL_FREQUENCIES)
@@ -474,7 +471,7 @@ volatile int	 MotionPlusDetectCount;		  // waiting for the result
 		volatile DWORD	 AsyncRumbleTimeout;
 		// orientation estimation
 		unsigned		 WiimoteNearGUpdates;
-		//unsigned		 NunchukNearGUpdates;
+		unsigned		 NunchukNearGUpdates;
 		// audio
 		HANDLE			 SampleThread;
 		const wiimote_sample* volatile CurrentSample;	// otherwise playing square wave
@@ -489,5 +486,3 @@ volatile int	 MotionPlusDetectCount;		  // waiting for the result
 			unsigned		ExtTriggerFlags;// extension changes "
 			} Recording;
 	};
-
-#include "warns-end.hpp"

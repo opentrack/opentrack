@@ -21,7 +21,7 @@
 
 #include <QString>
 
-#include <wiimote.h>
+#include <wiiyourself/wiimote.h>
 #include "wii_frame.hpp"
 
 namespace pt_module {
@@ -41,26 +41,33 @@ struct WIICamera final : pt_camera
     QString get_desired_name() const override;
     QString get_active_name() const override;
 
-    void set_fov(f value) override { (void)value; }
+    void set_fov(double value) override {}
     void show_camera_settings() override;
 
 private:
-    static void on_state_change(wiimote &remote,
-                                state_change_flags changed,
-                                const wiimote_state &new_state);
-    wii_camera_status pair();
-    wii_camera_status get_frame_(cv::Mat& Frame);
-    bool get_points(struct wii_info& wii);
-    void get_status(struct wii_info& wii);
+	std::unique_ptr<wiimote> m_pDev;
+	static void on_state_change(wiimote &remote,
+		state_change_flags changed,
+		const wiimote_state &new_state);
+	bool onExit = false;
+	pt_frame internalframe;
+	
+	wii_camera_status _pair();
+	wii_camera_status _get_frame(cv::Mat& Frame);
+	bool _get_points(struct wii_info&);
+	void _get_status(struct wii_info&);
 
-    std::unique_ptr<wiimote> m_pDev;
+    double dt_mean = 0;
+
+    Timer t;
 
     pt_camera_info cam_info;
     pt_camera_info cam_desired;
-
-    struct { float p = 0, r = 0; } horizon;
+    QString desired_name, active_name;
 
     pt_settings s;
+
+    static constexpr inline double dt_eps = 1./384;
 };
 
 } // ns pt_module

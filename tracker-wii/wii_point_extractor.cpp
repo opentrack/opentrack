@@ -30,9 +30,9 @@
 
 #include <QDebug>
 
-using namespace numeric_types;
+using namespace types;
+using namespace pt_module;
 
-namespace pt_module {
 
 WIIPointExtractor::WIIPointExtractor(const QString& module_name) : s(module_name)
 {
@@ -40,40 +40,40 @@ WIIPointExtractor::WIIPointExtractor(const QString& module_name) : s(module_name
 }
 
 //define a temp draw function
-void WIIPointExtractor::draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness)
+void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thinkness)
 {
 	static constexpr int len = 9;
 
-	cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols / f{2}),
-		     iround(-p[1] * preview_frame.cols + preview_frame.rows / f{2}));
+	cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols / 2),
+		iround(-p[1] * preview_frame.cols + preview_frame.rows / 2));
 
 	cv::line(preview_frame,
 		cv::Point(p2.x - len, p2.y),
 		cv::Point(p2.x + len, p2.y),
 		color,
-		thickness);
+		thinkness);
 	cv::line(preview_frame,
 		cv::Point(p2.x, p2.y - len),
 		cv::Point(p2.x, p2.y + len),
 		color,
-		thickness);
-}
+		thinkness);
+};
 
-bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_info& wii, std::vector<vec2>& points)
+bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_info &wii, std::vector<vec2>& points)
 {
-	constexpr int W = 1024;
-	constexpr int H = 768;
+	const float W = 1024.0f;
+	const float H = 768.0f;
 	points.reserve(4);
 	points.clear();
 
-	for (unsigned index = 0; index < 4; index++) // NOLINT(modernize-loop-convert)
+	for (unsigned index = 0; index < 4; index++)
 	{
 		const struct wii_info_points &dot = wii.Points[index];
 		if (dot.bvis) {
 			//qDebug() << "wii:" << dot.RawX << "+" << dot.RawY;
 			//anti-clockwise rotate the 2D point
-			const f RX = W - dot.ux;
-			const f RY = H - dot.uy;
+			const float RX = W - dot.ux;
+			const float RY = H - dot.uy;
 			//vec2 dt((dot.RawX - W / 2.0f) / W, -(dot.RawY - H / 2.0f) / W);
 			//vec2 dt((RX - W / 2.0f) / W, -(RY - H / 2.0f) / W);
 			//vec2 dt((2.0f*RX - W) / W, -(2.0f*RY - H ) / W);
@@ -81,7 +81,7 @@ bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_inf
 			std::tie(dt[0], dt[1]) = to_screen_pos(RX, RY, W, H);
 
 			points.push_back(dt);
-            draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), dot.isize);
+			_draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), dot.isize);
 		}
 	}
 	const bool success = points.size() >= PointModel::N_POINTS;
@@ -89,7 +89,7 @@ bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_inf
 	return success;
 }
 
-void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& wii)
+void WIIPointExtractor::_draw_bg(cv::Mat& preview_frame, const struct wii_info &wii)
 {
 	//draw battery status
 	cv::line(preview_frame,
@@ -99,8 +99,8 @@ void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& w
 		2);
 
 	//draw horizon
-	int pdelta = iround((preview_frame.rows / f{4}) * tan(((double)wii.Pitch)* pi / f(180)));
-	int rdelta = iround((preview_frame.cols / f{4}) * tan(((double)wii.Roll)* pi / f(180)));
+	int pdelta = iround((preview_frame.rows / 4) * tan((wii.Pitch)* M_PI / 180.0f));
+	int rdelta = iround((preview_frame.cols / 4) * tan((wii.Roll)* M_PI / 180.0f));
 
 	cv::line(preview_frame,
 		cv::Point(0, preview_frame.rows / 2 + rdelta - pdelta),
@@ -114,15 +114,11 @@ void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& previ
 	const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
 	cv::Mat& preview_frame = *preview_frame_.as<WIIPreview>();
 
-    switch (wii.status)
-    {
-    case wii_cam_data_change:
-        draw_bg(preview_frame, wii);
-        draw_points(preview_frame, wii, points);
-        break;
-    default:
-        break;
-    }
+	switch (wii.status) {
+	case wii_cam_data_change:
+		_draw_bg(preview_frame, wii);
+		_draw_points(preview_frame, wii, points);
+		break;
+	}
 }
 
-} // ns pt_module

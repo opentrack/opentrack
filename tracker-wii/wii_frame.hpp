@@ -12,10 +12,7 @@
 #include <opencv2/core.hpp>
 #include <QImage>
 
-#ifdef __clang__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wweak-vtables"
-#endif
+
 
 namespace pt_module {
 
@@ -52,7 +49,7 @@ struct WIIPreview final : pt_preview
 
     WIIPreview& operator=(const pt_frame& frame) override;
     QImage get_bitmap() override;
-    void draw_head_center(f x, f y) override;
+    void draw_head_center(double x, double y) override;
 
     operator cv::Mat&() { return frame_copy; }
     operator cv::Mat const&() const { return frame_copy; }
@@ -60,12 +57,9 @@ struct WIIPreview final : pt_preview
 private:
     static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
-    cv::Mat frame_copy, frame_out;
-    wii_camera_status status = wii_cam_wait_for_dongle;
+    bool fresh = true;
+    cv::Mat frame_copy, frame_color, frame_resize, frame_out;
+	wii_camera_status status;
 };
 
 } // ns pt_module
-
-#ifdef __clang__
-#   pragma clang diagnostic pop
-#endif

@@ -15,7 +15,7 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace pt_module {
+using namespace pt_module;
 
 WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
 {
@@ -27,7 +27,7 @@ WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
 
     if (frame.channels() != 3)
     {
-        eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
+        once_only(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
         return *this;
     }
 
@@ -49,23 +49,19 @@ WIIPreview::WIIPreview(int w, int h)
 
 QImage WIIPreview::get_bitmap()
 {
-    switch (status) {
-    case wii_cam_wait_for_dongle:
-        return QImage(":/Resources/usb.png");
-    case wii_cam_wait_for_sync:
-        return QImage(":/Resources/sync.png");
-    case wii_cam_wait_for_connect:
-        return QImage(":/Resources/on.png");
-    case wii_cam_data_change:
-    case wii_cam_data_no_change:
-        break;
-    }
-
+	switch (status) {
+	case wii_cam_wait_for_dongle:
+		return QImage(":/Resources/usb.png");
+	case wii_cam_wait_for_sync:
+		return QImage(":/Resources/sync.png");
+	case wii_cam_wait_for_connect:
+		return QImage(":/Resources/on.png");
+	}
     int stride = frame_out.step.p[0];
 
     if (stride < 64 || stride < frame_out.cols * 4)
     {
-        eval_once(qDebug() << "bad stride" << stride
+        once_only(qDebug() << "bad stride" << stride
                            << "for bitmap size" << frame_copy.cols << frame_copy.rows);
         return QImage();
     }
@@ -78,9 +74,11 @@ QImage WIIPreview::get_bitmap()
                   QImage::Format_ARGB32);
 }
 
-void WIIPreview::draw_head_center(f x, f y)
+void WIIPreview::draw_head_center(double x, double y)
 {
-    auto [px_, py_] = to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
+    double px_, py_;
+
+    std::tie(px_, py_) = to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
 
     int px = iround(px_), py = iround(py_);
 
@@ -102,5 +100,3 @@ void WIIPreview::ensure_size(cv::Mat& frame, int w, int h, int type)
     if (frame.cols != w || frame.rows != h)
         frame = cv::Mat(h, w, type);
 }
-
-} // ns pt_module
