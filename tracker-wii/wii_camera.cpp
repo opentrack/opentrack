@@ -119,7 +119,8 @@ wii_camera_status WIICamera::_pair()
 	wii_camera_status ret = wii_cam_wait_for_sync;
 	HBLUETOOTH_RADIO_FIND hbt;
 	BLUETOOTH_FIND_RADIO_PARAMS bt_param;
-	HANDLE hbtlist[10];
+	constexpr int max_devices = 64;
+	HANDLE hbtlist[max_devices];
 	int ibtidx = 0;
 	bool wiifound = false;
 
@@ -127,9 +128,8 @@ wii_camera_status WIICamera::_pair()
 	hbt = BluetoothFindFirstRadio(&bt_param, hbtlist + ibtidx);
 	if (!hbt) { ret = wii_cam_wait_for_dongle; return ret; }
 	do
-	{
 		ibtidx++;
-	} while (BluetoothFindNextRadio(&bt_param, hbtlist + ibtidx));
+	while (ibtidx < max_devices && BluetoothFindNextRadio(&bt_param, hbtlist + ibtidx));
 	BluetoothFindRadioClose(hbt);
 
 
@@ -143,11 +143,12 @@ wii_camera_status WIICamera::_pair()
 		if (ERROR_SUCCESS != BluetoothGetRadioInfo(hbtlist[i], &btinfo)) {break;}
 
 		HBLUETOOTH_DEVICE_FIND hbtdevfd;
-		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam;
+		BLUETOOTH_DEVICE_SEARCH_PARAMS btdevparam {};
 		BLUETOOTH_DEVICE_INFO btdevinfo;
 
 		btdevinfo.dwSize = sizeof(btdevinfo);
 		btdevparam.dwSize = sizeof(btdevparam);
+		btdevparam.fReturnUnknown = TRUE;
 		btdevparam.fReturnAuthenticated = TRUE;
 		btdevparam.fReturnConnected = TRUE;
 		btdevparam.fReturnRemembered = TRUE;

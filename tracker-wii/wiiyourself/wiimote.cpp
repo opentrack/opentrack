@@ -255,7 +255,9 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 		{
 		// get the buffer size for this device detail instance
 		DWORD req_size = 0;
-		SetupDiGetDeviceInterfaceDetail(dev_info, &didata, NULL, 0, &req_size, NULL);
+		(void)SetupDiGetDeviceInterfaceDetail(dev_info, &didata, NULL, 0, &req_size, NULL);
+		if (req_size < sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA))
+			WARN(_T("couldn't get device size for %u"), index);
 
 		// (bizarre way of doing it) create a buffer large enough to hold the
 		//  fixed-size detail struct components, and the variable string size
