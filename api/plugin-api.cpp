@@ -72,5 +72,5 @@ module_status ITracker::status_ok()
 
 module_status ITracker::error(const QString& error)
 {
-    return module_status(error);
+    return module_status_mixin::error(error);
 }
