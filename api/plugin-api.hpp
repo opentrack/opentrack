@@ -14,6 +14,7 @@
 #include <QIcon>
 #include <QWidget>
 #include <QDialog>
+#include <QCoreApplication>
 
 #include "compat/simple-mat.hpp"
 #include "compat/tr.hpp"
@@ -111,6 +112,8 @@ struct OTR_API_EXPORT module_status_mixin
 
     virtual module_status initialize() = 0; // where to return from
     virtual ~module_status_mixin();
+
+    Q_DECLARE_TR_FUNCTIONS(module_status_mixin)
 };
 
 // implement this in filters
