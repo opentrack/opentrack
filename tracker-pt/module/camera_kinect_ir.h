@@ -9,6 +9,8 @@
 
 #if __has_include(<Kinect.h>)
 
+#include <Kinect.h>
+
 #include "pt-api.hpp"
 #include "compat/timer.hpp"
 
@@ -55,13 +57,21 @@ private:
         void operator()(cv::VideoCapture* cap);
     };
 
-    using camera_ptr = std::unique_ptr<cv::VideoCapture, camera_deleter>;
-
-    camera_ptr cap;
 
     pt_settings s;
 
     static constexpr f dt_eps = f{1}/256;
+
+
+    // Current Kinect
+    IKinectSensor* iKinectSensor = nullptr;
+
+    // Infrared reader
+    IInfraredFrameReader*  iInfraredFrameReader = nullptr;
+
+    // Frame needs to stay alive while we access the data buffer
+    IInfraredFrame* iInfraredFrame = nullptr;
+
 };
 
 } // ns pt_module

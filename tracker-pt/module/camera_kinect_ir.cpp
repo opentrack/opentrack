@@ -38,10 +38,12 @@ void CameraKinectIr::show_camera_settings()
 {
     const int idx = camera_name_to_index(s.camera_name);
 
+    /*
     if (cap && cap->isOpened())
         video_property_page::show_from_capture(*cap, idx);
     else
         video_property_page::show(idx);
+    */
 }
 
 CameraKinectIr::result CameraKinectIr::get_info() const
@@ -83,6 +85,17 @@ CameraKinectIr::result CameraKinectIr::get_frame(pt_frame& frame_)
         return { false, {} };
 }
 
+// Safe release for interfaces
+template<class Interface>
+inline void SafeRelease(Interface *& pInterfaceToRelease)
+{
+    if (pInterfaceToRelease != NULL)
+    {
+        pInterfaceToRelease->Release();
+        pInterfaceToRelease = NULL;
+    }
+}
+
 bool CameraKinectIr::start(int idx, int fps, int res_x, int res_y)
 {
 
@@ -91,8 +104,7 @@ bool CameraKinectIr::start(int idx, int fps, int res_x, int res_y)
         if (cam_desired.idx != idx ||
             (int)cam_desired.fps != fps ||
             cam_desired.res_x != res_x ||
-            cam_desired.res_y != res_y ||
-            !cap || !cap->isOpened() || !cap->grab())
+            cam_desired.res_y != res_y )
         {
             stop();
 
@@ -108,18 +120,39 @@ bool CameraKinectIr::start(int idx, int fps, int res_x, int res_y)
             cam_desired.res_y = res_y;
             cam_desired.fov = fov;
 
-            cap = camera_ptr(new cv::VideoCapture(idx));
+            HRESULT hr;
 
-            if (cam_desired.res_x > 0 && cam_desired.res_y > 0)
+            // Get and open Kinect sensor
+            hr = GetDefaultKinectSensor(&iKinectSensor);
+            if (SUCCEEDED(hr))
             {
-                cap->set(cv::CAP_PROP_FRAME_WIDTH,  res_x);
-                cap->set(cv::CAP_PROP_FRAME_HEIGHT, res_y);
+                hr = iKinectSensor->Open();
             }
 
-            if (fps > 0)
-                cap->set(cv::CAP_PROP_FPS, fps);
+            // Create infrared frame reader	
+            if (SUCCEEDED(hr))
+            {
+                // Initialize the Kinect and get the infrared reader
+                IInfraredFrameSource* pInfraredFrameSource = NULL;
 
-            if (cap->isOpened())
+                hr = iKinectSensor->Open();
+
+                if (SUCCEEDED(hr))
+                {
+                    hr = iKinectSensor->get_InfraredFrameSource(&pInfraredFrameSource);
+                }
+
+                if (SUCCEEDED(hr))
+                {
+                    hr = pInfraredFrameSource->OpenReader(&iInfraredFrameReader);
+                }
+
+                SafeRelease(pInfraredFrameSource);
+            }
+
+
+
+            //if (cap->isOpened())
             {
                 cam_info = pt_camera_info();
                 cam_info.idx = idx;
@@ -134,8 +167,7 @@ bool CameraKinectIr::start(int idx, int fps, int res_x, int res_y)
                     return true;
                 }
             }
-
-            cap = nullptr;
+            
             return false;
         }
 
@@ -148,7 +180,19 @@ bool CameraKinectIr::start(int idx, int fps, int res_x, int res_y)
 
 void CameraKinectIr::stop()
 {
-    cap = nullptr;
+    // done with infrared frame reader
+    SafeRelease(iInfraredFrame);
+    SafeRelease(iInfraredFrameReader);
+
+    // close the Kinect Sensor
+    if (iKinectSensor)
+    {
+        iKinectSensor->Close();
+    }
+
+    SafeRelease(iKinectSensor);
+
+    
     desired_name = QString{};
     active_name = QString{};
     cam_info = {};
@@ -157,6 +201,79 @@ void CameraKinectIr::stop()
 
 bool CameraKinectIr::get_frame_(cv::Mat& frame)
 {
+
+    if (!iInfraredFrameReader)
+    {
+        return false;
+    }
+
+    bool success = false;
+
+    // Release previous frame if any
+    SafeRelease(iInfraredFrame);
+
+    HRESULT hr = iInfraredFrameReader->AcquireLatestFrame(&iInfraredFrame);
+
+    if (SUCCEEDED(hr))
+    {
+        INT64 nTime = 0;
+        IFrameDescription* frameDescription = NULL;
+        int nWidth = 0;
+        int nHeight = 0;
+        UINT nBufferSize = 0;
+        UINT16 *pBuffer = NULL;
+
+        hr = iInfraredFrame->get_RelativeTime(&nTime);
+
+        if (SUCCEEDED(hr))
+        {
+            hr = iInfraredFrame->get_FrameDescription(&frameDescription);
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            hr = frameDescription->get_Width(&nWidth);
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            hr = frameDescription->get_Height(&nHeight);
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            hr = iInfraredFrame->AccessUnderlyingBuffer(&nBufferSize, &pBuffer);
+        }
+
+        if (SUCCEEDED(hr))
+        {
+            //ProcessInfrared(nTime, pBuffer, nWidth, nHeight);
+
+            // Create an OpenCV matrix with our 16-bits IR buffer
+            cv::Mat raw = cv::Mat(nHeight, nWidth, CV_16UC1, pBuffer); // .clone();
+
+            // Convert that OpenCV matrix to an RGB one as this is what is expected by our point extractor
+            // TODO: Ideally we should implement a point extractors that works with our native buffer
+            // First resample to 8-bits
+            double min, max;
+            cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
+            cv::Mat raw8;
+            raw.convertTo(raw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
+            // Second convert to RGB
+            cv::cvtColor(raw8, frame, cv::COLOR_GRAY2BGR);
+            int newType = frame.type();
+
+
+            success = true;
+        }
+
+        SafeRelease(frameDescription);
+    }
+
+
+    return success;
+
+    /*
     if (cap && cap->isOpened())
     {
         for (unsigned i = 0; i < 10; i++)
@@ -166,8 +283,13 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             portable::sleep(50);
         }
     }
-    return false;
+
+       return false;
+
+    */
+ 
 }
+
 
 void CameraKinectIr::camera_deleter::operator()(cv::VideoCapture* cap)
 {
