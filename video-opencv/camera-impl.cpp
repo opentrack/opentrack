@@ -1,52 +1,10 @@
-/* Copyright (c) 2019 Stanislaw Halik <sthalik@misaki.pl>
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted, provided that the above
- * copyright notice and this permission notice appear in all copies.
- */
-
+#include "camera-impl.hpp"
 #include "compat/sleep.hpp"
-#include "video/camera.hpp"
 
 #include "camera-names.hpp"
 #include "video-property-page.hpp"
 
-#include <optional>
-
-#include <opencv2/core.hpp>
-#include <opencv2/videoio.hpp>
-
-using namespace video::impl;
-
-struct cam;
-
-struct metadata : camera_
-{
-    metadata();
-    std::vector<QString> camera_names() const override;
-    std::unique_ptr<camera> make_camera(const QString& name) override;
-    bool can_show_dialog(const QString& camera_name) override;
-    bool show_dialog(const QString& camera_name) override;
-};
-
-struct cam final : camera
-{
-    cam(int idx);
-    ~cam() override;
-
-    bool start(const info& args) override;
-    void stop() override;
-    bool is_open() override;
-    std::tuple<const frame&, bool> get_frame() override;
-    bool show_dialog() override;
-
-    bool get_frame_();
-
-    std::optional<cv::VideoCapture> cap;
-    cv::Mat mat;
-    frame frame_;
-    int idx = -1;
-};
+namespace opencv_camera_impl {
 
 metadata::metadata() = default;
 
@@ -171,3 +129,5 @@ bool cam::show_dialog()
 }
 
 OTR_REGISTER_CAMERA(metadata)
+
+} // ns opencv_camera_impl
