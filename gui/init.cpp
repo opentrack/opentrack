@@ -240,7 +240,14 @@ static int run_window(std::unique_ptr<QWidget> main_window)
 
 int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> const& make_main_window)
 {
+#ifdef _WIN32
+    (void)setvbuf(stderr, nullptr, _IONBF, 0);
+#else
+    (void)setvbuf(stderr, nullptr, _IOLBF, 256);
+#endif
+
     set_fp_mask();
+
 #ifdef OTR_X11_THREADS
     enable_x11_threads();
 #endif
@@ -256,7 +263,6 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
     add_win32_path();
     attach_parent_console();
 #endif
-
     (void)qInstallMessageHandler(qdebug_to_console);
 
     QDir::setCurrent(OPENTRACK_BASE_PATH);
