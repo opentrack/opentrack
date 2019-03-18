@@ -30,6 +30,13 @@ function(otr_i18n_for_target_directory n)
         endif()
     endforeach()
 
+    # all sorts of problems
+    if(WIN32)
+        set(to-null "2>NUL")
+    else()
+        set(to-null "2>/dev/null")
+    endif()
+
     add_custom_command(OUTPUT "${stamp}"
                        COMMAND "${lupdate-binary}"
                        -I "${CMAKE_SOURCE_DIR}"
@@ -39,6 +46,7 @@ function(otr_i18n_for_target_directory n)
                        -locations none
                        .
                        -ts ${ts-files}
+                       ${to-null}
                        COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
                        DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-uih} ${${k}-moc}
                        COMMENT "Running lupdate for ${n}"
