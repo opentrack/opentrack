@@ -138,7 +138,8 @@ bool Camera::get_frame_(cv::Mat& img)
         auto [ frame, ret ] = cap->get_frame();
         if (ret)
         {
-            img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
+            int type = CV_8UC(frame.channels);
+            img = cv::Mat(frame.height, frame.width, type, (void*)frame.data, frame.stride);
             return true;
         }
     }
