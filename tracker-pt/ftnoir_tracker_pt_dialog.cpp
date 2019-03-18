@@ -7,10 +7,9 @@
  */
 
 #include "ftnoir_tracker_pt_dialog.h"
-
 #include "compat/math.hpp"
-#include "compat/camera-names.hpp"
-#include "cv/video-property-page.hpp"
+#include "video/camera.hpp"
+
 #include <opencv2/core.hpp>
 
 #include <QString>
@@ -33,7 +32,8 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
 
     ui.setupUi(this);
 
-    ui.camdevice_combo->addItems(get_camera_names());
+    for (const QString& str : video::camera_names())
+        ui.camdevice_combo->addItem(str);
 
     tie_setting(s.camera_name, ui.camdevice_combo);
     tie_setting(s.cam_res_x, ui.res_x_spin);
@@ -231,10 +231,7 @@ void TrackerDialog_PT::show_camera_settings()
         tracker->camera->show_camera_settings();
     }
     else
-    {
-        const int idx = camera_name_to_index(s.camera_name);
-        video_property_page::show(idx);
-    }
+        (void)video::show_dialog(s.camera_name);
 }
 
 void TrackerDialog_PT::trans_calib_step()

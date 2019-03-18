@@ -8,7 +8,6 @@
 
 #include "ftnoir_tracker_pt.h"
 #include "video/video-widget.hpp"
-#include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
 #include "pt-api.hpp"
@@ -121,7 +120,7 @@ bool Tracker_PT::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
-    return camera->start(camera_name_to_index(s.camera_name),
+    return camera->start(s.camera_name,
                          s.cam_fps, s.cam_res_x, s.cam_res_y);
 }
 

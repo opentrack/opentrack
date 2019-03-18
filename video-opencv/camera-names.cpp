@@ -1,5 +1,8 @@
 #include "camera-names.hpp"
 
+#include <algorithm>
+#include <iterator>
+
 #ifdef _WIN32
 #   include <cwchar>
 #   define NO_DSHOW_STRSAFE
@@ -21,15 +24,16 @@
 int camera_name_to_index(const QString &name)
 {
     auto list = get_camera_names();
-    int ret = list.indexOf(name);
-    if (ret < 0)
-        ret = 0;
-    return ret;
+    auto it = std::find(list.cbegin(), list.cend(), name);
+    if (it != list.cend())
+        return std::distance(list.cbegin(), it);
+
+    return -1;
 }
 
-QList<QString> get_camera_names()
+std::vector<QString> get_camera_names()
 {
-    QList<QString> ret;
+    std::vector<QString> ret;
 #ifdef _WIN32
     // Create the System Device Enumerator.
     HRESULT hr;
@@ -62,7 +66,7 @@ QList<QString> get_camera_names()
                 {
                     // Display the name in your UI somehow.
                     QString str((QChar*)var.bstrVal, int(std::wcslen(var.bstrVal)));
-                    ret.append(str);
+                    ret.push_back(str);
                 }
                 VariantClear(&var);
                 pPropBag->Release();
@@ -93,7 +97,7 @@ QList<QString> get_camera_names()
                 close(fd);
                 continue;
             }
-            ret.append(QString{(const char*)video_cap.card});
+            ret.push_back(QString((const char*)video_cap.card));
             close(fd);
         }
     }

@@ -14,8 +14,6 @@
 #include "cv/numeric.hpp"
 #include "compat/math.hpp"
 
-#include <opencv2/videoio.hpp>
-
 #undef PREVIEW
 //#define PREVIEW
 

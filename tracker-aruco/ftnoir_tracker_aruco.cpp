@@ -6,8 +6,6 @@
  */
 
 #include "ftnoir_tracker_aruco.h"
-#include "cv/video-property-page.hpp"
-#include "compat/camera-names.hpp"
 #include "compat/sleep.hpp"
 #include "compat/math-imports.hpp"
 
@@ -75,7 +73,6 @@ aruco_tracker::~aruco_tracker()
     wait();
     // fast start/stop causes breakage
     portable::sleep(1000);
-    camera.release();
 }
 
 module_status aruco_tracker::start_tracker(QFrame* videoframe)
@@ -166,16 +163,18 @@ bool aruco_tracker::open_camera()
 
     QMutexLocker l(&camera_mtx);
 
-    camera = cv::VideoCapture(camera_name_to_index(s.camera_name));
+    camera = video::make_camera(s.camera_name);
+    video::impl::camera::info args {};
+
     if (res.width)
     {
-        camera.set(cv::CAP_PROP_FRAME_WIDTH, res.width);
-        camera.set(cv::CAP_PROP_FRAME_HEIGHT, res.height);
+        args.width = res.width;
+        args.height = res.height;
     }
     if (fps)
-        camera.set(cv::CAP_PROP_FPS, fps);
+        args.fps = fps;
 
-    if (!camera.isOpened())
+    if (!camera->start(args))
     {
         qDebug() << "aruco tracker: can't open camera";
         return false;
@@ -372,14 +371,28 @@ void aruco_tracker::run()
         {
             QMutexLocker l(&camera_mtx);
 
-            if (!camera.read(color))
+            auto [ img, res ] = camera->get_frame();
+
+            if (!res)
             {
                 portable::sleep(100);
                 continue;
             }
-        }
 
-        cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+            color = cv::Mat(img.height, img.width, CV_8UC(img.channels), (void*)img.data, img.stride);
+
+            switch (img.channels)
+            {
+            case 1:
+                grayscale.setTo(color); break;
+            case 3:
+                cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+                break;
+            default:
+                qDebug() << "aruco: can't handle" << img.channels << "color channels";
+                return;
+            }
+        }
 
 #ifdef DEBUG_UNSHARP_MASKING
         {
@@ -496,7 +509,9 @@ aruco_dialog::aruco_dialog() :
 
     tracker = nullptr;
     calib_timer.setInterval(100);
-    ui.cameraName->addItems(get_camera_names());
+
+    for (const auto& str : video::camera_names())
+        ui.cameraName->addItem(str);
 
     tie_setting(s.camera_name, ui.cameraName);
     tie_setting(s.resolution, ui.resolution);
@@ -572,10 +587,10 @@ void aruco_dialog::camera_settings()
     if (tracker)
     {
         QMutexLocker l(&tracker->camera_mtx);
-        video_property_page::show_from_capture(tracker->camera, camera_name_to_index(s.camera_name));
+        (void)tracker->camera->show_dialog();
     }
     else
-        video_property_page::show(camera_name_to_index(s.camera_name));
+        (void)video::show_dialog(s.camera_name);
 }
 
 void aruco_dialog::update_camera_settings_state(const QString& name)

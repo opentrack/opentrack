@@ -24,6 +24,7 @@ function(otr_init_variant)
         "migration"
         "main-window"
         "video"
+        "video-*"
     )
 
     set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")

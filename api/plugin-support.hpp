@@ -35,10 +35,11 @@ struct dylib final
         Tracker = 0xcafebeef,
         Protocol = 0xdeadf00d,
         Extension = 0xcafebabe,
+        Video = 0xbadf00d,
         Invalid = (unsigned)-1,
     };
 
-    dylib(const QString& filename_, Type t) :
+    dylib(const QString& filename_, Type t, bool load = true) :
         full_filename(filename_),
         module_name(trim_filename(filename_))
     {
@@ -57,19 +58,25 @@ struct dylib final
         if (check(!handle.load()))
             return;
 
-        if (check((Dialog = (module_ctor_t) handle.resolve("GetDialog"), !Dialog)))
-            return;
+        if (load)
+        {
+            if (check((Dialog = (module_ctor_t) handle.resolve("GetDialog"), !Dialog)))
+                return;
 
-        if (check((Constructor = (module_ctor_t) handle.resolve("GetConstructor"), !Constructor)))
-            return;
+            if (check((Constructor = (module_ctor_t) handle.resolve("GetConstructor"), !Constructor)))
+                return;
 
-        if (check((Meta = (module_metadata_t) handle.resolve("GetMetadata"), !Meta)))
-            return;
+            if (check((Meta = (module_metadata_t) handle.resolve("GetMetadata"), !Meta)))
+                return;
 
-        std::unique_ptr<Metadata_> m{Meta()};
+            std::unique_ptr<Metadata_> m{Meta()};
 
-        icon = m->icon();
-        name = m->name();
+            if (check(!m))
+                return;
+
+            icon = m->icon();
+            name = m->name();
+        }
 
         type = t;
 #ifdef __clang__
@@ -88,18 +95,20 @@ struct dylib final
         const struct filter_ {
             Type type{Invalid};
             QString glob;
+            bool load = true;
         } filters[] = {
             { Filter, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION), },
             { Tracker, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION), },
             { Protocol, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION), },
             { Extension, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION), },
+            { Video, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-video-*." OPENTRACK_LIBRARY_EXTENSION), false, },
         };
 
         for (const filter_& filter : filters)
         {
             for (const QString& filename : module_directory.entryList({ filter.glob }, QDir::Files, QDir::Name))
             {
-                auto lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path, filename), filter.type);
+                auto lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path, filename), filter.type, filter.load);
 
                 if (lib->type == Invalid)
                     continue;
@@ -159,6 +168,7 @@ private:
                     OPENTRACK_LIBRARY_PREFIX "opentrack-proto-",
                     OPENTRACK_LIBRARY_PREFIX "opentrack-filter-",
                     OPENTRACK_LIBRARY_PREFIX "opentrack-ext-",
+                    OPENTRACK_LIBRARY_PREFIX "opentrack-video-",
                 };
 
                 for (auto name : names)
@@ -198,7 +208,8 @@ struct Modules final
         filter_modules(filter(dylib::Filter)),
         tracker_modules(filter(dylib::Tracker)),
         protocol_modules(filter(dylib::Protocol)),
-        extension_modules(filter(dylib::Extension))
+        extension_modules(filter(dylib::Extension)),
+        video_modules(filter(dylib::Video))
     {}
     dylib_list& filters() { return filter_modules; }
     dylib_list& trackers() { return tracker_modules; }
@@ -211,6 +222,7 @@ private:
     dylib_list tracker_modules;
     dylib_list protocol_modules;
     dylib_list extension_modules;
+    dylib_list video_modules;
 
     static dylib_list& sorted(dylib_list& xs)
     {

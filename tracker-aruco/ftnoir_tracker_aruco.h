@@ -13,6 +13,7 @@
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
 #include "compat/timer.hpp"
+#include "video/camera.hpp"
 
 #include "aruco/markerdetector.h"
 
@@ -27,7 +28,6 @@
 #include <cinttypes>
 
 #include <opencv2/core.hpp>
-#include <opencv2/videoio.hpp>
 
 // value 0->1
 //#define DEBUG_UNSHARP_MASKING .75
@@ -77,7 +77,7 @@ public:
 
     void getRT(cv::Matx33d &r, cv::Vec3d &t);
     QMutex camera_mtx;
-    cv::VideoCapture camera;
+    std::unique_ptr<video::impl::camera> camera;
 
 private:
     bool detect_with_roi();

@@ -16,12 +16,9 @@
 #include "wii_frame.hpp"
 
 #include "compat/sleep.hpp"
-#include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
 #include <opencv2/imgproc.hpp>
-
-#include "cv/video-property-page.hpp"
 
 #include <bluetoothapis.h>
 
@@ -33,7 +30,7 @@ WIICamera::WIICamera(const QString& module_name) : s { module_name }
 	cam_info.res_x = 1024;
 	cam_info.res_y = 768;
 	cam_info.fov = 42.0f;
-    cam_info.idx = 0;
+	cam_info.name = "Wii";
 }
 
 WIICamera::~WIICamera()
@@ -86,7 +83,7 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 	return result(true, cam_info);
 }
 
-bool WIICamera::start(int idx, int fps, int res_x, int res_y)
+bool WIICamera::start(const QString& name, int fps, int res_x, int res_y)
 {
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;

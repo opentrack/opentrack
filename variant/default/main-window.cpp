@@ -448,7 +448,7 @@ void main_window::stop_tracker_()
     with_tracker_teardown sentinel;
 
     pose_update_timer.stop();
-    ui.pose_display->rotate_sync(0,0,0, 0,0,0);
+    ui.pose_display->present(0,0,0, 0,0,0);
 
     if (pTrackerDialog)
         pTrackerDialog->unregister_tracker();
@@ -473,8 +473,8 @@ void main_window::stop_tracker_()
 
 void main_window::show_pose_(const double* mapped, const double* raw)
 {
-    ui.pose_display->rotate_async(mapped[Yaw], mapped[Pitch], -mapped[Roll],
-                                  mapped[TX], mapped[TY], mapped[TZ]);
+    ui.pose_display->present(mapped[Yaw], mapped[Pitch], -mapped[Roll],
+                             mapped[TX], mapped[TY], mapped[TZ]);
 
     QLCDNumber* raw_[] = {
         ui.raw_x, ui.raw_y, ui.raw_z,

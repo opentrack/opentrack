@@ -8,11 +8,11 @@
 
 #pragma once
 
-#include <QList>
+#include <vector>
 #include <QString>
 
 #include "export.hpp"
 
-OTR_COMPAT_EXPORT QList<QString> get_camera_names();
-OTR_COMPAT_EXPORT int camera_name_to_index(const QString &name);
+std::vector<QString> get_camera_names();
+int camera_name_to_index(const QString &name);
 

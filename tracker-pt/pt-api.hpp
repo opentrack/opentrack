@@ -12,6 +12,7 @@
 #include <opencv2/core.hpp>
 
 #include <QImage>
+#include <QString>
 
 #ifdef __clang__
 #   pragma clang diagnostic push
@@ -30,7 +31,7 @@ struct pt_camera_info final
 
     int res_x = 0;
     int res_y = 0;
-    int idx = -1;
+    QString name;
 };
 
 struct pt_pixel_pos_mixin
@@ -74,7 +75,7 @@ struct pt_camera
     pt_camera();
     virtual ~pt_camera();
 
-    [[nodiscard]] virtual bool start(int idx, int fps, int res_x, int res_y) = 0;
+    [[nodiscard]] virtual bool start(const QString& name, int fps, int res_x, int res_y) = 0;
     virtual void stop() = 0;
 
     virtual result get_frame(pt_frame& frame) = 0;

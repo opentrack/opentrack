@@ -9,11 +9,11 @@
 
 #include "pt-api.hpp"
 #include "compat/timer.hpp"
+#include "video/camera.hpp"
 
 #include <memory>
 
 #include <opencv2/core.hpp>
-#include <opencv2/videoio.hpp>
 
 #include <QString>
 
@@ -23,7 +23,7 @@ struct Camera final : pt_camera
 {
     Camera(const QString& module_name);
 
-    bool start(int idx, int fps, int res_x, int res_y) override;
+    bool start(const QString& name, int fps, int res_x, int res_y) override;
     void stop() override;
 
     result get_frame(pt_frame& Frame) override;
@@ -37,23 +37,16 @@ struct Camera final : pt_camera
     void show_camera_settings() override;
 
 private:
+    using camera = typename video::impl::camera;
+
     [[nodiscard]] bool get_frame_(cv::Mat& frame);
 
     f dt_mean = 0, fov = 30;
     Timer t;
     pt_camera_info cam_info;
     pt_camera_info cam_desired;
-    QString desired_name, active_name;
 
-    struct camera_deleter final
-    {
-        void operator()(cv::VideoCapture* cap);
-    };
-
-    using camera_ptr = std::unique_ptr<cv::VideoCapture, camera_deleter>;
-
-    camera_ptr cap;
-
+    std::unique_ptr<camera> cap;
     pt_settings s;
 
     static constexpr f dt_eps = f{1}/256;

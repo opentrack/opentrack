@@ -9,7 +9,7 @@
 
 #ifdef _WIN32
 
-#include "compat/camera-names.hpp"
+#include "camera-names.hpp"
 #include "compat/sleep.hpp"
 #include "compat/run-in-thread.hpp"
 #include "compat/library-path.hpp"
