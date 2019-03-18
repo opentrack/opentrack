@@ -6,6 +6,9 @@
  */
 
 #include "camera_kinect_ir.h"
+
+#if __has_include(<Kinect.h>)
+
 #include "frame.hpp"
 
 #include "compat/sleep.hpp"
@@ -220,6 +223,7 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
         IFrameDescription* frameDescription = NULL;
         int nWidth = 0;
         int nHeight = 0;
+        float diagonalFieldOfView = 0.0f;
         UINT nBufferSize = 0;
         UINT16 *pBuffer = NULL;
 
@@ -242,6 +246,11 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
 
         if (SUCCEEDED(hr))
         {
+            hr = frameDescription->get_DiagonalFieldOfView(&diagonalFieldOfView);
+        }
+        
+        if (SUCCEEDED(hr))
+        {
             hr = iInfraredFrame->AccessUnderlyingBuffer(&nBufferSize, &pBuffer);
         }
 
@@ -255,8 +264,12 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             // Convert that OpenCV matrix to an RGB one as this is what is expected by our point extractor
             // TODO: Ideally we should implement a point extractors that works with our native buffer
             // First resample to 8-bits
-            double min, max;
-            cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
+            double min = std::numeric_limits<uint16_t>::min();
+            double max = std::numeric_limits<uint16_t>::max();
+            // For scalling to have more precission in the range we are interrested in
+            min = max - 255;
+            //cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
+
             cv::Mat raw8;
             raw.convertTo(raw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
             // Second convert to RGB
@@ -302,3 +315,5 @@ void CameraKinectIr::camera_deleter::operator()(cv::VideoCapture* cap)
 }
 
 } // ns pt_module
+
+#endif

@@ -143,7 +143,7 @@ void PointTracker::track(const std::vector<vec2>& points,
     const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointOrder order;
 
-    if (init_phase_timeout <= 0 || t.elapsed_ms() > init_phase_timeout || init_phase)
+    if (init_phase_timeout <= 0 || timer.elapsed_ms() > init_phase_timeout || init_phase)
     {
         init_phase = true;
         order = find_correspondences(points.data(), model);
@@ -154,7 +154,7 @@ void PointTracker::track(const std::vector<vec2>& points,
     if (POSIT(model, order, fx) != -1)
     {
         init_phase = false;
-        t.start();
+        timer.start();
     }
     else
         reset_state();
@@ -360,7 +360,10 @@ vec2 PointTracker::project(const vec3& v_M, f focal_length, const Affine& X_CM)
 void PointTracker::reset_state()
 {
     init_phase = true;
+    //X_CM = {};
     X_CM_expected = {};
+    //prev_positions = {};
+    //timer.start();
 }
 
 } // ns pt_impl

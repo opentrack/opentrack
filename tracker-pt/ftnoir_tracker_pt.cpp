@@ -214,13 +214,22 @@ void Tracker_PT::data(double *data)
         data[TX] = (double)t[0] / 10;
         data[TY] = (double)t[1] / 10;
         data[TZ] = (double)t[2] / 10;
+        
+        // Workaround an issue where our tracker is stuck reporting extrem roll and yaw values around +/-170
+        // Using Kinect with a cap this is easy to reproduce by getting close enough from the sensor (<50cm) and stepping back.
+        if (data[Roll] > 100 || data[Roll] < -100 || data[Pitch] < -60 )
+        {
+            // Hopefully our user did not break his neck, something is wrong, reset our tracker
+            QMutexLocker l(&center_lock);
+            point_tracker.reset_state();
+            // TODO: Provide the last valid data frame instead
+        }
     }
 }
 
 bool Tracker_PT::center()
 {
     QMutexLocker l(&center_lock);
-
     point_tracker.reset_state();
     return false;
 }
