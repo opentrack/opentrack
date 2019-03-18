@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <type_traits>
 #include <utility>
 #include <cmath>
@@ -286,6 +287,12 @@ public:
     }
 };
 
+template<unsigned k, typename num, int h, int w>
+constexpr num get(const Mat<num, h, w>& m) { return m(k); }
+
+template<unsigned k, typename num, int h, int w>
+constexpr num& get(Mat<num, h, w>& m) { return m(k); }
+
 } // ns simple_mat
 
 template<typename num, int h, int w>
@@ -306,3 +313,16 @@ constexpr Mat<num, H, W> operator*(const Mat<num, H, W>& self, num other)
             ret(j, i) = self(j, i) * other;
     return ret;
 }
+
+namespace std {
+    template<typename num, int H, int W>
+    struct tuple_size<Mat<num, H, W>> :
+        std::integral_constant<std::size_t, H == 1 || W == 1 ? W * H : 0>
+    {};
+
+    template<std::size_t k, typename num, int h, int w>
+    struct tuple_element<k, Mat<num, h, w>>
+    {
+        using type = std::remove_const_t<std::remove_reference_t<num>>;
+    };
+} // ns std
