@@ -147,9 +147,7 @@ bool video_property_page::show(int idx)
 
 bool video_property_page::show(int idx)
 {
-    const QList<QString> camera_names(get_camera_names());
-
-    if (idx >= 0 && idx < camera_names.size())
+    if ((unsigned)idx < get_camera_names().size())
         return QProcess::startDetached("qv4l2", QStringList { "-d", QString("/dev/video%1").arg(idx) });
     else
         return false;
