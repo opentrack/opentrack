@@ -391,11 +391,6 @@ class wiimote : public wiimote_state
 		EVENT			 DataRead;		  // signals overlapped read complete
 		bool			 bUseHIDwrite;	  // alternative write method (less efficient
 										  //  but required for some BT stacks (eg. MS')
-		// HidD_SetOutputReport is only supported from XP onwards, so detect &
-		//  load it dynamically:
-		static HMODULE	 HidDLL;	
-		static hidwrite_ptr _HidD_SetOutputReport;
-		
 		volatile bool	 bStatusReceived;	  // for output method detection
 		volatile bool	 bConnectInProgress;  // don't handle extensions until complete
 		volatile bool	 bInitInProgress;	  // stop regular requests until complete
@@ -406,7 +401,6 @@ volatile int	 MotionPlusDetectCount;		  // waiting for the result
 		volatile bool	 bMotionPlusEnabled;
 		volatile bool	 bMotionPlusExtension;// detected one plugged into MotionPlus
 		volatile bool	 bCalibrateAtRest;	  // as soon as the first sensor values 											  //  come in after a Connect() call.
-		static unsigned	 _TotalCreated;
 		static unsigned	 _TotalConnected;
 		input_report	 ReportType;	      // type of data the wiimote delivers	
 		// read buffer

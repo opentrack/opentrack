@@ -8,106 +8,68 @@
 //
 //  wiimote.cpp  (tab = 4 spaces)
 
-// VC-specifics:
-#ifdef _MSC_VER 
- // disable warning "C++ exception handler used, but unwind semantics are not enabled."
- //				     in <xstring> (I don't use it - or just enable C++ exceptions)
-# pragma warning(disable: 4530)
-//  auto-link with the necessary libs
-# pragma comment(lib, "setupapi.lib")	
-# pragma comment(lib, "hid.lib")		// for HID API (from DDK)
-# pragma comment(lib, "winmm.lib")		// for timeGetTime()
-#endif // _MSC_VER
-
 #include "wiimote.h"
+#include <cmath>
+#include <algorithm>    // std::min
+#include <iterator>     // std::size
+#include <tchar.h>
 #include <setupapi.h>
-extern "C" {
-# ifdef __MINGW32__
-#  include <ddk/hidsdi.h>// from WinDDK
-# else
-#  include <hidsdi.h>
-# endif
-}
+#include <hidsdi.h>
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
 #include <process.h>	// for _beginthreadex()
-#ifdef __BORLANDC__
-# include <cmath.h>		// for orientation
-#else
-# include <math.h>		// "
-#endif
 #include <mmreg.h>		// for WAVEFORMATEXTENSIBLE
 #include <mmsystem.h>	// for timeGetTime()
 
-// apparently not defined in some compilers:
-#ifndef min
-# define min(a,b)	(((a) < (b)) ? (a) : (b))
-#endif
 // ------------------------------------------------------------------------------------
 // helpers
 // ------------------------------------------------------------------------------------
 template<class T> inline T sign  (const T& val)  { return (val<0)? T(-1) : T(1); }
 template<class T> inline T square(const T& val)  { return val*val; }
-#define ARRAY_ENTRIES(array)	(sizeof(array)/sizeof(array[0]))
 
 // ------------------------------------------------------------------------------------
 //  Tracing & Debugging
 // ------------------------------------------------------------------------------------
-#define PREFIX	_T("WiiYourself! : ")
 
-// comment these to auto-strip their code from the library:
-//  (they currently use OutputDebugString() via _TRACE() - change to suit)
-#if (_MSC_VER >= 1400) // VC 2005+ (earlier versions don't support variable args)
-# define TRACE(fmt, ...) _TRACE(PREFIX          fmt          _T("\n"), __VA_ARGS__)
-# define WARN(fmt, ...)  _TRACE(PREFIX _T("* ") fmt _T(" *") _T("\n"), __VA_ARGS__)
-#elif defined(__MINGW32__)
-# define TRACE(fmt, ...) _TRACE(PREFIX          fmt          _T("\n") , ##__VA_ARGS__)
-# define WARN(fmt, ...)  _TRACE(PREFIX _T("* ") fmt _T(" *") _T("\n") , ##__VA_ARGS__)
+static_assert(sizeof(TCHAR) == sizeof(char));
+
+template<typename... xs>
+[[maybe_unused]]
+static void trace_ (const char* fmt, const xs&... args)
+{
+    fprintf(stderr, fmt, args...);
+    fprintf(stderr, "\n");
+    fflush(stderr);
+}
+
+template<typename... xs>
+[[maybe_unused]]
+static inline void disabled_trace_(const char*, const xs&...) {}
+
+#define TRACE trace_
+#define WARN  trace_
+
+#ifndef TRACE
+# define TRACE disabled_trace_
 #endif
+#ifndef DEEP_TRACE
+# define DEEP_TRACE disabled_trace_
+#endif
+#ifndef WARN
+# define WARN disabled_trace_
+#endif
+
 // uncomment any of these for deeper debugging:
-//#define DEEP_TRACE(fmt, ...) _TRACE(PREFIX _T("|") fmt _T("\n"), __VA_ARGS__)    // VC 2005+
-//#define DEEP_TRACE(fmt, ...) _TRACE(PREFIX _T("|") fmt _T("\n") , ##__VA_ARGS__) // mingw
 //#define BEEP_DEBUG_READS
 //#define BEEP_DEBUG_WRITES
 //#define BEEP_ON_ORIENTATION_ESTIMATE
 //#define BEEP_ON_PERIODIC_STATUSREFRESH
 
-// internals: auto-strip code from the macros if they weren't defined
-#ifndef TRACE
-# define TRACE
-#endif
-#ifndef DEEP_TRACE
-# define DEEP_TRACE
-#endif
-#ifndef WARN
-# define WARN
-#endif
-// ------------------------------------------------------------------------------------
-static void _cdecl _TRACE (const TCHAR* fmt, ...)
-	{
-	static TCHAR buffer[256];
-	if (!fmt) return;
-
-	va_list	 argptr;
-	va_start (argptr, fmt);
-#if (_MSC_VER >= 1400) // VC 2005+
-	_vsntprintf_s(buffer, ARRAY_ENTRIES(buffer), _TRUNCATE, fmt, argptr);
-#else
-	_vsntprintf  (buffer, ARRAY_ENTRIES(buffer),			 fmt, argptr);
-#endif
-	va_end (argptr);
-
-	OutputDebugString(buffer);
-	}
-
 // ------------------------------------------------------------------------------------
 //  wiimote
 // ------------------------------------------------------------------------------------
 // class statics
-HMODULE		   wiimote::HidDLL				  = NULL;
-unsigned	   wiimote::_TotalCreated		  = 0;
 unsigned	   wiimote::_TotalConnected		  = 0;
-hidwrite_ptr   wiimote::_HidD_SetOutputReport = NULL;
 
 // (keep in sync with 'speaker_freq'):
 const unsigned wiimote::FreqLookup [TOTAL_FREQUENCIES] = 
@@ -156,23 +118,6 @@ wiimote::wiimote ()
 #endif
 	{
 	_ASSERT(DataRead != INVALID_HANDLE_VALUE);
-				
-	// if this is the first wiimote object, detect & enable HID write support
-	if(++_TotalCreated == 1)
-		{
-		HidDLL = LoadLibrary(_T("hid.dll"));
-		_ASSERT(HidDLL);
-		if(!HidDLL)
-			WARN(_T("Couldn't load hid.dll - shouldn't happen!"));
-		else{
-			_HidD_SetOutputReport = (hidwrite_ptr)
-									GetProcAddress(HidDLL, "HidD_SetOutputReport");
-			if(_HidD_SetOutputReport)
-				TRACE(_T("OS supports HID writes."));
-			else
-				TRACE(_T("OS doesn't support HID writes."));
-			}
-		}
 
 	// clear our public and private state data completely (including deadzones)
 	Clear		  (true);
@@ -197,7 +142,7 @@ wiimote::wiimote ()
 	}
 // ------------------------------------------------------------------------------------
 wiimote::~wiimote ()
-	{
+{
 	Disconnect();
 
 	// events & critical sections are kept open for the lifetime of the object,
@@ -209,16 +154,8 @@ wiimote::~wiimote ()
 	DeleteCriticalSection(&StateLock);
 
 	// tidy up timer accuracy request
-	timeEndPeriod(1);		
-
-	// release HID DLL (for dynamic HID write method)
-	if((--_TotalCreated == 0) && HidDLL)
-		{
-		FreeLibrary(HidDLL);
-		HidDLL				  = NULL;
-		_HidD_SetOutputReport = NULL;
-		}
-	}
+	timeEndPeriod(1);
+}
 
 // ------------------------------------------------------------------------------------
 bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
@@ -343,10 +280,6 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 
 			// autodetect which write method the Bluetooth stack supports,
 			//  by requesting the wiimote status report:
-			if(force_hidwrites && !_HidD_SetOutputReport) {
-				TRACE(_T(".. can't force HID writes (not supported)"));
-				force_hidwrites = false;
-				}
 
 			if(force_hidwrites)
 				TRACE(_T(".. (HID writes forced)"));
@@ -364,7 +297,7 @@ bool wiimote::Connect (unsigned wiimote_index, bool force_hidwrites)
 				}
 
 			// try HID write method (if supported)
-			if(!bStatusReceived && _HidD_SetOutputReport)
+			if(!bStatusReceived)
 				{
 				bUseHIDwrite = true;
 				RequestStatusReport();
@@ -1775,50 +1708,53 @@ int wiimote::ParseReadAddress (BYTE* buff)
 				break;
 				}
 
-			#define IF_TYPE(id)	if(type == id) { \
-									/* sometimes it comes in more than once */ \
-									if(Internal.ExtensionType == wiimote_state::id)\
-										break; \
-									Internal.ExtensionType = wiimote_state::id;
+			#define IF_TYPE(id, ...) /* sometimes it comes in more than once */ \
+			    if(type == id)                                      \
+			    {                                                   \
+                    if(Internal.ExtensionType == wiimote_state::id) \
+                        break;                                      \
+                    Internal.ExtensionType = wiimote_state::id;     \
+                    __VA_ARGS__;                                    \
+                }
 
 			// MotionPlus: once it's activated & mapped to the standard ext. port
-			IF_TYPE(MOTION_PLUS)
+			IF_TYPE(MOTION_PLUS,
 				TRACE(_T(".. Motion Plus!"));
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
 				bMotionPlusDetected = true;
-				}
-			else IF_TYPE(NUNCHUK)
+            )
+			else IF_TYPE(NUNCHUK,
 				TRACE(_T(".. Nunchuk!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(CLASSIC)
+            )
+			else IF_TYPE(CLASSIC,
 				TRACE(_T(".. Classic Controller!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(GH3_GHWT_GUITAR)
+            )
+			else IF_TYPE(GH3_GHWT_GUITAR,
 				// sometimes it comes in more than once?
 				TRACE(_T(".. GH3/GHWT Guitar Controller!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(GHWT_DRUMS)
+            )
+			else IF_TYPE(GHWT_DRUMS,
 				TRACE(_T(".. GHWT Drums!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_EXTENSION_CALIBRATION, 16);
-				}
-			else IF_TYPE(BALANCE_BOARD)
+            )
+			else IF_TYPE(BALANCE_BOARD,
 				TRACE(_T(".. Balance Board!"));
 				bMotionPlusEnabled = false;
 				// and start a query for the calibration data
 				ReadAddress(REGISTER_BALANCE_CALIBRATION, 24);
-				}
+            )
 			else if(type == PARTIALLY_INSERTED) {
 				// sometimes it comes in more than once?
 				if(Internal.ExtensionType == wiimote_state::PARTIALLY_INSERTED)
@@ -1831,13 +1767,12 @@ int wiimote::ParseReadAddress (BYTE* buff)
 				//  status report (this usually fixes it)
 				Internal.bExtension = false;
 				RequestStatusReport();
-				}
-			else{
+			}
+			else
 				TRACE(_T("unknown extension controller found (0x%I64x)"), type);
-				}
 			}
 			break;
-		
+
 		case (REGISTER_EXTENSION_CALIBRATION & 0xffff):
 		case (REGISTER_BALANCE_CALIBRATION   & 0xffff):
 			{
@@ -2042,7 +1977,7 @@ unsigned __stdcall wiimote::HIDwriteThreadfunc (void* param)
 #endif
 			LeaveCriticalSection(&remote.HIDwriteQueueLock);
 
-			if(!_HidD_SetOutputReport(remote.Handle, buff, REPORT_LENGTH))
+			if(!HidD_SetOutputReport(remote.Handle, buff, REPORT_LENGTH))
 				{
 				DWORD err = GetLastError();
 if(err==ERROR_BUSY)
@@ -2308,7 +2243,7 @@ unsigned __stdcall wiimote::SampleStreamThreadfunc (void* param)
 					{
 					// (remember that samples are 4bit, ie. 2 per byte)
 					unsigned samples_left   = (current_sample->length - sample_index);
-					unsigned report_samples = min(samples_left, (unsigned)40);
+					unsigned report_samples = std::min(samples_left, (unsigned)40);
 					// round the entries up to the nearest multiple of 2
 					unsigned report_entries = (report_samples+1) >> 1;
 					
@@ -2470,7 +2405,7 @@ bool wiimote::Load16bitMonoSampleWAV (const TCHAR* filepath, wiimote_sample &out
 			unsigned	   sample_freq = wf.x.nSamplesPerSec;
 			const unsigned epsilon	   = 100; // for now
 			
-			for(unsigned index=1; index<ARRAY_ENTRIES(FreqLookup); index++)
+			for(unsigned index=1; index<std::size(FreqLookup); index++)
 				{
 				if((sample_freq+epsilon) >= FreqLookup[index] &&
 				   (sample_freq-epsilon) <= FreqLookup[index]) {
