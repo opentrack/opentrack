@@ -143,7 +143,7 @@ bool video_property_page::show(int idx)
 
 #elif defined(__linux)
 #   include <QProcess>
-#   include "compat/camera-names.hpp"
+#   include "camera-names.hpp"
 
 bool video_property_page::show(int idx)
 {
