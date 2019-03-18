@@ -13,6 +13,9 @@
 #include <QMessageBox>
 #include <QProcess>
 #include <QStackedLayout>
+#include <QDesktopServices>
+#include <QUrl>
+#include <QPushButton>
 #include <QDebug>
 
 RSTracker::RSTracker() {
@@ -33,9 +36,7 @@ void RSTracker::configurePreviewFrame()
     mImageWidget = new ImageWidget(mPreviewFrame);
     mImageWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-    if(mPreviewFrame->layout() != nullptr){
-        delete mPreviewFrame->layout();
-    }
+    delete mPreviewFrame->layout();
 
     QLayout* layout = new QStackedLayout();
     mPreviewFrame->setLayout(layout);
@@ -85,9 +86,7 @@ void RSTracker::handleTrackingEnded(int exitCode){
 
 bool RSTracker::startSdkInstallationProcess()
 {
-    static const QString contrib_path(OPENTRACK_BASE_PATH + OPENTRACK_CONTRIB_PATH);
-
-	bool pStarted = QProcess::startDetached(contrib_path + "intel_rs_sdk_runtime_websetup_10.0.26.0396.exe", QStringList({ "--finstall=core,face3d","--fnone=all" }));
+    bool pStarted = QDesktopServices::openUrl({"https://software.intel.com/en-us/realsense-sdk-windows-eol"});
     if(!pStarted){
         QMessageBox::warning(nullptr,
                              tr("Intel® RealSense™ Runtime Installation"),
@@ -117,7 +116,7 @@ void RSTracker::showRealSenseErrorMessageBox(int exitCode)
         msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R2 to be installed.");
     }
 
-    QPushButton* triggerSdkInstallation = msgBox.addButton(tr("Install Runtime"), QMessageBox::ActionRole);
+    QPushButton* triggerSdkInstallation = msgBox.addButton(tr("Install SDK 2016 R2 Runtime"), QMessageBox::ActionRole);
     msgBox.addButton(QMessageBox::Ok);
     msgBox.exec();
 
@@ -135,10 +134,8 @@ RSTracker::~RSTracker() {
 
     stopPreview();
 
-    if(mImageWidget!=nullptr)
-        delete mImageWidget;
-
-    if (mPreviewFrame!=nullptr && mPreviewFrame->layout()!=nullptr)
+    delete mImageWidget;
+    if (mPreviewFrame)
         delete mPreviewFrame->layout();
 
     mTrackerWorkerThread.requestInterruption();

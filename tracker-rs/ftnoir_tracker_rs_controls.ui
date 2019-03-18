@@ -2,19 +2,22 @@
 <ui version="4.0">
  <class>UIRSControls</class>
  <widget class="QWidget" name="UIRSControls">
-  <property name="windowModality">
-   <enum>Qt::NonModal</enum>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>484</width>
-    <height>244</height>
+    <width>339</width>
+    <height>155</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>339</width>
+    <height>0</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>RealSense 3D Tracker settings</string>
+   <string>Intel RealSense</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -23,28 +26,17 @@
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
   </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+   <item alignment="Qt::AlignTop">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>There is no configuration available at the moment.
-
-The application will activate your camera for face tracking by the
-Intel® RealSense™ SDK. By design, the application has no direct access
-to any camera images.
-
-In order to use this tracker, you need a PC equipped with an Intel® RealSense™ 
-F200 or SR300 camera and the RealSense™ SDK 2016 R2 runtime.</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to use this tracker, you need a PC equipped with an Intel® RealSense™ F200 or SR300 camera and the RealSense™ &lt;a href=&quot;https://software.intel.com/en-us/realsense-sdk-windows-eol&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;SDK 2016 R2 runtime&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Scroll down to the bottom of the page, choosing &lt;span style=&quot; font-weight:600;&quot;&gt;2016 R2 Full SDK&lt;/span&gt; on the right-hand side. Unfortunately it's necessary to create an account prior to downloading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-    </widget>
-   </item>
-   <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-    <widget class="QPushButton" name="triggerSDKInstallButton">
-     <property name="text">
-      <string>Install Runtime</string>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="openExternalLinks">
+      <bool>true</bool>
      </property>
     </widget>
    </item>

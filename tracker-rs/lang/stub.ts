@@ -24,7 +24,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Install Runtime</source>
+        <source>Install SDK 2016 R2 Runtime</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -38,22 +38,11 @@
 <context>
     <name>UIRSControls</name>
     <message>
-        <source>RealSense 3D Tracker settings</source>
+        <source>Intel RealSense</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>There is no configuration available at the moment.
-
-The application will activate your camera for face tracking by the
-Intel® RealSense™ SDK. By design, the application has no direct access
-to any camera images.
-
-In order to use this tracker, you need a PC equipped with an Intel® RealSense™ 
-F200 or SR300 camera and the RealSense™ SDK 2016 R2 runtime.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Install Runtime</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to use this tracker, you need a PC equipped with an Intel® RealSense™ F200 or SR300 camera and the RealSense™ &lt;a href=&quot;https://software.intel.com/en-us/realsense-sdk-windows-eol&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;SDK 2016 R2 runtime&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Scroll down to the bottom of the page, choosing &lt;span style=&quot; font-weight:600;&quot;&gt;2016 R2 Full SDK&lt;/span&gt; on the right-hand side. Unfortunately it&apos;s necessary to create an account prior to downloading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

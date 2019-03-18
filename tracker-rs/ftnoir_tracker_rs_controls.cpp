@@ -10,15 +10,14 @@
 RSdialog_realsense::RSdialog_realsense()
 {
     ui.setupUi(this);
-    connect(ui.triggerSDKInstallButton, SIGNAL(clicked(bool)), this, SLOT(doInstallRSRuntime()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &QDialog::close);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &QDialog::close);
 }
 
 void RSdialog_realsense::doInstallRSRuntime()
 {
     bool pStarted = RSTracker::startSdkInstallationProcess();
-    if(pStarted == true)
+    if(pStarted)
         close();
 }
 
