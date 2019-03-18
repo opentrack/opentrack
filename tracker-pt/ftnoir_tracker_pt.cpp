@@ -9,6 +9,7 @@
 #include "ftnoir_tracker_pt.h"
 #include "video/video-widget.hpp"
 #include "compat/math-imports.hpp"
+#include "compat/check-visible.hpp"
 
 #include "pt-api.hpp"
 
@@ -102,9 +103,11 @@ void Tracker_PT::run()
 
             if (p[2] > f(.1))
                 preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
-            widget->update_image(preview_frame->get_bitmap());
 
+            if (check_is_visible())
             {
+                widget->update_image(preview_frame->get_bitmap());
+
                 auto [ w, h ] = widget->preview_size();
                 if (w != preview_width || h != preview_height)
                 {
