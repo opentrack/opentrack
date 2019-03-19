@@ -198,11 +198,7 @@ double pipeline::map(double pos, Map& axis)
     return fc.get_value(pos);
 }
 
-//#define NO_NAN_CHECK
 //#define DEBUG_TIMINGS
-
-#ifndef NO_NAN_CHECK
-
 template<int u, int w>
 static inline bool is_nan(const dmat<u,w>& r)
 {
@@ -249,10 +245,6 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
             goto error;                                                                 \
     }                                                                                   \
     while (false)
-
-#else
-#   define nan_check(...) (void)(__VA_ARGS__)
-#endif
 
 bool pipeline::maybe_enable_center_on_tracking_started()
 {
