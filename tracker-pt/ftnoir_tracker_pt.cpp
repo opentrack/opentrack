@@ -57,6 +57,7 @@ void Tracker_PT::run()
     {
         pt_camera_info info;
         bool new_frame = false;
+        const bool preview_visible = check_is_visible();
 
         {
             QMutexLocker l(&camera_mtx);
@@ -67,12 +68,12 @@ void Tracker_PT::run()
 
         if (new_frame)
         {
-            *preview_frame = *frame;
+            if (preview_visible)
+                *preview_frame = *frame;
 
             point_extractor->extract_points(*frame, *preview_frame, points);
             point_count.store(points.size(), std::memory_order_relaxed);
 
-            const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
             const bool success = points.size() >= PointModel::N_POINTS;
 
             Affine X_CM;
@@ -97,15 +98,16 @@ void Tracker_PT::run()
                 X_CM = point_tracker.pose();
             }
 
-            Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
-            Affine X_GH = X_CM * X_MH;
-            vec3 p = X_GH.t; // head (center?) position in global space
-
-            if (p[2] > f(.1))
-                preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
-
-            if (check_is_visible())
+            if (preview_visible)
             {
+                const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
+                Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
+                Affine X_GH = X_CM * X_MH;
+                vec3 p = X_GH.t; // head (center?) position in global space
+
+                if (p[2] > f(.1))
+                    preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
+
                 widget->update_image(preview_frame->get_bitmap());
 
                 auto [ w, h ] = widget->preview_size();
