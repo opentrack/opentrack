@@ -125,7 +125,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
         // if one point is closest to more than one model point, fallback
         if (point_taken[min_idx])
         {
-            init_phase = true;
+            reset_state();
             return find_correspondences(points, model);
         }
         point_taken[min_idx] = true;
@@ -143,9 +143,9 @@ void PointTracker::track(const std::vector<vec2>& points,
     const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointOrder order;
 
-    if (init_phase_timeout <= 0 || t.elapsed_ms() > init_phase_timeout || init_phase)
+    if (init_phase || init_phase_timeout <= 0 || t.elapsed_ms() > init_phase_timeout)
     {
-        init_phase = true;
+        reset_state();
         order = find_correspondences(points.data(), model);
     }
     else
