@@ -40,5 +40,16 @@ if (WIN32 AND opentrack-intel)
 		  DESTINATION "${opentrack-hier-pfx}"
 		  PERMISSIONS ${opentrack-perms-exec}
 		)
+
+        # Optional OpenCV support
+        # Needed for Point Tracker to support Kinect V2 IR Sensor
+        find_package(OpenCV QUIET)
+        if(OpenCV_FOUND)
+            add_definitions(-DOTR_HAVE_OPENCV)
+            target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
+            target_link_libraries(${self} opencv_imgproc opentrack-cv opencv_core opentrack-video)
+        endif()
+
+
 	endif()
 endif()
