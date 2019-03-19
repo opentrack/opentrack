@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Patrick Ruoff
+/* Copyright (c) 2019 Stéphane Lenclud
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -63,6 +63,10 @@ CameraKinectIr::CameraKinectIr()
 }
 
 
+CameraKinectIr::~CameraKinectIr()
+{
+    stop();
+}
 
 bool CameraKinectIr::show_dialog()
 {
@@ -74,25 +78,34 @@ bool CameraKinectIr::is_open()
     return iInfraredFrameReader!=nullptr;
 }
 
+///
+/// Wait until we get a first frame
+///
+void CameraKinectIr::WaitForFirstFrame()
+{
+    bool new_frame = false;
+    int attempts = 100;
+    while (!new_frame && attempts>0)
+    {
+        new_frame = get_frame_(iMatFrame);
+        portable::sleep(100);
+        --attempts;
+    }
+}
 
 
 
 std::tuple<const video::impl::frame&, bool> CameraKinectIr::get_frame()
 {
-    
-
     bool new_frame = false;
-    while (!new_frame)
-    {
-        new_frame = get_frame_(iMatFrame);
-    }
+    new_frame = get_frame_(iMatFrame);
         
     iFrame.data = iMatFrame.ptr();
     iFrame.width = 512;
     iFrame.height = 424;
     iFrame.stride = 0; // Auto step
     iFrame.channels = 3;
-    return { iFrame, true };
+    return { iFrame, new_frame };
 }
 
 // Safe release for interfaces
@@ -143,7 +156,9 @@ bool CameraKinectIr::start(const info& args)
 
     if (SUCCEEDED(hr))
     {
-        return true;
+        WaitForFirstFrame();
+        bool success = iMatFrame.ptr() != nullptr;
+        return success;
     }
 
     stop();
@@ -163,7 +178,9 @@ void CameraKinectIr::stop()
     }
 
     SafeRelease(iKinectSensor);
-  
+
+    // Free up our memory buffer if any
+    iMatFrame = {};  
 }
 
 bool CameraKinectIr::get_frame_(cv::Mat& frame)
