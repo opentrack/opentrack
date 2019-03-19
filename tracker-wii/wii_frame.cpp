@@ -44,7 +44,7 @@ WIIPreview::WIIPreview(int w, int h)
     ensure_size(frame_out, w, h, CV_8UC4);
     ensure_size(frame_copy, w, h, CV_8UC3);
 
-    frame_out.setTo(cv::Scalar(0, 0, 0, 0));
+    frame_copy.setTo(cv::Scalar(0, 0, 0));
 }
 
 QImage WIIPreview::get_bitmap()
