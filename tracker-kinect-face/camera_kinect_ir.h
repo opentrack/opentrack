@@ -7,7 +7,7 @@
 
 #pragma once
 
-#if __has_include(<opencv2/core.hpp>)
+#ifdef OTR_HAVE_OPENCV
 
 #include <Kinect.h>
 
@@ -68,7 +68,7 @@ private:
     cv::Mat iMatFrame;
 };
 
-} // ns pt_module
+}
 
 
 #endif

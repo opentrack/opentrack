@@ -233,11 +233,9 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
                           : cv::Scalar(0, 0, 255);
 
         cv::Point pos(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy));
-        /*
         cv::putText(preview_frame, buf, pos,
                     cv::FONT_HERSHEY_PLAIN, overlay_size, text_color,
                     1);
-                    */
     }
 }
 

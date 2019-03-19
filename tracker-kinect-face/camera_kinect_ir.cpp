@@ -7,18 +7,14 @@
 
 #include "camera_kinect_ir.h"
 
-#if __has_include(<opencv2/core.hpp>)
+#ifdef OTR_HAVE_OPENCV
 
 //#include "frame.hpp"
 
 #include "compat/sleep.hpp"
-//#include "compat/camera-names.hpp"
 #include "compat/math-imports.hpp"
 
 #include <opencv2/imgproc.hpp>
-
-//#include "cv/video-property-page.hpp"
-
 #include <cstdlib>
 
 namespace Kinect {
@@ -54,7 +50,7 @@ namespace Kinect {
         return false;
     }
 
-
+// Register our camera provider thus making sure Point Tracker can use Kinect V2 IR Sensor
 OTR_REGISTER_CAMERA(CamerasProvider)
 
 
@@ -84,7 +80,7 @@ bool CameraKinectIr::is_open()
 void CameraKinectIr::WaitForFirstFrame()
 {
     bool new_frame = false;
-    int attempts = 100;
+    int attempts = 200; // Kinect cold start can take a while
     while (!new_frame && attempts>0)
     {
         new_frame = get_frame_(iMatFrame);
@@ -215,6 +211,7 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             hr = iInfraredFrame->get_FrameDescription(&frameDescription);
         }
 
+        // TODO: should not request those info for a every frame really
         if (SUCCEEDED(hr))
         {
             hr = frameDescription->get_Width(&nWidth);
@@ -240,24 +237,22 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             //ProcessInfrared(nTime, pBuffer, nWidth, nHeight);
 
             // Create an OpenCV matrix with our 16-bits IR buffer
-            cv::Mat raw = cv::Mat(nHeight, nWidth, CV_16UC1, pBuffer); // .clone();
+            cv::Mat raw = cv::Mat(nHeight, nWidth, CV_16UC1, pBuffer);
 
             // Convert that OpenCV matrix to an RGB one as this is what is expected by our point extractor
             // TODO: Ideally we should implement a point extractors that works with our native buffer
-            // First resample to 8-bits
+            // First resample to 8-bits            
             double min = std::numeric_limits<uint16_t>::min();
             double max = std::numeric_limits<uint16_t>::max();
-            // For scalling to have more precission in the range we are interrested in
-            min = max - 255;
             //cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
-
+            // For scalling to have more precission in the range we are interrested in
+            min = max - 255;            
             cv::Mat raw8;
+            // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
             raw.convertTo(raw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
             // Second convert to RGB
             cv::cvtColor(raw8, frame, cv::COLOR_GRAY2BGR);
-            int newType = frame.type();
-
-
+            //
             success = true;
         }
 
@@ -270,6 +265,6 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
 
 
 
-} // ns pt_module
+}
 
 #endif
