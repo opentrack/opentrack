@@ -29,6 +29,11 @@
 #   include <mmsystem.h>
 #endif
 
+//#define DEBUG_TIMINGS
+#ifdef DEBUG_TIMINGS
+#   include "compat/variance.hpp"
+#endif
+
 namespace pipeline_impl {
 
 reltrans::reltrans() = default;
@@ -198,7 +203,6 @@ double pipeline::map(double pos, Map& axis)
     return fc.get_value(pos);
 }
 
-//#define DEBUG_TIMINGS
 template<int u, int w>
 static inline bool is_nan(const dmat<u,w>& r)
 {
@@ -535,18 +539,30 @@ void pipeline::run()
 
 #ifdef DEBUG_TIMINGS
         {
+            static variance v;
+            static Timer tt, t2;
             static int cnt;
-            static Timer tt;
-            if (tt.elapsed_seconds() >= 1)
+
+            v.input(t2.elapsed_ms());
+
+            if (tt.elapsed_ms() >= 1000)
             {
                 tt.start();
-                qDebug() << cnt << "Hz"
-                         << "sleepy time" << sleep_time_ms
-                         << "diff" << ms{elapsed_nsecs}.count() - ms{const_sleep_ms}.count()
-                         << "backlog" << ms{backlog_time}.count();
+                qDebug() << cnt << "Hz,"
+                         << "loop: " "time" << v.avg()
+                         << "stddev:" << v.stddev()
+                         << "backlog" << ms{backlog_time}.count()
+                         << "sleep" << sleep_time_ms << "ms";
+
+                if (v.count() > 256 * 60)
+                    v.clear();
+
                 cnt = 0;
             }
+
             cnt++;
+
+            t2.start();
         }
 #endif
 
