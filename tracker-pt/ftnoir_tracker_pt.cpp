@@ -57,7 +57,6 @@ void Tracker_PT::run()
     {
         pt_camera_info info;
         bool new_frame = false;
-        const bool preview_visible = check_is_visible();
 
         {
             QMutexLocker l(&camera_mtx);
@@ -68,6 +67,8 @@ void Tracker_PT::run()
 
         if (new_frame)
         {
+            const bool preview_visible = check_is_visible();
+
             if (preview_visible)
                 *preview_frame = *frame;
 
