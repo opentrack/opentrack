@@ -21,7 +21,6 @@ WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
 {
     const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
     const cv::Mat& frame = frame_.as_const<const WIIFrame>()->mat;
-    ensure_size(frame_copy, frame_out.cols, frame_out.rows, CV_8UC3);
 
     status = wii.status;
 
@@ -43,6 +42,7 @@ WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
 WIIPreview::WIIPreview(int w, int h)
 {
     ensure_size(frame_out, w, h, CV_8UC4);
+    ensure_size(frame_copy, w, h, CV_8UC3);
 
     frame_out.setTo(cv::Scalar(0, 0, 0, 0));
 }

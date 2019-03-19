@@ -9,7 +9,6 @@ namespace pt_module {
 Preview& Preview::operator=(const pt_frame& frame_)
 {
     const cv::Mat& frame = frame_.as_const<const Frame>()->mat;
-    ensure_size(frame_copy, frame_out.cols, frame_out.rows, CV_8UC3);
 
     if (frame.channels() != 3)
     {
@@ -29,6 +28,7 @@ Preview& Preview::operator=(const pt_frame& frame_)
 Preview::Preview(int w, int h)
 {
     ensure_size(frame_out, w, h, CV_8UC4);
+    ensure_size(frame_copy, w, h, CV_8UC3);
 
     frame_out.setTo(cv::Scalar(0, 0, 0, 0));
 }
