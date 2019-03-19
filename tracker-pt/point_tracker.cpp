@@ -102,9 +102,7 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
     constexpr unsigned sz = PointModel::N_POINTS;
 
     // set correspondences by minimum distance to projected model point
-    bool point_taken[sz];
-    for (unsigned i=0; i < sz; ++i) // NOLINT(modernize-loop-convert)
-        point_taken[i] = false;
+    bool point_taken[sz] {};
 
     for (unsigned i=0; i < sz; ++i)
     {

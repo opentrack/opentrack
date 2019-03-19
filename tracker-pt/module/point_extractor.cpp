@@ -88,8 +88,8 @@ PointExtractor::PointExtractor(const QString& module_name) : s(module_name)
 void PointExtractor::ensure_channel_buffers(const cv::Mat& orig_frame)
 {
     if (ch[0].rows != orig_frame.rows || ch[0].cols != orig_frame.cols)
-        for (unsigned k = 0; k < 3; k++) // NOLINT(modernize-loop-convert)
-            ch[k] = cv::Mat1b(orig_frame.rows, orig_frame.cols);
+        for (cv::Mat1b& x : ch)
+            x = cv::Mat1b(orig_frame.rows, orig_frame.cols);
 }
 
 void PointExtractor::ensure_buffers(const cv::Mat& frame)
