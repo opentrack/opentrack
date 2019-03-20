@@ -69,6 +69,9 @@ bool cam::get_frame_()
             frame_.width = mat.cols;
             frame_.height = mat.rows;
             frame_.stride = mat.step.p[0];
+            if (mat.step.p[0] == (unsigned)frame_.width * mat.elemSize())
+                frame_.stride = cv::Mat::AUTO_STEP;
+
             frame_.channels = mat.channels();
 
             return true;
