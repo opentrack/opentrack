@@ -141,7 +141,7 @@ bool Camera::get_frame_(cv::Mat& img)
             int stride = frame.stride;
             if (stride == 0)
                 stride = cv::Mat::AUTO_STEP;
-            img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
+            img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, stride);
             return true;
         }
     }
