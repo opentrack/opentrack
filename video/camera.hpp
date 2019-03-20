@@ -20,6 +20,8 @@ namespace video
 struct frame final
 {
     unsigned char* data = nullptr;
+    // the `stride' member can have a special value of zero,
+    // signifying equal to width * element size
     int width = 0, height = 0, stride = 0, channels = 0;
 };
 
