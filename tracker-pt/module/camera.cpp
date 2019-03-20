@@ -138,6 +138,9 @@ bool Camera::get_frame_(cv::Mat& img)
         auto [ frame, ret ] = cap->get_frame();
         if (ret)
         {
+            int stride = frame.stride;
+            if (stride == 0)
+                stride = cv::Mat::AUTO_STEP;
             img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
             return true;
         }
