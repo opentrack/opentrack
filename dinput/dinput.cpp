@@ -1,16 +1,45 @@
+#undef NDEBUG
+
 #include "dinput.hpp"
 #include "compat/macros.hpp"
 
+#include <cassert>
+#include <cstdlib>
+
 #include <QDebug>
 
-int di_t::refcnt{0};
 diptr di_t::handle;
 QMutex di_t::lock;
 
-diptr di_t::init_di_()
+diptr di_t::init_di()
 {
     CoInitialize(nullptr);
 
+    if (!handle)
+        handle = init_di_();
+
+    return handle;
+}
+
+diptr di_t::operator->() const
+{
+    QMutexLocker l(&lock);
+    return init_di();
+}
+
+di_t::operator bool() const
+{
+    QMutexLocker l(&lock);
+    return !!init_di();
+}
+
+di_t::operator diptr() const
+{
+    return init_di();
+}
+
+diptr di_t::init_di_()
+{
     diptr di = nullptr;
     HRESULT hr = DirectInput8Create(GetModuleHandle(nullptr),
                                     DIRECTINPUT_VERSION,
@@ -24,45 +53,17 @@ diptr di_t::init_di_()
         std::abort();
     }
 
+    qDebug() << "dinput: initialized";
+
     return di;
 }
 
-di_t::di_t()
-{
-    ref_di();
-}
-
-void di_t::ref_di()
-{
-    QMutexLocker l(&lock);
-
-    if (!handle)
-        handle = init_di_();
-
-    ++refcnt;
-}
-
-void di_t::unref_di()
-{
-    QMutexLocker l(&lock);
-
-    const int refcnt_ = --refcnt;
-
-    if (refcnt_ == 0)
-    {
-        qDebug() << "exit: di handle";
-        handle->Release();
-    }
-}
-
-di_t::~di_t()
-{
-    unref_di();
-}
+di_t::di_t() = default;
 
 bool di_t::poll_device(LPDIRECTINPUTDEVICE8 dev)
 {
     HRESULT hr;
+    assert(handle);
 
     switch (dev->Poll())
     {

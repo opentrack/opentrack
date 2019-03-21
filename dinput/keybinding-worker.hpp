@@ -45,7 +45,7 @@ struct OTR_DINPUT_EXPORT KeybindingWorker : private QThread
     KeybindingWorker& operator=(KeybindingWorker&) = delete;
 
 private:
-    LPDIRECTINPUTDEVICE8 dinkeyboard { nullptr };
+    IDirectInputDevice8A* dinkeyboard = nullptr;
     win32_joy_ctx joy_ctx;
     std::vector<std::unique_ptr<fun>> receivers;
     QMutex mtx;

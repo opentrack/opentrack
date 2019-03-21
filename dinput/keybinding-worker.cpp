@@ -33,7 +33,9 @@ KeybindingWorker::~KeybindingWorker()
 
     requestInterruption();
     wait();
-    if (dinkeyboard) {
+
+    if (dinkeyboard)
+    {
         dinkeyboard->Unacquire();
         dinkeyboard->Release();
     }
@@ -41,29 +43,31 @@ KeybindingWorker::~KeybindingWorker()
 
 bool KeybindingWorker::init()
 {
+    if (dinkeyboard)
+        return true;
+
     if (!din)
     {
         qDebug() << "can't create dinput handle";
-        return false;
+        goto fail;
     }
 
-    if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, nullptr) != DI_OK) {
+    if (din->CreateDevice(GUID_SysKeyboard, &dinkeyboard, nullptr) != DI_OK)
+    {
         qDebug() << "dinput: create keyboard failed" << GetLastError();
-        return false;
+        goto fail;
     }
 
-    if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK) {
+    if (dinkeyboard->SetDataFormat(&c_dfDIKeyboard) != DI_OK)
+    {
         qDebug() << "dinput: keyboard SetDataFormat" << GetLastError();
-        dinkeyboard->Release();
-        dinkeyboard = nullptr;
-        return false;
+        goto fail;
     }
 
-    if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK) {
-        dinkeyboard->Release();
-        dinkeyboard = nullptr;
+    if (dinkeyboard->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND) != DI_OK)
+    {
         qDebug() << "dinput: keyboard SetCooperativeLevel" << GetLastError();
-        return false;
+        goto fail;
     }
 
     {
@@ -73,20 +77,29 @@ bool KeybindingWorker::init()
         dipdw.diph.dwHow = DIPH_DEVICE;
         dipdw.diph.dwObj = 0;
         dipdw.diph.dwSize = sizeof(dipdw);
-        if ( dinkeyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph) != DI_OK)
+
+        if (dinkeyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph) != DI_OK)
         {
             qDebug() << "dinput: DIPROP_BUFFERSIZE";
-            dinkeyboard->Release();
-            dinkeyboard = nullptr;
-            return false;
+            goto fail;
         }
     }
 
     return true;
+
+fail:
+    if (dinkeyboard)
+    {
+        dinkeyboard->Release();
+        dinkeyboard = nullptr;
+    }
+    return false;
 }
 
 KeybindingWorker::KeybindingWorker()
 {
+    fake_main_window.setAttribute(Qt::WA_NativeWindow);
+
     if (init())
         start(QThread::HighPriority);
 }

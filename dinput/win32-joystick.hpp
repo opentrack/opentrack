@@ -87,7 +87,7 @@ private:
     {
         std::vector<QString> all;
         joys_t joys;
-        di_t di {};
+        di_t di;
 
         static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
         static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);
