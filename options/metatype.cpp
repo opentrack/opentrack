@@ -12,15 +12,16 @@ void declare_metatype_for_type(const char* str)
 
 } // ns options::detail
 
-#define OPENTRACK_DEFINE_METATYPE2(t, ctr)                                  \
-    namespace {                 /* NOLINT(cert-dcl59-cpp) */                \
-        [[maybe_unused]]                                                    \
-        static const char ctr = /* NOLINT(misc-definitions-in-headers) */   \
-            (::options::detail::declare_metatype_for_type<t>(#t), 0);       \
-    } // anon ns
+#define OPENTRACK_DEFINE_METATYPE3(t, ctr)                              \
+    static                                                              \
+    const char init_##ctr = /* NOLINT(misc-definitions-in-headers) */   \
+        (::options::detail::declare_metatype_for_type<t>(#t), 0);       \
+
+#define OPENTRACK_DEFINE_METATYPE2(t, ctr) \
+    OPENTRACK_DEFINE_METATYPE3(t, ctr)
 
 #define OPENTRACK_DEFINE_METATYPE(t) \
-    OPENTRACK_DEFINE_METATYPE2(t, PP_CAT(kipple_, __COUNTER__))
+    OPENTRACK_DEFINE_METATYPE2(t, __COUNTER__)
 
 #define OPENTRACK_METATYPE_(x) OPENTRACK_DEFINE_METATYPE(x)
 #include "metatype.hpp"

@@ -42,6 +42,7 @@
 
 #ifdef __cplusplus
 #   define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
+#   define eval_once2(expr, ctr) eval_once3(expr, ctr)
+#   define eval_once3(expr, ctr) ([&] { [[maybe_unused]] static const char init_ ## ctr = ((void)(expr), 0); }())
 #   define eval_once(expr) eval_once2(expr, __COUNTER__)
-#   define eval_once2(expr, ctr) ([&] { [[maybe_unused]] static auto init ## ctr = (((void)(expr)), 0); }())
 #endif

@@ -67,17 +67,14 @@ void register_camera(std::unique_ptr<impl::camera_> metadata);
 
 } // ns video::impl
 
-#define OTR_REGISTER_CAMERA2(type, ctr)                                     \
-    namespace {                                                             \
-        struct init_##ctr                                                   \
-        {                                                                   \
-            static char fuzz;                                               \
-        };                                                                  \
-        char init_##ctr :: fuzz =                                           \
-            (::video::impl::register_camera(std::make_unique<type>()), 0);  \
-    } // anon ns
+#define OTR_REGISTER_CAMERA3(type, ctr)                                 \
+    static const char init_ ## ctr =                                    \
+        (::video::impl::register_camera(std::make_unique<type>()), 0);
 
-#define OTR_REGISTER_CAMERA(type)                                           \
+#define OTR_REGISTER_CAMERA2(type, ctr) \
+    OTR_REGISTER_CAMERA3(type, ctr)
+
+#define OTR_REGISTER_CAMERA(type) \
     OTR_REGISTER_CAMERA2(type, __COUNTER__)
 
 namespace video

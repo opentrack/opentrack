@@ -57,19 +57,14 @@ namespace detail {
     };
 }
 
-#ifndef __COUNTER__
-#   error "oops, need __COUNTER__ extension for preprocessor"
-#endif
+#define OPENTRACK_MIGRATION3(type, ctr) \
+    static const char init_##ctr = (::migrations::detail::registrator<type>{}, 0);
 
-#define MIGRATE_EXPAND2(x) x
-#define MIGRATE_EXPAND1(x) MIGRATE_EXPAND2(x)
-#define MIGRATE_EXPANDED2(type, ctr) \
-    static ::migrations::detail::registrator<type> opentrack_migration_registrator_ ## ctr
-#define MIGRATE_EXPANDED1(type, ctr) \
-    MIGRATE_EXPANDED2(type, ctr)
+#define OPENTRACK_MIGRATION2(type, ctr) \
+    OPENTRACK_MIGRATION3(type, ctr)
 
 #define OPENTRACK_MIGRATION(type) \
-    MIGRATE_EXPANDED1(type, MIGRATE_EXPAND1(__COUNTER__))
+    OPENTRACK_MIGRATION2(type, __COUNTER__)
 
 struct migration
 {
