@@ -13,6 +13,8 @@ QMutex di_t::lock;
 
 diptr di_t::init_di()
 {
+    QMutexLocker l(&lock);
+
     CoInitialize(nullptr);
 
     if (!handle)
@@ -23,13 +25,11 @@ diptr di_t::init_di()
 
 diptr di_t::operator->() const
 {
-    QMutexLocker l(&lock);
     return init_di();
 }
 
 di_t::operator bool() const
 {
-    QMutexLocker l(&lock);
     return !!init_di();
 }
 
