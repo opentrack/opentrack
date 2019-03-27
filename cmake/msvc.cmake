@@ -20,6 +20,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
 set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 4702 4457)
 
+add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
 add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
 add_definitions(-D_ENABLE_ATOMIC_ALIGNMENT_FIX)
 add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
