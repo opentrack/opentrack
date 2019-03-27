@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Resources/cap_front.png</file>
+        <file>Resources/cap_side.png</file>
+        <file>Resources/clip_front.png</file>
+        <file>Resources/clip_side.png</file>
+    </qresource>
+</RCC>
