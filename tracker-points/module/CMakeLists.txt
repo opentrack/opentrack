@@ -1,0 +1,6 @@
+find_package(OpenCV QUIET)
+if(OpenCV_FOUND)
+    otr_module(tracker-points)
+    target_link_libraries(${self} opentrack-tracker-points-base)
+    target_include_directories(${self} PUBLIC "${CMAKE_SOURCE_DIR}/tracker-pt")
+endif()
