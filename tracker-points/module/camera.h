@@ -35,6 +35,7 @@ struct Camera final : pt_camera
 
     void set_fov(f value) override { fov = value; }
     void show_camera_settings() override;
+    
 
 private:
     using camera = typename video::impl::camera;
@@ -47,6 +48,7 @@ private:
     pt_camera_info cam_desired;
 
     std::unique_ptr<camera> cap;
+    
     pt_settings s;
 
     static constexpr f dt_eps = f{1}/256;

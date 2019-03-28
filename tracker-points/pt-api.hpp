@@ -4,6 +4,7 @@
 
 #include "cv/numeric.hpp"
 #include "options/options.hpp"
+#include "video/camera.hpp"
 
 #include <tuple>
 #include <type_traits>
@@ -87,6 +88,8 @@ struct pt_camera
 
     virtual void set_fov(f value) = 0;
     virtual void show_camera_settings() = 0;
+
+    video::impl::camera::info info;
 };
 
 struct pt_point_extractor : pt_pixel_pos_mixin

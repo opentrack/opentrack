@@ -96,7 +96,6 @@ bool Camera::start(const QString& name, int fps, int res_x, int res_y)
             if (!cap)
                 goto fail;
 
-            camera::info info {};
             info.fps = fps;
             info.width = res_x;
             info.height = res_y;

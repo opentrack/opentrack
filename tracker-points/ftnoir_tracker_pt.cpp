@@ -18,6 +18,8 @@
 #include <QFile>
 #include <QCoreApplication>
 
+#include <opencv2\calib3d.hpp>
+
 using namespace options;
 
 namespace pt_impl {
@@ -93,6 +95,42 @@ void Tracker_PT::run()
                                         info,
                                         dynamic_pose_ms);
                     ever_success.store(true, std::memory_order_relaxed);
+
+                    // TODO: Solve with OpenCV
+
+                    std::vector<cv::Point3f> objectPoints;
+                    //TODO: Stuff object points in that vector
+                    std::vector<cv::Point2f> trackedPoints;
+                    //TODO: Stuff bitmap point in there making sure they match the order of the object point
+
+                    // Create our camera matrix
+                    // TODO: Just do that once, use data memeber instead
+                    // Double or Float?
+                    cv::Mat cameraMatrix;
+                    cameraMatrix.create(3, 3, CV_64FC1);
+                    cameraMatrix.setTo(cv::Scalar(0));
+                    cameraMatrix.at<double>(0, 0) = camera->info.focalLengthX;
+                    cameraMatrix.at<double>(1, 1) = camera->info.focalLengthX;
+                    cameraMatrix.at<double>(0, 2) = camera->info.principalPointX;
+                    cameraMatrix.at<double>(1, 2) = camera->info.principalPointY;
+                    cameraMatrix.at<double>(2, 2) = 1;
+
+                    // Create distortion cooefficients
+                    cv::Mat distCoeffs = cv::Mat::zeros(4, 1, CV_64FC1);
+                    for (int i = 0; i < 3; i++)
+                    {
+                        // Put in proper values
+                        distCoeffs.at<double>(i, 0) = 0;
+                    }
+
+                    std::vector<cv::Mat> rvecs, tvecs;
+
+                    // TODO: try SOLVEPNP_AP3P too 
+                    int num_of_solutions = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, rvecs, tvecs, cv::SOLVEPNP_P3P);
+
+
+
+
                 }
 
                 QMutexLocker l2(&data_lock);
