@@ -41,7 +41,7 @@ struct axis_signs_split_rc11 : migration
     void run() override;
 };
 
-OPENTRACK_MIGRATION(axis_signs_split_rc11);
+OPENTRACK_MIGRATION(axis_signs_split_rc11)
 
 bool axis_signs_split_rc11::should_run() const
 {

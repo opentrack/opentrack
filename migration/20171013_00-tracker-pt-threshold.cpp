@@ -49,4 +49,4 @@ struct move_int_to_slider : migration
     }
 };
 
-OPENTRACK_MIGRATION(move_int_to_slider);
+OPENTRACK_MIGRATION(move_int_to_slider)

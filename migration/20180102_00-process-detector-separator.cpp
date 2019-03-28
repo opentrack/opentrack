@@ -46,4 +46,4 @@ struct process_detector_record_separator : migration
     }
 };
 
-OPENTRACK_MIGRATION(process_detector_record_separator);
+OPENTRACK_MIGRATION(process_detector_record_separator)

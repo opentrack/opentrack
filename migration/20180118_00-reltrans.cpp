@@ -41,4 +41,4 @@ struct reltrans_enum : migration
     }
 };
 
-OPENTRACK_MIGRATION(reltrans_enum);
+OPENTRACK_MIGRATION(reltrans_enum)

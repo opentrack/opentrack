@@ -17,7 +17,7 @@ struct module_names : migration
         dylib_list const& list;
     };
 
-    Modules m { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH };
+    Modules m { OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH, dylib_load_quiet };
 
     module_type types[3] {
         { "tracker-dll", "pt", m.trackers() },
@@ -89,4 +89,4 @@ struct module_names : migration
     }
 };
 
-OPENTRACK_MIGRATION(module_names);
+OPENTRACK_MIGRATION(module_names)

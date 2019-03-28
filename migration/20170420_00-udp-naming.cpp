@@ -51,4 +51,4 @@ struct rename_udp_stuff : migration
     }
 };
 
-OPENTRACK_MIGRATION(rename_udp_stuff);
+OPENTRACK_MIGRATION(rename_udp_stuff)

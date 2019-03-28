@@ -64,4 +64,4 @@ struct split_modules_rc11 : migration
     }
 };
 
-OPENTRACK_MIGRATION(split_modules_rc11);
+OPENTRACK_MIGRATION(split_modules_rc11)

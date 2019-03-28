@@ -67,4 +67,4 @@ struct max_pitch_output : migration
     }
 };
 
-OPENTRACK_MIGRATION(max_pitch_output);
+OPENTRACK_MIGRATION(max_pitch_output)

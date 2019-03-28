@@ -113,4 +113,4 @@ struct mappings_from_2_3_0_rc11 : migration
     }
 };
 
-OPENTRACK_MIGRATION(mappings_from_2_3_0_rc11);
+OPENTRACK_MIGRATION(mappings_from_2_3_0_rc11)
