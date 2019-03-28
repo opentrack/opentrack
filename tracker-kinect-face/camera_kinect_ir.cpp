@@ -238,7 +238,7 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             //ProcessInfrared(nTime, pBuffer, nWidth, nHeight);
 
             // Create an OpenCV matrix with our 16-bits IR buffer
-            cv::Mat raw = cv::Mat(nHeight, nWidth, CV_16UC1, pBuffer);
+            cv::Mat raw = cv::Mat(height, width, CV_16UC1, pBuffer, cv::Mat::AUTO_STEP);
 
             // Convert that OpenCV matrix to an RGB one as this is what is expected by our point extractor
             // TODO: Ideally we should implement a point extractors that works with our native buffer
@@ -248,7 +248,6 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             //cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
             // For scalling to have more precission in the range we are interrested in
             min = max - 255;            
-            cv::Mat raw8;
             // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
             raw.convertTo(raw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
             // Second convert to RGB
