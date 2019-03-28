@@ -13,13 +13,12 @@
 #include <memory>
 #include <algorithm>
 #include <cstring>
+#include <vector>
 
 #include <QDebug>
 #include <QString>
 #include <QLibrary>
-#include <QList>
 #include <QDir>
-#include <QList>
 #include <QIcon>
 
 extern "C" {
@@ -27,19 +26,26 @@ extern "C" {
     using module_metadata_t = Metadata_* (*)(void);
 }
 
+enum dylib_load_mode : unsigned
+{
+    dylib_load_norm  = 0,
+    dylib_load_quiet = 1 << 0,
+    dylib_load_none  = 1 << 1,
+};
+
+enum class dylib_type : unsigned
+{
+    Filter    = 0xdeadbabe,
+    Tracker   = 0xcafebeef,
+    Protocol  = 0xdeadf00d,
+    Extension = 0xcafebabe,
+    Video     = 0xbadf00d,
+    Invalid   = (unsigned)-1,
+};
+
 struct dylib final
 {
-    enum Type : unsigned
-    {
-        Filter = 0xdeadbabe,
-        Tracker = 0xcafebeef,
-        Protocol = 0xdeadf00d,
-        Extension = 0xcafebabe,
-        Video = 0xbadf00d,
-        Invalid = (unsigned)-1,
-    };
-
-    dylib(const QString& filename_, Type t, bool load = true) :
+    dylib(const QString& filename_, dylib_type t, dylib_load_mode load_mode = dylib_load_norm) :
         full_filename(filename_),
         module_name(trim_filename(filename_))
     {
@@ -55,91 +61,70 @@ struct dylib final
 #   pragma clang diagnostic ignored "-Wcomma"
 #endif
 
-        if (check(!handle.load()))
-            return;
+        if (!handle.load())
+            goto fail;
 
-        if (load)
+        if (!(load_mode & dylib_load_none))
         {
-            if (check((Dialog = (module_ctor_t) handle.resolve("GetDialog"), !Dialog)))
-                return;
+            std::unique_ptr<Metadata_> m;
 
-            if (check((Constructor = (module_ctor_t) handle.resolve("GetConstructor"), !Constructor)))
-                return;
+            if (Dialog = (module_ctor_t) handle.resolve("GetDialog"), !Dialog)
+                goto fail;
 
-            if (check((Meta = (module_metadata_t) handle.resolve("GetMetadata"), !Meta)))
-                return;
+            if (Constructor = (module_ctor_t) handle.resolve("GetConstructor"), !Constructor)
+                goto fail;
 
-            std::unique_ptr<Metadata_> m{Meta()};
+            if (Meta = (module_metadata_t) handle.resolve("GetMetadata"), !Meta)
+                goto fail;
 
-            if (check(!m))
-                return;
+            m = std::unique_ptr<Metadata_>(Meta());
+
+            if (!m)
+            {
+                if (!(load_mode & dylib_load_quiet))
+                {
+                    qDebug() << "library" << module_name << "failed: no metadata";
+                    load_mode = dylib_load_quiet;
+                }
+                goto fail;
+            }
 
             icon = m->icon();
             name = m->name();
         }
 
         type = t;
+
+        return;
 #ifdef __clang__
 #   pragma clang diagnostic pop
 #endif
+
+fail:
+        if (!(load_mode & dylib_load_quiet))
+            qDebug() << "library" << module_name << "failed:" << handle.errorString();
+
+        Constructor = nullptr;
+        Dialog = nullptr;
+        Meta = nullptr;
+
+        type = dylib_type::Invalid;
     }
 
     // QLibrary refcounts the .dll's so don't forcefully unload
     ~dylib() = default;
 
-    static QList<std::shared_ptr<dylib>> enum_libraries(const QString& library_path)
-    {
-        QDir module_directory(library_path);
-        QList<std::shared_ptr<dylib>> ret;
-
-        const struct filter_ {
-            Type type{Invalid};
-            QString glob;
-            bool load = true;
-        } filters[] = {
-            { Filter, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Tracker, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Protocol, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Extension, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION), },
-            { Video, QStringLiteral(OPENTRACK_LIBRARY_PREFIX "opentrack-video-*." OPENTRACK_LIBRARY_EXTENSION), false, },
-        };
-
-        for (const filter_& filter : filters)
-        {
-            for (const QString& filename : module_directory.entryList({ filter.glob }, QDir::Files, QDir::Name))
-            {
-                auto lib = std::make_shared<dylib>(QStringLiteral("%1/%2").arg(library_path, filename), filter.type, filter.load);
-
-                if (lib->type == Invalid)
-                    continue;
-
-                if (std::any_of(ret.cbegin(),
-                                ret.cend(),
-                                [&lib](const std::shared_ptr<dylib>& a) {
-                                    return a->type == lib->type && a->name == lib->name;
-                                }))
-                {
-                    qDebug() << "duplicate lib" << filename << "ident" << lib->name;
-                    continue;
-                }
-
-                ret.push_back(lib);
-            }
-        }
-
-        return ret;
-    }
-
-    Type type{Invalid};
+    dylib_type type = dylib_type::Invalid;
     QString full_filename;
     QString module_name;
 
     QIcon icon;
     QString name;
 
-    module_ctor_t Dialog{nullptr};
-    module_ctor_t Constructor{nullptr};
-    module_metadata_t Meta{nullptr};
+    module_ctor_t Dialog = nullptr;
+    module_ctor_t Constructor = nullptr;
+    module_metadata_t Meta = nullptr;
+
 private:
     QLibrary handle;
 
@@ -180,36 +165,21 @@ private:
         }
         return {""};
     }
-
-    bool check(bool fail)
-    {
-        if (fail)
-        {
-            qDebug() << "library" << module_name << "failed:" << handle.errorString();
-
-            Constructor = nullptr;
-            Dialog = nullptr;
-            Meta = nullptr;
-
-            type = Invalid;
-        }
-
-        return fail;
-    }
 };
 
 struct Modules final
 {
     using dylib_ptr = std::shared_ptr<dylib>;
-    using dylib_list = QList<dylib_ptr>;
+    using dylib_list = std::vector<dylib_ptr>;
+    using type = dylib_type;
 
-    Modules(const QString& library_path) :
-        module_list(dylib::enum_libraries(library_path)),
-        filter_modules(filter(dylib::Filter)),
-        tracker_modules(filter(dylib::Tracker)),
-        protocol_modules(filter(dylib::Protocol)),
-        extension_modules(filter(dylib::Extension)),
-        video_modules(filter(dylib::Video))
+    Modules(const QString& library_path, dylib_load_mode load_mode = dylib_load_norm) :
+        module_list(enum_libraries(library_path, load_mode)),
+        filter_modules(filter(type::Filter)),
+        tracker_modules(filter(type::Tracker)),
+        protocol_modules(filter(type::Protocol)),
+        extension_modules(filter(type::Extension)),
+        video_modules(filter(type::Video))
     {}
     dylib_list& filters() { return filter_modules; }
     dylib_list& trackers() { return tracker_modules; }
@@ -226,18 +196,67 @@ private:
 
     static dylib_list& sorted(dylib_list& xs)
     {
-        std::sort(xs.begin(), xs.end(), [&](const dylib_ptr& a, const dylib_ptr& b) { return a->name.toLower() < b->name.toLower(); });
+        std::sort(xs.begin(), xs.end(),
+                  [&](const dylib_ptr& a, const dylib_ptr& b) {
+                      return a->name.toLower() < b->name.toLower();
+        });
         return xs;
     }
 
-    dylib_list filter(dylib::Type t)
+    dylib_list filter(dylib_type t)
     {
-        QList<std::shared_ptr<dylib>> ret;
+        dylib_list ret; ret.reserve(module_list.size());
         for (const auto& x : module_list)
             if (x->type == t)
                 ret.push_back(x);
 
         return sorted(ret);
+    }
+
+    static dylib_list enum_libraries(const QString& library_path,
+                                     dylib_load_mode load_mode = dylib_load_norm)
+    {
+        QDir dir(library_path);
+        dylib_list ret;
+
+        const struct filter_ {
+            type type = type::Invalid;
+            QString glob;
+            dylib_load_mode load_mode = dylib_load_norm;
+        } filters[] = {
+            { type::Filter, OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION, },
+            { type::Tracker, OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION, },
+            { type::Protocol, OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION, },
+            { type::Extension, OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION, },
+            { type::Video, OPENTRACK_LIBRARY_PREFIX "opentrack-video-*." OPENTRACK_LIBRARY_EXTENSION, dylib_load_none, },
+        };
+
+        for (const filter_& filter : filters)
+        {
+            for (const QString& filename : dir.entryList({ filter.glob }, QDir::Files, QDir::Name))
+            {
+                dylib_load_mode load_mode_{filter.load_mode | load_mode};
+                auto lib = std::make_shared<dylib>(QString("%1/%2").arg(library_path, filename), filter.type, load_mode_);
+
+                if (lib->type == type::Invalid)
+                    continue;
+
+                if (std::any_of(ret.cbegin(),
+                                ret.cend(),
+                                [&lib](const std::shared_ptr<dylib>& a) {
+                                    return a->type == lib->type && a->name == lib->name;
+                                }))
+                {
+                    if (!(load_mode & dylib_load_quiet))
+                        qDebug() << "duplicate lib" << filename << "ident" << lib->name;
+                    continue;
+                }
+
+                ret.push_back(std::move(lib));
+            }
+        }
+
+        return ret;
     }
 };
 

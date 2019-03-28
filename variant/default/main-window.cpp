@@ -77,7 +77,8 @@ void main_window::init_dylibs()
     using dylib_ptr = Modules::dylib_ptr;
     using dylib_list = Modules::dylib_list;
 
-    modules.filters().push_front(std::make_shared<dylib>("", dylib::Filter));
+    modules.filters().insert(modules.filters().begin(),
+                             std::make_shared<dylib>("", dylib_type::Filter));
 
     for (dylib_ptr& x : modules.trackers())
         ui.iconcomboTrackerSource->addItem(x->icon, x->name, x->module_name);
