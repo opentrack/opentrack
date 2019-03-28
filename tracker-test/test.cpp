@@ -15,69 +15,49 @@
 #include <cmath>
 #include <QDebug>
 
-const double test_tracker::incr[6] =
+static const double incr[3] =
 {
-    50, 40, 80,
-    70, 5, 3
+    10, 5, 3
+};
+
+static const double max_values[3] = {
+    180, 2, 3,
 };
 
 test_tracker::test_tracker() = default;
-
 test_tracker::~test_tracker() = default;
 
 module_status test_tracker::start_tracker(QFrame*)
 {
     t.start();
-
-    return status_ok();
+    return {};
 }
-
-#ifdef EMIT_NAN
-#   include <cstdlib>
-#endif
 
 void test_tracker::data(double *data)
 {
     const double dt = t.elapsed_seconds();
     t.start();
 
-#ifdef EMIT_NAN
-    if ((rand()%4) == 0)
+    for (int i = 0; i < 3; i++)
     {
-        for (int i = 0; i < 6; i++)
-            data[i] = 0./0.;
+        double last_ = last[i];
+        double max = max_values[i] * 2;
+        double incr_ = incr[i];
+        double x = fmod(last_ + incr_ * dt, max);
+        last[i] = x;
+        if (x > max_values[i])
+            x = -max + x;
+        data[i+3] = x;
     }
-    else
-#endif
-        for (int i = 0; i < 6; i++)
-        {
-            double x = last_x[i] + incr[i] * dt;
-            if (x > 180)
-                x = -360 + x;
-            else if (x < -180)
-                x = 360 + x;
-            x = copysign(fmod(fabs(x), 360), x);
-            last_x[i] = x;
-
-            if (i >= 3)
-            {
-                data[i] = x;
-            }
-            else
-            {
-                data[i] = x * 100/180.;
-            }
-        }
 }
 
-test_dialog::test_dialog()
+test_dialog::test_dialog() // NOLINT(cppcoreguidelines-pro-type-member-init)
 {
     ui.setupUi(this);
 
     connect(ui.buttonBox, &QDialogButtonBox::clicked, [this](QAbstractButton* btn) {
         if (btn == ui.buttonBox->button(QDialogButtonBox::Abort))
-            // NOLINTNEXTLINE
-            *(volatile int*)nullptr = 0;
+            *(volatile int*)nullptr /*NOLINT*/ = 0;
     });
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));

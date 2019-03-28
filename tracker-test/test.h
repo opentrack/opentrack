@@ -15,8 +15,7 @@ public:
     void data(double *data) override;
 
 private:
-    static const double incr[6];
-    double last_x[6] {};
+    double last[6] {};
     Timer t;
 };
 
