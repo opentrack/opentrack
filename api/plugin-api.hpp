@@ -16,8 +16,8 @@
 #include <QDialog>
 #include <QCoreApplication>
 
-#include "compat/simple-mat.hpp"
-#include "compat/tr.hpp"
+#include "../compat/simple-mat.hpp"
+#include "../compat/tr.hpp"
 #include "export.hpp"
 
 using Pose = Mat<double, 6, 1>;
