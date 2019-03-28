@@ -124,7 +124,6 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 
-    add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     add_definitions(-D_HAS_EXCEPTIONS=0)
 
     add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
