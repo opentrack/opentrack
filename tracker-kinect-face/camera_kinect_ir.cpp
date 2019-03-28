@@ -198,34 +198,40 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
     if (SUCCEEDED(hr))
     {
         INT64 nTime = 0;
-        IFrameDescription* frameDescription = NULL;
-        int nWidth = 0;
-        int nHeight = 0;
-        float diagonalFieldOfView = 0.0f;
         UINT nBufferSize = 0;
         UINT16 *pBuffer = NULL;
 
         hr = iInfraredFrame->get_RelativeTime(&nTime);
 
-        if (SUCCEEDED(hr))
+        if (first_frame)
         {
-            hr = iInfraredFrame->get_FrameDescription(&frameDescription);
-        }
+            IFrameDescription* frameDescription = NULL;
 
-        // TODO: should not request those info for a every frame really
-        if (SUCCEEDED(hr))
-        {
-            hr = frameDescription->get_Width(&nWidth);
-        }
+            if (SUCCEEDED(hr))
+            {
+                hr = iInfraredFrame->get_FrameDescription(&frameDescription);
+            }
 
-        if (SUCCEEDED(hr))
-        {
-            hr = frameDescription->get_Height(&nHeight);
-        }
+            // TODO: should not request those info for a every frame really
+            if (SUCCEEDED(hr))
+            {
+                hr = frameDescription->get_Width(&width);
+            }
 
-        if (SUCCEEDED(hr))
-        {
-            hr = frameDescription->get_DiagonalFieldOfView(&diagonalFieldOfView);
+            if (SUCCEEDED(hr))
+            {
+                hr = frameDescription->get_Height(&height);
+            }
+
+            if (SUCCEEDED(hr))
+            {
+                hr = frameDescription->get_DiagonalFieldOfView(&fov);
+            }
+
+            if (SUCCEEDED(hr))
+                first_frame = false;
+
+            SafeRelease(frameDescription);
         }
         
         if (SUCCEEDED(hr))
@@ -255,8 +261,6 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             //
             success = true;
         }
-
-        SafeRelease(frameDescription);
     }
 
 

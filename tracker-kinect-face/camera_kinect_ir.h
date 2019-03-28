@@ -68,6 +68,10 @@ private:
     video::frame iFrame;
     cv::Mat iMatFrame;
     cv::Mat raw8;
+
+    float fov = 0;
+    int width = 0, height = 0;
+    bool first_frame = true;
 };
 
 }
