@@ -103,7 +103,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     bool tracking_started = false;
 
-    double map(double pos, Map& axis);
+    static double map(double pos, Map& axis);
     void logic();
     void run() override;
     bool maybe_enable_center_on_tracking_started();
