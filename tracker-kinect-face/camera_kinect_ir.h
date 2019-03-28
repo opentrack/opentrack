@@ -67,6 +67,7 @@ private:
 
     video::frame iFrame;
     cv::Mat iMatFrame;
+    cv::Mat raw8;
 };
 
 }
