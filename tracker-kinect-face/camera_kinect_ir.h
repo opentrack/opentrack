@@ -42,7 +42,7 @@ namespace Kinect {
 struct CameraKinectIr final : video::impl::camera
 {
     CameraKinectIr();
-    virtual ~CameraKinectIr();
+    ~CameraKinectIr() override;
 
 
     [[nodiscard]] bool start(const info& args) override;
