@@ -175,7 +175,7 @@ void CameraKinectIr::stop()
     SafeRelease(iKinectSensor);
 
     // Free up our memory buffer if any
-    iMatFrame = {};  
+    iMatFrame = cv::Mat();
 }
 
 bool CameraKinectIr::get_frame_(cv::Mat& frame)
