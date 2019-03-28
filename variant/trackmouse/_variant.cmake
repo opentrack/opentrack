@@ -16,6 +16,7 @@ function(otr_init_variant)
         "migration"
         "executable"
         "pose-widget"
+        "trackmouse"
     )
     set_property(GLOBAL PROPERTY opentrack-subprojects "${subprojects}")
 endfunction()
