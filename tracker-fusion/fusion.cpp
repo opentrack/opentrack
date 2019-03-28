@@ -19,7 +19,7 @@ static const char* own_name = "fusion";
 
 static auto get_modules()
 {
-    return Modules(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
+    return Modules(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH, dylib_load_quiet);
 }
 
 fusion_tracker::fusion_tracker() = default;
