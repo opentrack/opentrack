@@ -287,22 +287,6 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
     }
 }
 
-Pose pipeline::clamp_value(Pose value) const
-{
-    // hatire, udp, and freepie trackers can mess up here
-    for (unsigned i = 3; i < 6; i++)
-    {
-        value(i) = std::fmod(value(i), 360);
-
-        const double x = value(i);
-        if (std::fabs(x) - 1e-2 > 180)
-            value(i) = std::fmod(x + std::copysign(180, x), 360) - std::copysign(180, x);
-        value(i) = clamp(x, -180, 180);
-    }
-
-    return value;
-}
-
 Pose pipeline::apply_center(Pose value) const
 {
     // this is incorrect but people like it
@@ -406,12 +390,10 @@ void pipeline::logic()
 
     nan_check(newpose, raw, value);
 
-    value = clamp_value(value);
-
     {
         maybe_enable_center_on_tracking_started();
         maybe_set_center_pose(value, own_center_logic);
-        value = clamp_value(apply_center(value));
+        value = apply_center(value);
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
