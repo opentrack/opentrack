@@ -98,7 +98,7 @@ std::tuple<const video::impl::frame&, bool> CameraKinectIr::get_frame()
     iFrame.data = iMatFrame.ptr();
     iFrame.width = 512;
     iFrame.height = 424;
-    iFrame.stride = 0; // Auto step
+    iFrame.stride = cv::Mat::AUTO_STEP;
     iFrame.channels = 3;
     return { iFrame, new_frame };
 }
