@@ -38,7 +38,7 @@ class test_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("Testing - sine wave"); }
-    QIcon icon() { return QIcon(":/images/opentrack.png"); }
+    QString name() override { return tr("Test tracker"); }
+    QIcon icon() override { return QIcon(":/images/opentrack.png"); }
 };
 

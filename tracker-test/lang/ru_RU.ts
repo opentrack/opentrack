@@ -4,7 +4,7 @@
 <context>
     <name>test_metadata</name>
     <message>
-        <source>Testing - sine wave</source>
+        <source>Test tracker</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
