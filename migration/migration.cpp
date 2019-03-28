@@ -50,15 +50,13 @@ void migrator::register_migration(mptr const& m)
 
     bool ok = true;
 
-    if (year < "2016")
-        abort();
 
     const int month_ = to_int(month, ok), day_ = to_int(day, ok);
 
     (void) to_int(year, ok);
     (void) to_int(serial, ok);
 
-    if (!ok)
+    if (!ok || year < 1970)
         abort();
 
     if (month_ < 1 || month_ > 12)
