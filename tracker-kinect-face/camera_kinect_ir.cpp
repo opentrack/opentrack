@@ -36,9 +36,7 @@ namespace Kinect {
 
     std::vector<QString> CamerasProvider::camera_names() const
     {
-        std::vector<QString> cameras;
-        cameras.push_back(KKinectIRSensor);
-        return cameras;
+        return { KKinectIRSensor };
     }
 
     bool CamerasProvider::can_show_dialog(const QString& camera_name)
