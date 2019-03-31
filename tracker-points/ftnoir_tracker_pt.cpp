@@ -233,26 +233,39 @@ void Tracker_PT::run()
 
                     // Define our solution arrays
                     // They will receive up to 4 solutions for our P3P problem
-                    std::vector<cv::Mat> rvecs, tvecs;
+                    
 
-                    // TODO: try SOLVEPNP_AP3P too 
-                    int solutionCount = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, rvecs, tvecs, cv::SOLVEPNP_P3P);
+                    // TODO: try SOLVEPNP_AP3P too
+                    iAngles.clear();
+                    iBestSolutionIndex = -1;
+                    int solutionCount = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, iRotations, iTranslations, cv::SOLVEPNP_P3P);
+
                     if (solutionCount > 0)
                     {
                         std::cout << "Solution count: " << solutionCount << "\n";
-
+                        int minPitch = std::numeric_limits<int>::max();
                         // Find the solution we want
                         for (int i = 0; i < solutionCount; i++)
                         {
                             std::cout << "Translation:\n";
-                            std::cout << tvecs.at(i);
+                            std::cout << iTranslations.at(i);
                             std::cout << "\n";
                             std::cout << "Rotation:\n";
                             //std::cout << rvecs.at(i);
                             cv::Mat rotationCameraMatrix;
-                            cv::Rodrigues(rvecs[i], rotationCameraMatrix);
+                            cv::Rodrigues(iRotations[i], rotationCameraMatrix);
                             cv::Vec3d angles;
                             getEulerAngles(rotationCameraMatrix,angles);
+                            iAngles.push_back(angles);
+
+                            // Check if pitch is closest to zero
+                            int absolutePitch = std::abs(angles[0]);
+                            if (minPitch > absolutePitch)
+                            {
+                                minPitch = absolutePitch;
+                                iBestSolutionIndex = i;
+                            }
+
                             //cv::Vec3f angles=EulerAngles(quaternion);
                             std::cout << angles;
                             std::cout << "\n";
@@ -271,6 +284,12 @@ void Tracker_PT::run()
 
                 QMutexLocker l2(&data_lock);
                 X_CM = point_tracker.pose();
+                if (iBestSolutionIndex != -1)
+                {
+                    iBestAngles = iAngles[iBestSolutionIndex];
+                    iBestTranslation = iTranslations[iBestSolutionIndex];
+                }
+
             }
 
             if (preview_visible)
@@ -369,6 +388,16 @@ void Tracker_PT::data(double *data)
         data[TX] = (double)t[0] / 10;
         data[TY] = (double)t[1] / 10;
         data[TZ] = (double)t[2] / 10;
+
+
+        QMutexLocker l(&data_lock);
+        data[Yaw] = iBestAngles[1];
+        data[Pitch] = iBestAngles[0];
+        data[Roll] = iBestAngles[2];
+        data[TX] = iBestTranslation[0];
+        data[TY] = iBestTranslation[1];
+        data[TZ] = iBestTranslation[2];
+
     }
 }
 
