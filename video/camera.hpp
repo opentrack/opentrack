@@ -49,12 +49,19 @@ struct OTR_VIDEO_EXPORT camera
     struct info final
     {
         int width = 0, height = 0, fps = 0;
+        float focalLengthX = 0.0f;
+        float focalLengthY = 0.0f;
+        float principalPointX = 0.0f;
+        float principalPointY = 0.0f;
+        float radialDistortionSecondOrder = 0.0f;
+        float radialDistortionFourthOrder = 0.0f;
+        float radialDistortionSixthOrder = 0.0f;
     };
 
     camera();
     virtual ~camera();
 
-    [[nodiscard]] virtual bool start(const info& args) = 0;
+    [[nodiscard]] virtual bool start(info& args) = 0;
     virtual void stop() = 0;
     virtual bool is_open() = 0;
 

@@ -44,8 +44,8 @@ struct CameraKinectIr final : video::impl::camera
     CameraKinectIr();
     ~CameraKinectIr() override;
 
-
-    [[nodiscard]] bool start(const info& args) override;
+    // From video::impl::camera
+    [[nodiscard]] bool start(info& args) override;
     void stop() override;
     bool is_open() override;
     std::tuple<const video::impl::frame&, bool> get_frame() override;
@@ -65,9 +65,12 @@ private:
     // Frame needs to stay alive while we access the data buffer
     IInfraredFrame* iInfraredFrame = nullptr;
 
+    //
+    ICoordinateMapper* iCoordinateMapper = nullptr;
+
     video::frame iFrame;
     cv::Mat iMatFrame;
-    cv::Mat raw8;
+    cv::Mat iRaw8;
 
     float fov = 0;
     int width = 0, height = 0;

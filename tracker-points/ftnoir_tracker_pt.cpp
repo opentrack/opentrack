@@ -20,6 +20,8 @@
 
 #include <opencv2\calib3d.hpp>
 
+#include <iostream>
+
 using namespace options;
 
 namespace pt_impl {
@@ -74,7 +76,8 @@ void Tracker_PT::run()
             if (preview_visible)
                 *preview_frame = *frame;
 
-            point_extractor->extract_points(*frame, *preview_frame, points);
+            iImagePoints.clear();
+            point_extractor->extract_points(*frame, *preview_frame, points, iImagePoints);
             point_count.store(points.size(), std::memory_order_relaxed);
 
             const bool success = points.size() >= PointModel::N_POINTS;
@@ -98,19 +101,67 @@ void Tracker_PT::run()
 
                     // TODO: Solve with OpenCV
 
-                    std::vector<cv::Point3f> objectPoints;
-                    //TODO: Stuff object points in that vector
+                    // Construct the points defining the object we want to detect based on settings.
+                    // We are converting them from millimeters to meters.
+                    // TODO: Need to support clip too. That's cap only for now. 
+                    std::vector<cv::Point3f> objectPoints;                    
+                    objectPoints.push_back(cv::Point3f(s.cap_x/1000.0,0,0)); // Right
+                    objectPoints.push_back(cv::Point3f(-s.cap_x/1000.0, 0, 0)); // Left
+                    objectPoints.push_back(cv::Point3f(0, s.cap_y/1000.0, s.cap_z/1000.0)); // Top
+
                     std::vector<cv::Point2f> trackedPoints;
-                    //TODO: Stuff bitmap point in there making sure they match the order of the object point
+                    //TODO: Stuff bitmap point in there making sure they match the order of the object point  
+                    // Find top most point
+                    int topPointIndex = -1;
+                    int maxY = 0;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        if (iImagePoints[i][1]>maxY)
+                        {
+                            maxY = iImagePoints[i][1];
+                            topPointIndex = i;
+                        }
+                    }
+
+                    int rightPointIndex = -1;
+                    int maxX = 0;
+
+                    // Find right most point 
+                    for (int i = 0; i < 3; i++)
+                    {
+                        // Excluding top most point
+                        if (i!=topPointIndex && iImagePoints[i][0] > maxX)
+                        {
+                            maxX = iImagePoints[i][0];
+                            rightPointIndex = i;
+                        }
+                    }
+
+                    // Find left most point
+                    int leftPointIndex = -1;
+                    for (int i = 0; i < 3; i++)
+                    {
+                        // Excluding top most point
+                        if (i != topPointIndex && i != rightPointIndex)
+                        {
+                            leftPointIndex = i;
+                            break;
+                        }
+                    }
+
+                    //
+                    trackedPoints.push_back(cv::Point2f(iImagePoints[rightPointIndex][0], iImagePoints[rightPointIndex][1]));
+                    trackedPoints.push_back(cv::Point2f(iImagePoints[leftPointIndex][0], iImagePoints[leftPointIndex][1]));
+                    trackedPoints.push_back(cv::Point2f(iImagePoints[topPointIndex][0], iImagePoints[topPointIndex][1]));
 
                     // Create our camera matrix
-                    // TODO: Just do that once, use data memeber instead
+                    // TODO: Just do that once, use data member instead
                     // Double or Float?
                     cv::Mat cameraMatrix;
                     cameraMatrix.create(3, 3, CV_64FC1);
                     cameraMatrix.setTo(cv::Scalar(0));
                     cameraMatrix.at<double>(0, 0) = camera->info.focalLengthX;
-                    cameraMatrix.at<double>(1, 1) = camera->info.focalLengthX;
+                    cameraMatrix.at<double>(1, 1) = camera->info.focalLengthY;
                     cameraMatrix.at<double>(0, 2) = camera->info.principalPointX;
                     cameraMatrix.at<double>(1, 2) = camera->info.principalPointY;
                     cameraMatrix.at<double>(2, 2) = 1;
@@ -123,11 +174,33 @@ void Tracker_PT::run()
                         distCoeffs.at<double>(i, 0) = 0;
                     }
 
+                    // Define our solution arrays
+                    // They will receive up to 4 solutions for our P3P problem
                     std::vector<cv::Mat> rvecs, tvecs;
 
                     // TODO: try SOLVEPNP_AP3P too 
-                    int num_of_solutions = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, rvecs, tvecs, cv::SOLVEPNP_P3P);
+                    int solutionCount = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, rvecs, tvecs, cv::SOLVEPNP_AP3P);
+                    if (solutionCount > 0)
+                    {
+                        std::cout << "Solution count: " << solutionCount << "\n";
 
+                        // Find the solution we want
+                        for (int i = 0; i < solutionCount; i++)
+                        {
+                            std::cout << "Translation:\n";
+                            std::cout << tvecs.at(i);
+                            std::cout << "\n";
+                            std::cout << "Rotation:\n";
+                            std::cout << rvecs.at(i);
+                            std::cout << "\n";
+                        }
+
+                        std::cout << "\n";
+                        
+                    }
+
+                    // TODO: Work out rotation angles
+                    // TODO: Choose the one solution that makes sense for us
 
 
 

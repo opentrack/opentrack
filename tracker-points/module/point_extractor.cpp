@@ -239,7 +239,7 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
     }
 }
 
-void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
+void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points, std::vector<vec2>& imagePoints)
 {
     const cv::Mat& frame = frame_.as_const<Frame>()->mat;
 
@@ -375,6 +375,7 @@ end:
         vec2 p;
         std::tie(p[0], p[1]) = to_screen_pos(b.pos[0], b.pos[1], W, H);
         points.push_back(p);
+        imagePoints.push_back(vec2(b.pos[0], b.pos[1]));
     }
 }
 

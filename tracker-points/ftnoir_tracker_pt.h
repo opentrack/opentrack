@@ -62,6 +62,7 @@ private:
 
     std::unique_ptr<QLayout> layout;
     std::vector<vec2> points;
+    std::vector<vec2> iImagePoints;
 
     int preview_width = 320, preview_height = 240;
 

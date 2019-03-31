@@ -34,7 +34,7 @@ struct cam final : camera
     cam(int idx);
     ~cam() override;
 
-    bool start(const info& args) override;
+    bool start(info& args) override;
     void stop() override;
     bool is_open() override;
     std::tuple<const frame&, bool> get_frame() override;

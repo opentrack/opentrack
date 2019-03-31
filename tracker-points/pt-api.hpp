@@ -99,7 +99,7 @@ struct pt_point_extractor : pt_pixel_pos_mixin
 
     pt_point_extractor();
     virtual ~pt_point_extractor();
-    virtual void extract_points(const pt_frame& image, pt_preview& preview_frame, std::vector<vec2>& points) = 0;
+    virtual void extract_points(const pt_frame& image, pt_preview& preview_frame, std::vector<vec2>& points, std::vector<vec2>& imagePoints) = 0;
 
     static f threshold_radius_value(int w, int h, int threshold);
 };

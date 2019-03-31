@@ -30,7 +30,7 @@ bool cam::is_open()
     return !!cap;
 }
 
-bool cam::start(const info& args)
+bool cam::start(info& args)
 {
     stop();
     cap.emplace(idx);
