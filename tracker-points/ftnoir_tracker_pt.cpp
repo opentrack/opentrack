@@ -81,6 +81,26 @@ cv::Vec3f EulerAngles(cv::Mat &R)
 }
 
 
+void getEulerAngles(cv::Mat &rotCamerMatrix, cv::Vec3d &eulerAngles)
+{
+
+    cv::Mat cameraMatrix, rotMatrix, transVect, rotMatrixX, rotMatrixY, rotMatrixZ;
+    double* _r = rotCamerMatrix.ptr<double>();
+    double projMatrix[12] = { _r[0],_r[1],_r[2],0,
+                          _r[3],_r[4],_r[5],0,
+                          _r[6],_r[7],_r[8],0 };
+
+    cv::decomposeProjectionMatrix(cv::Mat(3, 4, CV_64FC1, projMatrix),
+        cameraMatrix,
+        rotMatrix,
+        transVect,
+        rotMatrixX,
+        rotMatrixY,
+        rotMatrixZ,
+        eulerAngles);
+}
+
+
 void Tracker_PT::run()
 {
     maybe_reopen_camera();
@@ -127,26 +147,27 @@ void Tracker_PT::run()
                                         dynamic_pose_ms);
                     ever_success.store(true, std::memory_order_relaxed);
 
-                    // TODO: Solve with OpenCV
+                    // Solve P3P problem with OpenCV
 
                     // Construct the points defining the object we want to detect based on settings.
                     // We are converting them from millimeters to meters.
                     // TODO: Need to support clip too. That's cap only for now. 
                     std::vector<cv::Point3f> objectPoints;                    
-                    objectPoints.push_back(cv::Point3f(s.cap_x/1000.0,0,0)); // Right
-                    objectPoints.push_back(cv::Point3f(-s.cap_x/1000.0, 0, 0)); // Left
-                    objectPoints.push_back(cv::Point3f(0, s.cap_y/1000.0, s.cap_z/1000.0)); // Top
+                    objectPoints.push_back(cv::Point3f(s.cap_x/1000.0,  s.cap_z / 1000.0,  -s.cap_y / 1000.0)); // Right
+                    objectPoints.push_back(cv::Point3f(-s.cap_x/1000.0,  s.cap_z / 1000.0,  -s.cap_y / 1000.0)); // Left
+                    objectPoints.push_back(cv::Point3f(0, 0, 0)); // Top
 
+                    //Bitmap origin is top left
                     std::vector<cv::Point2f> trackedPoints;
-                    //TODO: Stuff bitmap point in there making sure they match the order of the object point  
-                    // Find top most point
+                    // Stuff bitmap point in there making sure they match the order of the object point  
+                    // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
                     int topPointIndex = -1;
-                    int maxY = 0;
+                    int minY = std::numeric_limits<int>::max();
                     for (int i = 0; i < 3; i++)
                     {
-                        if (iImagePoints[i][1]>maxY)
+                        if (iImagePoints[i][1]<minY)
                         {
-                            maxY = iImagePoints[i][1];
+                            minY = iImagePoints[i][1];
                             topPointIndex = i;
                         }
                     }
@@ -179,8 +200,12 @@ void Tracker_PT::run()
 
                     //
                     trackedPoints.push_back(cv::Point2f(iImagePoints[rightPointIndex][0], iImagePoints[rightPointIndex][1]));
-                    trackedPoints.push_back(cv::Point2f(iImagePoints[leftPointIndex][0], iImagePoints[leftPointIndex][1]));
+                    trackedPoints.push_back(cv::Point2f(iImagePoints[leftPointIndex][0], iImagePoints[leftPointIndex][1]));                    
                     trackedPoints.push_back(cv::Point2f(iImagePoints[topPointIndex][0], iImagePoints[topPointIndex][1]));
+
+                    std::cout << "Object: " << objectPoints << "\n";
+                    std::cout << "Points: " << trackedPoints << "\n";
+
 
                     // Create our camera matrix
                     // TODO: Just do that once, use data member instead
@@ -211,7 +236,7 @@ void Tracker_PT::run()
                     std::vector<cv::Mat> rvecs, tvecs;
 
                     // TODO: try SOLVEPNP_AP3P too 
-                    int solutionCount = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, rvecs, tvecs, cv::SOLVEPNP_AP3P);
+                    int solutionCount = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, rvecs, tvecs, cv::SOLVEPNP_P3P);
                     if (solutionCount > 0)
                     {
                         std::cout << "Solution count: " << solutionCount << "\n";
@@ -224,9 +249,11 @@ void Tracker_PT::run()
                             std::cout << "\n";
                             std::cout << "Rotation:\n";
                             //std::cout << rvecs.at(i);
-                            cv::Mat quaternion;
-                            cv::Rodrigues(rvecs[i], quaternion);
-                            cv::Vec3f angles=EulerAngles(quaternion);
+                            cv::Mat rotationCameraMatrix;
+                            cv::Rodrigues(rvecs[i], rotationCameraMatrix);
+                            cv::Vec3d angles;
+                            getEulerAngles(rotationCameraMatrix,angles);
+                            //cv::Vec3f angles=EulerAngles(quaternion);
                             std::cout << angles;
                             std::cout << "\n";
                         }
