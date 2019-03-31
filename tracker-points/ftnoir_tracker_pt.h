@@ -75,6 +75,19 @@ private:
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success = false;
     mutable QMutex center_lock, data_lock;
+
+    // Translation solutions
+    std::vector<cv::Mat> iTranslations;
+    // Rotation solutions
+    std::vector<cv::Mat> iRotations;
+    // Angle solutions, pitch, yaw, roll, in this order
+    std::vector<cv::Vec3d> iAngles;
+    // The index of our best solution
+    int iBestSolutionIndex = -1;
+    // Best translation
+    cv::Vec3d iBestTranslation;
+    // Best angles
+    cv::Vec3d iBestAngles;
 };
 
 } // ns pt_impl
