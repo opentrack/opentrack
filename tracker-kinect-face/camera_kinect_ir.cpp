@@ -114,7 +114,7 @@ inline void SafeRelease(Interface *& pInterfaceToRelease)
     }
 }
 
-bool CameraKinectIr::start(const info& args)
+bool CameraKinectIr::start(info& aInfo)
 {
     stop();
 
@@ -146,6 +146,11 @@ bool CameraKinectIr::start(const info& args)
         }
 
         SafeRelease(pInfraredFrameSource);
+
+        if (SUCCEEDED(hr))
+        {
+            iKinectSensor->get_CoordinateMapper(&iCoordinateMapper);
+        }
     }
 
 
@@ -153,6 +158,27 @@ bool CameraKinectIr::start(const info& args)
     {
         WaitForFirstFrame();
         bool success = iMatFrame.ptr() != nullptr;
+        if (success)
+        {
+            // Provide frame info
+            aInfo.width = width;
+            aInfo.height = height;
+
+            CameraIntrinsics intrinsics;
+            hr = iCoordinateMapper->GetDepthCameraIntrinsics(&intrinsics);
+            if (SUCCEEDED(hr))
+            {
+                aInfo.focalLengthX = intrinsics.FocalLengthX;
+                aInfo.focalLengthY = intrinsics.FocalLengthY;
+                aInfo.principalPointX = intrinsics.PrincipalPointX;
+                aInfo.principalPointY = intrinsics.PrincipalPointY;
+                aInfo.radialDistortionFourthOrder = intrinsics.RadialDistortionFourthOrder;
+                aInfo.radialDistortionSecondOrder = intrinsics.RadialDistortionSecondOrder;
+                aInfo.radialDistortionSixthOrder = intrinsics.RadialDistortionSixthOrder;                
+            }
+
+        }
+
         return success;
     }
 
@@ -172,6 +198,7 @@ void CameraKinectIr::stop()
         iKinectSensor->Close();
     }
 
+    SafeRelease(iCoordinateMapper);
     SafeRelease(iKinectSensor);
 
     // Free up our memory buffer if any
@@ -253,9 +280,9 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             // For scalling to have more precission in the range we are interrested in
             min = max - 255;            
             // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
-            raw.convertTo(raw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
+            raw.convertTo(iRaw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
             // Second convert to RGB
-            cv::cvtColor(raw8, frame, cv::COLOR_GRAY2BGR);
+            cv::cvtColor(iRaw8, frame, cv::COLOR_GRAY2BGR);
             //
             success = true;
         }

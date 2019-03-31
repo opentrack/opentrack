@@ -33,16 +33,19 @@ class PointExtractor final : public pt_point_extractor
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
-    void extract_points(const pt_frame& frame, pt_preview& preview_frame, std::vector<vec2>& points) override;
+    void extract_points(const pt_frame& frame, pt_preview& preview_frame, std::vector<vec2>& points, std::vector<vec2>& imagePoints) override;
     PointExtractor(const QString& module_name);
+
+public:
+    std::vector<blob> blobs;
+
 private:
     static constexpr int max_blobs = 16;
 
     pt_settings s;
 
     cv::Mat1b frame_gray_unmasked, frame_bin, frame_gray;
-    cv::Mat1f hist;
-    std::vector<blob> blobs;
+    cv::Mat1f hist;    
     cv::Mat1b ch[3];
 
     void ensure_channel_buffers(const cv::Mat& orig_frame);
