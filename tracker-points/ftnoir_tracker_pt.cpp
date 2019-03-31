@@ -53,6 +53,34 @@ Tracker_PT::~Tracker_PT()
     camera->stop();
 }
 
+
+// Calculates rotation matrix to euler angles
+cv::Vec3f EulerAngles(cv::Mat &R)
+{
+
+    float sy = sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) + R.at<double>(1, 0) * R.at<double>(1, 0));
+
+    bool singular = sy < 1e-6; // If
+
+    float x, y, z;
+    if (!singular)
+    {
+        x = atan2(R.at<double>(2, 1), R.at<double>(2, 2));
+        y = atan2(-R.at<double>(2, 0), sy);
+        z = atan2(R.at<double>(1, 0), R.at<double>(0, 0));
+    }
+    else
+    {
+        x = atan2(-R.at<double>(1, 2), R.at<double>(1, 1));
+        y = atan2(-R.at<double>(2, 0), sy);
+        z = 0;
+    }
+
+    // Convert to degrees
+    return cv::Vec3f(x* 180 / CV_PI, y* 180 / CV_PI, z* 180 / CV_PI);
+}
+
+
 void Tracker_PT::run()
 {
     maybe_reopen_camera();
@@ -167,12 +195,16 @@ void Tracker_PT::run()
                     cameraMatrix.at<double>(2, 2) = 1;
 
                     // Create distortion cooefficients
-                    cv::Mat distCoeffs = cv::Mat::zeros(4, 1, CV_64FC1);
-                    for (int i = 0; i < 3; i++)
-                    {
-                        // Put in proper values
-                        distCoeffs.at<double>(i, 0) = 0;
-                    }
+                    cv::Mat distCoeffs = cv::Mat::zeros(8, 1, CV_64FC1);
+                    // As per OpenCV docs they should be thus: k1, k2, p1, p2, k3, k4, k5, k6
+                    distCoeffs.at<double>(0, 0) = 0; // Radial first order
+                    distCoeffs.at<double>(1, 0) = camera->info.radialDistortionSecondOrder; // Radial second order
+                    distCoeffs.at<double>(2, 0) = 0; // Tangential first order
+                    distCoeffs.at<double>(3, 0) = 0; // Tangential second order
+                    distCoeffs.at<double>(4, 0) = 0; // Radial third order
+                    distCoeffs.at<double>(5, 0) = camera->info.radialDistortionFourthOrder; // Radial fourth order
+                    distCoeffs.at<double>(6, 0) = 0; // Radial fith order
+                    distCoeffs.at<double>(7, 0) = camera->info.radialDistortionSixthOrder; // Radial sixth order
 
                     // Define our solution arrays
                     // They will receive up to 4 solutions for our P3P problem
@@ -191,7 +223,11 @@ void Tracker_PT::run()
                             std::cout << tvecs.at(i);
                             std::cout << "\n";
                             std::cout << "Rotation:\n";
-                            std::cout << rvecs.at(i);
+                            //std::cout << rvecs.at(i);
+                            cv::Mat quaternion;
+                            cv::Rodrigues(rvecs[i], quaternion);
+                            cv::Vec3f angles=EulerAngles(quaternion);
+                            std::cout << angles;
                             std::cout << "\n";
                         }
 
