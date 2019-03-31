@@ -153,8 +153,8 @@ void Tracker_PT::run()
                     // We are converting them from millimeters to meters.
                     // TODO: Need to support clip too. That's cap only for now. 
                     std::vector<cv::Point3f> objectPoints;                    
-                    objectPoints.push_back(cv::Point3f(s.cap_x/1000.0,  s.cap_z / 1000.0,  -s.cap_y / 1000.0)); // Right
-                    objectPoints.push_back(cv::Point3f(-s.cap_x/1000.0,  s.cap_z / 1000.0,  -s.cap_y / 1000.0)); // Left
+                    objectPoints.push_back(cv::Point3f(s.cap_x/10.0,  s.cap_z / 10.0,  -s.cap_y / 10.0)); // Right
+                    objectPoints.push_back(cv::Point3f(-s.cap_x/10.0,  s.cap_z / 10.0,  -s.cap_y / 10.0)); // Left
                     objectPoints.push_back(cv::Point3f(0, 0, 0)); // Top
 
                     //Bitmap origin is top left
