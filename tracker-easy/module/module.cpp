@@ -60,7 +60,7 @@ struct dialog_pt : TrackerDialog_PT
 
 dialog_pt::dialog_pt() : EasyTrackerDialog(module_name) {}
 
-QString metadata_pt::name() { return tr("Points Tracker 0.1"); }
+QString metadata_pt::name() { return tr("Easy Tracker 0.1"); }
 QIcon metadata_pt::icon() { return QIcon(":/Resources/Logo_IR.png"); }
 
 }

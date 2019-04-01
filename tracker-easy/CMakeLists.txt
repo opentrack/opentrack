@@ -1,6 +1,6 @@
 find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
-    otr_module(tracker-points-base STATIC)
+    otr_module(tracker-easy-base STATIC)
     target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(${self} opencv_imgproc opencv_calib3d opentrack-cv opencv_core opentrack-video)
     #set_property(TARGET ${self} PROPERTY OUTPUT_NAME "points-base")
