@@ -6,7 +6,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_pt_dialog.h"
+#include "tracker-easy-dialog.h"
 #include "compat/math.hpp"
 #include "video/camera.hpp"
 

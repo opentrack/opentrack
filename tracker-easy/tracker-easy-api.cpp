@@ -1,4 +1,4 @@
-#include "pt-api.hpp"
+#include "tracker-easy-api.h"
 #include "cv/numeric.hpp"
 
 using namespace numeric_types;

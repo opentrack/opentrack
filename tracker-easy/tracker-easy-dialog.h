@@ -7,10 +7,10 @@
 
 #pragma once
 
-#include "pt-api.hpp"
+#include "tracker-easy-api.h"
 
-#include "ftnoir_tracker_pt.h"
-#include "tracker-pt/ui_FTNoIR_PT_Controls.h"
+#include "tracker-easy.h"
+#include "ui_FTNoIR_PT_Controls.h"
 #include "cv/translation-calibrator.hpp"
 #include "video/video-widget.hpp"
 

@@ -7,12 +7,12 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "ftnoir_tracker_pt.h"
+#include "tracker-easy.h"
 #include "video/video-widget.hpp"
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
 
-#include "pt-api.hpp"
+#include "tracker-easy-api.h"
 
 #include <QHBoxLayout>
 #include <QDebug>

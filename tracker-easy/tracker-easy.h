@@ -9,7 +9,7 @@
 #pragma once
 
 #include "api/plugin-api.hpp"
-#include "pt-api.hpp"
+#include "tracker-easy-api.h"
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
 
