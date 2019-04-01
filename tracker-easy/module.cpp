@@ -1,12 +1,12 @@
-#include "ftnoir_tracker_pt.h"
+#include "tracker-easy.h"
+#include "tracker-easy-dialog.h"
+#include "tracker-easy-api.h"
 
 #include "module.hpp"
 #include "camera.h"
 #include "frame.hpp"
 #include "point_extractor.h"
-#include "ftnoir_tracker_pt_dialog.h"
 
-#include "pt-api.hpp"
 
 #include <memory>
 

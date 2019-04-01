@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pt-api.hpp"
+#include "tracker-easy-api.h"
 
 #include <opencv2/core.hpp>
 #include <QImage>

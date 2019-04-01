@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "pt-api.hpp"
+#include "tracker-easy-api.h"
 #include "compat/timer.hpp"
 #include "video/camera.hpp"
 
