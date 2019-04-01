@@ -19,11 +19,11 @@
 
 namespace pt_impl {
 
-class TrackerDialog_PT : public ITrackerDialog
+class EasyTrackerDialog : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    TrackerDialog_PT(const QString& module_name);
+    EasyTrackerDialog(const QString& module_name);
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;
     void save();
@@ -42,7 +42,7 @@ protected:
     QString threshold_display_text(int threshold_value);
 
     pt_settings s;
-    Tracker_PT* tracker;
+    EasyTracker* tracker;
     QTimer timer, calib_timer;
     TranslationCalibrator trans_calib;
     QMutex calibrator_mutex;
@@ -52,4 +52,4 @@ protected:
 
 } // ns pt_impl
 
-using TrackerDialog_PT = pt_impl::TrackerDialog_PT;
+using TrackerDialog_PT = pt_impl::EasyTrackerDialog;

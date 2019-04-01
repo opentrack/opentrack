@@ -22,7 +22,7 @@ static void init_resources() { Q_INIT_RESOURCE(tracker_pt_base); }
 
 namespace pt_impl {
 
-TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
+EasyTrackerDialog::EasyTrackerDialog(const QString& module_name) :
     s(module_name),
     tracker(nullptr),
     timer(this),
@@ -80,19 +80,19 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
-    connect(ui.camdevice_combo, &QComboBox::currentTextChanged, this, &TrackerDialog_PT::set_camera_settings_available);
+    connect(ui.camdevice_combo, &QComboBox::currentTextChanged, this, &EasyTrackerDialog::set_camera_settings_available);
     set_camera_settings_available(ui.camdevice_combo->currentText());
-    connect(ui.camera_settings, &QPushButton::clicked, this, &TrackerDialog_PT::show_camera_settings);
+    connect(ui.camera_settings, &QPushButton::clicked, this, &EasyTrackerDialog::show_camera_settings);
 
-    connect(&timer, &QTimer::timeout, this, &TrackerDialog_PT::poll_tracker_info_impl);
+    connect(&timer, &QTimer::timeout, this, &EasyTrackerDialog::poll_tracker_info_impl);
     timer.setInterval(250);
 
-    connect(&calib_timer, &QTimer::timeout, this, &TrackerDialog_PT::trans_calib_step);
+    connect(&calib_timer, &QTimer::timeout, this, &EasyTrackerDialog::trans_calib_step);
     calib_timer.setInterval(35);
 
     poll_tracker_info_impl();
 
-    connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::DirectConnection);
+    connect(this, &EasyTrackerDialog::poll_tracker_info, this, &EasyTrackerDialog::poll_tracker_info_impl, Qt::DirectConnection);
 
     constexpr pt_color_type color_types[] = {
         pt_color_average,
@@ -117,7 +117,7 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
                 [this](bool) { s.threshold_slider.notify(); });
 }
 
-QString TrackerDialog_PT::threshold_display_text(int threshold_value)
+QString EasyTrackerDialog::threshold_display_text(int threshold_value)
 {
     if (!s.auto_threshold)
         return tr("Brightness %1/255").arg(threshold_value);
@@ -144,7 +144,7 @@ QString TrackerDialog_PT::threshold_display_text(int threshold_value)
     }
 }
 
-void TrackerDialog_PT::startstop_trans_calib(bool start)
+void EasyTrackerDialog::startstop_trans_calib(bool start)
 {
     QMutexLocker l(&calibrator_mutex);
 
@@ -200,7 +200,7 @@ void TrackerDialog_PT::startstop_trans_calib(bool start)
         ui.tcalib_button->setText(tr("Start calibration"));
 }
 
-void TrackerDialog_PT::poll_tracker_info_impl()
+void EasyTrackerDialog::poll_tracker_info_impl()
 {
     pt_camera_info info;
     if (tracker && tracker->get_cam_info(info))
@@ -218,12 +218,12 @@ void TrackerDialog_PT::poll_tracker_info_impl()
     }
 }
 
-void TrackerDialog_PT::set_camera_settings_available(const QString& /* camera_name */)
+void EasyTrackerDialog::set_camera_settings_available(const QString& /* camera_name */)
 {
     ui.camera_settings->setEnabled(true);
 }
 
-void TrackerDialog_PT::show_camera_settings()
+void EasyTrackerDialog::show_camera_settings()
 {
     if (tracker)
     {
@@ -234,44 +234,37 @@ void TrackerDialog_PT::show_camera_settings()
         (void)video::show_dialog(s.camera_name);
 }
 
-void TrackerDialog_PT::trans_calib_step()
+void EasyTrackerDialog::trans_calib_step()
 {
     QMutexLocker l(&calibrator_mutex);
-
-    if (tracker)
-    {
-        Affine X_CM = tracker->pose();
-        trans_calib.update(X_CM.R, X_CM.t);
-    }
-    else
-        startstop_trans_calib(false);
+    // TODO: Do we still need that function
 }
 
-void TrackerDialog_PT::save()
+void EasyTrackerDialog::save()
 {
     s.b->save();
 }
 
-void TrackerDialog_PT::doOK()
+void EasyTrackerDialog::doOK()
 {
     save();
     close();
 }
 
-void TrackerDialog_PT::doCancel()
+void EasyTrackerDialog::doCancel()
 {
     close();
 }
 
-void TrackerDialog_PT::register_tracker(ITracker *t)
+void EasyTrackerDialog::register_tracker(ITracker *t)
 {
-    tracker = static_cast<Tracker_PT*>(t);
+    tracker = static_cast<EasyTracker*>(t);
     ui.tcalib_button->setEnabled(true);
     poll_tracker_info();
     timer.start();
 }
 
-void TrackerDialog_PT::unregister_tracker()
+void EasyTrackerDialog::unregister_tracker()
 {
     tracker = nullptr;
     ui.tcalib_button->setEnabled(false);

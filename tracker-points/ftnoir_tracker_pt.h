@@ -10,7 +10,6 @@
 
 #include "api/plugin-api.hpp"
 #include "pt-api.hpp"
-#include "point_tracker.h"
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
 
@@ -26,25 +25,24 @@
 
 namespace pt_impl {
 
-class TrackerDialog_PT;
+class EasyTrackerDialog;
 
 using namespace numeric_types;
 
-struct Tracker_PT : QThread, ITracker
+struct EasyTracker : QThread, ITracker
 {
-    friend class TrackerDialog_PT;
+    friend class EasyTrackerDialog;
 
     template<typename t> using pointer = pt_pointer<t>;
 
-    explicit Tracker_PT(pointer<pt_runtime_traits> const& pt_runtime_traits);
-    ~Tracker_PT() override;
+    explicit EasyTracker(pointer<pt_runtime_traits> const& pt_runtime_traits);
+    ~EasyTracker() override;
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
     bool center() override;
 
     int  get_n_points();
     [[nodiscard]] bool get_cam_info(pt_camera_info& info);
-    Affine pose() const;
 
 private:
     void run() override;
@@ -56,7 +54,6 @@ private:
 
     QMutex camera_mtx;
 
-    PointTracker point_tracker;
 
     pt_settings s;
 
@@ -82,7 +79,7 @@ private:
     std::vector<cv::Mat> iRotations;
     // Angle solutions, pitch, yaw, roll, in this order
     std::vector<cv::Vec3d> iAngles;
-    // The index of our best solution
+    // The index of our best solution in the above arrays
     int iBestSolutionIndex = -1;
     // Best translation
     cv::Vec3d iBestTranslation;
@@ -92,4 +89,4 @@ private:
 
 } // ns pt_impl
 
-using Tracker_PT = pt_impl::Tracker_PT;
+using Tracker_PT = pt_impl::EasyTracker;

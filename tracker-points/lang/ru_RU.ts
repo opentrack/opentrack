@@ -239,7 +239,7 @@ ROLL или X/Y-смещения.</translation>
     </message>
 </context>
 <context>
-    <name>pt_impl::TrackerDialog_PT</name>
+    <name>pt_impl::EasyTrackerDialog</name>
     <message>
         <source>Brightness %1/255</source>
         <translation type="unfinished"></translation>
