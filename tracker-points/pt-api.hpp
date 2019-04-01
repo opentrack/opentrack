@@ -20,6 +20,8 @@
 #   pragma clang diagnostic ignored "-Wweak-vtables"
 #endif
 
+const int KPointCount = 3;
+
 struct pt_camera_info final
 {
     using f = numeric_types::f;

@@ -7,7 +7,6 @@
  */
 
 #include "point_extractor.h"
-#include "point_tracker.h"
 #include "frame.hpp"
 
 #include "cv/numeric.hpp"
@@ -214,7 +213,7 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
 
         cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
 
-        auto circle_color = k >= PointModel::N_POINTS
+        auto circle_color = k >= KPointCount
                             ? cv::Scalar(192, 192, 192)
                             : cv::Scalar(255, 255, 0);
 
@@ -228,7 +227,7 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
         buf[sizeof(buf)-1] = '\0';
         std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", (double)b.radius);
 
-        auto text_color = k >= PointModel::N_POINTS
+        auto text_color = k >= KPointCount
                           ? cv::Scalar(160, 160, 160)
                           : cv::Scalar(0, 0, 255);
 
@@ -359,6 +358,7 @@ end:
         b.pos[1] = pos[1] + rect.y;
     }
 
+    // TODO: Do not do that if no preview. Delay blob drawing until we know where are the points?
     draw_blobs(preview_frame_.as<Frame>()->mat,
                blobs.data(), blobs.size(),
                frame_gray.size());

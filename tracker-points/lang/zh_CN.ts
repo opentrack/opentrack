@@ -234,7 +234,7 @@ Don&apos;t roll or change position.</source>
     </message>
 </context>
 <context>
-    <name>pt_impl::TrackerDialog_PT</name>
+    <name>pt_impl::EasyTrackerDialog</name>
     <message>
         <source>Brightness %1/255</source>
         <translation type="unfinished">亮度 %1/255</translation>

@@ -48,7 +48,7 @@ struct pt_module_traits final : pt_runtime_traits
 
 struct tracker_pt : Tracker_PT
 {
-    tracker_pt() : Tracker_PT(pointer<pt_runtime_traits>(new pt_module_traits))
+    tracker_pt() : EasyTracker(pointer<pt_runtime_traits>(new pt_module_traits))
     {
     }
 };
@@ -58,7 +58,7 @@ struct dialog_pt : TrackerDialog_PT
     dialog_pt();
 };
 
-dialog_pt::dialog_pt() : TrackerDialog_PT(module_name) {}
+dialog_pt::dialog_pt() : EasyTrackerDialog(module_name) {}
 
 QString metadata_pt::name() { return tr("Points Tracker 0.1"); }
 QIcon metadata_pt::icon() { return QIcon(":/Resources/Logo_IR.png"); }

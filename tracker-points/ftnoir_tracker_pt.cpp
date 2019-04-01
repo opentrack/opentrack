@@ -1,5 +1,6 @@
 /* Copyright (c) 2012 Patrick Ruoff
  * Copyright (c) 2014-2016 Stanislaw Halik <sthalik@misaki.pl>
+ * Copyright (c) 2019 Stephane Lenclud
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -26,7 +27,7 @@ using namespace options;
 
 namespace pt_impl {
 
-Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
+EasyTracker::EasyTracker(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
     s { traits->get_module_name() },
     point_extractor { traits->make_point_extractor() },
@@ -37,14 +38,14 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     cv::setBreakOnError(true);
     cv::setNumThreads(1);
 
-    connect(s.b.get(), &bundle_::saving, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
-    connect(s.b.get(), &bundle_::reloading, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
+    connect(s.b.get(), &bundle_::saving, this, &EasyTracker::maybe_reopen_camera, Qt::DirectConnection);
+    connect(s.b.get(), &bundle_::reloading, this, &EasyTracker::maybe_reopen_camera, Qt::DirectConnection);
 
-    connect(&s.fov, value_::value_changed<int>(), this, &Tracker_PT::set_fov, Qt::DirectConnection);
+    connect(&s.fov, value_::value_changed<int>(), this, &EasyTracker::set_fov, Qt::DirectConnection);
     set_fov(s.fov);
 }
 
-Tracker_PT::~Tracker_PT()
+EasyTracker::~EasyTracker()
 {
     requestInterruption();
     wait();
@@ -54,7 +55,7 @@ Tracker_PT::~Tracker_PT()
 }
 
 
-// Calculates rotation matrix to euler angles
+// Compute Euler angles from ratation matrix
 cv::Vec3f EulerAngles(cv::Mat &R)
 {
 
@@ -101,7 +102,7 @@ void getEulerAngles(cv::Mat &rotCamerMatrix, cv::Vec3d &eulerAngles)
 }
 
 
-void Tracker_PT::run()
+void EasyTracker::run()
 {
     maybe_reopen_camera();
 
@@ -128,30 +129,24 @@ void Tracker_PT::run()
             point_extractor->extract_points(*frame, *preview_frame, points, iImagePoints);
             point_count.store(points.size(), std::memory_order_relaxed);
 
-            const bool success = points.size() >= PointModel::N_POINTS;
+            const bool success = points.size() >= KPointCount;
 
-            Affine X_CM;
+            int topPointIndex = -1;
 
             {
                 QMutexLocker l(&center_lock);
 
                 if (success)
                 {
-                    int dynamic_pose_ms = s.dynamic_pose && s.active_model_panel != PointModel::Clip
-                                          ? s.init_phase_timeout
-                                          : 0;
-
-                    point_tracker.track(points,
-                                        PointModel(s),
-                                        info,
-                                        dynamic_pose_ms);
                     ever_success.store(true, std::memory_order_relaxed);
 
                     // Solve P3P problem with OpenCV
 
                     // Construct the points defining the object we want to detect based on settings.
-                    // We are converting them from millimeters to meters.
-                    // TODO: Need to support clip too. That's cap only for now. 
+                    // We are converting them from millimeters to centimeters.
+                    // TODO: Need to support clip too. That's cap only for now.
+                    // s.active_model_panel != PointModel::Clip
+
                     std::vector<cv::Point3f> objectPoints;                    
                     objectPoints.push_back(cv::Point3f(s.cap_x/10.0,  s.cap_z / 10.0,  -s.cap_y / 10.0)); // Right
                     objectPoints.push_back(cv::Point3f(-s.cap_x/10.0,  s.cap_z / 10.0,  -s.cap_y / 10.0)); // Left
@@ -161,7 +156,7 @@ void Tracker_PT::run()
                     std::vector<cv::Point2f> trackedPoints;
                     // Stuff bitmap point in there making sure they match the order of the object point  
                     // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
-                    int topPointIndex = -1;
+                    
                     int minY = std::numeric_limits<int>::max();
                     for (int i = 0; i < 3; i++)
                     {
@@ -275,15 +270,10 @@ void Tracker_PT::run()
                         
                     }
 
-                    // TODO: Work out rotation angles
-                    // TODO: Choose the one solution that makes sense for us
-
-
-
                 }
 
+                // Send solution data back to main thread
                 QMutexLocker l2(&data_lock);
-                X_CM = point_tracker.pose();
                 if (iBestSolutionIndex != -1)
                 {
                     iBestAngles = iAngles[iBestSolutionIndex];
@@ -294,14 +284,12 @@ void Tracker_PT::run()
 
             if (preview_visible)
             {
-                const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
-                Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
-                Affine X_GH = X_CM * X_MH;
-                vec3 p = X_GH.t; // head (center?) position in global space
-
-                if (p[2] > f(.1))
-                    preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
-
+                if (topPointIndex != -1)
+                {
+                    // Render a cross to indicate which point is the head
+                    preview_frame->draw_head_center(points[topPointIndex][0], points[topPointIndex][1]);
+                }
+                
                 widget->update_image(preview_frame->get_bitmap());
 
                 auto [ w, h ] = widget->preview_size();
@@ -315,7 +303,7 @@ void Tracker_PT::run()
     }
 }
 
-bool Tracker_PT::maybe_reopen_camera()
+bool EasyTracker::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
@@ -323,13 +311,13 @@ bool Tracker_PT::maybe_reopen_camera()
                          s.cam_fps, s.cam_res_x, s.cam_res_y);
 }
 
-void Tracker_PT::set_fov(int value)
+void EasyTracker::set_fov(int value)
 {
     QMutexLocker l(&camera_mtx);
     camera->set_fov(value);
 }
 
-module_status Tracker_PT::start_tracker(QFrame* video_frame)
+module_status EasyTracker::start_tracker(QFrame* video_frame)
 {
     //video_frame->setAttribute(Qt::WA_NativeWindow);
 
@@ -346,50 +334,11 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
     return {};
 }
 
-void Tracker_PT::data(double *data)
+void EasyTracker::data(double *data)
 {
     if (ever_success.load(std::memory_order_relaxed))
     {
-        Affine X_CM;
-        {
-            QMutexLocker l(&data_lock);
-            X_CM = point_tracker.pose();
-        }
-
-        Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));
-        Affine X_GH(X_CM * X_MH);
-
-        // translate rotation matrix from opengl (G) to roll-pitch-yaw (E) frame
-        // -z -> x, y -> z, x -> -y
-        mat33 R_EG(0, 0,-1,
-                   -1, 0, 0,
-                   0, 1, 0);
-        mat33 R(R_EG *  X_GH.R * R_EG.t());
-
-        // get translation(s)
-        const vec3& t = X_GH.t;
-
-        // extract rotation angles
-        auto r00 = (double)R(0, 0);
-        auto r10 = (double)R(1,0), r20 = (double)R(2,0);
-        auto r21 = (double)R(2,1), r22 = (double)R(2,2);
-
-        double beta  = atan2(-r20, sqrt(r21*r21 + r22*r22));
-        double alpha = atan2(r10, r00);
-        double gamma = atan2(r21, r22);
-
-        constexpr double rad2deg = 180/M_PI;
-
-        data[Yaw]   = rad2deg * alpha;
-        data[Pitch] = -rad2deg * beta;
-        data[Roll]  = rad2deg * gamma;
-
-        // convert to cm
-        data[TX] = (double)t[0] / 10;
-        data[TY] = (double)t[1] / 10;
-        data[TZ] = (double)t[2] / 10;
-
-
+        // Get data back from tracker thread
         QMutexLocker l(&data_lock);
         data[Yaw] = iBestAngles[1];
         data[Pitch] = iBestAngles[0];
@@ -397,24 +346,22 @@ void Tracker_PT::data(double *data)
         data[TX] = iBestTranslation[0];
         data[TY] = iBestTranslation[1];
         data[TZ] = iBestTranslation[2];
-
     }
 }
 
-bool Tracker_PT::center()
+bool EasyTracker::center()
 {
     QMutexLocker l(&center_lock);
-
-    point_tracker.reset_state();
+    //TODO: Do we need to do anything there?
     return false;
 }
 
-int Tracker_PT::get_n_points()
+int EasyTracker::get_n_points()
 {
     return (int)point_count.load(std::memory_order_relaxed);
 }
 
-bool Tracker_PT::get_cam_info(pt_camera_info& info)
+bool EasyTracker::get_cam_info(pt_camera_info& info)
 {
     QMutexLocker l(&camera_mtx);
     bool ret;
@@ -423,10 +370,5 @@ bool Tracker_PT::get_cam_info(pt_camera_info& info)
     return ret;
 }
 
-Affine Tracker_PT::pose() const
-{
-    QMutexLocker l(&data_lock);
-    return point_tracker.pose();
-}
 
 } // ns pt_impl
