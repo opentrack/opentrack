@@ -1,6 +1,0 @@
-find_package(OpenCV QUIET)
-if(OpenCV_FOUND)
-    otr_module(tracker-easy)
-    target_link_libraries(${self} opentrack-tracker-easy-base)
-    target_include_directories(${self} PUBLIC "${CMAKE_SOURCE_DIR}/tracker-easy")
-endif()

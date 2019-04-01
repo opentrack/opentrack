@@ -18,7 +18,7 @@
 
 using namespace options;
 
-static void init_resources() { Q_INIT_RESOURCE(tracker_pt_base); }
+static void init_resources() { Q_INIT_RESOURCE(tracker_easy); }
 
 namespace pt_impl {
 
