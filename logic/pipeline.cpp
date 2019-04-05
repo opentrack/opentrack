@@ -281,16 +281,30 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
             libs.pFilter->center();
 
         if (own_center_logic)
-            center = Pose();
+        {
+            center.inv_R = rmat::eye();
+            center.T = {};
+        }
         else
-            center = value;
+        {
+            center.inv_R = euler_to_rmat(euler_t(&value[Yaw]) * (M_PI / 180)).t();
+            center.T = euler_t(&value[TX]);
+        }
     }
 }
 
 Pose pipeline::apply_center(Pose value) const
 {
-    // this is incorrect but people like it
-    value = value - center;
+    {
+        for (unsigned k = 0; k < 3; k++)
+            value(k) -= center.T(k);
+
+        euler_t rot = rmat_to_euler(
+            euler_to_rmat(euler_t(&value[Yaw]) * (M_PI / 180)) * center.inv_R
+        );
+        for (unsigned k = 0; k < 3; k++)
+            value(k+3) = rot(k) * 180 / M_PI;
+    }
 
     for (int i = 0; i < 6; i++)
         // don't invert after reltrans

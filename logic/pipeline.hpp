@@ -97,7 +97,10 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     reltrans rel;
 
-    Pose center;
+    struct {
+        rmat inv_R = rmat::eye();
+        euler_t T;
+    } center;
 
     time_units::ns backlog_time {};
 
