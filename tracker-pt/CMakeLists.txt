@@ -1,4 +1,4 @@
-find_package(OpenCV QUIET)
+include(opentrack-opencv)
 if(OpenCV_FOUND)
     otr_module(tracker-pt-base STATIC)
     target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})

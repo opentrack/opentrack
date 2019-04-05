@@ -1,4 +1,4 @@
-find_package(OpenCV QUIET)
+include(opentrack-opencv)
 if(OpenCV_FOUND)
     otr_module(cv STATIC)
     target_link_libraries(${self} opencv_videoio opencv_core opentrack-video)

@@ -1,4 +1,4 @@
-find_package(OpenCV QUIET)
+include(opentrack-opencv)
 if(OpenCV_FOUND)
     otr_module(tracker-pt)
     target_link_libraries(${self} opentrack-tracker-pt-base)

@@ -7,7 +7,7 @@ function(maybe_add_static_define)
 endfunction()
 
 
-find_package(OpenCV QUIET)
+include(opentrack-opencv)
 
 if(OpenCV_FOUND)
     set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")

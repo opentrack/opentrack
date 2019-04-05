@@ -43,7 +43,7 @@ if (WIN32 AND opentrack-intel)
 
         # Optional OpenCV support
         # Needed for Point Tracker to support Kinect V2 IR Sensor
-        find_package(OpenCV QUIET)
+        include(opentrack-opencv)
         if(OpenCV_FOUND)
             add_definitions(-DOTR_HAVE_OPENCV)
             target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
