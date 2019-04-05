@@ -220,7 +220,7 @@ private:
         dylib_list ret;
 
         const struct filter_ {
-            type type = type::Invalid;
+            type t = type::Invalid;
             QString glob;
             dylib_load_mode load_mode = dylib_load_norm;
         } filters[] = {
@@ -236,7 +236,7 @@ private:
             for (const QString& filename : dir.entryList({ filter.glob }, QDir::Files, QDir::Name))
             {
                 dylib_load_mode load_mode_{filter.load_mode | load_mode};
-                auto lib = std::make_shared<dylib>(QString("%1/%2").arg(library_path, filename), filter.type, load_mode_);
+                auto lib = std::make_shared<dylib>(QString("%1/%2").arg(library_path, filename), filter.t, load_mode_);
 
                 if (lib->type == type::Invalid)
                     continue;
