@@ -63,9 +63,12 @@ event_handler::event_handler(Modules::dylib_list const& extensions) : ext_bundle
 
 void event_handler::run_events(event_ordinal k, Pose& pose)
 {
+#if 0
     auto fun = std::mem_fn(ordinal_to_function[k].ptr);
 
     for (extension& x : extensions_for_event[k])
         fun(*x.logic, pose);
+#else
+    (void)k; (void)pose;
+#endif
 }
-
