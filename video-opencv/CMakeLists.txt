@@ -1,4 +1,5 @@
 include(opentrack-opencv)
+find_package(OpenCV QUIET)
 
 if(OpenCV_FOUND)
     otr_module(video-opencv)
