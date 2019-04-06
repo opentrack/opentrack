@@ -120,7 +120,7 @@ function(otr_module n_)
     )
 
     if(NOT "${arg_UNPARSED_ARGUMENTS}" STREQUAL "")
-        message(FATAL_ERROR "otr_module bad formals: ${arg_UNPARSED_ARGUMENTS}")
+        message(FATAL_ERROR "otr_module(${n_}) bad formals: ${arg_UNPARSED_ARGUMENTS}")
     endif()
 
     set(n "opentrack-${n_}")
