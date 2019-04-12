@@ -50,9 +50,9 @@ QImage Preview::get_bitmap()
                   QImage::Format_ARGB32);
 }
 
-void Preview::draw_head_center(pt_pixel_pos_mixin::f x, pt_pixel_pos_mixin::f y)
+void Preview::draw_head_center(Coordinates::f x, Coordinates::f y)
 {
-    auto [px_, py_] = pt_pixel_pos_mixin::to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
+    auto [px_, py_] = Coordinates::to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
 
     int px = iround(px_), py = iround(py_);
 

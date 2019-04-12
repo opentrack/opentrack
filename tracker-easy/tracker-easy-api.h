@@ -22,8 +22,10 @@
 
 const int KPointCount = 3;
 
-
-struct pt_pixel_pos_mixin
+///
+/// Utility class providing coordinates conversion functionalities
+///
+struct Coordinates final
 {
     using f = numeric_types::f;
 
@@ -32,8 +34,7 @@ struct pt_pixel_pos_mixin
 };
 
 
-
-struct pt_point_extractor : pt_pixel_pos_mixin
+struct pt_point_extractor
 {
     using vec2 = numeric_types::vec2;
     using f = numeric_types::f;

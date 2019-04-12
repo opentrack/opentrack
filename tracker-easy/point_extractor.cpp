@@ -372,7 +372,7 @@ end:
         // note: H/W is equal to fx/fy
 
         vec2 p;
-        std::tie(p[0], p[1]) = to_screen_pos(b.pos[0], b.pos[1], W, H);
+        std::tie(p[0], p[1]) = Coordinates::to_screen_pos(b.pos[0], b.pos[1], W, H);
         points.push_back(p);
         imagePoints.push_back(vec2(b.pos[0], b.pos[1]));
     }
