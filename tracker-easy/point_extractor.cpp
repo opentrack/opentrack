@@ -238,9 +238,8 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
     }
 }
 
-void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points, std::vector<vec2>& imagePoints)
+void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame_, std::vector<vec2>& points, std::vector<vec2>& imagePoints)
 {
-    const cv::Mat& frame = frame_.as_const<Frame>()->mat;
 
     ensure_buffers(frame);
     color_to_grayscale(frame, frame_gray_unmasked);
@@ -359,7 +358,7 @@ end:
     }
 
     // TODO: Do not do that if no preview. Delay blob drawing until we know where are the points?
-    draw_blobs(preview_frame_.as<Frame>()->mat,
+    draw_blobs(preview_frame_,
                blobs.data(), blobs.size(),
                frame_gray.size());
 

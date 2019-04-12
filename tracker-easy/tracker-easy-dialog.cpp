@@ -123,7 +123,6 @@ QString EasyTrackerDialog::threshold_display_text(int threshold_value)
         return tr("Brightness %1/255").arg(threshold_value);
     else
     {
-        pt_camera_info info;
         int w = s.cam_res_x, h = s.cam_res_y;
 
         if (w * h <= 0)
@@ -132,11 +131,14 @@ QString EasyTrackerDialog::threshold_display_text(int threshold_value)
             h = 480;
         }
 
+        //SL: sort this out 
+        /*
         if (tracker && tracker->get_cam_info(info) && info.res_x * info.res_y != 0)
         {
             w = info.res_x;
             h = info.res_y;
         }
+        */
 
         double value = (double)pt_point_extractor::threshold_radius_value(w, h, threshold_value);
 
@@ -202,6 +204,8 @@ void EasyTrackerDialog::startstop_trans_calib(bool start)
 
 void EasyTrackerDialog::poll_tracker_info_impl()
 {
+    //SL: sort this out
+    /*
     pt_camera_info info;
     if (tracker && tracker->get_cam_info(info))
     {
@@ -212,6 +216,7 @@ void EasyTrackerDialog::poll_tracker_info_impl()
         ui.pointinfo_label->setText((n_points == 3 ? tr("%1 OK!") : tr("%1 BAD!")).arg(n_points));
     }
     else
+    */
     {
         ui.caminfo_label->setText(tr("Tracker offline"));
         ui.pointinfo_label->setText(QString());
@@ -228,7 +233,7 @@ void EasyTrackerDialog::show_camera_settings()
     if (tracker)
     {
         QMutexLocker l(&tracker->camera_mtx);
-        tracker->camera->show_camera_settings();
+        tracker->camera->show_dialog();
     }
     else
         (void)video::show_dialog(s.camera_name);

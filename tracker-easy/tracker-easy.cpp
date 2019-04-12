@@ -31,9 +31,7 @@ EasyTracker::EasyTracker(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
     s { traits->get_module_name() },
     point_extractor { traits->make_point_extractor() },
-    camera { traits->make_camera() },
-    frame { traits->make_frame() },
-    preview_frame { traits->make_preview(preview_width, preview_height) }
+    iPreview{ preview_width, preview_height }
 {
     cv::setBreakOnError(true);
     cv::setNumThreads(1);
@@ -107,26 +105,31 @@ void EasyTracker::run()
     maybe_reopen_camera();
 
     while(!isInterruptionRequested())
-    {
-        pt_camera_info info;
+    {        
         bool new_frame = false;
 
         {
             QMutexLocker l(&camera_mtx);
 
             if (camera)
-                std::tie(new_frame, info) = camera->get_frame(*frame);
+                std::tie(iFrame, new_frame) = camera->get_frame();
         }
 
         if (new_frame)
         {
+            //TODO: We should not assume channel size of 1 byte
+            iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE(CV_8U,iFrame.channels), iFrame.data, iFrame.stride);
+
             const bool preview_visible = check_is_visible();
 
             if (preview_visible)
-                *preview_frame = *frame;
+            {
+                iPreview = iMatFrame;                
+            }
+                
 
             iImagePoints.clear();
-            point_extractor->extract_points(*frame, *preview_frame, points, iImagePoints);
+            point_extractor->extract_points(iMatFrame, iPreview, points, iImagePoints);
             point_count.store(points.size(), std::memory_order_relaxed);
 
             const bool success = points.size() >= KPointCount;
@@ -208,23 +211,23 @@ void EasyTracker::run()
                     cv::Mat cameraMatrix;
                     cameraMatrix.create(3, 3, CV_64FC1);
                     cameraMatrix.setTo(cv::Scalar(0));
-                    cameraMatrix.at<double>(0, 0) = camera->info.focalLengthX;
-                    cameraMatrix.at<double>(1, 1) = camera->info.focalLengthY;
-                    cameraMatrix.at<double>(0, 2) = camera->info.principalPointX;
-                    cameraMatrix.at<double>(1, 2) = camera->info.principalPointY;
+                    cameraMatrix.at<double>(0, 0) = iCameraInfo.focalLengthX;
+                    cameraMatrix.at<double>(1, 1) = iCameraInfo.focalLengthY;
+                    cameraMatrix.at<double>(0, 2) = iCameraInfo.principalPointX;
+                    cameraMatrix.at<double>(1, 2) = iCameraInfo.principalPointY;
                     cameraMatrix.at<double>(2, 2) = 1;
 
                     // Create distortion cooefficients
                     cv::Mat distCoeffs = cv::Mat::zeros(8, 1, CV_64FC1);
                     // As per OpenCV docs they should be thus: k1, k2, p1, p2, k3, k4, k5, k6
                     distCoeffs.at<double>(0, 0) = 0; // Radial first order
-                    distCoeffs.at<double>(1, 0) = camera->info.radialDistortionSecondOrder; // Radial second order
+                    distCoeffs.at<double>(1, 0) = iCameraInfo.radialDistortionSecondOrder; // Radial second order
                     distCoeffs.at<double>(2, 0) = 0; // Tangential first order
                     distCoeffs.at<double>(3, 0) = 0; // Tangential second order
                     distCoeffs.at<double>(4, 0) = 0; // Radial third order
-                    distCoeffs.at<double>(5, 0) = camera->info.radialDistortionFourthOrder; // Radial fourth order
+                    distCoeffs.at<double>(5, 0) = iCameraInfo.radialDistortionFourthOrder; // Radial fourth order
                     distCoeffs.at<double>(6, 0) = 0; // Radial fith order
-                    distCoeffs.at<double>(7, 0) = camera->info.radialDistortionSixthOrder; // Radial sixth order
+                    distCoeffs.at<double>(7, 0) = iCameraInfo.radialDistortionSixthOrder; // Radial sixth order
 
                     // Define our solution arrays
                     // They will receive up to 4 solutions for our P3P problem
@@ -287,16 +290,17 @@ void EasyTracker::run()
                 if (topPointIndex != -1)
                 {
                     // Render a cross to indicate which point is the head
-                    preview_frame->draw_head_center(points[topPointIndex][0], points[topPointIndex][1]);
+                    iPreview.draw_head_center(points[topPointIndex][0], points[topPointIndex][1]);
                 }
                 
-                widget->update_image(preview_frame->get_bitmap());
+                widget->update_image(iPreview.get_bitmap());
 
                 auto [ w, h ] = widget->preview_size();
                 if (w != preview_width || h != preview_height)
                 {
+                    // Resize preivew if widget size has changed
                     preview_width = w; preview_height = h;
-                    preview_frame = traits->make_preview(w, h);
+                    iPreview = Preview(w, h);
                 }
             }
         }
@@ -307,14 +311,13 @@ bool EasyTracker::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
-    return camera->start(s.camera_name,
-                         s.cam_fps, s.cam_res_x, s.cam_res_y);
+    return camera->start(iCameraInfo);
 }
 
 void EasyTracker::set_fov(int value)
 {
     QMutexLocker l(&camera_mtx);
-    camera->set_fov(value);
+
 }
 
 module_status EasyTracker::start_tracker(QFrame* video_frame)
@@ -328,6 +331,9 @@ module_status EasyTracker::start_tracker(QFrame* video_frame)
     video_frame->setLayout(layout.get());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
+
+    // Create our camera
+    camera = video::make_camera(s.camera_name);
 
     start(QThread::HighPriority);
 
@@ -361,14 +367,6 @@ int EasyTracker::get_n_points()
     return (int)point_count.load(std::memory_order_relaxed);
 }
 
-bool EasyTracker::get_cam_info(pt_camera_info& info)
-{
-    QMutexLocker l(&camera_mtx);
-    bool ret;
-
-    std::tie(ret, info) = camera->get_info();
-    return ret;
-}
 
 
 } // ns pt_impl
