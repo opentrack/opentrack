@@ -70,7 +70,6 @@ private:
 
     video::frame iFrame;
     cv::Mat iMatFrame;
-    cv::Mat iRaw8;
 
     float fov = 0;
     int width = 0, height = 0;
