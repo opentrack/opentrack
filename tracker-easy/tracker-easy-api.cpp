@@ -22,12 +22,12 @@ f pt_point_extractor::threshold_radius_value(int w, int h, int threshold)
     return radius;
 }
 
-std::tuple<f, f> pt_pixel_pos_mixin::to_pixel_pos(f x, f y, int w, int h)
+std::tuple<f, f> Coordinates::to_pixel_pos(f x, f y, int w, int h)
 {
     return std::make_tuple(w*(x+f{.5}), f{.5}*(h - 2*y*w));
 }
 
-std::tuple<f, f> pt_pixel_pos_mixin::to_screen_pos(f px, f py, int w, int h)
+std::tuple<f, f> Coordinates::to_screen_pos(f px, f py, int w, int h)
 {
     px *= w/(w-f{1}); py *= h/(h-f{1});
     return std::make_tuple((px - w/f{2})/w, -(py - h/f{2})/w);
