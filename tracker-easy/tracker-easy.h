@@ -12,6 +12,8 @@
 #include "tracker-easy-api.h"
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
+#include "video/camera.hpp"
+#include "frame.hpp"
 
 #include <atomic>
 #include <memory>
@@ -42,7 +44,6 @@ struct EasyTracker : QThread, ITracker
     bool center() override;
 
     int  get_n_points();
-    [[nodiscard]] bool get_cam_info(pt_camera_info& info);
 
 private:
     void run() override;
@@ -64,10 +65,13 @@ private:
     int preview_width = 320, preview_height = 240;
 
     pointer<pt_point_extractor> point_extractor;
-    pointer<pt_camera> camera;
+    std::unique_ptr<video::impl::camera> camera;
+    video::impl::camera::info iCameraInfo;
     pointer<video_widget> widget;
-    pointer<pt_frame> frame;
-    pointer<pt_preview> preview_frame;
+
+    video::frame iFrame;
+    cv::Mat iMatFrame;
+    Preview iPreview;
 
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success = false;

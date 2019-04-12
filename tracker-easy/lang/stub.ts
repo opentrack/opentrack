@@ -264,18 +264,6 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1x%2 @ %3 FPS</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 OK!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 BAD!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Tracker offline</source>
         <translation type="unfinished"></translation>
     </message>

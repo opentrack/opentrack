@@ -3,7 +3,6 @@
 #include "tracker-easy-api.h"
 
 #include "module.hpp"
-#include "camera.h"
 #include "frame.hpp"
 #include "point_extractor.h"
 
@@ -20,11 +19,6 @@ namespace pt_module {
 
 struct pt_module_traits final : pt_runtime_traits
 {
-    pointer<pt_camera> make_camera() const override
-    {
-        return pointer<pt_camera>(new Camera(module_name));
-    }
-
     pointer<pt_point_extractor> make_point_extractor() const override
     {
         return pointer<pt_point_extractor>(new PointExtractor(module_name));
@@ -35,15 +29,6 @@ struct pt_module_traits final : pt_runtime_traits
         return module_name;
     }
 
-    pointer<pt_frame> make_frame() const override
-    {
-        return pointer<pt_frame>(new Frame);
-    }
-
-    pointer<pt_preview> make_preview(int w, int h) const override
-    {
-        return pointer<pt_preview>(new Preview(w, h));
-    }
 };
 
 struct tracker_pt : Tracker_PT

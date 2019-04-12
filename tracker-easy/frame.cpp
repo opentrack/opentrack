@@ -4,11 +4,9 @@
 
 #include <opencv2/imgproc.hpp>
 
-namespace pt_module {
 
-Preview& Preview::operator=(const pt_frame& frame_)
+Preview& Preview::operator=(const cv::Mat& frame)
 {
-    const cv::Mat& frame = frame_.as_const<const Frame>()->mat;
 
     if (frame.channels() != 3)
     {
@@ -52,9 +50,9 @@ QImage Preview::get_bitmap()
                   QImage::Format_ARGB32);
 }
 
-void Preview::draw_head_center(f x, f y)
+void Preview::draw_head_center(pt_pixel_pos_mixin::f x, pt_pixel_pos_mixin::f y)
 {
-    auto [px_, py_] = to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
+    auto [px_, py_] = pt_pixel_pos_mixin::to_pixel_pos(x, y, frame_copy.cols, frame_copy.rows);
 
     int px = iround(px_), py = iround(py_);
 
@@ -76,5 +74,3 @@ void Preview::ensure_size(cv::Mat& frame, int w, int h, int type)
     if (frame.cols != w || frame.rows != h)
         frame = cv::Mat(h, w, type);
 }
-
-} // ns pt_module
