@@ -242,7 +242,15 @@ void PointExtractor::extract_points(const cv::Mat& frame, cv::Mat& preview_frame
 {
 
     ensure_buffers(frame);
-    color_to_grayscale(frame, frame_gray_unmasked);
+    if (frame.channels() != 1)
+    {
+        color_to_grayscale(frame, frame_gray_unmasked);
+    }
+    else
+    {
+        frame_gray_unmasked = frame;
+    }
+    
 
 #if defined PREVIEW
     cv::imshow("capture", frame_gray);

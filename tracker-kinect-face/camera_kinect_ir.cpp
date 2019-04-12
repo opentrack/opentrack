@@ -99,7 +99,7 @@ std::tuple<const video::impl::frame&, bool> CameraKinectIr::get_frame()
     iFrame.width = 512;
     iFrame.height = 424;
     iFrame.stride = cv::Mat::AUTO_STEP;
-    iFrame.channels = 3;
+    iFrame.channels = iMatFrame.channels();
     return { iFrame, new_frame };
 }
 
@@ -280,9 +280,7 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
             // For scalling to have more precission in the range we are interrested in
             min = max - 255;            
             // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
-            raw.convertTo(iRaw8, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
-            // Second convert to RGB
-            cv::cvtColor(iRaw8, frame, cv::COLOR_GRAY2BGR);
+            raw.convertTo(frame, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
             //
             success = true;
         }

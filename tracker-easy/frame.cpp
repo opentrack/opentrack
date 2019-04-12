@@ -5,21 +5,37 @@
 #include <opencv2/imgproc.hpp>
 
 
-Preview& Preview::operator=(const cv::Mat& frame)
+Preview& Preview::operator=(const cv::Mat& aFrame)
 {
 
-    if (frame.channels() != 3)
+    // Make sure our frame is RGB
+    // Make an extra copy if needed
+    int channelCount = aFrame.channels();
+    if (channelCount == 1)
     {
-        eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
+        // Convert to RGB
+        cv::cvtColor(aFrame, iFrameRgb, cv::COLOR_GRAY2BGR);
+    }
+    else if (channelCount == 3)
+    {
+        iFrameRgb = aFrame;
+    }
+    else
+    {
+        eval_once(qDebug() << "tracker/easy: camera frame depth not supported" << aFrame.channels());
         return *this;
     }
 
-    const bool need_resize = frame.cols != frame_out.cols || frame.rows != frame_out.rows;
+    const bool need_resize = iFrameRgb.cols != frame_out.cols || iFrameRgb.rows != frame_out.rows;
     if (need_resize)
-        cv::resize(frame, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
+    {
+        cv::resize(iFrameRgb, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
+    }        
     else
-        frame.copyTo(frame_copy);
-
+    {
+        iFrameRgb.copyTo(frame_copy);
+    }
+        
     return *this;
 }
 
