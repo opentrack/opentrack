@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>EasyTrackerDialog</name>
+    <name>EasyTracker::Dialog</name>
     <message>
         <source>Brightness %1/255</source>
         <translation type="unfinished">亮度 %1/255</translation>
@@ -34,6 +34,13 @@
     <message>
         <source>Tracker offline</source>
         <translation type="unfinished">跟踪器脱机</translation>
+    </message>
+</context>
+<context>
+    <name>EasyTracker::Metadata</name>
+    <message>
+        <source>Easy Tracker 0.1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -265,13 +272,6 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Green only</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>pt_module::metadata_pt</name>
-    <message>
-        <source>Easy Tracker 0.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

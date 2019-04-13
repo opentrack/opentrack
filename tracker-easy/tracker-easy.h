@@ -25,66 +25,70 @@
 #include <QMutex>
 #include <QLayout>
 
-
-class EasyTrackerDialog;
-
-using namespace numeric_types;
-
-struct EasyTracker : QThread, ITracker
+namespace EasyTracker
 {
-    friend class EasyTrackerDialog;
 
-    template<typename t> using pointer = pt_pointer<t>;
+    static const QString KModuleName = "tracker-easy";
 
-    explicit EasyTracker(pointer<IEasyTrackerTraits> const& pt_runtime_traits);
-    ~EasyTracker() override;
-    module_status start_tracker(QFrame* parent_window) override;
-    void data(double* data) override;
-    bool center() override;
+    class Dialog;
 
-    int  get_n_points();
+    using namespace numeric_types;
 
-private:
-    void run() override;
+    struct Tracker : QThread, ITracker
+    {
+        friend class Dialog;
 
-    bool maybe_reopen_camera();
-    void set_fov(int value);
+        template<typename t> using pointer = pt_pointer<t>;
 
-    pointer<IEasyTrackerTraits> traits;
+        explicit Tracker();
+        ~Tracker() override;
+        module_status start_tracker(QFrame* parent_window) override;
+        void data(double* data) override;
+        bool center() override;
 
-    QMutex camera_mtx;
+        int  get_n_points();
+
+    private:
+        void run() override;
+
+        bool maybe_reopen_camera();
+        void set_fov(int value);
+
+        QMutex camera_mtx;
 
 
-    pt_settings s;
+        pt_settings s;
 
-    std::unique_ptr<QLayout> layout;
-    std::vector<vec2> iPoints;
+        std::unique_ptr<QLayout> layout;
+        std::vector<vec2> iPoints;
 
-    int preview_width = 320, preview_height = 240;
+        int preview_width = 320, preview_height = 240;
 
-    pointer<IPointExtractor> point_extractor;
-    std::unique_ptr<video::impl::camera> camera;
-    video::impl::camera::info iCameraInfo;
-    pointer<video_widget> widget;
+        std::unique_ptr<IPointExtractor> point_extractor;
+        std::unique_ptr<video::impl::camera> camera;
+        video::impl::camera::info iCameraInfo;
+        pointer<video_widget> widget;
 
-    video::frame iFrame;
-    cv::Mat iMatFrame;
-    Preview iPreview;
+        video::frame iFrame;
+        cv::Mat iMatFrame;
+        Preview iPreview;
 
-    std::atomic<unsigned> point_count { 0 };
-    std::atomic<bool> ever_success = false;
-    mutable QMutex center_lock, data_lock;
+        std::atomic<unsigned> point_count{ 0 };
+        std::atomic<bool> ever_success = false;
+        mutable QMutex center_lock, data_lock;
 
-    // Translation solutions
-    std::vector<cv::Mat> iTranslations;
-    // Rotation solutions
-    std::vector<cv::Mat> iRotations;
-    // Angle solutions, pitch, yaw, roll, in this order
-    std::vector<cv::Vec3d> iAngles;
-    // The index of our best solution in the above arrays
-    int iBestSolutionIndex = -1;
-    // Best translation
-    cv::Vec3d iBestTranslation;
-    // Best angles
-    cv::Vec3d iBestAngles;
-};
+        // Translation solutions
+        std::vector<cv::Mat> iTranslations;
+        // Rotation solutions
+        std::vector<cv::Mat> iRotations;
+        // Angle solutions, pitch, yaw, roll, in this order
+        std::vector<cv::Vec3d> iAngles;
+        // The index of our best solution in the above arrays
+        int iBestSolutionIndex = -1;
+        // Best translation
+        cv::Vec3d iBestTranslation;
+        // Best angles
+        cv::Vec3d iBestAngles;
+    };
+
+}

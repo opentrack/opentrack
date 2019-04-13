@@ -18,17 +18,20 @@
 
 using namespace numeric_types;
 
-
-class CvPointExtractor final : public IPointExtractor
+namespace EasyTracker
 {
-public:
-    // extracts points from frame and draws some processing info into frame, if draw_output is set
-    // dt: time since last call in seconds
-    void extract_points(const cv::Mat& frame, cv::Mat* aPreview, std::vector<vec2>& aPoints) override;
-    CvPointExtractor(const QString& module_name);
-
-    pt_settings s;
-};
 
 
+    class CvPointExtractor final : public IPointExtractor
+    {
+    public:
+        // extracts points from frame and draws some processing info into frame, if draw_output is set
+        // dt: time since last call in seconds
+        void extract_points(const cv::Mat& frame, cv::Mat* aPreview, std::vector<vec2>& aPoints) override;
+        CvPointExtractor();
+
+        pt_settings s;
+    };
+
+}
 

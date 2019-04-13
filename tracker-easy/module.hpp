@@ -6,15 +6,15 @@
 
 #include "compat/linkage-macros.hpp"
 
-namespace pt_module
+namespace EasyTracker
 {
 
-class OTR_GENERIC_EXPORT metadata_pt : public Metadata
-{
-    Q_OBJECT
+    class OTR_GENERIC_EXPORT Metadata : public ::Metadata
+    {
+        Q_OBJECT
 
-    QString name() override;
-    QIcon icon() override;
-};
+        QString name() override;
+        QIcon icon() override;
+    };
 
 } // ns pt_module
