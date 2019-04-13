@@ -19,13 +19,13 @@
 #include <QFile>
 #include <QCoreApplication>
 
-#include <opencv2\calib3d.hpp>
+#include <opencv2/calib3d.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include <iostream>
 
 using namespace options;
 
-namespace pt_impl {
 
 EasyTracker::EasyTracker(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
@@ -45,11 +45,14 @@ EasyTracker::EasyTracker(pointer<pt_runtime_traits> const& traits) :
 
 EasyTracker::~EasyTracker()
 {
+    //
+    cv::destroyWindow("Preview");
+
     requestInterruption();
     wait();
 
     QMutexLocker l(&camera_mtx);
-    camera->stop();
+    camera->stop();    
 }
 
 
@@ -120,19 +123,30 @@ void EasyTracker::run()
             //TODO: We should not assume channel size of 1 byte
             iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE(CV_8U,iFrame.channels), iFrame.data, iFrame.stride);
 
-            const bool preview_visible = check_is_visible();
 
+            const bool preview_visible = check_is_visible();
             if (preview_visible)
             {
-                iPreview = iMatFrame;                
+                iPreview = iMatFrame;
             }
-                
 
             iImagePoints.clear();
-            point_extractor->extract_points(iMatFrame, iPreview, points, iImagePoints);
+            point_extractor->extract_points(iMatFrame, iPreview.iFrameRgb, points, iImagePoints);
             point_count.store(points.size(), std::memory_order_relaxed);
 
-            const bool success = points.size() >= KPointCount;
+            
+            if (preview_visible)
+            {
+                //iPreview = iMatFrame;
+                cv::imshow("Preview", iPreview.iFrameRgb);
+                cv::waitKey(1);
+            }
+            else
+            {
+                cv::destroyWindow("Preview");
+            }
+
+            const bool success = points.size() >= KPointCount || iImagePoints.size() >= KPointCount;
 
             int topPointIndex = -1;
 
@@ -290,7 +304,10 @@ void EasyTracker::run()
                 if (topPointIndex != -1)
                 {
                     // Render a cross to indicate which point is the head
-                    iPreview.draw_head_center(points[topPointIndex][0], points[topPointIndex][1]);
+                    if (points.size() >= 3)
+                    {
+                        iPreview.draw_head_center(points[topPointIndex][0], points[topPointIndex][1]);
+                    }                    
                 }
                 
                 widget->update_image(iPreview.get_bitmap());
@@ -367,6 +384,3 @@ int EasyTracker::get_n_points()
     return (int)point_count.load(std::memory_order_relaxed);
 }
 
-
-
-} // ns pt_impl

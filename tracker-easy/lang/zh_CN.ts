@@ -2,6 +2,41 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>EasyTrackerDialog</name>
+    <message>
+        <source>Brightness %1/255</source>
+        <translation type="unfinished">亮度 %1/255</translation>
+    </message>
+    <message>
+        <source>LED radius %1 pixels</source>
+        <translation type="unfinished">光源半径 %1 像素</translation>
+    </message>
+    <message>
+        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 samples. Over %2, good!</source>
+        <translation type="unfinished">%1 样本。%2 正常</translation>
+    </message>
+    <message>
+        <source>Stop calibration</source>
+        <translation type="unfinished">停止校准</translation>
+    </message>
+    <message>
+        <source>Start calibration</source>
+        <translation type="unfinished">开始校准</translation>
+    </message>
+    <message>
+        <source>Tracker offline</source>
+        <translation type="unfinished">跟踪器脱机</translation>
+    </message>
+</context>
+<context>
     <name>UICPTClientControls</name>
     <message>
         <source>PointTracker Settings</source>
@@ -231,41 +266,6 @@ Don&apos;t roll or change position.</source>
     <message>
         <source>Green only</source>
         <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>pt_impl::EasyTrackerDialog</name>
-    <message>
-        <source>Brightness %1/255</source>
-        <translation type="unfinished">亮度 %1/255</translation>
-    </message>
-    <message>
-        <source>LED radius %1 pixels</source>
-        <translation type="unfinished">光源半径 %1 像素</translation>
-    </message>
-    <message>
-        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 samples. Over %2, good!</source>
-        <translation type="unfinished">%1 样本。%2 正常</translation>
-    </message>
-    <message>
-        <source>Stop calibration</source>
-        <translation type="unfinished">停止校准</translation>
-    </message>
-    <message>
-        <source>Start calibration</source>
-        <translation type="unfinished">开始校准</translation>
-    </message>
-    <message>
-        <source>Tracker offline</source>
-        <translation type="unfinished">跟踪器脱机</translation>
     </message>
 </context>
 <context>
