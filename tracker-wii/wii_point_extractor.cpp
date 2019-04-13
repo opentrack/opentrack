@@ -38,7 +38,7 @@ WIIPointExtractor::WIIPointExtractor(const QString& module_name) : s(module_name
 }
 
 //define a temp draw function
-void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thinkness)
+void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness)
 {
 	static constexpr int len = 9;
 
@@ -49,12 +49,12 @@ void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const
 		cv::Point(p2.x - len, p2.y),
 		cv::Point(p2.x + len, p2.y),
 		color,
-		thinkness);
+		thickness);
 	cv::line(preview_frame,
 		cv::Point(p2.x, p2.y - len),
 		cv::Point(p2.x, p2.y + len),
 		color,
-		thinkness);
+		thickness);
 };
 
 bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_info &wii, std::vector<vec2>& points)
