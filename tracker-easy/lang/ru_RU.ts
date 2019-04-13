@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
-    <name>EasyTrackerDialog</name>
+    <name>EasyTracker::Dialog</name>
     <message>
         <source>Brightness %1/255</source>
         <translation type="unfinished"></translation>
@@ -34,6 +34,13 @@
     <message>
         <source>Tracker offline</source>
         <translation type="unfinished">Отслеживание отключено</translation>
+    </message>
+</context>
+<context>
+    <name>EasyTracker::Metadata</name>
+    <message>
+        <source>Easy Tracker 0.1</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -270,13 +277,6 @@ ROLL или X/Y-смещения.</translation>
     </message>
     <message>
         <source>Green only</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>pt_module::metadata_pt</name>
-    <message>
-        <source>Easy Tracker 0.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

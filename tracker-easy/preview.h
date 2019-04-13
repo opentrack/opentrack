@@ -14,23 +14,27 @@
 #include <opencv2/core.hpp>
 #include <QImage>
 
-struct Preview
+namespace EasyTracker
 {
-    Preview(int w, int h);
 
-    Preview& operator=(const cv::Mat& frame);
-    QImage get_bitmap();
-    void draw_head_center(numeric_types::f x, numeric_types::f y);
+    struct Preview
+    {
+        Preview(int w, int h);
 
-    operator cv::Mat&() { return iFrameResized; }
-    operator cv::Mat const&() const { return iFrameResized; }
+        Preview& operator=(const cv::Mat& frame);
+        QImage get_bitmap();
+        void draw_head_center(numeric_types::f x, numeric_types::f y);
 
-private:
-    static void ensure_size(cv::Mat& frame, int w, int h, int type);
+        operator cv::Mat&() { return iFrameResized; }
+        operator cv::Mat const&() const { return iFrameResized; }
 
-public:
-    cv::Mat iFrameResized, frame_out;
-    cv::Mat iFrameRgb;
-};
+    private:
+        static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
+    public:
+        cv::Mat iFrameResized, frame_out;
+        cv::Mat iFrameRgb;
+    };
+
+}
 

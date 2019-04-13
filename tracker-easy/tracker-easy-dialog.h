@@ -17,35 +17,37 @@
 #include <QTimer>
 #include <QMutex>
 
-
-class EasyTrackerDialog : public ITrackerDialog
+namespace EasyTracker
 {
-    Q_OBJECT
-public:
-    EasyTrackerDialog(const QString& module_name);
-    void register_tracker(ITracker *tracker) override;
-    void unregister_tracker() override;
-    void save();
-public slots:
-    void doOK();
-    void doCancel();
+    class Dialog : public ITrackerDialog
+    {
+        Q_OBJECT
+    public:
+        Dialog();
+        void register_tracker(ITracker *tracker) override;
+        void unregister_tracker() override;
+        void save();
+    public slots:
+        void doOK();
+        void doCancel();
 
-    void startstop_trans_calib(bool start);
-    void trans_calib_step();
-    void poll_tracker_info_impl();
-    void set_camera_settings_available(const QString& camera_name);
-    void show_camera_settings();
-signals:
-    void poll_tracker_info();
-protected:
-    QString threshold_display_text(int threshold_value);
+        void startstop_trans_calib(bool start);
+        void trans_calib_step();
+        void poll_tracker_info_impl();
+        void set_camera_settings_available(const QString& camera_name);
+        void show_camera_settings();
+    signals:
+        void poll_tracker_info();
+    protected:
+        QString threshold_display_text(int threshold_value);
 
-    pt_settings s;
-    EasyTracker* tracker;
-    QTimer timer, calib_timer;
-    TranslationCalibrator trans_calib;
-    QMutex calibrator_mutex;
+        pt_settings s;
+        Tracker* tracker;
+        QTimer timer, calib_timer;
+        TranslationCalibrator trans_calib;
+        QMutex calibrator_mutex;
 
-    Ui::UICPTClientControls ui;
-};
+        Ui::UICPTClientControls ui;
+    };
 
+}

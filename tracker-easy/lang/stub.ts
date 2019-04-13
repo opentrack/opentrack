@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>EasyTrackerDialog</name>
+    <name>EasyTracker::Dialog</name>
     <message>
         <source>Brightness %1/255</source>
         <translation type="unfinished"></translation>
@@ -33,6 +33,13 @@
     </message>
     <message>
         <source>Tracker offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EasyTracker::Metadata</name>
+    <message>
+        <source>Easy Tracker 0.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -265,13 +272,6 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Green only</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>pt_module::metadata_pt</name>
-    <message>
-        <source>Easy Tracker 0.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
