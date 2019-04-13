@@ -10,7 +10,7 @@
 #include "tracker-easy-api.h"
 
 #include "tracker-easy.h"
-#include "ui_FTNoIR_PT_Controls.h"
+#include "ui_tracker-easy-settings.h"
 #include "cv/translation-calibrator.hpp"
 #include "video/video-widget.hpp"
 

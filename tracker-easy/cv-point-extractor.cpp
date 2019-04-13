@@ -79,10 +79,10 @@ namespace EasyTracker
             }
         }
 
-        // Keep the three points which are highest, i.e. with lowest Y coordinates
+        // Keep only the three points which are highest, i.e. with lowest Y coordinates
         // That's most usefull to discard noise from features below your cap/head.
         // Typically noise comming from zippers and metal parts on your clothing.
-        // With a cap tracker it also successfully discards noise glasses.
+        // With a cap tracker it also successfully discards noise from glasses.
         // However it may not work as good with a clip user wearing glasses.
         while (aPoints.size() > 3) // Until we have no more than three points
         {
