@@ -23,8 +23,8 @@
    <string>PointTracker Settings</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="module/tracker_pt.qrc">
-    <normaloff>:/Resources/Logo_IR.png</normaloff>:/Resources/Logo_IR.png</iconset>
+   <iconset resource="tracker_easy.qrc">
+    <normaloff>:/Resources/tracker-easy-logo.png</normaloff>:/Resources/tracker-easy-logo.png</iconset>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>
@@ -725,7 +725,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="tracker_pt_base.qrc">:/Resources/clip_side.png</pixmap>
+               <pixmap resource="tracker_easy.qrc">:/Resources/clip_side.png</pixmap>
               </property>
              </widget>
              <widget class="QLabel" name="label_50">
@@ -805,7 +805,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="tracker_pt_base.qrc">:/Resources/clip_front.png</pixmap>
+               <pixmap resource="tracker_easy.qrc">:/Resources/clip_front.png</pixmap>
               </property>
              </widget>
             </widget>
@@ -841,7 +841,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="tracker_pt_base.qrc">:/Resources/cap_side.png</pixmap>
+               <pixmap resource="tracker_easy.qrc">:/Resources/cap_side.png</pixmap>
               </property>
              </widget>
              <widget class="QLabel" name="label_48">
@@ -889,7 +889,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="tracker_pt_base.qrc">:/Resources/cap_front.png</pixmap>
+               <pixmap resource="tracker_easy.qrc">:/Resources/cap_front.png</pixmap>
               </property>
              </widget>
              <widget class="QSpinBox" name="cap_width_spin">
@@ -1349,7 +1349,7 @@ Don't roll or change position.</string>
           <string/>
          </property>
          <property name="pixmap">
-          <pixmap resource="module/tracker_pt.qrc">:/Resources/Logo_IR.png</pixmap>
+          <pixmap resource="tracker_easy.qrc">:/Resources/tracker-easy-logo.png</pixmap>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1410,16 +1410,7 @@ Don't roll or change position.</string>
   <tabstop>tcalib_button</tabstop>
  </tabstops>
  <resources>
-  <include location="module/tracker_pt.qrc"/>
-  <include location="module/tracker_pt.qrc"/>
-  <include location="module/tracker_pt.qrc"/>
-  <include location="module/tracker_pt.qrc"/>
-  <include location="module/tracker_pt.qrc"/>
-  <include location="tracker_pt_base.qrc"/>
-  <include location="tracker_pt_base.qrc"/>
-  <include location="tracker_pt_base.qrc"/>
-  <include location="tracker_pt_base.qrc"/>
-  <include location="tracker_pt_base.qrc"/>
+  <include location="tracker_easy.qrc"/>
  </resources>
  <connections/>
  <slots>

@@ -332,6 +332,10 @@ namespace EasyTracker
     {
         QMutexLocker l(&camera_mtx);
 
+        iCameraInfo.fps = s.cam_fps;
+        iCameraInfo.width = s.cam_res_x;
+        iCameraInfo.height = s.cam_res_y;
+
         return camera->start(iCameraInfo);
     }
 

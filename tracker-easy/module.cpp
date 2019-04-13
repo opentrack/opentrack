@@ -12,7 +12,7 @@ namespace EasyTracker
 {
 
     QString Metadata::name() { return tr("Easy Tracker 0.1"); }
-    QIcon Metadata::icon() { return QIcon(":/Resources/Logo_IR.png"); }
+    QIcon Metadata::icon() { return QIcon(":/Resources/easy-tracker-logo.png"); }
 
 }
 
