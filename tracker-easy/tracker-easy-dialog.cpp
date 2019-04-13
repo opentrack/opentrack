@@ -20,8 +20,6 @@ using namespace options;
 
 static void init_resources() { Q_INIT_RESOURCE(tracker_easy); }
 
-namespace pt_impl {
-
 EasyTrackerDialog::EasyTrackerDialog(const QString& module_name) :
     s(module_name),
     tracker(nullptr),
@@ -276,5 +274,3 @@ void EasyTrackerDialog::unregister_tracker()
     poll_tracker_info();
     timer.stop();
 }
-
-} // ns pt_impl

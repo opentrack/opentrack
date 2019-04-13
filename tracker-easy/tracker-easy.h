@@ -25,7 +25,6 @@
 #include <QMutex>
 #include <QLayout>
 
-namespace pt_impl {
 
 class EasyTrackerDialog;
 
@@ -90,7 +89,3 @@ private:
     // Best angles
     cv::Vec3d iBestAngles;
 };
-
-} // ns pt_impl
-
-using Tracker_PT = pt_impl::EasyTracker;

@@ -17,7 +17,6 @@
 #include <QTimer>
 #include <QMutex>
 
-namespace pt_impl {
 
 class EasyTrackerDialog : public ITrackerDialog
 {
@@ -50,6 +49,3 @@ protected:
     Ui::UICPTClientControls ui;
 };
 
-} // ns pt_impl
-
-using TrackerDialog_PT = pt_impl::EasyTrackerDialog;

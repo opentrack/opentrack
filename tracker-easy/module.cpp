@@ -5,11 +5,12 @@
 #include "module.hpp"
 #include "frame.hpp"
 #include "point_extractor.h"
+#include "cv-point-extractor.h"
 
 
 #include <memory>
 
-static const QString module_name = "tracker-pt";
+static const QString module_name = "tracker-easy";
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Wweak-vtables"
@@ -21,7 +22,7 @@ struct pt_module_traits final : pt_runtime_traits
 {
     pointer<pt_point_extractor> make_point_extractor() const override
     {
-        return pointer<pt_point_extractor>(new PointExtractor(module_name));
+        return pointer<pt_point_extractor>(new CvPointExtractor(module_name));
     }
 
     QString get_module_name() const override
@@ -31,14 +32,14 @@ struct pt_module_traits final : pt_runtime_traits
 
 };
 
-struct tracker_pt : Tracker_PT
+struct tracker_pt : EasyTracker
 {
     tracker_pt() : EasyTracker(pointer<pt_runtime_traits>(new pt_module_traits))
     {
     }
 };
 
-struct dialog_pt : TrackerDialog_PT
+struct dialog_pt : EasyTrackerDialog
 {
     dialog_pt();
 };

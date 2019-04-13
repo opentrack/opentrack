@@ -2,6 +2,41 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
+    <name>EasyTrackerDialog</name>
+    <message>
+        <source>Brightness %1/255</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>LED radius %1 pixels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 samples. Over %2, good!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Start calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tracker offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UICPTClientControls</name>
     <message>
         <source>PointTracker Settings</source>
@@ -230,41 +265,6 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Green only</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>pt_impl::EasyTrackerDialog</name>
-    <message>
-        <source>Brightness %1/255</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LED radius %1 pixels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 samples. Over %2, good!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Stop calibration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Start calibration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tracker offline</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
