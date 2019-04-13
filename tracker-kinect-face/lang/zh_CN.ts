@@ -9,6 +9,13 @@
     </message>
 </context>
 <context>
+    <name>KinectFaceSettings</name>
+    <message>
+        <source>Kinect license</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KinectFaceUi</name>
     <message>
         <source>Kinect Face Tracker</source>

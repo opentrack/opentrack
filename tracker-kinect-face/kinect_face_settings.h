@@ -11,19 +11,16 @@
 #include "compat/macros.hpp"
 #include "api/plugin-api.hpp"
 
-
 class KinectFaceSettings : public ITrackerDialog
 {
     Q_OBJECT
 
     Ui::KinectFaceUi ui;
+
 public:
     KinectFaceSettings();
     void register_tracker(ITracker *) override {}
     void unregister_tracker() override {}
-private slots:
-    void doOK();
-    void doCancel();
 };
 
 class KinectFaceMetadata : public Metadata

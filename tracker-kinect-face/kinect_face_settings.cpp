@@ -10,30 +10,29 @@
 #include "kinect_face_tracker.h"
 #include "api/plugin-api.hpp"
 #include "compat/math-imports.hpp"
-
-#include <QPushButton>
+#include "compat/library-path.hpp"
 
 #include <cmath>
-#include <QDebug>
 
+#include <QDesktopServices>
+#include <QUrl>
+#include <QPushButton>
+#include <QDebug>
 
 KinectFaceSettings::KinectFaceSettings()
 {
     ui.setupUi(this);
 
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-}
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &KinectFaceSettings::close);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &KinectFaceSettings::close);
 
-void KinectFaceSettings::doOK()
-{
-    //s.b->save();
-    close();
-}
+    static const QUrl path {"file:///" + application_base_path() + OPENTRACK_DOC_PATH "/3rdparty-notices/Kinect-V2-SDK-Eula.rtf" };
 
-void KinectFaceSettings::doCancel()
-{
-    close();
+    connect(ui.buttonBox, &QDialogButtonBox::helpRequested, [] {
+        QDesktopServices::openUrl(path);
+    });
+
+    ui.buttonBox->addButton(tr("Kinect license"), QDialogButtonBox::HelpRole);
 }
 
 OPENTRACK_DECLARE_TRACKER(KinectFaceTracker, KinectFaceSettings, KinectFaceMetadata)
