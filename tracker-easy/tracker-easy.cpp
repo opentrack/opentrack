@@ -26,6 +26,11 @@
 
 using namespace options;
 
+// Disable debug
+#define dbgout if (true) {} else std::cout
+// Enable debug
+//#define dbgout if (false) {} else std::cout
+
 namespace EasyTracker
 {
 
@@ -122,6 +127,7 @@ namespace EasyTracker
             if (new_frame)
             {
                 //TODO: We should not assume channel size of 1 byte
+                // Though in practice since cv::findContours needs CV_8U we would still need to convert our frame from 16 bits to 8 bits.
                 iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE(CV_8U, iFrame.channels), iFrame.data, iFrame.stride);
 
 
@@ -216,8 +222,8 @@ namespace EasyTracker
                         trackedPoints.push_back(cv::Point2f(iPoints[leftPointIndex][0], iPoints[leftPointIndex][1]));
                         trackedPoints.push_back(cv::Point2f(iPoints[topPointIndex][0], iPoints[topPointIndex][1]));
 
-                        std::cout << "Object: " << objectPoints << "\n";
-                        std::cout << "Points: " << trackedPoints << "\n";
+                        dbgout << "Object: " << objectPoints << "\n";
+                        dbgout << "Points: " << trackedPoints << "\n";
 
 
                         // Create our camera matrix
@@ -255,16 +261,16 @@ namespace EasyTracker
 
                         if (solutionCount > 0)
                         {
-                            std::cout << "Solution count: " << solutionCount << "\n";
+                            dbgout << "Solution count: " << solutionCount << "\n";
                             int minPitch = std::numeric_limits<int>::max();
                             // Find the solution we want
                             for (int i = 0; i < solutionCount; i++)
                             {
-                                std::cout << "Translation:\n";
-                                std::cout << iTranslations.at(i);
-                                std::cout << "\n";
-                                std::cout << "Rotation:\n";
-                                //std::cout << rvecs.at(i);
+                                dbgout << "Translation:\n";
+                                dbgout << iTranslations.at(i);
+                                dbgout << "\n";
+                                dbgout << "Rotation:\n";
+                                //dbgout << rvecs.at(i);
                                 cv::Mat rotationCameraMatrix;
                                 cv::Rodrigues(iRotations[i], rotationCameraMatrix);
                                 cv::Vec3d angles;
@@ -280,11 +286,11 @@ namespace EasyTracker
                                 }
 
                                 //cv::Vec3f angles=EulerAngles(quaternion);
-                                std::cout << angles;
-                                std::cout << "\n";
+                                dbgout << angles;
+                                dbgout << "\n";
                             }
 
-                            std::cout << "\n";
+                            dbgout << "\n";
 
                         }
 
