@@ -79,7 +79,7 @@ bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_in
 			std::tie(dt[0], dt[1]) = to_screen_pos(RX, RY, W, H);
 
 			points.push_back(dt);
-			_draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), dot.isize);
+			_draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), clamp(dot.isize, 1, 32));
 		}
 	}
 	const bool success = points.size() >= PointModel::N_POINTS;
