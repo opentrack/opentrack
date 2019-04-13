@@ -14,13 +14,6 @@
 #include "cv/numeric.hpp"
 #include "compat/math.hpp"
 
-#undef PREVIEW
-//#define PREVIEW
-
-#if defined PREVIEW
-#   include <opencv2/highgui.hpp>
-#endif
-
 #include <cmath>
 #include <algorithm>
 #include <cinttypes>
