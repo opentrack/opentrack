@@ -1,5 +1,5 @@
-/* Copyright (c) 2012 Patrick Ruoff
- * Copyright (c) 2015-2017 Stanislaw Halik <sthalik@misaki.pl>
+/* 
+ * Copyright (c) 2019 Stephane Lenclud
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -7,7 +7,7 @@
  */
 
 #include "cv-point-extractor.h"
-#include "frame.hpp"
+#include "preview.h"
 
 #include "cv/numeric.hpp"
 #include "compat/math.hpp"

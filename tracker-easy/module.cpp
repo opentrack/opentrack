@@ -1,9 +1,7 @@
 #include "tracker-easy.h"
 #include "tracker-easy-dialog.h"
 #include "tracker-easy-api.h"
-
 #include "module.hpp"
-#include "frame.hpp"
 #include "cv-point-extractor.h"
 
 
