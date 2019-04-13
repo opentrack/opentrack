@@ -36,7 +36,7 @@ struct EasyTracker : QThread, ITracker
 
     template<typename t> using pointer = pt_pointer<t>;
 
-    explicit EasyTracker(pointer<pt_runtime_traits> const& pt_runtime_traits);
+    explicit EasyTracker(pointer<IEasyTrackerTraits> const& pt_runtime_traits);
     ~EasyTracker() override;
     module_status start_tracker(QFrame* parent_window) override;
     void data(double* data) override;
@@ -50,7 +50,7 @@ private:
     bool maybe_reopen_camera();
     void set_fov(int value);
 
-    pointer<pt_runtime_traits> traits;
+    pointer<IEasyTrackerTraits> traits;
 
     QMutex camera_mtx;
 
@@ -58,12 +58,11 @@ private:
     pt_settings s;
 
     std::unique_ptr<QLayout> layout;
-    std::vector<vec2> points;
-    std::vector<vec2> iImagePoints;
+    std::vector<vec2> iPoints;
 
     int preview_width = 320, preview_height = 240;
 
-    pointer<pt_point_extractor> point_extractor;
+    pointer<IPointExtractor> point_extractor;
     std::unique_ptr<video::impl::camera> camera;
     video::impl::camera::info iCameraInfo;
     pointer<video_widget> widget;

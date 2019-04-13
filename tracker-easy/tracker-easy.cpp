@@ -27,7 +27,7 @@
 using namespace options;
 
 
-EasyTracker::EasyTracker(pointer<pt_runtime_traits> const& traits) :
+EasyTracker::EasyTracker(pointer<IEasyTrackerTraits> const& traits) :
     traits { traits },
     s { traits->get_module_name() },
     point_extractor { traits->make_point_extractor() },
@@ -130,9 +130,9 @@ void EasyTracker::run()
                 iPreview = iMatFrame;
             }
 
-            iImagePoints.clear();
-            point_extractor->extract_points(iMatFrame, iPreview.iFrameRgb, points, iImagePoints);
-            point_count.store(points.size(), std::memory_order_relaxed);
+            iPoints.clear();
+            point_extractor->extract_points(iMatFrame, (preview_visible?&iPreview.iFrameRgb:nullptr), iPoints);
+            point_count.store(iPoints.size(), std::memory_order_relaxed);
 
             
             if (preview_visible)
@@ -146,7 +146,7 @@ void EasyTracker::run()
                 cv::destroyWindow("Preview");
             }
 
-            const bool success = points.size() >= KPointCount || iImagePoints.size() >= KPointCount;
+            const bool success = iPoints.size() >= KPointCount;
 
             int topPointIndex = -1;
 
@@ -177,9 +177,9 @@ void EasyTracker::run()
                     int minY = std::numeric_limits<int>::max();
                     for (int i = 0; i < 3; i++)
                     {
-                        if (iImagePoints[i][1]<minY)
+                        if (iPoints[i][1]<minY)
                         {
-                            minY = iImagePoints[i][1];
+                            minY = iPoints[i][1];
                             topPointIndex = i;
                         }
                     }
@@ -191,9 +191,9 @@ void EasyTracker::run()
                     for (int i = 0; i < 3; i++)
                     {
                         // Excluding top most point
-                        if (i!=topPointIndex && iImagePoints[i][0] > maxX)
+                        if (i!=topPointIndex && iPoints[i][0] > maxX)
                         {
-                            maxX = iImagePoints[i][0];
+                            maxX = iPoints[i][0];
                             rightPointIndex = i;
                         }
                     }
@@ -211,9 +211,9 @@ void EasyTracker::run()
                     }
 
                     //
-                    trackedPoints.push_back(cv::Point2f(iImagePoints[rightPointIndex][0], iImagePoints[rightPointIndex][1]));
-                    trackedPoints.push_back(cv::Point2f(iImagePoints[leftPointIndex][0], iImagePoints[leftPointIndex][1]));                    
-                    trackedPoints.push_back(cv::Point2f(iImagePoints[topPointIndex][0], iImagePoints[topPointIndex][1]));
+                    trackedPoints.push_back(cv::Point2f(iPoints[rightPointIndex][0], iPoints[rightPointIndex][1]));
+                    trackedPoints.push_back(cv::Point2f(iPoints[leftPointIndex][0], iPoints[leftPointIndex][1]));                    
+                    trackedPoints.push_back(cv::Point2f(iPoints[topPointIndex][0], iPoints[topPointIndex][1]));
 
                     std::cout << "Object: " << objectPoints << "\n";
                     std::cout << "Points: " << trackedPoints << "\n";
@@ -304,10 +304,7 @@ void EasyTracker::run()
                 if (topPointIndex != -1)
                 {
                     // Render a cross to indicate which point is the head
-                    if (points.size() >= 3)
-                    {
-                        iPreview.draw_head_center(points[topPointIndex][0], points[topPointIndex][1]);
-                    }                    
+                    iPreview.draw_head_center(iPoints[topPointIndex][0], iPoints[topPointIndex][1]);
                 }
                 
                 widget->update_image(iPreview.get_bitmap());

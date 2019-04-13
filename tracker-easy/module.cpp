@@ -4,7 +4,6 @@
 
 #include "module.hpp"
 #include "frame.hpp"
-#include "point_extractor.h"
 #include "cv-point-extractor.h"
 
 
@@ -18,11 +17,11 @@ static const QString module_name = "tracker-easy";
 
 namespace pt_module {
 
-struct pt_module_traits final : pt_runtime_traits
+struct pt_module_traits final : IEasyTrackerTraits
 {
-    pointer<pt_point_extractor> make_point_extractor() const override
+    pointer<IPointExtractor> make_point_extractor() const override
     {
-        return pointer<pt_point_extractor>(new CvPointExtractor(module_name));
+        return pointer<IPointExtractor>(new CvPointExtractor(module_name));
     }
 
     QString get_module_name() const override
@@ -34,7 +33,7 @@ struct pt_module_traits final : pt_runtime_traits
 
 struct tracker_pt : EasyTracker
 {
-    tracker_pt() : EasyTracker(pointer<pt_runtime_traits>(new pt_module_traits))
+    tracker_pt() : EasyTracker(pointer<IEasyTrackerTraits>(new pt_module_traits))
     {
     }
 };

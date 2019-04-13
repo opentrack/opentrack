@@ -30,19 +30,21 @@ CvPointExtractor::CvPointExtractor(const QString& module_name) : s(module_name)
 }
 
 
-void CvPointExtractor::extract_points(const cv::Mat& frame, cv::Mat& aPreview, std::vector<vec2>& points, std::vector<vec2>& imagePoints)
+void CvPointExtractor::extract_points(const cv::Mat& frame, cv::Mat* aPreview, std::vector<vec2>& aPoints)
 {
 
     // Contours detection
     std::vector<std::vector<cv::Point> > contours;
     cv::findContours(frame, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     
-    // Workout which countour are valid points
-    std::vector<std::vector<cv::Point> > balls;
-    std::vector<cv::Rect> ballsBox;
+    // Workout which countours are valid points
     for (size_t i = 0; i < contours.size(); i++)
     {
-        cv::drawContours(aPreview, contours, i, CV_RGB(255, 0, 0), 2);
+        if (aPreview)
+        {
+            cv::drawContours(*aPreview, contours, i, CV_RGB(255, 0, 0), 2);
+        }
+        
 
         cv::Rect bBox;
         bBox = cv::boundingRect(contours[i]);
@@ -63,15 +65,15 @@ void CvPointExtractor::extract_points(const cv::Mat& frame, cv::Mat& aPreview, s
             && bBox.area() <= maxArea
             /*&& ratio > 0.75 &&*/)
         {
-            balls.push_back(contours[i]);
-            ballsBox.push_back(bBox);
-
             vec2 center;
             center[0] = bBox.x + bBox.width / 2;
             center[1] = bBox.y + bBox.height / 2;
-            imagePoints.push_back(vec2(center));
+            aPoints.push_back(vec2(center));
 
-            cv::rectangle(aPreview, bBox, CV_RGB(0, 255, 0), 2);            
+            if (aPreview)
+            {
+                cv::rectangle(*aPreview, bBox, CV_RGB(0, 255, 0), 2);
+            }
         }
     }
 
@@ -80,23 +82,23 @@ void CvPointExtractor::extract_points(const cv::Mat& frame, cv::Mat& aPreview, s
     // Typically noise comming from zippers and metal parts on your clothing.
     // With a cap tracker it also successfully discards noise glasses.
     // However it may not work as good with a clip user wearing glasses.
-    while (imagePoints.size() > 3) // Until we have no more than three points
+    while (aPoints.size() > 3) // Until we have no more than three points
     {
         int maxY = 0;
         int index = -1;
 
         // Search for the point with highest Y coordinate
-        for (size_t i = 0; i < imagePoints.size(); i++)
+        for (size_t i = 0; i < aPoints.size(); i++)
         {
-            if (imagePoints[i][1] > maxY)
+            if (aPoints[i][1] > maxY)
             {
-                maxY = imagePoints[i][1];
+                maxY = aPoints[i][1];
                 index = i;
             }
         }
 
         // Discard it
-        imagePoints.erase(imagePoints.begin() + index);
+        aPoints.erase(aPoints.begin() + index);
     }
 
 
