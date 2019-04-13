@@ -13,7 +13,7 @@
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
 #include "video/camera.hpp"
-#include "frame.hpp"
+#include "preview.h"
 
 #include <atomic>
 #include <memory>
