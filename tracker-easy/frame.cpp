@@ -26,15 +26,6 @@ Preview& Preview::operator=(const cv::Mat& aFrame)
         return *this;
     }
 
-    const bool need_resize = iFrameRgb.cols != frame_out.cols || iFrameRgb.rows != frame_out.rows;
-    if (need_resize)
-    {
-        cv::resize(iFrameRgb, iFrameResized, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
-    }        
-    else
-    {
-        iFrameRgb.copyTo(iFrameResized);
-    }
         
     return *this;
 }
@@ -58,6 +49,17 @@ QImage Preview::get_bitmap()
         return QImage();
     }
 
+    // Resize if needed
+    const bool need_resize = iFrameRgb.cols != frame_out.cols || iFrameRgb.rows != frame_out.rows;
+    if (need_resize)
+    {
+        cv::resize(iFrameRgb, iFrameResized, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
+    }
+    else
+    {
+        iFrameRgb.copyTo(iFrameResized);
+    }
+
     cv::cvtColor(iFrameResized, frame_out, cv::COLOR_BGR2BGRA);
 
     return QImage((const unsigned char*) frame_out.data,
@@ -66,20 +68,18 @@ QImage Preview::get_bitmap()
                   QImage::Format_ARGB32);
 }
 
-void Preview::draw_head_center(Coordinates::f x, Coordinates::f y)
+void Preview::draw_head_center(numeric_types::f x, numeric_types::f y)
 {
-    auto [px_, py_] = Coordinates::to_pixel_pos(x, y, iFrameResized.cols, iFrameResized.rows);
-
-    int px = iround(px_), py = iround(py_);
+    int px = iround(x), py = iround(y);
 
     constexpr int len = 9;
 
     static const cv::Scalar color(0, 255, 255);
-    cv::line(iFrameResized,
+    cv::line(iFrameRgb,
              cv::Point(px - len, py),
              cv::Point(px + len, py),
              color, 1);
-    cv::line(iFrameResized,
+    cv::line(iFrameRgb,
              cv::Point(px, py - len),
              cv::Point(px, py + len),
              color, 1);

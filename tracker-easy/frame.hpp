@@ -13,7 +13,7 @@ struct Preview
 
     Preview& operator=(const cv::Mat& frame);
     QImage get_bitmap();
-    void draw_head_center(Coordinates::f x, Coordinates::f y);
+    void draw_head_center(numeric_types::f x, numeric_types::f y);
 
     operator cv::Mat&() { return iFrameResized; }
     operator cv::Mat const&() const { return iFrameResized; }
