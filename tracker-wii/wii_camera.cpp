@@ -274,16 +274,14 @@ void WIICamera::get_status(struct wii_info& wii)
 	wii.bBatteryDrained = m_pDev->bBatteryDrained;
 
 	//draw horizon
-	static int p = 0;
-	static int r = 0;
 	if (m_pDev->Nunchuk.Acceleration.Orientation.UpdateAge < 10)
 	{
-		p = m_pDev->Acceleration.Orientation.Pitch;
-		r = m_pDev->Acceleration.Orientation.Roll;
+		pitch_ = m_pDev->Acceleration.Orientation.Pitch;
+		roll_ = m_pDev->Acceleration.Orientation.Roll;
 	}
 
-	wii.Pitch = p;
-	wii.Roll = r;
+	wii.Pitch = pitch_;
+	wii.Roll = roll_;
 }
 
 void WIICamera::on_state_change(wiimote &remote,

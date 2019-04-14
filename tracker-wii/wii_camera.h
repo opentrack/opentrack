@@ -66,6 +66,8 @@ private:
 
     pt_settings s;
 
+    int pitch_ = 0, roll_ = 0;
+
     static constexpr inline double dt_eps = 1./384;
 };
 
