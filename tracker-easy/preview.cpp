@@ -109,11 +109,11 @@ namespace EasyTracker
         cv::line(iFrameRgb,
             cv::Point(px - len, py),
             cv::Point(px + len, py),
-            color, 1);
+            color, 2);
         cv::line(iFrameRgb,
             cv::Point(px, py - len),
             cv::Point(px, py + len),
-            color, 1);
+            color, 2);
     }
 
     void Preview::ensure_size(cv::Mat& frame, int w, int h, int type)

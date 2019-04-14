@@ -36,7 +36,7 @@ namespace EasyTracker
 
     Tracker::Tracker() :
         s{ KModuleName },
-        point_extractor{ std::make_unique<PointExtractor>() },
+        iPointExtractor{ std::make_unique<PointExtractor>() },
         iPreview{ preview_width, preview_height }
     {
         cv::setBreakOnError(true);
@@ -58,7 +58,7 @@ namespace EasyTracker
         wait();
 
         QMutexLocker l(&camera_mtx);
-        camera->stop();
+        camera->stop();        
     }
 
 
@@ -138,20 +138,8 @@ namespace EasyTracker
                 }
 
                 iPoints.clear();
-                point_extractor->extract_points(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);
+                iPointExtractor->extract_points(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);
                 point_count.store(iPoints.size(), std::memory_order_relaxed);
-
-
-                if (preview_visible)
-                {
-                    //iPreview = iMatFrame;
-                    cv::imshow("Preview", iPreview.iFrameRgb);
-                    cv::waitKey(1);
-                }
-                else
-                {
-                    cv::destroyWindow("Preview");
-                }
 
                 const bool success = iPoints.size() >= KPointCount;
 
@@ -307,13 +295,19 @@ namespace EasyTracker
                 }
 
                 if (preview_visible)
-                {
+                {                    
+                    //
                     if (topPointIndex != -1)
                     {
                         // Render a cross to indicate which point is the head
                         iPreview.draw_head_center(iPoints[topPointIndex][0], iPoints[topPointIndex][1]);
                     }
 
+                    // Show full size preview pop-up
+                    cv::imshow("Preview", iPreview.iFrameRgb);
+                    cv::waitKey(1);
+
+                    // Update preview widget
                     widget->update_image(iPreview.get_bitmap());
 
                     auto[w, h] = widget->preview_size();
@@ -323,6 +317,11 @@ namespace EasyTracker
                         preview_width = w; preview_height = h;
                         iPreview = Preview(w, h);
                     }
+                }
+                else
+                {
+                    // No preview, destroy preview pop-up
+                    cv::destroyWindow("Preview");
                 }
             }
         }
