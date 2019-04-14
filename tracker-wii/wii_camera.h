@@ -49,8 +49,7 @@ private:
 		state_change_flags changed,
 		const wiimote_state &new_state);
 	bool onExit = false;
-	pt_frame internalframe;
-	
+
 	wii_camera_status pair();
 	wii_camera_status get_frame(cv::Mat& Frame);
 	bool get_points(struct wii_info& wii);
