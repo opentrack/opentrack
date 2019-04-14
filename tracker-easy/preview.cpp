@@ -63,7 +63,7 @@ namespace EasyTracker
 
     Preview::Preview(int w, int h)
     {
-        ensure_size(frame_out, w, h, CV_8UC4);
+        ensure_size(iFrameWidget, w, h, CV_8UC4);
         ensure_size(iFrameResized, w, h, CV_8UC3);
 
         iFrameResized.setTo(cv::Scalar(0, 0, 0));
@@ -71,9 +71,9 @@ namespace EasyTracker
 
     QImage Preview::get_bitmap()
     {
-        int stride = frame_out.step.p[0];
+        int stride = iFrameWidget.step.p[0];
 
-        if (stride < 64 || stride < frame_out.cols * 4)
+        if (stride < 64 || stride < iFrameWidget.cols * 4)
         {
             eval_once(qDebug() << "bad stride" << stride
                 << "for bitmap size" << iFrameResized.cols << iFrameResized.rows);
@@ -81,20 +81,20 @@ namespace EasyTracker
         }
 
         // Resize if needed
-        const bool need_resize = iFrameRgb.cols != frame_out.cols || iFrameRgb.rows != frame_out.rows;
+        const bool need_resize = iFrameRgb.cols != iFrameWidget.cols || iFrameRgb.rows != iFrameWidget.rows;
         if (need_resize)
         {
-            cv::resize(iFrameRgb, iFrameResized, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
+            cv::resize(iFrameRgb, iFrameResized, cv::Size(iFrameWidget.cols, iFrameWidget.rows), 0, 0, cv::INTER_NEAREST);
         }
         else
         {
-            iFrameRgb.copyTo(iFrameResized);
+            iFrameResized = iFrameRgb;
         }
 
-        cv::cvtColor(iFrameResized, frame_out, cv::COLOR_BGR2BGRA);
+        cv::cvtColor(iFrameResized, iFrameWidget, cv::COLOR_BGR2BGRA);
 
-        return QImage((const unsigned char*)frame_out.data,
-            frame_out.cols, frame_out.rows,
+        return QImage((const unsigned char*)iFrameWidget.data,
+            iFrameWidget.cols, iFrameWidget.rows,
             stride,
             QImage::Format_ARGB32);
     }
