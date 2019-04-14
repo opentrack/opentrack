@@ -38,7 +38,6 @@ namespace EasyTracker
     {
         friend class Dialog;
 
-
         explicit Tracker();
         ~Tracker() override;
         module_status start_tracker(QFrame* parent_window) override;
@@ -63,7 +62,7 @@ namespace EasyTracker
 
         int preview_width = 320, preview_height = 240;
 
-        std::unique_ptr<IPointExtractor> point_extractor;
+        std::unique_ptr<IPointExtractor> iPointExtractor;
         std::unique_ptr<video::impl::camera> camera;
         video::impl::camera::info iCameraInfo;
         std::unique_ptr<video_widget> widget;
