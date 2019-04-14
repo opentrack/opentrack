@@ -80,7 +80,7 @@ namespace EasyTracker
 
         // Contours detection
         std::vector<std::vector<cv::Point> > contours;
-        cv::findContours(iFrameGray, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+        cv::findContours(iFrameGray, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
     
         // Workout which countours are valid points
         for (size_t i = 0; i < contours.size(); i++)
@@ -93,22 +93,12 @@ namespace EasyTracker
 
             cv::Rect bBox;
             bBox = cv::boundingRect(contours[i]);
-
-            float ratio = (float)bBox.width / (float)bBox.height;
-            if (ratio > 1.0f)
-                ratio = 1.0f / ratio;
-
        
-            // Searching for a bBox almost square
-            float minArea = s.min_point_size*s.min_point_size;
-            float maxArea = s.max_point_size*s.max_point_size;
+            // Make sure bounding box matches our criteria
             if (bBox.width >= s.min_point_size
                 && bBox.height >= s.min_point_size
                 && bBox.width <= s.max_point_size
-                && bBox.height <= s.max_point_size
-                && bBox.area() >= minArea
-                && bBox.area() <= maxArea
-                /*&& ratio > 0.75 &&*/)
+                && bBox.height <= s.max_point_size)
             {
                 vec2 center;
                 center[0] = bBox.x + bBox.width / 2;
