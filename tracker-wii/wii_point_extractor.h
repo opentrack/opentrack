@@ -25,13 +25,12 @@ public:
     // dt: time since last call in seconds
     void extract_points(const pt_frame& frame, pt_preview& preview_frame, std::vector<vec2>& points) override;
     WIIPointExtractor(const QString& module_name);
-private:
-    static constexpr int max_blobs = 16;
 
+private:
     pt_settings s;
-	void _draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness = 1);
-	bool _draw_points(cv::Mat& preview_frame, const struct wii_info &wii, std::vector<vec2>& points);
-	void _draw_bg(cv::Mat& preview_frame, const struct wii_info &wii);
+    static void draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness = 1);
+    static bool draw_points(cv::Mat& preview_frame, const struct wii_info& wii, std::vector<vec2>& points);
+    static void draw_bg(cv::Mat& preview_frame, const struct wii_info& wii);
 };
 
 } // ns impl

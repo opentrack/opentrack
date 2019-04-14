@@ -31,7 +31,7 @@ WIIPointExtractor::WIIPointExtractor(const QString& module_name) : s(module_name
 }
 
 //define a temp draw function
-void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness)
+void WIIPointExtractor::draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness)
 {
 	static constexpr int len = 9;
 
@@ -50,7 +50,7 @@ void WIIPointExtractor::_draw_point(cv::Mat& preview_frame, const vec2& p, const
 		thickness);
 };
 
-bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_info &wii, std::vector<vec2>& points)
+bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_info& wii, std::vector<vec2>& points)
 {
 	const float W = 1024.0f;
 	const float H = 768.0f;
@@ -72,7 +72,7 @@ bool WIIPointExtractor::_draw_points(cv::Mat& preview_frame, const struct wii_in
 			std::tie(dt[0], dt[1]) = to_screen_pos(RX, RY, W, H);
 
 			points.push_back(dt);
-			_draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), clamp(dot.isize, 1, 32));
+            draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), clamp(dot.isize, 1, 32));
 		}
 	}
 	const bool success = points.size() >= PointModel::N_POINTS;
@@ -105,11 +105,10 @@ void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& previ
 	const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
 	cv::Mat& preview_frame = *preview_frame_.as<WIIPreview>();
 
-	switch (wii.status) {
-	case wii_cam_data_change:
-		_draw_bg(preview_frame, wii);
-		_draw_points(preview_frame, wii, points);
-		break;
-	}
+    if (wii.status == wii_cam_data_change)
+    {
+        draw_bg(preview_frame, wii);
+        draw_points(preview_frame, wii, points);
+    }
 }
 
