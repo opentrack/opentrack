@@ -1,6 +1,13 @@
+/* Copyright (c) 2019 Stephane Lenclud
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ */
+
 #pragma once
 
-#include "pt-settings.hpp"
+#include "settings.h"
 
 #include "cv/numeric.hpp"
 #include "options/options.hpp"
@@ -15,10 +22,6 @@
 #include <QImage>
 #include <QString>
 
-#ifdef __clang__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wweak-vtables"
-#endif
 
 const int KPointCount = 3;
 
@@ -31,20 +34,4 @@ public:
     virtual void extract_points(const cv::Mat& image, cv::Mat* aPreview, std::vector<vec2>& aPoints) = 0;
 };
 
-struct IEasyTrackerTraits
-{
-    template<typename t> using pointer = std::shared_ptr<t>;
 
-    IEasyTrackerTraits();
-    virtual ~IEasyTrackerTraits();
-
-    virtual pointer<IPointExtractor> make_point_extractor() const = 0;
-    virtual QString get_module_name() const = 0;
-};
-
-template<typename t>
-using pt_pointer = typename IEasyTrackerTraits::pointer<t>;
-
-#ifdef __clang__
-#   pragma clang diagnostic pop
-#endif

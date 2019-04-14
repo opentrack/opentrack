@@ -41,7 +41,7 @@ namespace EasyTracker
     protected:
         QString threshold_display_text(int threshold_value);
 
-        pt_settings s;
+        Settings s;
         Tracker* tracker;
         QTimer timer, calib_timer;
         TranslationCalibrator trans_calib;

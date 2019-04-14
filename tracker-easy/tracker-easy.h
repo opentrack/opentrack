@@ -38,7 +38,6 @@ namespace EasyTracker
     {
         friend class Dialog;
 
-        template<typename t> using pointer = pt_pointer<t>;
 
         explicit Tracker();
         ~Tracker() override;
@@ -57,7 +56,7 @@ namespace EasyTracker
         QMutex camera_mtx;
 
 
-        pt_settings s;
+        Settings s;
 
         std::unique_ptr<QLayout> layout;
         std::vector<vec2> iPoints;
@@ -67,7 +66,7 @@ namespace EasyTracker
         std::unique_ptr<IPointExtractor> point_extractor;
         std::unique_ptr<video::impl::camera> camera;
         video::impl::camera::info iCameraInfo;
-        pointer<video_widget> widget;
+        std::unique_ptr<video_widget> widget;
 
         video::frame iFrame;
         cv::Mat iMatFrame;
