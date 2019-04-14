@@ -19,18 +19,37 @@ namespace EasyTracker
 
     Preview& Preview::operator=(const cv::Mat& aFrame)
     {
+        //TODO: Assert if channel size is neither one nor two
+
+        // Make sure our frame channel is 8 bit
+        size_t channelSize = aFrame.elemSize1();
+        if (channelSize == 2)
+        {
+            // First resample to 8-bits            
+            double min = std::numeric_limits<uint16_t>::min();
+            double max = std::numeric_limits<uint16_t>::max();
+            //cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
+            // For scalling to have more precission in the range we are interrested in
+            //min = max - 255;
+            // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
+            aFrame.convertTo(iFrameChannelSizeOne, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
+        }
+        else
+        {
+            iFrameChannelSizeOne = aFrame;
+        }
 
         // Make sure our frame is RGB
         // Make an extra copy if needed
-        int channelCount = aFrame.channels();
+        int channelCount = iFrameChannelSizeOne.channels();
         if (channelCount == 1)
         {
             // Convert to RGB
-            cv::cvtColor(aFrame, iFrameRgb, cv::COLOR_GRAY2BGR);
+            cv::cvtColor(iFrameChannelSizeOne, iFrameRgb, cv::COLOR_GRAY2BGR);
         }
         else if (channelCount == 3)
         {
-            iFrameRgb = aFrame;
+            iFrameRgb = iFrameChannelSizeOne;
         }
         else
         {

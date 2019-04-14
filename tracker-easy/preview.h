@@ -34,6 +34,7 @@ namespace EasyTracker
     public:
         cv::Mat iFrameResized, frame_out;
         cv::Mat iFrameRgb;
+        cv::Mat iFrameChannelSizeOne;
     };
 
 }

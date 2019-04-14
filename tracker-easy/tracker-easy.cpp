@@ -126,9 +126,9 @@ namespace EasyTracker
 
             if (new_frame)
             {
-                //TODO: We should not assume channel size of 1 byte
-                // Though in practice since cv::findContours needs CV_8U we would still need to convert our frame from 16 bits to 8 bits.
-                iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE(CV_8U, iFrame.channels), iFrame.data, iFrame.stride);
+                // Create OpenCV matrix from our frame
+                // TODO: Assert channel size is one or two
+                iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channelSize == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
 
 
                 const bool preview_visible = check_is_visible();
