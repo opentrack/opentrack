@@ -32,9 +32,15 @@ namespace EasyTracker
         static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
     public:
-        cv::Mat iFrameResized, frame_out;
-        cv::Mat iFrameRgb;
+        // Frame with an 8 bits channel size
         cv::Mat iFrameChannelSizeOne;
+        // Frame with three channels for RGB
+        cv::Mat iFrameRgb;
+        // Frame rezised to widget dimension
+        cv::Mat iFrameResized;
+        // Frame ready to be packed in a QImage for use in our widget
+        cv::Mat iFrameWidget;
+        
     };
 
 }
