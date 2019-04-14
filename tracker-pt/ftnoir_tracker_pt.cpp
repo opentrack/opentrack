@@ -60,9 +60,7 @@ void Tracker_PT::run()
 
         {
             QMutexLocker l(&camera_mtx);
-
-            if (camera)
-                std::tie(new_frame, info) = camera->get_frame(*frame);
+            std::tie(new_frame, info) = camera->get_frame(*frame);
         }
 
         if (new_frame)
