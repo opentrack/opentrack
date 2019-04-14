@@ -98,19 +98,20 @@ bool WIICamera::start(const QString&, int, int, int)
 
 void WIICamera::stop()
 {
-	onExit = true;
-	m_pDev->ChangedCallback = nullptr;
-	m_pDev->Disconnect();
-	Beep(1000, 200);
-	if (m_pDev) {
-		m_pDev=nullptr;
-		m_pDev = nullptr;
-	}
-
     desired_name = QString();
     active_name = QString();
     cam_info = pt_camera_info();
     cam_desired = pt_camera_info();
+    onExit = true;
+
+    if (m_pDev)
+    {
+        m_pDev->ChangedCallback = nullptr;
+        m_pDev->Disconnect();
+        m_pDev = nullptr;
+    }
+
+	Beep(1000, 200);
 }
 
 
