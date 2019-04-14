@@ -6,7 +6,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#include "cv-point-extractor.h"
+#include "point-extractor.h"
 #include "preview.h"
 #include "tracker-easy.h"
 
@@ -26,13 +26,13 @@ using namespace numeric_types;
 namespace EasyTracker
 {
 
-    CvPointExtractor::CvPointExtractor() : s(KModuleName)
+    PointExtractor::PointExtractor() : s(KModuleName)
     {
     
     }
 
 
-    void CvPointExtractor::extract_points(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<vec2>& aPoints)
+    void PointExtractor::extract_points(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<vec2>& aPoints)
     {
         //TODO: Assert if channel size is neither one nor two
         // Make sure our frame channel is 8 bit

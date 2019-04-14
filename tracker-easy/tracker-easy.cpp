@@ -11,7 +11,7 @@
 #include "video/video-widget.hpp"
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
-#include "cv-point-extractor.h"
+#include "point-extractor.h"
 #include "tracker-easy-api.h"
 
 #include <QHBoxLayout>
@@ -36,7 +36,7 @@ namespace EasyTracker
 
     Tracker::Tracker() :
         s{ KModuleName },
-        point_extractor{ std::make_unique<CvPointExtractor>() },
+        point_extractor{ std::make_unique<PointExtractor>() },
         iPreview{ preview_width, preview_height }
     {
         cv::setBreakOnError(true);
