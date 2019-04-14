@@ -100,6 +100,7 @@ std::tuple<const video::impl::frame&, bool> CameraKinectIr::get_frame()
     iFrame.height = 424;
     iFrame.stride = cv::Mat::AUTO_STEP;
     iFrame.channels = iMatFrame.channels();
+    iFrame.channelSize = iMatFrame.elemSize1();
     return { iFrame, new_frame };
 }
 
@@ -205,7 +206,7 @@ void CameraKinectIr::stop()
     iMatFrame = cv::Mat();
 }
 
-bool CameraKinectIr::get_frame_(cv::Mat& frame)
+bool CameraKinectIr::get_frame_(cv::Mat& aFrame)
 {
 
     if (!iInfraredFrameReader)
@@ -266,22 +267,9 @@ bool CameraKinectIr::get_frame_(cv::Mat& frame)
 
         if (SUCCEEDED(hr))
         {
-            //ProcessInfrared(nTime, pBuffer, nWidth, nHeight);
-
             // Create an OpenCV matrix with our 16-bits IR buffer
-            cv::Mat raw = cv::Mat(height, width, CV_16UC1, pBuffer, cv::Mat::AUTO_STEP);
-
-            // Convert that OpenCV matrix to an RGB one as this is what is expected by our point extractor
-            // TODO: Ideally we should implement a point extractors that works with our native buffer
-            // First resample to 8-bits            
-            double min = std::numeric_limits<uint16_t>::min();
-            double max = std::numeric_limits<uint16_t>::max();
-            //cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
-            // For scalling to have more precission in the range we are interrested in
-            min = max - 255;            
-            // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
-            raw.convertTo(frame, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
-            //
+            aFrame = cv::Mat(height, width, CV_16UC1, pBuffer, cv::Mat::AUTO_STEP);
+            // Any processing of the frame is left to the user
             success = true;
         }
     }

@@ -23,7 +23,7 @@ struct frame final
     // the `stride' member can have a special value of zero,
     // signifying equal to width * element size
     int width = 0, height = 0, stride = 0, channels = 0;
-    // TODO: Add channel size instead of assuming 1 byte
+    int channelSize = 1;
 };
 
 } // ns video

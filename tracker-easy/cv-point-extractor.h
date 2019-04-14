@@ -27,10 +27,14 @@ namespace EasyTracker
     public:
         // extracts points from frame and draws some processing info into frame, if draw_output is set
         // dt: time since last call in seconds
-        void extract_points(const cv::Mat& frame, cv::Mat* aPreview, std::vector<vec2>& aPoints) override;
+        void extract_points(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<vec2>& aPoints) override;
         CvPointExtractor();
-
+        // Settings
         pt_settings s;
+        // Our frame with a channel size of 8 bits
+        cv::Mat iFrameChannelSizeOne;
+        // Our frame with a single 8 bits channel
+        cv::Mat iFrameGray;
     };
 
 }

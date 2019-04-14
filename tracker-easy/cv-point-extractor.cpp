@@ -32,19 +32,62 @@ namespace EasyTracker
     }
 
 
-    void CvPointExtractor::extract_points(const cv::Mat& frame, cv::Mat* aPreview, std::vector<vec2>& aPoints)
+    void CvPointExtractor::extract_points(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<vec2>& aPoints)
     {
+        //TODO: Assert if channel size is neither one nor two
+        // Make sure our frame channel is 8 bit
+        size_t channelSize = aFrame.elemSize1();
+        if (channelSize == 2)
+        {
+            // We have a 16 bits single channel. Typically coming from Kinect V2 IR sensor
+            // Resample to 8-bits
+            double min = std::numeric_limits<uint16_t>::min();
+            double max = std::numeric_limits<uint16_t>::max();
+            //cv::minMaxLoc(raw, &min, &max); // Should we use 16bit min and max instead?
+            // For scalling to have more precission in the range we are interrested in
+            min = max - 255;
+            // See: https://stackoverflow.com/questions/14539498/change-type-of-mat-object-from-cv-32f-to-cv-8u/14539652
+            aFrame.convertTo(iFrameChannelSizeOne, CV_8U, 255.0 / (max - min), -255.0*min / (max - min));
+        }
+        else
+        {
+            iFrameChannelSizeOne = aFrame;
+        }
+
+
+        // Make sure our frame has a single channel
+        // Make an extra copy if needed
+        const int channelCount = iFrameChannelSizeOne.channels();
+        if (channelCount == 3)
+        {
+            // Convert to grayscale
+            // TODO: What's our input format, BRG or RGB?
+            // That won't make our point extraction work but at least it won't crash
+            cv::cvtColor(iFrameChannelSizeOne, iFrameGray, cv::COLOR_BGR2GRAY);
+            // TODO: Instead convert to HSV and use a key color together with cv::inRange to sport the color we want.
+            // Key color should be defined in settings.
+        }
+        else if (channelCount == 1)
+        {
+            // No further convertion needed
+            iFrameGray = iFrameChannelSizeOne;
+        }
+        else
+        {
+            eval_once(qDebug() << "tracker/easy: camera frame depth not supported" << aFrame.channels());
+            return;
+        }
 
         // Contours detection
         std::vector<std::vector<cv::Point> > contours;
-        cv::findContours(frame, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+        cv::findContours(iFrameGray, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
     
         // Workout which countours are valid points
         for (size_t i = 0; i < contours.size(); i++)
         {
             if (aPreview)
             {
-                cv::drawContours(*aPreview, contours, i, CV_RGB(255, 0, 0), 2);
+                cv::drawContours(*aPreview, contours, (int)i, CV_RGB(255, 0, 0), 2);
             }
         
 
@@ -87,7 +130,7 @@ namespace EasyTracker
         while (aPoints.size() > 3) // Until we have no more than three points
         {
             int maxY = 0;
-            int index = -1;
+            size_t index = -1;
 
             // Search for the point with highest Y coordinate
             for (size_t i = 0; i < aPoints.size(); i++)
