@@ -35,6 +35,7 @@ WIICamera::WIICamera(const QString& module_name) : s { module_name }
 
 WIICamera::~WIICamera()
 {
+    // XXX why is this commented out? -sh 20190414
     //stop();
 }
 
@@ -78,12 +79,14 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 		break;
 	case wii_cam_data_no_change:
 		return result(false, cam_info);
+    default:
+        break;
 	}
 
 	return result(true, cam_info);
 }
 
-bool WIICamera::start(const QString& name, int fps, int res_x, int res_y)
+bool WIICamera::start(const QString&, int, int, int)
 {
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;
@@ -96,12 +99,12 @@ bool WIICamera::start(const QString& name, int fps, int res_x, int res_y)
 void WIICamera::stop()
 {
 	onExit = true;
-	m_pDev->ChangedCallback = NULL;
+	m_pDev->ChangedCallback = nullptr;
 	m_pDev->Disconnect();
 	Beep(1000, 200);
 	if (m_pDev) {
 		m_pDev=nullptr;
-		m_pDev = NULL;
+		m_pDev = nullptr;
 	}
 
     desired_name = QString();
@@ -160,7 +163,8 @@ wii_camera_status WIICamera::pair()
 		}
 		do
 		{
-			if (wcscmp(btdevinfo.szName, L"Nintendo RVL-CNT-01-TR") && wcscmp(btdevinfo.szName, L"Nintendo RVL-CNT-01"))
+			if (!!wcscmp(btdevinfo.szName, L"Nintendo RVL-CNT-01-TR") &&
+			    !!wcscmp(btdevinfo.szName, L"Nintendo RVL-CNT-01"))
 			{
 				continue;
 			}
@@ -181,7 +185,7 @@ wii_camera_status WIICamera::pair()
 			pwd[4] = btinfo.address.rgBytes[4];
 			pwd[5] = btinfo.address.rgBytes[5];
 
-			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(NULL, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
+			if (ERROR_SUCCESS != BluetoothAuthenticateDevice(nullptr, hbtlist[i], &btdevinfo, pwd, 6)) { error = true; continue; }
 			DWORD servicecount = 32;
 			GUID guids[32];
 			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { error = true; continue; }
@@ -199,19 +203,22 @@ wii_camera_status WIICamera::pair()
 	return ret;
 }
 
-wii_camera_status WIICamera::get_frame(cv::Mat& frame)
+wii_camera_status WIICamera::get_frame(cv::Mat&)
 {
 	wii_camera_status ret = wii_cam_wait_for_connect;
 
 	if (!m_pDev->IsConnected()) {
 		qDebug() << "wii wait";
 		ret = pair();
-		switch(ret){
+		switch(ret)
+		{
 		case wii_cam_wait_for_sync:
 			m_pDev->Disconnect();
 			goto goodbye;
 		case wii_cam_wait_for_connect:
 			break;
+		default:
+		    break;
 		}
 		if (!m_pDev->Connect(wiimote::FIRST_AVAILABLE)) {
 			Beep(500, 30); Sleep(1000);
@@ -276,8 +283,8 @@ void WIICamera::get_status(struct wii_info& wii)
 	//draw horizon
 	if (m_pDev->Nunchuk.Acceleration.Orientation.UpdateAge < 10)
 	{
-		pitch_ = m_pDev->Acceleration.Orientation.Pitch;
-		roll_ = m_pDev->Acceleration.Orientation.Roll;
+		pitch_ = (int)m_pDev->Acceleration.Orientation.Pitch;
+		roll_ = (int)m_pDev->Acceleration.Orientation.Roll;
 	}
 
 	wii.Pitch = pitch_;

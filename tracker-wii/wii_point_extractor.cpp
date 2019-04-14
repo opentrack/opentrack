@@ -35,8 +35,8 @@ void WIIPointExtractor::draw_point(cv::Mat& preview_frame, const vec2& p, const 
 {
 	static constexpr int len = 9;
 
-	cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols / 2),
-		iround(-p[1] * preview_frame.cols + preview_frame.rows / 2));
+    cv::Point p2(iround(p[0] * preview_frame.cols + preview_frame.cols / 2.f),
+                 iround(-p[1] * preview_frame.cols + preview_frame.rows / 2.f));
 
 	cv::line(preview_frame,
 		cv::Point(p2.x - len, p2.y),
@@ -52,12 +52,12 @@ void WIIPointExtractor::draw_point(cv::Mat& preview_frame, const vec2& p, const 
 
 bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_info& wii, std::vector<vec2>& points)
 {
-	const float W = 1024.0f;
-	const float H = 768.0f;
+	constexpr int W = 1024;
+	constexpr int H = 768;
 	points.reserve(4);
 	points.clear();
 
-	for (unsigned index = 0; index < 4; index++)
+	for (unsigned index = 0; index < 4; index++) // NOLINT(modernize-loop-convert)
 	{
 		const struct wii_info_points &dot = wii.Points[index];
 		if (dot.bvis) {
@@ -80,18 +80,18 @@ bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_inf
 	return success;
 }
 
-void WIIPointExtractor::_draw_bg(cv::Mat& preview_frame, const struct wii_info &wii)
+void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& wii)
 {
 	//draw battery status
-	cv::line(preview_frame,
-		cv::Point(0, 0),
-		cv::Point(preview_frame.cols*wii.BatteryPercent / 100, 0),
-		(wii.bBatteryDrained ? cv::Scalar(255, 0, 0) : cv::Scalar(0, 140, 0)),
-		2);
+    cv::line(preview_frame,
+             cv::Point(0, 0),
+             cv::Point(preview_frame.cols*wii.BatteryPercent / 100, 0),
+             (wii.bBatteryDrained ? cv::Scalar(255, 0, 0) : cv::Scalar(0, 140, 0)),
+             2);
 
 	//draw horizon
-	int pdelta = iround((preview_frame.rows / 4) * tan((wii.Pitch)* M_PI / 180.0f));
-	int rdelta = iround((preview_frame.cols / 4) * tan((wii.Roll)* M_PI / 180.0f));
+	int pdelta = iround(preview_frame.rows / 4.f * tan(wii.Pitch * pi / 180.f));
+	int rdelta = iround(preview_frame.cols / 4.f * tan(wii.Roll* pi / 180.f));
 
 	cv::line(preview_frame,
 		cv::Point(0, preview_frame.rows / 2 + rdelta - pdelta),
