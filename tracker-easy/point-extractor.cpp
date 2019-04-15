@@ -12,7 +12,6 @@
 
 #include "cv/numeric.hpp"
 #include "compat/math.hpp"
-#include <opencv2/imgproc/types_c.h>
 
 #include <cmath>
 #include <algorithm>
@@ -80,7 +79,7 @@ namespace EasyTracker
 
         // Contours detection
         std::vector<std::vector<cv::Point> > contours;
-        cv::findContours(iFrameGray, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+        cv::findContours(iFrameGray, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
     
         // Workout which countours are valid points
         for (size_t i = 0; i < contours.size(); i++)
