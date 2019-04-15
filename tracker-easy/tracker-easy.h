@@ -9,11 +9,12 @@
 #pragma once
 
 #include "api/plugin-api.hpp"
-#include "tracker-easy-api.h"
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
 #include "video/camera.hpp"
 #include "preview.h"
+#include "settings.h"
+#include "point-extractor.h"
 
 #include <atomic>
 #include <memory>
@@ -58,11 +59,12 @@ namespace EasyTracker
         Settings s;
 
         std::unique_ptr<QLayout> layout;
-        std::vector<vec2> iPoints;
+        std::vector<cv::Point> iPoints;
 
         int preview_width = 320, preview_height = 240;
 
-        std::unique_ptr<IPointExtractor> iPointExtractor;
+        PointExtractor iPointExtractor;
+
         std::unique_ptr<video::impl::camera> camera;
         video::impl::camera::info iCameraInfo;
         std::unique_ptr<video_widget> widget;

@@ -31,7 +31,7 @@ namespace EasyTracker
     }
 
 
-    void PointExtractor::extract_points(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<vec2>& aPoints)
+    void PointExtractor::ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<cv::Point>& aPoints)
     {
         //TODO: Assert if channel size is neither one nor two
         // Make sure our frame channel is 8 bit
@@ -99,10 +99,10 @@ namespace EasyTracker
                 && bBox.width <= s.max_point_size
                 && bBox.height <= s.max_point_size)
             {
-                vec2 center;
-                center[0] = bBox.x + bBox.width / 2;
-                center[1] = bBox.y + bBox.height / 2;
-                aPoints.push_back(vec2(center));
+                cv::Point center;
+                center.x = bBox.x + bBox.width / 2;
+                center.y = bBox.y + bBox.height / 2;
+                aPoints.push_back(center);
 
                 if (aPreview)
                 {
@@ -124,9 +124,9 @@ namespace EasyTracker
             // Search for the point with highest Y coordinate
             for (size_t i = 0; i < aPoints.size(); i++)
             {
-                if (aPoints[i][1] > maxY)
+                if (aPoints[i].y > maxY)
                 {
-                    maxY = aPoints[i][1];
+                    maxY = aPoints[i].y;
                     index = i;
                 }
             }

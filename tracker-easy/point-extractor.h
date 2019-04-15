@@ -8,27 +8,26 @@
 
 #pragma once
 
-#include "tracker-easy-api.h"
-
+#include "settings.h"
 #include <vector>
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
 
-using namespace numeric_types;
-
 namespace EasyTracker
 {
 
+    const int KPointCount = 3;
 
-    class PointExtractor final : public IPointExtractor
+    class PointExtractor 
     {
     public:
+        PointExtractor();
         // extracts points from frame and draws some processing info into frame, if draw_output is set
         // dt: time since last call in seconds
-        void extract_points(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<vec2>& aPoints) override;
-        PointExtractor();
+        void ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<cv::Point>& aPoints);
+        
         // Settings
         Settings s;
         // Our frame with a channel size of 8 bits
