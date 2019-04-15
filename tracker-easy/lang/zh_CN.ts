@@ -82,10 +82,6 @@
         <translation> 像素点</translation>
     </message>
     <message>
-        <source>Dynamic pose timeout</source>
-        <translation>动态姿态超时时间</translation>
-    </message>
-    <message>
         <source>Desired capture framerate</source>
         <translation>期望帧数</translation>
     </message>
@@ -100,10 +96,6 @@
     <message>
         <source>Height</source>
         <translation>高度</translation>
-    </message>
-    <message>
-        <source> ms</source>
-        <translation> 毫秒</translation>
     </message>
     <message>
         <source>Device</source>
@@ -258,10 +250,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Dynamic pose (for caps only, never clips)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
@@ -272,6 +260,10 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Green only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug (full size preview)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

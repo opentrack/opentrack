@@ -82,10 +82,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Dynamic pose timeout</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Desired capture framerate</source>
         <translation type="unfinished"></translation>
     </message>
@@ -99,10 +95,6 @@
     </message>
     <message>
         <source>Height</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source> ms</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -163,10 +155,6 @@
     </message>
     <message>
         <source>Blue only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dynamic pose (for caps only, never clips)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -272,6 +260,10 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Green only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug (full size preview)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

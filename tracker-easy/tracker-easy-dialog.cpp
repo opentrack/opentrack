@@ -71,8 +71,7 @@ namespace EasyTracker
 
         tie_setting(s.active_model_panel, ui.model_tabs);
 
-        tie_setting(s.dynamic_pose, ui.dynamic_pose);
-        tie_setting(s.init_phase_timeout, ui.init_phase_timeout);
+        tie_setting(s.debug, ui.debug);
 
         tie_setting(s.auto_threshold, ui.auto_threshold);
 
