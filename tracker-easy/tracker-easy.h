@@ -37,6 +37,7 @@ namespace EasyTracker
 
     struct Tracker : QThread, ITracker
     {
+    public:
         friend class Dialog;
 
         explicit Tracker();
@@ -44,10 +45,11 @@ namespace EasyTracker
         module_status start_tracker(QFrame* parent_window) override;
         void data(double* data) override;
         bool center() override;
-
-        int  get_n_points();
-
+       
     private:
+        void CreateModelFromSettings();
+        void CreateCameraIntrinsicsMatrices();
+
         void run() override;
 
         bool maybe_reopen_camera();
@@ -73,10 +75,17 @@ namespace EasyTracker
         cv::Mat iMatFrame;
         Preview iPreview;
 
-        std::atomic<unsigned> point_count{ 0 };
         std::atomic<bool> ever_success = false;
         mutable QMutex center_lock, data_lock;
 
+        // Vertices defining the model we are tracking
+        std::vector<cv::Point3f> iModel;
+        // Bitmap points corresponding to model vertices
+        std::vector<cv::Point2f> iTrackedPoints;
+        // Intrinsics camera matrix
+        cv::Mat iCameraMatrix;
+        // Intrinsics distortion coefficients as a matrix
+        cv::Mat iDistCoeffsMatrix;
         // Translation solutions
         std::vector<cv::Mat> iTranslations;
         // Rotation solutions
