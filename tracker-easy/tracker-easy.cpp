@@ -45,6 +45,8 @@ namespace EasyTracker
 
         connect(&s.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
         set_fov(s.fov);
+
+        CreateModelFromSettings();
     }
 
     Tracker::~Tracker()
@@ -60,33 +62,7 @@ namespace EasyTracker
     }
 
 
-    // Compute Euler angles from ratation matrix
-    cv::Vec3f EulerAngles(cv::Mat &R)
-    {
-
-        float sy = sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) + R.at<double>(1, 0) * R.at<double>(1, 0));
-
-        bool singular = sy < 1e-6; // If
-
-        float x, y, z;
-        if (!singular)
-        {
-            x = atan2(R.at<double>(2, 1), R.at<double>(2, 2));
-            y = atan2(-R.at<double>(2, 0), sy);
-            z = atan2(R.at<double>(1, 0), R.at<double>(0, 0));
-        }
-        else
-        {
-            x = atan2(-R.at<double>(1, 2), R.at<double>(1, 1));
-            y = atan2(-R.at<double>(2, 0), sy);
-            z = 0;
-        }
-
-        // Convert to degrees
-        return cv::Vec3f(x * 180 / CV_PI, y * 180 / CV_PI, z * 180 / CV_PI);
-    }
-
-
+    // Compute Euler angles from rotation matrix
     void getEulerAngles(cv::Mat &rotCamerMatrix, cv::Vec3d &eulerAngles)
     {
 
@@ -104,6 +80,44 @@ namespace EasyTracker
             rotMatrixY,
             rotMatrixZ,
             eulerAngles);
+    }
+
+    ///
+    void Tracker::CreateModelFromSettings()
+    {
+        // Construct the points defining the object we want to detect based on settings.
+        // We are converting them from millimeters to centimeters.
+        // TODO: Need to support clip too. That's cap only for now.
+        // s.active_model_panel != PointModel::Clip
+        iModel.clear();
+        iModel.push_back(cv::Point3f(s.cap_x / 10.0, s.cap_z / 10.0, -s.cap_y / 10.0)); // Right
+        iModel.push_back(cv::Point3f(-s.cap_x / 10.0, s.cap_z / 10.0, -s.cap_y / 10.0)); // Left
+        iModel.push_back(cv::Point3f(0, 0, 0)); // Top
+    }
+
+    ///
+    void Tracker::CreateCameraIntrinsicsMatrices()
+    {
+        // Create our camera matrix                
+        iCameraMatrix.create(3, 3, CV_64FC1);
+        iCameraMatrix.setTo(cv::Scalar(0));
+        iCameraMatrix.at<double>(0, 0) = iCameraInfo.focalLengthX;
+        iCameraMatrix.at<double>(1, 1) = iCameraInfo.focalLengthY;
+        iCameraMatrix.at<double>(0, 2) = iCameraInfo.principalPointX;
+        iCameraMatrix.at<double>(1, 2) = iCameraInfo.principalPointY;
+        iCameraMatrix.at<double>(2, 2) = 1;
+
+        // Create distortion cooefficients
+        iDistCoeffsMatrix = cv::Mat::zeros(8, 1, CV_64FC1);
+        // As per OpenCV docs they should be thus: k1, k2, p1, p2, k3, k4, k5, k6
+        iDistCoeffsMatrix.at<double>(0, 0) = 0; // Radial first order
+        iDistCoeffsMatrix.at<double>(1, 0) = iCameraInfo.radialDistortionSecondOrder; // Radial second order
+        iDistCoeffsMatrix.at<double>(2, 0) = 0; // Tangential first order
+        iDistCoeffsMatrix.at<double>(3, 0) = 0; // Tangential second order
+        iDistCoeffsMatrix.at<double>(4, 0) = 0; // Radial third order
+        iDistCoeffsMatrix.at<double>(5, 0) = iCameraInfo.radialDistortionFourthOrder; // Radial fourth order
+        iDistCoeffsMatrix.at<double>(6, 0) = 0; // Radial fith order
+        iDistCoeffsMatrix.at<double>(7, 0) = iCameraInfo.radialDistortionSixthOrder; // Radial sixth order
     }
 
 
@@ -139,8 +153,7 @@ namespace EasyTracker
                 }
 
                 iPoints.clear();
-                iPointExtractor.ExtractPoints(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);
-                point_count.store(iPoints.size(), std::memory_order_relaxed);
+                iPointExtractor.ExtractPoints(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);                
 
                 const bool success = iPoints.size() >= KPointCount;
 
@@ -154,22 +167,11 @@ namespace EasyTracker
                         ever_success.store(true, std::memory_order_relaxed);
 
                         // Solve P3P problem with OpenCV
-
-                        // Construct the points defining the object we want to detect based on settings.
-                        // We are converting them from millimeters to centimeters.
-                        // TODO: Need to support clip too. That's cap only for now.
-                        // s.active_model_panel != PointModel::Clip
-
-                        std::vector<cv::Point3f> objectPoints;
-                        objectPoints.push_back(cv::Point3f(s.cap_x / 10.0, s.cap_z / 10.0, -s.cap_y / 10.0)); // Right
-                        objectPoints.push_back(cv::Point3f(-s.cap_x / 10.0, s.cap_z / 10.0, -s.cap_y / 10.0)); // Left
-                        objectPoints.push_back(cv::Point3f(0, 0, 0)); // Top
-
+                    
                         //Bitmap origin is top left
-                        std::vector<cv::Point2f> trackedPoints;
-                        // Stuff bitmap point in there making sure they match the order of the object point  
+                        iTrackedPoints.clear();
+                        // Tracked points must match the order of the object model points.
                         // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
-
                         int minY = std::numeric_limits<int>::max();
                         for (int i = 0; i < 3; i++)
                         {
@@ -207,52 +209,24 @@ namespace EasyTracker
                         }
 
                         //
-                        trackedPoints.push_back(iPoints[rightPointIndex]);
-                        trackedPoints.push_back(iPoints[leftPointIndex]);
-                        trackedPoints.push_back(iPoints[topPointIndex]);
+                        iTrackedPoints.push_back(iPoints[rightPointIndex]);
+                        iTrackedPoints.push_back(iPoints[leftPointIndex]);
+                        iTrackedPoints.push_back(iPoints[topPointIndex]);
 
-                        dbgout << "Object: " << objectPoints << "\n";
-                        dbgout << "Points: " << trackedPoints << "\n";
-
-
-                        // Create our camera matrix
-                        // TODO: Just do that once, use data member instead
-                        // Double or Float?
-                        cv::Mat cameraMatrix;
-                        cameraMatrix.create(3, 3, CV_64FC1);
-                        cameraMatrix.setTo(cv::Scalar(0));
-                        cameraMatrix.at<double>(0, 0) = iCameraInfo.focalLengthX;
-                        cameraMatrix.at<double>(1, 1) = iCameraInfo.focalLengthY;
-                        cameraMatrix.at<double>(0, 2) = iCameraInfo.principalPointX;
-                        cameraMatrix.at<double>(1, 2) = iCameraInfo.principalPointY;
-                        cameraMatrix.at<double>(2, 2) = 1;
-
-                        // Create distortion cooefficients
-                        cv::Mat distCoeffs = cv::Mat::zeros(8, 1, CV_64FC1);
-                        // As per OpenCV docs they should be thus: k1, k2, p1, p2, k3, k4, k5, k6
-                        distCoeffs.at<double>(0, 0) = 0; // Radial first order
-                        distCoeffs.at<double>(1, 0) = iCameraInfo.radialDistortionSecondOrder; // Radial second order
-                        distCoeffs.at<double>(2, 0) = 0; // Tangential first order
-                        distCoeffs.at<double>(3, 0) = 0; // Tangential second order
-                        distCoeffs.at<double>(4, 0) = 0; // Radial third order
-                        distCoeffs.at<double>(5, 0) = iCameraInfo.radialDistortionFourthOrder; // Radial fourth order
-                        distCoeffs.at<double>(6, 0) = 0; // Radial fith order
-                        distCoeffs.at<double>(7, 0) = iCameraInfo.radialDistortionSixthOrder; // Radial sixth order
-
-                        // Define our solution arrays
-                        // They will receive up to 4 solutions for our P3P problem
+                        dbgout << "Object: " << iModel << "\n";
+                        dbgout << "Points: " << iTrackedPoints << "\n";
 
 
-                        // TODO: try SOLVEPNP_AP3P too
+                        // TODO: try SOLVEPNP_AP3P too, make it a settings option?
                         iAngles.clear();
                         iBestSolutionIndex = -1;
-                        int solutionCount = cv::solveP3P(objectPoints, trackedPoints, cameraMatrix, distCoeffs, iRotations, iTranslations, cv::SOLVEPNP_P3P);
+                        int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, cv::SOLVEPNP_P3P);
 
                         if (solutionCount > 0)
                         {
                             dbgout << "Solution count: " << solutionCount << "\n";
                             int minPitch = std::numeric_limits<int>::max();
-                            // Find the solution we want
+                            // Find the solution we want amongst all possible ones
                             for (int i = 0; i < solutionCount; i++)
                             {
                                 dbgout << "Translation:\n";
@@ -270,19 +244,17 @@ namespace EasyTracker
                                 int absolutePitch = std::abs(angles[0]);
                                 if (minPitch > absolutePitch)
                                 {
+                                    // The solution with pitch closest to zero is the one we want
                                     minPitch = absolutePitch;
                                     iBestSolutionIndex = i;
                                 }
 
-                                //cv::Vec3f angles=EulerAngles(quaternion);
                                 dbgout << angles;
                                 dbgout << "\n";
                             }
 
                             dbgout << "\n";
-
                         }
-
                     }
 
                     // Send solution data back to main thread
@@ -347,7 +319,10 @@ namespace EasyTracker
         iCameraInfo.width = s.cam_res_x;
         iCameraInfo.height = s.cam_res_y;
 
-        return camera->start(iCameraInfo);
+        bool res = camera->start(iCameraInfo);
+        // We got new our camera intrinsics, create corresponding matrices
+        CreateCameraIntrinsicsMatrices();
+        return res;
     }
 
     void Tracker::set_fov(int value)
@@ -398,9 +373,5 @@ namespace EasyTracker
         return false;
     }
 
-    int Tracker::get_n_points()
-    {
-        return (int)point_count.load(std::memory_order_relaxed);
-    }
 
 }
