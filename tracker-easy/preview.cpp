@@ -11,6 +11,7 @@
 #include "compat/math.hpp"
 
 #include <opencv2/imgproc.hpp>
+#include <QDebug>
 
 
 namespace EasyTracker
@@ -99,20 +100,18 @@ namespace EasyTracker
             QImage::Format_ARGB32);
     }
 
-    void Preview::draw_head_center(numeric_types::f x, numeric_types::f y)
+    void Preview::DrawCross(cv::Point aPoint)
     {
-        int px = iround(x), py = iround(y);
-
         constexpr int len = 9;
 
         static const cv::Scalar color(0, 255, 255);
         cv::line(iFrameRgb,
-            cv::Point(px - len, py),
-            cv::Point(px + len, py),
+            cv::Point(aPoint.x - len, aPoint.y),
+            cv::Point(aPoint.x + len, aPoint.y),
             color, 2);
         cv::line(iFrameRgb,
-            cv::Point(px, py - len),
-            cv::Point(px, py + len),
+            cv::Point(aPoint.x, aPoint.y - len),
+            cv::Point(aPoint.x, aPoint.y + len),
             color, 2);
     }
 

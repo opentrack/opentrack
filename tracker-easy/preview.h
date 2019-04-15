@@ -9,8 +9,6 @@
 
 #pragma once
 
-#include "tracker-easy-api.h"
-
 #include <opencv2/core.hpp>
 #include <QImage>
 
@@ -23,7 +21,7 @@ namespace EasyTracker
 
         Preview& operator=(const cv::Mat& frame);
         QImage get_bitmap();
-        void draw_head_center(numeric_types::f x, numeric_types::f y);
+        void DrawCross(cv::Point aPoint);
 
         operator cv::Mat&() { return iFrameResized; }
         operator cv::Mat const&() const { return iFrameResized; }

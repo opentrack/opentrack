@@ -12,7 +12,6 @@
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
 #include "point-extractor.h"
-#include "tracker-easy-api.h"
 
 #include <QHBoxLayout>
 #include <QDebug>
@@ -36,7 +35,6 @@ namespace EasyTracker
 
     Tracker::Tracker() :
         s{ KModuleName },
-        iPointExtractor{ std::make_unique<PointExtractor>() },
         iPreview{ preview_width, preview_height }
     {
         cv::setBreakOnError(true);
@@ -141,7 +139,7 @@ namespace EasyTracker
                 }
 
                 iPoints.clear();
-                iPointExtractor->extract_points(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);
+                iPointExtractor.ExtractPoints(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);
                 point_count.store(iPoints.size(), std::memory_order_relaxed);
 
                 const bool success = iPoints.size() >= KPointCount;
@@ -175,9 +173,9 @@ namespace EasyTracker
                         int minY = std::numeric_limits<int>::max();
                         for (int i = 0; i < 3; i++)
                         {
-                            if (iPoints[i][1] < minY)
+                            if (iPoints[i].y < minY)
                             {
-                                minY = iPoints[i][1];
+                                minY = iPoints[i].y;
                                 topPointIndex = i;
                             }
                         }
@@ -189,9 +187,9 @@ namespace EasyTracker
                         for (int i = 0; i < 3; i++)
                         {
                             // Excluding top most point
-                            if (i != topPointIndex && iPoints[i][0] > maxX)
+                            if (i != topPointIndex && iPoints[i].x > maxX)
                             {
-                                maxX = iPoints[i][0];
+                                maxX = iPoints[i].x;
                                 rightPointIndex = i;
                             }
                         }
@@ -209,9 +207,9 @@ namespace EasyTracker
                         }
 
                         //
-                        trackedPoints.push_back(cv::Point2f(iPoints[rightPointIndex][0], iPoints[rightPointIndex][1]));
-                        trackedPoints.push_back(cv::Point2f(iPoints[leftPointIndex][0], iPoints[leftPointIndex][1]));
-                        trackedPoints.push_back(cv::Point2f(iPoints[topPointIndex][0], iPoints[topPointIndex][1]));
+                        trackedPoints.push_back(iPoints[rightPointIndex]);
+                        trackedPoints.push_back(iPoints[leftPointIndex]);
+                        trackedPoints.push_back(iPoints[topPointIndex]);
 
                         dbgout << "Object: " << objectPoints << "\n";
                         dbgout << "Points: " << trackedPoints << "\n";
@@ -303,7 +301,7 @@ namespace EasyTracker
                     if (topPointIndex != -1)
                     {
                         // Render a cross to indicate which point is the head
-                        iPreview.draw_head_center(iPoints[topPointIndex][0], iPoints[topPointIndex][1]);
+                        iPreview.DrawCross(iPoints[topPointIndex]);
                     }
 
                     // Show full size preview pop-up

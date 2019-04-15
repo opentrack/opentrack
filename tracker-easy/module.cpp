@@ -1,12 +1,8 @@
 #include "tracker-easy.h"
 #include "tracker-easy-dialog.h"
-#include "tracker-easy-api.h"
 #include "module.hpp"
-#include "point-extractor.h"
 
 #include <memory>
-
-
 
 namespace EasyTracker
 {

@@ -7,9 +7,8 @@
 
 #pragma once
 
-#include "tracker-easy-api.h"
-
 #include "tracker-easy.h"
+#include "settings.h"
 #include "ui_tracker-easy-settings.h"
 #include "cv/translation-calibrator.hpp"
 #include "video/video-widget.hpp"
