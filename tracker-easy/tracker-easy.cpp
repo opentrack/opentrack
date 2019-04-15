@@ -121,7 +121,10 @@ namespace EasyTracker
                 QMutexLocker l(&camera_mtx);
 
                 if (camera)
+                {
                     std::tie(iFrame, new_frame) = camera->get_frame();
+                }
+                    
             }
 
             if (new_frame)
@@ -304,8 +307,11 @@ namespace EasyTracker
                     }
 
                     // Show full size preview pop-up
-                    cv::imshow("Preview", iPreview.iFrameRgb);
-                    cv::waitKey(1);
+                    if (s.debug)
+                    {
+                        cv::imshow("Preview", iPreview.iFrameRgb);
+                        cv::waitKey(1);
+                    }
 
                     // Update preview widget
                     widget->update_image(iPreview.get_bitmap());
@@ -321,7 +327,10 @@ namespace EasyTracker
                 else
                 {
                     // No preview, destroy preview pop-up
-                    cv::destroyWindow("Preview");
+                    if (s.debug)
+                    {
+                        cv::destroyWindow("Preview");
+                    }                    
                 }
             }
         }
@@ -330,6 +339,11 @@ namespace EasyTracker
     bool Tracker::maybe_reopen_camera()
     {
         QMutexLocker l(&camera_mtx);
+
+        if (camera->is_open())
+        {
+            return true;
+        }
 
         iCameraInfo.fps = s.cam_fps;
         iCameraInfo.width = s.cam_res_x;

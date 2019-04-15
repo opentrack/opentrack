@@ -82,10 +82,6 @@
         <translation></translation>
     </message>
     <message>
-        <source>Dynamic pose timeout</source>
-        <translation>Динамическая поза (время ожидания)</translation>
-    </message>
-    <message>
         <source>Desired capture framerate</source>
         <translation>Желаемая частота кадров</translation>
     </message>
@@ -100,14 +96,6 @@
     <message>
         <source>Height</source>
         <translation>Высота</translation>
-    </message>
-    <message>
-        <source> ms</source>
-        <translation> мс</translation>
-    </message>
-    <message>
-        <source>Dynamic pose (for caps only, never clips)</source>
-        <translation>Динамическая поза (Только для модели &quot;Кепка&quot;)</translation>
     </message>
     <message>
         <source>Device</source>
@@ -277,6 +265,10 @@ ROLL или X/Y-смещения.</translation>
     </message>
     <message>
         <source>Green only</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Debug (full size preview)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
