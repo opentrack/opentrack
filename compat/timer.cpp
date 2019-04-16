@@ -12,6 +12,8 @@
 #include <cassert>
 #include <cmath>
 
+#include <QDebug>
+
 using time_type = Timer::time_type;
 
 Timer::Timer()
@@ -24,40 +26,35 @@ void Timer::start()
     gettime(&state);
 }
 
+struct timespec Timer::gettime_() const
+{
+    struct timespec ts{};
+    gettime(&ts);
+    ts.tv_sec -= state.tv_sec;
+    ts.tv_nsec -= state.tv_nsec;
+    return ts;
+}
+
 // nanoseconds
 
 time_type Timer::elapsed_nsecs() const
 {
-    timespec cur{};
-    gettime(&cur);
-    return conv_nsecs(cur);
-}
-
-time_type Timer::conv_nsecs(const struct timespec& cur) const
-{
-    return (cur.tv_sec - state.tv_sec) * 1000000000LL + (cur.tv_nsec - state.tv_nsec);
-}
-
-// microseconds
-
-double Timer::elapsed_usecs() const
-{
-    timespec cur{};
-    gettime(&cur);
-    const long long nsecs = conv_nsecs(cur);
-    return nsecs * 1e-3;
+    struct timespec delta = gettime_();
+    return (time_type)delta.tv_sec * 1000000000 + (time_type)delta.tv_nsec;
 }
 
 // milliseconds
 
 double Timer::elapsed_ms() const
 {
-    return elapsed_usecs() / 1000.;
+    struct timespec delta = gettime_();
+    return delta.tv_sec * 1000 + delta.tv_nsec * 1e-6;
 }
 
 double Timer::elapsed_seconds() const
 {
-    return double(elapsed_nsecs() * 1e-9);
+    struct timespec delta = gettime_();
+    return delta.tv_sec + delta.tv_nsec * 1e-9;
 }
 
 // --
@@ -67,27 +64,28 @@ double Timer::elapsed_seconds() const
 #if defined (_WIN32)
 #   include <windows.h>
 
-static LARGE_INTEGER otr_get_clock_frequency()
+static auto otr_get_clock_frequency()
 {
     LARGE_INTEGER freq{};
-    const BOOL ret = QueryPerformanceFrequency(&freq);
+    BOOL ret = QueryPerformanceFrequency(&freq);
     assert(ret && "QueryPerformanceFrequency failed");
-    return freq;
+    return freq.QuadPart;
 }
 
-static void otr_clock_gettime(timespec* ts)
+void Timer::gettime(timespec* ts)
 {
-    static const LARGE_INTEGER freq = otr_get_clock_frequency();
+    static const unsigned long long freq = otr_get_clock_frequency();
 
     LARGE_INTEGER d;
-    (void) QueryPerformanceCounter(&d);
+    BOOL ret = QueryPerformanceCounter(&d);
+    assert(ret && "QueryPerformanceCounter failed");
 
     using ll = long long;
-    const auto part = ll(std::roundl((d.QuadPart * 1000000000.L) / ll(freq.QuadPart)));
+    auto part = ll(std::roundl((d.QuadPart * 1000000000.L) / freq));
     using t_s = decltype(ts->tv_sec);
     using t_ns = decltype(ts->tv_nsec);
 
-    ts->tv_sec = t_s(part / 1000000000LL);
+    ts->tv_sec = t_s((long double)d.QuadPart/freq);
     ts->tv_nsec = t_ns(part % 1000000000LL);
 }
 
@@ -98,11 +96,11 @@ static void otr_clock_gettime(timespec* ts)
 static mach_timebase_info_data_t otr_get_mach_frequency()
 {
     mach_timebase_info_data_t timebase_info;
-    (void) mach_timebase_info(&timebase_info);
+    (void)mach_timebase_info(&timebase_info);
     return timebase_info;
 }
 
-static void otr_clock_gettime(timespec* ts)
+void Timer::gettime(timespec* ts)
 {
     static const mach_timebase_info_data_t timebase_info = otr_get_mach_frequency();
     uint64_t state, nsec;
@@ -112,19 +110,15 @@ static void otr_clock_gettime(timespec* ts)
     ts->tv_nsec = nsec % 1000000000UL;
 }
 
+#else
+
+void Timer::gettime(timespec* ts)
+{
+    [[maybe_unused]] int error = clock_gettime(CLOCK_MONOTONIC, ts);
+    assert(error == 0 && "clock_gettime failed");
+};
+
 #endif
 
 // common
 
-void Timer::gettime(timespec* state)
-{
-#if defined(_WIN32) || defined(__MACH__)
-    otr_clock_gettime(state);
-#elif defined CLOCK_MONOTONIC
-    const int res = clock_gettime(CLOCK_MONOTONIC, state);
-    (void)res;
-    assert(res == 0 && "must support CLOCK_MONOTONIC");
-#else
-#   error "timer query method not known"
-#endif
-}

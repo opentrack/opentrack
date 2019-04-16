@@ -12,30 +12,23 @@
 #include "time.hpp"
 
 #include <ctime>
+#include <cstdint>
 #include <type_traits>
 
 struct OTR_COMPAT_EXPORT Timer final
 {
-    using time_type = time_t;
+    using time_type = std::int64_t;
 
     Timer();
     void start();
 
-    template<typename t>
-    constexpr auto elapsed() const
-    {
-        using ns = time_units::ns;
-        return t{ns{elapsed_nsecs()}};
-    }
-
     time_type elapsed_nsecs() const;
-    double elapsed_usecs() const;
     double elapsed_ms() const;
     double elapsed_seconds() const;
 
 private:
     struct timespec state {};
     static void gettime(struct timespec* state);
-    time_type conv_nsecs(const struct timespec& cur) const;
+    struct timespec gettime_() const;
     using ns = time_units::ns;
 };
