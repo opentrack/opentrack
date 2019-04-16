@@ -39,10 +39,10 @@ namespace Kinect {
 ///
 /// Implement our camera interface using Kinect V2 SDK IR Sensor.
 ///
-struct CameraKinectIr final : video::impl::camera
+struct InfraredCamera final : video::impl::camera
 {
-    CameraKinectIr();
-    ~CameraKinectIr() override;
+    InfraredCamera();
+    ~InfraredCamera() override;
 
     // From video::impl::camera
     [[nodiscard]] bool start(info& args) override;

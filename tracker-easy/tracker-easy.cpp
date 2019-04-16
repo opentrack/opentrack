@@ -36,17 +36,17 @@ namespace EasyTracker
 {
 
     Tracker::Tracker() :
-        s{ KModuleName },
+        iSettings{ KModuleName },
         iPreview{ preview_width, preview_height }
     {
         cv::setBreakOnError(true);
         cv::setNumThreads(1);
 
-        connect(s.b.get(), &bundle_::saving, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
-        connect(s.b.get(), &bundle_::reloading, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
+        connect(iSettings.b.get(), &bundle_::saving, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
+        connect(iSettings.b.get(), &bundle_::reloading, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
 
-        connect(&s.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
-        set_fov(s.fov);
+        connect(&iSettings.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
+        set_fov(iSettings.fov);
 
         CreateModelFromSettings();
     }
@@ -92,8 +92,8 @@ namespace EasyTracker
         // TODO: Need to support clip too. That's cap only for now.
         // s.active_model_panel != PointModel::Clip
         iModel.clear();
-        iModel.push_back(cv::Point3f(s.cap_x / 10.0, s.cap_z / 10.0, -s.cap_y / 10.0)); // Right
-        iModel.push_back(cv::Point3f(-s.cap_x / 10.0, s.cap_z / 10.0, -s.cap_y / 10.0)); // Left
+        iModel.push_back(cv::Point3f(iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Right
+        iModel.push_back(cv::Point3f(-iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Left
         iModel.push_back(cv::Point3f(0, 0, 0)); // Top
     }
 
@@ -286,7 +286,7 @@ namespace EasyTracker
                     }
 
                     // Show full size preview pop-up
-                    if (s.debug)
+                    if (iSettings.debug)
                     {
                         cv::imshow("Preview", iPreview.iFrameRgb);
                         cv::waitKey(1);
@@ -306,7 +306,7 @@ namespace EasyTracker
                 else
                 {
                     // No preview, destroy preview pop-up
-                    if (s.debug)
+                    if (iSettings.debug)
                     {
                         cv::destroyWindow("Preview");
                     }                    
@@ -345,9 +345,9 @@ namespace EasyTracker
             return true;
         }
 
-        iCameraInfo.fps = s.cam_fps;
-        iCameraInfo.width = s.cam_res_x;
-        iCameraInfo.height = s.cam_res_y;
+        iCameraInfo.fps = iSettings.cam_fps;
+        iCameraInfo.width = iSettings.cam_res_x;
+        iCameraInfo.height = iSettings.cam_res_y;
 
         bool res = camera->start(iCameraInfo);
         // We got new our camera intrinsics, create corresponding matrices
@@ -374,7 +374,7 @@ namespace EasyTracker
         video_frame->show();
 
         // Create our camera
-        camera = video::make_camera(s.camera_name);
+        camera = video::make_camera(iSettings.camera_name);
 
         start(QThread::HighPriority);
 
