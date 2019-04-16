@@ -78,20 +78,20 @@ namespace EasyTracker
         }
 
         // Contours detection
-        std::vector<std::vector<cv::Point> > contours;
-        cv::findContours(iFrameGray, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
+        iContours.clear();
+        cv::findContours(iFrameGray, iContours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
     
         // Workout which countours are valid points
-        for (size_t i = 0; i < contours.size(); i++)
+        for (size_t i = 0; i < iContours.size(); i++)
         {
             if (aPreview)
             {
-                cv::drawContours(*aPreview, contours, (int)i, CV_RGB(255, 0, 0), 2);
+                cv::drawContours(*aPreview, iContours, (int)i, CV_RGB(255, 0, 0), 2);
             }
         
 
             cv::Rect bBox;
-            bBox = cv::boundingRect(contours[i]);
+            bBox = cv::boundingRect(iContours[i]);
        
             // Make sure bounding box matches our criteria
             if (bBox.width >= s.min_point_size
@@ -116,7 +116,7 @@ namespace EasyTracker
         // Typically noise comming from zippers and metal parts on your clothing.
         // With a cap tracker it also successfully discards noise from glasses.
         // However it may not work as good with a clip user wearing glasses.
-        while (aPoints.size() > 3) // Until we have no more than three points
+        while (aPoints.size() > KPointCount) // Until we have no more than three points
         {
             int maxY = 0;
             size_t index = -1;

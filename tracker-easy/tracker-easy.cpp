@@ -122,7 +122,184 @@ namespace EasyTracker
         iDistCoeffsMatrix.at<double>(7, 0) = iCameraInfo.radialDistortionSixthOrder; // Radial sixth order
     }
 
+    ///
+    ///
+    ///
+    void Tracker::ProcessFrame()
+    {
+        // Create OpenCV matrix from our frame
+        // TODO: Assert channel size is one or two
+        iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channelSize == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
+        iFrameCount++;
 
+        bool doPreview = check_is_visible();
+        if (doPreview)
+        {
+            iPreview = iMatFrame;
+        }
+
+        iPoints.clear();
+        iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iPoints);
+
+        const bool success = iPoints.size() >= KPointCount;
+
+        int topPointIndex = -1;
+
+        {
+            QMutexLocker l(&center_lock);
+
+            if (success)
+            {
+                ever_success.store(true, std::memory_order_relaxed);
+
+                // Solve P3P problem with OpenCV
+
+                //Bitmap origin is top left
+                iTrackedPoints.clear();
+                // Tracked points must match the order of the object model points.
+                // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
+                int minY = std::numeric_limits<int>::max();
+                for (int i = 0; i < 3; i++)
+                {
+                    if (iPoints[i].y < minY)
+                    {
+                        minY = iPoints[i].y;
+                        topPointIndex = i;
+                    }
+                }
+
+                int rightPointIndex = -1;
+                int maxX = 0;
+
+                // Find right most point 
+                for (int i = 0; i < 3; i++)
+                {
+                    // Excluding top most point
+                    if (i != topPointIndex && iPoints[i].x > maxX)
+                    {
+                        maxX = iPoints[i].x;
+                        rightPointIndex = i;
+                    }
+                }
+
+                // Find left most point
+                int leftPointIndex = -1;
+                for (int i = 0; i < 3; i++)
+                {
+                    // Excluding top most point
+                    if (i != topPointIndex && i != rightPointIndex)
+                    {
+                        leftPointIndex = i;
+                        break;
+                    }
+                }
+
+                //
+                iTrackedPoints.push_back(iPoints[rightPointIndex]);
+                iTrackedPoints.push_back(iPoints[leftPointIndex]);
+                iTrackedPoints.push_back(iPoints[topPointIndex]);
+
+                dbgout << "Object: " << iModel << "\n";
+                dbgout << "Points: " << iTrackedPoints << "\n";
+
+
+                // TODO: try SOLVEPNP_AP3P too, make it a settings option?
+                iAngles.clear();
+                iBestSolutionIndex = -1;
+                int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, cv::SOLVEPNP_P3P);
+
+                if (solutionCount > 0)
+                {
+                    dbgout << "Solution count: " << solutionCount << "\n";
+                    int minPitch = std::numeric_limits<int>::max();
+                    // Find the solution we want amongst all possible ones
+                    for (int i = 0; i < solutionCount; i++)
+                    {
+                        dbgout << "Translation:\n";
+                        dbgout << iTranslations.at(i);
+                        dbgout << "\n";
+                        dbgout << "Rotation:\n";
+                        //dbgout << rvecs.at(i);
+                        cv::Mat rotationCameraMatrix;
+                        cv::Rodrigues(iRotations[i], rotationCameraMatrix);
+                        cv::Vec3d angles;
+                        getEulerAngles(rotationCameraMatrix, angles);
+                        iAngles.push_back(angles);
+
+                        // Check if pitch is closest to zero
+                        int absolutePitch = std::abs(angles[0]);
+                        if (minPitch > absolutePitch)
+                        {
+                            // The solution with pitch closest to zero is the one we want
+                            minPitch = absolutePitch;
+                            iBestSolutionIndex = i;
+                        }
+
+                        dbgout << angles;
+                        dbgout << "\n";
+                    }
+
+                    dbgout << "\n";
+                }
+            }
+
+            // Send solution data back to main thread
+            QMutexLocker l2(&data_lock);
+            if (iBestSolutionIndex != -1)
+            {
+                iBestAngles = iAngles[iBestSolutionIndex];
+                iBestTranslation = iTranslations[iBestSolutionIndex];
+            }
+
+        }
+
+        if (doPreview)
+        {
+            std::ostringstream ss;
+            ss << "FPS: " << iFps << "/" << iSkippedFps;
+            iPreview.DrawInfo(ss.str());
+
+            //
+            if (topPointIndex != -1)
+            {
+                // Render a cross to indicate which point is the head
+                iPreview.DrawCross(iPoints[topPointIndex]);
+            }
+
+            // Show full size preview pop-up
+            if (iSettings.debug)
+            {
+                cv::imshow("Preview", iPreview.iFrameRgb);
+                cv::waitKey(1);
+            }
+
+            // Update preview widget
+            widget->update_image(iPreview.get_bitmap());
+
+            auto[w, h] = widget->preview_size();
+            if (w != preview_width || h != preview_height)
+            {
+                // Resize preivew if widget size has changed
+                preview_width = w; preview_height = h;
+                iPreview = Preview(w, h);
+            }
+        }
+        else
+        {
+            // No preview, destroy preview pop-up
+            if (iSettings.debug)
+            {
+                cv::destroyWindow("Preview");
+            }
+        }
+
+        dbgout << "Frame time:" << iTimer.elapsed_seconds() << "\n";
+
+    }
+
+    ///
+    ///
+    ///
     void Tracker::run()
     {
         maybe_reopen_camera();
@@ -146,173 +323,7 @@ namespace EasyTracker
 
             if (new_frame)
             {
-                // Create OpenCV matrix from our frame
-                // TODO: Assert channel size is one or two
-                iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channelSize == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
-                iFrameCount++;
-
-                const bool preview_visible = check_is_visible();
-                if (preview_visible)
-                {
-                    iPreview = iMatFrame;
-                }
-
-                iPoints.clear();
-                iPointExtractor.ExtractPoints(iMatFrame, (preview_visible ? &iPreview.iFrameRgb : nullptr), iPoints);                
-
-                const bool success = iPoints.size() >= KPointCount;
-
-                int topPointIndex = -1;
-
-                {
-                    QMutexLocker l(&center_lock);
-
-                    if (success)
-                    {
-                        ever_success.store(true, std::memory_order_relaxed);
-
-                        // Solve P3P problem with OpenCV
-                    
-                        //Bitmap origin is top left
-                        iTrackedPoints.clear();
-                        // Tracked points must match the order of the object model points.
-                        // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
-                        int minY = std::numeric_limits<int>::max();
-                        for (int i = 0; i < 3; i++)
-                        {
-                            if (iPoints[i].y < minY)
-                            {
-                                minY = iPoints[i].y;
-                                topPointIndex = i;
-                            }
-                        }
-
-                        int rightPointIndex = -1;
-                        int maxX = 0;
-
-                        // Find right most point 
-                        for (int i = 0; i < 3; i++)
-                        {
-                            // Excluding top most point
-                            if (i != topPointIndex && iPoints[i].x > maxX)
-                            {
-                                maxX = iPoints[i].x;
-                                rightPointIndex = i;
-                            }
-                        }
-
-                        // Find left most point
-                        int leftPointIndex = -1;
-                        for (int i = 0; i < 3; i++)
-                        {
-                            // Excluding top most point
-                            if (i != topPointIndex && i != rightPointIndex)
-                            {
-                                leftPointIndex = i;
-                                break;
-                            }
-                        }
-
-                        //
-                        iTrackedPoints.push_back(iPoints[rightPointIndex]);
-                        iTrackedPoints.push_back(iPoints[leftPointIndex]);
-                        iTrackedPoints.push_back(iPoints[topPointIndex]);
-
-                        dbgout << "Object: " << iModel << "\n";
-                        dbgout << "Points: " << iTrackedPoints << "\n";
-
-
-                        // TODO: try SOLVEPNP_AP3P too, make it a settings option?
-                        iAngles.clear();
-                        iBestSolutionIndex = -1;
-                        int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, cv::SOLVEPNP_P3P);
-
-                        if (solutionCount > 0)
-                        {
-                            dbgout << "Solution count: " << solutionCount << "\n";
-                            int minPitch = std::numeric_limits<int>::max();
-                            // Find the solution we want amongst all possible ones
-                            for (int i = 0; i < solutionCount; i++)
-                            {
-                                dbgout << "Translation:\n";
-                                dbgout << iTranslations.at(i);
-                                dbgout << "\n";
-                                dbgout << "Rotation:\n";
-                                //dbgout << rvecs.at(i);
-                                cv::Mat rotationCameraMatrix;
-                                cv::Rodrigues(iRotations[i], rotationCameraMatrix);
-                                cv::Vec3d angles;
-                                getEulerAngles(rotationCameraMatrix, angles);
-                                iAngles.push_back(angles);
-
-                                // Check if pitch is closest to zero
-                                int absolutePitch = std::abs(angles[0]);
-                                if (minPitch > absolutePitch)
-                                {
-                                    // The solution with pitch closest to zero is the one we want
-                                    minPitch = absolutePitch;
-                                    iBestSolutionIndex = i;
-                                }
-
-                                dbgout << angles;
-                                dbgout << "\n";
-                            }
-
-                            dbgout << "\n";
-                        }
-                    }
-
-                    // Send solution data back to main thread
-                    QMutexLocker l2(&data_lock);
-                    if (iBestSolutionIndex != -1)
-                    {
-                        iBestAngles = iAngles[iBestSolutionIndex];
-                        iBestTranslation = iTranslations[iBestSolutionIndex];
-                    }
-
-                }
-
-                if (preview_visible)
-                {
-                    std::ostringstream ss;
-                    ss << "FPS: " << iFps << "/" << iSkippedFps;
-                    iPreview.DrawInfo(ss.str());
-
-                    //
-                    if (topPointIndex != -1)
-                    {
-                        // Render a cross to indicate which point is the head
-                        iPreview.DrawCross(iPoints[topPointIndex]);
-                    }
-
-                    // Show full size preview pop-up
-                    if (iSettings.debug)
-                    {
-                        cv::imshow("Preview", iPreview.iFrameRgb);
-                        cv::waitKey(1);
-                    }
-
-                    // Update preview widget
-                    widget->update_image(iPreview.get_bitmap());
-
-                    auto[w, h] = widget->preview_size();
-                    if (w != preview_width || h != preview_height)
-                    {
-                        // Resize preivew if widget size has changed
-                        preview_width = w; preview_height = h;
-                        iPreview = Preview(w, h);
-                    }
-                }
-                else
-                {
-                    // No preview, destroy preview pop-up
-                    if (iSettings.debug)
-                    {
-                        cv::destroyWindow("Preview");
-                    }                    
-                }
-
-                dbgout << "Frame time:" << iTimer.elapsed_seconds() << "\n";
+                ProcessFrame();
             }
             else
             {

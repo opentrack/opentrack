@@ -34,6 +34,9 @@ namespace EasyTracker
         cv::Mat iFrameChannelSizeOne;
         // Our frame with a single 8 bits channel
         cv::Mat iFrameGray;
+        //
+        std::vector<std::vector<cv::Point> > iContours;
+
     };
 
 }
