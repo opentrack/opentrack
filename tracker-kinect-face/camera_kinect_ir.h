@@ -71,9 +71,9 @@ private:
     video::frame iFrame;
     cv::Mat iMatFrame;
 
-    float fov = 0;
-    int width = 0, height = 0;
-    bool first_frame = true;
+    float iFov = 0;
+    int iWidth = 0, iHeight = 0;
+    bool iFirstFrame = true;
 };
 
 }

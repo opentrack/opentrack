@@ -100,6 +100,11 @@ namespace EasyTracker
             QImage::Format_ARGB32);
     }
 
+    void Preview::DrawInfo(const std::string& aString)
+    {
+        cv::putText(iFrameRgb, aString, cv::Point(4,iFrameRgb.size().height-4), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0),2);
+    }
+
     void Preview::DrawCross(cv::Point aPoint)
     {
         constexpr int len = 9;
