@@ -56,6 +56,7 @@ namespace EasyTracker
     private:
         void CreateModelFromSettings();
         void CreateCameraIntrinsicsMatrices();
+        void ProcessFrame();
 
         // From QThread
         void run() override;
