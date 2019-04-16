@@ -26,6 +26,7 @@
 namespace pipeline_impl {
 
 using namespace euler;
+using namespace time_units;
 
 using vec6_bool = Mat<bool, 6, 1>;
 using vec3_bool = Mat<bool, 6, 1>;
@@ -102,7 +103,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
         euler_t T;
     } center;
 
-    time_units::ns backlog_time {};
+    time_units::ms backlog_time {};
 
     bool tracking_started = false;
 

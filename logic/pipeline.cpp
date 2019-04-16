@@ -479,6 +479,40 @@ ok:
     logger.next_line();
 }
 
+#ifdef DEBUG_TIMINGS
+static void debug_timings(float backlog_time)
+{
+    static variance v;
+    static Timer t, t2;
+    static unsigned cnt, k;
+
+    if (k > 1000)
+    {
+        v.input((double)backlog_time);
+
+        if (t.elapsed_ms() >= 1000)
+        {
+            t.start();
+            qDebug() << cnt << "Hz:"
+                     << "backlog"
+                     << "avg" << v.avg()
+                     << "stddev" << v.stddev();
+
+            cnt = 0;
+        }
+
+        cnt++;
+    }
+    else
+    {
+        k++;
+        t.start();
+    }
+
+    t2.start();
+}
+#endif
+
 void pipeline::run()
 {
 #if defined _WIN32
@@ -513,10 +547,8 @@ void pipeline::run()
     {
         logic();
 
-        using namespace time_units;
-
-        constexpr ns const_sleep_ms(ms{4});
-        const ns elapsed_nsecs = t.elapsed<ns>();
+        constexpr ms interval{4};
+        backlog_time += ms{t.elapsed_ms()} - interval;
         t.start();
 
         if (std::chrono::abs(backlog_time) > secs(3))
@@ -526,43 +558,13 @@ void pipeline::run()
             backlog_time = {};
         }
 
-        backlog_time += ns{elapsed_nsecs - const_sleep_ms};
-
-        const int sleep_time_ms = (int)(
-            clamp(ms{const_sleep_ms - backlog_time},
-                  ms{0}, ms{10}).count() - .45f
-        );
+        const int sleep_ms = (int)clamp(interval - backlog_time,
+                                        ms{0}, ms{10}).count();
 
 #ifdef DEBUG_TIMINGS
-        {
-            static variance v;
-            static Timer tt, t2;
-            static int cnt;
-
-            v.input(t2.elapsed_ms());
-
-            if (tt.elapsed_ms() >= 1000)
-            {
-                tt.start();
-                qDebug() << cnt << "Hz,"
-                         << "loop: " "time" << v.avg()
-                         << "stddev:" << v.stddev()
-                         << "backlog" << ms{backlog_time}.count()
-                         << "sleep" << sleep_time_ms << "ms";
-
-                if (v.count() > 256 * 60)
-                    v.clear();
-
-                cnt = 0;
-            }
-
-            cnt++;
-
-            t2.start();
-        }
+        debug_timings(backlog_time.count());
 #endif
-
-        portable::sleep(sleep_time_ms);
+        portable::sleep(sleep_ms);
     }
 
     // filter may inhibit exact origin
