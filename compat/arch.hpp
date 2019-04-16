@@ -6,13 +6,13 @@
 // can be copied, modified, and redistributed freely with
 // no conditions. there's no warranty. -sh 20181226
 
-#ifdef __clang__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wreserved-id-macro"
-#   pragma clang diagnostic ignored "-Wunused-macros"
-#endif
-
 #if defined _MSC_VER
+#   ifdef __clang__
+#       pragma clang diagnostic push
+#       pragma clang diagnostic ignored "-Wreserved-id-macro"
+#       pragma clang diagnostic ignored "-Wunused-macros"
+#   endif
+
 #   if defined _M_AMD64
 #       undef __x86_64__
 #       define __x86_64__ 1
@@ -30,10 +30,10 @@
 #       define __SSE2__ 1
 #       define __SSE3__ 1 // assume SSE3 in the _M_IX86_FP >= 2 case
 #   endif
-#endif
 
-#ifdef __clang__
-#   pragma clang diagnostic pop
+#   ifdef __clang__
+#       pragma clang diagnostic pop
+#   endif
 #endif
 
 #if defined __SSE3__
