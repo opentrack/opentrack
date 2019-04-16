@@ -12,6 +12,8 @@
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
 #include "video/camera.hpp"
+#include "compat/timer.hpp"
+
 #include "preview.h"
 #include "settings.h"
 #include "point-extractor.h"
@@ -77,6 +79,14 @@ namespace EasyTracker
 
         std::atomic<bool> ever_success = false;
         mutable QMutex center_lock, data_lock;
+
+        //
+        Timer iTimer;
+        Timer iFpsTimer;
+        int iFrameCount = 0;
+        int iSkippedFrameCount = 0;
+        int iFps = 0;
+        int iSkippedFps = 0;
 
         // Vertices defining the model we are tracking
         std::vector<cv::Point3f> iModel;

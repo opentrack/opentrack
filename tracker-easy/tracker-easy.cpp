@@ -27,8 +27,10 @@ using namespace options;
 
 // Disable debug
 #define dbgout if (true) {} else std::cout
+//#define infout if (true) {} else std::cout
 // Enable debug
 //#define dbgout if (false) {} else std::cout
+#define infout if (false) {} else std::cout
 
 namespace EasyTracker
 {
@@ -125,10 +127,13 @@ namespace EasyTracker
     {
         maybe_reopen_camera();
 
+        iFpsTimer.start();
+
         while (!isInterruptionRequested())
         {
-            bool new_frame = false;
+            iTimer.start();
 
+            bool new_frame = false;
             {
                 QMutexLocker l(&camera_mtx);
 
@@ -144,7 +149,7 @@ namespace EasyTracker
                 // Create OpenCV matrix from our frame
                 // TODO: Assert channel size is one or two
                 iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channelSize == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
-
+                iFrameCount++;
 
                 const bool preview_visible = check_is_visible();
                 if (preview_visible)
@@ -268,7 +273,11 @@ namespace EasyTracker
                 }
 
                 if (preview_visible)
-                {                    
+                {
+                    std::ostringstream ss;
+                    ss << "FPS: " << iFps << "/" << iSkippedFps;
+                    iPreview.DrawInfo(ss.str());
+
                     //
                     if (topPointIndex != -1)
                     {
@@ -302,6 +311,27 @@ namespace EasyTracker
                         cv::destroyWindow("Preview");
                     }                    
                 }
+
+                dbgout << "Frame time:" << iTimer.elapsed_seconds() << "\n";
+            }
+            else
+            {
+                iSkippedFrameCount++;
+            }
+
+            // Pace ourselves, drastically reduce CPU usage
+            // TODO: Consider using QTimer instead of QThread
+            msleep(1000 / 55);
+
+            // Compute FPS
+            double elapsed = iFpsTimer.elapsed_seconds();
+            if (elapsed >= 1.0)
+            {
+                iFps = iFrameCount / elapsed;
+                iSkippedFps = iSkippedFrameCount / elapsed;
+                iFrameCount = 0;
+                iSkippedFrameCount = 0;
+                iFpsTimer.start();
             }
         }
     }

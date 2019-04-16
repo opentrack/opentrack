@@ -22,10 +22,11 @@ namespace EasyTracker
         Preview& operator=(const cv::Mat& frame);
         QImage get_bitmap();
         void DrawCross(cv::Point aPoint);
+        void DrawInfo(const std::string& aString);
 
         operator cv::Mat&() { return iFrameResized; }
         operator cv::Mat const&() const { return iFrameResized; }
-
+       
     private:
         static void ensure_size(cv::Mat& frame, int w, int h, int type);
 

@@ -96,8 +96,8 @@ std::tuple<const video::impl::frame&, bool> CameraKinectIr::get_frame()
     new_frame = get_frame_(iMatFrame);
         
     iFrame.data = iMatFrame.ptr();
-    iFrame.width = 512;
-    iFrame.height = 424;
+    iFrame.width = iWidth;
+    iFrame.height = iHeight;
     iFrame.stride = cv::Mat::AUTO_STEP;
     iFrame.channels = iMatFrame.channels();
     iFrame.channelSize = iMatFrame.elemSize1();
@@ -115,6 +115,9 @@ inline void SafeRelease(Interface *& pInterfaceToRelease)
     }
 }
 
+///
+///
+///
 bool CameraKinectIr::start(info& aInfo)
 {
     stop();
@@ -162,8 +165,8 @@ bool CameraKinectIr::start(info& aInfo)
         if (success)
         {
             // Provide frame info
-            aInfo.width = width;
-            aInfo.height = height;
+            aInfo.width = iWidth;
+            aInfo.height = iHeight;
 
             CameraIntrinsics intrinsics;
             hr = iCoordinateMapper->GetDepthCameraIntrinsics(&intrinsics);
@@ -223,13 +226,7 @@ bool CameraKinectIr::get_frame_(cv::Mat& aFrame)
 
     if (SUCCEEDED(hr))
     {
-        INT64 nTime = 0;
-        UINT nBufferSize = 0;
-        UINT16 *pBuffer = NULL;
-
-        hr = iInfraredFrame->get_RelativeTime(&nTime);
-
-        if (first_frame)
+        if (iFirstFrame)
         {
             IFrameDescription* frameDescription = NULL;
 
@@ -238,28 +235,33 @@ bool CameraKinectIr::get_frame_(cv::Mat& aFrame)
                 hr = iInfraredFrame->get_FrameDescription(&frameDescription);
             }
 
-            // TODO: should not request those info for a every frame really
             if (SUCCEEDED(hr))
             {
-                hr = frameDescription->get_Width(&width);
+                hr = frameDescription->get_Width(&iWidth);
             }
 
             if (SUCCEEDED(hr))
             {
-                hr = frameDescription->get_Height(&height);
+                hr = frameDescription->get_Height(&iHeight);
             }
 
             if (SUCCEEDED(hr))
             {
-                hr = frameDescription->get_DiagonalFieldOfView(&fov);
+                hr = frameDescription->get_DiagonalFieldOfView(&iFov);
             }
 
             if (SUCCEEDED(hr))
-                first_frame = false;
-
+            {
+                iFirstFrame = false;
+            }
+                
             SafeRelease(frameDescription);
         }
-        
+
+
+        UINT nBufferSize = 0;
+        UINT16 *pBuffer = NULL;
+
         if (SUCCEEDED(hr))
         {
             hr = iInfraredFrame->AccessUnderlyingBuffer(&nBufferSize, &pBuffer);
@@ -268,7 +270,7 @@ bool CameraKinectIr::get_frame_(cv::Mat& aFrame)
         if (SUCCEEDED(hr))
         {
             // Create an OpenCV matrix with our 16-bits IR buffer
-            aFrame = cv::Mat(height, width, CV_16UC1, pBuffer, cv::Mat::AUTO_STEP);
+            aFrame = cv::Mat(iHeight, iWidth, CV_16UC1, pBuffer, cv::Mat::AUTO_STEP);
             // Any processing of the frame is left to the user
             success = true;
         }
