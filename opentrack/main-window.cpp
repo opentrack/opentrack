@@ -540,12 +540,18 @@ static void show_window(QWidget& d, bool fresh)
 
         d.show();
         d.adjustSize();
+#ifdef __APPLE__
         d.raise();
+#endif
+        d.activateWindow();
     }
     else
     {
         d.show();
+#ifdef __APPLE__
         d.raise();
+#endif
+        d.activateWindow();
     }
 }
 
@@ -718,7 +724,9 @@ void main_window::ensure_tray()
             show();
             setVisible(true);
 
+#ifdef __APPLE__
             raise(); // for OSX
+#endif
             activateWindow(); // for Windows
         }
 
@@ -756,7 +764,9 @@ void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
 
     if (is_minimized)
     {
+#ifdef __APPLE__
         raise(); // for OSX
+#endif
         activateWindow(); // for Windows
     }
     else
