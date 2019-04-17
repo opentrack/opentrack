@@ -17,8 +17,12 @@
 #include <algorithm>
 #include <cinttypes>
 #include <memory>
+#include <opencv2/highgui/highgui.hpp>
+// Needed for mean shift
+#include <opencv2/video/tracking.hpp>
 
 #include <QDebug>
+
 
 using namespace numeric_types;
 
@@ -77,6 +81,16 @@ namespace EasyTracker
             return;
         }
 
+//#define DEBUG
+#ifdef DEBUG        
+        cv::imshow("iFrameGray", iFrameGray);
+        cv::erode(iFrameGray, iFrameGray, cv::Mat(), cv::Point(-1, -1), 1);
+        cv::imshow("Eroded", iFrameGray);
+        cv::dilate(iFrameGray, iFrameGray, cv::Mat(), cv::Point(-1, -1), 2);
+        cv::imshow("Dilated", iFrameGray);        
+#endif 
+
+
         // Contours detection
         iContours.clear();
         cv::findContours(iFrameGray, iContours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
@@ -99,6 +113,9 @@ namespace EasyTracker
                 && bBox.width <= s.max_point_size
                 && bBox.height <= s.max_point_size)
             {
+                // Do a mean shift or cam shift, it's not bringing much though
+                //cv::CamShift(iFrameGray, bBox, cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 10, 1));
+                //                
                 cv::Point center;
                 center.x = bBox.x + bBox.width / 2;
                 center.y = bBox.y + bBox.height / 2;
