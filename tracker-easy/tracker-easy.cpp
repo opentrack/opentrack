@@ -1,6 +1,4 @@
-/* Copyright (c) 2012 Patrick Ruoff
- * Copyright (c) 2014-2016 Stanislaw Halik <sthalik@misaki.pl>
- * Copyright (c) 2019 Stephane Lenclud
+/* Copyright (c) 2019 Stephane Lenclud
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -49,6 +47,14 @@ namespace EasyTracker
         set_fov(iSettings.fov);
 
         CreateModelFromSettings();
+
+        
+        //int nStates = 18;            // the number of states
+        //int nMeasurements = 6;       // the number of measured states
+        //int nInputs = 0;             // the number of control actions
+        //double dt = 0.125;           // time between measurements (1/FPS)
+
+        iKf.Init(18,6,0,0033);
     }
 
     Tracker::~Tracker()
@@ -243,12 +249,21 @@ namespace EasyTracker
                 }
             }
 
-            // Send solution data back to main thread
-            QMutexLocker l2(&data_lock);
+                        
             if (iBestSolutionIndex != -1)
             {
-                iBestAngles = iAngles[iBestSolutionIndex];
-                iBestTranslation = iTranslations[iBestSolutionIndex];
+                // Best translation
+                cv::Vec3d translation = iTranslations[iBestSolutionIndex];
+                // Best angles
+                cv::Vec3d angles = iAngles[iBestSolutionIndex];
+
+                // Pass solution through our kalman filter
+                iKf.Update(translation[0], translation[1], translation[2], angles[2], angles[0], angles[1]);
+
+                // Send solution data back to main thread
+                QMutexLocker l2(&data_lock);
+                iBestAngles = angles;
+                iBestTranslation = translation;
             }
 
         }
