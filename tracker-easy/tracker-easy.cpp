@@ -45,25 +45,18 @@ namespace EasyTracker
 
         connect(&iSettings.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
         set_fov(iSettings.fov);
+        // We could not get this working, nevermind
+        //connect(&iSettings.cam_fps, value_::value_changed<int>(), this, &Tracker::SetFps, Qt::DirectConnection);
 
         CreateModelFromSettings();
-
-        
-        //int nStates = 18;            // the number of states
-        //int nMeasurements = 6;       // the number of measured states
-        //int nInputs = 0;             // the number of control actions
-        //double dt = 0.125;           // time between measurements (1/FPS)
-
-        iKf.Init(18,6,0,0033);
     }
 
     Tracker::~Tracker()
     {
-        //
         cv::destroyWindow("Preview");
 
-        requestInterruption();
-        wait();
+        iThread.exit();
+        iThread.wait();        
 
         QMutexLocker l(&camera_mtx);
         camera->stop();        
@@ -315,51 +308,43 @@ namespace EasyTracker
     ///
     ///
     ///
-    void Tracker::run()
+    void Tracker::Tick()
     {
         maybe_reopen_camera();
+      
+        iTimer.start();
 
-        iFpsTimer.start();
-
-        while (!isInterruptionRequested())
+        bool new_frame = false;
         {
-            iTimer.start();
+            QMutexLocker l(&camera_mtx);
 
-            bool new_frame = false;
+            if (camera)
             {
-                QMutexLocker l(&camera_mtx);
-
-                if (camera)
-                {
-                    std::tie(iFrame, new_frame) = camera->get_frame();
-                }
+                std::tie(iFrame, new_frame) = camera->get_frame();
+            }
                     
-            }
-
-            if (new_frame)
-            {
-                ProcessFrame();
-            }
-            else
-            {
-                iSkippedFrameCount++;
-            }
-
-            // Pace ourselves, drastically reduce CPU usage
-            // TODO: Consider using QTimer instead of QThread
-            msleep(1000 / 55);
-
-            // Compute FPS
-            double elapsed = iFpsTimer.elapsed_seconds();
-            if (elapsed >= 1.0)
-            {
-                iFps = iFrameCount / elapsed;
-                iSkippedFps = iSkippedFrameCount / elapsed;
-                iFrameCount = 0;
-                iSkippedFrameCount = 0;
-                iFpsTimer.start();
-            }
         }
+
+        if (new_frame)
+        {
+            ProcessFrame();
+        }
+        else
+        {
+            iSkippedFrameCount++;
+        }
+
+        // Compute FPS
+        double elapsed = iFpsTimer.elapsed_seconds();
+        if (elapsed >= 1.0)
+        {
+            iFps = iFrameCount / elapsed;
+            iSkippedFps = iSkippedFrameCount / elapsed;
+            iFrameCount = 0;
+            iSkippedFrameCount = 0;
+            iFpsTimer.start();
+        }
+        
     }
 
     bool Tracker::maybe_reopen_camera()
@@ -378,6 +363,10 @@ namespace EasyTracker
         bool res = camera->start(iCameraInfo);
         // We got new our camera intrinsics, create corresponding matrices
         CreateCameraIntrinsicsMatrices();
+
+        // If ever the camera implementation provided an FPS now is the time to apply it
+        DoSetFps(iCameraInfo.fps);
+
         return res;
     }
 
@@ -386,6 +375,28 @@ namespace EasyTracker
         QMutexLocker l(&camera_mtx);
 
     }
+
+    // Calling this from another thread than the one it belongs too after it's started somehow breaks our timer
+    void Tracker::SetFps(int aFps)
+    {
+        QMutexLocker l(&camera_mtx);
+        DoSetFps(aFps);
+    }
+
+    void Tracker::DoSetFps(int aFps)
+    {
+        // Aplly FPS to timer
+        iTicker.setInterval(1000 / aFps + 1);
+
+        // Reset Kalman filter
+        //int nStates = 18;            // the number of states
+        //int nMeasurements = 6;       // the number of measured states
+        //int nInputs = 0;             // the number of control actions
+        //double dt = 0.125;           // time between measurements (1/FPS)
+        double dt = 1000.0 / aFps;
+        iKf.Init(18, 6, 0, dt);
+    }
+
 
     module_status Tracker::start_tracker(QFrame* video_frame)
     {
@@ -401,12 +412,26 @@ namespace EasyTracker
 
         // Create our camera
         camera = video::make_camera(iSettings.camera_name);
-
-        start(QThread::HighPriority);
+        // Precise timer is needed otherwise the interval is not really respected
+        iTicker.setTimerType(Qt::PreciseTimer);
+        SetFps(iSettings.cam_fps);
+        iTicker.moveToThread(&iThread);
+        // Connect timer timeout signal to our tick slot
+        connect(&iTicker, SIGNAL(timeout()), SLOT(Tick()), Qt::DirectConnection);
+        // Start our timer once our thread is started
+        iTicker.connect(&iThread, SIGNAL(started()), SLOT(start()));
+        iFpsTimer.start(); // Kick off our FPS counter
+        iThread.setObjectName("EasyTrackerThread");
+        iThread.setPriority(QThread::HighPriority); // Do we really want that?
+        iThread.start();
 
         return {};
     }
 
+    //
+    // That's called around 250 times per second.
+    // Therefore we better not do anything here other than provide current data.
+    //
     void Tracker::data(double *data)
     {
         if (ever_success.load(std::memory_order_relaxed))

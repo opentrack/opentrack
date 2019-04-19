@@ -39,11 +39,9 @@ namespace EasyTracker
 
     using namespace numeric_types;
 
-    struct Tracker : QThread, ITracker
+    struct Tracker : public QObject, ITracker
     {
-        // We had problem where Qt slots would not get disconnected upon object destruction.
-        // Issue seems to be gone now even without Q_OBJECT declaration, go figure.
-        //Q_OBJECT
+        Q_OBJECT
     public:        
         friend class Dialog;
 
@@ -54,20 +52,26 @@ namespace EasyTracker
         module_status start_tracker(QFrame* parent_window) override;
         void data(double* data) override;
         bool center() override;
-       
+
+    private slots:
+        void Tick();
+
+
     private:
         void CreateModelFromSettings();
         void CreateCameraIntrinsicsMatrices();
         void ProcessFrame();
 
-        // From QThread
-        void run() override;
+        //
 
         bool maybe_reopen_camera();
         void set_fov(int value);
+        void SetFps(int aFps);
+        void DoSetFps(int aFps);
 
         QMutex camera_mtx;
-
+        QThread iThread;
+        QTimer iTicker;
 
         Settings iSettings;
 
@@ -91,7 +95,7 @@ namespace EasyTracker
 
         // Statistics
         Timer iTimer;
-        Timer iFpsTimer;
+        Timer iFpsTimer;        
         int iFrameCount = 0;
         int iSkippedFrameCount = 0;
         int iFps = 0;
