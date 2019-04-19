@@ -48,8 +48,8 @@ namespace EasyTracker {
             clip_bz{ b, "clip-bz", 80 };
 
         value<int> active_model_panel{ b, "active-model-panel", 0 },
-            cap_x{ b, "cap-x", 40 },
-            cap_y{ b, "cap-y", 60 },
+            cap_x{ b, "cap-x", 35 },
+            cap_y{ b, "cap-y", 55 },
             cap_z{ b, "cap-z", 100 };
 
         value<int> fov{ b, "camera-fov", 56 };

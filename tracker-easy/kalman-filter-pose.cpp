@@ -81,6 +81,7 @@ namespace EasyTracker
         //  [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0]
         //  [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0]
 
+        // Those will scale the filtered values, 2 will give you half the raw input
         measurementMatrix.at<double>(0, 0) = 1;  // x
         measurementMatrix.at<double>(1, 1) = 1;  // y
         measurementMatrix.at<double>(2, 2) = 1;  // z
