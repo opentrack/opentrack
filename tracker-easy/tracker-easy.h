@@ -61,13 +61,14 @@ namespace EasyTracker
         void CreateModelFromSettings();
         void CreateCameraIntrinsicsMatrices();
         void ProcessFrame();
-
+        
         //
 
         bool maybe_reopen_camera();
         void set_fov(int value);
         void SetFps(int aFps);
         void DoSetFps(int aFps);
+        void UpdateDeadzones(int aHalfEdgeSize);
 
         QMutex camera_mtx;
         QThread iThread;
@@ -93,6 +94,10 @@ namespace EasyTracker
         std::atomic<bool> ever_success = false;
         mutable QMutex center_lock, data_lock;
 
+        // Deadzone
+        int iDeadzoneEdge=0;
+        int iDeadzoneHalfEdge=0;
+
         // Statistics
         Timer iTimer;
         Timer iFpsTimer;        
@@ -108,6 +113,9 @@ namespace EasyTracker
         std::vector<cv::Point3f> iModel;
         // Bitmap points corresponding to model vertices
         std::vector<cv::Point2f> iTrackedPoints;
+
+        std::vector<cv::Rect> iTrackedRects;
+
         // Intrinsics camera matrix
         cv::Mat iCameraMatrix;
         // Intrinsics distortion coefficients as a matrix

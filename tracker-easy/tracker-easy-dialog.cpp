@@ -45,6 +45,7 @@ namespace EasyTracker
 
         tie_setting(s.min_point_size, ui.mindiam_spin);
         tie_setting(s.max_point_size, ui.maxdiam_spin);
+        tie_setting(s.DeadzoneRectHalfEdgeSize, ui.spinDeadzone);
 
         tie_setting(s.clip_by, ui.clip_bheight_spin);
         tie_setting(s.clip_bz, ui.clip_blength_spin);

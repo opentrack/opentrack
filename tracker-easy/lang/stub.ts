@@ -243,10 +243,6 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FTNoIR PointTracker Plugin&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Patrick Ruoff&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;http://ftnoirpt.sourceforge.net/&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#0000ff;&quot;&gt;Manual (external)&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
@@ -264,6 +260,18 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Debug (full size preview)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deadzone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 0.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See  &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999AA;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Size in pixels of half the edge defining deadzone squares around tracked points</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
