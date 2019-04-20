@@ -48,7 +48,12 @@ namespace EasyTracker
         // We could not get this working, nevermind
         //connect(&iSettings.cam_fps, value_::value_changed<int>(), this, &Tracker::SetFps, Qt::DirectConnection);
 
+        // Make sure deadzones are updated whenever the settings are changed
+        connect(&iSettings.DeadzoneRectHalfEdgeSize, value_::value_changed<int>(), this, &Tracker::UpdateDeadzones, Qt::DirectConnection);
+
         CreateModelFromSettings();
+
+        UpdateDeadzones(iSettings.DeadzoneRectHalfEdgeSize);
     }
 
     Tracker::~Tracker()
@@ -198,47 +203,79 @@ namespace EasyTracker
                 iTrackedPoints.push_back(iPoints[leftPointIndex]);
                 iTrackedPoints.push_back(iPoints[topPointIndex]);
 
-                dbgout << "Object: " << iModel << "\n";
-                dbgout << "Points: " << iTrackedPoints << "\n";
-
-
-                // TODO: try SOLVEPNP_AP3P too, make it a settings option?
-                iAngles.clear();
-                iBestSolutionIndex = -1;
-                int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, cv::SOLVEPNP_P3P);
-
-                if (solutionCount > 0)
+                bool movedEnough = true;
+                // Check if we moved enough since last time we were here
+                // This is our deadzone management
+                if (iSettings.DeadzoneRectHalfEdgeSize != 0 // Check if deazones are enabled
+                    && iTrackedRects.size() == iTrackedPoints.size())
                 {
-                    dbgout << "Solution count: " << solutionCount << "\n";
-                    int minPitch = std::numeric_limits<int>::max();
-                    // Find the solution we want amongst all possible ones
-                    for (int i = 0; i < solutionCount; i++)
+                    movedEnough = false;
+                    for (size_t i = 0; i < iTrackedPoints.size(); i++)
                     {
-                        dbgout << "Translation:\n";
-                        dbgout << iTranslations.at(i);
-                        dbgout << "\n";
-                        dbgout << "Rotation:\n";
-                        //dbgout << rvecs.at(i);
-                        cv::Mat rotationCameraMatrix;
-                        cv::Rodrigues(iRotations[i], rotationCameraMatrix);
-                        cv::Vec3d angles;
-                        getEulerAngles(rotationCameraMatrix, angles);
-                        iAngles.push_back(angles);
-
-                        // Check if pitch is closest to zero
-                        int absolutePitch = std::abs(angles[0]);
-                        if (minPitch > absolutePitch)
+                        if (!iTrackedRects[i].contains(iTrackedPoints[i]))
                         {
-                            // The solution with pitch closest to zero is the one we want
-                            minPitch = absolutePitch;
-                            iBestSolutionIndex = i;
+                            movedEnough = true;
+                            break;
                         }
+                    }
+                }
 
-                        dbgout << angles;
-                        dbgout << "\n";
+                if (movedEnough)
+                {
+                    // Build deadzone rectangles if needed
+                    iTrackedRects.clear();
+                    if (iSettings.DeadzoneRectHalfEdgeSize != 0) // Check if deazones are enabled
+                    {
+                        for (const cv::Point& pt : iTrackedPoints)
+                        {
+                            cv::Rect rect(pt - cv::Point(iDeadzoneHalfEdge, iDeadzoneHalfEdge), cv::Size(iDeadzoneEdge, iDeadzoneEdge));
+                            iTrackedRects.push_back(rect);
+                        }
                     }
 
-                    dbgout << "\n";
+
+                    dbgout << "Object: " << iModel << "\n";
+                    dbgout << "Points: " << iTrackedPoints << "\n";
+
+
+                    // TODO: try SOLVEPNP_AP3P too, make it a settings option?
+                    iAngles.clear();
+                    iBestSolutionIndex = -1;
+                    int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, cv::SOLVEPNP_P3P);
+
+                    if (solutionCount > 0)
+                    {
+                        dbgout << "Solution count: " << solutionCount << "\n";
+                        int minPitch = std::numeric_limits<int>::max();
+                        // Find the solution we want amongst all possible ones
+                        for (int i = 0; i < solutionCount; i++)
+                        {
+                            dbgout << "Translation:\n";
+                            dbgout << iTranslations.at(i);
+                            dbgout << "\n";
+                            dbgout << "Rotation:\n";
+                            //dbgout << rvecs.at(i);
+                            cv::Mat rotationCameraMatrix;
+                            cv::Rodrigues(iRotations[i], rotationCameraMatrix);
+                            cv::Vec3d angles;
+                            getEulerAngles(rotationCameraMatrix, angles);
+                            iAngles.push_back(angles);
+
+                            // Check if pitch is closest to zero
+                            int absolutePitch = std::abs(angles[0]);
+                            if (minPitch > absolutePitch)
+                            {
+                                // The solution with pitch closest to zero is the one we want
+                                minPitch = absolutePitch;
+                                iBestSolutionIndex = i;
+                            }
+
+                            dbgout << angles;
+                            dbgout << "\n";
+                        }
+
+                        dbgout << "\n";
+                    }
                 }
             }
 
@@ -272,6 +309,12 @@ namespace EasyTracker
             {
                 // Render a cross to indicate which point is the head
                 iPreview.DrawCross(iPoints[topPointIndex]);
+            }
+
+            // Render our deadzone rects
+            for (const cv::Rect& rect : iTrackedRects)
+            {
+                cv::rectangle(iPreview.iFrameRgb,rect,cv::Scalar(255,0,0));
             }
 
             // Show full size preview pop-up
@@ -395,6 +438,14 @@ namespace EasyTracker
         //double dt = 0.125;           // time between measurements (1/FPS)
         double dt = 1000.0 / aFps;
         iKf.Init(18, 6, 0, dt);
+    }
+
+    void Tracker::UpdateDeadzones(int aHalfEdgeSize)
+    {
+        QMutexLocker l(&center_lock);
+        iDeadzoneHalfEdge = aHalfEdgeSize;
+        iDeadzoneEdge = iDeadzoneHalfEdge * 2;
+        iTrackedRects.clear();
     }
 
 
