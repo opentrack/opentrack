@@ -1,19 +1,10 @@
 #pragma once
 
 #include "options/options.hpp"
+#include <opencv2/calib3d.hpp>
 
 #include <QString>
 
-enum pt_color_type
-{
-    // explicit values, gotta preserve the numbering in .ini
-    // don't reuse when removing some of the modes
-    pt_color_natural = 2,
-    pt_color_red_only = 3,
-    pt_color_average = 5,
-    pt_color_blue_only = 6,
-    pt_color_green_only = 7,
-};
 
 namespace EasyTracker {
 
@@ -58,7 +49,7 @@ namespace EasyTracker {
         value<bool> debug{ b, "debug", false };
 
         value<bool> auto_threshold{ b, "automatic-threshold", true };
-        value<pt_color_type> blob_color{ b, "blob-color", pt_color_natural };
+        value<int> PnpSolver{ b, "pnp-solver", cv::SOLVEPNP_P3P };
 
         value<slider_value> threshold_slider{ b, "threshold-slider", { 128, 0, 255 } };
 

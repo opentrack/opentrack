@@ -69,6 +69,7 @@ namespace EasyTracker
         void SetFps(int aFps);
         void DoSetFps(int aFps);
         void UpdateDeadzones(int aHalfEdgeSize);
+        void UpdateSolver(int aSolver);
 
         QMutex camera_mtx;
         QThread iThread;
@@ -97,6 +98,9 @@ namespace EasyTracker
         // Deadzone
         int iDeadzoneEdge=0;
         int iDeadzoneHalfEdge=0;
+
+        // Solver
+        int iSolver = cv::SOLVEPNP_P3P;
 
         // Statistics
         Timer iTimer;

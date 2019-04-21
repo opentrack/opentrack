@@ -138,26 +138,6 @@
         <translation>Полузнок устанавливает размер точек</translation>
     </message>
     <message>
-        <source>Color channels used</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Average</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Natural</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Red only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Blue only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Maximum point diameter</source>
         <translation></translation>
     </message>
@@ -260,10 +240,6 @@ ROLL или X/Y-смещения.</translation>
         <translation>Параметры камеры:</translation>
     </message>
     <message>
-        <source>Green only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Debug (full size preview)</source>
         <translation type="unfinished"></translation>
     </message>
@@ -277,6 +253,38 @@ ROLL или X/Y-смещения.</translation>
     </message>
     <message>
         <source>Size in pixels of half the edge defining deadzone squares around tracked points</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Perspective-N-Point solver</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Make sure you pick a solver supporting the number of marker you are using. For three points detection use either P3P or AP3P.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>P3P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ITERATIVE</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EPNP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DLS</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UPNP</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>AP3P</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

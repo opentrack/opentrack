@@ -11,6 +11,7 @@
 #include "video/camera.hpp"
 
 #include <opencv2/core.hpp>
+#include <opencv2/calib3d.hpp>
 
 #include <QString>
 #include <QtGlobal>
@@ -95,18 +96,11 @@ namespace EasyTracker
 
         connect(this, &Dialog::poll_tracker_info, this, &Dialog::poll_tracker_info_impl, Qt::DirectConnection);
 
-        constexpr pt_color_type color_types[] = {
-            pt_color_average,
-            pt_color_natural,
-            pt_color_red_only,
-            pt_color_green_only,
-            pt_color_blue_only,
-        };
 
-        for (unsigned k = 0; k < std::size(color_types); k++)
-            ui.blob_color->setItemData(k, int(color_types[k]));
+        for (unsigned k = 0; k < cv::SOLVEPNP_MAX_COUNT; k++)
+            ui.comboBoxSolvers->setItemData(k, k);
 
-        tie_setting(s.blob_color, ui.blob_color);
+        tie_setting(s.PnpSolver, ui.comboBoxSolvers);
 
         tie_setting(s.threshold_slider, ui.threshold_value_display, [this](const slider_value& val) {
             return threshold_display_text(int(val));
