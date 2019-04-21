@@ -4,14 +4,6 @@
 <context>
     <name>EasyTracker::Dialog</name>
     <message>
-        <source>Brightness %1/255</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LED radius %1 pixels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -51,10 +43,6 @@
     </message>
     <message>
         <source>Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -110,31 +98,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Point extraction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Max size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Threshold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Min size</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Intensity threshold for point extraction</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Automatic threshold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Enable, slider sets point size</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -143,10 +111,6 @@
     </message>
     <message>
         <source>Minimum point diameter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -280,6 +244,14 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>AP3P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

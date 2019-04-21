@@ -38,7 +38,6 @@ namespace EasyTracker
     signals:
         void poll_tracker_info();
     protected:
-        QString threshold_display_text(int threshold_value);
 
         Settings s;
         Tracker* tracker;

@@ -4,14 +4,6 @@
 <context>
     <name>EasyTracker::Dialog</name>
     <message>
-        <source>Brightness %1/255</source>
-        <translation type="unfinished">亮度 %1/255</translation>
-    </message>
-    <message>
-        <source>LED radius %1 pixels</source>
-        <translation type="unfinished">光源半径 %1 像素</translation>
-    </message>
-    <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -52,10 +44,6 @@
     <message>
         <source>Camera</source>
         <translation>摄像头</translation>
-    </message>
-    <message>
-        <source>Camera settings</source>
-        <translation>摄像头设置</translation>
     </message>
     <message>
         <source>°</source>
@@ -110,32 +98,12 @@
         <translation>摄像头设置 （连接时）</translation>
     </message>
     <message>
-        <source>Point extraction</source>
-        <translation>跟踪点解析</translation>
-    </message>
-    <message>
         <source>Max size</source>
         <translation>最大</translation>
     </message>
     <message>
-        <source>Threshold</source>
-        <translation>大小门限值</translation>
-    </message>
-    <message>
         <source>Min size</source>
         <translation>最小</translation>
-    </message>
-    <message>
-        <source>Intensity threshold for point extraction</source>
-        <translation>点密度</translation>
-    </message>
-    <message>
-        <source>Automatic threshold</source>
-        <translation>自动门限值</translation>
-    </message>
-    <message>
-        <source>Enable, slider sets point size</source>
-        <translation>激活，滑动，设置跟踪点大小</translation>
     </message>
     <message>
         <source>Maximum point diameter</source>
@@ -226,10 +194,6 @@
         <translation>设备信息：</translation>
     </message>
     <message>
-        <source>Value</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Use only yaw and pitch while calibrating.
 Don&apos;t roll or change position.</source>
         <translation>用pitch和yaw校准。不要roll或者变换位置</translation>
@@ -280,6 +244,14 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>AP3P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
