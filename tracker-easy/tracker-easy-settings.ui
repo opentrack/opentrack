@@ -198,7 +198,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Color channels used</string>
+             <string>Perspective-N-Point solver</string>
             </property>
            </widget>
           </item>
@@ -242,36 +242,47 @@
            </widget>
           </item>
           <item row="7" column="1">
-           <widget class="QComboBox" name="blob_color">
+           <widget class="QComboBox" name="comboBoxSolvers">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="toolTip">
+             <string>Make sure you pick a solver supporting the number of marker you are using. For three points detection use either P3P or AP3P.</string>
+            </property>
+            <property name="currentText">
+             <string>P3P</string>
+            </property>
             <item>
              <property name="text">
-              <string>Average</string>
+              <string>ITERATIVE</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Natural</string>
+              <string>EPNP</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Red only</string>
+              <string>P3P</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Green only</string>
+              <string>DLS</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Blue only</string>
+              <string>UPNP</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>AP3P</string>
              </property>
             </item>
            </widget>
@@ -1393,7 +1404,7 @@ Don't roll or change position.</string>
   <tabstop>fov</tabstop>
   <tabstop>debug</tabstop>
   <tabstop>camera_settings</tabstop>
-  <tabstop>blob_color</tabstop>
+  <tabstop>comboBoxSolvers</tabstop>
   <tabstop>auto_threshold</tabstop>
   <tabstop>threshold_slider</tabstop>
   <tabstop>mindiam_spin</tabstop>

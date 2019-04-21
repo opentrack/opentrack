@@ -50,10 +50,13 @@ namespace EasyTracker
 
         // Make sure deadzones are updated whenever the settings are changed
         connect(&iSettings.DeadzoneRectHalfEdgeSize, value_::value_changed<int>(), this, &Tracker::UpdateDeadzones, Qt::DirectConnection);
-
-        CreateModelFromSettings();
-
         UpdateDeadzones(iSettings.DeadzoneRectHalfEdgeSize);
+
+        // Make sure solver is updated whenever the settings are changed
+        connect(&iSettings.PnpSolver, value_::value_changed<int>(), this, &Tracker::UpdateSolver, Qt::DirectConnection);
+        UpdateSolver(iSettings.PnpSolver);
+
+        CreateModelFromSettings();        
     }
 
     Tracker::~Tracker()
@@ -62,9 +65,12 @@ namespace EasyTracker
 
         iThread.exit();
         iThread.wait();        
-
-        QMutexLocker l(&camera_mtx);
-        camera->stop();        
+        
+        if (camera)
+        {
+            QMutexLocker l(&camera_mtx);
+            camera->stop();
+        }        
     }
 
 
@@ -156,8 +162,6 @@ namespace EasyTracker
             {
                 ever_success.store(true, std::memory_order_relaxed);
 
-                // Solve P3P problem with OpenCV
-
                 //Bitmap origin is top left
                 iTrackedPoints.clear();
                 // Tracked points must match the order of the object model points.
@@ -233,15 +237,13 @@ namespace EasyTracker
                         }
                     }
 
-
                     dbgout << "Object: " << iModel << "\n";
                     dbgout << "Points: " << iTrackedPoints << "\n";
 
-
-                    // TODO: try SOLVEPNP_AP3P too, make it a settings option?
                     iAngles.clear();
                     iBestSolutionIndex = -1;
-                    int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, cv::SOLVEPNP_P3P);
+                    // Solve P3P problem with OpenCV
+                    int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, iSolver);
 
                     if (solutionCount > 0)
                     {
@@ -449,10 +451,23 @@ namespace EasyTracker
     }
 
 
+    void Tracker::UpdateSolver(int aSolver)
+    {
+        QMutexLocker l(&center_lock);
+        iSolver = aSolver;
+    }
+
+
+
     module_status Tracker::start_tracker(QFrame* video_frame)
     {
-        //video_frame->setAttribute(Qt::WA_NativeWindow);
+        // Check that we support that solver
+        if (iSolver!=cv::SOLVEPNP_P3P && iSolver != cv::SOLVEPNP_AP3P)
+        {
+            return module_status("Error: Solver not supported use either P3P or AP3P.");
+        }
 
+        //video_frame->setAttribute(Qt::WA_NativeWindow);
         widget = std::make_unique<video_widget>(video_frame);
         layout = std::make_unique<QHBoxLayout>(video_frame);
         layout->setContentsMargins(0, 0, 0, 0);
