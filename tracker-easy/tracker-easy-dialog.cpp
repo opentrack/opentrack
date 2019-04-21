@@ -42,8 +42,6 @@ namespace EasyTracker
         tie_setting(s.cam_res_y, ui.res_y_spin);
         tie_setting(s.cam_fps, ui.fps_spin);
 
-        tie_setting(s.threshold_slider, ui.threshold_slider);
-
         tie_setting(s.min_point_size, ui.mindiam_spin);
         tie_setting(s.max_point_size, ui.maxdiam_spin);
         tie_setting(s.DeadzoneRectHalfEdgeSize, ui.spinDeadzone);
@@ -75,7 +73,6 @@ namespace EasyTracker
 
         tie_setting(s.debug, ui.debug);
 
-        tie_setting(s.auto_threshold, ui.auto_threshold);
 
         connect(ui.tcalib_button, SIGNAL(toggled(bool)), this, SLOT(startstop_trans_calib(bool)));
 
@@ -102,37 +99,9 @@ namespace EasyTracker
 
         tie_setting(s.PnpSolver, ui.comboBoxSolvers);
 
-        tie_setting(s.threshold_slider, ui.threshold_value_display, [this](const slider_value& val) {
-            return threshold_display_text(int(val));
-        });
-
-        // refresh threshold display on auto-threshold checkbox state change
-        tie_setting(s.auto_threshold,
-            this,
-            [this](bool) { s.threshold_slider.notify(); });
     }
 
-    QString Dialog::threshold_display_text(int threshold_value)
-    {
-        if (!s.auto_threshold)
-            return tr("Brightness %1/255").arg(threshold_value);
-        else
-        {
-            int w = s.cam_res_x, h = s.cam_res_y;
-
-            if (w * h <= 0)
-            {
-                w = 640;
-                h = 480;
-            }
-
-            //SL: What are we suppose to do here?
-            double value = 0.0f;
-
-            return tr("LED radius %1 pixels").arg(value, 0, 'f', 2);
-        }
-    }
-
+    
     void Dialog::startstop_trans_calib(bool start)
     {
         QMutexLocker l(&calibrator_mutex);

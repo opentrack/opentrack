@@ -48,10 +48,8 @@ namespace EasyTracker {
 
         value<bool> debug{ b, "debug", false };
 
-        value<bool> auto_threshold{ b, "automatic-threshold", true };
         value<int> PnpSolver{ b, "pnp-solver", cv::SOLVEPNP_P3P };
 
-        value<slider_value> threshold_slider{ b, "threshold-slider", { 128, 0, 255 } };
 
         explicit Settings(const QString& name) : opts(name) {}
     };

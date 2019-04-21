@@ -4,14 +4,6 @@
 <context>
     <name>EasyTracker::Dialog</name>
     <message>
-        <source>Brightness %1/255</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>LED radius %1 pixels</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
         <translation type="unfinished">По оси YAW выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
     </message>
@@ -52,10 +44,6 @@
     <message>
         <source>Camera</source>
         <translation>Камера</translation>
-    </message>
-    <message>
-        <source>Camera settings</source>
-        <translation>Настройка камеры</translation>
     </message>
     <message>
         <source>°</source>
@@ -110,32 +98,12 @@
         <translation>Параметры камеры (если доступно)</translation>
     </message>
     <message>
-        <source>Point extraction</source>
-        <translation>Извлечение точек</translation>
-    </message>
-    <message>
         <source>Max size</source>
         <translation>Макс.размер</translation>
     </message>
     <message>
-        <source>Threshold</source>
-        <translation>Порог</translation>
-    </message>
-    <message>
         <source>Min size</source>
         <translation>Мин.размер</translation>
-    </message>
-    <message>
-        <source>Intensity threshold for point extraction</source>
-        <translation>Порог интенсивности для извлечения точки</translation>
-    </message>
-    <message>
-        <source>Automatic threshold</source>
-        <translation>Автоматич. порог</translation>
-    </message>
-    <message>
-        <source>Enable, slider sets point size</source>
-        <translation>Полузнок устанавливает размер точек</translation>
     </message>
     <message>
         <source>Maximum point diameter</source>
@@ -144,10 +112,6 @@
     <message>
         <source>Minimum point diameter</source>
         <translation></translation>
-    </message>
-    <message>
-        <source>Value</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Model</source>
@@ -285,6 +249,14 @@ ROLL или X/Y-смещения.</translation>
     </message>
     <message>
         <source>AP3P</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
