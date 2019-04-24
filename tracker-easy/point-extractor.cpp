@@ -35,7 +35,7 @@ namespace EasyTracker
     }
 
 
-    void PointExtractor::ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<cv::Point>& aPoints)
+    void PointExtractor::ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, int aNeededPointCount, std::vector<cv::Point>& aPoints)
     {
         //TODO: Assert if channel size is neither one nor two
         // Make sure our frame channel is 8 bit
@@ -133,7 +133,7 @@ namespace EasyTracker
         // Typically noise comming from zippers and metal parts on your clothing.
         // With a cap tracker it also successfully discards noise from glasses.
         // However it may not work as good with a clip user wearing glasses.
-        while (aPoints.size() > KPointCount) // Until we have no more than three points
+        while (aPoints.size() > aNeededPointCount) // Until we have no more than three points
         {
             int maxY = 0;
             size_t index = -1;

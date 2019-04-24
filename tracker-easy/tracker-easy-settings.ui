@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>418</width>
+    <width>422</width>
     <height>724</height>
    </rect>
   </property>
@@ -115,7 +115,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabTracker">
       <attribute name="title">
@@ -871,35 +871,22 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tabCustom">
+         <widget class="QWidget" name="tabModelFourPoints">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
           </property>
           <attribute name="title">
-           <string>Custom</string>
+           <string>Four</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
             <widget class="QGroupBox" name="groupBox_7">
              <property name="title">
-              <string>Model Dimensions</string>
+              <string>Model vertices</string>
              </property>
              <layout class="QGridLayout" name="gridLayout_5">
-              <item row="3" column="1">
-               <widget class="QLabel" name="label_57">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>z:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="5">
-               <widget class="QSpinBox" name="m2y_spin">
+              <item row="0" column="6">
+               <widget class="QSpinBox" name="iSpinFourTopZ">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -911,8 +898,8 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="1">
-               <widget class="QLabel" name="label_63">
+              <item row="0" column="1">
+               <widget class="QLabel" name="label_68">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -924,8 +911,73 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="2">
-               <widget class="QSpinBox" name="m1x_spin">
+              <item row="0" column="3">
+               <widget class="QLabel" name="label_76">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2">
+               <widget class="QSpinBox" name="iSpinFourTopX">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="5">
+               <widget class="QLabel" name="label_65">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_75">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Top&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="4">
+               <widget class="QSpinBox" name="iSpinFourTopY">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="6">
+               <widget class="QSpinBox" name="iSpinFourLeftZ">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -938,59 +990,7 @@
                </widget>
               </item>
               <item row="2" column="2">
-               <widget class="QSpinBox" name="m1y_spin">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="5">
-               <widget class="QSpinBox" name="m2z_spin">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="5">
-               <widget class="QSpinBox" name="m2x_spin">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" colspan="6">
-               <widget class="QLabel" name="label_56">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Location of the two remaining model points&lt;br/&gt;with respect to the reference point in default pose&lt;/p&gt;&lt;p&gt;Use any units you want, not necessarily centimeters.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QSpinBox" name="m1z_spin">
+               <widget class="QSpinBox" name="iSpinFourLeftX">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1003,7 +1003,33 @@
                </widget>
               </item>
               <item row="2" column="4">
-               <widget class="QLabel" name="label_70">
+               <widget class="QSpinBox" name="iSpinFourLeftY">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0">
+               <widget class="QLabel" name="label_74">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Left&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="3">
+               <widget class="QLabel" name="label_72">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1015,47 +1041,8 @@
                 </property>
                </widget>
               </item>
-              <item row="1" column="4">
-               <widget class="QLabel" name="label_67">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>x:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="3">
-               <widget class="QLabel" name="label_64">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;3&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0">
-               <widget class="QLabel" name="label_60">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;P&lt;/span&gt;&lt;span style=&quot; font-size:16pt; vertical-align:sub;&quot;&gt;2&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="4">
-               <widget class="QLabel" name="label_69">
+              <item row="2" column="5">
+               <widget class="QLabel" name="label_73">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                   <horstretch>0</horstretch>
@@ -1068,6 +1055,58 @@
                </widget>
               </item>
               <item row="2" column="1">
+               <widget class="QLabel" name="label_71">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>x:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0">
+               <widget class="QLabel" name="label_60">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Right&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="2">
+               <widget class="QSpinBox" name="iSpinFourRightX">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="1">
+               <widget class="QLabel" name="label_63">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>x:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="3">
                <widget class="QLabel" name="label_58">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -1077,6 +1116,136 @@
                 </property>
                 <property name="text">
                  <string>y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="4">
+               <widget class="QSpinBox" name="iSpinFourRightY">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="5">
+               <widget class="QLabel" name="label_57">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="6">
+               <widget class="QSpinBox" name="iSpinFourRightZ">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="0">
+               <widget class="QLabel" name="label_64">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Center&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="1">
+               <widget class="QLabel" name="label_67">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>x:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="2">
+               <widget class="QSpinBox" name="iSpinFourCenterX">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="3">
+               <widget class="QLabel" name="label_70">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>y:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="4">
+               <widget class="QSpinBox" name="iSpinFourCenterY">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="5">
+               <widget class="QLabel" name="label_69">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>z:</string>
+                </property>
+               </widget>
+              </item>
+              <item row="5" column="6">
+               <widget class="QSpinBox" name="iSpinFourCenterZ">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
                 </property>
                </widget>
               </item>
@@ -1318,12 +1487,6 @@ Don't roll or change position.</string>
   <tabstop>cap_length_spin</tabstop>
   <tabstop>cap_height_spin</tabstop>
   <tabstop>cap_width_spin</tabstop>
-  <tabstop>m1x_spin</tabstop>
-  <tabstop>m1y_spin</tabstop>
-  <tabstop>m1z_spin</tabstop>
-  <tabstop>m2x_spin</tabstop>
-  <tabstop>m2y_spin</tabstop>
-  <tabstop>m2z_spin</tabstop>
   <tabstop>tx_spin</tabstop>
   <tabstop>ty_spin</tabstop>
   <tabstop>tz_spin</tabstop>

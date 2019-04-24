@@ -27,8 +27,10 @@ namespace EasyTracker {
             max_point_size{ b, "max-point-size", 50 };
         value<int> DeadzoneRectHalfEdgeSize { b, "deadzone-rect-half-edge-size", 1 };
 
-        value<int> m01_x{ b, "m_01-x", 0 }, m01_y{ b, "m_01-y", 0 }, m01_z{ b, "m_01-z", 0 };
-        value<int> m02_x{ b, "m_02-x", 0 }, m02_y{ b, "m_02-y", 0 }, m02_z{ b, "m_02-z", 0 };
+        value<int> iFourPointsTopX{ b, "iFourPointsTopX", 0 }, iFourPointsTopY{ b, "iFourPointsTopY", 0 }, iFourPointsTopZ{ b, "iFourPointsTopZ", 0 };
+        value<int> iFourPointsLeftX{ b, "iFourPointsLeftX", 0 }, iFourPointsLeftY{ b, "iFourPointsLeftY", 0 }, iFourPointsLeftZ{ b, "iFourPointsLeftZ", 0 };
+        value<int> iFourPointsRightX{ b, "iFourPointsRightX", 0 }, iFourPointsRightY{ b, "iFourPointsRightY", 0 }, iFourPointsRightZ{ b, "iFourPointsRightZ", 0 };
+        value<int> iFourPointsCenterX{ b, "iFourPointsCenterX", 0 }, iFourPointsCenterY{ b, "iFourPointsCenterY", 0 }, iFourPointsCenterZ{ b, "iFourPointsCenterZ", 0 };
 
         value<int> t_MH_x{ b, "model-centroid-x", 0 },
             t_MH_y{ b, "model-centroid-y", 0 },

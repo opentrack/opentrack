@@ -77,7 +77,6 @@ namespace EasyTracker
     // Compute Euler angles from rotation matrix
     void getEulerAngles(cv::Mat &rotCamerMatrix, cv::Vec3d &eulerAngles)
     {
-
         cv::Mat cameraMatrix, rotMatrix, transVect, rotMatrixX, rotMatrixY, rotMatrixZ;
         double* _r = rotCamerMatrix.ptr<double>();
         double projMatrix[12] = { _r[0],_r[1],_r[2],0,
@@ -100,11 +99,20 @@ namespace EasyTracker
         // Construct the points defining the object we want to detect based on settings.
         // We are converting them from millimeters to centimeters.
         // TODO: Need to support clip too. That's cap only for now.
-        // s.active_model_panel != PointModel::Clip
         iModel.clear();
-        iModel.push_back(cv::Point3f(iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Right
-        iModel.push_back(cv::Point3f(-iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Left
-        iModel.push_back(cv::Point3f(0, 0, 0)); // Top
+        if (iSettings.active_model_panel == FourPoints)
+        {
+            iModel.push_back(cv::Point3f(iSettings.iFourPointsTopX / 10.0, iSettings.iFourPointsTopY / 10.0, iSettings.iFourPointsTopZ / 10.0)); // Top
+            iModel.push_back(cv::Point3f(iSettings.iFourPointsRightX / 10.0, iSettings.iFourPointsRightY / 10.0, iSettings.iFourPointsRightZ / 10.0)); // Right
+            iModel.push_back(cv::Point3f(iSettings.iFourPointsLeftX / 10.0, iSettings.iFourPointsLeftY / 10.0, iSettings.iFourPointsLeftZ / 10.0)); // Left
+            iModel.push_back(cv::Point3f(iSettings.iFourPointsCenterX / 10.0, iSettings.iFourPointsCenterY / 10.0, iSettings.iFourPointsCenterZ / 10.0)); // Center
+        }
+        else if (iSettings.active_model_panel == Cap)
+        {
+            iModel.push_back(cv::Point3f(0, 0, 0)); // Top
+            iModel.push_back(cv::Point3f(iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Right
+            iModel.push_back(cv::Point3f(-iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Left            
+        }
     }
 
     ///
@@ -149,11 +157,14 @@ namespace EasyTracker
         }
 
         iPoints.clear();
-        iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iPoints);
+        iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iModel.size(), iPoints);
 
-        const bool success = iPoints.size() >= KPointCount;
+        const bool success = iPoints.size() >= iModel.size();
 
         int topPointIndex = -1;
+        int rightPointIndex = -1;
+        int leftPointIndex = -1;
+        int centerPointIndex = -1;
 
         {
             QMutexLocker l(&center_lock);
@@ -167,7 +178,7 @@ namespace EasyTracker
                 // Tracked points must match the order of the object model points.
                 // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
                 int minY = std::numeric_limits<int>::max();
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < iPoints.size(); i++)
                 {
                     if (iPoints[i].y < minY)
                     {
@@ -176,11 +187,11 @@ namespace EasyTracker
                     }
                 }
 
-                int rightPointIndex = -1;
+                
                 int maxX = 0;
 
                 // Find right most point 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < iPoints.size(); i++)
                 {
                     // Excluding top most point
                     if (i != topPointIndex && iPoints[i].x > maxX)
@@ -191,21 +202,38 @@ namespace EasyTracker
                 }
 
                 // Find left most point
-                int leftPointIndex = -1;
-                for (int i = 0; i < 3; i++)
+
+                int minX = std::numeric_limits<int>::max();;
+                for (int i = 0; i < iPoints.size(); i++)
                 {
-                    // Excluding top most point
-                    if (i != topPointIndex && i != rightPointIndex)
+                    // Excluding top most point and right most point
+                    if (i != topPointIndex && i != rightPointIndex && iPoints[i].x < minX)
                     {
                         leftPointIndex = i;
-                        break;
+                        minX = iPoints[i].x;
                     }
                 }
 
-                //
+                // Find center point, the last one
+                for (int i = 0; i < iPoints.size(); i++)
+                {
+                    // Excluding the three points we already have
+                    if (i != topPointIndex && i != rightPointIndex && i != leftPointIndex)
+                    {
+                        centerPointIndex = i;
+                    }
+                }
+
+                // Order matters
+                iTrackedPoints.push_back(iPoints[topPointIndex]);
                 iTrackedPoints.push_back(iPoints[rightPointIndex]);
                 iTrackedPoints.push_back(iPoints[leftPointIndex]);
-                iTrackedPoints.push_back(iPoints[topPointIndex]);
+                if (iModel.size() > iTrackedPoints.size())
+                {
+                    // We are tracking more than 3 points
+                    iTrackedPoints.push_back(iPoints[centerPointIndex]);
+                }
+                
 
                 bool movedEnough = true;
                 // Check if we moved enough since last time we were here
@@ -243,7 +271,32 @@ namespace EasyTracker
                     iAngles.clear();
                     iBestSolutionIndex = -1;
                     // Solve P3P problem with OpenCV
-                    int solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, iSolver);
+                    int solutionCount = 0;
+                    if (iModel.size() == 3)
+                    {
+                        solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, iSolver);
+                    }
+                    else
+                    {
+                        //Guess extrinsic boolean is only for ITERATIVE method, it will be set to false for all other method
+                        cv::Mat rotation, translation;
+                        // Init only needed for iterative, it's also useless as it is
+                        rotation = cv::Mat::zeros(3, 1, CV_64FC1);
+                        translation = cv::Mat::zeros(3, 1, CV_64FC1);
+                        rotation.setTo(cv::Scalar(0));
+                        translation.setTo(cv::Scalar(0));
+                        /////
+                        iRotations.clear();
+                        iTranslations.clear();
+                        bool solved = cv::solvePnP(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, rotation, translation, true, iSolver );
+                        if (solved)
+                        {
+                            solutionCount = 1;
+                            iRotations.push_back(rotation);
+                            iTranslations.push_back(translation);
+                        }
+                    }
+                     
 
                     if (solutionCount > 0)
                     {
@@ -306,12 +359,33 @@ namespace EasyTracker
             ss << "FPS: " << iFps << "/" << iSkippedFps;
             iPreview.DrawInfo(ss.str());
 
-            //
+            //Color is BGR
             if (topPointIndex != -1)
             {
                 // Render a cross to indicate which point is the head
-                iPreview.DrawCross(iPoints[topPointIndex]);
+                static const cv::Scalar color(0, 255, 255); // Yellow
+                iPreview.DrawCross(iPoints[topPointIndex],color);
             }
+
+            if (rightPointIndex != -1)
+            {
+                static const cv::Scalar color(255, 0, 255); // Pink
+                iPreview.DrawCross(iPoints[rightPointIndex], color);
+            }
+
+            if (leftPointIndex != -1)
+            {
+                static const cv::Scalar color(255, 0, 0); // Blue                
+                iPreview.DrawCross(iPoints[leftPointIndex], color);
+            }
+
+            if (centerPointIndex != -1)
+            {
+                static const cv::Scalar color(0, 255, 0); // Green
+                iPreview.DrawCross(iPoints[centerPointIndex], color);
+            }
+
+
 
             // Render our deadzone rects
             for (const cv::Rect& rect : iTrackedRects)
@@ -462,7 +536,7 @@ namespace EasyTracker
     module_status Tracker::start_tracker(QFrame* video_frame)
     {
         // Check that we support that solver
-        if (iSolver!=cv::SOLVEPNP_P3P && iSolver != cv::SOLVEPNP_AP3P)
+        if (iSolver!=cv::SOLVEPNP_P3P && iSolver != cv::SOLVEPNP_AP3P && iModel.size()==3)
         {
             return module_status("Error: Solver not supported use either P3P or AP3P.");
         }

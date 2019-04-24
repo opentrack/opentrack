@@ -17,16 +17,13 @@
 
 namespace EasyTracker
 {
-
-    const int KPointCount = 3;
-
     class PointExtractor 
     {
     public:
         PointExtractor();
         // extracts points from frame and draws some processing info into frame, if draw_output is set
         // dt: time since last call in seconds
-        void ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<cv::Point>& aPoints);
+        void ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, int aNeededPointCount, std::vector<cv::Point>& aPoints);
         
         // Settings
         Settings s;

@@ -33,6 +33,14 @@
 namespace EasyTracker
 {
 
+    // Order matters, it must match the order of the UI tabs
+    enum ModelType
+    {
+        Clip,
+        Cap,
+        FourPoints
+    };
+
     static const QString KModuleName = "tracker-easy";
 
     class Dialog;

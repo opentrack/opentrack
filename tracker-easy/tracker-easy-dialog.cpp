@@ -55,13 +55,21 @@ namespace EasyTracker
         tie_setting(s.cap_y, ui.cap_height_spin);
         tie_setting(s.cap_z, ui.cap_length_spin);
 
-        tie_setting(s.m01_x, ui.m1x_spin);
-        tie_setting(s.m01_y, ui.m1y_spin);
-        tie_setting(s.m01_z, ui.m1z_spin);
+        tie_setting(s.iFourPointsTopX, ui.iSpinFourTopX);
+        tie_setting(s.iFourPointsTopY, ui.iSpinFourTopY);
+        tie_setting(s.iFourPointsTopZ, ui.iSpinFourTopZ);
 
-        tie_setting(s.m02_x, ui.m2x_spin);
-        tie_setting(s.m02_y, ui.m2y_spin);
-        tie_setting(s.m02_z, ui.m2z_spin);
+        tie_setting(s.iFourPointsLeftX, ui.iSpinFourLeftX);
+        tie_setting(s.iFourPointsLeftY, ui.iSpinFourLeftY);
+        tie_setting(s.iFourPointsLeftZ, ui.iSpinFourLeftZ);
+
+        tie_setting(s.iFourPointsRightX, ui.iSpinFourRightX);
+        tie_setting(s.iFourPointsRightY, ui.iSpinFourRightY);
+        tie_setting(s.iFourPointsRightZ, ui.iSpinFourRightZ);
+
+        tie_setting(s.iFourPointsCenterX, ui.iSpinFourCenterX);
+        tie_setting(s.iFourPointsCenterY, ui.iSpinFourCenterY);
+        tie_setting(s.iFourPointsCenterZ, ui.iSpinFourCenterZ);
 
         tie_setting(s.t_MH_x, ui.tx_spin);
         tie_setting(s.t_MH_y, ui.ty_spin);
