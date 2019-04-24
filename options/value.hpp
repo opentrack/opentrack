@@ -62,6 +62,9 @@ class value final : public value_
         if (traits::is_equal(get(), traits::value_from_qvariant(value)))
             return;
 
+        if (is_null())
+            return;
+
         if (value.isValid() && !value.isNull())
             b->store_kv(self_name, value);
         else
@@ -97,12 +100,18 @@ public:
 
     auto& operator=(t&& datum) noexcept
     {
+        if (is_null())
+            return *this;
+
         store_variant(traits::qvariant_from_value(traits::pass_value(datum)));
         return *this;
     }
 
     auto& operator=(const t& datum) noexcept
     {
+        if (is_null())
+            return *this;
+
         t copy{datum};
         *this = std::move(copy);
         return *this;
