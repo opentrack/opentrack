@@ -34,7 +34,7 @@ void pose_widget::paintEvent(QPaintEvent*)
     auto [ yaw, pitch, roll ] = R;
     auto [ x, y, z ] = T;
 
-    const QImage& img = std::fabs(pitch) > 90 || std::fabs(yaw) > 90
+    const QImage& img = std::fabs(pitch) > 90 ^ std::fabs(yaw) > 90
                         ? back
                         : front;
 
