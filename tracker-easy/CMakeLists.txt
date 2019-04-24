@@ -2,7 +2,7 @@ include(opentrack-opencv)
 find_package(OpenCV QUIET)
 
 if(OpenCV_FOUND)
-    try_compile(tracker-easy-ocv-check "${CMAKE_CURRENT_BINARY_DIR}"
+    try_compile(tracker-easy_ocv-check "${CMAKE_CURRENT_BINARY_DIR}"
                 SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/ocv-check.cxx"
                 CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${OpenCV_INCLUDE_DIRS}"
                             "-DCXX_STANDARD=17" "-DCXX_STANDARD_REQUIRED=1"
