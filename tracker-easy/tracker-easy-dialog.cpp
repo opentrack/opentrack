@@ -189,7 +189,7 @@ namespace EasyTracker
         if (tracker)
         {
             QMutexLocker l(&tracker->camera_mtx);
-            tracker->camera->show_dialog();
+            (void)tracker->camera->show_dialog();
         }
         else
             (void)video::show_dialog(s.camera_name);

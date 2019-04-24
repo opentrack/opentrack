@@ -136,7 +136,7 @@ namespace EasyTracker
         while (aPoints.size() > KPointCount) // Until we have no more than three points
         {
             int maxY = 0;
-            size_t index = -1;
+            unsigned index = (unsigned)-1;
 
             // Search for the point with highest Y coordinate
             for (size_t i = 0; i < aPoints.size(); i++)
