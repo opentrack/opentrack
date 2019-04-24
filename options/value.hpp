@@ -130,7 +130,8 @@ public:
     {
     }
 
-    value(const value<t>& other) noexcept : value{other.b, other.self_name, other.def} {}
+    //value(const value<t>& other) noexcept : value{other.b, other.self_name, other.def} {}
+    value(const value<t>&) = delete;
 
     t default_value() const
     {
