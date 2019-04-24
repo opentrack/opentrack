@@ -13,9 +13,6 @@ find_package(OpenCV QUIET)
 if(OpenCV_FOUND)
     set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
     if(SDK_ARUCO_LIBPATH)
-
-        maybe_add_static_define()
-
         set(modules "${SDK_ARUCO_LIBPATH}" opencv_calib3d opencv_imgproc opencv_core)
 
         get_filename_component(dir "${SDK_ARUCO_LIBPATH}" DIRECTORY)
@@ -31,8 +28,10 @@ if(OpenCV_FOUND)
             message(FATAL_ERROR "${krap}\n" "Must use Aruco fork from <https://github.com/opentrack/aruco>")
         endif()
 
-        otr_module(tracker-aruco)
+        maybe_add_static_define()
+        otr_install_lib("${SDK_ARUCO_LIBPATH}" "${opentrack-hier-pfx}")
 
+        otr_module(tracker-aruco)
         target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS} "${dir}")
         target_link_libraries(${self} opentrack-cv ${modules})
     endif()
