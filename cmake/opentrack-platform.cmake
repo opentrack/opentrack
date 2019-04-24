@@ -44,6 +44,8 @@ include_directories("${CMAKE_SOURCE_DIR}")
 
 set(opentrack_maintainer-mode FALSE CACHE INTERNAL "Select if developing core code (not modules)")
 
+set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_DEFAULT 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
