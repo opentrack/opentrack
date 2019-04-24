@@ -22,19 +22,13 @@ if(OpenCV_FOUND)
         get_filename_component(dir "${dir}" ABSOLUTE)
         set(dir "${dir}/include")
 
-        file(TIMESTAMP "${SDK_ARUCO_LIBPATH}" tm "%s" UTC)
-        set(cache-str "${tm}^|^${SDK_ARUCO_LIBPATH}")
-
-        if(NOT aruco_has-working-abi STREQUAL "${cache-str}")
-            try_compile(result "${CMAKE_CURRENT_BINARY_DIR}"
-                               SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/compile-test/abi.cpp"
-                               CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${dir}"
-                               OUTPUT_VARIABLE krap)
-            if(NOT result)
-                message(FATAL_ERROR "${krap}\n" "Must use Aruco fork from <https://github.com/opentrack/aruco>")
-            endif()
-
-            set(aruco_has-working-abi "${cache-str}" CACHE INTERNAL "" FORCE)
+        try_compile(tracker-aruco_has-working-abi "${CMAKE_CURRENT_BINARY_DIR}"
+                           SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/compile-test/abi.cpp"
+                           CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${dir}"
+                                       "-DCXX_STANDARD=17" "-DCXX_STANDARD_REQUIRED=1"
+                           OUTPUT_VARIABLE krap)
+        if(NOT tracker-aruco_has-working-abi)
+            message(FATAL_ERROR "${krap}\n" "Must use Aruco fork from <https://github.com/opentrack/aruco>")
         endif()
 
         otr_module(tracker-aruco)
