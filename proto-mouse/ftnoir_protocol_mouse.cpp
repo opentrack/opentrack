@@ -41,8 +41,7 @@ void mouse::pose(const double* headpose)
                             *s.sensitivity_y,
                             axis_y >= 3);
 
-    const int dx = get_delta(mouse_x, last_x),
-              dy = get_delta(mouse_y, last_y);
+    int dx = get_delta(mouse_x, last_x), dy = mouse_y - last_y;
 
     last_x = mouse_x; last_y = mouse_y;
 
