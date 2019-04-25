@@ -36,7 +36,12 @@ namespace Kinect {
 
     std::vector<QString> CamerasProvider::camera_names() const
     {
-        return { KKinectIRSensor };
+        IKinectSensor* ptr;
+        BOOLEAN b;
+        if (SUCCEEDED(GetDefaultKinectSensor(&ptr)) && SUCCEEDED(ptr->get_IsAvailable(&b)) && b)
+            return { KKinectIRSensor };
+        else
+            return {};
     }
 
     bool CamerasProvider::can_show_dialog(const QString& camera_name)
