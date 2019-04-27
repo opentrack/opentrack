@@ -167,12 +167,10 @@ namespace EasyTracker
         int centerPointIndex = -1;
 
         {
-            QMutexLocker l(&center_lock);
+            QMutexLocker l(&iProcessLock);
 
             if (success)
             {
-                ever_success.store(true, std::memory_order_relaxed);
-
                 //Bitmap origin is top left
                 iTrackedPoints.clear();
                 // Tracked points must match the order of the object model points.
@@ -252,7 +250,14 @@ namespace EasyTracker
                     }
                 }
 
-                if (movedEnough)
+                if (!movedEnough)
+                {
+                    // We are in a dead zone
+                    // However we still have tracking so make sure we don't auto center
+                    QMutexLocker lock(&iDataLock);
+                    iBestTime.start();
+                }
+                else
                 {
                     // Build deadzone rectangles if needed
                     iTrackedRects.clear();
@@ -296,7 +301,9 @@ namespace EasyTracker
                             iTranslations.push_back(translation);
                         }
                     }
-                     
+
+                    // Reset best solution index
+                    iBestSolutionIndex = -1;
 
                     if (solutionCount > 0)
                     {
@@ -331,26 +338,28 @@ namespace EasyTracker
 
                         dbgout << "\n";
                     }
+
+                    if (iBestSolutionIndex != -1)
+                    {
+                        // Best translation
+                        cv::Vec3d translation = iTranslations[iBestSolutionIndex];
+                        // Best angles
+                        cv::Vec3d angles = iAngles[iBestSolutionIndex];
+
+                        // Pass solution through our kalman filter
+                        iKf.Update(translation[0], translation[1], translation[2], angles[2], angles[0], angles[1]);
+
+                        // We succeded in finding a solution to our PNP problem
+                        ever_success.store(true, std::memory_order_relaxed);
+
+                        // Send solution data back to main thread
+                        QMutexLocker l2(&iDataLock);
+                        iBestAngles = angles;
+                        iBestTranslation = translation;
+                        iBestTime.start();
+                    }
                 }
-            }
-
-                        
-            if (iBestSolutionIndex != -1)
-            {
-                // Best translation
-                cv::Vec3d translation = iTranslations[iBestSolutionIndex];
-                // Best angles
-                cv::Vec3d angles = iAngles[iBestSolutionIndex];
-
-                // Pass solution through our kalman filter
-                iKf.Update(translation[0], translation[1], translation[2], angles[2], angles[0], angles[1]);
-
-                // Send solution data back to main thread
-                QMutexLocker l2(&data_lock);
-                iBestAngles = angles;
-                iBestTranslation = translation;
-            }
-
+            }                      
         }
 
         if (doPreview)
@@ -518,7 +527,7 @@ namespace EasyTracker
 
     void Tracker::UpdateDeadzones(int aHalfEdgeSize)
     {
-        QMutexLocker l(&center_lock);
+        QMutexLocker l(&iProcessLock);
         iDeadzoneHalfEdge = aHalfEdgeSize;
         iDeadzoneEdge = iDeadzoneHalfEdge * 2;
         iTrackedRects.clear();
@@ -527,7 +536,7 @@ namespace EasyTracker
 
     void Tracker::UpdateSolver(int aSolver)
     {
-        QMutexLocker l(&center_lock);
+        QMutexLocker l(&iProcessLock);
         iSolver = aSolver;
     }
 
@@ -569,28 +578,47 @@ namespace EasyTracker
     }
 
     //
+    void FeedData(double* aData, const cv::Vec3d& aAngles, const cv::Vec3d& aTranslation)
+    {
+        aData[Yaw] = aAngles[1];
+        aData[Pitch] = aAngles[0];
+        aData[Roll] = aAngles[2];
+        aData[TX] = aTranslation[0];
+        aData[TY] = aTranslation[1];
+        aData[TZ] = aTranslation[2];
+    }
+
+    //
     // That's called around 250 times per second.
     // Therefore we better not do anything here other than provide current data.
     //
-    void Tracker::data(double *data)
+    void Tracker::data(double* aData)
     {
         if (ever_success.load(std::memory_order_relaxed))
         {
             // Get data back from tracker thread
-            QMutexLocker l(&data_lock);
-            data[Yaw] = iBestAngles[1];
-            data[Pitch] = iBestAngles[0];
-            data[Roll] = iBestAngles[2];
-            data[TX] = iBestTranslation[0];
-            data[TY] = iBestTranslation[1];
-            data[TZ] = iBestTranslation[2];
+            QMutexLocker l(&iDataLock);
+            // If there was no new data recently then we provide center data.
+            // Basically if our user remove her hat we will go back to center position until she puts it back on.
+            if (iBestTime.elapsed_seconds() > 1)
+            {
+                // Reset to center until we get new data
+                FeedData(aData, iCenterAngles, iCenterTranslation);
+            }
+            else
+            {
+                // We got valid data, provide it
+                FeedData(aData, iBestAngles, iBestTranslation);
+            }
         }
     }
 
     bool Tracker::center()
     {
-        QMutexLocker l(&center_lock);
-        //TODO: Do we need to do anything there?
+        QMutexLocker l(&iDataLock);
+        iCenterTranslation = iBestTranslation;
+        iCenterAngles = iBestAngles;
+        // Returning false tells the pipeline we want to use the default center behaviour
         return false;
     }
 

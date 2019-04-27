@@ -101,7 +101,7 @@ namespace EasyTracker
         Preview iPreview;
 
         std::atomic<bool> ever_success = false;
-        mutable QMutex center_lock, data_lock;
+        mutable QMutex iProcessLock, iDataLock;
 
         // Deadzone
         int iDeadzoneEdge=0;
@@ -144,6 +144,12 @@ namespace EasyTracker
         cv::Vec3d iBestTranslation;
         // Best angles
         cv::Vec3d iBestAngles;
+        // Time at which we found our last best solution
+        Timer iBestTime;
+        // Center translation
+        cv::Vec3d iCenterTranslation = {0,0,0};
+        // Center angles
+        cv::Vec3d iCenterAngles = { 0,0,0 };
     };
 
 }
