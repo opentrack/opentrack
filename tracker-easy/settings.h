@@ -23,18 +23,22 @@ namespace EasyTracker {
         value<int> cam_res_x{ b, "camera-res-width", 640 },
             cam_res_y{ b, "camera-res-height", 480 },
             cam_fps{ b, "camera-fps", 30 };
-        value<double> min_point_size{ b, "min-point-size", 2.5 },
-            max_point_size{ b, "max-point-size", 50 };
+        value<int> iMinBlobSize{ b, "iMinBlobSize", 4 }, iMaxBlobSize{ b, "iMaxBlobSize", 15 };
         value<int> DeadzoneRectHalfEdgeSize { b, "deadzone-rect-half-edge-size", 1 };
 
-        value<int> iFourPointsTopX{ b, "iFourPointsTopX", 0 }, iFourPointsTopY{ b, "iFourPointsTopY", 0 }, iFourPointsTopZ{ b, "iFourPointsTopZ", 0 };
-        value<int> iFourPointsLeftX{ b, "iFourPointsLeftX", 0 }, iFourPointsLeftY{ b, "iFourPointsLeftY", 0 }, iFourPointsLeftZ{ b, "iFourPointsLeftZ", 0 };
-        value<int> iFourPointsRightX{ b, "iFourPointsRightX", 0 }, iFourPointsRightY{ b, "iFourPointsRightY", 0 }, iFourPointsRightZ{ b, "iFourPointsRightZ", 0 };
-        value<int> iFourPointsCenterX{ b, "iFourPointsCenterX", 0 }, iFourPointsCenterY{ b, "iFourPointsCenterY", 0 }, iFourPointsCenterZ{ b, "iFourPointsCenterZ", 0 };
+        // Type of custom model
+        value<bool> iCustomModelThree{ b, "iCustomModelThree", true };
+        value<bool> iCustomModelFour{ b, "iCustomModelFour", false };
+        value<bool> iCustomModelFive{ b, "iCustomModelFive", false };
 
-        value<int> t_MH_x{ b, "model-centroid-x", 0 },
-            t_MH_y{ b, "model-centroid-y", 0 },
-            t_MH_z{ b, "model-centroid-z", 0 };
+        // Custom model vertices
+        value<int> iVertexTopX{ b, "iVertexTopX", 0 }, iVertexTopY{ b, "iVertexTopY", 0 }, iVertexTopZ{ b, "iVertexTopZ", 0 };
+        value<int> iVertexRightX{ b, "iVertexRightX", 0 }, iVertexRightY{ b, "iVertexRightY", 0 }, iVertexRightZ{ b, "iVertexRightZ", 0 };
+        value<int> iVertexLeftX{ b, "iVertexLeftX", 0 }, iVertexLeftY{ b, "iVertexLeftY", 0 }, iVertexLeftZ{ b, "iVertexLeftZ", 0 };
+        value<int> iVertexCenterX{ b, "iVertexCenterX", 0 }, iVertexCenterY{ b, "iVertexCenterY", 0 }, iVertexCenterZ{ b, "iVertexCenterZ", 0 };
+        value<int> iVertexTopRightX{ b, "iVertexTopRightX", 0 }, iVertexTopRightY{ b, "iVertexTopRightY", 0 }, iVertexTopRightZ{ b, "iVertexTopRightZ", 0 };
+        value<int> iVertexTopLeftX{ b, "iVertexTopLeftX", 0 }, iVertexTopLeftY{ b, "iVertexTopLeftY", 0 }, iVertexTopLeftZ{ b, "iVertexTopLeftZ", 0 };
+
 
         value<int> clip_ty{ b, "clip-ty", 40 },
             clip_tz{ b, "clip-tz", 30 },
@@ -49,6 +53,7 @@ namespace EasyTracker {
         value<int> fov{ b, "camera-fov", 56 };
 
         value<bool> debug{ b, "debug", false };
+
 
         value<int> PnpSolver{ b, "pnp-solver", cv::SOLVEPNP_P3P };
 

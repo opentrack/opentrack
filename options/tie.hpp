@@ -20,6 +20,7 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QTabWidget>
+#include <QRadioButton>
 
 #include <cmath>
 
@@ -97,6 +98,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QVariant>& v, QComboBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb);
+OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QRadioButton* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb);
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le);

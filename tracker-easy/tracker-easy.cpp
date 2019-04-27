@@ -49,14 +49,35 @@ namespace EasyTracker
         //connect(&iSettings.cam_fps, value_::value_changed<int>(), this, &Tracker::SetFps, Qt::DirectConnection);
 
         // Make sure deadzones are updated whenever the settings are changed
-        connect(&iSettings.DeadzoneRectHalfEdgeSize, value_::value_changed<int>(), this, &Tracker::UpdateDeadzones, Qt::DirectConnection);
-        UpdateDeadzones(iSettings.DeadzoneRectHalfEdgeSize);
+        connect(&iSettings.DeadzoneRectHalfEdgeSize, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
+
+        // Update point extractor whenever some of the settings it needs are changed
+        connect(&iSettings.iMinBlobSize, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
+        connect(&iSettings.iMaxBlobSize, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
 
         // Make sure solver is updated whenever the settings are changed
-        connect(&iSettings.PnpSolver, value_::value_changed<int>(), this, &Tracker::UpdateSolver, Qt::DirectConnection);
-        UpdateSolver(iSettings.PnpSolver);
+        connect(&iSettings.PnpSolver, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
 
-        CreateModelFromSettings();        
+        // Debug
+        connect(&iSettings.debug, value_::value_changed<bool>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
+
+        // Make sure model is updated whenever it is changed
+        connect(&iSettings.iCustomModelThree, value_::value_changed<bool>(), this, &Tracker::UpdateModel, Qt::DirectConnection);
+        connect(&iSettings.iCustomModelFour, value_::value_changed<bool>(), this, &Tracker::UpdateModel, Qt::DirectConnection);
+        connect(&iSettings.iCustomModelFive, value_::value_changed<bool>(), this, &Tracker::UpdateModel, Qt::DirectConnection);
+
+        // Update model logic
+        #define UM(v) connect(&iSettings.v, value_::value_changed<int>(), this, &Tracker::UpdateModel, Qt::DirectConnection)
+        UM(iVertexTopX); UM(iVertexTopY); UM(iVertexTopZ);
+        UM(iVertexTopRightX); UM(iVertexTopRightY); UM(iVertexTopRightZ);
+        UM(iVertexTopLeftX); UM(iVertexTopLeftY); UM(iVertexTopLeftZ);
+        UM(iVertexRightX); UM(iVertexRightY); UM(iVertexRightZ);
+        UM(iVertexLeftX); UM(iVertexLeftY); UM(iVertexLeftZ);
+        UM(iVertexCenterX); UM(iVertexCenterY); UM(iVertexCenterZ);
+
+        UpdateModel();
+
+        UpdateSettings();
     }
 
     Tracker::~Tracker()
@@ -94,20 +115,29 @@ namespace EasyTracker
     }
 
     ///
-    void Tracker::CreateModelFromSettings()
+    void Tracker::UpdateModel()
     {
+        infout << std::chrono::system_clock::now().time_since_epoch().count() << ": Update model\n";
+
+        QMutexLocker lock(&iProcessLock);
         // Construct the points defining the object we want to detect based on settings.
         // We are converting them from millimeters to centimeters.
         // TODO: Need to support clip too. That's cap only for now.
         iModel.clear();
-        if (iSettings.active_model_panel == FourPoints)
-        {
-            iModel.push_back(cv::Point3f(iSettings.iFourPointsTopX / 10.0, iSettings.iFourPointsTopY / 10.0, iSettings.iFourPointsTopZ / 10.0)); // Top
-            iModel.push_back(cv::Point3f(iSettings.iFourPointsRightX / 10.0, iSettings.iFourPointsRightY / 10.0, iSettings.iFourPointsRightZ / 10.0)); // Right
-            iModel.push_back(cv::Point3f(iSettings.iFourPointsLeftX / 10.0, iSettings.iFourPointsLeftY / 10.0, iSettings.iFourPointsLeftZ / 10.0)); // Left
-            iModel.push_back(cv::Point3f(iSettings.iFourPointsCenterX / 10.0, iSettings.iFourPointsCenterY / 10.0, iSettings.iFourPointsCenterZ / 10.0)); // Center
+        if (iSettings.active_model_panel == Custom)
+        {            
+            iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
+            iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
+            iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
+
+            if (iSettings.iCustomModelFour)
+            {
+                iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
+            }
+            
         }
-        else if (iSettings.active_model_panel == Cap)
+        // Default to Cap for now
+        else //if (iSettings.active_model_panel == Cap)
         {
             iModel.push_back(cv::Point3f(0, 0, 0)); // Top
             iModel.push_back(cv::Point3f(iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Right
@@ -140,11 +170,15 @@ namespace EasyTracker
         iDistCoeffsMatrix.at<double>(7, 0) = iCameraInfo.radialDistortionSixthOrder; // Radial sixth order
     }
 
+
+    const int KMinVertexCount = 3;
     ///
     ///
     ///
     void Tracker::ProcessFrame()
     {
+        QMutexLocker l(&iProcessLock);
+
         // Create OpenCV matrix from our frame
         // TODO: Assert channel size is one or two
         iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channelSize == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
@@ -159,207 +193,204 @@ namespace EasyTracker
         iPoints.clear();
         iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iModel.size(), iPoints);
 
-        const bool success = iPoints.size() >= iModel.size();
+        const bool success = iPoints.size() >= iModel.size() && iModel.size() >= KMinVertexCount;
 
         int topPointIndex = -1;
         int rightPointIndex = -1;
         int leftPointIndex = -1;
         int centerPointIndex = -1;
 
+
+
+        if (success)
         {
-            QMutexLocker l(&iProcessLock);
-
-            if (success)
+            //Bitmap origin is top left
+            iTrackedPoints.clear();
+            // Tracked points must match the order of the object model points.
+            // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
+            int minY = std::numeric_limits<int>::max();
+            for (int i = 0; i < iPoints.size(); i++)
             {
-                //Bitmap origin is top left
-                iTrackedPoints.clear();
-                // Tracked points must match the order of the object model points.
-                // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
-                int minY = std::numeric_limits<int>::max();
-                for (int i = 0; i < iPoints.size(); i++)
+                if (iPoints[i].y < minY)
                 {
-                    if (iPoints[i].y < minY)
-                    {
-                        minY = iPoints[i].y;
-                        topPointIndex = i;
-                    }
+                    minY = iPoints[i].y;
+                    topPointIndex = i;
                 }
+            }
 
                 
-                int maxX = 0;
+            int maxX = 0;
 
-                // Find right most point 
-                for (int i = 0; i < iPoints.size(); i++)
+            // Find right most point 
+            for (int i = 0; i < iPoints.size(); i++)
+            {
+                // Excluding top most point
+                if (i != topPointIndex && iPoints[i].x > maxX)
                 {
-                    // Excluding top most point
-                    if (i != topPointIndex && iPoints[i].x > maxX)
-                    {
-                        maxX = iPoints[i].x;
-                        rightPointIndex = i;
-                    }
+                    maxX = iPoints[i].x;
+                    rightPointIndex = i;
                 }
+            }
 
-                // Find left most point
-
-                int minX = std::numeric_limits<int>::max();;
-                for (int i = 0; i < iPoints.size(); i++)
+            // Find left most point
+            int minX = std::numeric_limits<int>::max();
+            for (int i = 0; i < iPoints.size(); i++)
+            {
+                // Excluding top most point and right most point
+                if (i != topPointIndex && i != rightPointIndex && iPoints[i].x < minX)
                 {
-                    // Excluding top most point and right most point
-                    if (i != topPointIndex && i != rightPointIndex && iPoints[i].x < minX)
-                    {
-                        leftPointIndex = i;
-                        minX = iPoints[i].x;
-                    }
+                    leftPointIndex = i;
+                    minX = iPoints[i].x;
                 }
+            }
 
-                // Find center point, the last one
-                for (int i = 0; i < iPoints.size(); i++)
+            // Find center point, the last one
+            for (int i = 0; i < iPoints.size(); i++)
+            {
+                // Excluding the three points we already have
+                if (i != topPointIndex && i != rightPointIndex && i != leftPointIndex)
                 {
-                    // Excluding the three points we already have
-                    if (i != topPointIndex && i != rightPointIndex && i != leftPointIndex)
-                    {
-                        centerPointIndex = i;
-                    }
+                    centerPointIndex = i;
                 }
+            }
 
-                // Order matters
-                iTrackedPoints.push_back(iPoints[topPointIndex]);
-                iTrackedPoints.push_back(iPoints[rightPointIndex]);
-                iTrackedPoints.push_back(iPoints[leftPointIndex]);
-                if (iModel.size() > iTrackedPoints.size())
-                {
-                    // We are tracking more than 3 points
-                    iTrackedPoints.push_back(iPoints[centerPointIndex]);
-                }
+            // Order matters
+            iTrackedPoints.push_back(iPoints[topPointIndex]);
+            iTrackedPoints.push_back(iPoints[rightPointIndex]);
+            iTrackedPoints.push_back(iPoints[leftPointIndex]);
+            if (iModel.size() > iTrackedPoints.size())
+            {
+                // We are tracking more than 3 points
+                iTrackedPoints.push_back(iPoints[centerPointIndex]);
+            }
                 
 
-                bool movedEnough = true;
-                // Check if we moved enough since last time we were here
-                // This is our deadzone management
-                if (iSettings.DeadzoneRectHalfEdgeSize != 0 // Check if deazones are enabled
-                    && iTrackedRects.size() == iTrackedPoints.size())
+            bool movedEnough = true;
+            // Check if we moved enough since last time we were here
+            // This is our deadzone management
+            if (iDeadzoneHalfEdge != 0 // Check if deazones are enabled
+                && iTrackedRects.size() == iTrackedPoints.size())
+            {
+                movedEnough = false;
+                for (size_t i = 0; i < iTrackedPoints.size(); i++)
                 {
-                    movedEnough = false;
-                    for (size_t i = 0; i < iTrackedPoints.size(); i++)
+                    if (!iTrackedRects[i].contains(iTrackedPoints[i]))
                     {
-                        if (!iTrackedRects[i].contains(iTrackedPoints[i]))
-                        {
-                            movedEnough = true;
-                            break;
-                        }
+                        movedEnough = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!movedEnough)
+            {
+                // We are in a dead zone
+                // However we still have tracking so make sure we don't auto center
+                QMutexLocker lock(&iDataLock);
+                iBestTime.start();
+            }
+            else
+            {
+                // Build deadzone rectangles if needed
+                iTrackedRects.clear();
+                if (iDeadzoneHalfEdge != 0) // Check if deazones are enabled
+                {
+                    for (const cv::Point& pt : iTrackedPoints)
+                    {
+                        cv::Rect rect(pt - cv::Point(iDeadzoneHalfEdge, iDeadzoneHalfEdge), cv::Size(iDeadzoneEdge, iDeadzoneEdge));
+                        iTrackedRects.push_back(rect);
                     }
                 }
 
-                if (!movedEnough)
+                dbgout << "Object: " << iModel << "\n";
+                dbgout << "Points: " << iTrackedPoints << "\n";
+
+                iAngles.clear();
+                iBestSolutionIndex = -1;
+                // Solve P3P problem with OpenCV
+                int solutionCount = 0;
+                if (iModel.size() == 3)
                 {
-                    // We are in a dead zone
-                    // However we still have tracking so make sure we don't auto center
-                    QMutexLocker lock(&iDataLock);
-                    iBestTime.start();
+                    solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, iSolver);
                 }
                 else
                 {
-                    // Build deadzone rectangles if needed
-                    iTrackedRects.clear();
-                    if (iSettings.DeadzoneRectHalfEdgeSize != 0) // Check if deazones are enabled
+                    //Guess extrinsic boolean is only for ITERATIVE method, it will be set to false for all other method
+                    cv::Mat rotation, translation;
+                    // Init only needed for iterative, it's also useless as it is
+                    rotation = cv::Mat::zeros(3, 1, CV_64FC1);
+                    translation = cv::Mat::zeros(3, 1, CV_64FC1);
+                    rotation.setTo(cv::Scalar(0));
+                    translation.setTo(cv::Scalar(0));
+                    /////
+                    iRotations.clear();
+                    iTranslations.clear();
+                    bool solved = cv::solvePnP(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, rotation, translation, true, iSolver );
+                    if (solved)
                     {
-                        for (const cv::Point& pt : iTrackedPoints)
-                        {
-                            cv::Rect rect(pt - cv::Point(iDeadzoneHalfEdge, iDeadzoneHalfEdge), cv::Size(iDeadzoneEdge, iDeadzoneEdge));
-                            iTrackedRects.push_back(rect);
-                        }
+                        solutionCount = 1;
+                        iRotations.push_back(rotation);
+                        iTranslations.push_back(translation);
                     }
+                }
 
-                    dbgout << "Object: " << iModel << "\n";
-                    dbgout << "Points: " << iTrackedPoints << "\n";
+                // Reset best solution index
+                iBestSolutionIndex = -1;
 
-                    iAngles.clear();
-                    iBestSolutionIndex = -1;
-                    // Solve P3P problem with OpenCV
-                    int solutionCount = 0;
-                    if (iModel.size() == 3)
+                if (solutionCount > 0)
+                {
+                    dbgout << "Solution count: " << solutionCount << "\n";
+                    int minPitch = std::numeric_limits<int>::max();
+                    // Find the solution we want amongst all possible ones
+                    for (int i = 0; i < solutionCount; i++)
                     {
-                        solutionCount = cv::solveP3P(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, iRotations, iTranslations, iSolver);
-                    }
-                    else
-                    {
-                        //Guess extrinsic boolean is only for ITERATIVE method, it will be set to false for all other method
-                        cv::Mat rotation, translation;
-                        // Init only needed for iterative, it's also useless as it is
-                        rotation = cv::Mat::zeros(3, 1, CV_64FC1);
-                        translation = cv::Mat::zeros(3, 1, CV_64FC1);
-                        rotation.setTo(cv::Scalar(0));
-                        translation.setTo(cv::Scalar(0));
-                        /////
-                        iRotations.clear();
-                        iTranslations.clear();
-                        bool solved = cv::solvePnP(iModel, iTrackedPoints, iCameraMatrix, iDistCoeffsMatrix, rotation, translation, true, iSolver );
-                        if (solved)
+                        dbgout << "Translation:\n";
+                        dbgout << iTranslations.at(i);
+                        dbgout << "\n";
+                        dbgout << "Rotation:\n";
+                        //dbgout << rvecs.at(i);
+                        cv::Mat rotationCameraMatrix;
+                        cv::Rodrigues(iRotations[i], rotationCameraMatrix);
+                        cv::Vec3d angles;
+                        getEulerAngles(rotationCameraMatrix, angles);
+                        iAngles.push_back(angles);
+
+                        // Check if pitch is closest to zero
+                        int absolutePitch = std::abs(angles[0]);
+                        if (minPitch > absolutePitch)
                         {
-                            solutionCount = 1;
-                            iRotations.push_back(rotation);
-                            iTranslations.push_back(translation);
-                        }
-                    }
-
-                    // Reset best solution index
-                    iBestSolutionIndex = -1;
-
-                    if (solutionCount > 0)
-                    {
-                        dbgout << "Solution count: " << solutionCount << "\n";
-                        int minPitch = std::numeric_limits<int>::max();
-                        // Find the solution we want amongst all possible ones
-                        for (int i = 0; i < solutionCount; i++)
-                        {
-                            dbgout << "Translation:\n";
-                            dbgout << iTranslations.at(i);
-                            dbgout << "\n";
-                            dbgout << "Rotation:\n";
-                            //dbgout << rvecs.at(i);
-                            cv::Mat rotationCameraMatrix;
-                            cv::Rodrigues(iRotations[i], rotationCameraMatrix);
-                            cv::Vec3d angles;
-                            getEulerAngles(rotationCameraMatrix, angles);
-                            iAngles.push_back(angles);
-
-                            // Check if pitch is closest to zero
-                            int absolutePitch = std::abs(angles[0]);
-                            if (minPitch > absolutePitch)
-                            {
-                                // The solution with pitch closest to zero is the one we want
-                                minPitch = absolutePitch;
-                                iBestSolutionIndex = i;
-                            }
-
-                            dbgout << angles;
-                            dbgout << "\n";
+                            // The solution with pitch closest to zero is the one we want
+                            minPitch = absolutePitch;
+                            iBestSolutionIndex = i;
                         }
 
+                        dbgout << angles;
                         dbgout << "\n";
                     }
 
-                    if (iBestSolutionIndex != -1)
-                    {
-                        // Best translation
-                        cv::Vec3d translation = iTranslations[iBestSolutionIndex];
-                        // Best angles
-                        cv::Vec3d angles = iAngles[iBestSolutionIndex];
-
-                        // Pass solution through our kalman filter
-                        iKf.Update(translation[0], translation[1], translation[2], angles[2], angles[0], angles[1]);
-
-                        // We succeded in finding a solution to our PNP problem
-                        ever_success.store(true, std::memory_order_relaxed);
-
-                        // Send solution data back to main thread
-                        QMutexLocker l2(&iDataLock);
-                        iBestAngles = angles;
-                        iBestTranslation = translation;
-                        iBestTime.start();
-                    }
+                    dbgout << "\n";
                 }
-            }                      
+
+                if (iBestSolutionIndex != -1)
+                {
+                    // Best translation
+                    cv::Vec3d translation = iTranslations[iBestSolutionIndex];
+                    // Best angles
+                    cv::Vec3d angles = iAngles[iBestSolutionIndex];
+
+                    // Pass solution through our kalman filter
+                    iKf.Update(translation[0], translation[1], translation[2], angles[2], angles[0], angles[1]);
+
+                    // We succeded in finding a solution to our PNP problem
+                    ever_success.store(true, std::memory_order_relaxed);
+
+                    // Send solution data back to main thread
+                    QMutexLocker l2(&iDataLock);
+                    iBestAngles = angles;
+                    iBestTranslation = translation;
+                    iBestTime.start();
+                }
+            }
         }
 
         if (doPreview)
@@ -403,7 +434,7 @@ namespace EasyTracker
             }
 
             // Show full size preview pop-up
-            if (iSettings.debug)
+            if (iDebug)
             {
                 cv::imshow("Preview", iPreview.iFrameRgb);
                 cv::waitKey(1);
@@ -423,7 +454,7 @@ namespace EasyTracker
         else
         {
             // No preview, destroy preview pop-up
-            if (iSettings.debug)
+            if (iDebug)
             {
                 cv::destroyWindow("Preview");
             }
@@ -525,22 +556,20 @@ namespace EasyTracker
         iKf.Init(18, 6, 0, dt);
     }
 
-    void Tracker::UpdateDeadzones(int aHalfEdgeSize)
+    ///
+    /// Take a copy of the settings needed by our thread to avoid deadlocks
+    ///
+    void Tracker::UpdateSettings()
     {
+        infout << std::chrono::system_clock::now().time_since_epoch().count() << ": Update Setting\n";
         QMutexLocker l(&iProcessLock);
-        iDeadzoneHalfEdge = aHalfEdgeSize;
+        iPointExtractor.UpdateSettings();
+        iSolver = iSettings.PnpSolver;
+        iDeadzoneHalfEdge = iSettings.DeadzoneRectHalfEdgeSize;
         iDeadzoneEdge = iDeadzoneHalfEdge * 2;
         iTrackedRects.clear();
+        iDebug = iSettings.debug;
     }
-
-
-    void Tracker::UpdateSolver(int aSolver)
-    {
-        QMutexLocker l(&iProcessLock);
-        iSolver = aSolver;
-    }
-
-
 
     module_status Tracker::start_tracker(QFrame* video_frame)
     {
@@ -599,7 +628,7 @@ namespace EasyTracker
             // Get data back from tracker thread
             QMutexLocker l(&iDataLock);
             // If there was no new data recently then we provide center data.
-            // Basically if our user remove her hat we will go back to center position until she puts it back on.
+            // Basically, if our user remove her hat, we will go back to center position until she puts it back on.
             if (iBestTime.elapsed_seconds() > 1)
             {
                 // Reset to center until we get new data

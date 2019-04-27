@@ -38,7 +38,7 @@ namespace EasyTracker
     {
         Clip,
         Cap,
-        FourPoints
+        Custom
     };
 
     static const QString KModuleName = "tracker-easy";
@@ -66,7 +66,7 @@ namespace EasyTracker
 
 
     private:
-        void CreateModelFromSettings();
+        void UpdateModel();
         void CreateCameraIntrinsicsMatrices();
         void ProcessFrame();
         
@@ -76,8 +76,7 @@ namespace EasyTracker
         void set_fov(int value);
         void SetFps(int aFps);
         void DoSetFps(int aFps);
-        void UpdateDeadzones(int aHalfEdgeSize);
-        void UpdateSolver(int aSolver);
+        void UpdateSettings();
 
         QMutex camera_mtx;
         QThread iThread;
@@ -103,12 +102,14 @@ namespace EasyTracker
         std::atomic<bool> ever_success = false;
         mutable QMutex iProcessLock, iDataLock;
 
+        //// Copy the settings need by our thread to avoid dead locks
         // Deadzone
         int iDeadzoneEdge=0;
         int iDeadzoneHalfEdge=0;
-
         // Solver
         int iSolver = cv::SOLVEPNP_P3P;
+        bool iDebug = false;
+        ////
 
         // Statistics
         Timer iTimer;

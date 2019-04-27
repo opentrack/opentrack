@@ -42,8 +42,8 @@ namespace EasyTracker
         tie_setting(s.cam_res_y, ui.res_y_spin);
         tie_setting(s.cam_fps, ui.fps_spin);
 
-        tie_setting(s.min_point_size, ui.mindiam_spin);
-        tie_setting(s.max_point_size, ui.maxdiam_spin);
+        tie_setting(s.iMinBlobSize, ui.mindiam_spin);
+        tie_setting(s.iMaxBlobSize, ui.maxdiam_spin);
         tie_setting(s.DeadzoneRectHalfEdgeSize, ui.spinDeadzone);
 
         tie_setting(s.clip_by, ui.clip_bheight_spin);
@@ -55,25 +55,30 @@ namespace EasyTracker
         tie_setting(s.cap_y, ui.cap_height_spin);
         tie_setting(s.cap_z, ui.cap_length_spin);
 
-        tie_setting(s.iFourPointsTopX, ui.iSpinFourTopX);
-        tie_setting(s.iFourPointsTopY, ui.iSpinFourTopY);
-        tie_setting(s.iFourPointsTopZ, ui.iSpinFourTopZ);
+        tie_setting(s.iVertexTopX, ui.iSpinVertexTopX);
+        tie_setting(s.iVertexTopY, ui.iSpinVertexTopY);
+        tie_setting(s.iVertexTopZ, ui.iSpinVertexTopZ);
 
-        tie_setting(s.iFourPointsLeftX, ui.iSpinFourLeftX);
-        tie_setting(s.iFourPointsLeftY, ui.iSpinFourLeftY);
-        tie_setting(s.iFourPointsLeftZ, ui.iSpinFourLeftZ);
+        tie_setting(s.iVertexRightX, ui.iSpinVertexRightX);
+        tie_setting(s.iVertexRightY, ui.iSpinVertexRightY);
+        tie_setting(s.iVertexRightZ, ui.iSpinVertexRightZ);
 
-        tie_setting(s.iFourPointsRightX, ui.iSpinFourRightX);
-        tie_setting(s.iFourPointsRightY, ui.iSpinFourRightY);
-        tie_setting(s.iFourPointsRightZ, ui.iSpinFourRightZ);
+        tie_setting(s.iVertexLeftX, ui.iSpinVertexLeftX);
+        tie_setting(s.iVertexLeftY, ui.iSpinVertexLeftY);
+        tie_setting(s.iVertexLeftZ, ui.iSpinVertexLeftZ);
 
-        tie_setting(s.iFourPointsCenterX, ui.iSpinFourCenterX);
-        tie_setting(s.iFourPointsCenterY, ui.iSpinFourCenterY);
-        tie_setting(s.iFourPointsCenterZ, ui.iSpinFourCenterZ);
+        tie_setting(s.iVertexCenterX, ui.iSpinVertexCenterX);
+        tie_setting(s.iVertexCenterY, ui.iSpinVertexCenterY);
+        tie_setting(s.iVertexCenterZ, ui.iSpinVertexCenterZ);
 
-        tie_setting(s.t_MH_x, ui.tx_spin);
-        tie_setting(s.t_MH_y, ui.ty_spin);
-        tie_setting(s.t_MH_z, ui.tz_spin);
+        tie_setting(s.iVertexTopRightX, ui.iSpinVertexTopRightX);
+        tie_setting(s.iVertexTopRightY, ui.iSpinVertexTopRightY);
+        tie_setting(s.iVertexTopRightZ, ui.iSpinVertexTopRightZ);
+
+        tie_setting(s.iVertexTopLeftX, ui.iSpinVertexTopLeftX);
+        tie_setting(s.iVertexTopLeftY, ui.iSpinVertexTopLeftY);
+        tie_setting(s.iVertexTopLeftZ, ui.iSpinVertexTopLeftZ);
+
 
         tie_setting(s.fov, ui.fov);
 
@@ -82,8 +87,6 @@ namespace EasyTracker
         tie_setting(s.debug, ui.debug);
 
 
-        connect(ui.tcalib_button, SIGNAL(toggled(bool)), this, SLOT(startstop_trans_calib(bool)));
-
         connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
         connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
 
@@ -91,11 +94,18 @@ namespace EasyTracker
         set_camera_settings_available(ui.camdevice_combo->currentText());
         connect(ui.camera_settings, &QPushButton::clicked, this, &Dialog::show_camera_settings);
 
+        // Radio Button
+        connect(ui.iRadioButtonCustomModelThree, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
+        connect(ui.iRadioButtonCustomModelFour, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
+        connect(ui.iRadioButtonCustomModelFive, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
+
+        tie_setting(s.iCustomModelThree, ui.iRadioButtonCustomModelThree);
+        tie_setting(s.iCustomModelFour, ui.iRadioButtonCustomModelFour);
+        tie_setting(s.iCustomModelFive, ui.iRadioButtonCustomModelFive);
+
         connect(&timer, &QTimer::timeout, this, &Dialog::poll_tracker_info_impl);
         timer.setInterval(250);
 
-        connect(&calib_timer, &QTimer::timeout, this, &Dialog::trans_calib_step);
-        calib_timer.setInterval(35);
 
         poll_tracker_info_impl();
 
@@ -107,63 +117,30 @@ namespace EasyTracker
 
         tie_setting(s.PnpSolver, ui.comboBoxSolvers);
 
+        UpdateCustomModelControls();
     }
 
-    
-    void Dialog::startstop_trans_calib(bool start)
+    void Dialog::UpdateCustomModelControls()
     {
-        QMutexLocker l(&calibrator_mutex);
-
-        if (start)
+        if (ui.iRadioButtonCustomModelThree->isChecked())
         {
-            qDebug() << "pt: starting translation calibration";
-            calib_timer.start();
-            trans_calib.reset();
-            s.t_MH_x = 0;
-            s.t_MH_y = 0;
-            s.t_MH_z = 0;
-
-            ui.sample_count_display->setText(QString());
+            ui.iGroupBoxCenter->hide();
+            ui.iGroupBoxTopRight->hide();
+            ui.iGroupBoxTopLeft->hide();
         }
-        else
+        else if (ui.iRadioButtonCustomModelFour->isChecked())
         {
-            calib_timer.stop();
-            qDebug() << "pt: stopping translation calibration";
-            {
-                auto[tmp, nsamples] = trans_calib.get_estimate();
-                s.t_MH_x = int(tmp[0]);
-                s.t_MH_y = int(tmp[1]);
-                s.t_MH_z = int(tmp[2]);
-
-                constexpr int min_yaw_samples = 15;
-                constexpr int min_pitch_samples = 15;
-                constexpr int min_samples = min_yaw_samples + min_pitch_samples;
-
-                // Don't bother counting roll samples. Roll calibration is hard enough
-                // that it's a hidden unsupported feature anyway.
-
-                QString sample_feedback;
-                if (nsamples[0] < min_yaw_samples)
-                    sample_feedback = tr("%1 yaw samples. Yaw more to %2 samples for stable calibration.").arg(nsamples[0]).arg(min_yaw_samples);
-                else if (nsamples[1] < min_pitch_samples)
-                    sample_feedback = tr("%1 pitch samples. Pitch more to %2 samples for stable calibration.").arg(nsamples[1]).arg(min_pitch_samples);
-                else
-                {
-                    const int nsamples_total = nsamples[0] + nsamples[1];
-                    sample_feedback = tr("%1 samples. Over %2, good!").arg(nsamples_total).arg(min_samples);
-                }
-
-                ui.sample_count_display->setText(sample_feedback);
-            }
+            ui.iGroupBoxCenter->show();
+            ui.iGroupBoxTopRight->hide();
+            ui.iGroupBoxTopLeft->hide();
         }
-        ui.tx_spin->setEnabled(!start);
-        ui.ty_spin->setEnabled(!start);
-        ui.tz_spin->setEnabled(!start);
+        else if (ui.iRadioButtonCustomModelFive->isChecked())
+        {
+            ui.iGroupBoxCenter->hide();
+            ui.iGroupBoxTopRight->show();
+            ui.iGroupBoxTopLeft->show();
+        }
 
-        if (start)
-            ui.tcalib_button->setText(tr("Stop calibration"));
-        else
-            ui.tcalib_button->setText(tr("Start calibration"));
     }
 
     void Dialog::poll_tracker_info_impl()
@@ -203,12 +180,7 @@ namespace EasyTracker
             (void)video::show_dialog(s.camera_name);
     }
 
-    void Dialog::trans_calib_step()
-    {
-        QMutexLocker l(&calibrator_mutex);
-        // TODO: Do we still need that function
-    }
-
+    
     void Dialog::save()
     {
         s.b->save();
@@ -228,7 +200,6 @@ namespace EasyTracker
     void Dialog::register_tracker(ITracker *t)
     {
         tracker = static_cast<Tracker*>(t);
-        ui.tcalib_button->setEnabled(true);
         poll_tracker_info();
         timer.start();
     }
@@ -236,7 +207,6 @@ namespace EasyTracker
     void Dialog::unregister_tracker()
     {
         tracker = nullptr;
-        ui.tcalib_button->setEnabled(false);
         poll_tracker_info();
         timer.stop();
     }

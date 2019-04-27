@@ -4,26 +4,6 @@
 <context>
     <name>EasyTracker::Dialog</name>
     <message>
-        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
-        <translation type="unfinished">По оси YAW выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
-    </message>
-    <message>
-        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
-        <translation type="unfinished">По оси Pitch выполнено: %1 замер(а/ов). Для стабильного результата необходимо не меньше %2</translation>
-    </message>
-    <message>
-        <source>%1 samples. Over %2, good!</source>
-        <translation type="unfinished">Получено %1 образца(-ов). Больше %2, отлично!!</translation>
-    </message>
-    <message>
-        <source>Stop calibration</source>
-        <translation type="unfinished">Остановить калибровку</translation>
-    </message>
-    <message>
-        <source>Start calibration</source>
-        <translation type="unfinished">Начать калибровку</translation>
-    </message>
-    <message>
         <source>Tracker offline</source>
         <translation type="unfinished">Отслеживание отключено</translation>
     </message>
@@ -142,35 +122,6 @@
         <translation>Кепка</translation>
     </message>
     <message>
-        <source>z:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>x:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>y:</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Model position</source>
-        <translation>Положение модели</translation>
-    </message>
-    <message>
-        <source>Use only yaw and pitch while calibrating.
-Don&apos;t roll or change position.</source>
-        <translation>Во время калибровки
-используйте только оси 
-YAW и PITCH.
-Не используйте оси 
-ROLL или X/Y-смещения.</translation>
-    </message>
-    <message>
-        <source>Start calibration</source>
-        <translation>Начать калибровку</translation>
-    </message>
-    <message>
         <source>About</source>
         <translation>О программе</translation>
     </message>
@@ -243,27 +194,59 @@ ROLL или X/Y-смещения.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Four</source>
+        <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Model vertices</source>
+        <source>Top Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Top&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Top</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Left&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Top Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Right&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Center&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Vertex count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Three vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Four vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Five vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

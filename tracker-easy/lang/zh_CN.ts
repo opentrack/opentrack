@@ -4,26 +4,6 @@
 <context>
     <name>EasyTracker::Dialog</name>
     <message>
-        <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1 samples. Over %2, good!</source>
-        <translation type="unfinished">%1 样本。%2 正常</translation>
-    </message>
-    <message>
-        <source>Stop calibration</source>
-        <translation type="unfinished">停止校准</translation>
-    </message>
-    <message>
-        <source>Start calibration</source>
-        <translation type="unfinished">开始校准</translation>
-    </message>
-    <message>
         <source>Tracker offline</source>
         <translation type="unfinished">跟踪器脱机</translation>
     </message>
@@ -142,26 +122,6 @@
         <translation>帽子式</translation>
     </message>
     <message>
-        <source>z:</source>
-        <translation>Z:</translation>
-    </message>
-    <message>
-        <source>x:</source>
-        <translation>X:</translation>
-    </message>
-    <message>
-        <source>y:</source>
-        <translation>Y:</translation>
-    </message>
-    <message>
-        <source>Model position</source>
-        <translation>姿态空间位置</translation>
-    </message>
-    <message>
-        <source>Start calibration</source>
-        <translation>开始校准</translation>
-    </message>
-    <message>
         <source>About</source>
         <translation>关于</translation>
     </message>
@@ -176,11 +136,6 @@
     <message>
         <source>Camera Info:</source>
         <translation>设备信息：</translation>
-    </message>
-    <message>
-        <source>Use only yaw and pitch while calibrating.
-Don&apos;t roll or change position.</source>
-        <translation>用pitch和yaw校准。不要roll或者变换位置</translation>
     </message>
     <message>
         <source>Debug (full size preview)</source>
@@ -239,27 +194,59 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Four</source>
+        <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Model vertices</source>
+        <source>Top Right</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Top&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Top</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Left&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Top Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Right&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Left</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Center&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>Vertex count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Three vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Four vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Five vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

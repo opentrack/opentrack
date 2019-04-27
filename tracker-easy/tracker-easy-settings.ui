@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>422</width>
-    <height>724</height>
+    <width>465</width>
+    <height>764</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -36,71 +36,17 @@
    <property name="sizeConstraint">
     <enum>QLayout::SetFixedSize</enum>
    </property>
-   <item row="1" column="0" alignment="Qt::AlignVCenter">
-    <widget class="QGroupBox" name="groupBox_5">
+   <item row="8" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="title">
-      <string>Status</string>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
-     <layout class="QGridLayout" name="gridLayout_10">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Extracted Points:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_38">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Camera Info:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="pointinfo_label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="caminfo_label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
    <item row="0" column="0">
@@ -115,7 +61,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabTracker">
       <attribute name="title">
@@ -387,9 +333,6 @@
             <property name="text">
              <string>Max size</string>
             </property>
-            <property name="buddy">
-             <cstring>maxdiam_spin</cstring>
-            </property>
            </widget>
           </item>
           <item row="0" column="0">
@@ -477,8 +420,8 @@
             </item>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="mindiam_spin">
+          <item row="5" column="1">
+           <widget class="QSpinBox" name="spinDeadzone">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -486,21 +429,15 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Minimum point diameter</string>
+             <string>Size in pixels of half the edge defining deadzone squares around tracked points</string>
             </property>
             <property name="suffix">
              <string> px</string>
             </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="singleStep">
-             <double>0.100000000000000</double>
-            </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QDoubleSpinBox" name="maxdiam_spin">
+           <widget class="QSpinBox" name="maxdiam_spin">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -513,16 +450,10 @@
             <property name="suffix">
              <string> px</string>
             </property>
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="singleStep">
-             <double>0.100000000000000</double>
-            </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QSpinBox" name="spinDeadzone">
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="mindiam_spin">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -530,7 +461,7 @@
              </sizepolicy>
             </property>
             <property name="toolTip">
-             <string>Size in pixels of half the edge defining deadzone squares around tracked points</string>
+             <string>Minimum point diameter</string>
             </property>
             <property name="suffix">
              <string> px</string>
@@ -871,22 +802,55 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="tabModelFourPoints">
+         <widget class="QWidget" name="tabModelCustom">
           <property name="enabled">
            <bool>true</bool>
           </property>
           <attribute name="title">
-           <string>Four</string>
+           <string>Custom</string>
           </attribute>
           <layout class="QGridLayout" name="gridLayout">
-           <item row="0" column="0">
-            <widget class="QGroupBox" name="groupBox_7">
+           <item row="1" column="0">
+            <widget class="QGroupBox" name="groupBox">
              <property name="title">
-              <string>Model vertices</string>
+              <string/>
              </property>
-             <layout class="QGridLayout" name="gridLayout_5">
-              <item row="0" column="6">
-               <widget class="QSpinBox" name="iSpinFourTopZ">
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_8">
+              <item>
+               <widget class="QLabel" name="label">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_6">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_11">
+                <property name="text">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="7" column="0">
+            <widget class="QGroupBox" name="iGroupBoxTopRight">
+             <property name="title">
+              <string>Top Right</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_6">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopRightX">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -898,34 +862,8 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="1">
-               <widget class="QLabel" name="label_68">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>x:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="3">
-               <widget class="QLabel" name="label_76">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>y:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="2">
-               <widget class="QSpinBox" name="iSpinFourTopX">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopRightY">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -937,34 +875,8 @@
                 </property>
                </widget>
               </item>
-              <item row="0" column="5">
-               <widget class="QLabel" name="label_65">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>z:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0">
-               <widget class="QLabel" name="label_75">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Top&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="4">
-               <widget class="QSpinBox" name="iSpinFourTopY">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopRightZ">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -976,8 +888,17 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="6">
-               <widget class="QSpinBox" name="iSpinFourLeftZ">
+             </layout>
+            </widget>
+           </item>
+           <item row="8" column="0">
+            <widget class="QGroupBox" name="iGroupBoxTopLeft">
+             <property name="title">
+              <string>Top Left</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_7">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopLeftX">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -989,8 +910,8 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="2">
-               <widget class="QSpinBox" name="iSpinFourLeftX">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopLeftY">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1002,8 +923,8 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="4">
-               <widget class="QSpinBox" name="iSpinFourLeftY">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopLeftZ">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1015,73 +936,17 @@
                 </property>
                </widget>
               </item>
-              <item row="2" column="0">
-               <widget class="QLabel" name="label_74">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Left&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="3">
-               <widget class="QLabel" name="label_72">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>y:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="5">
-               <widget class="QLabel" name="label_73">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>z:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="2" column="1">
-               <widget class="QLabel" name="label_71">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>x:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="0">
-               <widget class="QLabel" name="label_60">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Right&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="2">
-               <widget class="QSpinBox" name="iSpinFourRightX">
+             </layout>
+            </widget>
+           </item>
+           <item row="5" column="0">
+            <widget class="QGroupBox" name="iGroupBoxLeft">
+             <property name="title">
+              <string>Left</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexLeftX">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1093,34 +958,8 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="1">
-               <widget class="QLabel" name="label_63">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>x:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="3">
-               <widget class="QLabel" name="label_58">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>y:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="4">
-               <widget class="QSpinBox" name="iSpinFourRightY">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexLeftY">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1132,21 +971,8 @@
                 </property>
                </widget>
               </item>
-              <item row="3" column="5">
-               <widget class="QLabel" name="label_57">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>z:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="3" column="6">
-               <widget class="QSpinBox" name="iSpinFourRightZ">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexLeftZ">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1158,34 +984,50 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="0">
-               <widget class="QLabel" name="label_64">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
+             </layout>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QGroupBox" name="groupBoxCustomModelType">
+             <property name="title">
+              <string>Vertex count</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout">
+              <item>
+               <widget class="QRadioButton" name="iRadioButtonCustomModelThree">
                 <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;Center&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 <string>Three vertices</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
-              <item row="5" column="1">
-               <widget class="QLabel" name="label_67">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
+              <item>
+               <widget class="QRadioButton" name="iRadioButtonCustomModelFour">
                 <property name="text">
-                 <string>x:</string>
+                 <string>Four vertices</string>
                 </property>
                </widget>
               </item>
-              <item row="5" column="2">
-               <widget class="QSpinBox" name="iSpinFourCenterX">
+              <item>
+               <widget class="QRadioButton" name="iRadioButtonCustomModelFive">
+                <property name="text">
+                 <string>Five vertices</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="6" column="0">
+            <widget class="QGroupBox" name="iGroupBoxCenter">
+             <property name="title">
+              <string>Center</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexCenterX">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1197,21 +1039,8 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="3">
-               <widget class="QLabel" name="label_70">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text">
-                 <string>y:</string>
-                </property>
-               </widget>
-              </item>
-              <item row="5" column="4">
-               <widget class="QSpinBox" name="iSpinFourCenterY">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexCenterY">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1223,21 +1052,107 @@
                 </property>
                </widget>
               </item>
-              <item row="5" column="5">
-               <widget class="QLabel" name="label_69">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexCenterZ">
+                <property name="suffix">
+                 <string> mm</string>
                 </property>
-                <property name="text">
-                 <string>z:</string>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
                 </property>
                </widget>
               </item>
-              <item row="5" column="6">
-               <widget class="QSpinBox" name="iSpinFourCenterZ">
+             </layout>
+            </widget>
+           </item>
+           <item row="3" column="0">
+            <widget class="QGroupBox" name="iGroupBoxRight">
+             <property name="title">
+              <string>Right</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexRightX">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexRightY">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexRightZ">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QGroupBox" name="iGroupBoxTop">
+             <property name="title">
+              <string>Top</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="topMargin">
+               <number>9</number>
+              </property>
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopX">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopY">
+                <property name="suffix">
+                 <string> mm</string>
+                </property>
+                <property name="minimum">
+                 <number>-65535</number>
+                </property>
+                <property name="maximum">
+                 <number>65535</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="iSpinVertexTopZ">
                 <property name="suffix">
                  <string> mm</string>
                 </property>
@@ -1254,169 +1169,6 @@
            </item>
           </layout>
          </widget>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QGroupBox" name="groupBox_10">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="title">
-          <string>Model position</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_4">
-          <item row="0" column="0">
-           <widget class="QFrame" name="frame_2">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_11">
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="ty_spin">
-               <property name="suffix">
-                <string> mm</string>
-               </property>
-               <property name="minimum">
-                <number>-65535</number>
-               </property>
-               <property name="maximum">
-                <number>65536</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_66">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>z:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="tz_spin">
-               <property name="suffix">
-                <string> mm</string>
-               </property>
-               <property name="minimum">
-                <number>-65535</number>
-               </property>
-               <property name="maximum">
-                <number>65536</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="label_61">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>x:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSpinBox" name="tx_spin">
-               <property name="suffix">
-                <string> mm</string>
-               </property>
-               <property name="minimum">
-                <number>-65535</number>
-               </property>
-               <property name="maximum">
-                <number>65536</number>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_62">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string>y:</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-          <item row="0" column="1">
-           <widget class="QFrame" name="frame">
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="frameShadow">
-             <enum>QFrame::Raised</enum>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_2">
-             <item>
-              <widget class="QLabel" name="label_59">
-               <property name="text">
-                <string>Use only yaw and pitch while calibrating.
-Don't roll or change position.</string>
-               </property>
-               <property name="alignment">
-                <set>Qt::AlignCenter</set>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-               <property name="openExternalLinks">
-                <bool>false</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="sample_count_display">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="text">
-                <string/>
-               </property>
-               <property name="wordWrap">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="tcalib_button">
-               <property name="enabled">
-                <bool>false</bool>
-               </property>
-               <property name="text">
-                <string>Start calibration</string>
-               </property>
-               <property name="checkable">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
@@ -1456,17 +1208,71 @@ Don't roll or change position.</string>
      </widget>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
+   <item row="7" column="0" alignment="Qt::AlignVCenter">
+    <widget class="QGroupBox" name="groupBox_5">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="title">
+      <string>Status</string>
      </property>
+     <layout class="QGridLayout" name="gridLayout_10">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Extracted Points:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_38">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Camera Info:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="pointinfo_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="caminfo_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -1487,10 +1293,6 @@ Don't roll or change position.</string>
   <tabstop>cap_length_spin</tabstop>
   <tabstop>cap_height_spin</tabstop>
   <tabstop>cap_width_spin</tabstop>
-  <tabstop>tx_spin</tabstop>
-  <tabstop>ty_spin</tabstop>
-  <tabstop>tz_spin</tabstop>
-  <tabstop>tcalib_button</tabstop>
  </tabstops>
  <resources>
   <include location="tracker_easy.qrc"/>
