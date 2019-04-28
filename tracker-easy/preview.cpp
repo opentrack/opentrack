@@ -105,19 +105,17 @@ namespace EasyTracker
         cv::putText(iFrameRgb, aString, cv::Point(4,iFrameRgb.size().height-4), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0),2);
     }
 
-    void Preview::DrawCross(cv::Point aPoint)
+    void Preview::DrawCross(const cv::Point& aPoint, const cv::Scalar& aColor)
     {
-        constexpr int len = 9;
-
-        static const cv::Scalar color(0, 255, 255);
+        constexpr int len = 9;        
         cv::line(iFrameRgb,
             cv::Point(aPoint.x - len, aPoint.y),
             cv::Point(aPoint.x + len, aPoint.y),
-            color, 2);
+            aColor, 2);
         cv::line(iFrameRgb,
             cv::Point(aPoint.x, aPoint.y - len),
             cv::Point(aPoint.x, aPoint.y + len),
-            color, 2);
+            aColor, 2);
     }
 
     void Preview::ensure_size(cv::Mat& frame, int w, int h, int type)

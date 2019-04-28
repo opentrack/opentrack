@@ -21,7 +21,7 @@ namespace EasyTracker
 
         Preview& operator=(const cv::Mat& frame);
         QImage get_bitmap();
-        void DrawCross(cv::Point aPoint);
+        void DrawCross(const cv::Point& aPoint, const cv::Scalar& aColor);
         void DrawInfo(const std::string& aString);
 
         operator cv::Mat&() { return iFrameResized; }

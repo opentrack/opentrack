@@ -33,6 +33,19 @@
 namespace EasyTracker
 {
 
+    namespace VertexPosition
+    {
+        enum Type
+        {
+            Top = 0,
+            Right,
+            Left,
+            TopRight,
+            TopLeft,
+            Center
+        };
+    }
+
     static const QString KModuleName = "tracker-easy";
 
     class Dialog;
@@ -58,9 +71,13 @@ namespace EasyTracker
 
 
     private:
-        void CreateModelFromSettings();
+        void UpdateModel();
         void CreateCameraIntrinsicsMatrices();
-        void ProcessFrame();
+        void ProcessFrame();        
+        void MatchVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex, int& aTopRight, int& aTopLeft);
+        void MatchThreeOrFourVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex);
+        void MatchFiveVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aTopRight, int& aTopLeft);
+        
         
         //
 
@@ -68,8 +85,7 @@ namespace EasyTracker
         void set_fov(int value);
         void SetFps(int aFps);
         void DoSetFps(int aFps);
-        void UpdateDeadzones(int aHalfEdgeSize);
-        void UpdateSolver(int aSolver);
+        void UpdateSettings();
 
         QMutex camera_mtx;
         QThread iThread;
@@ -93,14 +109,16 @@ namespace EasyTracker
         Preview iPreview;
 
         std::atomic<bool> ever_success = false;
-        mutable QMutex center_lock, data_lock;
+        mutable QMutex iProcessLock, iDataLock;
 
+        //// Copy the settings need by our thread to avoid dead locks
         // Deadzone
         int iDeadzoneEdge=0;
         int iDeadzoneHalfEdge=0;
-
         // Solver
         int iSolver = cv::SOLVEPNP_P3P;
+        bool iDebug = false;
+        ////
 
         // Statistics
         Timer iTimer;
@@ -109,6 +127,8 @@ namespace EasyTracker
         int iSkippedFrameCount = 0;
         int iFps = 0;
         int iSkippedFps = 0;
+        uint iBadSolutionCount = 0;
+        uint iGoodSolutionCount = 0;
 
         //
         KalmanFilterPose iKf;
@@ -136,6 +156,12 @@ namespace EasyTracker
         cv::Vec3d iBestTranslation;
         // Best angles
         cv::Vec3d iBestAngles;
+        // Time at which we found our last best solution
+        Timer iBestTime;
+        // Center translation
+        cv::Vec3d iCenterTranslation = {0,0,0};
+        // Center angles
+        cv::Vec3d iCenterAngles = { 0,0,0 };
     };
 
 }

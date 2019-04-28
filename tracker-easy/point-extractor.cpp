@@ -29,13 +29,20 @@ using namespace numeric_types;
 namespace EasyTracker
 {
 
-    PointExtractor::PointExtractor() : s(KModuleName)
+    PointExtractor::PointExtractor() : iSettings(KModuleName)
     {
-    
+        UpdateSettings();
     }
 
+    ///
+    void PointExtractor::UpdateSettings()
+    {
+        iMinPointSize = iSettings.iMinBlobSize;
+        iMaxPointSize = iSettings.iMaxBlobSize;
+    }
 
-    void PointExtractor::ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, std::vector<cv::Point>& aPoints)
+    ///
+    void PointExtractor::ExtractPoints(const cv::Mat& aFrame, cv::Mat* aPreview, int aNeededPointCount, std::vector<cv::Point>& aPoints)
     {
         //TODO: Assert if channel size is neither one nor two
         // Make sure our frame channel is 8 bit
@@ -108,10 +115,10 @@ namespace EasyTracker
             bBox = cv::boundingRect(iContours[i]);
        
             // Make sure bounding box matches our criteria
-            if (bBox.width >= s.min_point_size
-                && bBox.height >= s.min_point_size
-                && bBox.width <= s.max_point_size
-                && bBox.height <= s.max_point_size)
+            if (bBox.width >= iMinPointSize
+                && bBox.height >= iMinPointSize
+                && bBox.width <= iMaxPointSize
+                && bBox.height <= iMaxPointSize)
             {
                 // Do a mean shift or cam shift, it's not bringing much though
                 //cv::CamShift(iFrameGray, bBox, cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 10, 1));
@@ -133,7 +140,7 @@ namespace EasyTracker
         // Typically noise comming from zippers and metal parts on your clothing.
         // With a cap tracker it also successfully discards noise from glasses.
         // However it may not work as good with a clip user wearing glasses.
-        while (aPoints.size() > KPointCount) // Until we have no more than three points
+        while (aPoints.size() > aNeededPointCount) // Until we have no more than three points
         {
             int maxY = 0;
             unsigned index = (unsigned)-1;

@@ -72,6 +72,13 @@ void tie_setting(value<QVariant>& v, QComboBox* cb)
 
 // XXX TODO need variant with setEnabled based on lambda retval -- sh 20170524
 
+void tie_setting(value<bool>& v, QRadioButton* cb)
+{
+    cb->setChecked(v);
+    value_::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
+}
+
 void tie_setting(value<bool>& v, QCheckBox* cb)
 {
     cb->setChecked(v);
