@@ -68,7 +68,11 @@ namespace EasyTracker
     private:
         void UpdateModel();
         void CreateCameraIntrinsicsMatrices();
-        void ProcessFrame();
+        void ProcessFrame();        
+        void MatchVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex, int& aTopRight, int& aTopLeft);
+        void MatchThreeOrFourVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex);
+        void MatchFiveVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aTopRight, int& aTopLeft);
+        
         
         //
 
@@ -118,6 +122,8 @@ namespace EasyTracker
         int iSkippedFrameCount = 0;
         int iFps = 0;
         int iSkippedFps = 0;
+        uint iBadSolutionCount = 0;
+        uint iGoodSolutionCount = 0;
 
         //
         KalmanFilterPose iKf;

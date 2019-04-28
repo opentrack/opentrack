@@ -24,11 +24,14 @@
 using namespace options;
 
 // Disable debug
-#define dbgout if (true) {} else std::cout
+#define dbgout if (true) {} else std::cout << "\n" <<std::chrono::system_clock::now().time_since_epoch().count() << ": "
 //#define infout if (true) {} else std::cout
 // Enable debug
 //#define dbgout if (false) {} else std::cout
-#define infout if (false) {} else std::cout
+#define infout if (false) {} else std::cout << "\n" << std::chrono::system_clock::now().time_since_epoch().count() << ": "
+
+// We need at least 3 vertices to be able to do anything
+const int KMinVertexCount = 3;
 
 namespace EasyTracker
 {
@@ -115,9 +118,11 @@ namespace EasyTracker
     }
 
     ///
+    /// Create our model from settings specifications
+    ///
     void Tracker::UpdateModel()
     {
-        infout << std::chrono::system_clock::now().time_since_epoch().count() << ": Update model\n";
+        infout << "Update model";
 
         QMutexLocker lock(&iProcessLock);
         // Construct the points defining the object we want to detect based on settings.
@@ -134,7 +139,11 @@ namespace EasyTracker
             {
                 iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
             }
-            
+            else if (iSettings.iCustomModelFive)
+            {
+                iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
+                iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
+            }
         }
         // Default to Cap for now
         else //if (iSettings.active_model_panel == Cap)
@@ -171,7 +180,92 @@ namespace EasyTracker
     }
 
 
-    const int KMinVertexCount = 3;
+    void Tracker::MatchVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex, int& aTopRight, int& aTopLeft)
+    {
+        if (iModel.size() == 5)
+        {
+            MatchFiveVertices(aTopIndex, aRightIndex, aLeftIndex, aTopRight, aTopLeft);
+        }
+        else
+        {
+            MatchThreeOrFourVertices(aTopIndex, aRightIndex, aLeftIndex, aCenterIndex);
+        }
+    }
+
+
+    void Tracker::MatchFiveVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aTopRight, int& aTopLeft)
+    {
+
+    }
+
+
+    void Tracker::MatchThreeOrFourVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex)
+    {
+        //Bitmap origin is top left
+        iTrackedPoints.clear();
+        // Tracked points must match the order of the object model points.
+        // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
+        int minY = std::numeric_limits<int>::max();
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            if (iPoints[i].y < minY)
+            {
+                minY = iPoints[i].y;
+                aTopIndex = i;
+            }
+        }
+
+
+        int maxX = 0;
+
+        // Find right most point 
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            // Excluding top most point
+            if (i != aTopIndex && iPoints[i].x > maxX)
+            {
+                maxX = iPoints[i].x;
+                aRightIndex = i;
+            }
+        }
+
+        // Find left most point
+        int minX = std::numeric_limits<int>::max();
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            // Excluding top most point and right most point
+            if (i != aTopIndex && i != aRightIndex && iPoints[i].x < minX)
+            {
+                aLeftIndex = i;
+                minX = iPoints[i].x;
+            }
+        }
+
+        // Find center point, the last one
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            // Excluding the three points we already have
+            if (i != aTopIndex && i != aRightIndex && i != aLeftIndex)
+            {
+                aCenterIndex = i;
+            }
+        }
+
+        // Order matters
+        iTrackedPoints.push_back(iPoints[aTopIndex]);
+        iTrackedPoints.push_back(iPoints[aRightIndex]);
+        iTrackedPoints.push_back(iPoints[aLeftIndex]);
+        if (iModel.size() > iTrackedPoints.size())
+        {
+            // We are tracking more than 3 points
+            iTrackedPoints.push_back(iPoints[aCenterIndex]);
+        }
+
+
+    }
+
+    
+
     ///
     ///
     ///
@@ -199,71 +293,13 @@ namespace EasyTracker
         int rightPointIndex = -1;
         int leftPointIndex = -1;
         int centerPointIndex = -1;
-
-
+        int topRightPointIndex = -1;
+        int topLeftPointIndex = -1;
 
         if (success)
         {
-            //Bitmap origin is top left
-            iTrackedPoints.clear();
-            // Tracked points must match the order of the object model points.
-            // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
-            int minY = std::numeric_limits<int>::max();
-            for (int i = 0; i < iPoints.size(); i++)
-            {
-                if (iPoints[i].y < minY)
-                {
-                    minY = iPoints[i].y;
-                    topPointIndex = i;
-                }
-            }
-
-                
-            int maxX = 0;
-
-            // Find right most point 
-            for (int i = 0; i < iPoints.size(); i++)
-            {
-                // Excluding top most point
-                if (i != topPointIndex && iPoints[i].x > maxX)
-                {
-                    maxX = iPoints[i].x;
-                    rightPointIndex = i;
-                }
-            }
-
-            // Find left most point
-            int minX = std::numeric_limits<int>::max();
-            for (int i = 0; i < iPoints.size(); i++)
-            {
-                // Excluding top most point and right most point
-                if (i != topPointIndex && i != rightPointIndex && iPoints[i].x < minX)
-                {
-                    leftPointIndex = i;
-                    minX = iPoints[i].x;
-                }
-            }
-
-            // Find center point, the last one
-            for (int i = 0; i < iPoints.size(); i++)
-            {
-                // Excluding the three points we already have
-                if (i != topPointIndex && i != rightPointIndex && i != leftPointIndex)
-                {
-                    centerPointIndex = i;
-                }
-            }
-
-            // Order matters
-            iTrackedPoints.push_back(iPoints[topPointIndex]);
-            iTrackedPoints.push_back(iPoints[rightPointIndex]);
-            iTrackedPoints.push_back(iPoints[leftPointIndex]);
-            if (iModel.size() > iTrackedPoints.size())
-            {
-                // We are tracking more than 3 points
-                iTrackedPoints.push_back(iPoints[centerPointIndex]);
-            }
-                
+            // Lets match our 3D vertices with our image 2D points
+            MatchVertices(topPointIndex, rightPointIndex, leftPointIndex, centerPointIndex, topRightPointIndex, topLeftPointIndex);
 
             bool movedEnough = true;
             // Check if we moved enough since last time we were here
@@ -381,22 +417,35 @@ namespace EasyTracker
                     // Pass solution through our kalman filter
                     iKf.Update(translation[0], translation[1], translation[2], angles[2], angles[0], angles[1]);
 
-                    // We succeded in finding a solution to our PNP problem
-                    ever_success.store(true, std::memory_order_relaxed);
+                    // Check if our solution makes sense
+                    // For now, just discard solutions with extrem pitch 
+                    if (std::abs(angles[0]) > 50) //TODO: Put that in settings
+                    {
+                        infout << "WARNING: discarding solution!";
+                        iBadSolutionCount++;
+                    }
+                    else
+                    {
+                        iGoodSolutionCount++;
+                        // We succeded in finding a solution to our PNP problem
+                        ever_success.store(true, std::memory_order_relaxed);
 
-                    // Send solution data back to main thread
-                    QMutexLocker l2(&iDataLock);
-                    iBestAngles = angles;
-                    iBestTranslation = translation;
-                    iBestTime.start();
+                        // Send solution data back to main thread
+                        QMutexLocker l2(&iDataLock);
+                        iBestAngles = angles;
+                        iBestTranslation = translation;
+                        iBestTime.start();
+                    }
+
                 }
             }
         }
 
         if (doPreview)
         {
+            double qualityIndex = 1 - (iGoodSolutionCount!=0?(double)iBadSolutionCount / (double)iGoodSolutionCount:0);
             std::ostringstream ss;
-            ss << "FPS: " << iFps << "/" << iSkippedFps;
+            ss << "FPS: " << iFps << "/" << iSkippedFps << "   QI: " << qualityIndex;
             iPreview.DrawInfo(ss.str());
 
             //Color is BGR
@@ -424,8 +473,6 @@ namespace EasyTracker
                 static const cv::Scalar color(0, 255, 0); // Green
                 iPreview.DrawCross(iPoints[centerPointIndex], color);
             }
-
-
 
             // Render our deadzone rects
             for (const cv::Rect& rect : iTrackedRects)
@@ -561,7 +608,7 @@ namespace EasyTracker
     ///
     void Tracker::UpdateSettings()
     {
-        infout << std::chrono::system_clock::now().time_since_epoch().count() << ": Update Setting\n";
+        infout << "Update Setting";
         QMutexLocker l(&iProcessLock);
         iPointExtractor.UpdateSettings();
         iSolver = iSettings.PnpSolver;
