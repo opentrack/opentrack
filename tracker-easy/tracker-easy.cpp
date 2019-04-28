@@ -129,7 +129,7 @@ namespace EasyTracker
         // We are converting them from millimeters to centimeters.
         // TODO: Need to support clip too. That's cap only for now.
         iModel.clear();
-        if (iSettings.active_model_panel == Custom)
+        if (iSettings.active_model_panel == Model::Custom)
         {            
             iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
             iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
@@ -195,6 +195,102 @@ namespace EasyTracker
 
     void Tracker::MatchFiveVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aTopRight, int& aTopLeft)
     {
+        //Bitmap origin is top left
+        iTrackedPoints.clear();
+
+        int vertexIndices[] = { -1,-1,-1,-1,-1 };
+        std::vector<int> indices = { 0,1,2,3,4 };
+
+        // Tracked points must match the order of the object model points.
+        // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
+        int minY = std::numeric_limits<int>::max();
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            if (iPoints[i].y < minY)
+            {
+                minY = iPoints[i].y;
+                vertexIndices[VertexPosition::Top] = i;                
+            }
+        }
+        indices.erase(std::find(indices.begin(), indices.end(), vertexIndices[VertexPosition::Top]));
+
+        // Find right most point 
+        int maxX = 0;
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            // Excluding top most point
+            if (i != vertexIndices[VertexPosition::Top] && iPoints[i].x > maxX)
+            {
+                maxX = iPoints[i].x;
+                vertexIndices[VertexPosition::Right] = i;
+            }
+        }
+        indices.erase(std::find(indices.begin(), indices.end(), vertexIndices[VertexPosition::Right]));
+
+        // Find left most point
+        int minX = std::numeric_limits<int>::max();
+        for (int i = 0; i < iPoints.size(); i++)
+        {
+            // Excluding top most point and right most point
+            if (i != vertexIndices[VertexPosition::Top] && i != vertexIndices[VertexPosition::Right] && iPoints[i].x < minX)
+            {
+                minX = iPoints[i].x;
+                vertexIndices[VertexPosition::Left] = i;
+            }
+        }
+        indices.erase(std::find(indices.begin(), indices.end(), vertexIndices[VertexPosition::Left]));
+
+        // Check which of our two remaining points is on the left
+        int leftIndex = -1;
+        int rightIndex = -1;
+        if (iPoints[indices[0]].x > iPoints[indices[1]].x)
+        {
+            leftIndex = indices[1];
+            rightIndex = indices[0];
+        }
+        else
+        {
+            leftIndex = indices[0];
+            rightIndex = indices[1];
+        }
+
+        // Check which of the left points is at the top
+        if (iPoints[vertexIndices[VertexPosition::Left]].y < iPoints[leftIndex].y)
+        {
+            vertexIndices[VertexPosition::TopLeft] = vertexIndices[VertexPosition::Left];
+            vertexIndices[VertexPosition::Left] = leftIndex;
+        }
+        else
+        {
+            vertexIndices[VertexPosition::TopLeft] = leftIndex;
+        }
+
+        // Check which of the right points is at the top
+        if (iPoints[vertexIndices[VertexPosition::Right]].y < iPoints[rightIndex].y)
+        {
+            vertexIndices[VertexPosition::TopRight] = vertexIndices[VertexPosition::Right];
+            vertexIndices[VertexPosition::Right] = rightIndex;
+        }
+        else
+        {
+            vertexIndices[VertexPosition::TopRight] = rightIndex;
+        }
+
+
+        // Order matters, see UpdateModel function 
+        iTrackedPoints.push_back(iPoints[vertexIndices[VertexPosition::Top]]);
+        iTrackedPoints.push_back(iPoints[vertexIndices[VertexPosition::Right]]);
+        iTrackedPoints.push_back(iPoints[vertexIndices[VertexPosition::Left]]);
+        iTrackedPoints.push_back(iPoints[vertexIndices[VertexPosition::TopRight]]);
+        iTrackedPoints.push_back(iPoints[vertexIndices[VertexPosition::TopLeft]]);
+
+        //
+        aTopIndex = vertexIndices[VertexPosition::Top];
+        aRightIndex = vertexIndices[VertexPosition::Right];
+        aLeftIndex = vertexIndices[VertexPosition::Left];
+        aTopRight = vertexIndices[VertexPosition::TopRight];
+        aTopLeft = vertexIndices[VertexPosition::TopLeft];
+
 
     }
 
@@ -260,8 +356,6 @@ namespace EasyTracker
             // We are tracking more than 3 points
             iTrackedPoints.push_back(iPoints[aCenterIndex]);
         }
-
-
     }
 
     
@@ -473,6 +567,19 @@ namespace EasyTracker
                 static const cv::Scalar color(0, 255, 0); // Green
                 iPreview.DrawCross(iPoints[centerPointIndex], color);
             }
+
+            if (topRightPointIndex != -1)
+            {
+                static const cv::Scalar color(0, 0, 255); // Red
+                iPreview.DrawCross(iPoints[topRightPointIndex], color);
+            }
+
+            if (topLeftPointIndex != -1)
+            {
+                static const cv::Scalar color(255, 255, 0); // Cyan
+                iPreview.DrawCross(iPoints[topLeftPointIndex], color);
+            }
+
 
             // Render our deadzone rects
             for (const cv::Rect& rect : iTrackedRects)

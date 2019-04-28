@@ -33,13 +33,29 @@
 namespace EasyTracker
 {
 
-    // Order matters, it must match the order of the UI tabs
-    enum ModelType
+    namespace VertexPosition
     {
-        Clip,
-        Cap,
-        Custom
-    };
+        enum Type
+        {
+            Top = 0,
+            Right,
+            Left,
+            TopRight,
+            TopLeft,
+            Center
+        };
+    }
+
+    namespace Model
+    {
+        // Order matters, it must match the order of the UI tabs
+        enum Type
+        {
+            Clip,
+            Cap,
+            Custom
+        };
+    }
 
     static const QString KModuleName = "tracker-easy";
 
