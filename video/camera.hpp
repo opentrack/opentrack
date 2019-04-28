@@ -87,7 +87,7 @@ void register_camera(std::unique_ptr<impl::camera_> metadata);
 
 namespace video
 {
-using camera_impl = typename impl::camera;
+using camera_impl = impl::camera;
 
 OTR_VIDEO_EXPORT
 std::unique_ptr<camera_impl> make_camera(const QString& name);

@@ -37,7 +37,7 @@ struct Camera final : pt_camera
     void show_camera_settings() override;
 
 private:
-    using camera = typename video::impl::camera;
+    using camera = video::impl::camera;
 
     [[nodiscard]] bool get_frame_(cv::Mat& frame);
 
