@@ -129,28 +129,18 @@ namespace EasyTracker
         // We are converting them from millimeters to centimeters.
         // TODO: Need to support clip too. That's cap only for now.
         iModel.clear();
-        if (iSettings.active_model_panel == Model::Custom)
-        {            
-            iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
-            iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
-            iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
+        iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
+        iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
+        iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
 
-            if (iSettings.iCustomModelFour)
-            {
-                iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
-            }
-            else if (iSettings.iCustomModelFive)
-            {
-                iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
-                iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
-            }
-        }
-        // Default to Cap for now
-        else //if (iSettings.active_model_panel == Cap)
+        if (iSettings.iCustomModelFour)
         {
-            iModel.push_back(cv::Point3f(0, 0, 0)); // Top
-            iModel.push_back(cv::Point3f(iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Right
-            iModel.push_back(cv::Point3f(-iSettings.cap_x / 10.0, iSettings.cap_z / 10.0, -iSettings.cap_y / 10.0)); // Left            
+            iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
+        }
+        else if (iSettings.iCustomModelFive)
+        {
+            iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
+            iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
         }
     }
 

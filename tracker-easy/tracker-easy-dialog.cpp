@@ -26,9 +26,7 @@ namespace EasyTracker
 
     Dialog::Dialog() :
         s(KModuleName),
-        tracker(nullptr),
-        timer(this),
-        trans_calib(1, 2)
+        tracker(nullptr)
     {
         init_resources();
 
@@ -45,15 +43,6 @@ namespace EasyTracker
         tie_setting(s.iMinBlobSize, ui.mindiam_spin);
         tie_setting(s.iMaxBlobSize, ui.maxdiam_spin);
         tie_setting(s.DeadzoneRectHalfEdgeSize, ui.spinDeadzone);
-
-        tie_setting(s.clip_by, ui.clip_bheight_spin);
-        tie_setting(s.clip_bz, ui.clip_blength_spin);
-        tie_setting(s.clip_ty, ui.clip_theight_spin);
-        tie_setting(s.clip_tz, ui.clip_tlength_spin);
-
-        tie_setting(s.cap_x, ui.cap_width_spin);
-        tie_setting(s.cap_y, ui.cap_height_spin);
-        tie_setting(s.cap_z, ui.cap_length_spin);
 
         tie_setting(s.iVertexTopX, ui.iSpinVertexTopX);
         tie_setting(s.iVertexTopY, ui.iSpinVertexTopY);
@@ -79,10 +68,7 @@ namespace EasyTracker
         tie_setting(s.iVertexTopLeftY, ui.iSpinVertexTopLeftY);
         tie_setting(s.iVertexTopLeftZ, ui.iSpinVertexTopLeftZ);
 
-
         tie_setting(s.fov, ui.fov);
-
-        tie_setting(s.active_model_panel, ui.model_tabs);
 
         tie_setting(s.debug, ui.debug);
 
@@ -103,17 +89,12 @@ namespace EasyTracker
         tie_setting(s.iCustomModelFour, ui.iRadioButtonCustomModelFour);
         tie_setting(s.iCustomModelFive, ui.iRadioButtonCustomModelFive);
 
-        connect(&timer, &QTimer::timeout, this, &Dialog::poll_tracker_info_impl);
-        timer.setInterval(250);
-
-
-        poll_tracker_info_impl();
-
-        connect(this, &Dialog::poll_tracker_info, this, &Dialog::poll_tracker_info_impl, Qt::DirectConnection);
-
 
         for (unsigned k = 0; k < cv::SOLVEPNP_MAX_COUNT; k++)
+        {
             ui.comboBoxSolvers->setItemData(k, k);
+        }
+            
 
         tie_setting(s.PnpSolver, ui.comboBoxSolvers);
 
@@ -143,26 +124,6 @@ namespace EasyTracker
 
     }
 
-    void Dialog::poll_tracker_info_impl()
-    {
-        //SL: sort this out
-        /*
-        pt_camera_info info;
-        if (tracker && tracker->get_cam_info(info))
-        {
-            ui.caminfo_label->setText(tr("%1x%2 @ %3 FPS").arg(info.res_x).arg(info.res_y).arg(iround(info.fps)));
-
-            // display point info
-            const int n_points = tracker->get_n_points();
-            ui.pointinfo_label->setText((n_points == 3 ? tr("%1 OK!") : tr("%1 BAD!")).arg(n_points));
-        }
-        else
-        */
-        {
-            ui.caminfo_label->setText(tr("Tracker offline"));
-            ui.pointinfo_label->setText(QString());
-        }
-    }
 
     void Dialog::set_camera_settings_available(const QString& /* camera_name */)
     {
@@ -200,14 +161,10 @@ namespace EasyTracker
     void Dialog::register_tracker(ITracker *t)
     {
         tracker = static_cast<Tracker*>(t);
-        poll_tracker_info();
-        timer.start();
     }
 
     void Dialog::unregister_tracker()
     {
         tracker = nullptr;
-        poll_tracker_info();
-        timer.stop();
     }
 }

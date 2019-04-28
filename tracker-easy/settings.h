@@ -40,15 +40,6 @@ namespace EasyTracker {
         value<int> iVertexTopLeftX{ b, "iVertexTopLeftX", 0 }, iVertexTopLeftY{ b, "iVertexTopLeftY", 0 }, iVertexTopLeftZ{ b, "iVertexTopLeftZ", 0 };
 
 
-        value<int> clip_ty{ b, "clip-ty", 40 },
-            clip_tz{ b, "clip-tz", 30 },
-            clip_by{ b, "clip-by", 70 },
-            clip_bz{ b, "clip-bz", 80 };
-
-        value<int> active_model_panel{ b, "active-model-panel", 0 },
-            cap_x{ b, "cap-x", 35 },
-            cap_y{ b, "cap-y", 55 },
-            cap_z{ b, "cap-z", 100 };
 
         value<int> fov{ b, "camera-fov", 56 };
 

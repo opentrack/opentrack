@@ -46,17 +46,6 @@ namespace EasyTracker
         };
     }
 
-    namespace Model
-    {
-        // Order matters, it must match the order of the UI tabs
-        enum Type
-        {
-            Clip,
-            Cap,
-            Custom
-        };
-    }
-
     static const QString KModuleName = "tracker-easy";
 
     class Dialog;

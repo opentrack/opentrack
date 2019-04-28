@@ -33,7 +33,6 @@ namespace EasyTracker
         void doOK();
         void doCancel();
 
-        void poll_tracker_info_impl();
         void set_camera_settings_available(const QString& camera_name);
         void show_camera_settings();
     signals:
@@ -42,9 +41,6 @@ namespace EasyTracker
 
         Settings s;
         Tracker* tracker;
-        QTimer timer;
-        TranslationCalibrator trans_calib;
-        QMutex calibrator_mutex;
 
         Ui::UICPTClientControls ui;
     };

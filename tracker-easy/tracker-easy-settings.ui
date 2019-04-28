@@ -36,7 +36,7 @@
    <property name="sizeConstraint">
     <enum>QLayout::SetFixedSize</enum>
    </property>
-   <item row="8" column="0">
+   <item row="7" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -61,7 +61,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabTracker">
       <attribute name="title">
@@ -477,698 +477,362 @@
       <attribute name="title">
        <string>Model</string>
       </attribute>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="QTabWidget" name="model_tabs">
-         <property name="enabled">
-          <bool>true</bool>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QGroupBox" name="groupBoxCustomModelType">
+         <property name="title">
+          <string>Vertex count</string>
          </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QRadioButton" name="iRadioButtonCustomModelThree">
+            <property name="text">
+             <string>Three vertices</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="iRadioButtonCustomModelFour">
+            <property name="text">
+             <string>Four vertices</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="iRadioButtonCustomModelFive">
+            <property name="text">
+             <string>Five vertices</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string/>
          </property>
-         <property name="tabShape">
-          <enum>QTabWidget::Rounded</enum>
-         </property>
-         <property name="currentIndex">
-          <number>2</number>
-         </property>
-         <property name="usesScrollButtons">
+         <property name="flat">
           <bool>false</bool>
          </property>
-         <property name="documentMode">
-          <bool>false</bool>
+         <layout class="QHBoxLayout" name="horizontalLayout_8">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxTop">
+         <property name="title">
+          <string>Top</string>
          </property>
-         <property name="tabsClosable">
-          <bool>false</bool>
-         </property>
-         <widget class="QWidget" name="tabClip">
-          <property name="enabled">
-           <bool>false</bool>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="topMargin">
+           <number>9</number>
           </property>
-          <attribute name="title">
-           <string>Clip</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout_6">
-           <item row="0" column="0">
-            <widget class="QGroupBox" name="groupBox_8">
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="minimumSize">
-              <size>
-               <width>331</width>
-               <height>208</height>
-              </size>
-             </property>
-             <property name="title">
-              <string>Model Dimensions</string>
-             </property>
-             <widget class="QSpinBox" name="clip_tlength_spin">
-              <property name="geometry">
-               <rect>
-                <x>70</x>
-                <y>35</y>
-                <width>100</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-             <widget class="QSpinBox" name="clip_bheight_spin">
-              <property name="geometry">
-               <rect>
-                <x>150</x>
-                <y>130</y>
-                <width>100</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_44">
-              <property name="geometry">
-               <rect>
-                <x>65</x>
-                <y>55</y>
-                <width>71</width>
-                <height>111</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="tracker_easy.qrc">:/Resources/clip_side.png</pixmap>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_50">
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>40</y>
-                <width>46</width>
-                <height>13</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Side</string>
-              </property>
-             </widget>
-             <widget class="QSpinBox" name="clip_blength_spin">
-              <property name="geometry">
-               <rect>
-                <x>50</x>
-                <y>160</y>
-                <width>100</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-             <widget class="QSpinBox" name="clip_theight_spin">
-              <property name="geometry">
-               <rect>
-                <x>150</x>
-                <y>70</y>
-                <width>100</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_51">
-              <property name="geometry">
-               <rect>
-                <x>290</x>
-                <y>40</y>
-                <width>46</width>
-                <height>13</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Front</string>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_45">
-              <property name="geometry">
-               <rect>
-                <x>300</x>
-                <y>70</y>
-                <width>21</width>
-                <height>111</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="tracker_easy.qrc">:/Resources/clip_front.png</pixmap>
-              </property>
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="tabCap">
-          <attribute name="title">
-           <string>Cap</string>
-          </attribute>
-          <layout class="QVBoxLayout" name="verticalLayout_14">
-           <item>
-            <widget class="QGroupBox" name="groupBox_9">
-             <property name="minimumSize">
-              <size>
-               <width>331</width>
-               <height>208</height>
-              </size>
-             </property>
-             <property name="title">
-              <string>Model Dimensions</string>
-             </property>
-             <widget class="QLabel" name="label_46">
-              <property name="geometry">
-               <rect>
-                <x>100</x>
-                <y>60</y>
-                <width>111</width>
-                <height>81</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="tracker_easy.qrc">:/Resources/cap_side.png</pixmap>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_48">
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>40</y>
-                <width>46</width>
-                <height>13</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Side</string>
-              </property>
-             </widget>
-             <widget class="QSpinBox" name="cap_length_spin">
-              <property name="geometry">
-               <rect>
-                <x>90</x>
-                <y>40</y>
-                <width>101</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_47">
-              <property name="geometry">
-               <rect>
-                <x>220</x>
-                <y>100</y>
-                <width>81</width>
-                <height>81</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="pixmap">
-               <pixmap resource="tracker_easy.qrc">:/Resources/cap_front.png</pixmap>
-              </property>
-             </widget>
-             <widget class="QSpinBox" name="cap_width_spin">
-              <property name="geometry">
-               <rect>
-                <x>240</x>
-                <y>70</y>
-                <width>81</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-             <widget class="QLabel" name="label_49">
-              <property name="geometry">
-               <rect>
-                <x>240</x>
-                <y>40</y>
-                <width>46</width>
-                <height>13</height>
-               </rect>
-              </property>
-              <property name="text">
-               <string>Front</string>
-              </property>
-             </widget>
-             <widget class="QSpinBox" name="cap_height_spin">
-              <property name="geometry">
-               <rect>
-                <x>20</x>
-                <y>90</y>
-                <width>81</width>
-                <height>22</height>
-               </rect>
-              </property>
-              <property name="suffix">
-               <string> mm</string>
-              </property>
-              <property name="minimum">
-               <number>-65535</number>
-              </property>
-              <property name="maximum">
-               <number>65535</number>
-              </property>
-             </widget>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-         <widget class="QWidget" name="tabModelCustom">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <attribute name="title">
-           <string>Custom</string>
-          </attribute>
-          <layout class="QGridLayout" name="gridLayout">
-           <item row="1" column="0">
-            <widget class="QGroupBox" name="groupBox">
-             <property name="title">
-              <string/>
-             </property>
-             <property name="flat">
-              <bool>false</bool>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_8">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_6">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Y&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="text">
-                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="7" column="0">
-            <widget class="QGroupBox" name="iGroupBoxTopRight">
-             <property name="title">
-              <string>Top Right</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_6">
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopRightX">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopRightY">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopRightZ">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="8" column="0">
-            <widget class="QGroupBox" name="iGroupBoxTopLeft">
-             <property name="title">
-              <string>Top Left</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_7">
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopLeftX">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopLeftY">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopLeftZ">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="5" column="0">
-            <widget class="QGroupBox" name="iGroupBoxLeft">
-             <property name="title">
-              <string>Left</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_4">
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexLeftX">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexLeftY">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexLeftZ">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QGroupBox" name="groupBoxCustomModelType">
-             <property name="title">
-              <string>Vertex count</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QRadioButton" name="iRadioButtonCustomModelThree">
-                <property name="text">
-                 <string>Three vertices</string>
-                </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="iRadioButtonCustomModelFour">
-                <property name="text">
-                 <string>Four vertices</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="iRadioButtonCustomModelFive">
-                <property name="text">
-                 <string>Five vertices</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="6" column="0">
-            <widget class="QGroupBox" name="iGroupBoxCenter">
-             <property name="title">
-              <string>Center</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexCenterX">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexCenterY">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexCenterZ">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QGroupBox" name="iGroupBoxRight">
-             <property name="title">
-              <string>Right</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_3">
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexRightX">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexRightY">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexRightZ">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QGroupBox" name="iGroupBoxTop">
-             <property name="title">
-              <string>Top</string>
-             </property>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="topMargin">
-               <number>9</number>
-              </property>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopX">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopY">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSpinBox" name="iSpinVertexTopZ">
-                <property name="suffix">
-                 <string> mm</string>
-                </property>
-                <property name="minimum">
-                 <number>-65535</number>
-                </property>
-                <property name="maximum">
-                 <number>65535</number>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxRight">
+         <property name="title">
+          <string>Right</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexRightX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexRightY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexRightZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxLeft">
+         <property name="title">
+          <string>Left</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexLeftX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexLeftY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexLeftZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxCenter">
+         <property name="title">
+          <string>Center</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexCenterX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexCenterY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexCenterZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxTopRight">
+         <property name="title">
+          <string>Top Right</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopRightX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopRightY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopRightZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxTopLeft">
+         <property name="title">
+          <string>Top Left</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopLeftX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopLeftY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexTopLeftZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
@@ -1181,7 +845,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 0.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See  &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999AA;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -1208,73 +872,6 @@
      </widget>
     </widget>
    </item>
-   <item row="7" column="0" alignment="Qt::AlignVCenter">
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="title">
-      <string>Status</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_10">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Extracted Points:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_38">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Camera Info:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="pointinfo_label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="caminfo_label">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
@@ -1285,14 +882,6 @@
   <tabstop>fps_spin</tabstop>
   <tabstop>fov</tabstop>
   <tabstop>camera_settings</tabstop>
-  <tabstop>model_tabs</tabstop>
-  <tabstop>clip_tlength_spin</tabstop>
-  <tabstop>clip_theight_spin</tabstop>
-  <tabstop>clip_bheight_spin</tabstop>
-  <tabstop>clip_blength_spin</tabstop>
-  <tabstop>cap_length_spin</tabstop>
-  <tabstop>cap_height_spin</tabstop>
-  <tabstop>cap_width_spin</tabstop>
  </tabstops>
  <resources>
   <include location="tracker_easy.qrc"/>

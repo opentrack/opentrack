@@ -2,16 +2,9 @@
 <!DOCTYPE TS>
 <TS version="2.1">
 <context>
-    <name>EasyTracker::Dialog</name>
-    <message>
-        <source>Tracker offline</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>EasyTracker::Metadata</name>
     <message>
-        <source>Easy Tracker 0.1</source>
+        <source>Easy Tracker 1.0</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -98,43 +91,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Clip</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Model Dimensions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> mm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Side</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Front</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>About</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Extracted Points:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera Info:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -143,10 +104,6 @@
     </message>
     <message>
         <source>Deadzone</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 0.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See  &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999AA;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -191,10 +148,6 @@
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -247,6 +200,10 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
