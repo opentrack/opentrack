@@ -80,13 +80,9 @@ void Timer::gettime(timespec* ts)
     BOOL ret = QueryPerformanceCounter(&d);
     assert(ret && "QueryPerformanceCounter failed");
 
-    using ll = long long;
-    auto part = ll(std::roundl((d.QuadPart * 1000000000.L) / freq));
-    using t_s = decltype(ts->tv_sec);
-    using t_ns = decltype(ts->tv_nsec);
-
-    ts->tv_sec = t_s((long double)d.QuadPart/freq);
-    ts->tv_nsec = t_ns(part % 1000000000LL);
+    auto part = (long long)std::roundl((d.QuadPart * 1000000000.L) / freq);
+    ts->tv_sec = d.QuadPart/freq;
+    ts->tv_nsec = part % 1000000000;
 }
 
 #elif defined __MACH__
