@@ -44,6 +44,8 @@ namespace EasyTracker {
         value<int> fov{ b, "camera-fov", 56 };
 
         value<bool> debug{ b, "debug", false };
+        value<bool> iAutoCenter{ b, "iAutoCenter", true };
+        value<int> iAutoCenterTimeout{ b, "iAutoCenterTimeout", 1000 };
 
 
         value<int> PnpSolver{ b, "pnp-solver", cv::SOLVEPNP_P3P };

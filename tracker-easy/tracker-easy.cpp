@@ -118,33 +118,6 @@ namespace EasyTracker
     }
 
     ///
-    /// Create our model from settings specifications
-    ///
-    void Tracker::UpdateModel()
-    {
-        infout << "Update model";
-
-        QMutexLocker lock(&iProcessLock);
-        // Construct the points defining the object we want to detect based on settings.
-        // We are converting them from millimeters to centimeters.
-        // TODO: Need to support clip too. That's cap only for now.
-        iModel.clear();
-        iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
-        iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
-        iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
-
-        if (iSettings.iCustomModelFour)
-        {
-            iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
-        }
-        else if (iSettings.iCustomModelFive)
-        {
-            iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
-            iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
-        }
-    }
-
-    ///
     void Tracker::CreateCameraIntrinsicsMatrices()
     {
         // Create our camera matrix                
@@ -700,6 +673,34 @@ namespace EasyTracker
         iKf.Init(18, 6, 0, dt);
     }
 
+
+    ///
+    /// Create our model from settings specifications
+    ///
+    void Tracker::UpdateModel()
+    {
+        infout << "Update model";
+
+        QMutexLocker lock(&iProcessLock);
+        // Construct the points defining the object we want to detect based on settings.
+        // We are converting them from millimeters to centimeters.
+        // TODO: Need to support clip too. That's cap only for now.
+        iModel.clear();
+        iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
+        iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
+        iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
+
+        if (iSettings.iCustomModelFour)
+        {
+            iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
+        }
+        else if (iSettings.iCustomModelFive)
+        {
+            iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
+            iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
+        }
+    }
+
     ///
     /// Take a copy of the settings needed by our thread to avoid deadlocks
     ///
@@ -715,6 +716,7 @@ namespace EasyTracker
         iDebug = iSettings.debug;
     }
 
+    ///
     module_status Tracker::start_tracker(QFrame* video_frame)
     {
         // Check that we support that solver
@@ -773,7 +775,7 @@ namespace EasyTracker
             QMutexLocker l(&iDataLock);
             // If there was no new data recently then we provide center data.
             // Basically, if our user remove her hat, we will go back to center position until she puts it back on.
-            if (iBestTime.elapsed_seconds() > 1)
+            if (iSettings.iAutoCenter && iBestTime.elapsed_ms() > iSettings.iAutoCenterTimeout)
             {
                 // Reset to center until we get new data
                 FeedData(aData, iCenterAngles, iCenterTranslation);

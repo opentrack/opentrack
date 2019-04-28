@@ -72,6 +72,9 @@ namespace EasyTracker
 
         tie_setting(s.debug, ui.debug);
 
+        tie_setting(s.iAutoCenter, ui.iCheckBoxAutoCenter);
+        tie_setting(s.iAutoCenterTimeout, ui.iSpinBoxAutoCenterTimeout);
+
 
         connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
         connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
