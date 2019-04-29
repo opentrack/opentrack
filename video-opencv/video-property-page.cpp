@@ -14,6 +14,7 @@
 #include "compat/run-in-thread.hpp"
 #include "compat/library-path.hpp"
 #include "compat/thread-name.hpp"
+#include "impl.hpp"
 
 #include <cstring>
 
@@ -49,6 +50,7 @@ prop_settings_worker::prop_settings_worker(int idx_)
     int ret = (int)cap.get(cv::CAP_PROP_SETTINGS);
 
     if (ret != 0)
+    {
         run_in_thread_async(qApp, [] {
             QMessageBox::warning(nullptr,
                                  "Camera properties",
@@ -56,6 +58,7 @@ prop_settings_worker::prop_settings_worker(int idx_)
                                  QMessageBox::Cancel,
                                  QMessageBox::NoButton);
         });
+    }
     else
     {
         idx = idx_;
@@ -67,7 +70,7 @@ prop_settings_worker::prop_settings_worker(int idx_)
 
 void prop_settings_worker::open_prop_page()
 {
-    cap.open(idx);
+    cap.open(idx + opencv_camera_impl::cam::video_capture_backend);
 
     if (cap.isOpened())
     {

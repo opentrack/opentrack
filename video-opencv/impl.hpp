@@ -31,6 +31,15 @@ struct metadata : camera_
 
 struct cam final : camera
 {
+static constexpr int video_capture_backend =
+#ifdef _WIN32
+    cv::CAP_DSHOW;
+#elif !defined __APPLE__
+    cv::CAP_V4L2;
+#else
+    cv::CAP_ANY;
+#endif
+
     cam(int idx);
     ~cam() override;
 
