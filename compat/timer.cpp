@@ -11,10 +11,7 @@
 #include "timer.hpp"
 #include <cassert>
 #include <cmath>
-
 #include <QDebug>
-
-using time_type = Timer::time_type;
 
 Timer::Timer()
 {
@@ -28,19 +25,11 @@ void Timer::start()
 
 struct timespec Timer::gettime_() const
 {
-    struct timespec ts{};
+    struct timespec ts; // NOLINT
     gettime(&ts);
-    ts.tv_sec -= state.tv_sec;
-    ts.tv_nsec -= state.tv_nsec;
-    return ts;
-}
-
-// nanoseconds
-
-time_type Timer::elapsed_nsecs() const
-{
-    struct timespec delta = gettime_();
-    return (time_type)delta.tv_sec * 1000000000 + (time_type)delta.tv_nsec;
+    unsigned long long a = ts.tv_sec, b = state.tv_sec;
+    unsigned c = ts.tv_nsec, d = state.tv_nsec;
+    return { (time_t)(a - b), (long)(c - d) };
 }
 
 // milliseconds
@@ -72,17 +61,22 @@ static auto otr_get_clock_frequency()
     return freq.QuadPart;
 }
 
-void Timer::gettime(timespec* ts)
+void Timer::gettime(timespec* state)
 {
     static const unsigned long long freq = otr_get_clock_frequency();
-
     LARGE_INTEGER d;
     BOOL ret = QueryPerformanceCounter(&d);
     assert(ret && "QueryPerformanceCounter failed");
 
-    auto part = (long long)std::roundl((d.QuadPart * 1000000000.L) / freq);
-    ts->tv_sec = d.QuadPart/freq;
-    ts->tv_nsec = part % 1000000000;
+    constexpr int usec = 1000000;
+    unsigned long long tm = d.QuadPart;
+    tm *= usec;
+    tm /= freq;
+    tm %= usec;
+    tm *= 1000;
+
+    state->tv_sec = (time_t)((unsigned long long)d.QuadPart/freq);
+    state->tv_nsec = (long)tm;
 }
 
 #elif defined __MACH__

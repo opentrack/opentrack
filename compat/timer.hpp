@@ -10,19 +10,13 @@
 
 #include "export.hpp"
 #include "time.hpp"
-
 #include <ctime>
-#include <cstdint>
-#include <type_traits>
 
 struct OTR_COMPAT_EXPORT Timer final
 {
-    using time_type = std::int64_t;
-
     Timer();
     void start();
 
-    time_type elapsed_nsecs() const;
     double elapsed_ms() const;
     double elapsed_seconds() const;
 
