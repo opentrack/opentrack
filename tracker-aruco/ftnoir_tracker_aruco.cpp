@@ -8,6 +8,7 @@
 #include "ftnoir_tracker_aruco.h"
 #include "compat/sleep.hpp"
 #include "compat/math-imports.hpp"
+#include "cv/init.hpp"
 
 #ifdef _MSC_VER
 #   pragma warning(disable : 4702)
@@ -60,8 +61,7 @@ static const resolution_tuple resolution_choices[] =
 
 aruco_tracker::aruco_tracker()
 {
-    cv::setBreakOnError(true);
-    cv::setNumThreads(1);
+    opencv_init();
 
     // param 2 ignored for Otsu thresholding. it's required to use our fork of Aruco.
     set_detector_params();

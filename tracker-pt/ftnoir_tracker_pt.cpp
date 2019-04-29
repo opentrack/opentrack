@@ -7,12 +7,12 @@
  */
 
 #include "ftnoir_tracker_pt.h"
+#include "pt-api.hpp"
+#include "cv/init.hpp"
 #include "video/video-widget.hpp"
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
 #include "compat/thread-name.hpp"
-
-#include "pt-api.hpp"
 
 #include <QHBoxLayout>
 #include <QDebug>
@@ -31,8 +31,7 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     frame { traits->make_frame() },
     preview_frame { traits->make_preview(preview_width, preview_height) }
 {
-    cv::setBreakOnError(true);
-    cv::setNumThreads(1);
+    opencv_init();
 
     connect(s.b.get(), &bundle_::saving, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
     connect(s.b.get(), &bundle_::reloading, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);

@@ -10,6 +10,7 @@
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
 #include "point-extractor.h"
+#include "cv/init.hpp"
 
 #include <QHBoxLayout>
 #include <QDebug>
@@ -33,6 +34,8 @@ using namespace options;
 // We need at least 3 vertices to be able to do anything
 const int KMinVertexCount = 3;
 
+
+
 namespace EasyTracker
 {
 
@@ -40,8 +43,7 @@ namespace EasyTracker
         iSettings{ KModuleName },
         iPreview{ preview_width, preview_height }
     {
-        cv::setBreakOnError(true);
-        cv::setNumThreads(1);
+        opencv_init();
 
         connect(iSettings.b.get(), &bundle_::saving, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
         connect(iSettings.b.get(), &bundle_::reloading, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
