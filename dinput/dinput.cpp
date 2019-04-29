@@ -53,7 +53,7 @@ diptr di_t::init_di_()
         std::abort();
     }
 
-    qDebug() << "dinput: initialized";
+    //qDebug() << "dinput: initialized";
 
     return di;
 }

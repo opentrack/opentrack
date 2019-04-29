@@ -644,7 +644,7 @@ void main_window::exit(int status)
         return;
     exiting_already = true;
 
-    qDebug() << "opentrack: exiting";
+    //qDebug() << "opentrack: exiting";
 
     if (tray)
         tray->hide();
