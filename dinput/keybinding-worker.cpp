@@ -10,6 +10,7 @@
 
 #include "keybinding-worker.hpp"
 #include "compat/macros.hpp"
+#include "compat/thread-name.hpp"
 
 #include <QDebug>
 #include <QMutexLocker>
@@ -112,6 +113,8 @@ KeybindingWorker& KeybindingWorker::make()
 
 void KeybindingWorker::run()
 {
+    portable::set_curthread_name("keybinding worker");
+
     while (!isInterruptionRequested())
     {
         {

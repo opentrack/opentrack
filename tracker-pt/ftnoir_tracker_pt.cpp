@@ -10,6 +10,7 @@
 #include "video/video-widget.hpp"
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
+#include "compat/thread-name.hpp"
 
 #include "pt-api.hpp"
 
@@ -51,6 +52,8 @@ Tracker_PT::~Tracker_PT()
 
 void Tracker_PT::run()
 {
+    portable::set_curthread_name("tracker/pt");
+
     maybe_reopen_camera();
 
     while(!isInterruptionRequested())

@@ -13,6 +13,7 @@
 #include "compat/sleep.hpp"
 #include "compat/run-in-thread.hpp"
 #include "compat/library-path.hpp"
+#include "compat/thread-name.hpp"
 
 #include <cstring>
 
@@ -121,6 +122,8 @@ prop_settings_worker::~prop_settings_worker()
 
 void prop_settings_worker::run()
 {
+    portable::set_curthread_name("dshow video property page");
+
     if (idx != -1)
     {
         while (cap.get(cv::CAP_PROP_SETTINGS) > 0)

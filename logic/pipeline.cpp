@@ -16,6 +16,7 @@
 #include "compat/math.hpp"
 #include "compat/meta.hpp"
 #include "compat/macros.hpp"
+#include "compat/thread-name.hpp"
 
 #include "pipeline.hpp"
 #include "logic/shortcuts.h"
@@ -515,6 +516,8 @@ static void debug_timings(float backlog_time)
 
 void pipeline::run()
 {
+    portable::set_curthread_name("tracking pipeline");
+
 #if defined _WIN32
     const MMRESULT mmres = timeBeginPeriod(1);
 #endif
