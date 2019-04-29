@@ -92,7 +92,8 @@ void Timer::gettime(timespec* ts)
 static mach_timebase_info_data_t otr_get_mach_frequency()
 {
     mach_timebase_info_data_t timebase_info;
-    (void)mach_timebase_info(&timebase_info);
+    kern_return_t status = mach_timebase_info(&timebase_info);
+    assert(status == KERN_SUCCESS && "mach_timebase_info failed");
     return timebase_info;
 }
 
@@ -110,7 +111,7 @@ void Timer::gettime(timespec* ts)
 
 void Timer::gettime(timespec* ts)
 {
-    [[maybe_unused]] int error = clock_gettime(CLOCK_MONOTONIC, ts);
+    int error = clock_gettime(CLOCK_MONOTONIC, ts);
     assert(error == 0 && "clock_gettime failed");
 };
 
