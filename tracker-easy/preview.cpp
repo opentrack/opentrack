@@ -120,7 +120,7 @@ namespace EasyTracker
 
     void Preview::ensure_size(cv::Mat& frame, int w, int h, int type)
     {
-        if (frame.cols != w || frame.rows != h)
+        if (frame.cols != w || frame.rows != h || frame.type() != type)
             frame = cv::Mat(h, w, type);
     }
 
