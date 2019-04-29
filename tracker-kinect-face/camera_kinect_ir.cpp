@@ -105,7 +105,7 @@ namespace Kinect {
         iFrame.height = iHeight;
         iFrame.stride = cv::Mat::AUTO_STEP;
         iFrame.channels = iMatFrame.channels();
-        iFrame.channelSize = iMatFrame.elemSize1();
+        iFrame.channel_size = iMatFrame.elemSize1();
         return { iFrame, new_frame };
     }
 
@@ -177,13 +177,13 @@ namespace Kinect {
                 hr = iCoordinateMapper->GetDepthCameraIntrinsics(&intrinsics);
                 if (SUCCEEDED(hr))
                 {
-                    aInfo.focalLengthX = intrinsics.FocalLengthX;
-                    aInfo.focalLengthY = intrinsics.FocalLengthY;
-                    aInfo.principalPointX = intrinsics.PrincipalPointX;
-                    aInfo.principalPointY = intrinsics.PrincipalPointY;
-                    aInfo.radialDistortionFourthOrder = intrinsics.RadialDistortionFourthOrder;
-                    aInfo.radialDistortionSecondOrder = intrinsics.RadialDistortionSecondOrder;
-                    aInfo.radialDistortionSixthOrder = intrinsics.RadialDistortionSixthOrder;
+                    aInfo.fx = intrinsics.FocalLengthX;
+                    aInfo.fy = intrinsics.FocalLengthY;
+                    aInfo.P_x = intrinsics.PrincipalPointX;
+                    aInfo.P_y = intrinsics.PrincipalPointY;
+                    aInfo.dist_c[1] = intrinsics.RadialDistortionSecondOrder;
+                    aInfo.dist_c[3] = intrinsics.RadialDistortionFourthOrder;
+                    aInfo.dist_c[5] = intrinsics.RadialDistortionSixthOrder;
                 }
 
             }

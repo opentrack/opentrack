@@ -125,23 +125,25 @@ namespace EasyTracker
         // Create our camera matrix                
         iCameraMatrix.create(3, 3, CV_64FC1);
         iCameraMatrix.setTo(cv::Scalar(0));
-        iCameraMatrix.at<double>(0, 0) = iCameraInfo.focalLengthX;
-        iCameraMatrix.at<double>(1, 1) = iCameraInfo.focalLengthY;
-        iCameraMatrix.at<double>(0, 2) = iCameraInfo.principalPointX;
-        iCameraMatrix.at<double>(1, 2) = iCameraInfo.principalPointY;
+        iCameraMatrix.at<double>(0, 0) = iCameraInfo.fx;
+        iCameraMatrix.at<double>(1, 1) = iCameraInfo.fy;
+        iCameraMatrix.at<double>(0, 2) = iCameraInfo.P_x;
+        iCameraMatrix.at<double>(1, 2) = iCameraInfo.P_y;
         iCameraMatrix.at<double>(2, 2) = 1;
 
         // Create distortion cooefficients
         iDistCoeffsMatrix = cv::Mat::zeros(8, 1, CV_64FC1);
         // As per OpenCV docs they should be thus: k1, k2, p1, p2, k3, k4, k5, k6
-        iDistCoeffsMatrix.at<double>(0, 0) = 0; // Radial first order
-        iDistCoeffsMatrix.at<double>(1, 0) = iCameraInfo.radialDistortionSecondOrder; // Radial second order
-        iDistCoeffsMatrix.at<double>(2, 0) = 0; // Tangential first order
-        iDistCoeffsMatrix.at<double>(3, 0) = 0; // Tangential second order
-        iDistCoeffsMatrix.at<double>(4, 0) = 0; // Radial third order
-        iDistCoeffsMatrix.at<double>(5, 0) = iCameraInfo.radialDistortionFourthOrder; // Radial fourth order
-        iDistCoeffsMatrix.at<double>(6, 0) = 0; // Radial fith order
-        iDistCoeffsMatrix.at<double>(7, 0) = iCameraInfo.radialDistortionSixthOrder; // Radial sixth order
+        // 0 - Radial first order
+        // 1 - Radial second order
+        // 2 - Tangential first order
+        // 3 - Tangential second order
+        // 4 - Radial third order
+        // 5 - Radial fourth order
+        // 6 - Radial fifth order
+        // 7 - Radial sixth order
+        for (unsigned k = 0; k < 8; k++)
+            iDistCoeffsMatrix.at<double>(k, 0) = (double)iCameraInfo.dist_c[k];
     }
 
 
@@ -334,7 +336,7 @@ namespace EasyTracker
 
         // Create OpenCV matrix from our frame
         // TODO: Assert channel size is one or two
-        iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channelSize == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
+        iMatFrame = cv::Mat(iFrame.height, iFrame.width, CV_MAKETYPE((iFrame.channel_size == 2 ? CV_16U : CV_8U), iFrame.channels), iFrame.data, iFrame.stride);
         iFrameCount++;
 
         bool doPreview = check_is_visible();

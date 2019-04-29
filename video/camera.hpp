@@ -21,9 +21,8 @@ struct frame final
 {
     unsigned char* data = nullptr;
     // the `stride' member can have a special value of zero,
-    // signifying equal to width * element size
-    int width = 0, height = 0, stride = 0, channels = 0;
-    int channelSize = 1;
+    // signifying stride equal to width * element size
+    int width = 0, height = 0, stride = 0, channels = 0, channel_size = 1;
 };
 
 } // ns video
@@ -41,7 +40,7 @@ struct OTR_VIDEO_EXPORT camera_
 
     virtual std::vector<QString> camera_names() const = 0;
     virtual std::unique_ptr<camera> make_camera(const QString& name) = 0;
-    [[nodiscard]] virtual bool show_dialog(const QString& camera_name) = 0;
+    virtual bool show_dialog(const QString& camera_name) = 0;
     virtual bool can_show_dialog(const QString& camera_name) = 0;
 };
 
@@ -49,14 +48,11 @@ struct OTR_VIDEO_EXPORT camera
 {
     struct info final
     {
+        // TODO: expose FOV-based focal length for regular webcams
         int width = 0, height = 0, fps = 0;
-        float focalLengthX = 0.0f;
-        float focalLengthY = 0.0f;
-        float principalPointX = 0.0f;
-        float principalPointY = 0.0f;
-        float radialDistortionSecondOrder = 0.0f;
-        float radialDistortionFourthOrder = 0.0f;
-        float radialDistortionSixthOrder = 0.0f;
+        float fx = 0, fy = 0;           // focal length
+        float P_x = 0, P_y = 0;         // principal point
+        float dist_c[8] {};             // distortion coefficients
     };
 
     camera();
