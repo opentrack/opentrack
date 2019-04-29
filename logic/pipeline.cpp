@@ -481,15 +481,16 @@ ok:
 }
 
 #ifdef DEBUG_TIMINGS
-static void debug_timings(float backlog_time)
+static void debug_timings(float backlog_time, int sleep_time)
 {
-    static variance v;
+    static variance v, v2;
     static Timer t, t2;
     static unsigned cnt, k;
 
     if (k > 1000)
     {
         v.input((double)backlog_time);
+        v2.input(sleep_time);
 
         if (t.elapsed_ms() >= 1000)
         {
@@ -497,7 +498,9 @@ static void debug_timings(float backlog_time)
             qDebug() << cnt << "Hz:"
                      << "backlog"
                      << "avg" << v.avg()
-                     << "stddev" << v.stddev();
+                     << "dev" << v.stddev()
+                     << "| sleep" << v2.avg()
+                     << "dev" << v2.stddev();
 
             cnt = 0;
         }
@@ -565,7 +568,7 @@ void pipeline::run()
                                         ms{0}, ms{10}).count();
 
 #ifdef DEBUG_TIMINGS
-        debug_timings(backlog_time.count());
+        debug_timings(backlog_time.count(), sleep_ms);
 #endif
         portable::sleep(sleep_ms);
     }
