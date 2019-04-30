@@ -1,8 +1,5 @@
 #include "thread-name.hpp"
 #ifdef _WIN32
-#   ifndef _WIN32_WINNT
-#       define _WIN32_WINNT 0x0501
-#   endif
 #   include <QDebug>
 #   include <windows.h>
 #else
