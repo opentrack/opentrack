@@ -47,21 +47,26 @@ static inline void set_curthread_name_old(const QString&) {}
 
 #endif
 
+using SetThreadDescr_type = HRESULT (__stdcall *)(HANDLE, const wchar_t*);
+
+static SetThreadDescr_type get_funptr()
+{
+    HMODULE module;
+    if (GetModuleHandleExA(0, "kernel32.dll", &module))
+        return (SetThreadDescr_type)GetProcAddress(module, "SetThreadDescription");
+    else
+        return nullptr;
+}
+
 void set_curthread_name(const QString& name)
 {
     static_assert(sizeof(wchar_t) == sizeof(decltype(*QString().utf16())));
+    static const SetThreadDescr_type fn = get_funptr();
 
-    HMODULE module;
-    HRESULT (__stdcall *fn)(HANDLE, const wchar_t*);
-    if (GetModuleHandleExA(0, "kernel32.dll", &module) &&
-        (fn = (decltype(fn))GetProcAddress(module, "SetThreadDescription")))
-    {
+    if (fn)
         fn(GetCurrentThread(), (const wchar_t*)name.utf16());
-    }
     else
-    {
         set_curthread_name_old(name);
-    }
 }
 
 #else
