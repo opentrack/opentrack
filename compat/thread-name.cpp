@@ -8,8 +8,9 @@
 
 namespace portable {
 
-#if defined _MSC_VER
+#ifdef _WIN32
 
+#ifdef _MSC_VER
 struct THREADNAME_INFO
 {
     DWORD dwType;      // must be 0x1000
@@ -40,6 +41,11 @@ void set_curthread_name_old(const QString& name_)
     {
     }
 }
+#else
+
+static inline void set_curthread_name_old(const QString&) {}
+
+#endif
 
 void set_curthread_name(const QString& name)
 {
@@ -56,13 +62,6 @@ void set_curthread_name(const QString& name)
     {
         set_curthread_name_old(name);
     }
-}
-
-#elif defined _WIN32
-
-void set_curthread_name(const QString& name)
-{
-    (void)name;
 }
 
 #else
