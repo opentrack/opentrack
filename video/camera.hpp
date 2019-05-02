@@ -85,8 +85,8 @@ namespace video
 {
 using camera_impl = impl::camera;
 
-OTR_VIDEO_EXPORT
-std::unique_ptr<camera_impl> make_camera(const QString& name);
+OTR_VIDEO_EXPORT std::unique_ptr<camera_impl> make_camera(const QString& name);
+OTR_VIDEO_EXPORT std::unique_ptr<camera_impl> make_camera_(const QString& name);
 
 OTR_VIDEO_EXPORT
 std::vector<QString> camera_names();

@@ -37,14 +37,27 @@ bool show_dialog(const QString& camera_name)
     return false;
 }
 
-std::unique_ptr<camera_impl> make_camera(const QString& name)
+std::unique_ptr<camera_impl> make_camera_(const QString& name)
 {
     QMutexLocker l(&mtx);
 
     for (auto& camera : metadata)
         for (const QString& name_ : camera->camera_names())
             if (name_ == name)
-                return camera->make_camera(name);
+                return camera->make_camera(name_);
+
+    return nullptr;
+}
+
+std::unique_ptr<camera_impl> make_camera(const QString& name)
+{
+    if (auto ret = make_camera_(name))
+        return ret;
+
+    for (auto& camera : metadata)
+        for (const QString& name_ : camera->camera_names())
+            if (auto ret = camera->make_camera(name_); ret)
+                return ret;
 
     return nullptr;
 }
