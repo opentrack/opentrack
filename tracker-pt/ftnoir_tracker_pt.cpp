@@ -53,7 +53,8 @@ void Tracker_PT::run()
 {
     portable::set_curthread_name("tracker/pt");
 
-    maybe_reopen_camera();
+    if (!maybe_reopen_camera())
+        return;
 
     while(!isInterruptionRequested())
     {

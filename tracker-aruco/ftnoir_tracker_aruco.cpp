@@ -164,6 +164,10 @@ bool aruco_tracker::open_camera()
     QMutexLocker l(&camera_mtx);
 
     camera = video::make_camera(s.camera_name);
+
+    if (!camera)
+        return false;
+
     video::impl::camera::info args {};
 
     if (res.width)

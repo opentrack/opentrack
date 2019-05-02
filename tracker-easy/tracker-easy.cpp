@@ -729,6 +729,12 @@ namespace EasyTracker
             return module_status("Error: Solver not supported use either P3P or AP3P.");
         }
 
+        // Create our camera
+        camera = video::make_camera(iSettings.camera_name);
+
+        if (!camera)
+            return error(QStringLiteral("Can't open camera %1").arg(iSettings.camera_name));
+
         //video_frame->setAttribute(Qt::WA_NativeWindow);
         widget = std::make_unique<video_widget>(video_frame);
         layout = std::make_unique<QHBoxLayout>(video_frame);
@@ -738,8 +744,6 @@ namespace EasyTracker
         //video_widget->resize(video_frame->width(), video_frame->height());
         video_frame->show();
 
-        // Create our camera
-        camera = video::make_camera(iSettings.camera_name);
         // Precise timer is needed otherwise the interval is not really respected
         iTicker.setTimerType(Qt::PreciseTimer);
         SetFps(iSettings.cam_fps);
