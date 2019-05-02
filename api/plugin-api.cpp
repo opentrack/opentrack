@@ -5,14 +5,12 @@
 namespace plugin_api::detail {
 
 BaseDialog::BaseDialog() = default;
-void BaseDialog::closeEvent(QCloseEvent*)
+
+void BaseDialog::closeEvent(QCloseEvent* aEvent)
 {
-    if (isVisible())
-    {
-        hide();
-        emit closing();
-    }
+    QDialog::closeEvent(aEvent);
 }
+
 
 void BaseDialog::done(int)
 {
