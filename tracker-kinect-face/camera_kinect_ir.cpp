@@ -22,6 +22,17 @@ namespace Kinect {
 
     static const char KKinectIRSensor[] = "Kinect V2 IR Sensor";
 
+    // Safe release for interfaces
+    template<class Interface>
+    inline void SafeRelease(Interface *& pInterfaceToRelease)
+    {
+        if (pInterfaceToRelease != NULL)
+        {
+            pInterfaceToRelease->Release();
+            pInterfaceToRelease = NULL;
+        }
+    }
+
     CamerasProvider::CamerasProvider() = default;
 
     std::unique_ptr<video::impl::camera> CamerasProvider::make_camera(const QString& name)
@@ -36,12 +47,16 @@ namespace Kinect {
 
     std::vector<QString> CamerasProvider::camera_names() const
     {
-        IKinectSensor* ptr;
-        BOOLEAN b;
-        if (SUCCEEDED(GetDefaultKinectSensor(&ptr)) && SUCCEEDED(ptr->get_IsAvailable(&b)) && b)
+        IKinectSensor* kinect;
+        if (SUCCEEDED(GetDefaultKinectSensor(&kinect)))
+        {
+            SafeRelease(kinect);
             return { KKinectIRSensor };
+        }            
         else
+        {
             return {};
+        }            
     }
 
     bool CamerasProvider::can_show_dialog(const QString& camera_name)
@@ -107,17 +122,6 @@ namespace Kinect {
         iFrame.channels = iMatFrame.channels();
         iFrame.channel_size = iMatFrame.elemSize1();
         return { iFrame, new_frame };
-    }
-
-    // Safe release for interfaces
-    template<class Interface>
-    inline void SafeRelease(Interface *& pInterfaceToRelease)
-    {
-        if (pInterfaceToRelease != NULL)
-        {
-            pInterfaceToRelease->Release();
-            pInterfaceToRelease = NULL;
-        }
     }
 
     ///
