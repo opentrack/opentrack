@@ -50,9 +50,9 @@ struct OTR_VIDEO_EXPORT camera
     {
         // TODO: expose FOV-based focal length for regular webcams
         int width = 0, height = 0, fps = 0;
-        float fx = 0, fy = 0;           // focal length
-        float P_x = 0, P_y = 0;         // principal point
-        float dist_c[8] {};             // distortion coefficients
+        double fx = 0, fy = 0;          // focal length
+        double P_x = 0, P_y = 0;        // principal point
+        double dist_c[8] {};            // distortion coefficients
     };
 
     camera();
