@@ -56,7 +56,7 @@ std::unique_ptr<camera_impl> make_camera(const QString& name)
 
     for (auto& camera : metadata)
         for (const QString& name_ : camera->camera_names())
-            if (auto ret = camera->make_camera(name_); ret)
+            if (auto ret = camera->make_camera(name_))
                 return ret;
 
     return nullptr;
