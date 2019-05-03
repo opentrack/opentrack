@@ -6,6 +6,8 @@
  * notice appear in all copies.
  */
 
+#pragma once
+
 #include <cmath>
 
 #include "api/plugin-api.hpp"
@@ -16,8 +18,6 @@
 // Kinect Header files
 #include <Kinect.h>
 #include <Kinect.Face.h>
-
-#pragma once
 
 // @deprecated Use UniqueInterface instead. Remove it at some point.
 template<class Interface>
