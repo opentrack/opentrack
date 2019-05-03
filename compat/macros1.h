@@ -28,12 +28,6 @@
 #   define function_name __PRETTY_FUNCTION__
 #endif
 
-#define PP_CAT(x,y) PP_CAT1(x,y)
-#define PP_CAT1(x,y) x ## y
-
-#define PP_EXPAND(x) PP_EXPAND2(x)
-#define PP_EXPAND2(x) x
-
 #ifdef _MSC_VER
 #   define unreachable() do { __assume(0); *(volatile int*)nullptr = 0; } while (0) /* NOLINT(clang-analyzer-core.NullDereference) */
 #else
