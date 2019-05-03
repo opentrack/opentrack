@@ -27,7 +27,7 @@ set -e
 
 mydate="$(date --iso-8601=minutes)"
 mydir="$(dirname -- "$0")"
-myfile="opentrack-"$mydate".7z"
+myfile="opentrack-$mydate.7z"
 
 cd "$mydir"
 for k in opencv aruco libovr-025  libovr-042 libovr-080; do
