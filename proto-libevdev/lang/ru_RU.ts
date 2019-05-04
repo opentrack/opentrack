@@ -23,10 +23,6 @@
 <context>
     <name>evdev</name>
     <message>
-        <source>Can&apos;t open /dev/uinput: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Virtual joystick for Linux</source>
         <translation type="unfinished"></translation>
     </message>

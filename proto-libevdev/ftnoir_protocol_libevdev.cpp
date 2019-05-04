@@ -18,10 +18,10 @@
 
 #define CHECK_LIBEVDEV(expr)                                    \
     do {                                                        \
-        if ((int error = (expr)); error != 0)                   \
+        if (int error = (expr); error != 0)                     \
         {                                                       \
             error_code = -error;                                \
-            error_str = #expr;                                  \
+            error_expr = #expr;                                 \
             goto fail;                                          \
         }                                                       \
     } while (false)
@@ -37,7 +37,7 @@ evdev::evdev()
     if (!dev)
     {
         error_code = errno;
-        error_str = "libevdev_new();";
+        error_expr = "libevdev_new();";
         goto fail;
     }
 
@@ -123,7 +123,7 @@ module_status evdev::initialize()
         char buf[128] {};
         (void)strerror_r(errno, buf, sizeof(buf));
         return error(QStringLiteral("libevdev call '%1' failed with error '%2' (%3)")
-                     .arg(error_str ? "<NULL>" : error_str, buf, error_code));
+                     .arg(!error_expr ? "<NULL>" : error_expr, buf).arg(error_code));
     }
     else
         return {};
