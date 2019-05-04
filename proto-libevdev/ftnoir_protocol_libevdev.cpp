@@ -121,7 +121,7 @@ module_status evdev::initialize()
     if (error_code)
     {
         char buf[128] {};
-        (void)strerror_r(errno, buf, sizeof(buf));
+        (void)strerror_r(error_code, buf, sizeof(buf));
         return error(QStringLiteral("libevdev call '%1' failed with error '%2' (%3)")
                      .arg(!error_expr ? "<NULL>" : error_expr, buf).arg(error_code));
     }
