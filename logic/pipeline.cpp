@@ -46,15 +46,15 @@ void reltrans::on_center()
     moving_to_reltans = false;
 }
 
-euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) const
+Pose_ reltrans::rotate(const rmat& R, const Pose_& in, vec3_bool disable) const
 {
     enum { tb_Z, tb_X, tb_Y };
 
     // TY is really yaw axis. need swapping accordingly.
     // sign changes are due to right-vs-left handedness of coordinate system used
-    const euler_t ret = R * euler_t(in(TZ), -in(TX), -in(TY));
+    const Pose_ ret = R * Pose_(in(TZ), -in(TX), -in(TY));
 
-    euler_t output;
+    Pose_ output;
 
     if (disable(TZ))
         output(TZ) = in(TZ);
@@ -77,7 +77,7 @@ euler_t reltrans::rotate(const rmat& R, const euler_t& in, vec3_bool disable) co
 Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
                               const vec6_bool& disable, bool neck_enable, int neck_z)
 {
-    euler_t rel((const double*)value);
+    Pose_ rel((const double*)value);
 
     if (state != reltrans_disabled)
     {
@@ -105,7 +105,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             constexpr double d2r = M_PI / 180;
 
             const rmat R = euler_to_rmat(
-                               euler_t(value(Yaw)   * d2r * !disable(Yaw),
+                               Pose_(value(Yaw)   * d2r * !disable(Yaw),
                                        value(Pitch) * d2r * !disable(Pitch),
                                        value(Roll)  * d2r * !disable(Roll)));
 
@@ -114,7 +114,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             // dynamic neck
             if (neck_enable && (state != reltrans_non_center || !in_zone))
             {
-                const euler_t neck = apply_neck(R, -neck_z, disable(TZ));
+                const Pose_ neck = apply_neck(R, -neck_z, disable(TZ));
 
                 for (unsigned k = 0; k < 3; k++)
                     rel(k) += neck(k);
@@ -144,7 +144,7 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
             interp_pos = interp_pos * (1-alpha) + rel * alpha;
 
-            const euler_t tmp = rel - interp_pos;
+            const Pose_ tmp = rel - interp_pos;
             rel = interp_pos;
             const double delta = std::fabs(tmp(0)) + std::fabs(tmp(1)) + std::fabs(tmp(2));
 
@@ -171,9 +171,9 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
     };
 }
 
-euler_t reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
+Pose_ reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
 {
-    euler_t neck;
+    Pose_ neck;
 
     neck = rotate(R, { 0, 0, nz }, {});
     neck(TZ) = neck(TZ) - nz;
@@ -288,8 +288,8 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
         }
         else
         {
-            center.inv_R = euler_to_rmat(euler_t(&value[Yaw]) * (M_PI / 180)).t();
-            center.T = euler_t(&value[TX]);
+            center.inv_R = euler_to_rmat(Pose_(&value[Yaw]) * (M_PI / 180)).t();
+            center.T = Pose_(&value[TX]);
         }
     }
 }
@@ -300,8 +300,8 @@ Pose pipeline::apply_center(Pose value) const
         for (unsigned k = 0; k < 3; k++)
             value(k) -= center.T(k);
 
-        euler_t rot = rmat_to_euler(
-            euler_to_rmat(euler_t(&value[Yaw]) * (M_PI / 180)) * center.inv_R
+        Pose_ rot = rmat_to_euler(
+            euler_to_rmat(Pose_(&value[Yaw]) * (M_PI / 180)) * center.inv_R
         );
         for (unsigned k = 0; k < 3; k++)
             value(k+3) = rot(k) * 180 / M_PI;

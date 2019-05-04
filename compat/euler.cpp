@@ -4,7 +4,7 @@
 
 namespace euler {
 
-euler_t rmat_to_euler(const rmat& R)
+Pose_ rmat_to_euler(const rmat& R)
 {
     const double cy = sqrt(R(2,2)*R(2, 2) + R(2, 1)*R(2, 1));
     const bool large_enough = cy > 1e-10;
@@ -23,7 +23,7 @@ euler_t rmat_to_euler(const rmat& R)
 }
 
 // tait-bryan angles, not euler
-rmat euler_to_rmat(const euler_t& input)
+rmat euler_to_rmat(const Pose_& input)
 {
     const double H = -input(0);
     const double P = -input(1);

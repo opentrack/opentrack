@@ -17,9 +17,9 @@ template<int h_, int w_> using dmat = Mat<double, h_, w_>;
 using dvec3 = Mat<double, 3, 1>;
 
 using rmat = dmat<3, 3>;
-using euler_t = dmat<3, 1>;
+using Pose_ = dmat<3, 1>;
 
-rmat OTR_COMPAT_EXPORT euler_to_rmat(const euler_t& input);
-euler_t OTR_COMPAT_EXPORT rmat_to_euler(const rmat& R);
+rmat OTR_COMPAT_EXPORT euler_to_rmat(const Pose_& input);
+Pose_ OTR_COMPAT_EXPORT rmat_to_euler(const rmat& R);
 
 } // end ns euler

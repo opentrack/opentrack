@@ -33,7 +33,7 @@ using vec3_bool = Mat<bool, 6, 1>;
 
 class reltrans
 {
-    euler_t interp_pos;
+    Pose_ interp_pos;
     Timer interp_timer;
 
     // this implements smooth transition into reltrans mode
@@ -49,8 +49,8 @@ public:
 
     void on_center();
 
-    euler_t rotate(const rmat& rmat, const euler_t& in, vec3_bool disable) const;
-    euler_t apply_neck(const rmat& R, int nz, bool disable_tz) const;
+    Pose_ rotate(const rmat& rmat, const Pose_& in, vec3_bool disable) const;
+    Pose_ apply_neck(const rmat& R, int nz, bool disable_tz) const;
     Pose apply_pipeline(reltrans_state state, const Pose& value,
                         const vec6_bool& disable, bool neck_enable, int neck_z);
 };
@@ -100,7 +100,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     struct {
         rmat inv_R = rmat::eye();
-        euler_t T;
+        Pose_ T;
     } center;
 
     time_units::ms backlog_time {};

@@ -28,7 +28,7 @@ public:
 private:
     void paintEvent(QPaintEvent*) override;
 
-    euler_t R, T;
+    Pose_ R, T;
     QImage front{QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)};
     QImage back{QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)};
 };

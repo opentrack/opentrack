@@ -91,7 +91,7 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
         for (unsigned i = 0; i < 3; i++)
             r(j, i) = R_CM_k(j, i);
 
-    const euler_t ypr = rmat_to_euler(r) * r2d;
+    const Pose_ ypr = rmat_to_euler(r) * r2d;
 
     auto array_index = [](double val, double spacing) {
         return (unsigned)iround((val + 180)/spacing);
