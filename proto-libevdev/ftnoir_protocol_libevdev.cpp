@@ -2,31 +2,44 @@
 #include "api/plugin-api.hpp"
 #include "compat/math.hpp"
 
-#include <stdio.h>
+#include <cstdlib>
+#include <cstring>
+#include <cstdio>
+#include <algorithm>
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
 #include <errno.h>
-#include <string.h>
 
-#include <algorithm>
+#include <QDebug>
 
-#define CHECK_LIBEVDEV(expr) if ((error = (expr)) != 0) goto error;
+#define CHECK_LIBEVDEV(expr)                                    \
+    do {                                                        \
+        if ((int error = (expr)); error != 0)                   \
+        {                                                       \
+            error_code = -error;                                \
+            error_str = #expr;                                  \
+            goto fail;                                          \
+        }                                                       \
+    } while (false)
 
-static const int max_input = 65535;
-static const int mid_input = 32767;
-static const int min_input = 0;
+static constexpr int max_input = 1 << 16;
+static constexpr int mid_input = (1 << 15) - 1;
+static constexpr int min_input = 0;
 
-evdev::evdev() : dev(NULL), uidev(NULL)
+evdev::evdev()
 {
-    int error = 0;
-
     dev = libevdev_new();
 
     if (!dev)
-        goto error;
+    {
+        error_code = errno;
+        error_str = "libevdev_new();";
+        goto fail;
+    }
 
     CHECK_LIBEVDEV(libevdev_enable_property(dev, INPUT_PROP_BUTTONPAD));
 
@@ -57,15 +70,17 @@ evdev::evdev() : dev(NULL), uidev(NULL)
     CHECK_LIBEVDEV(libevdev_uinput_create_from_device(dev, LIBEVDEV_UINPUT_OPEN_MANAGED, &uidev));
 
     return;
-error:
+
+fail:
     if (uidev)
         libevdev_uinput_destroy(uidev);
     if (dev)
         libevdev_free(dev);
-    if (error)
-        fprintf(stderr, "libevdev error: %d\n", error);
-    uidev = NULL;
-    dev = NULL;
+
+    qDebug() << "libevdev error" << error_code;
+
+    uidev = nullptr;
+    dev = nullptr;
 }
 
 evdev::~evdev()
@@ -103,14 +118,15 @@ void evdev::pose(const double* headpose) {
 
 module_status evdev::initialize()
 {
-    if (access("/dev/uinput", R_OK | W_OK))
+    if (error_code)
     {
         char buf[128] {};
-        (void) strerror_r(errno, buf, sizeof(buf));
-        return error(tr("Can't open /dev/uinput: %1").arg(buf));
+        (void)strerror_r(errno, buf, sizeof(buf));
+        return error(QStringLiteral("libevdev call '%1' failed with error '%2' (%3)")
+                     .arg(error_str ? "<NULL>" : error_str, buf, error_code));
     }
-
-    return status_ok();
+    else
+        return {};
 }
 
 OPENTRACK_DECLARE_PROTOCOL(evdev, LibevdevControls, evdevDll)

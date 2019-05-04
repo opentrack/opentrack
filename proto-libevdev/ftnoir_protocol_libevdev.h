@@ -26,8 +26,10 @@ public:
     module_status initialize() override;
 
 private:
-    struct libevdev* dev;
-    struct libevdev_uinput* uidev;
+    struct libevdev* dev = nullptr;
+    struct libevdev_uinput* uidev = nullptr;
+    int error_code = 0;
+    const char* error_expr = nullptr;
 };
 
 class LibevdevControls: public IProtocolDialog
