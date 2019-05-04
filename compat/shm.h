@@ -19,8 +19,8 @@
 #include <sys/types.h>
 #endif
 
-#include "macros.hpp"
 #include "export.hpp"
+#include "macros1.h"
 
 class OTR_COMPAT_EXPORT shm_wrapper final
 {
@@ -32,10 +32,10 @@ class OTR_COMPAT_EXPORT shm_wrapper final
 #endif
 
 public:
-    never_inline shm_wrapper(const char *shm_name, const char *mutex_name, int map_size);
-    never_inline ~shm_wrapper();
-    never_inline bool lock();
-    never_inline bool unlock();
-    never_inline bool success();
+    shm_wrapper(const char *shm_name, const char *mutex_name, int map_size);
+    ~shm_wrapper();
+    bool lock();
+    bool unlock();
+    bool success();
     inline void* ptr() { return mem; }
 };
