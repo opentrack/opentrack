@@ -1,3 +1,8 @@
+// strerror_r(3)
+#ifndef _POSIX_C_SOURCE
+#   define _POSIX_C_SOURCE 200112L
+#endif
+
 #include "ftnoir_protocol_libevdev.h"
 #include "api/plugin-api.hpp"
 #include "compat/math.hpp"
@@ -120,10 +125,17 @@ module_status evdev::initialize()
 {
     if (error_code)
     {
+        const char* msg;
         char buf[128] {};
-        (void)strerror_r(error_code, buf, sizeof(buf));
-        return error(QStringLiteral("libevdev call '%1' failed with error '%2' (%3)")
-                     .arg(!error_expr ? "<NULL>" : error_expr, buf).arg(error_code));
+
+        if (!(msg = strerror_r(error_code, buf, sizeof(buf))))
+        {
+            snprintf(buf, sizeof(buf), "%d", error_code);
+            msg = buf;
+        }
+
+        return error(QStringLiteral("libevdev call '%1' failed with error '%2'")
+                     .arg(!error_expr ? "<NULL>" : error_expr, msg));
     }
     else
         return {};
