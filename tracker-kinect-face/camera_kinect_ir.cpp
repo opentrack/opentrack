@@ -14,6 +14,7 @@
 
 #include "compat/sleep.hpp"
 #include "compat/math-imports.hpp"
+#include "video-opencv/camera-names.hpp"
 
 #include <opencv2/imgproc.hpp>
 #include <cstdlib>
@@ -47,10 +48,10 @@ namespace Kinect {
 
     std::vector<QString> CamerasProvider::camera_names() const
     {
-        IKinectSensor* kinect;
-        if (SUCCEEDED(GetDefaultKinectSensor(&kinect)))
+        if (camera_name_to_index("Kinect V2 Video Sensor") != -1)
         {
-            SafeRelease(kinect);
+            // We found Kinect V2 Video Sensor therefore we have a kinect V2 connected.
+            // Publish our Kinect V2 IR Sensor implementation then.
             return { KKinectIRSensor };
         }            
         else
