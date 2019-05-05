@@ -48,13 +48,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     adjustSize();
 
-    if (!start_in_tray())
-    {
-        setVisible(true);
-        show();
-    }
-    else
-        setVisible(false);
+    setVisible(!start_in_tray());
 
     connect(&pose_update_timer, &QTimer::timeout,
             this, &main_window::show_pose, Qt::DirectConnection);
@@ -722,7 +716,6 @@ void main_window::ensure_tray()
         if (!isVisible())
         {
             show();
-            setVisible(true);
 
 #ifdef __APPLE__
             raise(); // for OSX
