@@ -153,6 +153,10 @@ function(otr_module n_)
 
     if(arg_EXECUTABLE)
         add_executable(${n} ${subsys} "${${n}-all}")
+        set_target_properties(${n} PROPERTIES
+                              SUFFIX "${opentrack-binary-suffix}"
+                              OUTPUT_NAME "${n_}"
+                              PREFIX "")
         if(MSVC)
             target_compile_options(${n} PRIVATE -GA)
         endif()
