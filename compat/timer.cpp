@@ -28,7 +28,7 @@ struct timespec Timer::gettime_() const
     struct timespec ts; // NOLINT
     gettime(&ts);
     unsigned long long a = ts.tv_sec, b = state.tv_sec;
-    unsigned c = ts.tv_nsec, d = state.tv_nsec;
+    int c = ts.tv_nsec, d = state.tv_nsec;
     return { (time_t)(a - b), (long)(c - d) };
 }
 
