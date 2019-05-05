@@ -82,9 +82,8 @@ endfunction()
 otr_add_subdirs()
 otr_merge_translations()
 
-#install_sources()
-
 include(opentrack-install)
+otr_install_sources()
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 message(STATUS "-- Compile flags:")

@@ -22,7 +22,7 @@ function(otr_setup_refresh_install_dir)
     endif()
 endfunction()
 
-function(install_sources)
+function(otr_install_sources)
     otr_setup_refresh_install_dir()
     get_property(source-dirs GLOBAL PROPERTY opentrack-all-source-dirs)
     foreach(k ${source-dirs})
