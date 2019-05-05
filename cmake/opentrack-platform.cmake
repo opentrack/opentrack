@@ -145,6 +145,21 @@ if(MSVC)
     add_link_options(-WX)
     add_link_options(-ignore:4020)
     add_link_options(-ignore:4217) # debug build
+
+    #C4457: declaration of 'id' hides function parameter
+    #C4456: declaration of 'i' hides previous local declaration
+    #C4263 - member function does not override any base class virtual member function
+    #C4264 - no override available for virtual member function from base class, function is hidden
+    #C4265 - class has virtual functions, but destructor is not virtual
+    #C4266 - no override available for virtual member function from base type, function is hidden
+    #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
+    #C4200: nonstandard extension used: zero-sized array in struct/union
+
+    set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 4702 4457 4200)
+
+    foreach(i ${warns-disable})
+        add_compile_options(-wd${i})
+    endforeach()
 endif()
 
 if(APPLE)
