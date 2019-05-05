@@ -92,6 +92,8 @@ struct dylib final
             icon = m->icon();
             name = m->name();
         }
+        else
+            name = module_name;
 
         type = t;
 
