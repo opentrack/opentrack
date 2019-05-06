@@ -9,7 +9,7 @@
 
 #ifdef _WIN32
 
-#include "camera-names.hpp"
+#include "compat/camera-names.hpp"
 #include "compat/sleep.hpp"
 #include "compat/run-in-thread.hpp"
 #include "compat/library-path.hpp"
@@ -149,7 +149,7 @@ bool video_property_page::show(int idx)
 
 #elif defined(__linux)
 #   include <QProcess>
-#   include "camera-names.hpp"
+#   include "compat/camera-names.hpp"
 
 bool video_property_page::show(int idx)
 {

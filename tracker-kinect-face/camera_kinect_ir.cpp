@@ -14,7 +14,7 @@
 
 #include "compat/sleep.hpp"
 #include "compat/math-imports.hpp"
-#include "video-opencv/camera-names.hpp"
+#include "compat/camera-names.hpp"
 
 #include <opencv2/imgproc.hpp>
 #include <cstdlib>

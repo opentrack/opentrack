@@ -1,5 +1,5 @@
 #include "impl.hpp"
-#include "camera-names.hpp"
+#include "compat/camera-names.hpp"
 #include "video-property-page.hpp"
 
 namespace opencv_camera_impl {

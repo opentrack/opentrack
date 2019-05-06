@@ -7,9 +7,6 @@ if (WIN32 AND opentrack-intel)
 		# Register our module
 		otr_module(tracker-kinect-face)
 
-        target_sources(${self} PUBLIC "../video-opencv/camera-names.cpp")
-        target_link_libraries(${self} strmiids)
-
 		if(MSVC)
 		# workaround warning in SDK
 			target_compile_options(${self} PRIVATE "-wd4471")
@@ -54,7 +51,5 @@ if (WIN32 AND opentrack-intel)
             target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
             target_link_libraries(${self} opencv_imgproc opentrack-cv opencv_core opentrack-video)
         endif()
-
-
 	endif()
 endif()
