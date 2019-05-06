@@ -1,6 +1,5 @@
 #include "ps3eye.hpp"
 #include "compat/macros1.h"
-#include "compat/thread-name.hpp"
 #include "internal.hpp"
 
 #include "urb.hpp"
