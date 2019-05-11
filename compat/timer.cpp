@@ -107,7 +107,7 @@ void Timer::gettime(timespec* ts)
 {
     int error = clock_gettime(CLOCK_MONOTONIC, ts);
     assert(error == 0 && "clock_gettime failed");
-};
+}
 
 #endif
 

@@ -8,7 +8,7 @@
 struct TR : QObject
 {
     TR() = default;
-    TR(const TR&) {}
+    TR(const TR&) : QObject(nullptr) {}
 
     TR& operator=(const TR&) { return *this; }
 };
