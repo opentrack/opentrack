@@ -38,23 +38,23 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     annoy_if_root();
 #endif
 
-    init_profiles();
-    init_buttons();
-    init_tray_menu();
-    init_dylibs();
-    init_shortcuts();
-
     setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    adjustSize();
 
-    setVisible(!start_in_tray());
+    init_profiles();
+    init_buttons();
+    init_dylibs();
+    init_shortcuts();
+    init_tray_menu();
 
     connect(&pose_update_timer, &QTimer::timeout,
             this, &main_window::show_pose, Qt::DirectConnection);
     connect(&det_timer, &QTimer::timeout,
             this, &main_window::maybe_start_profile_from_executable);
     det_timer.start(1000);
+
+    adjustSize();
+    ensure_tray(); // calls QWidget::show()
 }
 
 void main_window::init_shortcuts()
@@ -216,8 +216,6 @@ void main_window::init_tray_menu()
 
     connect(&s.tray_enabled, value_::value_changed<bool>(),
             this, &main_window::ensure_tray);
-
-    ensure_tray();
 }
 
 void main_window::init_buttons()
@@ -688,30 +686,7 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
 
 void main_window::ensure_tray()
 {
-    if (!QSystemTrayIcon::isSystemTrayAvailable())
-    {
-        QApplication::setQuitOnLastWindowClosed(true);
-        return;
-    }
-
-    if (s.tray_enabled)
-    {
-        if (!tray)
-        {
-            tray = std::make_unique<QSystemTrayIcon>(this);
-            tray->setIcon(QIcon(":/images/opentrack.png"));
-            tray->setContextMenu(&tray_menu);
-            tray->show();
-
-            connect(tray.get(),
-                    &QSystemTrayIcon::activated,
-                    this,
-                    &main_window::toggle_restore_from_tray);
-        }
-
-        QApplication::setQuitOnLastWindowClosed(false);
-    }
-    else
+    if (!tray_enabled())
     {
         if (!isVisible())
         {
@@ -728,6 +703,23 @@ void main_window::ensure_tray()
         tray = nullptr;
 
         QApplication::setQuitOnLastWindowClosed(true);
+    }
+    else
+    {
+        if (!tray)
+        {
+            tray = std::make_unique<QSystemTrayIcon>(this);
+            tray->setIcon(QIcon(":/images/opentrack.png"));
+            tray->setContextMenu(&tray_menu);
+            tray->show();
+
+            connect(tray.get(),
+                    &QSystemTrayIcon::activated,
+                    this,
+                    &main_window::toggle_restore_from_tray);
+        }
+
+        QApplication::setQuitOnLastWindowClosed(false);
     }
 }
 
