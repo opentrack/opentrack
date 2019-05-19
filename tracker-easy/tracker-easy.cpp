@@ -9,6 +9,7 @@
 #include "video/video-widget.hpp"
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
+#include "compat/sleep.hpp"
 #include "point-extractor.h"
 #include "cv/init.hpp"
 
@@ -45,8 +46,8 @@ namespace EasyTracker
     {
         opencv_init();
 
-        connect(iSettings.b.get(), &bundle_::saving, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
-        connect(iSettings.b.get(), &bundle_::reloading, this, &Tracker::maybe_reopen_camera, Qt::DirectConnection);
+        connect(iSettings.b.get(), &bundle_::saving, this, &Tracker::CheckCamera, Qt::DirectConnection);
+        connect(iSettings.b.get(), &bundle_::reloading, this, &Tracker::CheckCamera, Qt::DirectConnection);
 
         connect(&iSettings.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
         set_fov(iSettings.fov);
@@ -332,6 +333,7 @@ namespace EasyTracker
     ///
     void Tracker::ProcessFrame()
     {
+        //infout << "ProcessFrame - begin";
         QMutexLocker l(&iProcessLock);
 
         // Create OpenCV matrix from our frame
@@ -346,7 +348,14 @@ namespace EasyTracker
         }
 
         iPoints.clear();
-        iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iModel.size(), iPoints);
+
+        // Do not attempt point extraction on a color buffer as it is running real slow and is useless anyway.
+        // If we are ever going to support color buffer we will need another implementation.
+        if (iFrame.channels == 1)
+        {            
+            iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iModel.size(), iPoints);
+        }
+        
 
         const bool success = iPoints.size() >= iModel.size() && iModel.size() >= KMinVertexCount;
 
@@ -581,8 +590,8 @@ namespace EasyTracker
             }
         }
 
-        dbgout << "Frame time:" << iTimer.elapsed_seconds() << "\n";
-
+        dbgout << "Frame time:" << iTimer.elapsed_seconds();
+        //infout << "ProcessFrame - end";
     }
 
     ///
@@ -590,7 +599,13 @@ namespace EasyTracker
     ///
     void Tracker::Tick()
     {
-        maybe_reopen_camera();
+        if (CheckCamera())
+        {
+            // Camera was just started, skipping that frame as it was causing a deadlock on our process mutex in ProcessFrame
+            // In fact it looked like ProcessFrame was called twice without completing.
+            // That has something to do with the ticker interval being changed after the camera is started.
+            return;
+        }
       
         iTimer.start();
 
@@ -627,13 +642,14 @@ namespace EasyTracker
         
     }
 
-    bool Tracker::maybe_reopen_camera()
+    /// @return True if camera was just started, false otherwise.
+    bool Tracker::CheckCamera()
     {
         QMutexLocker l(&camera_mtx);
 
         if (camera->is_open())
         {
-            return true;
+            return false;
         }
 
         iCameraInfo.fps = iSettings.cam_fps;
@@ -641,7 +657,9 @@ namespace EasyTracker
         iCameraInfo.height = iSettings.cam_res_y;
 
         bool res = camera->start(iCameraInfo);
-        // We got new our camera intrinsics, create corresponding matrices
+        //portable::sleep(5000);
+
+        // We got our camera intrinsics, create corresponding matrices
         CreateCameraIntrinsicsMatrices();
 
         // If ever the camera implementation provided an FPS now is the time to apply it
@@ -683,7 +701,7 @@ namespace EasyTracker
     ///
     void Tracker::UpdateModel()
     {
-        infout << "Update model";
+        infout << "Update model - begin";
 
         QMutexLocker lock(&iProcessLock);
         // Construct the points defining the object we want to detect based on settings.
@@ -703,6 +721,8 @@ namespace EasyTracker
             iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
             iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
         }
+
+        infout << "Update model - end";
     }
 
     ///
@@ -710,7 +730,7 @@ namespace EasyTracker
     ///
     void Tracker::UpdateSettings()
     {
-        infout << "Update Setting";
+        infout << "Update Setting - begin";
         QMutexLocker l(&iProcessLock);
         iPointExtractor.UpdateSettings();
         iSolver = iSettings.PnpSolver;
@@ -718,6 +738,7 @@ namespace EasyTracker
         iDeadzoneEdge = iDeadzoneHalfEdge * 2;
         iTrackedRects.clear();
         iDebug = iSettings.debug;
+        infout << "Update Setting - end";
     }
 
     ///
