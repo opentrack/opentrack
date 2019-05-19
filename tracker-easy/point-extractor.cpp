@@ -143,7 +143,7 @@ namespace EasyTracker
         while (aPoints.size() > aNeededPointCount) // Until we have no more than three points
         {
             int maxY = 0;
-            unsigned index = (unsigned)-1;
+            size_t index = std::numeric_limits<size_t>::max();
 
             // Search for the point with highest Y coordinate
             for (size_t i = 0; i < aPoints.size(); i++)
@@ -154,9 +154,13 @@ namespace EasyTracker
                     index = i;
                 }
             }
-
-            // Discard it
-            aPoints.erase(aPoints.begin() + index);
+            
+            if (index < aPoints.size()) // Defensive
+            {
+                // Discard it
+                aPoints.erase(aPoints.begin() + index);
+            }
+            
         }
     }
 

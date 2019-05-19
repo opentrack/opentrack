@@ -353,7 +353,7 @@ namespace EasyTracker
         // If we are ever going to support color buffer we will need another implementation.
         if (iFrame.channels == 1)
         {            
-            iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), iModel.size(), iPoints);
+            iPointExtractor.ExtractPoints(iMatFrame, (doPreview ? &iPreview.iFrameRgb : nullptr), (int)iModel.size(), iPoints);
         }
         
 

@@ -72,7 +72,7 @@ namespace EasyTracker
 
     QImage Preview::get_bitmap()
     {
-        int stride = iFrameWidget.step.p[0];
+        size_t stride = iFrameWidget.step.p[0];
 
         if (stride < 64 || stride < iFrameWidget.cols * 4)
         {
@@ -96,7 +96,7 @@ namespace EasyTracker
 
         return QImage((const unsigned char*)iFrameWidget.data,
             iFrameWidget.cols, iFrameWidget.rows,
-            stride,
+            (int)stride,
             QImage::Format_ARGB32);
     }
 
