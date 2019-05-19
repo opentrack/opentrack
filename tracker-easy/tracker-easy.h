@@ -81,7 +81,7 @@ namespace EasyTracker
         
         //
 
-        bool maybe_reopen_camera();
+        bool CheckCamera();
         void set_fov(int value);
         void SetFps(int aFps);
         void DoSetFps(int aFps);
