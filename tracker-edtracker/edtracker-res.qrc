@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/edtracker_logo.png</file>
+    </qresource>
+</RCC>
