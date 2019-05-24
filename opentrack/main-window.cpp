@@ -743,9 +743,6 @@ void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
     menu_action_show.setText(!isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
 
     setVisible(is_minimized);
-    setHidden(!is_minimized);
-
-    setWindowState(is_minimized ? windowState() & ~Qt::WindowMinimized : Qt::WindowNoState);
 
     if (is_minimized)
     {
