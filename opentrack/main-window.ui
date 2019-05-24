@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../gui/opentrack-res.qrc">
+   <iconset resource="../gui/opentrack-res.qrc">
     <normaloff>:/images/opentrack.png</normaloff>:/images/opentrack.png</iconset>
   </property>
   <property name="styleSheet">
@@ -183,7 +183,7 @@
                <string/>
               </property>
               <property name="pixmap">
-               <pixmap resource="../../gui/opentrack-res.qrc">:/images/tracking-not-started.png</pixmap>
+               <pixmap resource="../gui/opentrack-res.qrc">:/images/tracking-not-started.png</pixmap>
               </property>
               <property name="scaledContents">
                <bool>false</bool>
@@ -1077,7 +1077,7 @@
                 <string>Options</string>
                </property>
                <property name="icon">
-                <iconset resource="../../gui/opentrack-res.qrc">
+                <iconset resource="../gui/opentrack-res.qrc">
                  <normaloff>:/images/tools.png</normaloff>:/images/tools.png</iconset>
                </property>
                <property name="iconSize">
@@ -1100,7 +1100,7 @@
                 <string>Mapping</string>
                </property>
                <property name="icon">
-                <iconset resource="../../gui/opentrack-res.qrc">
+                <iconset resource="../gui/opentrack-res.qrc">
                  <normaloff>:/images/curves.png</normaloff>:/images/curves.png</iconset>
                </property>
                <property name="iconSize">
@@ -1453,7 +1453,7 @@
   <tabstop>btnEditCurves</tabstop>
  </tabstops>
  <resources>
-  <include location="../../gui/opentrack-res.qrc"/>
+  <include location="../gui/opentrack-res.qrc"/>
  </resources>
  <connections/>
 </ui>
