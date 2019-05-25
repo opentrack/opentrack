@@ -32,6 +32,15 @@ include(opentrack-policy NO_POLICY_SCOPE)
 project(opentrack)
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
+# must be prior to CMakeDetermineCXXCompiler due to rpath
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
+endif()
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+endif()
+
 if(POLICY CMP0083)
     cmake_policy(SET CMP0083 NEW)
     include(CheckPIESupported)
