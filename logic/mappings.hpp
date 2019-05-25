@@ -29,7 +29,7 @@ class OTR_LOGIC_EXPORT Mappings final
 private:
     Map axes[6];
 public:
-    Mappings(axis_opts** opts);
+    explicit Mappings(axis_opts** opts);
 
     Map& operator()(int i) { return axes[i]; }
     const Map& operator()(int i) const { return axes[i]; }
