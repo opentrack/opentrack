@@ -1,5 +1,5 @@
 include_guard(GLOBAL)
-if(WIN32)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     set(__sdk_username "$ENV{USERNAME}")
 else()
     set(__sdk_username "$ENV{USER}")
