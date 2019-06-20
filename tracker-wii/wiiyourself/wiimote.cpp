@@ -686,7 +686,7 @@ void wiimote::SetReportType (input_report type, bool continuous)
 						TYPE2NAME(IN_BUTTONS_ACCEL_EXT)		:
 						TYPE2NAME(IN_BUTTONS_ACCEL_IR_EXT)	:
 						TYPE2NAME(IN_BUTTONS_BALANCE_BOARD) :
-						_T("(unknown??)");
+						_T("(unknown?)");
 	TRACE(_T("ReportType: %s (%s)"), name, (continuous? _T("continuous") :
 														_T("non-continuous")));
 #endif
