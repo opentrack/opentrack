@@ -14,7 +14,9 @@
 #include <iterator>     // std::size
 #include <tchar.h>
 #include <setupapi.h>
+extern "C" {
 #include <hidsdi.h>
+}
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
 #include <process.h>	// for _beginthreadex()
