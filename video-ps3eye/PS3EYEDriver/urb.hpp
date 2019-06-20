@@ -3,6 +3,7 @@
 #include <memory>
 #include <cstdint>
 #include <mutex>
+#include <condition_variable>
 
 struct FrameQueue;
 struct libusb_device;
