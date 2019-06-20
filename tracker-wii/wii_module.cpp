@@ -62,10 +62,8 @@ struct wii_dialog_pt : TrackerDialog_PT
     wii_dialog_pt();
 };
 
-class wii_metadata_pt : public Metadata
+struct wii_metadata_pt : Metadata
 {
-    Q_OBJECT
-
     QString name() { return tr("WiiPointTracker 1.1"); }
     QIcon icon() { return QIcon(":/Resources/wii.png"); }
 };
