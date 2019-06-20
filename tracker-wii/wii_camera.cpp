@@ -114,6 +114,22 @@ void WIICamera::stop()
 	Beep(1000, 200);
 }
 
+#ifdef __MINGW32__
+extern "C"
+    DWORD WINAPI BluetoothAuthenticateDevice(
+      HWND                  hwndParent,
+      HANDLE                hRadio,
+      BLUETOOTH_DEVICE_INFO *pbtbi,
+      PWSTR                 pszPasskey,
+      ULONG                 ulPasskeyLength
+    );
+
+#ifndef BLUETOOTH_SERVICE_ENABLE
+#   define BLUETOOTH_SERVICE_DISABLE   0x00
+#   define BLUETOOTH_SERVICE_ENABLE    0x01
+#endif
+
+#endif
 
 wii_camera_status WIICamera::pair()
 {
@@ -190,7 +206,7 @@ wii_camera_status WIICamera::pair()
 			DWORD servicecount = 32;
 			GUID guids[32];
 			if (ERROR_SUCCESS != BluetoothEnumerateInstalledServices(hbtlist[i], &btdevinfo, &servicecount, guids)) { error = true; continue; }
-			if (ERROR_SUCCESS != BluetoothSetServiceState(hbtlist[i], &btdevinfo, &HumanInterfaceDeviceServiceClass_UUID, BLUETOOTH_SERVICE_ENABLE)) { error = true; continue; }
+			if (ERROR_SUCCESS != BluetoothSetServiceState(hbtlist[i], &btdevinfo, (GUID*)&HumanInterfaceDeviceServiceClass_UUID, BLUETOOTH_SERVICE_ENABLE)) { error = true; continue; }
 			break;
 		} while (BluetoothFindNextDevice(hbtdevfd, &btdevinfo));
 		BluetoothFindDeviceClose(hbtdevfd);
