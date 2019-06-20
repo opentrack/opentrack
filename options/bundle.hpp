@@ -102,7 +102,7 @@ private:
 
     void reload_();
 
-    friend
+    friend OTR_OPTIONS_EXPORT
     std::shared_ptr<v> options::make_bundle(const QString& name);
 
     std::shared_ptr<v> make_bundle_(const k& key);
