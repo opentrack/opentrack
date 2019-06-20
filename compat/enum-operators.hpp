@@ -3,7 +3,7 @@
 #include <type_traits>
 
 #define OTR_FLAGS_OP2(type, op)                                         \
-    inline type operator op (type a, type b)                            \
+    constexpr inline type operator op (type a, type b)                  \
     {                                                                   \
         using t_ = std::underlying_type_t<type>;                        \
         return type(t_((a)) op t_((b)));                                \
@@ -14,14 +14,14 @@
     type operator op (type, u) = delete // end
 
 #define OTR_FLAGS_OP1(type, op)                                         \
-    inline type operator op (type x)                                    \
+    constexpr inline type operator op (type x)                          \
     {                                                                   \
         using t_ = std::underlying_type_t<type>;                        \
         return type(op t_((x)));                                        \
     } // end
 
 #define OTR_FLAGS_ASSIGN_OP(type, op)                                   \
-    inline type& operator op ## = (type& lhs, type rhs)                 \
+    constexpr inline type& operator op ## = (type& lhs, type rhs)       \
     {                                                                   \
         using t_ = std::underlying_type_t<decltype(rhs)>;               \
         lhs = type(t_((lhs)) op t_((rhs)));                             \
