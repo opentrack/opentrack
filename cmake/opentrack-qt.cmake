@@ -9,6 +9,9 @@ set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} 
 
 function(otr_install_qt_libs)
     foreach(i Qt5::Core Qt5::Gui Qt5::Network Qt5::SerialPort Qt5::Widgets)
+        if(NOT TARGET "${i}")
+            continue()
+        endif()
         otr_install_lib(${i} ".")
     endforeach()
     otr_install_lib(Qt5::QWindowsIntegrationPlugin "./platforms")
