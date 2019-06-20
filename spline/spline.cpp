@@ -37,7 +37,7 @@ spline::~spline()
 
 spline::spline() : spline(QString{}, QString{}, Axis(-1)) {}
 
-void spline::set_tracking_active(bool value)
+void spline::set_tracking_active(bool value) const
 {
     std::shared_ptr<settings> S;
     {

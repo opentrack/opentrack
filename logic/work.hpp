@@ -25,7 +25,7 @@
 #include <tuple>
 #include <functional>
 
-class OTR_LOGIC_EXPORT Work final : public TR
+class OTR_LOGIC_EXPORT Work final : public QObject
 {
     Q_OBJECT
 
@@ -59,7 +59,7 @@ public:
         key_tuple(s.key_zero_press2, [&](bool x) { pipeline_.set_zero(x); }, false),
     };
 
-    Work(Mappings& m, event_handler& ev, QFrame* frame,
+    Work(const Mappings& m, event_handler& ev, QFrame* frame,
          const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto);
     void reload_shortcuts();
     bool is_ok() const;

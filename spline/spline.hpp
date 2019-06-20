@@ -54,7 +54,7 @@ struct OTR_SPLINE_EXPORT base_spline_
     virtual double get_value_no_save(double x) const = 0;
 
     [[nodiscard]] virtual bool get_last_value(QPointF& point) = 0;
-    virtual void set_tracking_active(bool value) = 0;
+    virtual void set_tracking_active(bool value) const = 0;
 
     virtual double max_input() const = 0;
     virtual double max_output() const = 0;
@@ -146,7 +146,7 @@ public:
 
     const points_t& get_points() const override;
 
-    void set_tracking_active(bool value) override;
+    void set_tracking_active(bool value) const override;
     bundle get_bundle();
     void ensure_valid(points_t& in_out) const;
 

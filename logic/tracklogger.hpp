@@ -41,5 +41,8 @@ public:
     void write(const char *s) override;
     void write(const double *p, int n) override;
     void next_line() override;
+
+    TrackLoggerCSV(const TrackLoggerCSV&) = delete;
+    TrackLoggerCSV& operator=(const TrackLoggerCSV&) = delete;
 };
 

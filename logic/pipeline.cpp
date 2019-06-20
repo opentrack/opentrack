@@ -184,7 +184,7 @@ Pose_ reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
     return neck;
 }
 
-pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
+pipeline::pipeline(const Mappings& m, const runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m), ev(ev), libs(libs), logger(logger)
 {
 }
@@ -195,7 +195,7 @@ pipeline::~pipeline()
     wait();
 }
 
-double pipeline::map(double pos, Map& axis)
+double pipeline::map(double pos, const Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
     axis.spline_main.set_tracking_active(!altp);
