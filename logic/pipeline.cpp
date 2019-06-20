@@ -604,7 +604,10 @@ void pipeline::set_center(bool x) { b.set(f_center, x); }
 
 void pipeline::set_held_center(bool value)
 {
-    b.set(f_held_center, value);
+    if (value)
+        b.set(f_held_center | f_center, true);
+    else
+        b.set(f_held_center, false);
 }
 
 void pipeline::set_enabled(bool value) { b.set(f_enabled_h, value); }
