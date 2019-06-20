@@ -1,8 +1,8 @@
 include_guard(GLOBAL)
-find_package(Qt5 REQUIRED COMPONENTS Core Network Widgets LinguistTools Gui QUIET)
 if(WIN32)
     find_package(Qt5Gui REQUIRED COMPONENTS QWindowsIntegrationPlugin)
 endif()
+find_package(Qt5 REQUIRED COMPONENTS Core Network Widgets LinguistTools Gui QUIET)
 find_package(Qt5 COMPONENTS SerialPort QUIET)
 
 set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
