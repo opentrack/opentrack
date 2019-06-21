@@ -161,3 +161,7 @@ if(APPLE)
     add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
     link_libraries(objc z)
 endif()
+
+if(NOT MSVC)
+    include(FindPkgConfig)
+endif()
