@@ -52,6 +52,7 @@ Checks:
     -cppcoreguidelines-avoid-magic-numbers,
     -readability-magic-numbers,
     -modernize-loop-convert,
+    -modernize-use-nodiscard,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
