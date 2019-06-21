@@ -6,3 +6,4 @@
 /sdk-paths-*.cmake
 /.vs/
 /CMakeSettings.json
+/.gtm/
