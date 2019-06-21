@@ -103,7 +103,7 @@ static QStringList get_all_executable_names()
                     if (idx != -1)
                     {
                         QString tmp = cmdline[0].mid(idx+1);
-                        if (cmdline.size() > 1 && (tmp == "wine.bin" || tmp == "wine"))
+                        if (cmdline.size() > 1 && (tmp == QStringLiteral("wine.bin") || tmp == QStringLiteral("wine")))
                         {
                             idx = cmdline[1].lastIndexOf('/');
                             if (idx == -1)
