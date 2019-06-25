@@ -54,6 +54,8 @@ public:
 
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }
     void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
+
+    QSize minimumSizeHint() const override;
 public slots:
     void reload_spline();
 protected slots:
@@ -78,6 +80,8 @@ private:
     bool is_on_pt(const QPointF& pos, int* pt = nullptr);
     void update_range();
     void changeEvent(QEvent* e) override;
+
+    double screen_dpi() const;
 
     QPointF pixel_to_point(const QPointF& point);
     QPointF point_to_pixel(const QPointF& point);
@@ -105,7 +109,7 @@ private:
     // point's circle radius on the widget
     static constexpr int point_size_in_pixels_ = 4;
 
-    const double point_size_in_pixels = point_size_in_pixels_ * std::fmax(1, devicePixelRatioF() * .66);
+    const double point_size_in_pixels = point_size_in_pixels_ * screen_dpi();
 };
 
 } // ns spline_detail
