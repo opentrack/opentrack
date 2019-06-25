@@ -216,9 +216,12 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-INSTALL)
-        if(arg_BIN)
+        if(arg_BIN AND WIN32)
+            install(TARGETS "${n}" RUNTIME DESTINATION ${opentrack-hier-bin} PERMISSIONS ${opentrack-perms-exec})
+        else()
             install(TARGETS "${n}" ${opentrack-hier-str} PERMISSIONS ${opentrack-perms-exec})
         endif()
+
         if(MSVC)
             set(opentrack_install-debug-info FALSE CACHE BOOL "Whether to build and install debug info at install time")
             if(opentrack_install-debug-info)
