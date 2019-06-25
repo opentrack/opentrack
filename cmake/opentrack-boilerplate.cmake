@@ -216,10 +216,14 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-INSTALL)
-        if(arg_BIN AND WIN32)
-            install(TARGETS "${n}" RUNTIME DESTINATION ${opentrack-hier-bin} PERMISSIONS ${opentrack-perms-exec})
+        if(arg_BIN)
+            install(TARGETS "${n}"
+                    RUNTIME DESTINATION ${opentrack-hier-bin}
+                    LIBRARY DESTINATION ${opentrack-hier-pfx}
+                    PERMISSIONS ${opentrack-perms-exec})
         else()
-            install(TARGETS "${n}" ${opentrack-hier-str} PERMISSIONS ${opentrack-perms-exec})
+            install(TARGETS "${n}" ${opentrack-hier-str}
+                    PERMISSIONS ${opentrack-perms-exec})
         endif()
 
         if(MSVC)
