@@ -40,7 +40,7 @@ else()
     set(opentrack-i18n-pfx "./share/opentrack/i18n")
     set(opentrack-i18n-path "../share/opentrack/i18n")
 endif()
-set(opentrack-hier-str ARCHIVE DESTINATION lib/opentrack RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
+set(opentrack-hier-str RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
 
 function(otr_escape_string var str)
     string(REGEX REPLACE "([^_A-Za-z0-9./:-])" "\\\\\\1" str "${str}")
