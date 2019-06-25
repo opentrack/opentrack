@@ -96,7 +96,6 @@ void spline_widget::drawBackground()
     font.setStyleHint(QFont::Monospace, QFont::PreferAntialias);
     painter.setFont(font);
     const QFontMetricsF metrics(font);
-    const double height = metrics.height();
 
     QColor color__(176, 190, 209, 127);
 
@@ -109,6 +108,8 @@ void spline_widget::drawBackground()
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
+    const double space_width = metrics.horizontalAdvance(' ');
+
     // vertical grid
     for (int i = 0; i <= maxy; i += ystep)
     {
@@ -117,11 +118,11 @@ void spline_widget::drawBackground()
                  QPointF(pixel_bounds.x(), y),
                  QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
                  pen);
-        painter.drawText(QRectF(10,
-                                y - height/2,
-                                pixel_bounds.left(),
-                                height),
-                         QString::number(i));
+        QString text = QString::number(i);
+        QRectF rect = metrics.boundingRect(text);
+        painter.drawText(QPointF(pixel_bounds.x() - metrics.horizontalAdvance(text) - space_width,
+                                 y - rect.height()/2 - rect.top()),
+                         text);
     }
 
     // horizontal grid
@@ -135,16 +136,10 @@ void spline_widget::drawBackground()
 
         const QString text = QString::number(i);
 
-        const double width =
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-            metrics.horizontalAdvance(text);
-#else
-            metrics.width(text);
-#endif
+        QRectF rect = metrics.boundingRect(text);
 
-        painter.drawText(QRectF{x - width/2,
-                                pixel_bounds.height() + 10 + height,
-                                width, height},
+        painter.drawText(QPointF(x - rect.width()/2 - rect.left(),
+                                 pixel_bounds.height() - rect.top() + rect.height() + metrics.descent()/4),
                          text);
     }
 }
@@ -188,7 +183,7 @@ void spline_widget::drawFunction()
         }
     );
 
-    painter.setPen(QPen(color_, 1.75, Qt::SolidLine, Qt::FlatCap));
+    painter.setPen(QPen(color_, 2, Qt::SolidLine, Qt::FlatCap));
 
     const double dpr = devicePixelRatioF();
     const double line_length_pixels = std::fmax(1, 2 * dpr);

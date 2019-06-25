@@ -107,7 +107,7 @@ private:
     bool draw_function = true, preview_only = false;
 
     // point's circle radius on the widget
-    static constexpr int point_size_in_pixels_ = 4;
+    static constexpr int point_size_in_pixels_ = 5;
 
     const double point_size_in_pixels = point_size_in_pixels_ * screen_dpi();
 };
