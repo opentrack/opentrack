@@ -37,7 +37,7 @@
 #include <QPair>
 #include <QKeyEvent>
 #include <QApplication>
-#include "qplatformnativeinterface.h"
+#include <qpa/qplatformnativeinterface.h>
 
 #include "x11-keymap.hpp"
 
