@@ -156,9 +156,8 @@ public:
 
         for (const pair& x : keycodes)
         {
-            int native_code = x.first, native_mods = x.second;
-
-            native_code = XKeysymToKeycode(display(), native_code);
+            auto [ native_sym, native_mods ] = x;
+            int native_code = XKeysymToKeycode(display(), native_sym);
 
             if (keybinding::incf((unsigned)native_code, native_mods))
             {
@@ -203,8 +202,8 @@ public:
 
         for (const pair& x : keycodes)
         {
-            int native_code = x.first, native_mods = x.second;
-            native_code = XKeysymToKeycode(display(), native_code);
+            auto [ native_sym, native_mods ] = x;
+            int native_code = XKeysymToKeycode(display(), native_sym);
 
             if (keybinding::decf((unsigned)native_code, native_mods))
             {
@@ -408,8 +407,7 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
         keystate = filter_evil_mods(keystate);
 
-        QPair<KeySym, KeySym> sym_ = keycode_to_keysym(x11.display(), keycode, keystate, kev);
-        KeySym sym = sym_.first, sym2 = sym_.second;
+        auto [ sym, sym2 ] = keycode_to_keysym(x11.display(), keycode, keystate, kev);
 
         Qt::Key k; Qt::KeyboardModifiers mods;
 
