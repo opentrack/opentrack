@@ -670,7 +670,8 @@ namespace EasyTracker
 
     void Tracker::set_fov(int value)
     {
-        QMutexLocker l(&camera_mtx);
+        (void)value;
+        //QMutexLocker l(&camera_mtx);
 
     }
 
