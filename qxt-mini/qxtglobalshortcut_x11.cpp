@@ -179,7 +179,15 @@ public:
                 if (errorHandler.error)
                 {
                     qDebug() << "qxt-mini: error while binding to" << code << mods;
-                    ungrabKey(code, mods);
+                    for (const auto& set : evil_mods.sets())
+                    {
+                        quint32 m = mods;
+
+                        for (int value : set)
+                            m |= (unsigned)value;
+
+                        XUngrabKey(display(), native_code, m, rootWindow());
+                    }
                     ret = false;
                 }
             }
@@ -210,7 +218,7 @@ public:
                     for (int value : set)
                         m |= (unsigned)value;
 
-                    XUngrabKey(display(), code, m, rootWindow());
+                    XUngrabKey(display(), native_code, m, rootWindow());
                 }
 
                 if (errorHandler.error)
