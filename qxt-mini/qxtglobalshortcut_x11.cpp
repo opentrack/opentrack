@@ -93,7 +93,7 @@ public:
 
     static int qxtX11ErrorHandler(Display *display, XErrorEvent *event)
     {
-        Q_UNUSED(display);
+        Q_UNUSED(display)
         switch (event->error_code)
         {
             case BadAccess:
@@ -135,7 +135,7 @@ public:
 
     bool isValid()
     {
-        return m_display != 0;
+        return m_display;
     }
 
     Display *display()
@@ -154,13 +154,13 @@ public:
         const std::vector<pair> keycodes = native_key(Qt::Key(code), Qt::KeyboardModifiers(mods));
         bool ret = true;
 
-        for (pair x : keycodes)
+        for (const pair& x : keycodes)
         {
             int native_code = x.first, native_mods = x.second;
 
             native_code = XKeysymToKeycode(display(), native_code);
 
-            if (keybinding::incf(native_code, native_mods))
+            if (keybinding::incf((unsigned)native_code, native_mods))
             {
                 QxtX11ErrorHandler errorHandler;
 
@@ -170,8 +170,8 @@ public:
                 {
                     quint32 m = native_mods;
 
-                    for (auto value : set)
-                        m |= value;
+                    for (int value : set)
+                        m |= (unsigned)value;
 
                     XGrabKey(display(), native_code, m, rootWindow(), True, GrabModeAsync, GrabModeAsync);
                 }
@@ -193,12 +193,12 @@ public:
         const std::vector<pair> keycodes = native_key(Qt::Key(code), Qt::KeyboardModifiers(mods));
         bool ret = true;
 
-        for (pair x : keycodes)
+        for (const pair& x : keycodes)
         {
             int native_code = x.first, native_mods = x.second;
             native_code = XKeysymToKeycode(display(), native_code);
 
-            if (keybinding::decf(native_code, native_mods))
+            if (keybinding::decf((unsigned)native_code, native_mods))
             {
                 QxtX11ErrorHandler errorHandler;
                 XUngrabKey(display(), native_code, native_mods, rootWindow());
@@ -207,8 +207,8 @@ public:
                 {
                     quint32 m = mods;
 
-                    for (auto value : set)
-                        m |= value;
+                    for (int value : set)
+                        m |= (unsigned)value;
 
                     XUngrabKey(display(), code, m, rootWindow());
                 }
@@ -354,7 +354,7 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
     bool is_release = false;
 
-    xcb_key_press_event_t *kev = 0;
+    xcb_key_press_event_t *kev = nullptr;
     if (eventType == "xcb_generic_event_t") {
         xcb_generic_event_t *ev = static_cast<xcb_generic_event_t *>(message);
         switch (ev->response_type & 127)
@@ -405,16 +405,15 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
         Qt::Key k; Qt::KeyboardModifiers mods;
 
-
         {
-            std::tie(k, mods) = x11_key_to_qt(x11.display(), sym, keystate);
+            std::tie(k, mods) = x11_key_to_qt(x11.display(), (quint32)sym, keystate);
 
             if (k != 0)
                 activateShortcut(k, mods, !is_release);
         }
 
         {
-            std::tie(k, mods) = x11_key_to_qt(x11.display(), sym2, keystate);
+            std::tie(k, mods) = x11_key_to_qt(x11.display(), (quint32)sym2, keystate);
 
             if (k != 0)
                 activateShortcut(k, mods, !is_release);

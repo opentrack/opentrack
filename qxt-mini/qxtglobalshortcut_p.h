@@ -54,13 +54,12 @@ public:
     bool unsetShortcut();
 
     static bool error;
-    static bool eventFilter(void* message);
     bool nativeEventFilter(const QByteArray & eventType, void * message, long * result) override;
 
     static void activateShortcut(quint32 nativeKey, quint32 nativeMods, bool is_down);
 
 private:
-    struct event_filter_installer;
+    struct event_filter_installer { static void ensure_event_filter(); };
     friend struct event_filter_installer;
     struct tag {};
     explicit QxtGlobalShortcutPrivate(tag);
@@ -72,8 +71,6 @@ private:
     static bool unregisterShortcut(quint32 nativeKey, quint32 nativeMods);
 
     static QHash<QPair<quint32, quint32>, QxtGlobalShortcut*> shortcuts;
-
-    static void ensure_event_filter();
 };
 
 #endif // QXTGLOBALSHORTCUT_P_H

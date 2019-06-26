@@ -213,7 +213,7 @@ std::vector<quint32> qt_key_to_x11(Display*, Qt::Key k, Qt::KeyboardModifiers)
 
 Qt::KeyboardModifiers x11_mods_to_qt(quint32 mods)
 {
-    Qt::KeyboardModifiers ret{0};
+    int ret{0};
 
     if (mods & Mod1Mask)
         ret |= Qt::AltModifier;
@@ -224,7 +224,7 @@ Qt::KeyboardModifiers x11_mods_to_qt(quint32 mods)
     if (mods & ShiftMask)
         ret |= Qt::ShiftModifier;
 
-    return ret;
+    return {ret};
 }
 
 std::tuple<Qt::Key, Qt::KeyboardModifiers> x11_key_to_qt(Display* disp, quint32 keycode, quint32 mods)
@@ -240,7 +240,7 @@ std::tuple<Qt::Key, Qt::KeyboardModifiers> x11_key_to_qt(Display* disp, quint32 
             return t(k, x11_mods_to_qt(mods));
     }
 
-    return t(Qt::Key(0), Qt::KeyboardModifiers(0));
+    return t(Qt::Key(0), Qt::KeyboardModifier(0));
 }
 
 
@@ -278,7 +278,7 @@ QPair<KeySym, KeySym> keycode_to_keysym(Display* disp,
 
     static char bytes[255+1];
     KeySym sym = 0;
-    int len = XLookupString(&ev, bytes, 255, &sym, NULL);
+    int len = XLookupString(&ev, bytes, 255, &sym, nullptr);
     if (len <= 0 || len > 255)
     {
         len = 0;
