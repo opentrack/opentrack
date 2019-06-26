@@ -258,7 +258,7 @@ void spline_widget::drawFunction()
 double spline_widget::screen_dpi() const
 {
 #ifdef _WIN32
-    return std::max(devicePixelRatioF, 1.);
+    return std::max(devicePixelRatioF(), 1.);
 #else
     return std::max(std::max(logicalDpiX()/(double)physicalDpiX(), devicePixelRatioF()), 1.);
 #endif
