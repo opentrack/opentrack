@@ -148,6 +148,8 @@ static int enum_to_fps(int value)
     case fps_50:        fps = 50; break;
     case fps_100:       fps = 100; break;
     case fps_120:       fps = 120; break;
+    case fps_300:       fps = 300; break;
+    case fps_250:       fps = 250; break;
     }
 
     return fps;

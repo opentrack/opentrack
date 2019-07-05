@@ -48,7 +48,9 @@ enum aruco_fps
     fps_50      = 6,
     fps_100     = 7,
     fps_120     = 8,
-    fps_MAX     = 9,
+    fps_300     = 9,
+    fps_250     = 10,
+    fps_MAX     = 11,
 };
 
 struct settings : opts {
