@@ -151,7 +151,10 @@ void process_detector::save()
     for (int i = 0; i < ui.tableWidget->rowCount(); i++)
     {
         auto exe = ui.tableWidget->item(i, 0)->text();
-        auto profile = reinterpret_cast<QComboBox*>(ui.tableWidget->cellWidget(i, 1))->currentText();
+        auto widget = qobject_cast<QComboBox*>(ui.tableWidget->cellWidget(i, 1));
+        if (!widget)
+            continue;
+        auto profile = widget->currentText();
         str += RECORD_SEPARATOR + exe + UNIT_SEPARATOR + profile;
     }
 
