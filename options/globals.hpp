@@ -45,12 +45,13 @@ auto with_settings_object_(ini_ctx& ini, F&& fun)
 OTR_OPTIONS_EXPORT ini_ctx& cur_settings();
 OTR_OPTIONS_EXPORT ini_ctx& global_settings();
 
+OTR_OPTIONS_EXPORT void mark_ini_modified(bool value = true);
+
 } // ns options::globals::detail
 
 namespace options::globals
 {
-    OTR_OPTIONS_EXPORT void mark_ini_modified(bool value = true);
-    OTR_OPTIONS_EXPORT bool is_ini_modified();
+    OTR_OPTIONS_EXPORT void mark_global_ini_modified(bool value = true);
     OTR_OPTIONS_EXPORT QString ini_directory();
     OTR_OPTIONS_EXPORT QString ini_filename();
     OTR_OPTIONS_EXPORT QString ini_pathname();

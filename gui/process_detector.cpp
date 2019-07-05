@@ -30,6 +30,7 @@ void proc_detector_settings::set_game_list(const QString &game_list)
 {
     with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-list", game_list);
+        mark_global_ini_modified();
     });
 }
 
@@ -51,6 +52,7 @@ void proc_detector_settings::set_is_enabled(bool enabled)
 {
     with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-detector-enabled", enabled);
+        mark_global_ini_modified();
     });
 }
 

@@ -76,6 +76,13 @@ ini_ctx& global_settings()
     return ret;
 }
 
+void mark_ini_modified(bool value)
+{
+    auto& ini = cur_settings();
+    ini.modifiedp = value;
+    ini.mtx.unlock();
+}
+
 } // ns options::globals::detail
 
 namespace options::globals
@@ -124,9 +131,9 @@ QStringList ini_list()
     return list;
 }
 
-void mark_ini_modified(bool value)
+void mark_global_ini_modified(bool value)
 {
-    auto& ini = cur_settings();
+    auto& ini = global_settings();
     ini.modifiedp = value;
     ini.mtx.unlock();
 }

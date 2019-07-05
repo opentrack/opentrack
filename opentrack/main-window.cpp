@@ -852,6 +852,7 @@ void main_window::set_profile_in_registry(const QString &profile)
 {
     with_global_settings_object([&](QSettings& s) {
         s.setValue(OPENTRACK_PROFILE_FILENAME_KEY, profile);
+        mark_global_ini_modified();
     });
 }
 

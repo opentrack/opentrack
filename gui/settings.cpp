@@ -42,6 +42,7 @@ void options_dialog::set_disable_translation_state(bool value)
     with_global_settings_object([&](QSettings& s)
     {
         s.setValue("disable-translation", value);
+        mark_global_ini_modified();
     });
 }
 
