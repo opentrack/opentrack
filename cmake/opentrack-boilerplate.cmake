@@ -76,7 +76,7 @@ endfunction()
 
 function(otr_compat target)
     if(NOT MSVC)
-        set_property(SOURCE ${${target}-moc} APPEND_STRING PROPERTY COMPILE_FLAGS "-w -Wno-error ")
+        set_property(SOURCE ${${target}-moc} APPEND PROPERTY COMPILE_OPTIONS "-w;-Wno-error")
     endif()
 
     if(UNIX) # no-op on OSX
