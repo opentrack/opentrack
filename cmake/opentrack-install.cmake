@@ -12,6 +12,7 @@ macro(otr_install_dir path)
         DIRECTORY ${ARGN} DESTINATION "${path}"
         FILE_PERMISSIONS ${opentrack-perms-file}
         DIRECTORY_PERMISSIONS ${opentrack-perms-dir}
+        PATTERN ".gtm" EXCLUDE
     )
 endmacro()
 
