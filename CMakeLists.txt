@@ -49,6 +49,15 @@ endif()
 
 include(CMakeDetermineCCompiler)
 include(CMakeDetermineCXXCompiler)
+
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT __otr_compile_flags_set)
+    set(__otr_compile_flags_set TRUE CACHE INTERNAL "" FORCE)
+    foreach(i C CXX)
+        set(CMAKE_${i}_FLAGS_RELEASE "-O3 -march=native" CACHE STRING "" FORCE)
+        set(CMAKE_${i}_FLAGS "-ggdb -Wall -Wextra -Wpedantic" CACHE STRING "" FORCE)
+    endforeach()
+endif()
+
 include(CMakeParseArguments)
 
 include(opentrack-load-user-settings)
