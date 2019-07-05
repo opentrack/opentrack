@@ -84,6 +84,8 @@ namespace EasyTracker
         UpdateModel();
 
         UpdateSettings();
+
+        cv::namedWindow("Preview");
     }
 
     Tracker::~Tracker()
