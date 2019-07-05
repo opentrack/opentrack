@@ -584,6 +584,14 @@ namespace EasyTracker
                 iPreview = Preview(w, h);
             }
         }
+        else
+        {
+            // No preview, destroy preview pop-up
+            if (iDebug)
+            {
+                cv::destroyWindow("Preview");
+            }
+        }
 
         dbgout << "Frame time:" << iTimer.elapsed_seconds();
         //infout << "ProcessFrame - end";
