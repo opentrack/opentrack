@@ -23,6 +23,16 @@
 
 #include <iostream>
 
+#ifdef __GNUC__
+#   pragma GCC diagnostic ignored "-Wsign-conversion"
+#   pragma GCC diagnostic ignored "-Wfloat-conversion"
+
+#endif
+
+#ifdef __clang__
+#   pragma clang diagnostic ignored "-Wimplicit-float-conversion"
+#endif
+
 using namespace options;
 
 // Disable debug
@@ -126,17 +136,15 @@ namespace EasyTracker
     ///
     void Tracker::CreateCameraIntrinsicsMatrices()
     {
-        // Create our camera matrix                
-        iCameraMatrix.create(3, 3, CV_64FC1);
-        iCameraMatrix.setTo(cv::Scalar(0));
-        iCameraMatrix.at<double>(0, 0) = iCameraInfo.fx;
-        iCameraMatrix.at<double>(1, 1) = iCameraInfo.fy;
-        iCameraMatrix.at<double>(0, 2) = iCameraInfo.P_x;
-        iCameraMatrix.at<double>(1, 2) = iCameraInfo.P_y;
-        iCameraMatrix.at<double>(2, 2) = 1;
+        // Create our camera matrix
+        iCameraMatrix(0, 0) = iCameraInfo.fx;
+        iCameraMatrix(1, 1) = iCameraInfo.fy;
+        iCameraMatrix(0, 2) = iCameraInfo.P_x;
+        iCameraMatrix(1, 2) = iCameraInfo.P_y;
+        iCameraMatrix(2, 2) = 1;
 
         // Create distortion cooefficients
-        iDistCoeffsMatrix = cv::Mat::zeros(8, 1, CV_64FC1);
+        iDistCoeffsMatrix = cv::Matx<double, 8, 1>::zeros();
         // As per OpenCV docs they should be thus: k1, k2, p1, p2, k3, k4, k5, k6
         // 0 - Radial first order
         // 1 - Radial second order
@@ -147,7 +155,7 @@ namespace EasyTracker
         // 6 - Radial fifth order
         // 7 - Radial sixth order
         for (unsigned k = 0; k < 8; k++)
-            iDistCoeffsMatrix.at<double>(k, 0) = (double)iCameraInfo.dist_c[k];
+            iDistCoeffsMatrix(k) = (double)iCameraInfo.dist_c[k];
     }
 
 
@@ -404,9 +412,9 @@ namespace EasyTracker
                 iTrackedRects.clear();
                 if (iDeadzoneHalfEdge != 0) // Check if deazones are enabled
                 {
-                    for (const cv::Point& pt : iTrackedPoints)
+                    for (const cv::Point2f& pt : iTrackedPoints)
                     {
-                        cv::Rect rect(pt - cv::Point(iDeadzoneHalfEdge, iDeadzoneHalfEdge), cv::Size(iDeadzoneEdge, iDeadzoneEdge));
+                        cv::Rect rect(pt - cv::Point2f(iDeadzoneHalfEdge, iDeadzoneHalfEdge), cv::Size(iDeadzoneEdge, iDeadzoneEdge));
                         iTrackedRects.push_back(rect);
                     }
                 }
@@ -465,7 +473,7 @@ namespace EasyTracker
                         iAngles.push_back(angles);
 
                         // Check if pitch is closest to zero
-                        int absolutePitch = std::abs(angles[0]);
+                        int absolutePitch = (int)std::abs(angles[0]);
                         if (minPitch > absolutePitch)
                         {
                             // The solution with pitch closest to zero is the one we want
