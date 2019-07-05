@@ -1,16 +1,10 @@
 #include "ftnoir_protocol_wine.h"
 #include <QString>
-#include <QStringList>
-#include <QCoreApplication>
 #include <string.h>
 #include <math.h>
-#include <sys/mman.h>
-#include <sys/stat.h>        /* For mode constants */
-#include <fcntl.h>           /* For O_* constants */
 #ifndef OTR_WINE_NO_WRAPPER
 #   include "csv/csv.h"
 #endif
-#include "compat/macros.hpp"
 #include "compat/library-path.hpp"
 
 wine::wine() = default;
