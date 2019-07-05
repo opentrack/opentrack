@@ -98,8 +98,8 @@ int process_detector::add_row(QString const& exe_name, QString const& profile)
 
     QComboBox* cb = new QComboBox();
     cb->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    cb->addItem("");
     cb->addItems(ini_list());
+    cb->setCurrentText(ini_filename());
     ui.tableWidget->setCellWidget(i, 1, cb);
 
     QTableWidgetItem* twi = new QTableWidgetItem(exe_name);
@@ -117,10 +117,11 @@ int process_detector::add_row(QString const& exe_name, QString const& profile)
     return i;
 }
 
-void process_detector::add_items()
+void process_detector::load_rows()
 {
+    for (int k = ui.tableWidget->size().height() - 1; k >= 0; k--)
+        ui.tableWidget->removeRow(k);
     auto names = s.split_process_names();
-    ui.tableWidget->clearContents();
     auto keys = names.keys();
     std::sort(keys.begin(), keys.end());
     for (auto const& n : keys)
@@ -133,7 +134,7 @@ process_detector::process_detector(QWidget* parent) : QWidget(parent)
     connect(ui.add, SIGNAL(clicked()), this, SLOT(add()));
     connect(ui.remove, SIGNAL(clicked()), this, SLOT(remove()));
 
-    add_items();
+    load_rows();
 
     QResizeEvent e(ui.tableWidget->size(), ui.tableWidget->size());
     ui.tableWidget->resizeEvent(&e);
@@ -160,6 +161,7 @@ void process_detector::save()
 
 void process_detector::revert()
 {
+    load_rows();
 }
 
 void process_detector::add()

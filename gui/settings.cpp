@@ -234,6 +234,8 @@ void options_dialog::doOK()
 
 void options_dialog::doCancel()
 {
+    ui.game_detector->revert();
+
     if (isHidden()) // close() can return true twice in a row it seems
         return;
     hide();
@@ -241,7 +243,6 @@ void options_dialog::doCancel()
         return;
 
     main.b->reload();
-    ui.game_detector->revert();
     emit closing();
 }
 

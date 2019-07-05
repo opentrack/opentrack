@@ -35,7 +35,7 @@ class OTR_GUI_EXPORT process_detector final : public QWidget
     proc_detector_settings s;
 
     int add_row(const QString& exe_name = "...", const QString& profile = "");
-    void add_items();
+    void load_rows();
 public:
     process_detector(QWidget* parent = nullptr);
 public slots:
