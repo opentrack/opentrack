@@ -18,11 +18,16 @@ wine::wine() = default;
 wine::~wine()
 {
 #ifndef OTR_WINE_NO_WRAPPER
+    bool exit = false;
     if (shm) {
         shm->stop = true;
-        wrapper.waitForFinished(100);
+        exit = wrapper.waitForFinished(100);
     }
-    wrapper.kill();
+    if (!exit)
+    {
+        wrapper.kill();
+        wrapper.waitForFinished(-1);
+    }
 #endif
     //shm_unlink("/" WINE_SHM_NAME);
 }
