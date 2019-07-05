@@ -92,7 +92,7 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    set(CMAKE_CXX_FLAGS "-fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
+    add_compile_options(-fuse-cxa-atexit)
 
     if(LINUX) # assume binutils
         add_link_options(-Wl,--exclude-libs,ALL)
