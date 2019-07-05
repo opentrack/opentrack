@@ -29,3 +29,7 @@ endif()
 if(TARGET ps3eye-mode-test)
     install(TARGETS "ps3eye-mode-test" DESTINATION "${opentrack-hier-pfx}")
 endif()
+
+if(TARGET ps3eye-frame-test)
+    install(TARGETS "ps3eye-frame-test" DESTINATION "${opentrack-hier-pfx}")
+endif()
