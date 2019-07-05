@@ -226,7 +226,7 @@ void aruco_tracker::draw_ar(bool ok)
     }
 
     char buf[9];
-    ::snprintf(buf, sizeof(buf)-1, "Hz: %d", clamp(int(fps), 0, 9999));
+    ::snprintf(buf, sizeof(buf), "Hz: %d", clamp(int(fps), 0, 9999));
     cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0), 1);
 }
 
