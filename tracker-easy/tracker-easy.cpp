@@ -88,10 +88,11 @@ namespace EasyTracker
 
     Tracker::~Tracker()
     {
-        cv::destroyWindow("Preview");
-
         iThread.exit();
         iThread.wait();        
+
+        if (iDebug)
+            cv::destroyWindow("Preview");
         
         if (camera)
         {
