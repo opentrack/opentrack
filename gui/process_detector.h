@@ -10,21 +10,22 @@
 
 #include "export.hpp"
 
-#include <QObject>
-#include <QWidget>
-#include <QTableWidget>
-
 #include "gui/ui_process_widget.h"
 #include "process-detector-fancy-table.hpp"
 #include "options/options.hpp"
 
+#include <QObject>
+#include <QString>
+#include <QWidget>
+#include <QTableWidget>
+
 struct OTR_GUI_EXPORT proc_detector_settings
 {
-    QHash<QString, QString> split_process_names();
-    QString get_game_list();
-    void set_game_list(const QString& game_list);
-    bool is_enabled();
-    void set_is_enabled(bool enabled);
+    static QHash<QString, QString> split_process_names();
+    static QString get_game_list();
+    static void set_game_list(const QString& game_list);
+    static bool is_enabled();
+    static void set_is_enabled(bool enabled);
 };
 
 class OTR_GUI_EXPORT process_detector final : public QWidget
@@ -60,10 +61,10 @@ public slots:
 class OTR_GUI_EXPORT process_detector_worker : QObject
 {
     Q_OBJECT
-    proc_detector_settings s;
     QString last_exe_name;
+    proc_detector_settings s;
 public:
-    bool profile_to_start(QString& str);
+    [[nodiscard]] bool profile_to_start(QString& str);
     bool should_stop();
 };
 

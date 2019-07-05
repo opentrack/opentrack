@@ -58,12 +58,13 @@ void proc_detector_settings::set_is_enabled(bool enabled)
 
 QHash<QString, QString> proc_detector_settings::split_process_names()
 {
-    QHash<QString, QString> ret;
     QString str = get_game_list();
     QStringList pairs = str.split(RECORD_SEPARATOR, QString::SkipEmptyParts);
+    QHash<QString, QString> ret;
+    ret.reserve(pairs.size() * 2);
     for (auto const& pair : pairs)
     {
-        QList<QString> tmp = pair.split(UNIT_SEPARATOR);
+        QStringList tmp = pair.split(UNIT_SEPARATOR);
         if (tmp.count() != 2)
             continue;
         if (tmp[0].contains(UNIT_SEPARATOR) || tmp[0].contains(RECORD_SEPARATOR))
@@ -138,9 +139,6 @@ process_detector::process_detector(QWidget* parent) : QWidget(parent)
 
     QResizeEvent e(ui.tableWidget->size(), ui.tableWidget->size());
     ui.tableWidget->resizeEvent(&e);
-
-    proc_detector_settings s;
-
     ui.enabled->setChecked(s.is_enabled());
 }
 
@@ -216,20 +214,18 @@ bool process_detector_worker::profile_to_start(QString& str)
 
     // assuming manual stop by user button click.
     // don't automatically start again while the same process is running.
-    if (last_exe_name != "" && exe_list.contains(last_exe_name))
+    if (!last_exe_name.isEmpty() && exe_list.contains(last_exe_name))
         return false;
     // it's gone, we can start automatically again
-    last_exe_name = "";
+    last_exe_name = QString();
 
-    for (auto& name : exe_list)
-    {
+    for (auto&& name : exe_list)
         if (filenames.contains(name))
         {
             str = filenames[name];
-            last_exe_name = std::move(name);
+            last_exe_name = name;
             return str != QString{};
         }
-    }
 
     return false;
 }
