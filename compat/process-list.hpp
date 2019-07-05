@@ -133,8 +133,9 @@ static QStringList get_all_executable_names()
 
 #include <proc/readproc.h>
 #include <cerrno>
+
 template<typename = void>
-static QStringList get_all_executable_names()
+QStringList get_all_executable_names()
 {
     QStringList ret;
     proc_t** procs = readproctab(PROC_FILLCOM);
