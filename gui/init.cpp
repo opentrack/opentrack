@@ -111,8 +111,20 @@ static void set_qt_style()
 #   include <alloca.h>
 #endif
 
-static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QString &msg)
+static void qdebug_to_console(QtMsgType loglevel, const QMessageLogContext& ctx, const QString &msg)
 {
+    const char* level;
+
+    switch (loglevel)
+    {
+    default:
+    case QtDebugMsg: level = "DEBUG "; break;
+    case QtWarningMsg: level = "WARN "; break;
+    case QtCriticalMsg: level = "CRIT "; break;
+    case QtFatalMsg: level = "FATAL "; break;
+    case QtInfoMsg: level = "INFO "; break;
+    }
+
 #ifdef _WIN32
     static_assert(sizeof(wchar_t) == sizeof(decltype(*msg.utf16())));
 
@@ -139,9 +151,9 @@ static void qdebug_to_console(QtMsgType, const QMessageLogContext& ctx, const QS
 #endif
         {
             if (ctx.file)
-                std::fprintf(stderr, "[%s:%d]: %ls\n", ctx.file, ctx.line, bytes);
+                std::fprintf(stderr, "%s[%s:%d]: %ls\n", level, ctx.file, ctx.line, bytes);
             else
-                std::fprintf(stderr, "%ls\n", bytes);
+                std::fprintf(stderr, "%s%ls\n", level, bytes);
         }
         std::fflush(stderr);
     }
