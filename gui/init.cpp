@@ -252,9 +252,7 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
     enable_x11_threads();
 #endif
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QApplication app(argc, argv);
