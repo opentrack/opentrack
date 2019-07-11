@@ -149,12 +149,10 @@ static void qdebug_to_console(QtMsgType loglevel, const QMessageLogContext& ctx,
         bytes[len-1] = 0;
         (void)msg.toWCharArray(bytes);
 #endif
-        {
-            if (ctx.file)
-                std::fprintf(stderr, "%s [%s:%d]: %ls\n", level, ctx.file, ctx.line, bytes);
-            else
-                std::fprintf(stderr, "%s %ls\n", level, bytes);
-        }
+        if (ctx.file)
+            std::fprintf(stderr, "%s [%s:%d]: %ls\n", level, ctx.file, ctx.line, bytes);
+        else
+            std::fprintf(stderr, "%s %ls\n", level, bytes);
         std::fflush(stderr);
     }
 }
