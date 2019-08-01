@@ -204,18 +204,22 @@ void spline_widget::drawFunction()
                : QPointF{max_x_pixel, val.y()};
     };
 
+    const auto fn = [&] (double k) {
+      const auto next_1 = config->get_value_no_save(k + step*1);
+      const auto next_2 = config->get_value_no_save(k + step*2);
+      const auto next_3 = config->get_value_no_save(k + step*3);
+
+      QPointF b(clamp(point_to_pixel({k + step*1, next_1}))),
+          c(clamp(point_to_pixel({k + step*2, next_2}))),
+          d(clamp(point_to_pixel({k + step*3, next_3})));
+
+      path.cubicTo(b, c, d);
+    };
+
     for (double k = 0; k < maxx; k += step*3) // NOLINT
-    {
-        const auto next_1 = config->get_value_no_save(k + step*1);
-        const auto next_2 = config->get_value_no_save(k + step*2);
-        const auto next_3 = config->get_value_no_save(k + step*3);
+        fn(k);
 
-        QPointF b(clamp(point_to_pixel({k + step*1, next_1}))),
-                c(clamp(point_to_pixel({k + step*2, next_2}))),
-                d(clamp(point_to_pixel({k + step*3, next_3})));
-
-        path.cubicTo(b, c, d);
-    }
+    fn(maxx);
 
     painter.drawPath(path);
 #else
