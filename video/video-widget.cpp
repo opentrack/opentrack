@@ -11,9 +11,8 @@
 
 void video_widget::init_image_nolock()
 {
-    double dpr = devicePixelRatioF();
-    size_.store({ iround(width() * dpr), iround(height() * dpr) },
-                std::memory_order_release);
+    double dpi = screen_dpi();
+    size_.store({ iround(width() * dpi), iround(height() * dpi) }, std::memory_order_release);
 }
 
 video_widget::video_widget(QWidget* parent) : QWidget(parent)
@@ -85,3 +84,4 @@ void video_widget::set_fresh(bool x)
 {
     fresh_.store(x, std::memory_order_release);
 }
+

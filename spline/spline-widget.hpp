@@ -11,6 +11,7 @@
 
 #include "spline.hpp"
 #include "api/plugin-api.hpp"
+#include "compat/qt-dpi.hpp"
 #include "options/options.hpp"
 
 #include "export.hpp"
@@ -26,7 +27,7 @@ namespace spline_detail {
 
 using namespace options;
 
-class OTR_SPLINE_EXPORT spline_widget final : public QWidget
+class OTR_SPLINE_EXPORT spline_widget final : public QWidget, public screen_dpi_mixin<spline_widget>
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
@@ -80,8 +81,6 @@ private:
     bool is_on_pt(const QPointF& pos, int* pt = nullptr);
     void update_range();
     void changeEvent(QEvent* e) override;
-
-    double screen_dpi() const;
 
     QPointF pixel_to_point(const QPointF& point);
     QPointF point_to_pixel(const QPointF& point);
