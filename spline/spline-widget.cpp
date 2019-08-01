@@ -190,7 +190,7 @@ void spline_widget::drawFunction()
     const double step = std::fmax(.1, line_length_pixels / c.x());
     const double maxx = config->max_input();
 
-//#define USE_CUBIC_SPLINE
+#define USE_CUBIC_SPLINE
 #if defined USE_CUBIC_SPLINE
     QPainterPath path;
 
