@@ -185,8 +185,8 @@ void spline_widget::drawFunction()
 
     painter.setPen(QPen(color_, 2, Qt::SolidLine, Qt::FlatCap));
 
-    const double dpr = devicePixelRatioF();
-    const double line_length_pixels = std::fmax(1, 2 * dpr);
+    const double dpr = screen_dpi();
+    const double line_length_pixels = std::fmax(1, dpr);
     const double step = std::fmax(.1, line_length_pixels / c.x());
     const double maxx = config->max_input();
 
