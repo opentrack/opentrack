@@ -69,6 +69,9 @@ using pair = QPair<quint32, quint32>;
 
 struct keybinding final
 {
+    keybinding(const keybinding&) = default;
+    keybinding& operator=(const keybinding&) = default;
+
     quint32 code, mods;
     int refcnt;
 
@@ -361,6 +364,8 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
     bool is_release = false;
 
+    static_assert(std::is_same_v<xcb_key_press_event_t, xcb_key_release_event_t>);
+
     xcb_key_press_event_t *kev = nullptr;
     if (eventType == "xcb_generic_event_t") {
         xcb_generic_event_t *ev = static_cast<xcb_generic_event_t *>(message);
@@ -368,10 +373,11 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
         {
             case XCB_KEY_RELEASE:
                 is_release = true;
-                /*FALLTHROUGH*/
+            [[fallthrough]];
             case XCB_KEY_PRESS:
                 kev = static_cast<xcb_key_press_event_t *>(message);
-                /*FALLTHROUGH*/
+                break;
+
             default:
                 break;
         }

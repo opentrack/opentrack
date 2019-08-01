@@ -101,7 +101,7 @@ double spline::get_value_internal(int x) const
     const float sign = signum(x);
     x = std::abs(x);
     const float ret_ = data[std::min(unsigned(x), value_count - 1)];
-    return sign * clamp(ret_, 0, 1000);
+    return (double)(sign * clamp(ret_, 0, 1000));
 }
 
 void spline::ensure_in_bounds(const QList<QPointF>& points, int i, f& x, f& y)
@@ -155,6 +155,7 @@ void spline::update_interp_data() const
 
     const double c = bucket_size_coefficient(list);
     const double c_ = c * c_interp;
+    const float cf = (float)c, c_f = (float)c_;
 
     for (unsigned i = 0; i < value_count; i++)
         data[i] = magic_fill_value;
@@ -200,7 +201,7 @@ void spline::update_interp_data() const
             };
 
             // multiplier helps fill in all the x's needed
-            const unsigned end = (unsigned)(c_ * (p2_x - p1_x)) + 1;
+            const unsigned end = (unsigned)(c_f * (p2_x - p1_x)) + 1;
             const f end_(end);
 
             for (unsigned k = 0; k <= end; k++)
@@ -209,7 +210,7 @@ void spline::update_interp_data() const
                 const f t2 = t*t;
                 const f t3 = t*t*t;
 
-                const unsigned x = unsigned(f(.5) * c * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
+                const unsigned x = unsigned(f(.5) * cf * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
                 const float y = (float)(f(.5) * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
                 if (x < value_count)

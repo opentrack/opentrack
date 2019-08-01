@@ -43,6 +43,10 @@ function(otr_qt2 n)
         -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
         -DQT_MESSAGELOGCONTEXT
     )
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set_property(SOURCE ${${n}-moc} ${${n}-rcc}
+                     APPEND_STRING PROPERTY COMPILE_FLAGS " -w -Wno-error ")
+    endif()
 endfunction()
 
 include_directories("${CMAKE_BINARY_DIR}")

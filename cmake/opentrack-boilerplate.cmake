@@ -208,7 +208,7 @@ function(otr_module n_)
     if(CMAKE_COMPILER_IS_CLANGXX AND (arg_EXECUTABLE OR NOT arg_BIN))
         set(opts
             weak-vtables
-            #header-hygiene
+            header-hygiene
         )
         foreach(k ${opts})
             target_compile_options(${n} PRIVATE "-Wno-${k}")

@@ -106,7 +106,7 @@ shm_wrapper::shm_wrapper(const char *shm_name, const char* /*mutex_name*/, int m
     strcat(filename, shm_name);
     fd = shm_open(filename, O_RDWR | O_CREAT, 0600);
     (void) ftruncate(fd, map_size);
-    mem = mmap(NULL, map_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
+    mem = mmap(nullptr, map_size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, (off_t)0);
 }
 
 shm_wrapper::~shm_wrapper()
