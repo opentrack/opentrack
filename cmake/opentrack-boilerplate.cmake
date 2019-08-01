@@ -18,10 +18,10 @@ set(new-hier-path "#pragma once
 #endif
 
 #define OPENTRACK_LIBRARY_PREFIX \"\"
-#define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
-#define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"
+#define OPENTRACK_LIBRARY_PATH \"/${opentrack-hier-path}/\"
+#define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}/\"
 #define OPENTRACK_CONTRIB_PATH \"${opentrack-hier-doc}contrib/\"
-#define OPENTRACK_I18N_PATH \"${opentrack-i18n-path}\"
+#define OPENTRACK_I18N_PATH \"${opentrack-hier-root}/${opentrack-i18n-pfx}\"
 ")
 
 function(otr_write_library_paths)
@@ -282,7 +282,7 @@ function(otr_install_lib target dest)
                 set(pdb-path "")
                 otr_pdb_for_dll(pdb-path "${path}")
                 if(pdb-path)
-                    install(FILES "${pdb-path}" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-exec})
+                    install(FILES "${pdb-path}" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-file})
                 endif()
             endif()
             install(FILES "${path}" DESTINATION "${dest}" PERMISSIONS ${opentrack-perms-exec})
