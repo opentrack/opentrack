@@ -36,7 +36,7 @@ protected:
     std::vector<unsigned char> vec;
     bool fresh() const;
     void set_fresh(bool x);
-    void set_image(const unsigned char* src, int width, int height, unsigned stride, QImage::Format fmt);
+    void set_image(const unsigned char* src, int width, int height, int stride, QImage::Format fmt);
 
 private:
     void init_image_nolock();

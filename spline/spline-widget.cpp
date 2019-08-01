@@ -155,8 +155,7 @@ void spline_widget::drawFunction()
         moving_control_point_idx < points.size())
     {
         const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
-        const QPointF prev_ = point_to_pixel({});
-        QPointF prev(iround(prev_.x()), iround(prev_.y()));
+        QPointF prev = point_to_pixel({});
         for (const auto& point : points)
         {
             const QPointF tmp = point_to_pixel(point);

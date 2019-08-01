@@ -33,13 +33,12 @@ void video_widget::update_image(const QImage& img)
     set_fresh(true);
 }
 
-void video_widget::set_image(const unsigned char* src, int width, int height,
-                             unsigned stride, QImage::Format fmt)
+void video_widget::set_image(const unsigned char* src, int width, int height, int stride, QImage::Format fmt)
 {
     QMutexLocker l(&mtx);
 
     texture = QImage();
-    unsigned nbytes = stride * height;
+    unsigned nbytes = (unsigned)(stride * height);
     vec.resize(nbytes); vec.shrink_to_fit();
     std::memcpy(vec.data(), src, nbytes);
     texture = QImage((const unsigned char*)vec.data(), width, height, stride, fmt);
