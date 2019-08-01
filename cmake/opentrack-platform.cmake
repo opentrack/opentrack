@@ -98,6 +98,7 @@ if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
         add_link_options(-Wl,--exclude-libs,ALL)
         add_link_options(-Wl,-z,relro,-z,now)
         add_link_options(-Wl,--as-needed)
+        add_compile_options(-fno-plt)
     endif()
 endif()
 
@@ -164,4 +165,8 @@ endif()
 
 if(NOT MSVC)
     include(FindPkgConfig)
+endif()
+
+if(LINUX AND CMAKE_COMPILER_IS_CLANG)
+    link_libraries(atomic)
 endif()
