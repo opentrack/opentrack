@@ -78,6 +78,10 @@ bool spline_widget::is_preview_only() const
     return preview_only;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
+#   define OTR_OBSOLETE_QT_WORKAROUND
+#endif
+
 void spline_widget::drawBackground()
 {
     QPainter painter(&background_img);
@@ -108,7 +112,11 @@ void spline_widget::drawBackground()
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
-    const double space_width = metrics.horizontalAdvance(' ');
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
+    double space_width = metrics.horizontalAdvance(' ');
+#else
+    double space_width = metrics.averageCharWidth();
+#endif
 
     // vertical grid
     for (int i = 0; i <= maxy; i += ystep)
@@ -120,7 +128,12 @@ void spline_widget::drawBackground()
                  pen);
         QString text = QString::number(i);
         QRectF rect = metrics.boundingRect(text);
-        painter.drawText(QPointF(pixel_bounds.x() - metrics.horizontalAdvance(text) - space_width,
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
+        double advance = metrics.horizontalAdvance(text);
+#else
+        double advance = rect.right();
+#endif
+        painter.drawText(QPointF(pixel_bounds.x() - advance - space_width,
                                  y - rect.height()/2 - rect.top()),
                          text);
     }
@@ -135,11 +148,15 @@ void spline_widget::drawBackground()
                  pen);
 
         const QString text = QString::number(i);
-
         QRectF rect = metrics.boundingRect(text);
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
+        double advance = metrics.horizontalAdvance(text);
+#else
+        double advance = rect.right();
+#endif
 
-        painter.drawText(QPointF(x - rect.width()/2 - rect.left(),
-                                 pixel_bounds.height() - rect.top() + rect.height() + metrics.descent()/4),
+        painter.drawText(QPointF(x - advance/2 - rect.left(),
+                                 pixel_bounds.height() - rect.top() + rect.height()),
                          text);
     }
 }

@@ -46,6 +46,12 @@
        <string>Yaw</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame">
          <property name="sizePolicy">
@@ -120,6 +126,12 @@
        <string>Pitch</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame_2">
          <property name="sizePolicy">
@@ -215,6 +227,12 @@
        <string>Roll</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_4">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame_3">
          <property name="sizePolicy">
@@ -293,6 +311,12 @@
        <string>X</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_5">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame444">
          <property name="sizePolicy">
@@ -367,6 +391,12 @@
        <string>Y</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_6">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame555">
          <property name="sizePolicy">
@@ -441,6 +471,12 @@
        <string>Z</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
+       <property name="leftMargin">
+        <number>12</number>
+       </property>
+       <property name="rightMargin">
+        <number>12</number>
+       </property>
        <item>
         <widget class="QFrame" name="frame666">
          <property name="sizePolicy">

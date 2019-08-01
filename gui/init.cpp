@@ -263,7 +263,9 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
 #endif
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+#endif
 
     QApplication app(argc, argv);
 
