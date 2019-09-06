@@ -92,7 +92,7 @@ function(otr_merge_translations)
         add_dependencies(i18n-lrelease ${target-name})
 
         install(FILES "${qm-output}"
-                DESTINATION "${opentrack-i18n-pfx}"
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/${opentrack-i18n-pfx}"
                 PERMISSIONS ${opentrack-perms-file})
     endforeach()
 endfunction()
