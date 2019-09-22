@@ -43,7 +43,7 @@ template<typename t>
 static void store(t volatile& place, t value)
 {
     static_assert(sizeof(t) == 4u);
-    (void)InterlockedExchange((LONG volatile*) &place, value);
+    (void)InterlockedExchange((LONG volatile*) &place, (LONG)value);
 }
 
 static std::int32_t load(std::int32_t volatile& place)
@@ -107,7 +107,7 @@ void freetrack::pose(const double* headpose, const double* raw)
         }
 
         store(ft->GameID2, id);
-        store((std::uint32_t volatile &)data->DataID, 0u);
+        store(data->DataID, 0u);
 
         intGameID = id;
 
