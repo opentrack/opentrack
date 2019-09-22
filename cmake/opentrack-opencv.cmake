@@ -9,4 +9,6 @@ function(otr_install_opencv_libs)
     endforeach()
 endfunction()
 
-otr_install_opencv_libs()
+if(TARGET opencv_core)
+    otr_install_opencv_libs()
+endif()
