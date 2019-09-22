@@ -21,7 +21,7 @@ udp::udp()
                      Qt::DirectConnection);
 }
 
-void udp::pose(const double *headpose)
+void udp::pose(const double *headpose, const double*)
 {
     QMutexLocker l(&lock);
 

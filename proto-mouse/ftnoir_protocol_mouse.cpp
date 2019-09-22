@@ -24,7 +24,7 @@ static const double invert[] = {
     1., -1., 1.
 };
 
-void mouse::pose(const double* headpose)
+void mouse::pose(const double* headpose, const double*)
 {
     const int axis_x = s.mouse_x - 1;
     const int axis_y = s.mouse_y - 1;

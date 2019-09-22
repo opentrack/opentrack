@@ -42,7 +42,7 @@ public:
     freetrack() = default;
     ~freetrack() override;
     module_status initialize() override;
-    void pose(const double* pose) override;
+    void pose(const double* pose, const double*) override;
     QString game_name() override;
 private:
     settings s;

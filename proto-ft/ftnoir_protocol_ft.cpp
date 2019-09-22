@@ -51,7 +51,7 @@ static std::int32_t load(std::int32_t volatile& place)
     return InterlockedCompareExchange((volatile LONG*) &place, 0, 0);
 }
 
-void freetrack::pose(const double* headpose)
+void freetrack::pose(const double* headpose, const double* raw)
 {
     constexpr double d2r = M_PI/180;
 
@@ -75,6 +75,13 @@ void freetrack::pose(const double* headpose)
     store(data->Yaw, yaw);
     store(data->Pitch, pitch);
     store(data->Roll, roll);
+
+    store(data->RawYaw, float(-raw[Yaw] * d2r));
+    store(data->RawPitch, float(raw[Pitch] * d2r));
+    store(data->RawRoll, float(raw[Roll] * d2r));
+    store(data->RawX, float(raw[TX] * 10));
+    store(data->RawY, float(raw[TY] * 10));
+    store(data->RawZ, float(raw[TZ] * 10));
 
     const std::int32_t id = load(ft->GameID);
 

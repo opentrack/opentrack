@@ -29,7 +29,7 @@ class mouse : public TR, public IProtocol
 public:
     mouse() = default;
     module_status initialize() override { return status_ok(); }
-    void pose(const double* headpose) override;
+    void pose(const double* headpose, const double*) override;
     QString game_name() override;
 };
 

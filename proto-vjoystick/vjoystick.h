@@ -22,7 +22,7 @@ public:
     vjoystick();
     ~vjoystick() override;
     module_status initialize() override;
-    void pose( const double *headpose ) override;
+    void pose(const double* headpose, const double*) override;
     QString game_name() override { return tr("Virtual joystick"); }
 
 private:

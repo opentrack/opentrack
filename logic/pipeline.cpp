@@ -468,7 +468,7 @@ ok:
     value = apply_zero_pos(value);
 
     ev.run_events(EV::ev_finished, value);
-    libs.pProtocol->pose(value);
+    libs.pProtocol->pose(value, raw);
 
     QMutexLocker foo(&mtx);
     output_pose = value;
@@ -575,7 +575,7 @@ void pipeline::run()
 
     // filter may inhibit exact origin
     Pose p;
-    libs.pProtocol->pose(p);
+    libs.pProtocol->pose(p, p);
 
     for (int i = 0; i < 6; i++)
     {

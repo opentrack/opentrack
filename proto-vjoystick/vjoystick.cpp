@@ -164,7 +164,7 @@ module_status vjoystick::initialize()
         return {};
 }
 
-void vjoystick::pose(const double *pose)
+void vjoystick::pose(const double *pose, const double*)
 {
     if (first_run)
     {

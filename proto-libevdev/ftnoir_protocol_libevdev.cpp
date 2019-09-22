@@ -102,7 +102,7 @@ evdev::~evdev()
         libevdev_free(dev);
 }
 
-void evdev::pose(const double* headpose) {
+void evdev::pose(const double* headpose, const double*) {
     static const int axes[] = {
         /* translation goes first */
         ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ

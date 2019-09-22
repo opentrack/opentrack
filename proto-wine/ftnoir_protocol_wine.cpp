@@ -26,7 +26,7 @@ wine::~wine()
     //shm_unlink("/" WINE_SHM_NAME);
 }
 
-void wine::pose( const double *headpose )
+void wine::pose(const double *headpose, const double*)
 {
     if (shm)
     {
