@@ -1,5 +1,5 @@
 #include "module.hpp"
-
+#if 0
 #include <libusb.h>
 
 int device_count()
@@ -48,3 +48,34 @@ bool check_device_exists()
     return ret;
 }
 
+static const QString camera_name = QStringLiteral("PS3 Eye open driver");
+
+namespace video::impl {
+
+std::vector<QString> ps3eye_camera_::camera_names() const
+{
+    if (check_device_exists())
+        return { camera_name };
+    else
+        return {};
+}
+std::unique_ptr<camera> ps3eye_camera_::make_camera(const QString& name)
+{
+    if (name == camera_name && check_device_exists())
+        return std::make_unique<ps3eye_camera>();
+    else
+        return {};
+}
+bool ps3eye_camera_::show_dialog(const QString& camera_name)
+{
+    // TODO
+    return false;
+}
+bool ps3eye_camera_::can_show_dialog(const QString& camera_name)
+{
+    return false;
+}
+
+} // ns video::impl
+
+#endif

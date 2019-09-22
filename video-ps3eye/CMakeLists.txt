@@ -23,6 +23,8 @@ endif()
 
 if(TARGET ps3eye-driver)
     otr_module(video-ps3eye)
+    link_libraries(ps3eye-driver)
+    add_executable(ps3eye-subprocess "wrapper.cxx")
     if(WIN32)
         set(path "${SDK_LIBUSB}/libusb-1.0.dll")
         if(EXISTS "${path}")
