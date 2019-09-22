@@ -64,5 +64,9 @@ void pose_widget::paintEvent(QPaintEvent*)
     p.drawImage(rect(), img);
 }
 
+QSize pose_widget::sizeHint() const
+{
+    return { 1 << 16, 1 << 16 };
+}
 
 } // ns pose_widget_impl
