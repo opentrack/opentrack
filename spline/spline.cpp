@@ -213,6 +213,10 @@ void spline::update_interp_data() const
                 const unsigned x = unsigned(f(.5) * cf * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
                 const float y = (float)(f(.5) * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
+                int ret = std::fpclassify(y);
+                if (ret == FP_NAN || ret == FP_INFINITE)
+                    continue;
+
                 if (x < value_count)
                     data[x] = y;
             }
