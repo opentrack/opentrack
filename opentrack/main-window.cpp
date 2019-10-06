@@ -46,7 +46,6 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_dylibs();
     init_shortcuts();
 
-    adjustSize();
     init_tray_menu();
     setVisible(start_in_tray());
     ensure_tray();
