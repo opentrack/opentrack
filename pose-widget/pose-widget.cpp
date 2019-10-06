@@ -44,7 +44,7 @@ void pose_widget::paintEvent(QPaintEvent*)
 
     t.translate(w*.5, h*.5);
 
-    constexpr double z_scale = 1./5;
+    constexpr double z_scale = 1./250;
     constexpr double xy_scale = .0075;
     double xy = std::sqrt(w*w + h*h) * xy_scale;
 
