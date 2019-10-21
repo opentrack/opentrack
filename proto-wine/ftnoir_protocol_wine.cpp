@@ -55,8 +55,13 @@ module_status wine::initialize()
 {
 #ifndef OTR_WINE_NO_WRAPPER
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
+    static QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    static QString wine(env.value("WINE", "wine"));
+    env.insert("PATH", env.value("WINE_PATH", env.value("PATH", "")));
+    env.insert("LD_LIBRARY_PATH", env.value("WINE_LD_LIBRARY_PATH", env.value("LD_LIBRARY_PATH", "")));
+    wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
-    wrapper.start("wine", { library_path + "opentrack-wrapper-wine.exe.so" });
+    wrapper.start(wine, { library_path + "opentrack-wrapper-wine.exe.so" });
 #endif
 
     if (lck_shm.success())
