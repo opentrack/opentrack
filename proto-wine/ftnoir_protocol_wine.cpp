@@ -56,7 +56,7 @@ module_status wine::initialize()
 #ifndef OTR_WINE_NO_WRAPPER
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
-    wrapper.start("wine", { library_path + "opentrack-wrapper-wine.exe.so" });
+    wrapper.start(library_path + "wrapper-wine");
 #endif
 
     if (lck_shm.success())

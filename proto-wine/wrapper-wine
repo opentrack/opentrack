@@ -1,0 +1,2 @@
+#!/bin/sh
+wine ../libexec/opentrack/opentrack-wrapper-wine.exe.so
