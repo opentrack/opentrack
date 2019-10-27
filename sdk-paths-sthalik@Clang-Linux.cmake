@@ -16,16 +16,34 @@ add_compile_options(
 )
 
 set(base-flags "-Wall -Wextra -Wpedantic")
-set(CMAKE_C_FLAGS "-std=c11 ${base-flags} -ggdb ${CMAKE_C_FLAGS}")
+
+set(CMAKE_LINKER "ld.lld")
+set(CMAKE_CXX_COMPILER "clang++")
+set(CMAKE_C_COMPILER "clang")
+
+set(CMAKE_C_FLAGS "-std=gnu11 ${base-flags} -ggdb ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "-std=c++17 ${base-flags} -ggdb ${CMAKE_CXX_FLAGS}")
 
 set(opt-flags "-O3 -ffast-math -march=native -flto=thin")
 
+set(CMAKE_BUILD_TYPE "RELEASE")
 set(CMAKE_CXX_FLAGS_RELEASE "${opt-flags} ${CMAKE_CXX_FLAGS_RELEASE}")
 set(CMAKE_C_FLAGS_RELEASE "${opt-flags} ${CMAKE_C_FLAGS_RELEASE}")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb ${CMAKE_CXX_FLAGS_DEBUG}")
 set(CMAKE_C_FLAGS_DEBUG "-ggdb ${CMAKE_C_FLAGS_DEBUG}")
 
-set(CMAKE_LINKER "ld.lld")
+foreach(x EXE MODULE SHARED)
+    set(CMAKE_${x}_LINKER_FLAGS "-fuse-ld=lld ${CMAKE_${x}_LINKER_FLAGS}")
+endforeach()
+
+function(set_sdk var path)
+    set(${var} "$ENV{HOME}/dev/opentrack-depends/${path}" CACHE INTERNAL "" FORCE)
+endfunction()
+
+set_sdk(SDK_ARUCO_LIBPATH "aruco/build/src/libaruco.a")
+set_sdk(SDK_HYDRA "SixenseSDK")
+set_sdk(SDK_VALVE_STEAMVR "steamvr")
+set_sdk(SDK_WINE TRUE)
+set_sdk(SDK_XPLANE "X-Plane-SDK")
 
