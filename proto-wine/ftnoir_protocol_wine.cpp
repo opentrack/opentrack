@@ -57,14 +57,13 @@ module_status wine::initialize()
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
     QString wine_path = "wine";
-    auto env = QProcessEnvironment::systemEnvironment();
     if (s.variant_proton)
     {
         QProcessEnvironment make_steam_environ(const QString& proton_version);
         QString proton_path(const QString& proton_version);
 
-        env = make_steam_environ(s.proton_version);
         wine_path = proton_path(s.proton_version);
+        wrapper.setProcessEnvironment(make_steam_environ(s.proton_version));
     }
 
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
