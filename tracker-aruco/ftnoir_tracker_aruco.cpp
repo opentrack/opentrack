@@ -553,9 +553,9 @@ void aruco_dialog::toggleCalibrate()
 
         auto [ pos, nvals ] = calibrator.get_estimate();
         (void) nvals;
-        s.headpos_x = -pos(0);
-        s.headpos_y = -pos(1);
-        s.headpos_z = -pos(2);
+        s.headpos_x = (double)-pos(0);
+        s.headpos_y = (double)-pos(1);
+        s.headpos_z = (double)-pos(2);
     }
 }
 
