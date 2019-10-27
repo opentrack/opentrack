@@ -4,19 +4,19 @@
 <context>
     <name>UICFTControls</name>
     <message>
-        <source>FreeTrack settings FaceTrackNoIR</source>
+        <source>Wine settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>There are no settings necessary for the Wine protocol.</source>
+        <source>Wine variant</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>OK</source>
+        <source>Wine (system)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
+        <source>Proton (Steam)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -6,11 +6,22 @@
 
 #include "ui_ftnoir_winecontrols.h"
 
+#include "options/options.hpp"
+using namespace options;
+
 #include <QString>
 #include <QProcess>
 #include <QMutex>
 
 #include <QDebug>
+
+struct settings : opts
+{
+    settings() : opts{"proto-wine"} {}
+    value<bool> variant_proton{b, "variant-proton", false },
+                variant_wine{b, "variant-wine", true };
+    value<QString> proton_version{b, "proton-version", {} };
+};
 
 class wine : TR, public IProtocol
 {
@@ -35,6 +46,7 @@ public:
 private:
     shm_wrapper lck_shm { WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM) };
     WineSHM* shm = nullptr;
+    settings s;
 
 #ifndef OTR_WINE_NO_WRAPPER
     QProcess wrapper;
@@ -55,6 +67,7 @@ public:
 
 private:
     Ui::UICFTControls ui;
+    settings s;
 
 private slots:
     void doOK();

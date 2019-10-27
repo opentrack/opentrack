@@ -51,12 +51,24 @@ void wine::pose(const double *headpose, const double*)
     }
 }
 
+QProcessEnvironment make_steam_environ(const QString& proton_version);
+QString proton_path(const QString& proton_version);
+
 module_status wine::initialize()
 {
 #ifndef OTR_WINE_NO_WRAPPER
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
+
+    QString wine_path = "wine";
+    auto env = QProcessEnvironment::systemEnvironment();
+    if (s.variant_proton)
+    {
+       env = make_steam_environ(s.proton_version);
+       wine_path = proton_path(s.proton_version);
+    }
+
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
-    wrapper.start("wine", { library_path + "opentrack-wrapper-wine.exe.so" });
+    wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });
 #endif
 
     if (lck_shm.success())
