@@ -19,7 +19,10 @@ struct settings : opts
 {
     settings() : opts{"proto-wine"} {}
     value<bool> variant_proton{b, "variant-proton", false },
-                variant_wine{b, "variant-wine", true };
+                variant_wine{b, "variant-wine", true },
+                fsync{b, "fsync", true},
+                esync{b, "esync", true};
+    value<int> proton_appid{b, "proton-appid", 0};
     value<QString> proton_version{b, "proton-version", {} };
 };
 

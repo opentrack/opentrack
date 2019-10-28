@@ -11,7 +11,7 @@
 #include <QString>
 #include <QProcessEnvironment>
 
-QProcessEnvironment make_steam_environ(const QString& proton_version)
+QProcessEnvironment make_steam_environ(const QString& proton_version, int appid)
 {
     auto ret = QProcessEnvironment::systemEnvironment();
     QString home = qgetenv("HOME");
@@ -23,9 +23,9 @@ QProcessEnvironment make_steam_environ(const QString& proton_version)
     };
 
     QString path = expand(
-        "HOME/.local/share/Steam/steamapps/common/Proton PROTON/dist/bin:"
-        "HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/bin:"
-        "HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/usr/bin"
+        ":HOME/.local/share/Steam/steamapps/common/Proton PROTON/dist/bin"
+        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/bin"
+        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/usr/bin"
     );
     path += ':'; path += qgetenv("PATH");
     ret.insert("PATH", path);
@@ -46,9 +46,7 @@ QProcessEnvironment make_steam_environ(const QString& proton_version)
     );
     library_path += ':'; library_path += qgetenv("LD_LIBRARY_PATH");
     ret.insert("LD_LIBRARY_PATH", library_path);
-
-    ret.insert("WINEPREFIX", expand("HOME/.local/share/Steam/steamapps/compatdata/805550/pfx"));
-    ret.insert("WINEESYNC", "1");
+    ret.insert("WINEPREFIX", expand("HOME/.local/share/Steam/steamapps/compatdata/%1/pfx").arg(appid));
 
     return ret;
 }
