@@ -48,7 +48,7 @@ void pose_widget::paintEvent(QPaintEvent*)
     constexpr double xy_scale = .0075;
     double xy = std::sqrt(w*w + h*h) * xy_scale;
 
-    double s = clamp(.25 + -z * z_scale, .01, 2);
+    double s = clamp(.4 + -z * z_scale, .1, 2);
     t.scale(s, s);
 
     t.rotate(pitch, Qt::XAxis);
