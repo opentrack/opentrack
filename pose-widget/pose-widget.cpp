@@ -57,7 +57,7 @@ void pose_widget::paintEvent(QPaintEvent*)
 
     t.translate(x * xy / s, y * xy / s);
 
-    t.translate(w*.5, h*-.5);
+    t.translate(w*-.5, h*-.5);
 
     QPainter p(this);
     p.setTransform(t);
