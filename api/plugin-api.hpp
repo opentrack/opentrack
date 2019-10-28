@@ -99,7 +99,7 @@ struct OTR_API_EXPORT module_status final
 
     bool is_ok() const;
     module_status();
-    explicit module_status(const QString& error);
+    module_status(const QString& error);
 };
 
 /*
