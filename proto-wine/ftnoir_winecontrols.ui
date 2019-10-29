@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
+    <width>492</width>
     <height>400</height>
    </rect>
   </property>
@@ -110,7 +110,7 @@
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Application id (Proton only)</string>
+            <string>Steam application id (Proton)</string>
            </property>
           </widget>
          </item>
