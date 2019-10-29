@@ -22,8 +22,10 @@ struct settings : opts
                 variant_wine{b, "variant-wine", true },
                 fsync{b, "fsync", true},
                 esync{b, "esync", true};
-    value<int> proton_appid{b, "proton-appid", 0};
-    value<QString> proton_version{b, "proton-version", {} };
+
+    value<int>     proton_appid{b, "proton-appid", 0};
+    value<QString> proton_version{b, "proton-version", {} },
+                   wineprefix{b, "wineprefix", "~/.wine"};
 };
 
 class wine : TR, public IProtocol

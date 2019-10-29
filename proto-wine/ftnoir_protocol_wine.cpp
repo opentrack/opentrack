@@ -70,6 +70,19 @@ module_status wine::initialize()
         wine_path = proton_path(s.proton_version);
         env = make_steam_environ(s.proton_version, s.proton_appid);
     }
+    else
+    {
+        QString wineprefix = "~/.wine";
+        if (!s.wineprefix->isEmpty())
+            wineprefix = s.wineprefix;
+        if (wineprefix[0] == '~')
+            wineprefix = qgetenv("HOME") + wineprefix.mid(1);
+
+        if (wineprefix[0] != '/')
+            error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
+
+        env.insert("WINEPREFIX", wineprefix);
+    }
 
     if (s.esync)
         env.insert("WINEESYNC", "1");

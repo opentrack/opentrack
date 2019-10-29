@@ -28,15 +28,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Proton (Steam Play)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;When supported.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Steam application id (Proton)</source>
+        <source>Steam application id</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proton (Steam Play)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -48,6 +48,10 @@
     </message>
     <message>
         <source>Must specify application id for Proton (Steam Play)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine prefix must be an absolute path (given &apos;%1&apos;)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
