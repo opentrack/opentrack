@@ -32,7 +32,7 @@
 
 #include "fttypes.h"
 
-#if !defined _WIN64
+#if defined _MSC_VER && !defined _WIN64
 #   define FT_EXPORT(t) t __stdcall
 #else
 #   define FT_EXPORT(t) __declspec(dllexport) t
