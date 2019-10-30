@@ -151,11 +151,20 @@ fail:   constexpr const char* subdir = "ini";
     }
     else
     {
-        const QString dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
+        QString dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
         if (dir.isEmpty())
             goto fail;
+#if !defined _WIN32 && !defined __APPLE__
+        const QString fmt = QStringLiteral("%1/%2");
+        if (!QFile::exists(fmt.arg(dir, OPENTRACK_ORG)))
+        {
+            dir = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0, QString());
+            if (dir.isEmpty())
+                goto fail;
+        }
+#endif
         (void)QDir(dir).mkpath(OPENTRACK_ORG);
-        return QStringLiteral("%1/%2").arg(dir, OPENTRACK_ORG);
+        return fmt.arg(dir, OPENTRACK_ORG);
     }
 }
 

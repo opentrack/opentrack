@@ -18,10 +18,6 @@
  * * created by the FreeTrack developers.                                           *
  */
 
-#ifndef _MSC_VER
-#   warning "expect misnamed symbols"
-#endif
-
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wvariadic-macros"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -32,7 +28,7 @@
 
 #include "fttypes.h"
 
-#if !defined _WIN64
+#if defined _MSC_VER && !defined _WIN64
 #   define FT_EXPORT(t) t __stdcall
 #else
 #   define FT_EXPORT(t) __declspec(dllexport) t
