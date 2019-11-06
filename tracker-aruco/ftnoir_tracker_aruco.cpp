@@ -148,6 +148,8 @@ static int enum_to_fps(int value)
     case fps_50:        fps = 50; break;
     case fps_100:       fps = 100; break;
     case fps_120:       fps = 120; break;
+    case fps_300:       fps = 300; break;
+    case fps_250:       fps = 250; break;
     }
 
     return fps;
@@ -224,8 +226,7 @@ void aruco_tracker::draw_ar(bool ok)
     }
 
     char buf[9];
-    ::snprintf(buf, sizeof(buf)-1, "Hz: %d", clamp(int(fps), 0, 9999));
-    buf[sizeof(buf)-1] = '\0';
+    ::snprintf(buf, sizeof(buf), "Hz: %d", clamp(int(fps), 0, 9999));
     cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0), 1);
 }
 
@@ -552,9 +553,9 @@ void aruco_dialog::toggleCalibrate()
 
         auto [ pos, nvals ] = calibrator.get_estimate();
         (void) nvals;
-        s.headpos_x = -pos(0);
-        s.headpos_y = -pos(1);
-        s.headpos_z = -pos(2);
+        s.headpos_x = (double)-pos(0);
+        s.headpos_y = (double)-pos(1);
+        s.headpos_z = (double)-pos(2);
     }
 }
 

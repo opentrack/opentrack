@@ -14,5 +14,5 @@ void check_kf()
 #include <opencv2/highgui.hpp>
 void check_highgui()
 {
-    cv::imshow("foo", {});
+    cv::imshow("foo", cv::noArray());
 }

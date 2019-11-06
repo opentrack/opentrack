@@ -2,6 +2,9 @@
 
 #include "spline/spline.hpp"
 #include "options/options.hpp"
+
+namespace detail::accela {
+
 using namespace options;
 
 // ------------------------------------
@@ -52,3 +55,7 @@ struct settings_accela : opts
 
     settings_accela() : opts("accela-sliders") {}
 };
+
+} // ns detail::accela
+
+using detail::accela::settings_accela;

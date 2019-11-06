@@ -11,6 +11,7 @@
 
 #include "spline.hpp"
 #include "api/plugin-api.hpp"
+#include "compat/qt-dpi.hpp"
 #include "options/options.hpp"
 
 #include "export.hpp"
@@ -26,7 +27,7 @@ namespace spline_detail {
 
 using namespace options;
 
-class OTR_SPLINE_EXPORT spline_widget final : public QWidget
+class OTR_SPLINE_EXPORT spline_widget final : public QWidget, public screen_dpi_mixin<spline_widget>
 {
     Q_OBJECT
     Q_PROPERTY(QColor colorBezier READ colorBezier WRITE setColorBezier)
@@ -54,6 +55,8 @@ public:
 
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }
     void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
+
+    QSize minimumSizeHint() const override;
 public slots:
     void reload_spline();
 protected slots:
@@ -90,7 +93,7 @@ private:
     QPixmap background_img;
     QPixmap spline_img;
     QColor spline_color;
-    QColor widget_bg_color = palette().background().color();
+    QColor widget_bg_color = palette().window().color();
 
     // bounds of the rectangle user can interact with
     QRect pixel_bounds;
@@ -103,9 +106,9 @@ private:
     bool draw_function = true, preview_only = false;
 
     // point's circle radius on the widget
-    static constexpr int point_size_in_pixels_ = 4;
+    static constexpr int point_size_in_pixels_ = 5;
 
-    const double point_size_in_pixels = point_size_in_pixels_ * std::fmax(1, devicePixelRatioF() * .66);
+    const double point_size_in_pixels = point_size_in_pixels_ * screen_dpi();
 };
 
 } // ns spline_detail

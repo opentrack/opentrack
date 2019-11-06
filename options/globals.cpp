@@ -76,6 +76,13 @@ ini_ctx& global_settings()
     return ret;
 }
 
+void mark_ini_modified(bool value)
+{
+    auto& ini = cur_settings();
+    ini.modifiedp = value;
+    ini.mtx.unlock();
+}
+
 } // ns options::globals::detail
 
 namespace options::globals
@@ -124,9 +131,9 @@ QStringList ini_list()
     return list;
 }
 
-void mark_ini_modified(bool value)
+void mark_global_ini_modified(bool value)
 {
-    auto& ini = cur_settings();
+    auto& ini = global_settings();
     ini.modifiedp = value;
     ini.mtx.unlock();
 }
@@ -144,11 +151,20 @@ fail:   constexpr const char* subdir = "ini";
     }
     else
     {
-        const QString dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
+        QString dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
         if (dir.isEmpty())
             goto fail;
+#if !defined _WIN32 && !defined __APPLE__
+        const QString fmt = QStringLiteral("%1/%2");
+        if (!QFile::exists(fmt.arg(dir, OPENTRACK_ORG)))
+        {
+            dir = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0, QString());
+            if (dir.isEmpty())
+                goto fail;
+        }
+#endif
         (void)QDir(dir).mkpath(OPENTRACK_ORG);
-        return QStringLiteral("%1/%2").arg(dir, OPENTRACK_ORG);
+        return fmt.arg(dir, OPENTRACK_ORG);
     }
 }
 

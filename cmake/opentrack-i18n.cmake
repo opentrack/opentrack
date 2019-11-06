@@ -31,7 +31,7 @@ function(otr_i18n_for_target_directory n)
     endforeach()
 
     # all sorts of problems
-    if(WIN32)
+    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
         set(to-null "2>NUL")
     else()
         set(to-null "2>/dev/null")

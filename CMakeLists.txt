@@ -32,6 +32,15 @@ include(opentrack-policy NO_POLICY_SCOPE)
 project(opentrack)
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
+# must be prior to CMakeDetermineCXXCompiler due to rpath
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
+endif()
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
+endif()
+
 if(POLICY CMP0083)
     cmake_policy(SET CMP0083 NEW)
     include(CheckPIESupported)
@@ -40,6 +49,15 @@ endif()
 
 include(CMakeDetermineCCompiler)
 include(CMakeDetermineCXXCompiler)
+
+if(CMAKE_COMPILER_IS_GNUCXX AND NOT __otr_compile_flags_set)
+    set(__otr_compile_flags_set TRUE CACHE INTERNAL "" FORCE)
+    foreach(i C CXX)
+        set(CMAKE_${i}_FLAGS_RELEASE "-O3 -march=native" CACHE STRING "" FORCE)
+        set(CMAKE_${i}_FLAGS "-ggdb -Wall -Wextra -Wpedantic" CACHE STRING "" FORCE)
+    endforeach()
+endif()
+
 include(CMakeParseArguments)
 
 include(opentrack-load-user-settings)

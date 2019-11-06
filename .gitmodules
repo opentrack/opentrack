@@ -1,0 +1,3 @@
+[submodule "video-ps3eye/ps3eye-driver"]
+	path = video-ps3eye/ps3eye-driver
+	url = https://github.com/opentrack/PS3EYEDriver

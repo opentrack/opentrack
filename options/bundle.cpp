@@ -73,7 +73,7 @@ void bundle::store_kv(const QString& name, QVariant&& value)
         return;
 
     {
-        mark_ini_modified();
+        options::globals::detail::mark_ini_modified();
         QMutexLocker l{&mtx};
         transient.put(name, value);
         connector::notify_values(name);

@@ -99,7 +99,7 @@ struct OTR_API_EXPORT module_status final
 
     bool is_ok() const;
     module_status();
-    explicit module_status(const QString& error);
+    module_status(const QString& error);
 };
 
 /*
@@ -160,7 +160,7 @@ struct OTR_API_EXPORT IProtocol : module_status_mixin
 
     // called 250 times a second with XYZ yaw pitch roll pose
     // try not to perform intense computation here. use a thread.
-    virtual void pose(const double* headpose) = 0;
+    virtual void pose(const double* pose, const double* raw) = 0;
     // return game name or placeholder text
     virtual QString game_name() = 0;
 };

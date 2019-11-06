@@ -13,6 +13,8 @@
 #include "spline/spline-widget.hpp"
 #include <QDialog>
 
+using namespace options;
+
 dialog_accela::dialog_accela()
 {
     ui.setupUi(this);

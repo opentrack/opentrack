@@ -12,6 +12,7 @@ macro(otr_install_dir path)
         DIRECTORY ${ARGN} DESTINATION "${path}"
         FILE_PERMISSIONS ${opentrack-perms-file}
         DIRECTORY_PERMISSIONS ${opentrack-perms-dir}
+        PATTERN ".gtm" EXCLUDE
     )
 endmacro()
 
@@ -71,6 +72,7 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
 endif()
 
 otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
+otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient64.dll")
 otr_install_exec("${opentrack-hier-pfx}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient.dll"
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"

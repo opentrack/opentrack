@@ -30,6 +30,10 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     endforeach()
 endif()
 
+if(CMAKE_PROJECT_NAME STREQUAL "opencv")
+    set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG TRUE)
+endif()
+
 add_compile_options(-Zi -Zf -Zo -bigobj -cgthreads1 -vd0)
 add_link_options(-cgthreads:1)
 

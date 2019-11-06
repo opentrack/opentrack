@@ -3,6 +3,7 @@
 #endif
 
 #define shm_wrapper ShmWine
+#define __WINE_OLE2_H
 #include "compat/shm.h"
 #include "compat/shm.cpp"
 #include "wine-shm.h"

@@ -76,7 +76,7 @@ endfunction()
 
 function(otr_compat target)
     if(NOT MSVC)
-        set_property(SOURCE ${${target}-moc} APPEND_STRING PROPERTY COMPILE_FLAGS "-w -Wno-error ")
+        set_property(SOURCE ${${target}-moc} APPEND PROPERTY COMPILE_OPTIONS "-w;-Wno-error")
     endif()
 
     if(UNIX) # no-op on OSX
@@ -208,7 +208,7 @@ function(otr_module n_)
     if(CMAKE_COMPILER_IS_CLANGXX AND (arg_EXECUTABLE OR NOT arg_BIN))
         set(opts
             weak-vtables
-            #header-hygiene
+            header-hygiene
         )
         foreach(k ${opts})
             target_compile_options(${n} PRIVATE "-Wno-${k}")
@@ -216,11 +216,16 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-INSTALL)
-        if(arg_BIN AND WIN32)
-            install(TARGETS "${n}" RUNTIME DESTINATION . PERMISSIONS ${opentrack-perms-exec})
+        if(arg_BIN)
+            install(TARGETS "${n}"
+                    RUNTIME DESTINATION ${opentrack-hier-bin}
+                    LIBRARY DESTINATION ${opentrack-hier-pfx}
+                    PERMISSIONS ${opentrack-perms-exec})
         else()
-            install(TARGETS "${n}" ${opentrack-hier-str} PERMISSIONS ${opentrack-perms-exec})
+            install(TARGETS "${n}" ${opentrack-hier-str}
+                    PERMISSIONS ${opentrack-perms-exec})
         endif()
+
         if(MSVC)
             set(opentrack_install-debug-info FALSE CACHE BOOL "Whether to build and install debug info at install time")
             if(opentrack_install-debug-info)
@@ -277,10 +282,10 @@ function(otr_install_lib target dest)
                 set(pdb-path "")
                 otr_pdb_for_dll(pdb-path "${path}")
                 if(pdb-path)
-                    install(FILES "${pdb-path}" DESTINATION "${opentrack-hier-debug}")
+                    install(FILES "${pdb-path}" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-exec})
                 endif()
             endif()
-            install(FILES "${path}" DESTINATION "${dest}")
+            install(FILES "${path}" DESTINATION "${dest}" PERMISSIONS ${opentrack-perms-exec})
         endif()
     endif()
 endfunction()

@@ -225,8 +225,7 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
                    cv::LINE_AA, fract_bits);
 
         char buf[16];
-        buf[sizeof(buf)-1] = '\0';
-        std::snprintf(buf, sizeof(buf) - 1, "%.2fpx", (double)b.radius);
+        std::snprintf(buf, sizeof(buf), "%.2fpx", (double)b.radius);
 
         auto text_color = k >= PointModel::N_POINTS
                           ? cv::Scalar(160, 160, 160)

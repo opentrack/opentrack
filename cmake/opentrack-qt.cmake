@@ -1,14 +1,17 @@
 include_guard(GLOBAL)
-find_package(Qt5 REQUIRED COMPONENTS Core Network Widgets LinguistTools Gui QUIET)
 if(WIN32)
     find_package(Qt5Gui REQUIRED COMPONENTS QWindowsIntegrationPlugin)
 endif()
+find_package(Qt5 REQUIRED COMPONENTS Core Network Widgets LinguistTools Gui QUIET)
 find_package(Qt5 COMPONENTS SerialPort QUIET)
 
 set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
 
 function(otr_install_qt_libs)
     foreach(i Qt5::Core Qt5::Gui Qt5::Network Qt5::SerialPort Qt5::Widgets)
+        if(NOT TARGET "${i}")
+            continue()
+        endif()
         otr_install_lib(${i} ".")
     endforeach()
     otr_install_lib(Qt5::QWindowsIntegrationPlugin "./platforms")
@@ -40,6 +43,10 @@ function(otr_qt2 n)
         -DQT_NO_NARROWING_CONVERSIONS_IN_CONNECT
         -DQT_MESSAGELOGCONTEXT
     )
+    if(CMAKE_COMPILER_IS_GNUCXX)
+        set_property(SOURCE ${${n}-moc} ${${n}-rcc}
+                     APPEND_STRING PROPERTY COMPILE_FLAGS " -w -Wno-error ")
+    endif()
 endfunction()
 
 include_directories("${CMAKE_BINARY_DIR}")

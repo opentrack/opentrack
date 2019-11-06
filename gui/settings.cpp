@@ -42,6 +42,7 @@ void options_dialog::set_disable_translation_state(bool value)
     with_global_settings_object([&](QSettings& s)
     {
         s.setValue("disable-translation", value);
+        mark_global_ini_modified();
     });
 }
 
@@ -233,6 +234,8 @@ void options_dialog::doOK()
 
 void options_dialog::doCancel()
 {
+    ui.game_detector->revert();
+
     if (isHidden()) // close() can return true twice in a row it seems
         return;
     hide();
@@ -240,7 +243,6 @@ void options_dialog::doCancel()
         return;
 
     main.b->reload();
-    ui.game_detector->revert();
     emit closing();
 }
 

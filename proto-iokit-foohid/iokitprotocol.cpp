@@ -47,7 +47,7 @@ static uint8_t valueToStick(FooHIDJoystick *stick, double min, double value, dou
                    stick->minValue() + stick->range()));
 }
 
-void IOKitProtocol::pose(const double *headpose)
+void IOKitProtocol::pose(const double *headpose, const double*)
 {
     const uint8_t x  = valueToStick(joystick.get(), -75., headpose[0], +75.);
     const uint8_t y  = valueToStick(joystick.get(), -75., headpose[1], +75.);

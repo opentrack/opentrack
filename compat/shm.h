@@ -28,7 +28,8 @@ class OTR_COMPAT_EXPORT shm_wrapper final
 #if defined(_WIN32)
     HANDLE mutex, mapped_file;
 #else
-    int fd, size;
+    int fd;
+    unsigned size;
 #endif
 
 public:

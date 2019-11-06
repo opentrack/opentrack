@@ -141,9 +141,9 @@ namespace EasyTracker
         std::vector<cv::Rect> iTrackedRects;
 
         // Intrinsics camera matrix
-        cv::Mat iCameraMatrix;
+        cv::Matx33d iCameraMatrix { cv::Matx33d::zeros() };
         // Intrinsics distortion coefficients as a matrix
-        cv::Mat iDistCoeffsMatrix;
+        cv::Matx<double, 8, 1> iDistCoeffsMatrix;
         // Translation solutions
         std::vector<cv::Mat> iTranslations;
         // Rotation solutions

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "compat/qt-dpi.hpp"
 #include "compat/math.hpp"
 #include "export.hpp"
 
@@ -20,7 +21,7 @@
 
 #include <QMutex>
 
-struct OTR_VIDEO_EXPORT video_widget : QWidget
+struct OTR_VIDEO_EXPORT video_widget : QWidget, public screen_dpi_mixin<video_widget>
 {
     video_widget(QWidget* parent = nullptr);
 
@@ -36,7 +37,7 @@ protected:
     std::vector<unsigned char> vec;
     bool fresh() const;
     void set_fresh(bool x);
-    void set_image(const unsigned char* src, int width, int height, unsigned stride, QImage::Format fmt);
+    void set_image(const unsigned char* src, int width, int height, int stride, QImage::Format fmt);
 
 private:
     void init_image_nolock();

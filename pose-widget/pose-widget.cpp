@@ -44,11 +44,11 @@ void pose_widget::paintEvent(QPaintEvent*)
 
     t.translate(w*.5, h*.5);
 
-    constexpr double z_scale = 1./100;
+    constexpr double z_scale = 1./250;
     constexpr double xy_scale = .0075;
     double xy = std::sqrt(w*w + h*h) * xy_scale;
 
-    double s = clamp(.5 + -z * z_scale, .5, 2);
+    double s = clamp(.4 + -z * z_scale, .1, 2);
     t.scale(s, s);
 
     t.rotate(pitch, Qt::XAxis);
@@ -62,6 +62,11 @@ void pose_widget::paintEvent(QPaintEvent*)
     QPainter p(this);
     p.setTransform(t);
     p.drawImage(rect(), img);
+}
+
+QSize pose_widget::sizeHint() const
+{
+    return { 1 << 16, 1 << 16 };
 }
 
 } // ns pose_widget_impl

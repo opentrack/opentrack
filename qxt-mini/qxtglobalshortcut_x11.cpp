@@ -37,7 +37,7 @@
 #include <QPair>
 #include <QKeyEvent>
 #include <QApplication>
-#include "qplatformnativeinterface.h"
+#include <qpa/qplatformnativeinterface.h>
 
 #include "x11-keymap.hpp"
 
@@ -69,6 +69,9 @@ using pair = QPair<quint32, quint32>;
 
 struct keybinding final
 {
+    keybinding(const keybinding&) = default;
+    keybinding& operator=(const keybinding&) = default;
+
     quint32 code, mods;
     int refcnt;
 
@@ -93,7 +96,7 @@ public:
 
     static int qxtX11ErrorHandler(Display *display, XErrorEvent *event)
     {
-        Q_UNUSED(display);
+        Q_UNUSED(display)
         switch (event->error_code)
         {
             case BadAccess:
@@ -135,7 +138,7 @@ public:
 
     bool isValid()
     {
-        return m_display != 0;
+        return m_display;
     }
 
     Display *display()
@@ -154,13 +157,12 @@ public:
         const std::vector<pair> keycodes = native_key(Qt::Key(code), Qt::KeyboardModifiers(mods));
         bool ret = true;
 
-        for (pair x : keycodes)
+        for (const pair& x : keycodes)
         {
-            int native_code = x.first, native_mods = x.second;
+            auto [ native_sym, native_mods ] = x;
+            int native_code = XKeysymToKeycode(display(), native_sym);
 
-            native_code = XKeysymToKeycode(display(), native_code);
-
-            if (keybinding::incf(native_code, native_mods))
+            if (keybinding::incf((unsigned)native_code, native_mods))
             {
                 QxtX11ErrorHandler errorHandler;
 
@@ -170,8 +172,8 @@ public:
                 {
                     quint32 m = native_mods;
 
-                    for (auto value : set)
-                        m |= value;
+                    for (int value : set)
+                        m |= (unsigned)value;
 
                     XGrabKey(display(), native_code, m, rootWindow(), True, GrabModeAsync, GrabModeAsync);
                 }
@@ -179,7 +181,15 @@ public:
                 if (errorHandler.error)
                 {
                     qDebug() << "qxt-mini: error while binding to" << code << mods;
-                    ungrabKey(code, mods);
+                    for (const auto& set : evil_mods.sets())
+                    {
+                        quint32 m = mods;
+
+                        for (int value : set)
+                            m |= (unsigned)value;
+
+                        XUngrabKey(display(), native_code, m, rootWindow());
+                    }
                     ret = false;
                 }
             }
@@ -193,12 +203,12 @@ public:
         const std::vector<pair> keycodes = native_key(Qt::Key(code), Qt::KeyboardModifiers(mods));
         bool ret = true;
 
-        for (pair x : keycodes)
+        for (const pair& x : keycodes)
         {
-            int native_code = x.first, native_mods = x.second;
-            native_code = XKeysymToKeycode(display(), native_code);
+            auto [ native_sym, native_mods ] = x;
+            int native_code = XKeysymToKeycode(display(), native_sym);
 
-            if (keybinding::decf(native_code, native_mods))
+            if (keybinding::decf((unsigned)native_code, native_mods))
             {
                 QxtX11ErrorHandler errorHandler;
                 XUngrabKey(display(), native_code, native_mods, rootWindow());
@@ -207,10 +217,10 @@ public:
                 {
                     quint32 m = mods;
 
-                    for (auto value : set)
-                        m |= value;
+                    for (int value : set)
+                        m |= (unsigned)value;
 
-                    XUngrabKey(display(), code, m, rootWindow());
+                    XUngrabKey(display(), native_code, m, rootWindow());
                 }
 
                 if (errorHandler.error)
@@ -354,17 +364,20 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
     bool is_release = false;
 
-    xcb_key_press_event_t *kev = 0;
+    static_assert(std::is_same_v<xcb_key_press_event_t, xcb_key_release_event_t>);
+
+    xcb_key_press_event_t *kev = nullptr;
     if (eventType == "xcb_generic_event_t") {
         xcb_generic_event_t *ev = static_cast<xcb_generic_event_t *>(message);
         switch (ev->response_type & 127)
         {
             case XCB_KEY_RELEASE:
                 is_release = true;
-                /*FALLTHROUGH*/
+            [[fallthrough]];
             case XCB_KEY_PRESS:
                 kev = static_cast<xcb_key_press_event_t *>(message);
-                /*FALLTHROUGH*/
+                break;
+
             default:
                 break;
         }
@@ -400,21 +413,19 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
         keystate = filter_evil_mods(keystate);
 
-        QPair<KeySym, KeySym> sym_ = keycode_to_keysym(x11.display(), keycode, keystate, kev);
-        KeySym sym = sym_.first, sym2 = sym_.second;
+        auto [ sym, sym2 ] = keycode_to_keysym(x11.display(), keycode, keystate, kev);
 
         Qt::Key k; Qt::KeyboardModifiers mods;
 
-
         {
-            std::tie(k, mods) = x11_key_to_qt(x11.display(), sym, keystate);
+            std::tie(k, mods) = x11_key_to_qt(x11.display(), (quint32)sym, keystate);
 
             if (k != 0)
                 activateShortcut(k, mods, !is_release);
         }
 
         {
-            std::tie(k, mods) = x11_key_to_qt(x11.display(), sym2, keystate);
+            std::tie(k, mods) = x11_key_to_qt(x11.display(), (quint32)sym2, keystate);
 
             if (k != 0)
                 activateShortcut(k, mods, !is_release);

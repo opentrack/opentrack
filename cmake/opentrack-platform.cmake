@@ -27,14 +27,6 @@ if(MSVC AND MSVC_VERSION LESS "1915" AND NOT ".${CMAKE_CXX_COMPILER_ID}" STREQUA
     message(FATAL_ERROR "Visual Studio too old. Use Visual Studio 2017 or newer.")
 endif()
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
-endif()
-
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
-endif()
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for clang
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
@@ -100,12 +92,13 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX AND NOT APPLE)
-    set(CMAKE_CXX_FLAGS "-fuse-cxa-atexit ${CMAKE_CXX_FLAGS}")
+    add_compile_options(-fuse-cxa-atexit)
 
     if(LINUX) # assume binutils
         add_link_options(-Wl,--exclude-libs,ALL)
         add_link_options(-Wl,-z,relro,-z,now)
         add_link_options(-Wl,--as-needed)
+        add_compile_options(-fno-plt)
     endif()
 endif()
 
@@ -168,4 +161,12 @@ if(APPLE)
 
     add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
     link_libraries(objc z)
+endif()
+
+if(NOT MSVC)
+    include(FindPkgConfig)
+endif()
+
+if(LINUX AND CMAKE_COMPILER_IS_CLANG)
+    link_libraries(atomic)
 endif()

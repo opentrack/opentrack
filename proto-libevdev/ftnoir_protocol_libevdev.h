@@ -21,7 +21,7 @@ class evdev : public TR, public IProtocol
 public:
     evdev();
     ~evdev() override;
-    void pose(const double *headpose) override;
+    void pose(const double *headpose, const double*) override;
     QString game_name() override { return tr("Virtual joystick for Linux"); }
     module_status initialize() override;
 

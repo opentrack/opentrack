@@ -53,7 +53,7 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
                     QMessageBox::Ok, QMessageBox::NoButton);
             }
             else
-                return std::move(logger);
+                return logger;
         }
     }
 
@@ -61,9 +61,9 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
 }
 
 
-Work::Work(Mappings& m, event_handler& ev, QFrame* frame,
-           const dylibptr& tracker_, const dylibptr& filter_, const dylibptr& proto_) :
-    libs(frame, tracker_, filter_, proto_),
+Work::Work(const Mappings& m, event_handler& ev, QFrame* frame,
+           const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto) :
+    libs(frame, tracker, filter, proto),
     pipeline_{ m, libs, ev, *logger }
 {
     if (!is_ok())

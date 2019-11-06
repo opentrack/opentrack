@@ -133,7 +133,7 @@ void migrator::set_last_migration_time(const QString& val)
         if (val != old_value)
         {
             s.setValue("last-migration-at", val);
-            mark_ini_modified();
+            options::globals::detail::mark_ini_modified();
         }
         s.endGroup();
     });

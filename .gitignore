@@ -2,7 +2,8 @@
 /build
 /build-*
 .DS_Store
-/.idea/
 /sdk-paths-*.cmake
+/.idea/
 /.vs/
 /CMakeSettings.json
+.gtm/

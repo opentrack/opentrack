@@ -28,21 +28,13 @@ mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
     };
 
     {
-        QColor bg = palette().background().color();
+        QColor bg = palette().window().color();
 
         QString tmp;
         tmp.reserve(32);
 
-        tmp += QStringLiteral(".QWidget { background-color: #");
-
-        for (int i : { bg.red(), bg.green(), bg.blue() })
-        {
-            if (i < 0xf0)
-                tmp += '0';
-            tmp += QString::number(i, 16);
-        }
-
-        tmp += "; }";
+        tmp += QStringLiteral(".QWidget { background-color: rgb(%1, %2, %3); } ")
+            .arg(bg.red()).arg(bg.green()).arg(bg.blue());
 
         for (QWidget* w : pages)
             w->setStyleSheet(tmp);

@@ -45,16 +45,16 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_buttons();
     init_dylibs();
     init_shortcuts();
+
     init_tray_menu();
+    setVisible(start_in_tray());
+    ensure_tray();
 
     connect(&pose_update_timer, &QTimer::timeout,
             this, &main_window::show_pose, Qt::DirectConnection);
     connect(&det_timer, &QTimer::timeout,
             this, &main_window::maybe_start_profile_from_executable);
     det_timer.start(1000);
-
-    adjustSize();
-    ensure_tray(); // calls QWidget::show()
 }
 
 void main_window::init_shortcuts()
@@ -743,9 +743,6 @@ void main_window::toggle_restore_from_tray(QSystemTrayIcon::ActivationReason e)
     menu_action_show.setText(!isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
 
     setVisible(is_minimized);
-    setHidden(!is_minimized);
-
-    setWindowState(is_minimized ? windowState() & ~Qt::WindowMinimized : Qt::WindowNoState);
 
     if (is_minimized)
     {
@@ -854,6 +851,7 @@ void main_window::set_profile_in_registry(const QString &profile)
 {
     with_global_settings_object([&](QSettings& s) {
         s.setValue(OPENTRACK_PROFILE_FILENAME_KEY, profile);
+        mark_global_ini_modified();
     });
 }
 

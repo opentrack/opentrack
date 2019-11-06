@@ -19,9 +19,8 @@
 
 //#define DEBUG_ACCELA
 
-class accela : public IFilter
+struct accela : IFilter
 {
-public:
     accela();
     void filter(const double* input, double *output) override;
     void center() override { first_run = true; }
