@@ -37,6 +37,12 @@
 #   define MAP_FAILED ((void*)-1)
 #endif
 
+#ifdef __GNUC__
+#   pragma GCC diagnostic ignored "-Wimplicit-float-conversion"
+#   pragma GCC diagnostic ignored "-Wdouble-promotion"
+#   pragma GCC diagnostic ignored "-Wlanguage-extension-token"
+#endif
+
 enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };

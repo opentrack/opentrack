@@ -36,7 +36,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
     else
         scaled = &frame;
 
-    int color_cvt = 0;
+    int color_cvt = cv::COLOR_COLORCVT_MAX;
     constexpr int nchannels = 4;
 
     switch (scaled->channels())

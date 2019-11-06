@@ -1,4 +1,10 @@
 // strerror_r(3)
+
+#ifdef __clang__
+#   pragma clang diagnostic ignored "-Wreserved-id-macro"
+#   pragma clang diagnostic ignored "-Wunused-macros"
+#endif
+
 #ifndef _POSIX_C_SOURCE
 #   define _POSIX_C_SOURCE 200112L
 #endif
@@ -96,7 +102,7 @@ evdev::~evdev()
         libevdev_free(dev);
 }
 
-void evdev::pose(const double* headpose) {
+void evdev::pose(const double* headpose, const double*) {
     static const int axes[] = {
         /* translation goes first */
         ABS_X, ABS_Y, ABS_Z, ABS_RX, ABS_RY, ABS_RZ
@@ -113,7 +119,7 @@ void evdev::pose(const double* headpose) {
 
     for (int i = 0; i < 6; i++)
     {
-        int value = headpose[i] * mid_input / max_value[i] + mid_input;
+        int value = (int)(headpose[i] * mid_input / max_value[i] + mid_input);
         int normalized = clamp(value, min_input, max_input);
         (void) libevdev_uinput_write_event(uidev, EV_ABS, axes[i], normalized);
     }

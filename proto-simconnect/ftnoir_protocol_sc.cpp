@@ -89,7 +89,7 @@ void simconnect::run()
     CloseHandle(event);
 }
 
-void simconnect::pose(const double* pose)
+void simconnect::pose(const double* pose, const double*)
 {
     QMutexLocker l(&mtx);
 

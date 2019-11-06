@@ -48,19 +48,23 @@ public:
 
 struct OTR_SPLINE_EXPORT base_spline_
 {
+    base_spline_() = default;
     virtual ~base_spline_();
 
     virtual double get_value(double x) const = 0;
     virtual double get_value_no_save(double x) const = 0;
 
     [[nodiscard]] virtual bool get_last_value(QPointF& point) = 0;
-    virtual void set_tracking_active(bool value) = 0;
+    virtual void set_tracking_active(bool value) const = 0;
 
     virtual double max_input() const = 0;
     virtual double max_output() const = 0;
 
     virtual const points_t& get_points() const = 0;
     virtual int get_point_count() const = 0;
+
+    base_spline_(const base_spline_&) = default;
+    base_spline_& operator=(const base_spline_&) = default;
 };
 
 struct OTR_SPLINE_EXPORT spline_settings_mixin
@@ -68,6 +72,10 @@ struct OTR_SPLINE_EXPORT spline_settings_mixin
     virtual std::shared_ptr<base_settings> get_settings() = 0;
     virtual std::shared_ptr<const base_settings> get_settings() const = 0;
 
+    spline_settings_mixin(const spline_settings_mixin&) = default;
+    spline_settings_mixin& operator=(const spline_settings_mixin&) = default;
+
+    spline_settings_mixin() = default;
     virtual ~spline_settings_mixin();
 };
 
@@ -79,11 +87,19 @@ struct OTR_SPLINE_EXPORT spline_modify_mixin
     virtual void remove_point(int i) = 0;
     virtual void clear() = 0;
 
+    spline_modify_mixin(const spline_modify_mixin&) = default;
+    spline_modify_mixin& operator=(const spline_modify_mixin&) = default;
+
+    spline_modify_mixin() = default;
     virtual ~spline_modify_mixin();
 };
 
 struct OTR_SPLINE_EXPORT base_spline : base_spline_, spline_modify_mixin, spline_settings_mixin
 {
+    base_spline(const base_spline&) = default;
+    base_spline& operator=(const base_spline&) = default;
+
+    base_spline() = default;
     ~base_spline() override;
 };
 
@@ -146,7 +162,7 @@ public:
 
     const points_t& get_points() const override;
 
-    void set_tracking_active(bool value) override;
+    void set_tracking_active(bool value) const override;
     bundle get_bundle();
     void ensure_valid(points_t& in_out) const;
 

@@ -30,6 +30,7 @@ void proc_detector_settings::set_game_list(const QString &game_list)
 {
     with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-list", game_list);
+        mark_global_ini_modified();
     });
 }
 
@@ -51,17 +52,19 @@ void proc_detector_settings::set_is_enabled(bool enabled)
 {
     with_global_settings_object([&](QSettings& settings) {
         settings.setValue("executable-detector-enabled", enabled);
+        mark_global_ini_modified();
     });
 }
 
 QHash<QString, QString> proc_detector_settings::split_process_names()
 {
-    QHash<QString, QString> ret;
     QString str = get_game_list();
     QStringList pairs = str.split(RECORD_SEPARATOR, QString::SkipEmptyParts);
+    QHash<QString, QString> ret;
+    ret.reserve(pairs.size() * 2);
     for (auto const& pair : pairs)
     {
-        QList<QString> tmp = pair.split(UNIT_SEPARATOR);
+        QStringList tmp = pair.split(UNIT_SEPARATOR);
         if (tmp.count() != 2)
             continue;
         if (tmp[0].contains(UNIT_SEPARATOR) || tmp[0].contains(RECORD_SEPARATOR))
@@ -96,8 +99,8 @@ int process_detector::add_row(QString const& exe_name, QString const& profile)
 
     QComboBox* cb = new QComboBox();
     cb->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
-    cb->addItem("");
     cb->addItems(ini_list());
+    cb->setCurrentText(ini_filename());
     ui.tableWidget->setCellWidget(i, 1, cb);
 
     QTableWidgetItem* twi = new QTableWidgetItem(exe_name);
@@ -115,10 +118,11 @@ int process_detector::add_row(QString const& exe_name, QString const& profile)
     return i;
 }
 
-void process_detector::add_items()
+void process_detector::load_rows()
 {
+    for (int k = ui.tableWidget->size().height() - 1; k >= 0; k--)
+        ui.tableWidget->removeRow(k);
     auto names = s.split_process_names();
-    ui.tableWidget->clearContents();
     auto keys = names.keys();
     std::sort(keys.begin(), keys.end());
     for (auto const& n : keys)
@@ -131,13 +135,10 @@ process_detector::process_detector(QWidget* parent) : QWidget(parent)
     connect(ui.add, SIGNAL(clicked()), this, SLOT(add()));
     connect(ui.remove, SIGNAL(clicked()), this, SLOT(remove()));
 
-    add_items();
+    load_rows();
 
     QResizeEvent e(ui.tableWidget->size(), ui.tableWidget->size());
     ui.tableWidget->resizeEvent(&e);
-
-    proc_detector_settings s;
-
     ui.enabled->setChecked(s.is_enabled());
 }
 
@@ -148,7 +149,10 @@ void process_detector::save()
     for (int i = 0; i < ui.tableWidget->rowCount(); i++)
     {
         auto exe = ui.tableWidget->item(i, 0)->text();
-        auto profile = reinterpret_cast<QComboBox*>(ui.tableWidget->cellWidget(i, 1))->currentText();
+        auto widget = qobject_cast<QComboBox*>(ui.tableWidget->cellWidget(i, 1));
+        if (!widget)
+            continue;
+        auto profile = widget->currentText();
         str += RECORD_SEPARATOR + exe + UNIT_SEPARATOR + profile;
     }
 
@@ -158,6 +162,7 @@ void process_detector::save()
 
 void process_detector::revert()
 {
+    load_rows();
 }
 
 void process_detector::add()
@@ -209,20 +214,18 @@ bool process_detector_worker::profile_to_start(QString& str)
 
     // assuming manual stop by user button click.
     // don't automatically start again while the same process is running.
-    if (last_exe_name != "" && exe_list.contains(last_exe_name))
+    if (!last_exe_name.isEmpty() && exe_list.contains(last_exe_name))
         return false;
     // it's gone, we can start automatically again
-    last_exe_name = "";
+    last_exe_name = QString();
 
-    for (auto& name : exe_list)
-    {
+    for (auto&& name : exe_list)
         if (filenames.contains(name))
         {
             str = filenames[name];
-            last_exe_name = std::move(name);
+            last_exe_name = name;
             return str != QString{};
         }
-    }
 
     return false;
 }

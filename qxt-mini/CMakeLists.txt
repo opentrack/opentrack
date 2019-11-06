@@ -1,5 +1,6 @@
 if(UNIX OR APPLE)
     set(self opentrack-qxt-mini)
+    include_directories(SYSTEM ${Qt5Gui_PRIVATE_INCLUDE_DIRS})
     otr_module(qxt-mini NO-COMPAT BIN)
     if(APPLE)
         target_link_options(${self} PUBLIC -framework Carbon -framework CoreFoundation)

@@ -3,8 +3,17 @@
 #define WINE_SHM_NAME "facetracknoir-wine-shm"
 #define WINE_MTX_NAME "facetracknoir-wine-mtx"
 
+#ifdef __clang__
+#   pragma clang diagnostic push
+#   pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+
 // OSX sdk 10.8 build error otherwise
 #undef _LIBCPP_MSVCRT
+
+#ifdef __clang__
+#   pragma clang diagnostic pop
+#endif
 
 #include <memory>
 

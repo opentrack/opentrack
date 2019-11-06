@@ -14,7 +14,9 @@
 #include <iterator>     // std::size
 #include <tchar.h>
 #include <setupapi.h>
+extern "C" {
 #include <hidsdi.h>
+}
 #include <sys/types.h>	// for _stat
 #include <sys/stat.h>	// "
 #include <process.h>	// for _beginthreadex()
@@ -684,7 +686,7 @@ void wiimote::SetReportType (input_report type, bool continuous)
 						TYPE2NAME(IN_BUTTONS_ACCEL_EXT)		:
 						TYPE2NAME(IN_BUTTONS_ACCEL_IR_EXT)	:
 						TYPE2NAME(IN_BUTTONS_BALANCE_BOARD) :
-						_T("(unknown??)");
+						_T("(unknown?)");
 	TRACE(_T("ReportType: %s (%s)"), name, (continuous? _T("continuous") :
 														_T("non-continuous")));
 #endif

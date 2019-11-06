@@ -83,7 +83,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     mutable QMutex mtx;
     main_settings s;
-    Mappings& m;
+    const Mappings& m;
     event_handler& ev;
 
     Timer t;
@@ -107,7 +107,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
 
     bool tracking_started = false;
 
-    static double map(double pos, Map& axis);
+    static double map(double pos, const Map& axis);
     void logic();
     void run() override;
     bool maybe_enable_center_on_tracking_started();
@@ -123,7 +123,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     bits b;
 
 public:
-    pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
+    pipeline(const Mappings& m, const runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
     ~pipeline() override;
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;

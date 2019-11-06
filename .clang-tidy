@@ -1,5 +1,6 @@
 Checks:
-    -*,
+    #-*,
+    *,
     clang-analyzer-*,clang-diagnostic-*,
     cppcoreguidelines-*,performance-*,bugprone-*,
     readability-*,misc-*,hicpp-*,cert-*,modernize-*,
@@ -50,6 +51,8 @@ Checks:
     -readability-inconsistent-declaration-parameter-name,
     -cppcoreguidelines-avoid-magic-numbers,
     -readability-magic-numbers,
+    -modernize-loop-convert,
+    -modernize-use-nodiscard,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
@@ -75,3 +78,5 @@ CheckOptions:
     value:    '90'
   - key:      readability-function-size.VariableThreshold
     value:    '10'
+
+# vim: ft=yaml

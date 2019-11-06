@@ -12,6 +12,12 @@ if(OpenCV_FOUND)
             otr_install_lib("opencv_${k}" "${opentrack-hier-pfx}")
         endforeach()
 
+        if(CMAKE_COMPILER_IS_GNUCXX)
+            add_compile_options(-Wno-sign-compare)
+        elseif(MSVC)
+            add_compile_definitions(-wd4018)
+        endif()
+
         otr_module(tracker-easy)
         target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
         target_link_libraries(${self} opencv_core opencv_imgproc opencv_calib3d opencv_video opencv_highgui opentrack-cv opentrack-video)

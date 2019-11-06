@@ -184,7 +184,7 @@ Pose_ reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
     return neck;
 }
 
-pipeline::pipeline(Mappings& m, runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
+pipeline::pipeline(const Mappings& m, const runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
     m(m), ev(ev), libs(libs), logger(logger)
 {
 }
@@ -195,7 +195,7 @@ pipeline::~pipeline()
     wait();
 }
 
-double pipeline::map(double pos, Map& axis)
+double pipeline::map(double pos, const Map& axis)
 {
     bool altp = (pos < 0) && axis.opts.altp;
     axis.spline_main.set_tracking_active(!altp);
@@ -468,7 +468,7 @@ ok:
     value = apply_zero_pos(value);
 
     ev.run_events(EV::ev_finished, value);
-    libs.pProtocol->pose(value);
+    libs.pProtocol->pose(value, raw);
 
     QMutexLocker foo(&mtx);
     output_pose = value;
@@ -575,7 +575,7 @@ void pipeline::run()
 
     // filter may inhibit exact origin
     Pose p;
-    libs.pProtocol->pose(p);
+    libs.pProtocol->pose(p, p);
 
     for (int i = 0; i < 6; i++)
     {
@@ -604,7 +604,10 @@ void pipeline::set_center(bool x) { b.set(f_center, x); }
 
 void pipeline::set_held_center(bool value)
 {
-    b.set(f_held_center, value);
+    if (value)
+        b.set(f_held_center | f_center, true);
+    else
+        b.set(f_held_center, false);
 }
 
 void pipeline::set_enabled(bool value) { b.set(f_enabled_h, value); }

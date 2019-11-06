@@ -8,5 +8,6 @@ chronological order:
 - Michael Welter <<mw.pub@welter-4d.de>>
 - Attila Csipa <<git@csipa.net>>
 - Wei Shuai <<cpuwolf@gmail.com>>
+- Stéphane Lenclud <<github@lenclud.com>>
 
 See OPENTRACK-LICENSING.txt for licensing information.

@@ -19,8 +19,18 @@ using namespace options;
 #   define EIGEN_VECTORIZE_SSE4_2
 #endif
 
+// nodiscard for placement new
+#ifdef _MSC_VER
+#   pragma warning(push)
+#   pragma warning(disable : 4834)
+#endif
+
 #include <Eigen/Core>
 #include <Eigen/LU>
+
+#ifdef _MSC_VER
+#   pragma warning(pop)
+#endif
 
 #include "ui_ftnoir_kalman_filtercontrols.h"
 #include <QString>

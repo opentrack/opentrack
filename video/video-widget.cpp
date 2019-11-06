@@ -11,9 +11,8 @@
 
 void video_widget::init_image_nolock()
 {
-    double dpr = devicePixelRatioF();
-    size_.store({ iround(width() * dpr), iround(height() * dpr) },
-                std::memory_order_release);
+    double dpi = screen_dpi();
+    size_.store({ iround(width() * dpi), iround(height() * dpi) }, std::memory_order_release);
 }
 
 video_widget::video_widget(QWidget* parent) : QWidget(parent)
@@ -33,13 +32,12 @@ void video_widget::update_image(const QImage& img)
     set_fresh(true);
 }
 
-void video_widget::set_image(const unsigned char* src, int width, int height,
-                             unsigned stride, QImage::Format fmt)
+void video_widget::set_image(const unsigned char* src, int width, int height, int stride, QImage::Format fmt)
 {
     QMutexLocker l(&mtx);
 
     texture = QImage();
-    unsigned nbytes = stride * height;
+    unsigned nbytes = (unsigned)(stride * height);
     vec.resize(nbytes); vec.shrink_to_fit();
     std::memcpy(vec.data(), src, nbytes);
     texture = QImage((const unsigned char*)vec.data(), width, height, stride, fmt);
@@ -86,3 +84,4 @@ void video_widget::set_fresh(bool x)
 {
     fresh_.store(x, std::memory_order_release);
 }
+

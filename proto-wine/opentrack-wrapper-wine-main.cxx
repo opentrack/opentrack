@@ -12,6 +12,7 @@ enum Axis {
     TX = 0, TY, TZ, Yaw, Pitch, Roll
 };
 
+#define __WINE_OLE2_H
 #include "compat/shm.h"
 
 void create_registry_key(void);

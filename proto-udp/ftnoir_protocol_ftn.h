@@ -35,7 +35,7 @@ class udp : public QObject, public IProtocol
 public:
     udp();
     module_status initialize() override;
-    void pose(const double *headpose) override;
+    void pose(const double *headpose, const double*) override;
     QString game_name() override { return tr("UDP over network"); }
 private:
     QUdpSocket outSocket;

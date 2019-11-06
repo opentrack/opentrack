@@ -78,6 +78,10 @@ bool spline_widget::is_preview_only() const
     return preview_only;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
+#   define OTR_OBSOLETE_QT_WORKAROUND
+#endif
+
 void spline_widget::drawBackground()
 {
     QPainter painter(&background_img);
@@ -96,7 +100,6 @@ void spline_widget::drawBackground()
     font.setStyleHint(QFont::Monospace, QFont::PreferAntialias);
     painter.setFont(font);
     const QFontMetricsF metrics(font);
-    const double height = metrics.height();
 
     QColor color__(176, 190, 209, 127);
 
@@ -109,6 +112,12 @@ void spline_widget::drawBackground()
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
+    double space_width = metrics.horizontalAdvance(' ');
+#else
+    double space_width = metrics.averageCharWidth();
+#endif
+
     // vertical grid
     for (int i = 0; i <= maxy; i += ystep)
     {
@@ -117,11 +126,16 @@ void spline_widget::drawBackground()
                  QPointF(pixel_bounds.x(), y),
                  QPointF(pixel_bounds.x() + pixel_bounds.width(), y),
                  pen);
-        painter.drawText(QRectF(10,
-                                y - height/2,
-                                pixel_bounds.left(),
-                                height),
-                         QString::number(i));
+        QString text = QString::number(i);
+        QRectF rect = metrics.boundingRect(text);
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
+        double advance = metrics.horizontalAdvance(text);
+#else
+        double advance = rect.right();
+#endif
+        painter.drawText(QPointF(pixel_bounds.x() - advance - space_width,
+                                 y - rect.height()/2 - rect.top()),
+                         text);
     }
 
     // horizontal grid
@@ -134,17 +148,15 @@ void spline_widget::drawBackground()
                  pen);
 
         const QString text = QString::number(i);
-
-        const double width =
-#if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
-            metrics.horizontalAdvance(text);
+        QRectF rect = metrics.boundingRect(text);
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
+        double advance = metrics.horizontalAdvance(text);
 #else
-            metrics.width(text);
+        double advance = rect.right();
 #endif
 
-        painter.drawText(QRectF{x - width/2,
-                                pixel_bounds.height() + 10 + height,
-                                width, height},
+        painter.drawText(QPointF(x - advance/2 - rect.left(),
+                                 pixel_bounds.height() - rect.top() + rect.height()),
                          text);
     }
 }
@@ -160,8 +172,7 @@ void spline_widget::drawFunction()
         moving_control_point_idx < points.size())
     {
         const QPen pen(Qt::white, 1, Qt::SolidLine, Qt::FlatCap);
-        const QPointF prev_ = point_to_pixel({});
-        QPointF prev(iround(prev_.x()), iround(prev_.y()));
+        QPointF prev = point_to_pixel({});
         for (const auto& point : points)
         {
             const QPointF tmp = point_to_pixel(point);
@@ -188,14 +199,14 @@ void spline_widget::drawFunction()
         }
     );
 
-    painter.setPen(QPen(color_, 1.75, Qt::SolidLine, Qt::FlatCap));
+    painter.setPen(QPen(color_, 2, Qt::SolidLine, Qt::FlatCap));
 
-    const double dpr = devicePixelRatioF();
-    const double line_length_pixels = std::fmax(1, 2 * dpr);
+    const double dpr = screen_dpi();
+    const double line_length_pixels = std::fmax(1, dpr);
     const double step = std::fmax(.1, line_length_pixels / c.x());
     const double maxx = config->max_input();
 
-//#define USE_CUBIC_SPLINE
+#define USE_CUBIC_SPLINE
 #if defined USE_CUBIC_SPLINE
     QPainterPath path;
 
@@ -209,18 +220,22 @@ void spline_widget::drawFunction()
                : QPointF{max_x_pixel, val.y()};
     };
 
+    const auto fn = [&] (double k) {
+      const auto next_1 = config->get_value_no_save(k + step*1);
+      const auto next_2 = config->get_value_no_save(k + step*2);
+      const auto next_3 = config->get_value_no_save(k + step*3);
+
+      QPointF b(clamp(point_to_pixel({k + step*1, next_1}))),
+          c(clamp(point_to_pixel({k + step*2, next_2}))),
+          d(clamp(point_to_pixel({k + step*3, next_3})));
+
+      path.cubicTo(b, c, d);
+    };
+
     for (double k = 0; k < maxx; k += step*3) // NOLINT
-    {
-        const auto next_1 = config->get_value_no_save(k + step*1);
-        const auto next_2 = config->get_value_no_save(k + step*2);
-        const auto next_3 = config->get_value_no_save(k + step*3);
+        fn(k);
 
-        QPointF b(clamp(point_to_pixel({k + step*1, next_1}))),
-                c(clamp(point_to_pixel({k + step*2, next_2}))),
-                d(clamp(point_to_pixel({k + step*3, next_3})));
-
-        path.cubicTo(b, c, d);
-    }
+    fn(maxx);
 
     painter.drawPath(path);
 #else
@@ -258,6 +273,12 @@ void spline_widget::drawFunction()
                       isEnabled() ? QColor(50, 100, 120, 200) : QColor(200, 200, 200, 96));
         }
     }
+}
+
+QSize spline_widget::minimumSizeHint() const
+{
+    const double dpi = screen_dpi();
+    return { iround(800 * dpi), iround(250 * dpi) };
 }
 
 void spline_widget::paintEvent(QPaintEvent *e)

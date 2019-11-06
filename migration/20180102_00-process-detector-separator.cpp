@@ -42,6 +42,7 @@ struct process_detector_record_separator : migration
             value.replace(OLD_UNIT_SEPARATOR,   NEW_UNIT_SEPARATOR);
             value.replace(OLD_RECORD_SEPARATOR, NEW_RECORD_SEPARATOR);
             s.setValue(KEY_NAME, value);
+            mark_global_ini_modified();
         });
     }
 };

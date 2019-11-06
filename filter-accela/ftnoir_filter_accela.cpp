@@ -139,6 +139,8 @@ void accela::filter(const double* input, double *output)
     }
 }
 
+namespace detail::accela {
+
 void settings_accela::make_splines(spline& rot, spline& pos)
 {
     rot.clear(); pos.clear();
@@ -149,5 +151,7 @@ void settings_accela::make_splines(spline& rot, spline& pos)
     for (const auto& val : pos_gains)
         pos.add_point({ val.x, val.y });
 }
+
+} // ns detail::accela
 
 OPENTRACK_DECLARE_FILTER(accela, dialog_accela, accelaDll)

@@ -103,7 +103,7 @@ static QStringList get_all_executable_names()
                     if (idx != -1)
                     {
                         QString tmp = cmdline[0].mid(idx+1);
-                        if (cmdline.size() > 1 && (tmp == "wine.bin" || tmp == "wine"))
+                        if (cmdline.size() > 1 && (tmp == QStringLiteral("wine.bin") || tmp == QStringLiteral("wine")))
                         {
                             idx = cmdline[1].lastIndexOf('/');
                             if (idx == -1)
@@ -133,8 +133,9 @@ static QStringList get_all_executable_names()
 
 #include <proc/readproc.h>
 #include <cerrno>
+
 template<typename = void>
-static QStringList get_all_executable_names()
+QStringList get_all_executable_names()
 {
     QStringList ret;
     proc_t** procs = readproctab(PROC_FILLCOM);

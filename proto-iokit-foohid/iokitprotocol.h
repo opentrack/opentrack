@@ -19,7 +19,7 @@ public:
     IOKitProtocol();
 
     module_status initialize() override;
-    void pose(const double *headpose) final;
+    void pose(const double *headpose, const double*) final;
     QString game_name() final;
 
 private:

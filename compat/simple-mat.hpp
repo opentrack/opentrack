@@ -244,6 +244,13 @@ public:
                 data[j][i] = mem[i*H+j];
     }
 
+    constexpr Mat(const Mat<num, H, W>& x)
+    {
+        for (int j = 0; j < H; j++)
+            for (int i = 0; i < W; i++)
+                data[j][i] = x(j, i);
+    }
+
     constexpr operator num*() & { return (num*)data; }
     constexpr operator const num*() const& { return (const num*)data; }
 

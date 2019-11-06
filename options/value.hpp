@@ -150,7 +150,7 @@ public:
 
     auto operator->() const noexcept
     {
-        return detail::dereference_wrapper{get()};
+        return detail::dereference_wrapper<t>{get()};
     }
 
     force_inline auto operator()() const noexcept { return get(); }

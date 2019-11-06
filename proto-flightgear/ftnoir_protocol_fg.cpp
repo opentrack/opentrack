@@ -13,7 +13,7 @@
 
 // For Todd and Arda Kutlu
 
-void flightgear::pose(const double* headpose) {
+void flightgear::pose(const double* headpose, const double*) {
     FlightData.x = -headpose[TX] * 1e-2;
     FlightData.y = headpose[TY] * 1e-2;
     FlightData.z = headpose[TZ] * 1e-2;

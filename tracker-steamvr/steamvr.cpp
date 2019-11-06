@@ -233,9 +233,9 @@ void steamvr::data(double* data)
 
             const auto& result = pose.mDeviceToAbsoluteTracking;
 
-            data[TX] = -result.m[0][3] * c;
-            data[TY] = result.m[1][3] * c;
-            data[TZ] = result.m[2][3] * c;
+            data[TX] = (double)(-result.m[0][3] * c);
+            data[TY] = (double)(result.m[1][3] * c);
+            data[TZ] = (double)(result.m[2][3] * c);
 
             matrix_to_euler(data[Yaw], data[Pitch], data[Roll], result);
 

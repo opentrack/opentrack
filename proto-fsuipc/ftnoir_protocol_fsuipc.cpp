@@ -48,7 +48,7 @@ static bool check_float_fresh(t x, t y)
 }
 #endif
 
-void fsuipc::pose(const double *headpose)
+void fsuipc::pose(const double *headpose, const double*)
 {
     DWORD result;
     WORD FSZoom;
