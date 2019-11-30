@@ -156,11 +156,13 @@ if(MSVC)
 endif()
 
 if(APPLE)
-    add_compile_definitions(-stdlib=libc++)
+    # Removed because of Macro error
+    # add_compile_definitions(-stdlib=libc++)
     add_link_options(-stdlib=libc++)
 
-    add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
-    link_libraries(objc z)
+    # Build failure cannot link to frameworks
+    #add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
+    #link_libraries(objc z)
 endif()
 
 if(NOT MSVC)
