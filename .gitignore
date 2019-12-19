@@ -7,3 +7,4 @@
 /.vs/
 /CMakeSettings.json
 .gtm/
+.vscode

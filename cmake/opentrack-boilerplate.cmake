@@ -61,8 +61,8 @@ function(otr_glob_sources var)
 endfunction()
 
 function(otr_fixup_subsystem n)
-    otr_find_msvc_editbin(editbin-pathname)
     if(MSVC)
+        otr_find_msvc_editbin(editbin-pathname)
         set(subsystem WINDOWS)
         get_property(type TARGET "${n}" PROPERTY TYPE)
         if (NOT type STREQUAL "STATIC_LIBRARY")
@@ -143,15 +143,17 @@ function(otr_module n_)
         set(arg_NO-I18N TRUE)
     endif()
 
-    if(NOT WIN32)
-        set(subsys "")
-    elseif(arg_WIN32-CONSOLE)
-        set(subsys "")
-    else()
-        set(subsys "WIN32")
-    endif()
-
     if(arg_EXECUTABLE)
+        if (APPLE)
+            set(subsys "MACOSX_BUNDLE") 
+        elseif(NOT WIN32)
+            set(subsys "")
+        elseif(arg_WIN32-CONSOLE)
+            set(subsys "")
+        else()
+            set(subsys "WIN32")
+        endif()
+
         add_executable(${n} ${subsys} "${${n}-all}")
         set_target_properties(${n} PROPERTIES
                               SUFFIX "${opentrack-binary-suffix}"
@@ -216,12 +218,23 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-INSTALL)
+        # Librarys/executable
         if(arg_BIN)
-            install(TARGETS "${n}"
+            if (APPLE)
+                install(TARGETS "${n}"
+                RUNTIME DESTINATION ${opentrack-hier-bin}
+                BUNDLE	DESTINATION ${opentrack-hier-bin}
+                LIBRARY DESTINATION ${opentrack-hier-bin}/opentrack.app/Contents/MacOS/
+                RESOURCE DESTINATION ${opentrack-hier-bin}/opentrack.app/Resource
+                PERMISSIONS ${opentrack-perms-exec})
+            else()
+                install(TARGETS "${n}"
                     RUNTIME DESTINATION ${opentrack-hier-bin}
                     LIBRARY DESTINATION ${opentrack-hier-pfx}
                     PERMISSIONS ${opentrack-perms-exec})
+            endif()
         else()
+            # Plugins
             install(TARGETS "${n}" ${opentrack-hier-str}
                     PERMISSIONS ${opentrack-perms-exec})
         endif()

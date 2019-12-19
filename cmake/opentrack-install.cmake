@@ -71,9 +71,11 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     cleanup_visual_studio_debug()
 endif()
 
+if (NOT APPLE)
 otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
 otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient64.dll")
 otr_install_exec("${opentrack-hier-pfx}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient.dll"
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe")
+endif()

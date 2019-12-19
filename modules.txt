@@ -1,0 +1,37 @@
+Not copied
+--------------
+logic           BIN             target_link_libraries(${self} opentrack-spline)
+migration       BIN             target_link_libraries(${self} opentrack-logic opentrack-spline)
+pose-widget     BIN             #target_link_libraries(${self}) 
+user-interface  BIN             target_link_libraries(${self}    opentrack-migration    opentrack-logic    opentrack-spline    opentrack-pose-widget)
+
+copied and fixed
+--------------
+api             NO-COMPAT BIN
+compat          NO-COMPAT BIN
+options         NO-COMPAT BIN   target_link_libraries(opentrack-options opentrack-compat)
+qtx-mini        NO-COMPAT BIN
+spline          BIN  
+video           BIN
+
+
+boiler
+--------------
+    if(NOT arg_NO-COMPAT)
+        target_link_libraries(${n} opentrack-api opentrack-options opentrack-compat)
+    endif()
+
+opentrack
+--------------
+target_link_libraries(${self} opentrack-user-interface opentrack-version)
+
+from opentrack mainwindow
+--------------
+Most lickly not used
+    foreach(k user-interface logic pose-widget migration spline)
+        target_link_libraries(${self} opentrack-${k})
+    endforeach()
+
+trackmouse
+--------------
+target_link_libraries(${self} opentrack-user-interface opentrack-version)

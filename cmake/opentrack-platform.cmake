@@ -43,10 +43,12 @@ set(CMAKE_CXX_STANDARD_DEFAULT 17)
 set(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-set(CMAKE_SKIP_INSTALL_RPATH FALSE)
-set(CMAKE_SKIP_RPATH FALSE)
+IF (NOT APPLE)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+    set(CMAKE_SKIP_INSTALL_RPATH FALSE)
+    set(CMAKE_SKIP_RPATH FALSE)
+endif()
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
@@ -153,16 +155,6 @@ if(MSVC)
     foreach(i ${warns-disable})
         add_compile_options(-wd${i})
     endforeach()
-endif()
-
-if(APPLE)
-    # Removed because of Macro error
-    # add_compile_definitions(-stdlib=libc++)
-    add_link_options(-stdlib=libc++)
-
-    # Build failure cannot link to frameworks
-    #add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
-    #link_libraries(objc z)
 endif()
 
 if(NOT MSVC)

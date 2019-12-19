@@ -93,8 +93,15 @@ function(otr_add_subdirs)
 
     foreach(k ${_globbed})
         get_filename_component(k "${k}" DIRECTORY)
-        add_subdirectory("${k}")
+        # we want to compile macosx last so we can run proper install scripts
+        if (k MATCHES "macosx$")
+            set(o ${k})
+        else()
+            add_subdirectory("${k}")
+        endif()
     endforeach()
+    # Add macosx last
+    add_subdirectory("${o}")
 endfunction()
 
 otr_add_subdirs()

@@ -2,9 +2,13 @@ if(LINUX OR APPLE)
     set(SDK_XPLANE "" CACHE PATH "Path to the X-Plane SDK")
 
     if(SDK_XPLANE)
-        otr_module(xplane-plugin NO-QT)
+        if (APPLE)
+            otr_module(xplane-plugin NO-QT NO-INSTALL)
+        else()
+            otr_module(xplane-plugin NO-QT)
+        endif()
         # probably librt already included
-        #install(FILES ${opentrack-xplane-plugin-c} DESTINATION "${opentrack-doc-src-pfx}/opentrack-xplane-plugin")
+        #install(FILES ${opentrack-xplane-plugin-c} DESTINATION "opentrack-hier-pfx")
         target_include_directories(opentrack-xplane-plugin SYSTEM PUBLIC ${SDK_XPLANE}/CHeaders/XPLM)
 
         if(APPLE)
@@ -15,6 +19,13 @@ if(LINUX OR APPLE)
             target_link_options(${self} PRIVATE
                                 "-F${SDK_XPLANE}/Libraries/Mac/"
                                 -framework XPLM)
+                                
+           install(TARGETS "${self}"
+                RUNTIME DESTINATION ${opentrack-hier-bin}/xplane
+                BUNDLE	DESTINATION ${opentrack-hier-bin}/xplane
+                LIBRARY DESTINATION ${opentrack-hier-bin}/xplane 
+                PERMISSIONS ${opentrack-perms-exec})
+
         elseif(CMAKE_COMPILER_IS_GNUCXX)
             target_compile_options(${self} PRIVATE -DLIN -DXPLM200 -DXPLM210)
             target_link_options(${self} PRIVATE -rdynamic -nodefaultlibs)
