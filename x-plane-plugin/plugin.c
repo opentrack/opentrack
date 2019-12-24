@@ -176,12 +176,19 @@ void volatile_explicit_bzero(void volatile* restrict ptr, size_t len)
 
 PLUGIN_API OTR_GENERIC_EXPORT
 int XPluginStart (char* outName, char* outSignature, char* outDescription) {
-    view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
-    view_y = XPLMFindDataRef("sim/aircraft/view/acf_peY");
-    view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
+    // view_x = XPLMFindDataRef("sim/aircraft/view/acf_peX");
+    // view_y = XPLMFindDataRef("sim/aircraft/view/acf_peY");
+    // view_z = XPLMFindDataRef("sim/aircraft/view/acf_peZ");
+    // view_heading = XPLMFindDataRef("sim/graphics/view/pilots_head_psi");
+    // view_pitch = XPLMFindDataRef("sim/graphics/view/pilots_head_the");
+    // view_roll = XPLMFindDataRef("sim/graphics/view/field_of_view_roll_deg");
+
+    view_x = XPLMFindDataRef("sim/graphics/view/pilots_head_x");
+    view_y = XPLMFindDataRef("sim/graphics/view/pilots_head_y");
+    view_z = XPLMFindDataRef("sim/graphics/view/pilots_head_z");
     view_heading = XPLMFindDataRef("sim/graphics/view/pilots_head_psi");
     view_pitch = XPLMFindDataRef("sim/graphics/view/pilots_head_the");
-    view_roll = XPLMFindDataRef("sim/graphics/view/field_of_view_roll_deg");
+    view_roll = XPLMFindDataRef("sim/graphics/view/pilots_head_phi");
 
     track_toggle = XPLMCreateCommand("opentrack/toggle", "Disable/Enable head tracking");
     translation_disable_toggle = XPLMCreateCommand("opentrack/toggle_translation", "Disable/Enable input translation from opentrack");
