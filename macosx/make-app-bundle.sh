@@ -24,7 +24,7 @@ tmp="$(mktemp -d "/tmp/$APPNAME-tmp.XXXXXXX")"
 test $? -eq 0 || exit 1
 
 # Add framework and other libraries
-macdeployqt -ff "$install/$APPNAME.app" -libpath="$install/$APPNAME.app/Contents/MacOS"
+macdeployqt "$install/$APPNAME.app" -libpath="$install/$APPNAME.app/Contents/MacOS"
 
 # Fixup dylib linker issues
 sh "$dir/install-fail-tool" "$install/$APPNAME.app/Contents/Frameworks"
