@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# exit when any command fails
+set -e
+
+# keep track of the last executed command
+trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+# echo an error message before exiting
+trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT 
+
 APPNAME=opentrack
 # Alternative we could look at https://github.com/arl/macdeployqtfix ??
 
@@ -16,7 +24,7 @@ tmp="$(mktemp -d "/tmp/$APPNAME-tmp.XXXXXXX")"
 test $? -eq 0 || exit 1
 
 # Add framework and other libraries
-macdeployqt "$install/$APPNAME.app" -libpath="$install/$APPNAME.app/Contents/MacOS"
+macdeployqt -ff "$install/$APPNAME.app" -libpath="$install/$APPNAME.app/Contents/MacOS"
 
 # Fixup dylib linker issues
 sh "$dir/install-fail-tool" "$install/$APPNAME.app/Contents/Frameworks"
@@ -37,6 +45,28 @@ sips -z 128 128   "$dir/../gui/images/opentrack.png" --out "$tmp/$APPNAME.iconse
 iconutil -c icns -o "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" "$tmp/$APPNAME.iconset"
 rm -rf "$tmp"
 
-# Zip it up
-#zip -9r "$install/$version-macosx.zip" "$APPNAME.app" || exit 1
-#ls -lh "$install/$version-macosx.zip"
+#Build DMG
+#https://github.com/andreyvit/create-dmg
+rm -rf $install/../$version.dmg
+create-dmg \
+  --volname "$APPNAME" \
+  --volicon "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" \
+  --window-pos 200 120 \
+  --window-size 800 450 \
+  --icon-size 100 \
+  --background "$dir/dmgbackground.png" \
+  --icon "$APPNAME.app" 200 190 \
+  --hide-extension "$APPNAME.app" \
+  --app-drop-link 600 185 \
+  "$version.dmg" \
+  "$install/$APPNAME.app"
+
+# Check if we have a DMG otherwise fail
+FILE=$install/../$version.dmg    
+if [ -f $FILE ]; then
+   ls -ial $install/../*.dmg    
+   exit 0
+else
+   echo "Failed to create $FILE"
+   exit 2
+fi
