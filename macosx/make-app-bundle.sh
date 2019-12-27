@@ -24,7 +24,7 @@ tmp="$(mktemp -d "/tmp/$APPNAME-tmp.XXXXXXX")"
 test $? -eq 0 || exit 1
 
 # Add framework and other libraries
-macdeployqt "$install/$APPNAME.app" -libpath="$install/$APPNAME.app/Contents/MacOS"
+macdeployqt "$install/$APPNAME.app" -libpath="$install/Library"
 
 # Fixup dylib linker issues
 sh "$dir/install-fail-tool" "$install/$APPNAME.app/Contents/Frameworks"
@@ -54,26 +54,28 @@ rm -rf "$tmp"
 
 #Build DMG
 #https://github.com/andreyvit/create-dmg
-rm -rf $install/../$version.dmg
+rm -rf $install/../*.dmg
 create-dmg \
   --volname "$APPNAME" \
   --volicon "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" \
   --window-pos 200 120 \
   --window-size 800 450 \
-  --icon-size 100 \
+  --icon-size 80 \
   --background "$dir/dmgbackground.png" \
-  --icon "$APPNAME.app" 200 190 \
+  --icon "$APPNAME.app" 200 180 \
+  --app-drop-link 420 180 \
   --hide-extension "$APPNAME.app" \
-  --app-drop-link 600 185 \
+  --add-folder "Document" "$install/doc" 20 40 \
+  --add-folder "source-code" "$install/source-code" 220 40 \
+  --add-folder "Xplane-Plugin" "$install/xplane" 420 40 \
   "$version.dmg" \
   "$install/$APPNAME.app"
 
 # Check if we have a DMG otherwise fail
-FILE=$install/../$version.dmg    
+FILE=$install/../$version.dmg
 if [ -f $FILE ]; then
-   ls -ial $install/../*.dmg    
-   exit 0
+   ls -ial $install/../*.dmg
 else
-   echo "Failed to create $FILE"
+   echo "Failed to create ${FILE}"
    exit 2
 fi

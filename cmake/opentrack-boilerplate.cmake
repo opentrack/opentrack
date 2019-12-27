@@ -224,7 +224,7 @@ function(otr_module n_)
                 install(TARGETS "${n}"
                 RUNTIME DESTINATION ${opentrack-hier-bin}
                 BUNDLE	DESTINATION ${opentrack-hier-bin}
-                LIBRARY DESTINATION ${opentrack-hier-bin}/opentrack.app/Contents/MacOS/
+                LIBRARY DESTINATION ${opentrack-hier-bin}/Library
                 RESOURCE DESTINATION ${opentrack-hier-bin}/opentrack.app/Resource
                 PERMISSIONS ${opentrack-perms-exec})
             else()

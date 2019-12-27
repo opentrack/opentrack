@@ -18,7 +18,7 @@ if(APPLE)
     set(opentrack-doc-src-pfx "./source-code")
     set(opentrack-i18n-pfx "opentrack.app/Contents/Resources") # used during install
     set(opentrack-i18n-path "../Resources/i18n") # used in application
-    set(opentrack-install-rpath "./")
+    set(opentrack-install-rpath "../Frameworks")
     set(opentrack-hier-str RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
 elseif(WIN32)
     set(opentrack-hier-pfx "modules")
