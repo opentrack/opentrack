@@ -35,13 +35,20 @@ cp "$dir/PkgInfo" "$install/$APPNAME.app/Contents/"
 cp "$dir/opentrack.sh" "$install/$APPNAME.app/Contents/MacOS/"
 sed -i '' -e "s#@OPENTRACK-VERSION@#$version#g" "$install/$APPNAME.app/Contents/Info.plist" || exit 1
 
+# Create an 512 resolution size (for retina displays mostly)
+#gm convert -size 512x512 "$dir/../gui/images/opentrack.png" "$tmp/opentrack.png"
+convert "$dir/../gui/images/opentrack.png" -filter triangle -resize 512x512 "$tmp/opentrack.png"
+
 # Build iconset 
 mkdir "$tmp/$APPNAME.iconset" || exit 1
-sips -z 16 16     "$dir/../gui/images/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_16x16.png" || exit 1
-sips -z 32 32     "$dir/../gui/images/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_16x16@2x.png" || exit 1
-sips -z 32 32     "$dir/../gui/images/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_32x32.png" || exit 1
-sips -z 64 64     "$dir/../gui/images/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_32x32@2x.png" || exit 1
-sips -z 128 128   "$dir/../gui/images/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_128x128.png" || exit 1
+sips -z 16 16     "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_16x16.png" || exit 1
+sips -z 32 32     "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_16x16@2x.png" || exit 1
+sips -z 32 32     "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_32x32.png" || exit 1
+sips -z 64 64     "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_32x32@2x.png" || exit 1
+sips -z 128 128   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_128x128.png" || exit 1
+sips -z 256 256   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_128x128@2x.png" || exit 1
+sips -z 512 512   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_256x256@2x.png" || exit 1
+sips -z 512 512   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_512x512.png" || exit 1
 iconutil -c icns -o "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" "$tmp/$APPNAME.iconset"
 rm -rf "$tmp"
 
