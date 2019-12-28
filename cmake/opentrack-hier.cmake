@@ -10,7 +10,7 @@
 include_guard(GLOBAL)
 
 if(APPLE)
-    set(opentrack-hier-pfx "${CMAKE_INSTALL_PREFIX}/opentrack.app/Contents/MacOS/Plugins")
+    set(opentrack-hier-pfx "Plugins")
     set(opentrack-hier-path "/Plugins/")                        # MUST HAVE A TRAILING BACKSLASH, Used in APP
     set(opentrack-hier-doc "/")                         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-hier-bin "${CMAKE_INSTALL_PREFIX}")
@@ -18,14 +18,12 @@ if(APPLE)
     set(opentrack-doc-src-pfx "./source-code")
     set(opentrack-i18n-pfx "opentrack.app/Contents/Resources") # used during install
     set(opentrack-i18n-path "../Resources/i18n") # used in application
-    set(opentrack-install-rpath "../Frameworks")
-    set(opentrack-hier-str RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
+    set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/Library")
 elseif(WIN32)
     set(opentrack-hier-pfx "modules")
     set(opentrack-hier-path "/${opentrack-hier-pfx}/")  # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-hier-doc "/doc/")                     # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-hier-bin ".")
-    set(opentrack-hier-str RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
     set(opentrack-doc-pfx "./doc")
     set(opentrack-doc-src-pfx "./source-code")
     set(opentrack-i18n-pfx "./i18n")
@@ -37,13 +35,13 @@ else()
     set(opentrack-hier-path "/../${opentrack-hier-pfx}/")   # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-hier-doc "/share/doc/opentrack/")         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-hier-bin "bin")
-    set(opentrack-hier-str RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
     set(opentrack-doc-pfx "./share/doc/opentrack")
     set(opentrack-doc-src-pfx "./share/doc/opentrack/source-code")
     set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/${opentrack-hier-pfx}")
     set(opentrack-i18n-pfx "./share/opentrack/i18n")
     set(opentrack-i18n-path "../share/opentrack/i18n")
 endif()
+set(opentrack-hier-str RUNTIME DESTINATION ${opentrack-hier-pfx} LIBRARY DESTINATION ${opentrack-hier-pfx})
 
 function(otr_escape_string var str)
     string(REGEX REPLACE "([^_A-Za-z0-9./:-])" "\\\\\\1" str "${str}")
