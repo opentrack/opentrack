@@ -5,7 +5,6 @@
 #include "compat/base-path.hpp"
 #include "compat/library-path.hpp"
 #include "compat/macros.hpp"
-#include "compat/qhash.hpp"
 #include "export.hpp"
 
 #include <optional>
