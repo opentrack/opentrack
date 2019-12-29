@@ -1,12 +1,12 @@
 #pragma once
 
 #include "api/plugin-api.hpp"
+#include "compat/timer.hpp"
 #include "ftnoir_tracker_hat_settings.h"
 #include "ftnoir_tracker_hat.h"
 #include "ui_ftnoir_hatcontrols.h"
 #include <QObject>
 #include <QWidget>
-#include <QTime>
 #include <QTimer>
 #include <QMessageBox>
 #include <QMetaType>
@@ -25,7 +25,7 @@ public:
 private:
     Ui::UIHATControls ui;
     hatire *theTracker;
-    QTime last_time;
+    Timer last_time;
 
 public  slots:
     void WriteMsgInfo(const QByteArray &MsgInfo);
