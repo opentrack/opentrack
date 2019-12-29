@@ -24,8 +24,6 @@
 
 #include <QDebug>
 
-#include "compat/qhash.hpp"
-
 #include "export.hpp"
 
 namespace options::detail {

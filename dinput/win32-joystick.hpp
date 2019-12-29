@@ -9,7 +9,6 @@
 
 #include "dinput.hpp"
 #include "compat/timer.hpp"
-#include "compat/qhash.hpp"
 #include "export.hpp"
 
 #include <memory>
