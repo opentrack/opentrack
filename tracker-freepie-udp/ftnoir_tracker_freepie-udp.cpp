@@ -17,21 +17,15 @@ tracker_freepie::~tracker_freepie()
 }
 
 void tracker_freepie::run() {
-#ifndef __clang__
-#pragma pack(push)
-struct
-#else
-struct __attribute__((packed))
-#endif
-{
+#pragma pack(push, 1)
+    struct {
         uint8_t pad1;
         uint8_t flags;
         float fl[12];
-} data;
-#ifndef __clang__
+    } data;
 #pragma pack(pop)
-#endif
 
+    static_assert(sizeof(data) == 50);
 
     enum F
     {
