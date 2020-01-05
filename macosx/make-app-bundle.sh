@@ -72,10 +72,11 @@ create-dmg \
   --icon "$APPNAME.app" 200 180 \
   --app-drop-link 420 180 \
   --hide-extension "$APPNAME.app" \
-  --add-folder "Document" "$install/doc" 20 40 \
   --no-internet-enable \
+  --add-folder "Document" "$install/doc" 20 40 \
   --add-folder "source-code" "$install/source-code" 220 40 \
   --add-folder "Xplane-Plugin" "$install/xplane" 420 40 \
+  --add-folder "thirdparty" "$install/thirdparty" 620 40 \
   "$version.dmg" \
   "$install/$APPNAME.app"
 
