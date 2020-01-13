@@ -34,7 +34,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
 
-#if !defined _WIN32 && !defined __APPLE__
+#if !defined _WIN32
     annoy_if_root();
 #endif
 

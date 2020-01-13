@@ -54,7 +54,6 @@ set(CMAKE_POSITION_INDEPENDENT_CODE TRUE)
 set(CMAKE_C_VISIBILITY_PRESET hidden)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-set(CMAKE_MACOSX_RPATH OFF)
 
 if(NOT WIN32 AND NOT APPLE)
     include(opentrack-pkg-config)
@@ -153,14 +152,6 @@ if(MSVC)
     foreach(i ${warns-disable})
         add_compile_options(-wd${i})
     endforeach()
-endif()
-
-if(APPLE)
-    add_compile_definitions(-stdlib=libc++)
-    add_link_options(-stdlib=libc++)
-
-    add_link_options(-framework Cocoa -framework CoreFoundation -framework Carbon)
-    link_libraries(objc z)
 endif()
 
 if(NOT MSVC)

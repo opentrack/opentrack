@@ -11,6 +11,10 @@
 #   include <unistd.h>
 #endif
 
+#ifdef __APPLE__
+#   include <QCameraInfo>
+#endif
+
 #ifdef __linux
 #   include <fcntl.h>
 #   include <sys/ioctl.h>
@@ -102,5 +106,12 @@ std::vector<QString> get_camera_names()
         }
     }
 #endif
+#ifdef __APPLE__
+    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    foreach (const QCameraInfo &cameraInfo, cameras) {
+        ret.push_back(cameraInfo.description());  
+    }
+#endif
+
     return ret;
 }

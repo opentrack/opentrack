@@ -71,9 +71,13 @@ if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
     cleanup_visual_studio_debug()
 endif()
 
-otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
-otr_install_exec("${opentrack-hier-pfx}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient64.dll")
-otr_install_exec("${opentrack-hier-pfx}" FILES
+# For now copy third party needed files into a seperate direcvtory instead of the plugins directory
+if (APPLE)
+    set(OSX_POST_INSTALL_DIR "/../thirdparty")
+endif()
+otr_install_exec("${opentrack-hier-pfx}${OSX_POST_INSTALL_DIR}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient.dll")
+otr_install_exec("${opentrack-hier-pfx}${OSX_POST_INSTALL_DIR}" FILES "${CMAKE_SOURCE_DIR}/bin/freetrackclient64.dll")
+otr_install_exec("${opentrack-hier-pfx}${OSX_POST_INSTALL_DIR}" FILES
     "${CMAKE_SOURCE_DIR}/bin/NPClient.dll"
     "${CMAKE_SOURCE_DIR}/bin/NPClient64.dll"
     "${CMAKE_SOURCE_DIR}/bin/TrackIR.exe")

@@ -9,16 +9,16 @@
 
 include_guard(GLOBAL)
 
-set(opentrack-install-rpath "")
 if(APPLE)
-    set(opentrack-hier-pfx ".")
-    set(opentrack-hier-path "/")                        # MUST HAVE A TRAILING BACKSLASH
+    set(opentrack-hier-pfx "Plugins")
+    set(opentrack-hier-path "/Plugins/")                        # MUST HAVE A TRAILING BACKSLASH, Used in APP
     set(opentrack-hier-doc "/")                         # MUST HAVE A TRAILING BACKSLASH
-    set(opentrack-hier-bin ".")
+    set(opentrack-hier-bin "${CMAKE_INSTALL_PREFIX}")
     set(opentrack-doc-pfx "./doc")
     set(opentrack-doc-src-pfx "./source-code")
-    set(opentrack-i18n-pfx "./i18n")
-    set(opentrack-i18n-path "./i18n")
+    set(opentrack-i18n-pfx "opentrack.app/Contents/Resources") # used during install
+    set(opentrack-i18n-path "../Resources/i18n") # used in application
+    set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/Library")
 elseif(WIN32)
     set(opentrack-hier-pfx "modules")
     set(opentrack-hier-path "/${opentrack-hier-pfx}/")  # MUST HAVE A TRAILING BACKSLASH
@@ -29,6 +29,7 @@ elseif(WIN32)
     set(opentrack-i18n-pfx "./i18n")
     set(opentrack-i18n-path "./i18n")
     set(opentrack-hier-debug "./debug")
+    set(opentrack-install-rpath "")
 else()
     set(opentrack-hier-pfx "libexec/opentrack")
     set(opentrack-hier-path "/../${opentrack-hier-pfx}/")   # MUST HAVE A TRAILING BACKSLASH
@@ -50,9 +51,7 @@ endfunction()
 set(opentrack-contrib-pfx "${opentrack-doc-pfx}/contrib")
 
 set(opentrack-binary-suffix "")
-if(APPLE)
-    set(opentrack-binary-suffix ".bin")
-elseif(WIN32)
+if(WIN32)
     set(opentrack-binary-suffix ".exe")
 endif()
 
