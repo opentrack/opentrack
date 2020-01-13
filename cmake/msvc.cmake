@@ -39,7 +39,7 @@ add_link_options(-cgthreads:1)
 
 set(_CFLAGS "")
 set(_CXXFLAGS "")
-set(_CFLAGS_RELEASE "-O2 -O2it -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy -arch:SSE2 -GR- -MT")
+set(_CFLAGS_RELEASE "-O2 -O2it -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy -arch:SSE2 -MT")
 set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
