@@ -11,7 +11,7 @@ if(APPLE)
     list(APPEND qt-imported-targets Qt5::DBus Qt5::Multimedia)
 endif()
 
-find_package(Qt5 REQUIRED COMPONENTS ${qt-required-components} QUIET)
+find_package(Qt5 5.14.0 REQUIRED COMPONENTS ${qt-required-components} QUIET)
 find_package(Qt5 COMPONENTS ${qt-optional-components} QUIET)
 
 set(MY_QT_LIBS ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Widgets_LIBRARIES} ${Qt5Network_LIBRARIES})
