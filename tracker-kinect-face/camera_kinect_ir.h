@@ -16,7 +16,7 @@
 #include "compat/timer.hpp"
 #include "video/camera.hpp"
 
-
+#include <cinttypes>
 #include <memory>
 
 #include <opencv2/core.hpp>
@@ -67,6 +67,7 @@ private:
 
     //
     ICoordinateMapper* iCoordinateMapper = nullptr;
+    std::int64_t timestamp = 0;
 
     video::frame iFrame;
     cv::Mat iMatFrame;

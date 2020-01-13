@@ -221,6 +221,7 @@ namespace Kinect {
 
     bool InfraredCamera::get_frame_(cv::Mat& aFrame)
     {
+        unsigned attempts = 0;
 
         if (!iInfraredFrameReader)
         {
@@ -231,11 +232,26 @@ namespace Kinect {
 
         // Release previous frame if any
         SafeRelease(iInfraredFrame);
-
+start:
         HRESULT hr = iInfraredFrameReader->AcquireLatestFrame(&iInfraredFrame);
 
         if (SUCCEEDED(hr))
         {
+
+            {
+                TIMESPAN t = 0;
+
+                (void)iInfraredFrame->get_RelativeTime(&t);
+
+                if (t == timestamp && ++attempts < 10)
+                {
+                    portable::sleep(2);
+                    goto start;
+                }
+
+                timestamp = t;
+            }
+
             if (iFirstFrame)
             {
                 IFrameDescription* frameDescription = NULL;
