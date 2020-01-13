@@ -36,6 +36,10 @@ setq(SDK_RIFT_140 "LibOVR-140/build")
 setq(SDK_VALVE_STEAMVR "steamvr")
 setq(SDK_VJOYSTICK "vjoystick")
 
+set(Qt5_DIR "c:/qt/qt-5.14.0/lib/cmake/Qt5" CACHE PATH "" FORCE)
+set(Qt5Core_DIR "${Qt5_DIR}Core" CACHE PATH "" FORCE)
+set(Qt5Gui_DIR "${Qt5_DIR}Gui" CACHE PATH "" FORCE)
+
 if(CMAKE_GENERATOR STREQUAL "NMake Makefiles")
     set(CMAKE_MAKE_PROGRAM "jom" CACHE STRING "" FORCE)
 endif()
