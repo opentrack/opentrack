@@ -17,6 +17,7 @@
 #include <unordered_map>
 #include <iterator>
 
+#include <QHashFunctions>
 #include <QString>
 #include <QMutex>
 
