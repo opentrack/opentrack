@@ -36,12 +36,8 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
     if (s.tracklogging_enabled)
     {
         QString filename = browse_datalogging_file(s);
-        if (filename.isEmpty())
-        {
-            // The user probably canceled the file dialog. In this case we don't want to do anything.
-            return {};
-        }
-        else
+
+        if (!filename.isEmpty())
         {
             auto logger = std::make_unique<TrackLoggerCSV>(*s.tracklogging_filename);
 
