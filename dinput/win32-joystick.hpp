@@ -17,7 +17,7 @@
 #include <unordered_map>
 #include <iterator>
 
-#include <QHashFunctions>
+#include "compat/qhash.hpp"
 #include <QString>
 #include <QMutex>
 

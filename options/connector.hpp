@@ -13,7 +13,7 @@
 
 #include <QString>
 #include <QMutex>
-#include <QHashFunctions>
+#include "compat/qhash.hpp"
 
 #include "export.hpp"
 
