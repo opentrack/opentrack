@@ -4,8 +4,7 @@
 #include <QString>
 #include <QHashFunctions>
 
-// Qt < 5.14.0
-#ifndef QT_SPECIALIZE_STD_HASH_TO_CALL_QHASH_BY_CREF
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
 
 namespace std {
 template<> struct hash<QString>
