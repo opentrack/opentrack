@@ -18,11 +18,9 @@ template<> struct hash<QString>
 
     std::size_t operator()(const QString& value) const noexcept
     {
-        return qHash(value);
+        return (std::size_t) qHash(value);
     }
 };
-
-template class hash<QString>;
 }
 
 #endif
