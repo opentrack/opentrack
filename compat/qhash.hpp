@@ -21,6 +21,8 @@ template<> struct hash<QString>
         return qHash(value);
     }
 };
+
+template class hash<QString>;
 }
 
 #endif
