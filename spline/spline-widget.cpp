@@ -118,6 +118,8 @@ void spline_widget::drawBackground()
     double space_width = metrics.averageCharWidth();
 #endif
 
+    painter.setPen(palette().text().color());
+
     // vertical grid
     for (int i = 0; i <= maxy; i += ystep)
     {
