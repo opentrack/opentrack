@@ -156,7 +156,7 @@ void spline_widget::drawBackground()
 #endif
 
         painter.drawText(QPointF(x - advance/2 - rect.left(),
-                                 pixel_bounds.height() - rect.top() + rect.height()),
+                                 pixel_bounds.bottom() + metrics.lineSpacing()),
                          text);
     }
 }
