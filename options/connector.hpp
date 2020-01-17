@@ -8,12 +8,13 @@
 
 #pragma once
 
+#include "compat/qhash.hpp"
+
 #include <unordered_map>
 #include <vector>
 
 #include <QString>
 #include <QMutex>
-#include "compat/qhash.hpp"
 
 #include "export.hpp"
 

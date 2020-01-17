@@ -10,6 +10,7 @@
 
 #include "group.hpp"
 #include "connector.hpp"
+#include "compat/qhash.hpp"
 
 #include <memory>
 #include <tuple>
