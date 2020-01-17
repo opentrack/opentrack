@@ -4,10 +4,6 @@
 <context>
     <name>UICLibevdevControls</name>
     <message>
-        <source>VJoy</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Make sure rw for /dev/input/uinput!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -17,6 +13,10 @@
     </message>
     <message>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>libevdev options</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
