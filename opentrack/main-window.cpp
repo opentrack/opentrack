@@ -47,7 +47,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_shortcuts();
 
     init_tray_menu();
-    setVisible(start_in_tray());
+    setVisible(!start_in_tray());
     ensure_tray();
 
     connect(&pose_update_timer, &QTimer::timeout,
