@@ -72,7 +72,6 @@ std::vector<QString> camera_names()
             if (std::find(names.cbegin(), names.cend(), name) == names.cend())
                 names.push_back(name);
 
-    std::sort(names.begin(), names.end());
     return names;
 }
 
