@@ -105,7 +105,8 @@ module_status vjoystick::initialize()
     if (!vJoyEnabled())
         msg = tr("vjoystick won't work without the driver installed.");
     else if (WORD VerDll, VerDrv; !DriverMatch(&VerDll, &VerDrv))
-        msg = tr("driver/SDK version mismatch (dll 0x%1, driver 0x%2)", (void*)VerDll, (void*)VerDrv);
+        msg = tr("driver/SDK version mismatch (dll 0x%1, driver 0x%2)")
+              .arg(QString::number(VerDll, 16), QString::number(VerDrv, 16));
     else
     {
         int code;
