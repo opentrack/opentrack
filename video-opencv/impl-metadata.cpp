@@ -17,7 +17,14 @@ std::unique_ptr<camera> metadata::make_camera(const QString& name)
 
 std::vector<QString> metadata::camera_names() const
 {
-    return get_camera_names();
+    std::vector<std::tuple<QString, int>> names = get_camera_names();
+    std::vector<QString> ret;
+    for (const auto& t : names)
+    {
+        const auto& [str, idx] = t;
+        ret.push_back(str);
+    }
+    return ret;
 }
 
 bool metadata::can_show_dialog(const QString& camera_name)
