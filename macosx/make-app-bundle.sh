@@ -6,7 +6,7 @@ set -e
 # keep track of the last executed command
 trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT 
+trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT
 
 APPNAME=opentrack
 # Alternative we could look at https://github.com/arl/macdeployqtfix ??
@@ -59,32 +59,38 @@ sips -z 512 512   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_512x512
 iconutil -c icns -o "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" "$tmp/$APPNAME.iconset"
 rm -rf "$tmp"
 
-#Build DMG
-#https://github.com/andreyvit/create-dmg
-rm -rf $install/../*.dmg
-create-dmg \
-  --volname "$APPNAME" \
-  --volicon "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" \
-  --window-pos 200 120 \
-  --window-size 800 450 \
-  --icon-size 80 \
-  --background "$dir/dmgbackground.png" \
-  --icon "$APPNAME.app" 200 180 \
-  --app-drop-link 420 180 \
-  --hide-extension "$APPNAME.app" \
-  --no-internet-enable \
-  --add-folder "Document" "$install/doc" 20 40 \
-  --add-folder "source-code" "$install/source-code" 220 40 \
-  --add-folder "Xplane-Plugin" "$install/xplane" 420 40 \
-  --add-folder "thirdparty" "$install/thirdparty" 620 40 \
-  "$version.dmg" \
-  "$install/$APPNAME.app"
+# We cannot use create-dmg on travis because the script opens finder.
+# However finder asks for permission to be openened by the application which is not allowed.
+if [ ! $TRAVIS ]; then 
+  #Build DMG
+  #https://github.com/andreyvit/create-dmg
+  rm -rf $install/../*.dmg
+  create-dmg \
+    --volname "$APPNAME" \
+    --volicon "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" \
+    --window-pos 200 120 \
+    --window-size 800 450 \
+    --icon-size 80 \
+    --background "$dir/dmgbackground.png" \
+    --icon "$APPNAME.app" 200 180 \
+    --app-drop-link 420 180 \
+    --hide-extension "$APPNAME.app" \
+    --no-internet-enable \
+    --add-folder "Document" "$install/doc" 20 40 \
+    --add-folder "source-code" "$install/source-code" 220 40 \
+    --add-folder "Xplane-Plugin" "$install/xplane" 420 40 \
+    --add-folder "thirdparty" "$install/thirdparty" 620 40 \
+    "$version.dmg" \
+    "$install/$APPNAME.app"
 
-# Check if we have a DMG otherwise fail
-FILE=$install/../$version.dmg
-if [ -f $FILE ]; then
-   ls -ial $install/../*.dmg
+  # Check if we have a DMG otherwise fail
+  FILE=$install/../$version.dmg
+  if [ -f $FILE ]; then
+    ls -ial $install/../*.dmg
+  else
+    echo "Failed to create ${FILE}"
+    exit 2
+  fi
 else
-   echo "Failed to create ${FILE}"
-   exit 2
+    echo "Running in travis. Not building DMG due to create-dmg opening Finder which has issues on travis"
 fi
