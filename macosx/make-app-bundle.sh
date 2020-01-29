@@ -4,9 +4,9 @@
 set -e
 
 # keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+#trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT
+#trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT
 
 APPNAME=opentrack
 # Alternative we could look at https://github.com/arl/macdeployqtfix ??
