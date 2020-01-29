@@ -1,6 +1,7 @@
 ## Intro
 
 [<img src="https://ci.appveyor.com/api/projects/status/n0j9h38jnif5qbe9/branch/unstable?svg=true"/>](https://ci.appveyor.com/project/sthalik/opentrack/branch/unstable)
+![Travis (.org) branch](https://img.shields.io/travis/opentrack/opentrack/travis?label=OSX&style=flat-square&logo=travis)
 
 opentrack project home is located at <<http://github.com/opentrack/opentrack>>.
 
