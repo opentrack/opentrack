@@ -1,0 +1,47 @@
+language: cpp
+os:
+  - osx
+
+jobs:
+  allow_failures:
+    - os: osx
+
+  include:
+    - os: osx
+      osx_image: xcode11.3
+      # TODO, try both compilers      
+      compiler: clang
+      env:
+        - Qt5_DIR="/usr/local/opt/qt" 
+      addons:
+        homebrew:
+          update: true
+          packages: 
+            - qt5
+            - eigen
+            - opencv
+            - cmake
+            - libusb
+            - create-dmg
+            - imagemagick
+            - tree
+      before_install:
+        - export PATH="/usr/local/opt/qt/bin:$PATH"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+script:
+  - pwd
+  - which cmake
+  - cmake --version 
+  - rm -rf build
+  - mkdir build
+  - rm -rf video-ps3eye/ps3eye-driver
+  - travis/build-opentrackdepends.sh
+  - travis/generate-travis-cmake.sh
+  - cd build
+  - cmake -DCMAKE_BUILD_TYPE=Release ..
+  - make VERBOSE=1 install
+  - tree -dl install 
+  
