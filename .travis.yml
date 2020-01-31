@@ -27,8 +27,10 @@ jobs:
             - tree
       before_install:
         - export PATH="/usr/local/opt/qt/bin:$PATH"
+      install:
+        - pip install dmgBuild
 
-before_install:
+before_install:  
   - eval "${MATRIX_EVAL}"
 
 script:
@@ -37,7 +39,6 @@ script:
   - cmake --version 
   - rm -rf build
   - mkdir build
-  - rm -rf video-ps3eye/ps3eye-driver
   - travis/build-opentrackdepends.sh
   - travis/generate-travis-cmake.sh
   - cd build
