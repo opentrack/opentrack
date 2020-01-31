@@ -42,6 +42,6 @@ script:
   - travis/generate-travis-cmake.sh
   - cd build
   - cmake -DCMAKE_BUILD_TYPE=Release ..
-  - make VERBOSE=1 install
+  - make install
   - tree -dl install 
   
