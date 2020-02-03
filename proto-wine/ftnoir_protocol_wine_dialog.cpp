@@ -20,6 +20,7 @@ FTControls::FTControls()
     tie_setting(s.fsync, ui.fsync);
     tie_setting(s.proton_appid, ui.proton_appid);
     tie_setting(s.wineprefix, ui.wineprefix);
+    tie_setting(s.protocol, ui.protocol_selection);
 
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &FTControls::doOK);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &FTControls::doCancel);

@@ -39,6 +39,22 @@
         <source>Proton (Steam Play)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Protocol</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Freetrack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>NPClient</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Both</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>wine</name>

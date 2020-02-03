@@ -19,6 +19,8 @@ wine::~wine()
     if (shm) {
         shm->stop = true;
         exit = wrapper.waitForFinished(100);
+        if (exit)
+            qDebug() << "proto/wine: wrapper exit code" << wrapper.exitCode();
     }
     if (!exit)
     {
@@ -91,6 +93,8 @@ module_status wine::initialize()
         env.insert("WINEESYNC", "1");
     if (s.fsync)
         env.insert("WINEFSYNC", "1");
+
+    env.insert("OTR_WINE_PROTO", QString::number(s.protocol+1));
 
     wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);

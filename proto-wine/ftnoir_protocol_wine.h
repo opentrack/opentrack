@@ -26,6 +26,7 @@ struct settings : opts
     value<int>     proton_appid{b, "proton-appid", 0};
     value<QString> proton_version{b, "proton-version", {} },
                    wineprefix{b, "wineprefix", "~/.wine"};
+    value<int>     protocol{b, "protocol", 2};
 };
 
 class wine : TR, public IProtocol
