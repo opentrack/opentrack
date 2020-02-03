@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "compat/qt-dpi.hpp"
 #include "compat/math.hpp"
 #include "export.hpp"
 
@@ -21,7 +20,7 @@
 
 #include <QMutex>
 
-struct OTR_VIDEO_EXPORT video_widget : QWidget, public screen_dpi_mixin<video_widget>
+struct OTR_VIDEO_EXPORT video_widget : QWidget
 {
     video_widget(QWidget* parent = nullptr);
 
