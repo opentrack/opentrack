@@ -8,7 +8,9 @@
 #include "compat/shm.cpp"
 #include "wine-shm.h"
 #include "compat/library-path.hpp"
+#include <cstdlib>
 #include <cstring>
+#include <sysexits.h>
 
 using std::strcat;
 
