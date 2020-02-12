@@ -3,7 +3,7 @@
 #include "api/plugin-api.hpp"
 
 static const char* proton_versions[] = {
-    "4.11", "4.2", "3.16", "3.7",
+    "5.0", "4.11", "4.2", "3.16", "3.7",
 };
 
 FTControls::FTControls()
