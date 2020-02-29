@@ -68,7 +68,7 @@ function(otr_merge_translations)
         set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
 
         # whines about duplicate messages since tracker-pt-base is static
-        if(WIN32)
+        if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
             set(to-null "2>NUL")
         else()
             set(to-null "2>/dev/null")
