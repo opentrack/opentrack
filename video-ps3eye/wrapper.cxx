@@ -3,7 +3,6 @@
 
 #include "ps3eye-driver/ps3eye.hpp"
 
-#include <thread>
 #include <cstdlib>
 
 #ifdef __clang__
