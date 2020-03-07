@@ -24,8 +24,9 @@ wine::~wine()
     }
     if (!exit)
     {
-        wrapper.kill();
-        wrapper.waitForFinished(-1);
+        if (wrapper.state() != QProcess::NotRunning)
+            wrapper.kill();
+        wrapper.waitForFinished(1000);
     }
 #endif
     //shm_unlink("/" WINE_SHM_NAME);
