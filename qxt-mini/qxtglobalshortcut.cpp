@@ -55,7 +55,7 @@ void QxtGlobalShortcutPrivate::event_filter_installer::ensure_event_filter()
 QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate(QxtGlobalShortcutPrivate::tag) :
     keystate(false), enabled(false), key(Qt::Key(0)), mods(Qt::NoModifier)
 {
-    qDebug() << "qxt-mini: adding event filter";
+    //qDebug() << "qxt-mini: adding event filter";
 }
 
 QxtGlobalShortcutPrivate::QxtGlobalShortcutPrivate() :
