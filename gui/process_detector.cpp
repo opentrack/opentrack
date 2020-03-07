@@ -163,6 +163,7 @@ void process_detector::save()
 void process_detector::revert()
 {
     load_rows();
+    ui.enabled->setChecked(s.is_enabled());
 }
 
 void process_detector::add()
