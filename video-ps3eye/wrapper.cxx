@@ -70,7 +70,7 @@ int main(int argc, char** argv)
 
     auto& camera = cameras[0];
     camera->set_debug(false);
-    auto frame = (uint8_t*)out.data_640x480;
+    auto* frame = (uint8_t*)out.data_640x480;
     decltype(out.timecode) timecode = 0;
 
     {
