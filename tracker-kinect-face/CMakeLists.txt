@@ -30,14 +30,14 @@ if (WIN32 AND opentrack-intel)
 		target_link_libraries(${self} opentrack-video)
 
 		# Install Kinect Face DLL
-		install(FILES "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/Kinect20.Face.dll" DESTINATION "${opentrack-hier-pfx}" PERMISSIONS ${opentrack-perms-exec})
+		install(FILES "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/Kinect20.Face.dll" DESTINATION "${opentrack-libexec}" PERMISSIONS ${opentrack-perms-exec})
 		# Install Kinect Face Database
-		install(DIRECTORY "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/NuiDatabase" DESTINATION "${opentrack-hier-pfx}")
+		install(DIRECTORY "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/NuiDatabase" DESTINATION "${opentrack-libexec}")
 
 		set(redist-dir "${CMAKE_SOURCE_DIR}/redist/${kinect-arch-dir}")
 		install(
 		  FILES "${redist-dir}/msvcp110.dll" "${redist-dir}/msvcr110.dll"
-		  DESTINATION "${opentrack-hier-pfx}"
+		  DESTINATION "${opentrack-libexec}"
 		  PERMISSIONS ${opentrack-perms-exec}
 		)
 

@@ -58,7 +58,7 @@ function(otr_i18n_for_target_directory n)
 endfunction()
 
 function(otr_merge_translations)
-    otr_escape_string(i18n-pfx "${opentrack-i18n-pfx}")
+    otr_escape_string(i18n-pfx "${opentrack-i18n}")
     install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/${i18n-pfx}\")")
 
     foreach(i ${opentrack_all-translations})
@@ -92,7 +92,7 @@ function(otr_merge_translations)
         add_dependencies(i18n-lrelease ${target-name})
 
         install(FILES "${qm-output}"
-                DESTINATION "${CMAKE_INSTALL_PREFIX}/${opentrack-i18n-pfx}"
+                DESTINATION "${CMAKE_INSTALL_PREFIX}/${opentrack-i18n}"
                 PERMISSIONS ${opentrack-perms-file})
     endforeach()
 endfunction()

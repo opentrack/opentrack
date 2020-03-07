@@ -8,7 +8,7 @@ if(LINUX OR APPLE)
             otr_module(xplane-plugin NO-QT)
         endif()
         # probably librt already included
-        #install(FILES ${opentrack-xplane-plugin-c} DESTINATION "opentrack-hier-pfx")
+        #install(FILES ${opentrack-xplane-plugin-c} DESTINATION "opentrack-libexec")
         target_include_directories(opentrack-xplane-plugin SYSTEM PUBLIC ${SDK_XPLANE}/CHeaders/XPLM)
 
         if(APPLE)
@@ -21,9 +21,9 @@ if(LINUX OR APPLE)
                                 -framework XPLM)
                                 
            install(TARGETS "${self}"
-                RUNTIME DESTINATION ${opentrack-hier-bin}/xplane
-                BUNDLE	DESTINATION ${opentrack-hier-bin}/xplane
-                LIBRARY DESTINATION ${opentrack-hier-bin}/xplane 
+                RUNTIME DESTINATION ${opentrack-bin}/xplane
+                BUNDLE	DESTINATION ${opentrack-bin}/xplane
+                LIBRARY DESTINATION ${opentrack-bin}/xplane 
                 PERMISSIONS ${opentrack-perms-exec})
 
         elseif(CMAKE_COMPILER_IS_GNUCXX)
