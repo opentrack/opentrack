@@ -179,7 +179,7 @@ ok:
 std::tuple<const frame&, bool> ps3eye_camera::get_frame()
 {
     volatile auto& ptr = *(ps3eye::shm*)shm.ptr();
-    constexpr int sleep_ms = 10;
+    constexpr int sleep_ms = 2;
     constexpr int max_sleeps = 2000/sleep_ms;
 
     if (!open)

@@ -4,7 +4,6 @@
 #include "ps3eye-driver/ps3eye.hpp"
 
 #include <thread>
-#include <chrono>
 #include <cstdlib>
 
 #ifdef __clang__
@@ -42,6 +41,18 @@ static void update_settings(ps3eye::camera& camera, const volatile ps3eye::shm_i
     camera.set_test_pattern_status(in.test_pattern);
 }
 
+static ps3eye::resolution get_mode(ps3eye::shm_in::mode res)
+{
+    switch (res)
+    {
+    default:
+    case ps3eye::shm_in::mode::qvga:
+        return ps3eye::res_QVGA;
+    case ps3eye::shm_in::mode::vga:
+        return ps3eye::res_VGA;
+    }
+}
+
 int main(int argc, char** argv)
 {
     (void)argc; (void)argv;
@@ -52,34 +63,22 @@ int main(int argc, char** argv)
 
     auto cameras = ps3eye::list_devices();
 
+    out.status_ = ps3eye::shm_out::status::starting;
+
     if (cameras.empty())
         error(out, "no camera found");
 
     auto& camera = cameras[0];
     camera->set_debug(false);
-    uint8_t* frame;
+    auto frame = (uint8_t*)out.data_640x480;
     decltype(out.timecode) timecode = 0;
 
     {
-        ps3eye::resolution mode;
-        switch (in.resolution)
-        {
-        case ps3eye::shm_in::mode::qvga:
-            mode = ps3eye::res_QVGA;
-            frame = (uint8_t*)out.data_320x240;
-            break;
-        case ps3eye::shm_in::mode::vga:
-            mode = ps3eye::res_VGA;
-            frame = (uint8_t*)out.data_640x480;
-            break;
-        default: error(out, "wrong resolution %u", (unsigned)mode);
-        }
-
         int framerate = in.framerate;
-        if (!framerate)
+        if (framerate <= 0)
             framerate = 60;
 
-        if (!camera->init(mode, framerate))
+        if (!camera->init(get_mode(in.resolution), framerate))
             error(out, "camera init failed: %s", camera->error_string());
 
         update_settings(*camera, in);
@@ -98,16 +97,21 @@ int main(int argc, char** argv)
             auto cookie = in.settings_updated;
             if (cookie != out.settings_updated_ack)
             {
+                camera->stop();
                 update_settings(*camera, in);
+                int framerate = in.framerate;
+                if (framerate <= 0)
+                    framerate = 60;
+                if (!camera->init(get_mode(in.resolution), framerate))
+                    error(out, "camera init failed: %s", camera->error_string());
+                if (!camera->start())
+                    error(out, "can't start camera: %s", camera->error_string());
                 out.settings_updated_ack = cookie;
             }
         }
 
         if (!camera->get_frame(frame))
-        {
-            std::this_thread::sleep_for(std::chrono::milliseconds{4});
             continue;
-        }
 
         out.timecode = ++timecode;
 

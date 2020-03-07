@@ -28,6 +28,7 @@ struct ps3eye_camera final : video::impl::camera
     shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
     settings s;
     frame fr;
+    int framerate = 30;
     bool open = false;
     unsigned timecode = 0;
 
