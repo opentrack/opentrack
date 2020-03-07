@@ -3,6 +3,8 @@
 
 #include "ps3eye-driver/ps3eye.hpp"
 
+#include <thread>
+#include <chrono>
 #include <cstdlib>
 
 #ifdef __clang__
@@ -32,7 +34,8 @@ static void error(volatile ps3eye::shm_out& out, const char (&error)[N], const x
 
 static void update_settings(ps3eye::camera& camera, const volatile ps3eye::shm_in& in)
 {
-    camera.set_framerate(in.framerate);
+    // TODO
+    //camera.set_framerate(in.framerate);
     camera.set_auto_gain(in.auto_gain);
     camera.set_gain(in.gain);
     camera.set_exposure(in.exposure);
@@ -44,7 +47,7 @@ int main(int argc, char** argv)
     (void)argc; (void)argv;
     shm_wrapper mem_("ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm));
     volatile auto& ptr_ = *(ps3eye::shm*)mem_.ptr();
-    const volatile auto& in = ptr_.in;
+    volatile auto& in = ptr_.in;
     volatile auto& out = ptr_.out;
 
     auto cameras = ps3eye::list_devices();
@@ -53,6 +56,7 @@ int main(int argc, char** argv)
         error(out, "no camera found");
 
     auto& camera = cameras[0];
+    camera->set_debug(false);
     uint8_t* frame;
     decltype(out.timecode) timecode = 0;
 
@@ -75,12 +79,18 @@ int main(int argc, char** argv)
         if (!framerate)
             framerate = 60;
 
-        bool ret = camera->init(mode, framerate) && camera->start();
-        if (!ret)
+        if (!camera->init(mode, framerate))
             error(out, "camera init failed: %s", camera->error_string());
+
+        update_settings(*camera, in);
+
+        if (!camera->start())
+            error(out, "can't start camera: %s", camera->error_string());
     }
 
-    update_settings(*camera, in);
+    out.timecode = 0;
+    in.do_exit = false;
+    FULL_BARRIER();
 
     for (;;)
     {
@@ -93,12 +103,11 @@ int main(int argc, char** argv)
             }
         }
 
-        bool success = true;
-
-        success &= camera->get_frame(frame);
-
-        if (!success)
-            error(out, "error %s", camera->error_string());
+        if (!camera->get_frame(frame))
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds{4});
+            continue;
+        }
 
         out.timecode = ++timecode;
 

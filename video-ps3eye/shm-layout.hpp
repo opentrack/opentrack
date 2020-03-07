@@ -8,7 +8,7 @@ struct shm_in {
     enum class status : uint8_t { starting, running, fail, terminate, };
 
     uint32_t settings_updated;
-    uint16_t framerate;
+    uint8_t framerate;
     mode resolution;
     status status_;
     //uint8_t sharpness, contrast, brightness hue, saturation;
@@ -19,11 +19,11 @@ struct shm_in {
 struct shm_out {
     uint32_t timecode;
     uint32_t settings_updated_ack;
+    char error_string[256];
     union {
         uint8_t data_320x240[320][240][3];
         uint8_t data_640x480[640][480][3];
     };
-    char error_string[256];
 };
 
 struct shm {
