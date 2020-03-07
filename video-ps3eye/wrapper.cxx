@@ -4,6 +4,7 @@
 #include "ps3eye-driver/ps3eye.hpp"
 
 #include <cstdlib>
+#include <atomic>
 
 #ifdef __clang__
 #   pragma clang diagnostic ignored "-Watomic-implicit-seq-cst"
@@ -13,13 +14,6 @@
 #   pragma GCC diagnostic ignored "-Wcast-qual"
 #   pragma GCC diagnostic ignored "-Wformat-security"
 #   pragma GCC diagnostic ignored "-Wformat-nonliteral"
-#endif
-
-#ifdef _MSC_VER
-#   include <windows.h>
-#   define FULL_BARRIER [](){ _ReadWriteBarrier(); MemoryBarrier(); }
-#else
-#   define FULL_BARRIER __sync_synchronize
 #endif
 
 template<int N, typename... xs>
@@ -88,7 +82,7 @@ int main(int argc, char** argv)
 
     out.timecode = 0;
     in.do_exit = false;
-    FULL_BARRIER();
+    std::atomic_thread_fence(std::memory_order_seq_cst);
 
     for (;;)
     {
@@ -117,7 +111,7 @@ int main(int argc, char** argv)
         if (in.do_exit)
             break;
 
-        FULL_BARRIER();
+        std::atomic_thread_fence(std::memory_order_seq_cst);
     }
 
     return 0;
