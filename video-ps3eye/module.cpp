@@ -203,7 +203,8 @@ fail:
     static_assert(offsetof(decltype(ptr.out), data_640x480) == offsetof(decltype(ptr.out), data_320x240));
 
 ok:
-    fr.data = (unsigned char*)ptr.out.data_640x480;
+    memcpy(data, (unsigned char*)ptr.out.data_640x480,sizeof(ptr.out.data_640x480));
+    fr.data = data;
     return { fr, true};
 }
 

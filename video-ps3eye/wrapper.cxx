@@ -26,7 +26,6 @@ static void error(volatile ps3eye::shm_out& out, const char (&error)[N], const x
 
 static void update_settings(ps3eye::camera& camera, const volatile ps3eye::shm_in& in)
 {
-    // TODO
     //camera.set_framerate(in.framerate);
     camera.set_auto_gain(in.auto_gain);
     camera.set_gain(in.gain);
