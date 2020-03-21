@@ -1,5 +1,6 @@
 # https://developer.tobii.com/download-packages/stream-engine-4-1-0-for-windows-x86
 # https://developer.tobii.com/download-packages/stream-engine-4-1-0-for-windows-x64
+set(SDK_TOBII "" CACHE PATH "Tobii SDK path")
 if(SDK_TOBII)
     otr_module(tracker-tobii)
     target_include_directories(${self} SYSTEM PRIVATE "${SDK_TOBII}/include")

@@ -2,6 +2,8 @@
 #include "api/plugin-api.hpp"
 #include "compat/math.hpp"
 
+tobii::~tobii() = default;
+
 module_status tobii::start_tracker(QFrame*)
 {
     t.start();
@@ -17,6 +19,9 @@ void tobii::data(double *data)
                 p.position_xyz[0] = p.position_xyz[0] - center_pose.position_xyz[0];
                 p.position_xyz[1] = p.position_xyz[1] - center_pose.position_xyz[1];
                 p.position_xyz[2] = p.position_xyz[2] - center_pose.position_xyz[2];
+            }
+            else {
+                center_pose = p;
             }
             data[0] = clamp(p.position_xyz[0] * 30.0 / 300.0, -30.0, 30.0);
             data[1] = clamp(p.position_xyz[1] * 30.0 / 300.0, -30.0, 30.0);

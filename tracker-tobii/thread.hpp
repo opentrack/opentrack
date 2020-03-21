@@ -14,12 +14,11 @@ class tobii_thread : public QThread
     Q_OBJECT
     void run() override;
 
-signals:
-    void tobii_error_signal(QString error_message);
-    void tobii_ready_signal();
-
 public:
-    tobii_thread();
+    tobii_thread()
+    {
+        head_pose = new tobii_head_pose_t();
+    }
     ~tobii_thread() override;
 
     tobii_head_pose_t* head_pose;
@@ -28,10 +27,9 @@ private:
     tobii_api_t* api;
     tobii_device_t* device;
     
-    const unsigned int retries = 300;
-    const unsigned int interval = 100;
-    std::atomic<bool> exit_thread = false;
+    static constexpr unsigned int retries = 300;
+    static constexpr unsigned int interval = 100;
 
-    void tobii_error_signal_impl(QString error_message);
-    void tobii_ready_signal_impl();
+    QString error_last = "";
+    std::atomic<bool> exit_thread = false;
 };
