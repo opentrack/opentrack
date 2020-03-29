@@ -104,7 +104,7 @@ void RSTracker::showRealSenseErrorMessageBox(int exitCode)
 
         switch(exitCode){
         case -101: //The implementation got an invalid handle from the RealSense SDK session/modules
-        msgBox.setInformativeText(tr("Couldn't initialize RealSense tracking. Please make sure SDK Runtime 2016 R2 is installed."));
+        msgBox.setInformativeText(tr("Couldn't initialize RealSense tracking. Please make sure SDK Runtime 2016 R3 is installed."));
                 break;
         case -301: //RealSense SDK runtime execution aborted.
                 msgBox.setInformativeText(tr("Tracking stopped after the RealSense SDK Runtime execution has aborted."));
@@ -113,10 +113,10 @@ void RSTracker::showRealSenseErrorMessageBox(int exitCode)
                 msgBox.setInformativeText(tr("Tracking stopped after another program changed camera streams configuration."));
                 break;
         default:
-        msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R2 to be installed.");
+        msgBox.setInformativeText("Status code: " + QString::number(exitCode) + ".\n\nNote that you need the latest camera drivers and the SDK runtime 2016 R3 to be installed.");
     }
 
-    QPushButton* triggerSdkInstallation = msgBox.addButton(tr("Install SDK 2016 R2 Runtime"), QMessageBox::ActionRole);
+    QPushButton* triggerSdkInstallation = msgBox.addButton(tr("Install SDK 2016 R3 Runtime"), QMessageBox::ActionRole);
     msgBox.addButton(QMessageBox::Ok);
     msgBox.exec();
 
