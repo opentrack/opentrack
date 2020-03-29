@@ -32,7 +32,7 @@ setq(SDK_KINECT20 "Kinect-v2.0")
 setq(SDK_LIBUSB "libusb-msvc-x86")
 setq(SDK_PS3EYEDRIVER "PS3EYEDriver")
 setq(SDK_REALSENSE "RSSDK-R2")
-setq(SDK_RIFT_140 "LibOVR-140/build")
+setq(SDK_RIFT_140 "ovr_sdk_win_1.43.0/LibOVR")
 setq(SDK_VALVE_STEAMVR "steamvr")
 setq(SDK_VJOYSTICK "vjoystick")
 
