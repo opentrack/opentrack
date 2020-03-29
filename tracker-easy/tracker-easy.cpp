@@ -183,7 +183,7 @@ namespace EasyTracker
         // Tracked points must match the order of the object model points.
         // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
         int minY = std::numeric_limits<int>::max();
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             if (iPoints[i].y < minY)
             {
@@ -195,7 +195,7 @@ namespace EasyTracker
 
         // Find right most point 
         int maxX = 0;
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             // Excluding top most point
             if (i != vertexIndices[VertexPosition::Top] && iPoints[i].x > maxX)
@@ -208,7 +208,7 @@ namespace EasyTracker
 
         // Find left most point
         int minX = std::numeric_limits<int>::max();
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             // Excluding top most point and right most point
             if (i != vertexIndices[VertexPosition::Top] && i != vertexIndices[VertexPosition::Right] && iPoints[i].x < minX)
@@ -281,7 +281,7 @@ namespace EasyTracker
         // Tracked points must match the order of the object model points.
         // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
         int minY = std::numeric_limits<int>::max();
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             if (iPoints[i].y < minY)
             {
@@ -294,7 +294,7 @@ namespace EasyTracker
         int maxX = 0;
 
         // Find right most point 
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             // Excluding top most point
             if (i != aTopIndex && iPoints[i].x > maxX)
@@ -306,7 +306,7 @@ namespace EasyTracker
 
         // Find left most point
         int minX = std::numeric_limits<int>::max();
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             // Excluding top most point and right most point
             if (i != aTopIndex && i != aRightIndex && iPoints[i].x < minX)
@@ -317,7 +317,7 @@ namespace EasyTracker
         }
 
         // Find center point, the last one
-        for (int i = 0; i < iPoints.size(); i++)
+        for (int i = 0; i < (int)iPoints.size(); i++)
         {
             // Excluding the three points we already have
             if (i != aTopIndex && i != aRightIndex && i != aLeftIndex)
