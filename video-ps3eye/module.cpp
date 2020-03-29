@@ -153,6 +153,7 @@ bool ps3eye_camera::start(info& args)
         fr.width = 320; fr.height = 240;
     }
 
+    ptr.in.auto_gain = false;
     ptr.in.framerate = (uint8_t)std::clamp(args.fps, 30, 187);
     ptr.in.gain = (uint8_t)s.gain;
     ptr.in.exposure = (uint8_t)s.exposure;
