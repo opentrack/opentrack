@@ -5,21 +5,45 @@
 #include "compat/shm.h"
 #include "options/options.hpp"
 #include "compat/macros1.h"
+#include "ui_dialog.h"
+
+#include <QDialog>
+#include <QProcess>
 
 using namespace options;
-
-#include <QProcess>
 
 using video::impl::camera;
 using video::impl::camera_;
 using video::frame;
 
-struct settings : opts
+struct settings final
 {
-    settings() : opts{"video-ps3eye"} {}
+    bundle b = make_bundle("video-ps3eye");
+    shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
 
-    value<slider_value> exposure{b, "exposure", {63, 0, 63}};
+    value<slider_value> exposure{b, "exposure", {255, 0, 255}};
     value<slider_value> gain{b, "gain", {30, 0, 63}};
+
+    void set_exposure();
+    void set_gain();
+};
+
+class dialog final : public QWidget
+{
+    Q_OBJECT
+    Ui_Dialog ui;
+    settings s;
+
+    shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
+
+    void do_ok() { s.b->save(); close(); deleteLater(); }
+    void do_cancel() { s.b->reload(); close(); deleteLater(); }
+
+protected:
+    void closeEvent(QCloseEvent*) override { do_cancel(); }
+
+public:
+    explicit dialog(QWidget* parent = nullptr);
 };
 
 struct ps3eye_camera final : video::impl::camera

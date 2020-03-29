@@ -4,11 +4,14 @@
 #include "compat/run-in-thread.hpp"
 
 #include <cstddef>
+#include <thread>
 
 #include <QCoreApplication>
 #include <QMessageBox>
 
 #include <libusb.h>
+
+using namespace options;
 
 #ifdef __GNUG__
 #   pragma clang diagnostic ignored "-Wcast-qual"
@@ -76,14 +79,21 @@ std::unique_ptr<camera> ps3eye_camera_::make_camera(const QString& name)
     else
         return {};
 }
+
+static bool show_dialog_()
+{
+    (new dialog)->show();
+    return true;
+}
+
 bool ps3eye_camera_::show_dialog(const QString&)
 {
-    // TODO
-    return false;
+    return show_dialog_();
 }
-bool ps3eye_camera_::can_show_dialog(const QString&)
+
+bool ps3eye_camera_::can_show_dialog(const QString& name)
 {
-    return false;
+    return name == camera_name && check_device_exists();
 }
 
 ps3eye_camera::ps3eye_camera()
@@ -210,7 +220,45 @@ ok:
 
 bool ps3eye_camera::show_dialog()
 {
-    return false;
+    return show_dialog_();
 }
 
 OTR_REGISTER_CAMERA(ps3eye_camera_)
+
+dialog::dialog(QWidget* parent) : QWidget(parent)
+{
+    ui.setupUi(this);
+    tie_setting(s.exposure, ui.exposure_slider);
+    tie_setting(s.gain, ui.gain_slider);
+    ui.exposure_label->setValue((int)*s.exposure);
+    ui.gain_label->setValue((int)*s.gain);
+    connect(&s.exposure, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_exposure(); });
+    connect(&s.gain, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_gain(); });
+    connect(ui.exposure_slider, &QSlider::valueChanged, ui.exposure_label, &QSpinBox::setValue);
+    connect(ui.gain_slider, &QSlider::valueChanged, ui.gain_label, &QSpinBox::setValue);
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &dialog::do_ok);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &dialog::do_cancel);
+}
+
+// XXX copypasta -sh 20200329
+void settings::set_gain()
+{
+    if (!shm.success())
+        return;
+
+    auto& ptr = *(ps3eye::shm volatile*)shm.ptr();
+    ptr.in.gain = (unsigned char)*gain;
+    ++ptr.in.settings_updated;
+    std::atomic_thread_fence(std::memory_order_seq_cst);
+}
+
+void settings::set_exposure()
+{
+    if (!shm.success())
+        return;
+
+    auto& ptr = *(ps3eye::shm volatile*)shm.ptr();
+    ptr.in.exposure = (unsigned char)*exposure;
+    ++ptr.in.settings_updated;
+    std::atomic_thread_fence(std::memory_order_seq_cst);
+}
