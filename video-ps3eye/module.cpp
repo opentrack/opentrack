@@ -158,6 +158,8 @@ bool ps3eye_camera::start(info& args)
     ptr.in.gain = (uint8_t)s.gain;
     ptr.in.exposure = (uint8_t)s.exposure;
 
+    sleep_ms = (int)std::ceil(1000./std::max(1, (int)ptr.in.framerate));
+
     wrapper.start();
 
     constexpr int sleep_ms = 10, max_sleeps = 5000/sleep_ms;
@@ -189,34 +191,40 @@ ok:
 
 std::tuple<const frame&, bool> ps3eye_camera::get_frame()
 {
-    volatile auto& ptr = *(ps3eye::shm*)shm.ptr();
-    constexpr int sleep_ms = 2;
-    constexpr int max_sleeps = 2000/sleep_ms;
+    auto volatile* ptr = (ps3eye::shm*)shm.ptr();
 
-    if (!open)
-        goto fail;
-
-    for (int i = 0; i < max_sleeps; i++)
+    if (shm.success() && open)
     {
-        unsigned new_timecode = ptr.out.timecode;
-        if (timecode != new_timecode)
+        int elapsed = std::min((int)std::ceil(t.elapsed_ms()), 100);
+        portable::sleep(sleep_ms - elapsed);
+
+        if (unsigned tc = ptr->out.timecode; tc != timecode)
         {
-            timecode = new_timecode;
+            timecode = tc;
             goto ok;
         }
-        portable::sleep(sleep_ms);
     }
 
-fail:
+    for (int i = 0; i < 100; i++)
+    {
+        if (unsigned tc = ptr->out.timecode; tc != timecode)
+        {
+            timecode = tc;
+            goto ok;
+        }
+        portable::sleep(1);
+    }
+
     stop();
     return { fr, false };
 
-    static_assert(offsetof(decltype(ptr.out), data_640x480) == offsetof(decltype(ptr.out), data_320x240));
+    static_assert(offsetof(decltype(ptr->out), data_640x480) == offsetof(decltype(ptr->out), data_320x240));
 
 ok:
-    memcpy(data, (unsigned char*)ptr.out.data_640x480,sizeof(ptr.out.data_640x480));
+    t.start();
+    memcpy(data, (unsigned char*)ptr->out.data_640x480,sizeof(ptr->out.data_640x480));
     fr.data = data;
-    return { fr, true};
+    return { fr, true };
 }
 
 bool ps3eye_camera::show_dialog()

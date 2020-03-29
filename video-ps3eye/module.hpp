@@ -5,6 +5,7 @@
 #include "compat/shm.h"
 #include "options/options.hpp"
 #include "compat/macros1.h"
+#include "compat/timer.hpp"
 #include "ui_dialog.h"
 
 #include <QDialog>
@@ -52,8 +53,9 @@ struct ps3eye_camera final : video::impl::camera
     shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
     settings s;
     frame fr;
+    Timer t;
     unsigned char data[640 * 480 * 3] = {};
-    int framerate = 30;
+    int framerate = 30, sleep_ms = 1;
     bool open = false;
     unsigned timecode = 0;
 
