@@ -205,7 +205,7 @@ std::tuple<const frame&, bool> ps3eye_camera::get_frame()
         }
     }
 
-    for (int i = 0; i < 100; i++)
+    for (int i = 0; i < 1000; i++)
     {
         if (unsigned tc = ptr->out.timecode; tc != timecode)
         {
