@@ -56,6 +56,7 @@ static const resolution_tuple resolution_choices[] =
 {
     { 640, 480 },
     { 320, 240 },
+    { 1280, 720 },
     { 0, 0 }
 };
 
@@ -157,9 +158,7 @@ static int enum_to_fps(int value)
 
 bool aruco_tracker::open_camera()
 {
-    int rint = s.resolution;
-    if (rint < 0 || rint >= (int)(sizeof(resolution_choices) / sizeof(resolution_tuple)))
-        rint = 0;
+    int rint = std::clamp(*s.resolution, 0, (int)std::size(resolution_choices)-1);
     resolution_tuple res = resolution_choices[rint];
     int fps = enum_to_fps(s.force_fps);
 

@@ -113,6 +113,11 @@
            </item>
            <item>
             <property name="text">
+             <string>1280x720</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Default (not recommended!)</string>
             </property>
            </item>

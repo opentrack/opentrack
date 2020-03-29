@@ -59,6 +59,10 @@
         <source>Toggle calibration</source>
         <translation>Schakel tussen kalibratie</translation>
     </message>
+    <message>
+        <source>1280x720</source>
+        <translation>1280x720</translation>
+    </message>
 </context>
 <context>
     <name>aruco_dialog</name>
