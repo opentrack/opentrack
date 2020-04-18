@@ -13,7 +13,8 @@ add_compile_options(
     -Wno-padded -Wno-shadow-field -Wno-shorten-64-to-32
     -Wno-sign-conversion
     -Wno-extra-semi-stmt # for qt moc
-)
+    -Wno-implicit-int-float-conversion
+    -Wno-alloca)
 
 set(base-flags "-Wall -Wextra -Wpedantic")
 
@@ -33,8 +34,14 @@ set(CMAKE_C_FLAGS_RELEASE "${opt-flags} ${CMAKE_C_FLAGS_RELEASE}")
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb ${CMAKE_CXX_FLAGS_DEBUG}")
 set(CMAKE_C_FLAGS_DEBUG "-ggdb ${CMAKE_C_FLAGS_DEBUG}")
 
+set(CMAKE_C_FLAGS "")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+
+add_compile_options("-emit-llvm")
+add_link_options("-fuse-ld=lld")
+
 foreach(x EXE MODULE SHARED)
-    set(CMAKE_${x}_LINKER_FLAGS "-fuse-ld=lld ${CMAKE_${x}_LINKER_FLAGS}")
+    set(CMAKE_${x}_LINKER_FLAGS "${CMAKE_${x}_LINKER_FLAGS}")
 endforeach()
 
 function(set_sdk var path)
