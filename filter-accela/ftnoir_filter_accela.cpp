@@ -64,8 +64,9 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
 
 void accela::filter(const double* input, double *output)
 {
-#define FULL_TURN 360.0
-#define HALF_TURN 180.0
+    static constexpr double full_turn = 360.0;	
+    static constexpr double half_turn = 180.0;	
+
     if (unlikely(first_run))
     {
         first_run = false;
@@ -100,7 +101,7 @@ void accela::filter(const double* input, double *output)
     for (unsigned i = 3; i < 6; i++)
     {
         double d = input[i] - last_output[i];
-		if (fabs(d) > HALF_TURN) d -= copysign(FULL_TURN, d);
+        if (fabs(d) > half_turn) d -= copysign(full_turn, d);
 
         if (fabs(d) > rot_dz)
             d -= copysign(rot_dz, d);
@@ -137,7 +138,7 @@ void accela::filter(const double* input, double *output)
     {
         output[k] *= dt;
         output[k] += last_output[k];
-		if (fabs(output[k]) > HALF_TURN) output[k] -= copysign(FULL_TURN, output[k]);
+        if (fabs(output[k]) > half_turn) output[k] -= copysign(full_turn, output[k]);
 
         last_output[k] = output[k];
     }
