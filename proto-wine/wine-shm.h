@@ -15,10 +15,6 @@
 #   pragma clang diagnostic pop
 #endif
 
-#include <memory>
-
-template<typename t> using ptr = std::shared_ptr<t>;
-
 struct WineSHM {
     double data[6];
     int gameid, gameid2;
