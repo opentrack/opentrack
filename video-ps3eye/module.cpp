@@ -171,7 +171,7 @@ bool ps3eye_camera::start(info& args)
         portable::sleep(sleep_ms);
     }
 
-    run_in_thread_async(qApp, [&]() {
+    run_in_thread_sync(qApp, [&]() {
         QString error;
         if (ptr.out.error_string[0] == '\0')
             error = "Unknown error";
