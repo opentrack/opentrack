@@ -237,16 +237,19 @@ OTR_REGISTER_CAMERA(ps3eye_camera_)
 dialog::dialog(QWidget* parent) : QWidget(parent)
 {
     ui.setupUi(this);
+    t.setSingleShot(true);
+    t.setInterval(500);
     tie_setting(s.exposure, ui.exposure_slider);
     tie_setting(s.gain, ui.gain_slider);
     ui.exposure_label->setValue((int)*s.exposure);
     ui.gain_label->setValue((int)*s.gain);
-    connect(&s.exposure, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_exposure(); });
-    connect(&s.gain, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_gain(); });
+    connect(&s.exposure, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_exposure(); t.stop(); t.start(); });
+    connect(&s.gain, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_gain(); t.stop(); t.start(); });
     connect(ui.exposure_slider, &QSlider::valueChanged, ui.exposure_label, &QSpinBox::setValue);
     connect(ui.gain_slider, &QSlider::valueChanged, ui.gain_label, &QSpinBox::setValue);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &dialog::do_ok);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &dialog::do_cancel);
+    connect(&t, &QTimer::timeout, this, [this]() { s.apply(); });
 }
 
 // XXX copypasta -sh 20200329
@@ -257,7 +260,7 @@ void settings::set_gain()
 
     auto& ptr = *(ps3eye::shm volatile*)shm.ptr();
     ptr.in.gain = (unsigned char)*gain;
-    ++ptr.in.settings_updated;
+    //++ptr.in.settings_updated;
     std::atomic_thread_fence(std::memory_order_seq_cst);
 }
 
@@ -268,6 +271,16 @@ void settings::set_exposure()
 
     auto& ptr = *(ps3eye::shm volatile*)shm.ptr();
     ptr.in.exposure = (unsigned char)*exposure;
+    //++ptr.in.settings_updated;
+    std::atomic_thread_fence(std::memory_order_seq_cst);
+}
+
+void settings::apply()
+{
+    if (!shm.success())
+        return;
+
+    auto& ptr = *(ps3eye::shm volatile*)shm.ptr();
     ++ptr.in.settings_updated;
     std::atomic_thread_fence(std::memory_order_seq_cst);
 }
