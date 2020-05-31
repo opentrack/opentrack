@@ -57,8 +57,18 @@ end:
     return cnt;
 }
 
+#ifdef __linux__
+#   include <unistd.h>
+#endif
+
 bool check_device_exists()
 {
+#ifdef __linux__
+    // don't show when system driver exists
+    if (!access("/sys/module/gspca_ov534", R_OK|X_OK))
+        return false;
+#endif
+
     static bool ret = device_count() > 0;
     return ret;
 }
