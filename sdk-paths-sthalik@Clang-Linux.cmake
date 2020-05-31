@@ -34,7 +34,7 @@ set(CMAKE_C_FLAGS_RELEASE "${opt-flags} ${CMAKE_C_FLAGS_RELEASE}")
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb ${CMAKE_CXX_FLAGS_DEBUG}")
 set(CMAKE_C_FLAGS_DEBUG "-ggdb ${CMAKE_C_FLAGS_DEBUG}")
 
-set(CMAKE_C_FLAGS "")
+set(CMAKE_C_FLAGS "-ggdb")
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
 
 add_compile_options("-emit-llvm")
@@ -53,4 +53,3 @@ set_sdk(SDK_HYDRA "SixenseSDK")
 set_sdk(SDK_VALVE_STEAMVR "steamvr")
 set_sdk(SDK_WINE TRUE)
 set_sdk(SDK_XPLANE "X-Plane-SDK")
-
