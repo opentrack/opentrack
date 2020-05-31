@@ -147,7 +147,7 @@ bool video_property_page::show(int idx)
     return true;
 }
 
-#elif defined(__linux)
+#elif defined(__linux__)
 #   include <QProcess>
 #   include "compat/camera-names.hpp"
 

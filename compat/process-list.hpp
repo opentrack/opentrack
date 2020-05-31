@@ -129,7 +129,7 @@ static QStringList get_all_executable_names()
     }
 }
 
-#elif defined __linux
+#elif defined __linux__
 
 #include <proc/readproc.h>
 #include <cerrno>

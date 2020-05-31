@@ -7,7 +7,7 @@
 #   include <cwchar>
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
-#elif defined(__unix) || defined(__linux) || defined(__APPLE__)
+#elif defined(__unix) || defined(__linux__) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
 
@@ -15,7 +15,7 @@
 #   include <QCameraInfo>
 #endif
 
-#ifdef __linux
+#ifdef __linux__
 #   include <fcntl.h>
 #   include <sys/ioctl.h>
 #   include <linux/videodev2.h>
@@ -91,7 +91,7 @@ std::vector<std::tuple<QString, int>> get_camera_names()
     pSysDevEnum->Release();
 #endif
 
-#ifdef __linux
+#ifdef __linux__
     for (int i = 0; i < 16; i++) {
         char buf[32];
         snprintf(buf, sizeof(buf), "/dev/video%d", i);
