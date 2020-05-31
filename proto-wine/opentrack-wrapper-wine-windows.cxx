@@ -4,6 +4,9 @@
 
 #define shm_wrapper ShmWine
 #define __WINE_OLE2_H
+// OSX sdk 10.8 build error otherwise
+#undef _LIBCPP_MSVCRT
+
 #include "compat/shm.h"
 #include "compat/shm.cpp"
 #include "wine-shm.h"
