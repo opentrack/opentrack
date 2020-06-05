@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QPixmap>
 #include <QString>
 #include <QToolTip>

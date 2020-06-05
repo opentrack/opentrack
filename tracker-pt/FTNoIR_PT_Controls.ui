@@ -420,6 +420,36 @@
               <string>Blue only</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Red filter</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Green filter</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Blue filter</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Cyan filter</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yellow filter</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Magenta filter</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="5" column="0">

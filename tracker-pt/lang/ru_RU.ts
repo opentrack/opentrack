@@ -237,6 +237,30 @@ ROLL или X/Y-смещения.</translation>
         <source>Green only</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Red filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyan filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yellow filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magenta filter</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>
