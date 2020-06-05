@@ -141,32 +141,32 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         extract_single_channel(frame, 2, output);
         break;
     }
-    case pt_color_red_filter:
+    case pt_color_red_chromakey:
     {
         filter_single_channel(frame, 1, -0.5, -0.5, output);
         break;
     }
-    case pt_color_green_filter:
+    case pt_color_green_chromakey:
     {
         filter_single_channel(frame, -0.5, 1, -0.5, output);
         break;
     }
-    case pt_color_blue_filter:
+    case pt_color_blue_chromakey:
     {
         filter_single_channel(frame, -0.5, -0.5, 1, output);
         break;
     }
-    case pt_color_cyan_filter:
+    case pt_color_cyan_chromakey:
     {
         filter_single_channel(frame, -1, 0.5, 0.5, output);
         break;
     }
-    case pt_color_yellow_filter:
+    case pt_color_yellow_chromakey:
     {
         filter_single_channel(frame, 0.5, 0.5, -1, output);
         break;
     }
-    case pt_color_magenta_filter:
+    case pt_color_magenta_chromakey:
     {
         filter_single_channel(frame, 0.5, -1, 0.5, output);
         break;

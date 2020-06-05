@@ -422,32 +422,32 @@
             </item>
             <item>
              <property name="text">
-              <string>Red filter</string>
+              <string>Red chroma key</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Green filter</string>
+              <string>Green chroma key</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Blue filter</string>
+              <string>Blue chroma key</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Cyan filter</string>
+              <string>Cyan chroma key</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Yellow filter</string>
+              <string>Yellow chroma key</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Magenta filter</string>
+              <string>Magenta chroma key</string>
              </property>
             </item>
            </widget>

@@ -100,12 +100,12 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
         pt_color_red_only,
         pt_color_green_only,
         pt_color_blue_only,
-        pt_color_red_filter,
-        pt_color_green_filter,
-        pt_color_blue_filter,
-        pt_color_cyan_filter,
-        pt_color_yellow_filter,
-        pt_color_magenta_filter,
+        pt_color_red_chromakey,
+        pt_color_green_chromakey,
+        pt_color_blue_chromakey,
+        pt_color_cyan_chromakey,
+        pt_color_yellow_chromakey,
+        pt_color_magenta_chromakey,
     };
 
     for (unsigned k = 0; k < std::size(color_types); k++)

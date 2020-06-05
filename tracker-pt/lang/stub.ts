@@ -233,27 +233,27 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Red filter</source>
+        <source>Red chroma key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Green filter</source>
+        <source>Green chroma key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Blue filter</source>
+        <source>Blue chroma key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cyan filter</source>
+        <source>Cyan chroma key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Yellow filter</source>
+        <source>Yellow chroma key</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Magenta filter</source>
+        <source>Magenta chroma key</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
