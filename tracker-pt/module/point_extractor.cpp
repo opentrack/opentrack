@@ -33,7 +33,7 @@ using namespace numeric_types;
 
 /*
 http://en.wikipedia.org/wiki/Mean-shift
-In this application the idea, is to eliminate any bias of the point estimate 
+In this application the idea, is to eliminate any bias of the point estimate
 which is introduced by the rather arbitrary thresholded area. One must recognize
 that the thresholded area can only move in one pixel increments since it is
 binary. Thus, its center of mass might make "jumps" as pixels are added/removed
@@ -42,9 +42,9 @@ With mean-shift, a moving "window" or kernel is multiplied with the gray-scale
 image, and the COM is calculated of the result. This is iterated where the
 kernel center is set the previously computed COM. Thus, peaks in the image intensity
 distribution "pull" the kernel towards themselves. Eventually it stops moving, i.e.
-then the computed COM coincides with the kernel center. We hope that the 
+then the computed COM coincides with the kernel center. We hope that the
 corresponding location is a good candidate for the extracted point.
-The idea similar to the window scaling suggested in  Berglund et al. "Fast, bias-free 
+The idea similar to the window scaling suggested in  Berglund et al. "Fast, bias-free
 algorithm for tracking single particles with variable size and shape." (2008).
 */
 static vec2 MeanShiftIteration(const cv::Mat1b &frame_gray, const vec2 &current_center, f filter_width)
@@ -115,6 +115,13 @@ void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, 
     cv::mixChannels(&orig_frame, 1, &dest, 1, from_to, 1);
 }
 
+void PointExtractor::filter_single_channel(const cv::Mat& orig_frame, float r, float g, float b, cv::Mat1b& dest)
+{
+    ensure_channel_buffers(orig_frame);
+
+    cv::transform(orig_frame, dest, cv::Mat(cv::Matx13f(b, g, r)));
+}
+
 void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
 {
     switch (s.blob_color)
@@ -132,6 +139,36 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     case pt_color_red_only:
     {
         extract_single_channel(frame, 2, output);
+        break;
+    }
+    case pt_color_red_chromakey:
+    {
+        filter_single_channel(frame, 1, -0.5, -0.5, output);
+        break;
+    }
+    case pt_color_green_chromakey:
+    {
+        filter_single_channel(frame, -0.5, 1, -0.5, output);
+        break;
+    }
+    case pt_color_blue_chromakey:
+    {
+        filter_single_channel(frame, -0.5, -0.5, 1, output);
+        break;
+    }
+    case pt_color_cyan_chromakey:
+    {
+        filter_single_channel(frame, -1, 0.5, 0.5, output);
+        break;
+    }
+    case pt_color_yellow_chromakey:
+    {
+        filter_single_channel(frame, 0.5, 0.5, -1, output);
+        break;
+    }
+    case pt_color_magenta_chromakey:
+    {
+        filter_single_channel(frame, 0.5, -1, 0.5, output);
         break;
     }
     case pt_color_average:

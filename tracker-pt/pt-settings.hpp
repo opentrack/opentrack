@@ -13,6 +13,12 @@ enum pt_color_type
     pt_color_average = 5,
     pt_color_blue_only = 6,
     pt_color_green_only = 7,
+    pt_color_red_chromakey = 8,
+    pt_color_green_chromakey = 9,
+    pt_color_blue_chromakey = 10,
+    pt_color_cyan_chromakey = 11,
+    pt_color_yellow_chromakey = 12,
+    pt_color_magenta_chromakey = 13,
 };
 
 namespace pt_impl {
