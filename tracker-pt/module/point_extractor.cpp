@@ -119,7 +119,7 @@ void PointExtractor::filter_single_channel(const cv::Mat& orig_frame, float r, f
 {
     ensure_channel_buffers(orig_frame);
 
-    cv::transform(orig_frame, dest, cv::Mat(cv::Matx13f(r, g, b)));
+    cv::transform(orig_frame, dest, cv::Mat(cv::Matx13f(b, g, r)));
 }
 
 void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
@@ -143,7 +143,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     }
     case pt_color_red_filter:
     {
-        filter_single_channel(frame, -0.5, -0.5, 1, output);
+        filter_single_channel(frame, 1, -0.5, -0.5, output);
         break;
     }
     case pt_color_green_filter:
@@ -153,17 +153,17 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     }
     case pt_color_blue_filter:
     {
-        filter_single_channel(frame, 1, -0.5, -0.5, output);
+        filter_single_channel(frame, -0.5, -0.5, 1, output);
         break;
     }
     case pt_color_cyan_filter:
     {
-        filter_single_channel(frame, 0.5, 0.5, -1, output);
+        filter_single_channel(frame, -1, 0.5, 0.5, output);
         break;
     }
     case pt_color_yellow_filter:
     {
-        filter_single_channel(frame, -1, 0.5, 0.5, output);
+        filter_single_channel(frame, 0.5, 0.5, -1, output);
         break;
     }
     case pt_color_magenta_filter:
