@@ -83,26 +83,28 @@ void Shortcuts::bind_shortcut(K& key, const key_opts& k, bool held)
 
 #ifdef _WIN32
 
-void Shortcuts::receiver(const Key& k)
+void Shortcuts::receiver(const Key& key)
 {
     const unsigned sz = keys.size();
     for (unsigned i = 0; i < sz; i++)
     {
-        K& k_ = std::get<0>(keys[i]);
-        if (k.guid != k_.guid)
+        K& k = std::get<0>(keys[i]);
+        if (key.guid != k.guid)
             continue;
-        if (k.keycode != k_.keycode)
-            continue;
-
-        if (k_.held && !k.held) continue;
-        if (k_.alt != k.alt) continue;
-        if (k_.ctrl != k.ctrl) continue;
-        if (k_.shift != k.shift) continue;
-        if (!k_.should_process())
+        if (key.keycode != k.keycode)
             continue;
 
+        if (k.held && !key.held) continue;
+        if (key.held)
+        {
+            if (k.alt != key.alt) continue;
+            if (k.ctrl != key.ctrl) continue;
+            if (k.shift != key.shift) continue;
+            if (!k.should_process())
+                continue;
+        }
         fun& f = std::get<1>(keys[i]);
-        f(k.held);
+        f(key.held);
     }
 }
 
