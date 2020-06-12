@@ -29,6 +29,15 @@ void set_is_visible(const QWidget& w, bool force)
         return;
     }
 
+    {
+        int ndisplays = GetSystemMetrics(SM_CMONITORS);
+        if (ndisplays > 1)
+        {
+            visible = true;
+            return;
+        }
+    }
+
     HWND hwnd = (HWND)w.winId();
 
     if (!force && timer.elapsed_ms() < (visible ? visible_timeout : invisible_timeout))
