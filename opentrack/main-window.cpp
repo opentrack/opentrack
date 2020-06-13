@@ -280,14 +280,7 @@ main_window::~main_window()
         stop_tracker_();
         close();
 
-        constexpr int inc = 25, max = 1000;
-
-        for (int k = 0; k < max; k += inc)
-        {
-            QEventLoop ev;
-            ev.processEvents();
-            portable::sleep(inc);
-        }
+        portable::sleep(1000);
     }
 
     exit();
