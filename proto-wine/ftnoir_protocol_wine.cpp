@@ -70,11 +70,11 @@ module_status wine::initialize()
         if (s.proton_appid == 0)
             return error(tr("Must specify application id for Proton (Steam Play)"));
 
-        QProcessEnvironment make_steam_environ(const QString& proton_version, int appid);
-        QString proton_path(const QString& proton_version);
+        QProcessEnvironment make_steam_environ(const QString& proton_path, int appid);
+        QString proton_path(const QString& proton_path);
 
-        wine_path = proton_path(s.proton_version);
-        env = make_steam_environ(s.proton_version, s.proton_appid);
+        wine_path = proton_path(s.proton_path().toString());
+        env = make_steam_environ(s.proton_path().toString(), s.proton_appid);
     }
     else
     {
