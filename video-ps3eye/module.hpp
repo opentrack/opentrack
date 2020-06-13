@@ -8,8 +8,8 @@
 #include "compat/timer.hpp"
 #include "ui_dialog.h"
 
+#include <QDialog>
 #include <QProcess>
-#include <QTimer>
 
 using namespace options;
 
@@ -27,7 +27,6 @@ struct settings final
 
     void set_exposure();
     void set_gain();
-    void apply();
 };
 
 class dialog final : public QWidget
@@ -36,15 +35,13 @@ class dialog final : public QWidget
     Ui_Dialog ui;
     settings s;
 
-    QTimer t;
-
     shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
 
-    void do_ok() { s.b->save(); s.apply(); close(); }
-    void do_cancel() { s.b->reload(); s.apply(); close(); }
+    void do_ok() { s.b->save(); close(); deleteLater(); }
+    void do_cancel() { s.b->reload(); close(); deleteLater(); }
 
 protected:
-    void closeEvent(QCloseEvent*) override { do_cancel(); deleteLater(); }
+    void closeEvent(QCloseEvent*) override { do_cancel(); }
 
 public:
     explicit dialog(QWidget* parent = nullptr);
