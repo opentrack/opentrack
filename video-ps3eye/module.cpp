@@ -144,6 +144,7 @@ bool ps3eye_camera::start(info& args)
         return false;
 
     volatile auto& ptr = *(ps3eye::shm*)shm.ptr();
+    QString error;
 
     using mode = ps3eye::shm_in::mode;
 
@@ -181,14 +182,13 @@ bool ps3eye_camera::start(info& args)
         portable::sleep(sleep_ms);
     }
 
-    run_in_thread_sync(qApp, [&]() {
-        QString error;
-        if (ptr.out.error_string[0] == '\0')
-            error = "Unknown error";
-        else
-            error = QString::fromLatin1((const char*)ptr.out.error_string,
-                                        strnlen((const char*)ptr.out.error_string, sizeof(ptr.out.error_string)));
+    if (ptr.out.error_string[0] == '\0')
+        error = "Unknown error";
+    else
+        error = QString::fromLatin1((const char*)ptr.out.error_string,
+                                    strnlen((const char*)ptr.out.error_string, sizeof(ptr.out.error_string)));
 
+    run_in_thread_async(qApp, [=]() {
         QMessageBox::critical(nullptr, "Can't open camera", "PS3 Eye driver error: " + error, QMessageBox::Close);
     });
 
