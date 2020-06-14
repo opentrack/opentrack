@@ -9,10 +9,10 @@
 #include "options/options.hpp"
 using namespace options;
 
-#include <QString>
-#include <QProcess>
 #include <QMutex>
-#include <QtCore/QVariant>
+#include <QProcess>
+#include <QString>
+#include <QVariant>
 
 #include <QDebug>
 
