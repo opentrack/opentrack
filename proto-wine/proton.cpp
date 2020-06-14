@@ -7,12 +7,13 @@
 
 #ifndef OTR_WINE_NO_WRAPPER
 
+#include "proton.h"
+
 #include <QDebug>
-#include <QtGlobal>
-#include <QString>
-#include <QProcessEnvironment>
 #include <QDir>
 #include <QFileInfo>
+#include <QProcessEnvironment>
+#include <QtGlobal>
 
 
 static const char* steam_paths[] = {
@@ -30,7 +31,14 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
 {
     auto ret = QProcessEnvironment::systemEnvironment();
     QString home = qgetenv("HOME");
-    QString runtime_path;
+    QString runtime_path, app_wineprefix;
+
+    auto expand = [&](QString x) {
+                      x.replace("HOME", home);
+                      x.replace("PROTON_PATH", proton_path);
+                      x.replace("RUNTIME_PATH", runtime_path);
+                      return x;
+                  };
 
     for (const char* path : runtime_paths) {
         QDir dir(QDir::homePath() + path);
@@ -38,12 +46,16 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
             runtime_path = dir.absolutePath();
     }
 
-    auto expand = [&](QString x) {
-        x.replace("HOME", home);
-        x.replace("PROTON_PATH", proton_path);
-        x.replace("RUNTIME_PATH", runtime_path);
-        return x;
-    };
+    if (runtime_path.isEmpty())
+        ProtonException(QString("Couldn't find a Steam runtime.")).raise();
+
+    for (const char* path : steam_paths) {
+        QDir dir(QDir::homePath() + path + expand("/%1/pfx").arg(appid));
+        if (dir.exists())
+            app_wineprefix = dir.absolutePath();
+    }
+    if (app_wineprefix.isEmpty())
+        ProtonException(QString("Couldn't find a Wineprefix for AppId %1").arg(appid)).raise();
 
     QString path = expand(
         ":PROTON_PATH/dist/bin"
@@ -67,12 +79,7 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
     );
     library_path += ':'; library_path += qgetenv("LD_LIBRARY_PATH");
     ret.insert("LD_LIBRARY_PATH", library_path);
-
-    for (const char* path : steam_paths) {
-        QDir dir(QDir::homePath() + path + expand("/%1/pfx").arg(appid));
-        if (dir.exists())
-            ret.insert("WINEPREFIX", dir.absolutePath());
-    }
+    ret.insert("WINEPREFIX", app_wineprefix);
 
     return ret;
 }

@@ -1,4 +1,5 @@
 #include "ftnoir_protocol_wine.h"
+#include "proton.h"
 #ifndef OTR_WINE_NO_WRAPPER
 #   include "csv/csv.h"
 #endif
@@ -74,9 +75,13 @@ module_status wine::initialize()
         QString proton_path(const QString& proton_path);
 
         wine_path = proton_path(s.proton_path().toString());
-        env = make_steam_environ(s.proton_path().toString(), s.proton_appid);
+        try {
+            env = make_steam_environ(s.proton_path().toString(), s.proton_appid);
+        } catch(const ProtonException &e) {
+            return error(e.getMessage());
+        }
     }
-    else
+
     {
         QString wineprefix = "~/.wine";
         if (!s.wineprefix->isEmpty())
@@ -85,7 +90,7 @@ module_status wine::initialize()
             wineprefix = qgetenv("HOME") + wineprefix.mid(1);
 
         if (wineprefix[0] != '/')
-            error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
+            return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
 
         env.insert("WINEPREFIX", wineprefix);
     }
