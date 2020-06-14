@@ -79,8 +79,7 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
 
 QString proton_path(const QString& proton_path)
 {
-    QString wine_path = proton_path + "/dist/bin/wine";
-    return wine_path;
+    return proton_path + "/dist/bin/wine";
 }
 
 #endif
