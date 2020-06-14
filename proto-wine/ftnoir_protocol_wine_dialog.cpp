@@ -10,8 +10,6 @@ static const char* proton_paths[] = {
     "/.local/share/Steam/steamapps/common",
 };
 
-static const QStringList proton_filter = { "Proton*" };
-
 FTControls::FTControls()
 {
     ui.setupUi(this);
@@ -19,7 +17,7 @@ FTControls::FTControls()
     for (const char* path : proton_paths) {
         QDir dir(QDir::homePath() + path);
         dir.setFilter(QDir::Dirs);
-        dir.setNameFilters(proton_filter);
+        dir.setNameFilters({ "Proton*" });
         QFileInfoList list = dir.entryInfoList();
         for (int i = 0; i < list.size(); ++i) {
             QFileInfo fileInfo = list.at(i);
