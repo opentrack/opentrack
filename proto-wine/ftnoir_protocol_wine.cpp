@@ -74,7 +74,6 @@ module_status wine::initialize()
         QString proton_path(const QString& proton_path);
 
         wine_path = proton_path(s.proton_path().toString());
-        qDebug() << s.proton_path().toString();
         auto [proton_env, error_string, success] = make_steam_environ(s.proton_path().toString(), s.proton_appid);
         env = proton_env;
 
