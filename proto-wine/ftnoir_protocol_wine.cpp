@@ -1,5 +1,4 @@
 #include "ftnoir_protocol_wine.h"
-#include "proton.h"
 #ifndef OTR_WINE_NO_WRAPPER
 #   include "csv/csv.h"
 #endif
@@ -71,15 +70,16 @@ module_status wine::initialize()
         if (s.proton_appid == 0)
             return error(tr("Must specify application id for Proton (Steam Play)"));
 
-        QProcessEnvironment make_steam_environ(const QString& proton_path, int appid);
+        std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_path, int appid);
         QString proton_path(const QString& proton_path);
 
         wine_path = proton_path(s.proton_path().toString());
-        try {
-            env = make_steam_environ(s.proton_path().toString(), s.proton_appid);
-        } catch(const ProtonException &e) {
-            return error(e.getMessage());
-        }
+        qDebug() << s.proton_path().toString();
+        auto [proton_env, error_string, success] = make_steam_environ(s.proton_path().toString(), s.proton_appid);
+        env = proton_env;
+
+        if (!success)
+            return error(error_string);
     }
 
     {

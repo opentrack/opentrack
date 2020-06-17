@@ -7,8 +7,6 @@
 
 #ifndef OTR_WINE_NO_WRAPPER
 
-#include "proton.h"
-
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
@@ -27,9 +25,11 @@ static const char* runtime_paths[] = {
 };
 
 
-QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
+std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_path, int appid)
 {
-    auto ret = QProcessEnvironment::systemEnvironment();
+    using ret = std::tuple<QProcessEnvironment, QString, bool>;
+    auto env = QProcessEnvironment::systemEnvironment();
+    QString error = "";
     QString home = qgetenv("HOME");
     QString runtime_path, app_wineprefix;
 
@@ -47,7 +47,7 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
     }
 
     if (runtime_path.isEmpty())
-        ProtonException(QString("Couldn't find a Steam runtime.")).raise();
+        error = QString("Couldn't find a Steam runtime.");
 
     for (const char* path : steam_paths) {
         QDir dir(QDir::homePath() + path + expand("/%1/pfx").arg(appid));
@@ -55,13 +55,13 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
             app_wineprefix = dir.absolutePath();
     }
     if (app_wineprefix.isEmpty())
-        ProtonException(QString("Couldn't find a Wineprefix for AppId %1").arg(appid)).raise();
+        error = QString("Couldn't find a Wineprefix for AppId %1").arg(appid);
 
     QString path = expand(
         ":PROTON_PATH/dist/bin"
     );
     path += ':'; path += qgetenv("PATH");
-    ret.insert("PATH", path);
+    env.insert("PATH", path);
 
     QString library_path = expand(
         ":PROTON_PATH/dist/lib"
@@ -78,10 +78,10 @@ QProcessEnvironment make_steam_environ(const QString& proton_path, int appid)
         ":RUNTIME_PATH/amd64/usr/lib"
     );
     library_path += ':'; library_path += qgetenv("LD_LIBRARY_PATH");
-    ret.insert("LD_LIBRARY_PATH", library_path);
-    ret.insert("WINEPREFIX", app_wineprefix);
+    env.insert("LD_LIBRARY_PATH", library_path);
+    env.insert("WINEPREFIX", app_wineprefix);
 
-    return ret;
+    return ret(env, error, error.isEmpty());
 }
 
 QString proton_path(const QString& proton_path)
