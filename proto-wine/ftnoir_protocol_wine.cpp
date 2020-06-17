@@ -70,13 +70,17 @@ module_status wine::initialize()
         if (s.proton_appid == 0)
             return error(tr("Must specify application id for Proton (Steam Play)"));
 
-        QProcessEnvironment make_steam_environ(const QString& proton_version, int appid);
-        QString proton_path(const QString& proton_version);
+        std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_path, int appid);
+        QString proton_path(const QString& proton_path);
 
-        wine_path = proton_path(s.proton_version);
-        env = make_steam_environ(s.proton_version, s.proton_appid);
+        wine_path = proton_path(s.proton_path().toString());
+        auto [proton_env, error_string, success] = make_steam_environ(s.proton_path().toString(), s.proton_appid);
+        env = proton_env;
+
+        if (!success)
+            return error(error_string);
     }
-    else
+
     {
         QString wineprefix = "~/.wine";
         if (!s.wineprefix->isEmpty())
@@ -85,7 +89,7 @@ module_status wine::initialize()
             wineprefix = qgetenv("HOME") + wineprefix.mid(1);
 
         if (wineprefix[0] != '/')
-            error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
+            return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
 
         env.insert("WINEPREFIX", wineprefix);
     }
