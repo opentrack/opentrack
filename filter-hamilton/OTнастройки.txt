@@ -1,0 +1,7 @@
+  Max radius :  20,00	2,5
+   Smoothing :   2,07
+   Dead Zone :   0,00	0,2	
+        Zoom :   4,00
+Max distance :  17,00	1,5 mm	
+   Smoothing :   0,60
+   Dead Zone :   0,26	1 mm
