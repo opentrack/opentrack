@@ -80,7 +80,7 @@ module_status wine::initialize()
         if (!success)
             return error(error_string);
     }
-
+    else
     {
         QString wineprefix = "~/.wine";
         if (!s.wineprefix->isEmpty())
