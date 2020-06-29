@@ -10,6 +10,7 @@
 #include <QString>
 #include <QToolTip>
 #include <QtEvents>
+#include <QPainterPath>
 
 #include <QDebug>
 
