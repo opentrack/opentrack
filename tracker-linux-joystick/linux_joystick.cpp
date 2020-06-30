@@ -61,5 +61,5 @@ QString getJoystickDevice(QString guid) {
         if (device_id == guid) return js_dev;
     }
 
-    return NULL;
+    return {};
 }

@@ -36,6 +36,10 @@
 #include <QtDebug>
 #include <QtGlobal>
 
+#ifdef __GNUG__
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 QHash<QPair<quint32, quint32>, QxtGlobalShortcut*> QxtGlobalShortcutPrivate::shortcuts;
 
 void QxtGlobalShortcutPrivate::event_filter_installer::ensure_event_filter()

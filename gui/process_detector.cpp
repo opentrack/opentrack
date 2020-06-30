@@ -56,6 +56,10 @@ void proc_detector_settings::set_is_enabled(bool enabled)
     });
 }
 
+#ifdef __GNUG__
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 QHash<QString, QString> proc_detector_settings::split_process_names()
 {
     QString str = get_game_list();

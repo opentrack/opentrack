@@ -27,6 +27,10 @@ static constexpr int add_cbx[] =
     -180,
 };
 
+#ifdef __GNUG__
+#   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 void tracker_s2bot::run() {
     int freq = s.freq;
     if (freq <= 0)
