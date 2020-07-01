@@ -22,7 +22,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/ps3eye-driver/CMakeLists.txt")
     endif()
 endif()
 
-if(TARGET ps3eye-sdl)
+if(TARGET ps3eye-sdl AND FALSE)
     install(TARGETS "ps3eye-sdl" DESTINATION "${opentrack-libexec}")
     if(WIN32)
         foreach(k ${SDL2_LIBRARIES})
