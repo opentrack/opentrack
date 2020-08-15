@@ -42,6 +42,16 @@ jobs:
       name: Install packages
       run: |
         sudo apt install libprocps-dev
-    - name: Build OpenTrack
+    - name: Run cmake
       run: |
-        cmake CMakeLists.txt && make
+        cmake CMakeLists.txt
+    - if: contains( matrix.os, 'windows')
+      name: Build OpenTrack for Windows
+      run: |
+        D:
+        cd D:/a/opentrack/opentrack
+        make
+    - if: false == contains( matrix.os, 'windows')
+      name: Build OpenTrack for Linux & macOS
+      run: |
+        make
