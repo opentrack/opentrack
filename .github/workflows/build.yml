@@ -46,6 +46,10 @@ jobs:
       with:
         version: ${{ matrix.qt-version }}
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
+    - if: contains( matrix.os, 'ubuntu')
+      name: Install packages
+      run: |
+        sudo apt install libprocps-dev
     - name: Build OpenTrack
       run: |
         cmake CMakeLists.txt && make
