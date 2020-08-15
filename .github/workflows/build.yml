@@ -2,9 +2,10 @@ name: Build
 
 on:
   push:
-    branches: [ unstable ]
+    tags-ignore:
+      - '*'
   pull_request:
-    branches: [ unstable ]
+  workflow_dispatch:
 
 jobs:
   build:
