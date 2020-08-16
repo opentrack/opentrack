@@ -47,18 +47,17 @@ jobs:
       # Build project
       #
 
-    - name: Run cmake
-      run: |
-        cmake CMakeLists.txt
-    - name: Build OpenTrack
-      run: |
-        cmake --build .
-
     - if: contains( matrix.os, 'macos')
-      name: Build macOS App
+      name: Build for macOS
       run: |
-        ${Qt5_Dir}/bin/macdeployqt $APP.app
-        git clone --depth=1 https://github.com/aurelien-rainone/macdeployqtfix.git
-        python macdeployqtfix/macdeployqtfix.py $APP.app/Contents/MacOS/$APP /usr/local
+        rm -rf build
+        mkdir build
+        cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        make install
+        tree -dl install 
+        #${Qt5_Dir}/bin/macdeployqt $APP.app
+        #git clone --depth=1 https://github.com/aurelien-rainone/macdeployqtfix.git
+        #python macdeployqtfix/macdeployqtfix.py $APP.app/Contents/MacOS/$APP /usr/local
       env:
         APP: OpenTrack
