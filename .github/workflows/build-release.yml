@@ -16,7 +16,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Set Env
         run: |
-          #export TAG=v${GITHUB_RUN_ID}.${GITHUB_RUN_NUMBER}
+          export TAG=v${GITHUB_RUN_ID}.${GITHUB_RUN_NUMBER}
           echo "::set-env name=TAG::${TAG}"
       - name: Create release
         id: create_release
