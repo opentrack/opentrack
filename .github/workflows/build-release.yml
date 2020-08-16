@@ -6,7 +6,31 @@ on:
   workflow_dispatch:
 
 jobs:
+  create_release:
+    name: Create release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set Env
+        run: |
+          #export TAG=v${GITHUB_RUN_ID}.${GITHUB_RUN_NUMBER}
+          echo "::set-env name=TAG::${TAG}"
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.TAG }}
+          release_name: Release v${{ env.TAG }}
+          draft: true
+          prerelease: false
+
   build:
+    needs: create_release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -56,9 +80,33 @@ jobs:
         cd build
         cmake -DCMAKE_BUILD_TYPE=Release ..
         make install
-        tree -dl install 
+        tree -dl install
+        tar cz install > opentrack-mac.tar.gz
         #${Qt5_Dir}/bin/macdeployqt $APP.app
         #git clone --depth=1 https://github.com/aurelien-rainone/macdeployqtfix.git
         #python macdeployqtfix/macdeployqtfix.py $APP.app/Contents/MacOS/$APP /usr/local
       env:
         APP: OpenTrack
+
+    - if: contains( matrix.os, 'macos')
+      name: Release for macOS
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create_release.outputs.upload_url }}
+        asset_path: ./build/opentrack-mac.tar.gz
+        asset_name: opentrack-mac.tar.gz
+        asset_content_type: application/gzip
+
+  publish_release:
+    name: Publish release
+    runs-on: ubuntu-latest
+    needs: [create_release, build]
+    steps:
+    - name: Publish draft release
+      uses: eregon/publish-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        release_id: ${{ needs.create_release.outputs.release_id }}
