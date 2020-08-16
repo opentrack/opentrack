@@ -50,7 +50,7 @@ jobs:
     - if: contains( matrix.os, 'macos')
       name: Build for macOS
       run: |
-        brew install imagemagick
+        brew install imagemagick create-dmg
         rm -rf build
         mkdir build
         cd build
