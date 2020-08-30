@@ -154,8 +154,13 @@ namespace EasyTracker
         // 5 - Radial fourth order
         // 6 - Radial fifth order
         // 7 - Radial sixth order
-        for (unsigned k = 0; k < 8; k++)
-            iDistCoeffsMatrix(k) = (double)iCameraInfo.dist_c[k];
+        //
+        // SL: Using distortion coefficients in this way is breaking our face tracking output.
+        // Just disable them for now until we invest time and effort to work it out.
+        // For our face tracking use case not having proper distortion coefficients ain't a big deal anyway
+        // See issues #1141 and #1020
+        //for (unsigned k = 0; k < 8; k++)
+        //    iDistCoeffsMatrix(k) = (double)iCameraInfo.dist_c[k];
     }
 
 
