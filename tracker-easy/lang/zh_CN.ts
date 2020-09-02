@@ -4,16 +4,12 @@
 <context>
     <name>EasyTracker::Metadata</name>
     <message>
-        <source>Easy Tracker 1.0</source>
+        <source>Easy Tracker 1.1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>UICPTClientControls</name>
-    <message>
-        <source>PointTracker Settings</source>
-        <translation>PointTracker设置</translation>
-    </message>
     <message>
         <source>Camera</source>
         <translation>摄像头</translation>
@@ -151,46 +147,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Top Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Vertex count</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Three vertices</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Four vertices</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Five vertices</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Center</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -200,10 +156,6 @@
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Z&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -224,6 +176,74 @@
     </message>
     <message>
         <source> ms</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Easy Tracker Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Model type:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hat three vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hat four vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Hat five vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip three vertices</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vertices: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Right:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Left:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Center:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top right:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Top left:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip top:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip middle:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip bottom:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -30,6 +30,7 @@ namespace EasyTracker {
         value<bool> iCustomModelThree{ b, "iCustomModelThree", true };
         value<bool> iCustomModelFour{ b, "iCustomModelFour", false };
         value<bool> iCustomModelFive{ b, "iCustomModelFive", false };
+        value<bool> iClipModelThree{ b, "iClipModelThree", false };
 
         // Custom model vertices
         value<int> iVertexTopX{ b, "iVertexTopX", 0 }, iVertexTopY{ b, "iVertexTopY", 0 }, iVertexTopZ{ b, "iVertexTopZ", 0 };
@@ -38,7 +39,10 @@ namespace EasyTracker {
         value<int> iVertexCenterX{ b, "iVertexCenterX", 0 }, iVertexCenterY{ b, "iVertexCenterY", 0 }, iVertexCenterZ{ b, "iVertexCenterZ", 0 };
         value<int> iVertexTopRightX{ b, "iVertexTopRightX", 0 }, iVertexTopRightY{ b, "iVertexTopRightY", 0 }, iVertexTopRightZ{ b, "iVertexTopRightZ", 0 };
         value<int> iVertexTopLeftX{ b, "iVertexTopLeftX", 0 }, iVertexTopLeftY{ b, "iVertexTopLeftY", 0 }, iVertexTopLeftZ{ b, "iVertexTopLeftZ", 0 };
-
+        // Clip model vertices
+        value<int> iVertexClipTopX{ b, "iVertexClipTopX", 0 }, iVertexClipTopY{ b, "iVertexClipTopY", 0 }, iVertexClipTopZ{ b, "iVertexClipTopZ", 0 };
+        value<int> iVertexClipMiddleX{ b, "iVertexClipMiddleX", 0 }, iVertexClipMiddleY{ b, "iVertexClipMiddleY", 0 }, iVertexClipMiddleZ{ b, "iVertexClipMiddleZ", 0 };
+        value<int> iVertexClipBottomX{ b, "iVertexClipBottomX", 0 }, iVertexClipBottomY{ b, "iVertexClipBottomY", 0 }, iVertexClipBottomZ{ b, "iVertexClipBottomZ", 0 };
 
 
         value<int> fov{ b, "camera-fov", 56 };
