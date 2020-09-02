@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>465</width>
-    <height>764</height>
+    <width>328</width>
+    <height>923</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>PointTracker Settings</string>
+   <string>Easy Tracker Settings</string>
   </property>
   <property name="windowIcon">
    <iconset>
@@ -32,24 +32,8 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_9">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
-   </property>
-   <item row="7" column="0">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item alignment="Qt::AlignTop">
     <widget class="QTabWidget" name="tabWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
@@ -61,7 +45,7 @@
       <locale language="English" country="UnitedStates"/>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tabTracker">
       <attribute name="title">
@@ -548,13 +532,13 @@
        <item>
         <widget class="QGroupBox" name="groupBoxCustomModelType">
          <property name="title">
-          <string>Vertex count</string>
+          <string>Model type:</string>
          </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
            <widget class="QRadioButton" name="iRadioButtonCustomModelThree">
             <property name="text">
-             <string>Three vertices</string>
+             <string>Hat three vertices</string>
             </property>
             <property name="checked">
              <bool>true</bool>
@@ -564,14 +548,21 @@
           <item>
            <widget class="QRadioButton" name="iRadioButtonCustomModelFour">
             <property name="text">
-             <string>Four vertices</string>
+             <string>Hat four vertices</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QRadioButton" name="iRadioButtonCustomModelFive">
             <property name="text">
-             <string>Five vertices</string>
+             <string>Hat five vertices</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="iRadioButtonClipModelThree">
+            <property name="text">
+             <string>Clip three vertices</string>
             </property>
            </widget>
           </item>
@@ -581,7 +572,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string/>
+          <string>Vertices: </string>
          </property>
          <property name="flat">
           <bool>false</bool>
@@ -614,7 +605,7 @@
        <item>
         <widget class="QGroupBox" name="iGroupBoxTop">
          <property name="title">
-          <string>Top</string>
+          <string>Top:</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <property name="topMargin">
@@ -665,7 +656,7 @@
        <item>
         <widget class="QGroupBox" name="iGroupBoxRight">
          <property name="title">
-          <string>Right</string>
+          <string>Right:</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_3">
           <item>
@@ -713,7 +704,7 @@
        <item>
         <widget class="QGroupBox" name="iGroupBoxLeft">
          <property name="title">
-          <string>Left</string>
+          <string>Left:</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <item>
@@ -761,7 +752,7 @@
        <item>
         <widget class="QGroupBox" name="iGroupBoxCenter">
          <property name="title">
-          <string>Center</string>
+          <string>Center:</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
@@ -809,7 +800,7 @@
        <item>
         <widget class="QGroupBox" name="iGroupBoxTopRight">
          <property name="title">
-          <string>Top Right</string>
+          <string>Top right:</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_6">
           <item>
@@ -857,7 +848,7 @@
        <item>
         <widget class="QGroupBox" name="iGroupBoxTopLeft">
          <property name="title">
-          <string>Top Left</string>
+          <string>Top left:</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
@@ -902,6 +893,159 @@
          </layout>
         </widget>
        </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxClipTop">
+         <property name="title">
+          <string>Clip top:</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_10">
+          <property name="topMargin">
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipTopX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipTopY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipTopZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxClipMiddle">
+         <property name="title">
+          <string>Clip middle:</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_9">
+          <property name="topMargin">
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipMiddleX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipMiddleY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipMiddleZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="iGroupBoxClipBottom">
+         <property name="title">
+          <string>Clip bottom:</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_11">
+          <property name="topMargin">
+           <number>9</number>
+          </property>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipBottomX">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipBottomY">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="iSpinVertexClipBottomZ">
+            <property name="suffix">
+             <string> mm</string>
+            </property>
+            <property name="minimum">
+             <number>-65535</number>
+            </property>
+            <property name="maximum">
+             <number>65535</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tab_3">
@@ -912,7 +1056,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label_10">
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.0&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -939,10 +1083,22 @@
      </widget>
     </widget>
    </item>
+   <item alignment="Qt::AlignBottom">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tabWidget</tabstop>
   <tabstop>camdevice_combo</tabstop>
   <tabstop>res_x_spin</tabstop>
   <tabstop>res_y_spin</tabstop>

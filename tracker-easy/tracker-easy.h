@@ -77,6 +77,7 @@ namespace EasyTracker
         void MatchVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex, int& aTopRight, int& aTopLeft);
         void MatchThreeOrFourVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aCenterIndex);
         void MatchFiveVertices(int& aTopIndex, int& aRightIndex, int& aLeftIndex, int& aTopRight, int& aTopLeft);
+        void MatchClipVertices(int& aTopIndex, int& aMiddleIndex, int& aBottomIndex);
         
         
         //

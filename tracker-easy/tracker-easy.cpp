@@ -170,9 +170,14 @@ namespace EasyTracker
         {
             MatchFiveVertices(aTopIndex, aRightIndex, aLeftIndex, aTopRight, aTopLeft);
         }
-        else
+        else if (!iSettings.iClipModelThree)
         {
             MatchThreeOrFourVertices(aTopIndex, aRightIndex, aLeftIndex, aCenterIndex);
+        }
+        else
+        {
+            // Clip model
+            MatchClipVertices(aTopIndex, aRightIndex, aLeftIndex);
         }
     }
 
@@ -342,7 +347,56 @@ namespace EasyTracker
         }
     }
 
-    
+    /**
+    */
+    void Tracker::MatchClipVertices(int& aTopIndex, int& aMiddleIndex, int& aBottomIndex)
+    {
+        //Bitmap origin is top left
+        iTrackedPoints.clear();
+        // Tracked points must match the order of the object model points.
+        // Find top most point, that's the one with min Y as we assume our guy's head is not up side down
+        int minY = std::numeric_limits<int>::max();
+        for (int i = 0; i < (int)iPoints.size(); i++)
+        {
+            if (iPoints[i].y < minY)
+            {
+                minY = iPoints[i].y;
+                aTopIndex = i;
+            }
+        }
+
+
+        int maxY = 0;
+
+        // Find bottom most point 
+        for (int i = 0; i < (int)iPoints.size(); i++)
+        {
+            // Excluding top most point
+            if (i != aTopIndex && iPoints[i].y > maxY)
+            {
+                maxY = iPoints[i].y;
+                aBottomIndex = i;
+            }
+        }
+
+
+        // Find center point, the last one
+        for (int i = 0; i < (int)iPoints.size(); i++)
+        {
+            // Excluding the three points we already have
+            if (i != aTopIndex && i != aBottomIndex)
+            {
+                aMiddleIndex = i;
+            }
+        }
+
+        // Order matters
+        iTrackedPoints.push_back(iPoints[aTopIndex]);
+        iTrackedPoints.push_back(iPoints[aMiddleIndex]);
+        iTrackedPoints.push_back(iPoints[aBottomIndex]);
+    }
+
+
 
     ///
     ///
@@ -725,18 +779,29 @@ namespace EasyTracker
         // We are converting them from millimeters to centimeters.
         // TODO: Need to support clip too. That's cap only for now.
         iModel.clear();
-        iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
-        iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
-        iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
 
-        if (iSettings.iCustomModelFour)
+        if (!iSettings.iClipModelThree)
         {
-            iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
+            iModel.push_back(cv::Point3f(iSettings.iVertexTopX / 10.0, iSettings.iVertexTopY / 10.0, iSettings.iVertexTopZ / 10.0)); // Top
+            iModel.push_back(cv::Point3f(iSettings.iVertexRightX / 10.0, iSettings.iVertexRightY / 10.0, iSettings.iVertexRightZ / 10.0)); // Right
+            iModel.push_back(cv::Point3f(iSettings.iVertexLeftX / 10.0, iSettings.iVertexLeftY / 10.0, iSettings.iVertexLeftZ / 10.0)); // Left
+
+            if (iSettings.iCustomModelFour)
+            {
+                iModel.push_back(cv::Point3f(iSettings.iVertexCenterX / 10.0, iSettings.iVertexCenterY / 10.0, iSettings.iVertexCenterZ / 10.0)); // Center
+            }
+            else if (iSettings.iCustomModelFive)
+            {
+                iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
+                iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
+            }
         }
-        else if (iSettings.iCustomModelFive)
+        else
         {
-            iModel.push_back(cv::Point3f(iSettings.iVertexTopRightX / 10.0, iSettings.iVertexTopRightY / 10.0, iSettings.iVertexTopRightZ / 10.0)); // Top Right
-            iModel.push_back(cv::Point3f(iSettings.iVertexTopLeftX / 10.0, iSettings.iVertexTopLeftY / 10.0, iSettings.iVertexTopLeftZ / 10.0)); // Top Left
+            // Clip model type
+            iModel.push_back(cv::Point3f(iSettings.iVertexClipTopX / 10.0, iSettings.iVertexClipTopY / 10.0, iSettings.iVertexClipTopZ / 10.0)); // Top
+            iModel.push_back(cv::Point3f(iSettings.iVertexClipMiddleX / 10.0, iSettings.iVertexClipMiddleY / 10.0, iSettings.iVertexClipMiddleZ / 10.0)); // Middle
+            iModel.push_back(cv::Point3f(iSettings.iVertexClipBottomX / 10.0, iSettings.iVertexClipBottomY / 10.0, iSettings.iVertexClipBottomZ / 10.0)); // Bottom
         }
 
         infout << "Update model - end";
