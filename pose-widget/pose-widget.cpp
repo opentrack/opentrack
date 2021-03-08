@@ -63,12 +63,8 @@ void pose_widget::resizeEvent(QResizeEvent *event)
     float w = event->size().width();
     float h = event->size().height();
 
-    // fill background by color
-    constexpr int clr = 220;
-    QImage background(QImage(w, h, QImage::Format_ARGB32));
-    background.fill(QColor(clr,clr,clr));
-
     // draw axes
+    QImage background(QImage(w, h, QImage::Format_ARGB32));
     QPainter p(&background);
     p.setPen(QPen(Qt::gray, 1, Qt::SolidLine));
     p.drawLine(0.5*w,   0  , 0.5*w,   h  );
