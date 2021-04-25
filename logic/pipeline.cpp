@@ -465,7 +465,8 @@ ok:
         for (int i = 0; i < 6; i++)
             value(i) = 0;
 
-    value = apply_zero_pos(value);
+    if (hold_ordered) value = output_pose;
+    else value = apply_zero_pos(value);
 
     ev.run_events(EV::ev_finished, value);
     libs.pProtocol->pose(value, raw);
