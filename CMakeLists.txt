@@ -21,6 +21,11 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 
+cmake_minimum_required(VERSION 3.15 FATAL_ERROR)
+# Enable MSVC runtime library setting 
+# (https://cmake.org/cmake/help/latest/prop_tgt/MSVC_RUNTIME_LIBRARY.html)
+cmake_policy(SET CMP0091 NEW) 
+
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
 set(CMAKE_C_LINKER_PREFERENCE_PROPAGATES OFF)
@@ -30,7 +35,6 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 include(opentrack-policy NO_POLICY_SCOPE)
 
 project(opentrack)
-cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 
 # must be prior to CMakeDetermineCXXCompiler due to rpath
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
