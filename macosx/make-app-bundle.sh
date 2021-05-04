@@ -4,9 +4,9 @@
 set -e
 
 # keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
+#trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
 # echo an error message before exiting
-trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT 
+#trap 'echo "--\n--\n--\n--\n\"${last_command}\" command failed with exit code $?."' EXIT
 
 APPNAME=opentrack
 # Alternative we could look at https://github.com/arl/macdeployqtfix ??
@@ -59,32 +59,19 @@ sips -z 512 512   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_512x512
 iconutil -c icns -o "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" "$tmp/$APPNAME.iconset"
 rm -rf "$tmp"
 
+# Rename additional directories
+mv $install/xplane $install/X-Plane-Plugin
+mv $install/doc $install/Documentation
+
 #Build DMG
-#https://github.com/andreyvit/create-dmg
-rm -rf $install/../*.dmg
-create-dmg \
-  --volname "$APPNAME" \
-  --volicon "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" \
-  --window-pos 200 120 \
-  --window-size 800 450 \
-  --icon-size 80 \
-  --background "$dir/dmgbackground.png" \
-  --icon "$APPNAME.app" 200 180 \
-  --app-drop-link 420 180 \
-  --hide-extension "$APPNAME.app" \
-  --no-internet-enable \
-  --add-folder "Document" "$install/doc" 20 40 \
-  --add-folder "source-code" "$install/source-code" 220 40 \
-  --add-folder "Xplane-Plugin" "$install/xplane" 420 40 \
-  --add-folder "thirdparty" "$install/thirdparty" 620 40 \
-  "$version.dmg" \
-  "$install/$APPNAME.app"
+#https://dmgbuild.readthedocs.io/en/latest/
+dmgbuild -s $dir/dmgSettings.py -D macosxPath="$dir/" -D installPath="$install/" $APPNAME $install/../$version.dmg
 
 # Check if we have a DMG otherwise fail
 FILE=$install/../$version.dmg
 if [ -f $FILE ]; then
-   ls -ial $install/../*.dmg
+  ls -ial $install/../*.dmg
 else
-   echo "Failed to create ${FILE}"
-   exit 2
+  echo "Failed to create ${FILE}"
+  exit 2
 fi
