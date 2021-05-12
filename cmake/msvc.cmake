@@ -11,6 +11,8 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
+set(CMAKE_GENERATOR "Ninja")
+
 #add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
 add_definitions(-diagnostics:caret)
 #add_compile_options(-Qvec-report:2)
@@ -30,16 +32,32 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     endforeach()
 endif()
 
+if(CMAKE_PROJECT_NAME STREQUAL "QtBase")
+        unset(CMAKE_CROSSCOMPILING)
+        set(QT_BUILD_TOOLS_WHEN_CROSSCOMPILING TRUE CACHE BOOL "" FORCE)
+        set(QT_DEBUG_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
+        set(QT_USE_DEFAULT_CMAKE_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
+
+        set(FEATURE_debug OFF)
+        set(FEATURE_debug_and_release OFF)
+        set(FEATURE_force_debug_info ON)
+        set(FEATURE_ltcg ON)
+        set(FEATURE_shared ON)
+endif()
+
 if(CMAKE_PROJECT_NAME STREQUAL "opencv")
     set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG TRUE)
 endif()
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 add_compile_options(-Zi -Zf -Zo -bigobj -cgthreads1 -vd0)
 add_link_options(-cgthreads:1)
 
 set(_CFLAGS "")
 set(_CXXFLAGS "")
-set(_CFLAGS_RELEASE "-O2 -O2it -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy -arch:SSE2 -MT")
+set(_CFLAGS_RELEASE "-O2 -Oit -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy -arch:SSE2 -MT")
 set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
@@ -51,7 +69,7 @@ set(_LDFLAGS_STATIC "")
 set(_LDFLAGS_STATIC_RELEASE "-LTCG:INCREMENTAL")
 set(_LDFLAGS_STATIC_DEBUG "")
 
-if(NOT CMAKE_INSTALL_PREFIX)
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "" FORCE)
 endif()
 
