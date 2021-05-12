@@ -2,8 +2,8 @@
 # qtbase configure line for safekeeping
 #
 
-# "../configure" -prefix d:\dev\qt-5.10.0 -no-ico -no-gif -no-libjpeg   \
-# -opengl desktop -no-angle -no-fontconfig -no-harfbuzz                 \
+# "../configure" -prefix d:\dev\qt-5.10.0 -no-ico -no-gif               \
+# -opengl desktop -no-fontconfig -no-harfbuzz                           \
 # -nomake tests -no-mp -release -opensource -shared -confirm-license    \
 # -no-freetype -force-debug-info -separate-debug-info                   \
 # -make-tool jom -platform win32-msvc -static-runtime
