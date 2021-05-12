@@ -6,7 +6,7 @@
 # -opengl desktop -no-angle -no-fontconfig -no-harfbuzz                 \
 # -nomake tests -no-mp -release -opensource -shared -confirm-license    \
 # -no-freetype -force-debug-info -separate-debug-info                   \
-# -make-tool jom -platform win32-msvc
+# -make-tool jom -platform win32-msvc -static-runtime
 
 # remember to change -MD to -MT in mkspecs/
 # also add CFLAGS -Zi and LFLAGS -DEBUG
