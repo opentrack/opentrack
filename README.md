@@ -68,6 +68,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - Eike "e4z9" (OSX joystick output driver)
 - Wei Shuai (Wiimote tracker)
 - Stéphane Lenclud (Kinect Face Tracker, Easy Tracker)
+- GO63-samara (Hamilton Filter, Pose-widget improvement)
 
 ## Thanks
 
