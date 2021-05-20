@@ -25,6 +25,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install Linux Dependencies
+      run: sudo apt install libprocps-dev libopencv-dev
+      if: matrix.os == 'ubuntu-latest'
+
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v1
