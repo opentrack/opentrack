@@ -82,6 +82,7 @@ class Localizer
         std::pair<float, cv::Rect2f> run(
             const cv::Mat &frame);
 
+        double last_inference_time_millis() const;
     private:
         inline static constexpr int input_img_width = 288;
         inline static constexpr int input_img_height = 224;
@@ -90,6 +91,7 @@ class Localizer
         cv::Mat scaled_frame{}, input_mat{};
         Ort::Value input_val{nullptr}, output_val{nullptr};
         std::array<float, 5> results;
+        double last_inference_time = 0;
 };
 
 
@@ -111,11 +113,10 @@ class PoseEstimator
         std::optional<Face> run(const cv::Mat &frame, const cv::Rect &box);
         // Returns an image compatible with the 'frame' image for displaying.
         cv::Mat last_network_input() const;
-
+        double last_inference_time_millis() const;
     private:
         // Operates on the private image data members
         int find_input_intensity_90_pct_quantile() const;
-
         inline static constexpr int input_img_width = 129;
         inline static constexpr int input_img_height = 129;
         Ort::Session session{nullptr};
@@ -130,6 +131,7 @@ class PoseEstimator
             Ort::Value{nullptr}, 
             Ort::Value{nullptr}, 
             Ort::Value{nullptr}};
+        double last_inference_time = 0;
 };
 
 
@@ -154,7 +156,7 @@ private:
     bool load_and_initialize_model();
     void draw_gizmos(
         cv::Mat frame,  
-        const PoseEstimator::Face &face,
+        const std::optional<PoseEstimator::Face> &face,
         const Affine& pose) const;
     void update_fps(double dt);
 
@@ -175,7 +177,7 @@ private:
     static constexpr float head_size_mm = 200.f;
 
     double fps = 0;
-    double max_frame_time = 0;
+    double last_inference_time = 0;
     static constexpr double RC = .25;
 
     QMutex mtx; // Protects the pose

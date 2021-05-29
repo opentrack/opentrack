@@ -207,14 +207,14 @@ std::pair<float, cv::Rect2f> Localizer::run(
     const char* input_names[] = {"x"};
     const char* output_names[] = {"logit_box"};
 
-    //Timer t_; t_.start();
+    Timer t; t.start();
 
     const auto nt = omp_get_num_threads();
     omp_set_num_threads(num_threads);
     session.Run(Ort::RunOptions{nullptr}, input_names, &input_val, 1, output_names, &output_val, 1);
     omp_set_num_threads(nt);
 
-    //qDebug() << "localizer: " << t_.elapsed_ms() << " ms\n";
+    last_inference_time = t.elapsed_ms();
 
     const cv::Rect2f roi = unnormalize(cv::Rect2f{
         results[1],
@@ -225,6 +225,12 @@ std::pair<float, cv::Rect2f> Localizer::run(
     const float score = sigmoid(results[0]);
 
     return { score, roi };
+}
+
+
+double Localizer::last_inference_time_millis() const
+{
+    return last_inference_time;
 }
 
 
@@ -317,7 +323,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     const char* input_names[] = {"x"};
     const char* output_names[] = {"pos_size", "quat", "box"};
 
-    //Timer t_; t_.start();
+    Timer t; t.start();
 
     const auto nt = omp_get_num_threads();
     omp_set_num_threads(num_threads);
@@ -329,7 +335,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     //        issue. The ONNX api suggests that tensor are allocated in an
     //        arena. Does that matter? Maybe the issue is something else?
 
-    //qDebug() << "pose net: " << t_.elapsed_ms() << " ms\n";
+    last_inference_time = t.elapsed_ms();
 
     // Perform coordinate transformation.
     // From patch-local normalized in [-1,1] to
@@ -372,6 +378,12 @@ cv::Mat PoseEstimator::last_network_input() const
 }
 
 
+double PoseEstimator::last_inference_time_millis() const
+{
+    return last_inference_time;
+}
+
+
 bool neuralnet_tracker::detect()
 {
     // Note: BGR colors!
@@ -379,6 +391,7 @@ bool neuralnet_tracker::detect()
         iou(*last_localizer_roi,*last_roi)<0.25)
     {
         auto [p, rect] = localizer->run(grayscale);
+        last_inference_time += localizer->last_inference_time_millis();
         if (p > 0.5 || rect.height < 5 || rect.width < 5)
         {
             last_localizer_roi = rect;
@@ -392,13 +405,18 @@ bool neuralnet_tracker::detect()
     }
 
     if (!last_roi)
+    {
+        draw_gizmos(frame, {}, {});
         return false;
+    }
 
     auto face = poseestimator->run(grayscale, *last_roi);
+    last_inference_time += poseestimator->last_inference_time_millis();
     
     if (!face)
     {
         last_roi.reset();
+        draw_gizmos(frame, *face, {});
         return false;
     }
 
@@ -457,7 +475,7 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
 
 void neuralnet_tracker::draw_gizmos(
     cv::Mat frame,
-    const PoseEstimator::Face &face,
+    const std::optional<PoseEstimator::Face> &face,
     const Affine& pose) const
 {
     if (last_roi) 
@@ -471,21 +489,28 @@ void neuralnet_tracker::draw_gizmos(
         cv::rectangle(frame, *last_localizer_roi, cv::Scalar(col, 0, 255-col), /*thickness=*/1);
     }
 
-    if (face.size>=1.f)
-        cv::circle(frame, static_cast<cv::Point>(face.center), int(face.size), cv::Scalar(255,255,255), 2);
-    cv::circle(frame, static_cast<cv::Point>(face.center), 3, cv::Scalar(255,255,255), -1);
-
-    auto draw_coord_line = [&](int i, const cv::Scalar& color)
+    if (face)
     {
-        const float vx = -pose.R(2,i);
-        const float vy = -pose.R(1,i);
-        static constexpr float len = 100.f;
-        cv::Point q = face.center + len*cv::Point2f{vx, vy};
-        cv::line(frame, static_cast<cv::Point>(face.center), static_cast<cv::Point>(q), color, 2);
-    };
-    draw_coord_line(0, {0, 0, 255});
-    draw_coord_line(1, {0, 255, 0});
-    draw_coord_line(2, {255, 0, 0});
+        if (face->size>=1.f)
+            cv::circle(frame, static_cast<cv::Point>(face->center), int(face->size), cv::Scalar(255,255,255), 2);
+        cv::circle(frame, static_cast<cv::Point>(face->center), 3, cv::Scalar(255,255,255), -1);
+
+        auto draw_coord_line = [&](int i, const cv::Scalar& color)
+        {
+            const float vx = -pose.R(2,i);
+            const float vy = -pose.R(1,i);
+            static constexpr float len = 100.f;
+            cv::Point q = face->center + len*cv::Point2f{vx, vy};
+            cv::line(frame, static_cast<cv::Point>(face->center), static_cast<cv::Point>(q), color, 2);
+        };
+        draw_coord_line(0, {0, 0, 255});
+        draw_coord_line(1, {0, 255, 0});
+        draw_coord_line(2, {255, 0, 0});
+
+        // Draw the computed joint position
+        auto xy = world_to_image(pose.t);
+        cv::circle(frame, cv::Point(xy[0],xy[1]), 5, cv::Scalar(0,0,255), -1);
+    }
 
     if (s.show_network_input)
     {
@@ -498,14 +523,9 @@ void neuralnet_tracker::draw_gizmos(
             netinput(roi).copyTo(frame(roi));
         }
     }
-    {
-        // Draw the computed joint position
-        auto xy = world_to_image(pose.t);
-        cv::circle(frame, cv::Point(xy[0],xy[1]), 5, cv::Scalar(0,0,255), -1);
-    }
 
     char buf[128];
-    ::snprintf(buf, sizeof(buf), "%d Hz, Max: %d ms", clamp(int(fps), 0, 9999), int(max_frame_time*1000.));
+    ::snprintf(buf, sizeof(buf), "%d Hz, pose inference: %d ms", clamp(int(fps), 0, 9999), int(last_inference_time));
     cv::putText(frame, buf, cv::Point(10, frame.rows-10), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1);
 }
 
@@ -660,6 +680,7 @@ void neuralnet_tracker::run()
 
     while (!isInterruptionRequested())
     {
+        last_inference_time = 0;
         auto t = clk.now();
         {
             QMutexLocker l(&camera_mtx);
@@ -713,8 +734,6 @@ void neuralnet_tracker::update_fps(double dt)
         fps *= 1 - alpha;
         fps += alpha * 1./dt;
     }
-
-    max_frame_time = std::max(max_frame_time, dt);
 }
 
 
