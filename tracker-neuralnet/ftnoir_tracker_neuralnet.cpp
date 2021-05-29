@@ -379,10 +379,15 @@ bool neuralnet_tracker::detect()
         iou(*last_localizer_roi,*last_roi)<0.25)
     {
         auto [p, rect] = localizer->run(grayscale);
-        if (p > 0.5)
+        if (p > 0.5 || rect.height < 5 || rect.width < 5)
         {
             last_localizer_roi = rect;
             last_roi = rect;
+        }
+        else
+        {
+            last_roi.reset();
+            last_localizer_roi.reset();
         }
     }
 
