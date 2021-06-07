@@ -19,7 +19,7 @@
 #include <utility>
 #include <algorithm>
 
-const QTextCodec* const CSV::m_codec = QTextCodec::codecForName("System");
+const QTextCodec* const CSV::m_codec = QTextCodec::codecForName("UTF-8");
 const QRegExp CSV::m_rx = QRegExp(QString("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)?\\n?"));
 const QRegExp CSV::m_rx2 = QRegExp(QString("(?:\"([^\"]*)\";?)|(?:([^;]*);?)?"));
 
