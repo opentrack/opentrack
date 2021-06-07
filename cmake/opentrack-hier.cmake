@@ -33,7 +33,7 @@ elseif(WIN32)
 else()
     set(opentrack-libexec "libexec/opentrack")
     set(opentrack-runtime-libexec "/../${opentrack-libexec}/")   # MUST HAVE A TRAILING BACKSLASH
-    set(opentrack-runtime-doc "/share/doc/opentrack/")         # MUST HAVE A TRAILING BACKSLASH
+    set(opentrack-runtime-doc "/../share/doc/opentrack/")         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-bin "bin")
     set(opentrack-doc "./share/doc/opentrack")
     set(opentrack-src "./share/doc/opentrack/source-code")
