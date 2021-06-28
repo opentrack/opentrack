@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/neuralnet.png</file>
+    </qresource>
+</RCC>

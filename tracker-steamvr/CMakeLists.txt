@@ -38,7 +38,7 @@ if(steamvr-dll AND opentrack-intel)
     SET(SDK_VALVE_STEAMVR "" CACHE PATH "Valve's SteamVR")
     if(SDK_VALVE_STEAMVR)
         otr_module(tracker-steamvr)
-        install(FILES "${SDK_VALVE_STEAMVR}/bin/${steamvr-dir}/${steamvr-dll}" DESTINATION "${opentrack-hier-pfx}")
+        install(FILES "${SDK_VALVE_STEAMVR}/bin/${steamvr-dir}/${steamvr-dll}" DESTINATION "${opentrack-libexec}")
 
         target_include_directories(opentrack-tracker-steamvr SYSTEM PRIVATE "${SDK_VALVE_STEAMVR}/headers")
         target_link_libraries(opentrack-tracker-steamvr "${SDK_VALVE_STEAMVR}/lib/${steamvr-dir}/${steamvr-lib}")

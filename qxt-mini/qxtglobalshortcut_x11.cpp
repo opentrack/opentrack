@@ -355,9 +355,7 @@ bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
 
             (void) XkbSetDetectableAutoRepeat(x11.display(), True, &val);
 
-            if (val)
-                qDebug() << "qxt-mini: fixed x11 autorepeat";
-            else
+            if (!val)
                 qDebug() << "qxt-mini: can't fix x11 autorepeat";
         }
     }

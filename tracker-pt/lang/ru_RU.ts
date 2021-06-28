@@ -237,6 +237,30 @@ ROLL или X/Y-смещения.</translation>
         <source>Green only</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Red chroma key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Green chroma key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Blue chroma key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cyan chroma key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yellow chroma key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Magenta chroma key</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>

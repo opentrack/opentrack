@@ -9,6 +9,7 @@
 
 #include <QByteArray>
 #include <QString>
+#include <QCoreApplication>
 
 #include <IOKit/IOKitLib.h>
 
@@ -23,6 +24,7 @@ struct JoystickValues {
 
 class FooHIDJoystick
 {
+    Q_DECLARE_TR_FUNCTIONS(FooHIDJoystick)
 public:
     FooHIDJoystick(const QByteArray &name, const QByteArray &serialNumber);
     ~FooHIDJoystick();

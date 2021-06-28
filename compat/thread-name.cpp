@@ -20,12 +20,9 @@ struct THREADNAME_INFO
 };
 
 static inline
-void set_curthread_name_old(const QString& name_)
+void set_curthread_name_old_(const char* name)
 {
-    QByteArray str = name_.toLocal8Bit();
-    const char* name = str.constData();
     HANDLE curthread = GetCurrentThread();
-
     THREADNAME_INFO info; // NOLINT(cppcoreguidelines-pro-type-member-init)
     info.dwType = 0x1000;
     info.szName = name;
@@ -40,6 +37,15 @@ void set_curthread_name_old(const QString& name_)
     __except (EXCEPTION_CONTINUE_EXECUTION)
     {
     }
+}
+
+static inline
+void set_curthread_name_old(const QString& name_)
+{
+    QByteArray str = name_.toLocal8Bit();
+    const char* name = str.constData();
+
+    set_curthread_name_old_(name);
 }
 #else
 

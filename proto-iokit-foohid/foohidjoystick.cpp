@@ -51,7 +51,7 @@ static bool connectToService(io_connect_t *connection, QString *errorMessage)
                                                      IOServiceMatching(FOOHID_SERVICE_NAME),
                                                      &iterator);
     if (ret != KERN_SUCCESS) {
-        *errorMessage = otr_tr("Unable to find FooHID IOService.");
+        *errorMessage = QObject::tr("Unable to find FooHID IOService.");
         return false;
     }
     // Iterate over services and try to open connection
@@ -66,7 +66,7 @@ static bool connectToService(io_connect_t *connection, QString *errorMessage)
     }
     IOObjectRelease(iterator);
     if (!found) {
-        *errorMessage = otr_tr("Unable to connect to FooHID IOService.");
+        *errorMessage = QObject::tr("Unable to connect to FooHID IOService.");
         return false;
     }
     return true;
@@ -89,7 +89,7 @@ FooHIDJoystick::FooHIDJoystick(const QByteArray &name, const QByteArray &serialN
         deviceCreated = createDevice();
         _hasError = !deviceCreated;
         if (!deviceCreated)
-            _errorMessage = otr_tr("Failed to create virtual joystick");
+            _errorMessage = tr("Failed to create virtual joystick");
     }
 }
 
@@ -116,7 +116,7 @@ void FooHIDJoystick::setValue(JoystickValues newValues)
     values = newValues;
     if (!sendToDevice()) {
         _hasError = true;
-        _errorMessage = otr_tr("Failed to send values to virtual joystick");
+        _errorMessage = tr("Failed to send values to virtual joystick");
     }
 }
 

@@ -22,8 +22,10 @@ void tracker_freepie::run() {
         uint8_t pad1;
         uint8_t flags;
         float fl[12];
-    } data {};
+    } data;
 #pragma pack(pop)
+
+    static_assert(sizeof(data) == 50);
 
     enum F
     {

@@ -9,7 +9,6 @@
 
 #include "dinput.hpp"
 #include "compat/timer.hpp"
-#include "compat/qhash.hpp"
 #include "export.hpp"
 
 #include <memory>
@@ -18,6 +17,7 @@
 #include <unordered_map>
 #include <iterator>
 
+#include "compat/qhash.hpp"
 #include <QString>
 #include <QMutex>
 

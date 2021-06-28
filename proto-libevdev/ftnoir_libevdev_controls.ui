@@ -14,7 +14,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>VJoy</string>
+   <string>libevdev options</string>
   </property>
   <property name="windowIcon">
    <iconset>

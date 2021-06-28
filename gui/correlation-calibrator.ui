@@ -40,7 +40,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
       <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="sizeAdjustPolicy">
-      <enum>QAbstractScrollArea::AdjustToContentsOnFirstShow</enum>
+      <enum>QAbstractScrollArea::AdjustToContents</enum>
      </property>
      <property name="autoScroll">
       <bool>true</bool>

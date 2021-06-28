@@ -11,7 +11,7 @@
 
 void video_widget::init_image_nolock()
 {
-    double dpi = screen_dpi();
+    double dpi = devicePixelRatioF();
     size_.store({ iround(width() * dpi), iround(height() * dpi) }, std::memory_order_release);
 }
 

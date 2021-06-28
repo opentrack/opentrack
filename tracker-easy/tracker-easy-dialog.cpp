@@ -68,6 +68,19 @@ namespace EasyTracker
         tie_setting(s.iVertexTopLeftY, ui.iSpinVertexTopLeftY);
         tie_setting(s.iVertexTopLeftZ, ui.iSpinVertexTopLeftZ);
 
+        // Clip model
+        tie_setting(s.iVertexClipTopX, ui.iSpinVertexClipTopX);
+        tie_setting(s.iVertexClipTopY, ui.iSpinVertexClipTopY);
+        tie_setting(s.iVertexClipTopZ, ui.iSpinVertexClipTopZ);
+
+        tie_setting(s.iVertexClipMiddleX, ui.iSpinVertexClipMiddleX);
+        tie_setting(s.iVertexClipMiddleY, ui.iSpinVertexClipMiddleY);
+        tie_setting(s.iVertexClipMiddleZ, ui.iSpinVertexClipMiddleZ);
+
+        tie_setting(s.iVertexClipBottomX, ui.iSpinVertexClipBottomX);
+        tie_setting(s.iVertexClipBottomY, ui.iSpinVertexClipBottomY);
+        tie_setting(s.iVertexClipBottomZ, ui.iSpinVertexClipBottomZ);
+
         tie_setting(s.fov, ui.fov);
 
         tie_setting(s.debug, ui.debug);
@@ -87,10 +100,12 @@ namespace EasyTracker
         connect(ui.iRadioButtonCustomModelThree, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
         connect(ui.iRadioButtonCustomModelFour, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
         connect(ui.iRadioButtonCustomModelFive, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
+        connect(ui.iRadioButtonClipModelThree, &QRadioButton::clicked, this, &Dialog::UpdateCustomModelControls);
 
         tie_setting(s.iCustomModelThree, ui.iRadioButtonCustomModelThree);
         tie_setting(s.iCustomModelFour, ui.iRadioButtonCustomModelFour);
         tie_setting(s.iCustomModelFive, ui.iRadioButtonCustomModelFive);
+        tie_setting(s.iClipModelThree, ui.iRadioButtonClipModelThree);
 
 
         for (unsigned k = 0; k < cv::SOLVEPNP_MAX_COUNT; k++)
@@ -111,20 +126,49 @@ namespace EasyTracker
             ui.iGroupBoxCenter->hide();
             ui.iGroupBoxTopRight->hide();
             ui.iGroupBoxTopLeft->hide();
+            ui.iGroupBoxTop->show();
+            ui.iGroupBoxRight->show();
+            ui.iGroupBoxLeft->show();
+            ui.iGroupBoxClipTop->hide();
+            ui.iGroupBoxClipMiddle->hide();
+            ui.iGroupBoxClipBottom->hide();
         }
         else if (ui.iRadioButtonCustomModelFour->isChecked())
         {
             ui.iGroupBoxCenter->show();
             ui.iGroupBoxTopRight->hide();
             ui.iGroupBoxTopLeft->hide();
+            ui.iGroupBoxTop->show();
+            ui.iGroupBoxRight->show();
+            ui.iGroupBoxLeft->show();
+            ui.iGroupBoxClipTop->hide();
+            ui.iGroupBoxClipMiddle->hide();
+            ui.iGroupBoxClipBottom->hide();
         }
         else if (ui.iRadioButtonCustomModelFive->isChecked())
         {
             ui.iGroupBoxCenter->hide();
             ui.iGroupBoxTopRight->show();
             ui.iGroupBoxTopLeft->show();
+            ui.iGroupBoxTop->show();
+            ui.iGroupBoxRight->show();
+            ui.iGroupBoxLeft->show();
+            ui.iGroupBoxClipTop->hide();
+            ui.iGroupBoxClipMiddle->hide();
+            ui.iGroupBoxClipBottom->hide();
         }
-
+        else if (ui.iRadioButtonClipModelThree->isChecked())
+        {
+            ui.iGroupBoxTop->hide();
+            ui.iGroupBoxRight->hide();
+            ui.iGroupBoxLeft->hide();
+            ui.iGroupBoxCenter->hide();
+            ui.iGroupBoxTopRight->hide();
+            ui.iGroupBoxTopLeft->hide();
+            ui.iGroupBoxClipTop->show();
+            ui.iGroupBoxClipMiddle->show();
+            ui.iGroupBoxClipBottom->show();
+        }
     }
 
 

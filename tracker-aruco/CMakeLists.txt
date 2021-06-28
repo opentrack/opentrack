@@ -29,7 +29,7 @@ if(OpenCV_FOUND)
         endif()
 
         maybe_add_static_define()
-        otr_install_lib("${SDK_ARUCO_LIBPATH}" "${opentrack-hier-pfx}")
+        otr_install_lib("${SDK_ARUCO_LIBPATH}" "${opentrack-libexec}")
 
         otr_module(tracker-aruco)
         target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS} "${dir}")

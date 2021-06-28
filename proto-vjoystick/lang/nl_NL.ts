@@ -20,10 +20,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>driver/SDK version mismatch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Device missing. Add joystick #1.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -57,6 +53,10 @@
     </message>
     <message>
         <source>Unknown error #%1.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>driver/SDK version mismatch (dll 0x%1, driver 0x%2)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,54 +1,79 @@
 #pragma once
 
 #include "video/camera.hpp"
+#include "shm-layout.hpp"
+#include "compat/shm.h"
+#include "options/options.hpp"
+#include "compat/macros1.h"
+#include "compat/timer.hpp"
+#include "ui_dialog.h"
 
-#if 0
+#include <QDialog>
+#include <QProcess>
 
-namespace video {
+using namespace options;
 
-struct OTR_VIDEO_EXPORT camera_
+using video::impl::camera;
+using video::impl::camera_;
+using video::frame;
+
+struct settings final
 {
-    camera_();
-    virtual ~camera_();
+    bundle b = make_bundle("video-ps3eye");
+    shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
 
-    virtual std::vector<QString> camera_names() const = 0;
-    virtual std::unique_ptr<camera> make_camera(const QString& name) = 0;
-    virtual bool show_dialog(const QString& camera_name) = 0;
-    virtual bool can_show_dialog(const QString& camera_name) = 0;
+    value<slider_value> exposure{b, "exposure", {255, 0, 255}};
+    value<slider_value> gain{b, "gain", {30, 0, 63}};
+
+    void set_exposure();
+    void set_gain();
 };
 
-struct OTR_VIDEO_EXPORT camera
+class dialog final : public QWidget
 {
-    struct info final
-    {
-        // TODO: expose FOV-based focal length for regular webcams
-        int width = 0, height = 0, fps = 0;
-        double fx = 0, fy = 0;          // focal length
-        double P_x = 0, P_y = 0;        // principal point
-        double dist_c[8] {};            // distortion coefficients
-    };
+    Q_OBJECT
+    Ui_Dialog ui;
+    settings s;
 
-    camera();
-    virtual ~camera();
+    shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
 
-    [[nodiscard]] virtual bool start(info& args) = 0;
-    virtual void stop() = 0;
-    virtual bool is_open() = 0;
+    void do_ok() { s.b->save(); close(); deleteLater(); }
+    void do_cancel() { s.b->reload(); close(); deleteLater(); }
 
-    virtual std::tuple<const frame&, bool> get_frame() = 0;
-    [[nodiscard]] virtual bool show_dialog() = 0;
+protected:
+    void closeEvent(QCloseEvent*) override { do_cancel(); }
+
+public:
+    explicit dialog(QWidget* parent = nullptr);
 };
 
-} // ns video
+struct ps3eye_camera final : video::impl::camera
+{
+    QProcess wrapper;
+    shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
+    settings s;
+    frame fr;
+    Timer t;
+    unsigned char data[640 * 480 * 3] = {};
+    int framerate = 30, sleep_ms = 1;
+    bool open = false;
+    unsigned timecode = 0;
 
-#endif
+    ps3eye_camera();
+    ~ps3eye_camera() override;
 
-namespace video::impl {
-struct ps3eye_camera_ : camera_
+    bool start(info& args) override;
+    void stop() override;
+    bool is_open() override { return open; }
+
+    std::tuple<const frame&, bool> get_frame() override;
+    [[nodiscard]] bool show_dialog() override;
+};
+
+struct ps3eye_camera_ final : video::impl::camera_
 {
     std::vector<QString> camera_names() const override;
     std::unique_ptr<camera> make_camera(const QString& name) override;
     bool show_dialog(const QString& camera_name) override;
     bool can_show_dialog(const QString& camera_name) override;
 };
-} // ns video::impl

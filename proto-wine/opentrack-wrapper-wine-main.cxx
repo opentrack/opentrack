@@ -5,7 +5,6 @@
 #include <cstdio>
 
 #include "freetrackclient/fttypes.h"
-#include "wine-shm.h"
 #include "compat/export.hpp"
 
 enum Axis {
@@ -14,6 +13,7 @@ enum Axis {
 
 #define __WINE_OLE2_H
 #include "compat/shm.h"
+#include "wine-shm.h"
 
 void create_registry_key(void);
 
@@ -42,7 +42,6 @@ private:
     void* mem;
     void *hMutex, *hMapFile;
 };
-#include <windows.h>
 
 int main(void)
 {

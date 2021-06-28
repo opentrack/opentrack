@@ -7,11 +7,15 @@
 #   include <cwchar>
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
-#elif defined(__unix) || defined(__linux) || defined(__APPLE__)
+#elif defined(__unix) || defined(__linux__) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
 
-#ifdef __linux
+#ifdef __APPLE__
+#   include <QCameraInfo>
+#endif
+
+#ifdef __linux__
 #   include <fcntl.h>
 #   include <sys/ioctl.h>
 #   include <linux/videodev2.h>
@@ -24,16 +28,22 @@
 int camera_name_to_index(const QString &name)
 {
     auto list = get_camera_names();
-    auto it = std::find(list.cbegin(), list.cend(), name);
+    auto it = std::find_if(list.cbegin(), list.cend(), [&name](const auto& tuple) {
+        const auto& [str, idx] = tuple;
+        return str == name;
+    });
     if (it != list.cend())
-        return std::distance(list.cbegin(), it);
+    {
+        const auto& [ str, idx ] = *it;
+        return idx;
+    }
 
     return -1;
 }
 
-std::vector<QString> get_camera_names()
+std::vector<std::tuple<QString, int>> get_camera_names()
 {
-    std::vector<QString> ret;
+    std::vector<std::tuple<QString, int>> ret;
 #ifdef _WIN32
     // Create the System Device Enumerator.
     HRESULT hr;
@@ -66,7 +76,7 @@ std::vector<QString> get_camera_names()
                 {
                     // Display the name in your UI somehow.
                     QString str((QChar*)var.bstrVal, int(std::wcslen(var.bstrVal)));
-                    ret.push_back(str);
+                    ret.push_back({ str, ret.size() });
                 }
                 VariantClear(&var);
                 pPropBag->Release();
@@ -81,7 +91,7 @@ std::vector<QString> get_camera_names()
     pSysDevEnum->Release();
 #endif
 
-#ifdef __linux
+#ifdef __linux__
     for (int i = 0; i < 16; i++) {
         char buf[32];
         snprintf(buf, sizeof(buf), "/dev/video%d", i);
@@ -97,10 +107,16 @@ std::vector<QString> get_camera_names()
                 close(fd);
                 continue;
             }
-            ret.push_back(QString((const char*)video_cap.card));
+            ret.push_back({ QString((const char*)video_cap.card), i});
             close(fd);
         }
     }
 #endif
+#ifdef __APPLE__
+    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
+    for (const QCameraInfo &cameraInfo : cameras)
+        ret.push_back({ cameraInfo.description(), ret.size() });
+#endif
+
     return ret;
 }

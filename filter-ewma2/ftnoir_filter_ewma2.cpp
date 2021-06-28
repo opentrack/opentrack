@@ -26,6 +26,8 @@ ewma::ewma() = default;
 
 void ewma::filter(const double *input, double *output)
 {
+    static constexpr double full_turn = 360;	
+    static constexpr double half_turn = 180;	
     // Start the timer and initialise filter state if it's not running.
     if (first_run)
     {
@@ -57,7 +59,13 @@ void ewma::filter(const double *input, double *output)
         using std::pow;
 
         // Calculate the current and smoothed delta.
-        double delta = input[i] - last_output[i];
+        double input_value = input[i];
+        double delta = input_value - last_output[i];
+        if (fabs(delta) > half_turn)
+        {
+            delta -= copysign(full_turn, delta);
+            input_value -= copysign(full_turn, input_value);
+        }
         last_delta[i] = delta_alpha*delta + (1.0-delta_alpha)*last_delta[i];
         // Calculate the current and smoothed noise variance.
         double noise = last_delta[i]*last_delta[i];
@@ -70,7 +78,9 @@ void ewma::filter(const double *input, double *output)
         // Calculate the dynamic alpha.
         double alpha = dt/(dt + RC);
         // Calculate the new output position.
-        output[i] = last_output[i] = alpha*input[i] + (1.0-alpha)*last_output[i];
+        output[i] = alpha*input_value + (1.0-alpha)*last_output[i];
+        if (fabs(output[i]) > half_turn) output[i] -= copysign(full_turn, output[i]);
+        last_output[i] = output[i];
     }
 }
 

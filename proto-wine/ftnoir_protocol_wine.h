@@ -9,9 +9,10 @@
 #include "options/options.hpp"
 using namespace options;
 
-#include <QString>
-#include <QProcess>
 #include <QMutex>
+#include <QProcess>
+#include <QString>
+#include <QVariant>
 
 #include <QDebug>
 
@@ -24,8 +25,9 @@ struct settings : opts
                 esync{b, "esync", true};
 
     value<int>     proton_appid{b, "proton-appid", 0};
-    value<QString> proton_version{b, "proton-version", {} },
-                   wineprefix{b, "wineprefix", "~/.wine"};
+    value<QVariant> proton_path{b, "proton-version", {} };
+    value<QString> wineprefix{b, "wineprefix", "~/.wine"};
+    value<int>     protocol{b, "protocol", 2};
 };
 
 class wine : TR, public IProtocol

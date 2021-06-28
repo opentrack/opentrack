@@ -154,8 +154,8 @@ fail:   constexpr const char* subdir = "ini";
         QString dir = QStandardPaths::standardLocations(QStandardPaths::DocumentsLocation).value(0, QString());
         if (dir.isEmpty())
             goto fail;
-#if !defined _WIN32 && !defined __APPLE__
         const QString fmt = QStringLiteral("%1/%2");
+#if !defined _WIN32 && !defined __APPLE__
         if (!QFile::exists(fmt.arg(dir, OPENTRACK_ORG)))
         {
             dir = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).value(0, QString());

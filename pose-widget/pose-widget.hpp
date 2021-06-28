@@ -14,7 +14,9 @@
 
 #include <QWidget>
 #include <QImage>
+#include <QCheckBox>
 
+//#define TEST
 namespace pose_widget_impl {
 
 using namespace euler;
@@ -25,13 +27,17 @@ public:
     pose_widget(QWidget *parent = nullptr);
     void present(double xAngle, double yAngle, double zAngle, double x, double y, double z);
     QSize sizeHint() const override;
-
+    QCheckBox mirror{QCheckBox{"Mirror", this}};
 private:
+    void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent*) override;
 
     Pose_ R, T;
     QImage front{QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)};
-    QImage back{QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)};
+    QImage back {QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)
+                                             .mirrored(true,false)};
+    QImage shine {QImage{front.width(), front.height(), QImage::Format_ARGB32}};
+    QImage shadow{QImage{front.width(), front.height(), QImage::Format_ARGB32}};
 };
 
 }

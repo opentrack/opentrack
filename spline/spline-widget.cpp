@@ -5,10 +5,12 @@
 #include <algorithm>
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QPixmap>
 #include <QString>
 #include <QToolTip>
 #include <QtEvents>
+#include <QPainterPath>
 
 #include <QDebug>
 
@@ -118,6 +120,8 @@ void spline_widget::drawBackground()
     double space_width = metrics.averageCharWidth();
 #endif
 
+    painter.setPen(palette().text().color());
+
     // vertical grid
     for (int i = 0; i <= maxy; i += ystep)
     {
@@ -156,7 +160,7 @@ void spline_widget::drawBackground()
 #endif
 
         painter.drawText(QPointF(x - advance/2 - rect.left(),
-                                 pixel_bounds.height() - rect.top() + rect.height()),
+                                 pixel_bounds.bottom() + metrics.lineSpacing()),
                          text);
     }
 }

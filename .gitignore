@@ -7,3 +7,5 @@
 /.vs/
 /CMakeSettings.json
 .gtm/
+.vscode
+.history

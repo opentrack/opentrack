@@ -34,7 +34,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
 
-#if !defined _WIN32 && !defined __APPLE__
+#if !defined _WIN32
     annoy_if_root();
 #endif
 
@@ -47,7 +47,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_shortcuts();
 
     init_tray_menu();
-    setVisible(start_in_tray());
+    setVisible(!start_in_tray());
     ensure_tray();
 
     connect(&pose_update_timer, &QTimer::timeout,
@@ -280,14 +280,7 @@ main_window::~main_window()
         stop_tracker_();
         close();
 
-        constexpr int inc = 25, max = 1000;
-
-        for (int k = 0; k < max; k += inc)
-        {
-            QEventLoop ev;
-            ev.processEvents();
-            portable::sleep(inc);
-        }
+        portable::sleep(1000);
     }
 
     exit();

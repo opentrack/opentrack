@@ -103,7 +103,7 @@
              <bool>false</bool>
             </property>
             <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToMinimumContentsLength</enum>
+             <enum>QComboBox::AdjustToContents</enum>
             </property>
             <property name="modelColumn">
              <number>0</number>

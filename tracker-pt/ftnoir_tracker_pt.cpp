@@ -85,9 +85,7 @@ void Tracker_PT::run()
 
                 if (success)
                 {
-                    int dynamic_pose_ms = s.dynamic_pose && s.active_model_panel != PointModel::Clip
-                                          ? s.init_phase_timeout
-                                          : 0;
+                    int dynamic_pose_ms = s.dynamic_pose ? s.init_phase_timeout : 0;
 
                     point_tracker.track(points,
                                         PointModel(s),

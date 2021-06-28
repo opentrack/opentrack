@@ -7,56 +7,86 @@
 
 #ifndef OTR_WINE_NO_WRAPPER
 
-#include <QtGlobal>
-#include <QString>
+#include <QDebug>
+#include <QDir>
+#include <QFileInfo>
 #include <QProcessEnvironment>
+#include <QtGlobal>
 
-QProcessEnvironment make_steam_environ(const QString& proton_version, int appid)
+
+static const char* steam_paths[] = {
+    "/.steam/steam/steamapps/compatdata",
+    "/.local/share/Steam/steamapps/compatdata",
+};
+
+static const char* runtime_paths[] = {
+    "/.local/share/Steam/ubuntu12_32/steam-runtime",
+    "/.steam/ubuntu12_32/steam-runtime",
+};
+
+
+std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_path, int appid)
 {
-    auto ret = QProcessEnvironment::systemEnvironment();
+    using ret = std::tuple<QProcessEnvironment, QString, bool>;
+    auto env = QProcessEnvironment::systemEnvironment();
+    QString error = "";
     QString home = qgetenv("HOME");
+    QString runtime_path, app_wineprefix;
 
     auto expand = [&](QString x) {
-        x.replace("HOME", home);
-        x.replace("PROTON", proton_version);
-        return x;
-    };
+                      x.replace("HOME", home);
+                      x.replace("PROTON_PATH", proton_path);
+                      x.replace("RUNTIME_PATH", runtime_path);
+                      return x;
+                  };
+
+    for (const char* path : runtime_paths) {
+        QDir dir(QDir::homePath() + path);
+        if (dir.exists())
+            runtime_path = dir.absolutePath();
+    }
+
+    if (runtime_path.isEmpty())
+        error = QString("Couldn't find a Steam runtime.");
+
+    for (const char* path : steam_paths) {
+        QDir dir(QDir::homePath() + path + expand("/%1/pfx").arg(appid));
+        if (dir.exists())
+            app_wineprefix = dir.absolutePath();
+    }
+    if (app_wineprefix.isEmpty())
+        error = QString("Couldn't find a Wineprefix for AppId %1").arg(appid);
 
     QString path = expand(
-        ":HOME/.local/share/Steam/steamapps/common/Proton PROTON/dist/bin"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/bin"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/usr/bin"
+        ":PROTON_PATH/dist/bin"
     );
     path += ':'; path += qgetenv("PATH");
-    ret.insert("PATH", path);
+    env.insert("PATH", path);
 
     QString library_path = expand(
-        ":HOME/.local/share/Steam/steamapps/common/Proton PROTON/dist/lib"
-        ":HOME/.local/share/Steam/steamapps/common/Proton PROTON/dist/lib64"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/pinned_libs_32"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/pinned_libs_64"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/i386/lib/i386-linux-gnu"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/i386/lib"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/i386/usr/lib/i386-linux-gnu"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/i386/usr/lib"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/lib/x86_64-linux-gnu"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/lib"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/usr/lib/x86_64-linux-gnu"
-        ":HOME/.local/share/Steam/ubuntu12_32/steam-runtime/amd64/usr/lib"
+        ":PROTON_PATH/dist/lib"
+        ":PROTON_PATH/dist/lib64"
+        ":RUNTIME_PATH/pinned_libs_32"
+        ":RUNTIME_PATH/pinned_libs_64"
+        ":RUNTIME_PATH/i386/lib/i386-linux-gnu"
+        ":RUNTIME_PATH/i386/lib"
+        ":RUNTIME_PATH/i386/usr/lib/i386-linux-gnu"
+        ":RUNTIME_PATH/i386/usr/lib"
+        ":RUNTIME_PATH/amd64/lib/x86_64-linux-gnu"
+        ":RUNTIME_PATH/amd64/lib"
+        ":RUNTIME_PATH/amd64/usr/lib/x86_64-linux-gnu"
+        ":RUNTIME_PATH/amd64/usr/lib"
     );
     library_path += ':'; library_path += qgetenv("LD_LIBRARY_PATH");
-    ret.insert("LD_LIBRARY_PATH", library_path);
-    ret.insert("WINEPREFIX", expand("HOME/.local/share/Steam/steamapps/compatdata/%1/pfx").arg(appid));
+    env.insert("LD_LIBRARY_PATH", library_path);
+    env.insert("WINEPREFIX", app_wineprefix);
 
-    return ret;
+    return ret(env, error, error.isEmpty());
 }
 
-QString proton_path(const QString& proton_version)
+QString proton_path(const QString& proton_path)
 {
-    QString wine_path = "HOME/.local/share/Steam/steamapps/common/Proton PROTON/dist/bin/wine";
-    wine_path.replace("HOME", qgetenv("HOME"));
-    wine_path.replace("PROTON", proton_version);
-    return wine_path;
+    return proton_path + "/dist/bin/wine";
 }
 
 #endif

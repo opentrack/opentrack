@@ -177,8 +177,8 @@ void dialog_hatire::poll_tracker_info()
         int frame_cnt;
 
         theTracker->get_info(&frame_cnt);
-        ui.lab_vtps->setText(QString::number(frame_cnt*(1000/last_time.elapsed())));
-        last_time.restart();
+        ui.lab_vtps->setText(QString::number(frame_cnt*(1000/last_time.elapsed_ms())));
+        last_time.start();
     }
 }
 

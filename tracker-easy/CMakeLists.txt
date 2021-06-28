@@ -9,7 +9,7 @@ if(OpenCV_FOUND)
                 OUTPUT_VARIABLE krap)
     if(tracker-easy_ocv-check)
         foreach(k video highgui)
-            otr_install_lib("opencv_${k}" "${opentrack-hier-pfx}")
+            otr_install_lib("opencv_${k}" "${opentrack-libexec}")
         endforeach()
 
         if(CMAKE_COMPILER_IS_GNUCXX)

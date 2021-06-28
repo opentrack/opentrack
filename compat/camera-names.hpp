@@ -10,9 +10,10 @@
 
 #include <vector>
 #include <QString>
+#   include <tuple>
 
 #include "export.hpp"
 
-OTR_COMPAT_EXPORT std::vector<QString> get_camera_names();
+OTR_COMPAT_EXPORT std::vector<std::tuple<QString, int>> get_camera_names();
 OTR_COMPAT_EXPORT int camera_name_to_index(const QString &name);
 

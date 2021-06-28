@@ -420,6 +420,36 @@
               <string>Blue only</string>
              </property>
             </item>
+            <item>
+             <property name="text">
+              <string>Red chroma key</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Green chroma key</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Blue chroma key</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Cyan chroma key</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yellow chroma key</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Magenta chroma key</string>
+             </property>
+            </item>
            </widget>
           </item>
           <item row="5" column="0">

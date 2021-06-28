@@ -159,6 +159,39 @@ static void qdebug_to_console(QtMsgType loglevel, const QMessageLogContext& ctx,
 
 #ifdef _WIN32
 
+static void apply_dark_windows_theme_if_needed()
+{
+    // On Windows apply dark theme if requested by user settings
+    QSettings settings("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize", QSettings::NativeFormat);
+    if (settings.value("AppsUseLightTheme") == 0) {
+        qApp->setStyle(QStyleFactory::create("Dark"));
+        QPalette darkPalette;
+        QColor darkColor = QColor(45, 45, 45);
+        QColor disabledColor = QColor(127, 127, 127);
+        darkPalette.setColor(QPalette::Window, darkColor);
+        darkPalette.setColor(QPalette::WindowText, Qt::white);
+        darkPalette.setColor(QPalette::Base, QColor(18, 18, 18));
+        darkPalette.setColor(QPalette::AlternateBase, darkColor);
+        darkPalette.setColor(QPalette::ToolTipBase, Qt::white);
+        darkPalette.setColor(QPalette::ToolTipText, Qt::white);
+        darkPalette.setColor(QPalette::Text, Qt::white);
+        darkPalette.setColor(QPalette::Disabled, QPalette::Text, disabledColor);
+        darkPalette.setColor(QPalette::Button, darkColor);
+        darkPalette.setColor(QPalette::ButtonText, Qt::white);
+        darkPalette.setColor(QPalette::Disabled, QPalette::ButtonText, disabledColor);
+        darkPalette.setColor(QPalette::BrightText, Qt::red);
+        darkPalette.setColor(QPalette::Link, QColor(42, 130, 218));
+
+        darkPalette.setColor(QPalette::Highlight, QColor(42, 130, 218));
+        darkPalette.setColor(QPalette::HighlightedText, Qt::black);
+        darkPalette.setColor(QPalette::Disabled, QPalette::HighlightedText, disabledColor);
+
+        qApp->setPalette(darkPalette);
+
+        qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+    }
+}
+
 static void add_win32_path()
 {
     // see https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
@@ -270,6 +303,7 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
     QApplication app(argc, argv);
 
 #ifdef _WIN32
+    apply_dark_windows_theme_if_needed();
     add_win32_path();
     attach_parent_console();
 #endif

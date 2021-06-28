@@ -25,14 +25,14 @@ IOKitProtocol::IOKitProtocol()
 module_status IOKitProtocol::initialize()
 {
     if (!joystick)
-        return otr_tr("Load failure");
+        return tr("Load failure");
 
     if (joystick->hasError())
     {
         QString msg = joystick->errorMessage();
 
         if (msg.isEmpty())
-            msg = otr_tr("Unknown error");
+            msg = tr("Unknown error");
 
         return error(msg);
     }

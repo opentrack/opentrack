@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDevelopmentRegion</key>
+  <string>en</string>
+  <key>CFBundleExecutable</key>
+  <string>opentrack</string>
+  <key>CFBundleIdentifier</key>
+  <string>com.github.opentrack</string>
+  <key>CFBundleName</key>
+  <string>opentrack</string>
+  <key>CFBundleIconFile</key>
+  <string>opentrack.icns</string>
+  <key>CFBundleVersion</key>
+  <string>@OPENTRACK-VERSION@</string>
+  <key>CFBundleInfoDictionaryVersion</key>
+  <string>6.0</string>
+  <key>CFBundlePackageType</key>
+  <string>APPL</string>
+  <key>CFBundleDisplayName</key>
+  <string>opentrack</string>
+  <key>CFBundleSignature</key>
+  <string>????</string>
+  <key>NSPrincipalClass</key>
+  <string>NSApplication</string>
+  <key>NSHighResolutionCapable</key>
+  <string>True</string>
+  <key>NSCameraUsageDescription</key>
+  <string>OpenTrack need's to access your camera to capture track head position.</string>
+  <key>NSDocumentsFolderUsageDescription</key>
+  <string>OpenTrack need's to access your to your documents folder to store settings</string>
+</dict>
+</plist>

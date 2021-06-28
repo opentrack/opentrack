@@ -16,7 +16,7 @@ if(NOT WIN32)
                 set(my-rt)
             endif()
             file(GLOB wine-deps "${CMAKE_CURRENT_SOURCE_DIR}/*.cxx")
-            #install(FILES ${wine-deps} DESTINATION "${opentrack-doc-src-pfx}/proto-wine")
+            #install(FILES ${wine-deps} DESTINATION "${opentrack-src}/proto-wine")
             add_custom_command(
               OUTPUT opentrack-wrapper-wine.exe.so
               DEPENDS ${wine-deps}
@@ -27,7 +27,7 @@ if(NOT WIN32)
             add_custom_target(wine-wrapper DEPENDS opentrack-wrapper-wine.exe.so)
             add_dependencies(opentrack-proto-wine wine-wrapper)
             add_dependencies(wine-wrapper opentrack-compat)
-            install(FILES "${CMAKE_CURRENT_BINARY_DIR}/opentrack-wrapper-wine.exe.so" DESTINATION ${opentrack-hier-pfx})
+            install(FILES "${CMAKE_CURRENT_BINARY_DIR}/opentrack-wrapper-wine.exe.so" DESTINATION ${opentrack-libexec})
         endif()
     endif()
 endif()

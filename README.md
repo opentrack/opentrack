@@ -77,6 +77,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
   assistance, testing)
 - Wim Vriend (original codebase author and maintainer)
 - Ryan Spicer (OSX tester, contributor)
+- Ries van Twisk (OSX tester, OSX Build Fixes, contributor)
 - Donovan Baarda (filtering/control theory expert)
 - Mathijs Groothuis (@MathijsG, dozens of bugs and other issues reported; NL translation)
 - The Russian community from the [IL-2 Sturmovik forums](https://forum.il2sturmovik.ru/) (reporting bugs, requesting important features)

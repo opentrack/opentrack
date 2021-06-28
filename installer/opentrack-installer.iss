@@ -24,7 +24,7 @@ DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename={#MyAppVersion}-win32-setup
-SetupIconFile=..\variant\default\opentrack.ico
+SetupIconFile=..\opentrack\opentrack.ico
 Compression=lzma2/ultra64
 SolidCompression=yes
 DisableWelcomePage=True
@@ -34,7 +34,7 @@ RestartIfNeededByRun=False
 InternalCompressLevel=ultra
 CompressionThreads=4
 LZMANumFastBytes=273
-MinVersion=0,5.01sp2
+MinVersion=0,6
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

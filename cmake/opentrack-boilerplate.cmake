@@ -18,10 +18,10 @@ set(new-hier-path "#pragma once
 #endif
 
 #define OPENTRACK_LIBRARY_PREFIX \"\"
-#define OPENTRACK_LIBRARY_PATH \"${opentrack-hier-path}\"
-#define OPENTRACK_DOC_PATH \"${opentrack-hier-doc}\"
-#define OPENTRACK_CONTRIB_PATH \"${opentrack-hier-doc}contrib/\"
-#define OPENTRACK_I18N_PATH \"${opentrack-i18n-path}\"
+#define OPENTRACK_LIBRARY_PATH \"${opentrack-runtime-libexec}\"
+#define OPENTRACK_DOC_PATH \"${opentrack-runtime-doc}\"
+#define OPENTRACK_CONTRIB_PATH \"${opentrack-runtime-doc}contrib/\"
+#define OPENTRACK_I18N_PATH \"${opentrack-runtime-i18n}\"
 ")
 
 function(otr_write_library_paths)
@@ -61,8 +61,8 @@ function(otr_glob_sources var)
 endfunction()
 
 function(otr_fixup_subsystem n)
-    otr_find_msvc_editbin(editbin-pathname)
     if(MSVC)
+        otr_find_msvc_editbin(editbin-pathname)
         set(subsystem WINDOWS)
         get_property(type TARGET "${n}" PROPERTY TYPE)
         if (NOT type STREQUAL "STATIC_LIBRARY")
@@ -109,7 +109,7 @@ endfunction()
 
 function(otr_install_pdb_current_project target)
     if(MSVC)
-        install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-file})
+        install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-debug}" PERMISSIONS ${opentrack-perms-file})
     endif()
 endfunction()
 
@@ -143,15 +143,17 @@ function(otr_module n_)
         set(arg_NO-I18N TRUE)
     endif()
 
-    if(NOT WIN32)
-        set(subsys "")
-    elseif(arg_WIN32-CONSOLE)
-        set(subsys "")
-    else()
-        set(subsys "WIN32")
-    endif()
-
     if(arg_EXECUTABLE)
+        if (APPLE)
+            set(subsys "MACOSX_BUNDLE") 
+        elseif(NOT WIN32)
+            set(subsys "")
+        elseif(arg_WIN32-CONSOLE)
+            set(subsys "")
+        else()
+            set(subsys "WIN32")
+        endif()
+
         add_executable(${n} ${subsys} "${${n}-all}")
         set_target_properties(${n} PROPERTIES
                               SUFFIX "${opentrack-binary-suffix}"
@@ -216,13 +218,24 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-INSTALL)
+        # Librarys/executable
         if(arg_BIN)
-            install(TARGETS "${n}"
-                    RUNTIME DESTINATION ${opentrack-hier-bin}
-                    LIBRARY DESTINATION ${opentrack-hier-pfx}
+            if (APPLE)
+                install(TARGETS "${n}"
+                RUNTIME DESTINATION ${opentrack-bin}
+                BUNDLE	DESTINATION ${opentrack-bin}
+                LIBRARY DESTINATION ${opentrack-bin}/Library
+                RESOURCE DESTINATION ${opentrack-bin}/opentrack.app/Resource
+                PERMISSIONS ${opentrack-perms-exec})
+            else()
+                install(TARGETS "${n}"
+                    RUNTIME DESTINATION ${opentrack-bin}
+                    LIBRARY DESTINATION ${opentrack-libexec}
                     PERMISSIONS ${opentrack-perms-exec})
+            endif()
         else()
-            install(TARGETS "${n}" ${opentrack-hier-str}
+            # Plugins
+            install(TARGETS "${n}" ${opentrack-install-src}
                     PERMISSIONS ${opentrack-perms-exec})
         endif()
 
@@ -282,7 +295,7 @@ function(otr_install_lib target dest)
                 set(pdb-path "")
                 otr_pdb_for_dll(pdb-path "${path}")
                 if(pdb-path)
-                    install(FILES "${pdb-path}" DESTINATION "${opentrack-hier-debug}" PERMISSIONS ${opentrack-perms-exec})
+                    install(FILES "${pdb-path}" DESTINATION "${opentrack-debug}" PERMISSIONS ${opentrack-perms-exec})
                 endif()
             endif()
             install(FILES "${path}" DESTINATION "${dest}" PERMISSIONS ${opentrack-perms-exec})
