@@ -118,8 +118,6 @@ class PoseEstimator
     private:
         // Operates on the private image data members
         int find_input_intensity_90_pct_quantile() const;
-        inline static constexpr int input_img_width = 129;
-        inline static constexpr int input_img_height = 129;
         Ort::Session session{nullptr};
         // Inputs
         cv::Mat scaled_frame{}, input_mat{};
