@@ -361,6 +361,22 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>None</source>
         <translation>空</translation>
     </message>
+    <message>
+        <source>Centering method</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wireless VR 360</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roll compensated VR 360</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

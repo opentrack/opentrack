@@ -272,7 +272,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
     return false;
 }
 
-void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
+void pipeline::maybe_set_center_pose(const centering_state mode, const Pose& value, bool own_center_logic)
 {
     if (b.get(f_center | f_held_center))
     {
@@ -283,28 +283,66 @@ void pipeline::maybe_set_center_pose(const Pose& value, bool own_center_logic)
 
         if (own_center_logic)
         {
-            center.inv_R = rmat::eye();
-            center.T = {};
+            center.P  = {};
+            center.QC = QQuaternion(1,0,0,0);
+            center.QR = QQuaternion(1,0,0,0);
         }
         else
         {
-            center.inv_R = euler_to_rmat(Pose_(&value[Yaw]) * (M_PI / 180)).t();
-            center.T = Pose_(&value[TX]);
+            if (mode)
+            {
+                center.P  = value;
+                center.QC = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]).conjugated();
+                center.QR = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], 0).conjugated();
+            }
+            else
+            {
+                // To reset the centering coordinates
+                // just select "Centering method [Disabled]" and then press [Center] button
+                center.P  = {};
+                center.QC = QQuaternion(1,0,0,0);
+                center.QR = QQuaternion(1,0,0,0);
+            }
         }
     }
 }
 
-Pose pipeline::apply_center(Pose value) const
+Pose pipeline::apply_center(const centering_state mode, Pose value) const
 {
-    {
-        for (unsigned k = 0; k < 3; k++)
-            value(k) -= center.T(k);
+    if (mode != center_disabled)
+	{
+        for (unsigned k = TX; k <= TZ; k++)
+            value(k) -= center.P(k);
 
-        Pose_ rot = rmat_to_euler(
-            euler_to_rmat(Pose_(&value[Yaw]) * (M_PI / 180)) * center.inv_R
-        );
-        for (unsigned k = 0; k < 3; k++)
-            value(k+3) = rot(k) * 180 / M_PI;
+        QQuaternion q;
+        QVector3D v;
+
+        switch (mode)
+        {
+        case center_point:
+            for (unsigned k = Yaw; k <= Roll; k++)
+            {
+                value(k) -= center.P(k);
+                if (fabs(value[k]) > 180) value[k] -= copysign(360, value[k]);
+            }
+            break;
+        case center_vr360:
+            q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+            q = center.QC * q;
+            v = q.toEulerAngles();
+            value[Pitch] =  v.x();
+            value[Yaw]   =  v.y();
+            value[Roll]  = -v.z();
+            break;
+        case center_roll_compensated:
+            q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], center.P[Roll] - value[Roll]);
+            q = center.QR * q;
+            v = q.toEulerAngles();
+            value[Pitch] =  v.x();
+            value[Yaw]   =  v.y();
+            value[Roll]  = -v.z();
+            break;
+        }
     }
 
     for (int i = 0; i < 6; i++)
@@ -407,8 +445,8 @@ void pipeline::logic()
 
     {
         maybe_enable_center_on_tracking_started();
-        maybe_set_center_pose(value, own_center_logic);
-        value = apply_center(value);
+        maybe_set_center_pose(s.centering_mode, value, own_center_logic);
+        value = apply_center(s.centering_mode, value);
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);

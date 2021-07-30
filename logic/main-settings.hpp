@@ -22,6 +22,14 @@ enum reltrans_state
     reltrans_non_center = 2,
 };
 
+enum centering_state
+{
+    center_disabled         = 0,
+    center_point            = 1,
+    center_vr360            = 2,
+    center_roll_compensated = 3,
+};
+
 namespace main_settings_impl {
 
 using namespace options;
@@ -65,7 +73,7 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<bool> tray_start { b, "start-in-tray", false };
 
     value<bool> center_at_startup { b, "center-at-startup", true };
-    //value<int> center_method;
+    value<centering_state> centering_mode { b, "centering-mode", center_roll_compensated };;
     value<int> neck_z { b, "neck-depth", 0 };
     value<bool> neck_enable { b, "neck-enable", false };
 
