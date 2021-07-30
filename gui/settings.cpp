@@ -59,6 +59,16 @@ options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
 
     tie_setting(main.center_at_startup, ui.center_at_startup);
 
+    const centering_state centering_modes[] = {
+        center_disabled,
+        center_point,
+        center_vr360,
+        center_roll_compensated,
+    };
+    for (unsigned k = 0; k < 4; k++)
+        ui.cbox_centering->setItemData(k, int(centering_modes[k]));
+    tie_setting(main.centering_mode, ui.cbox_centering);
+
     const reltrans_state reltrans_modes[] = {
         reltrans_disabled,
         reltrans_enabled,
