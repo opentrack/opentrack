@@ -1,18 +1,14 @@
 include(opentrack-opencv)
 find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.
-set(SDK_ONNX_LIBPATH "" CACHE FILEPATH "Full path of onnx library")
+find_package(ONNXRuntime REQUIRED)
 
-if(OpenCV_FOUND AND SDK_ONNX_LIBPATH AND OpenMP_FOUND)
-    get_filename_component(ONNX_INCLUDE_DIR "${SDK_ONNX_LIBPATH}" DIRECTORY)
-    get_filename_component(ONNX_INCLUDE_DIR "${ONNX_INCLUDE_DIR}" ABSOLUTE)
-    set(ONNX_INCLUDE_DIR "${ONNX_INCLUDE_DIR}/../include")
-
+if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
     otr_module(tracker-neuralnet)
     target_include_directories(${self} SYSTEM PUBLIC 
-        ${OpenCV_INCLUDE_DIRS} "${ONNX_INCLUDE_DIR}")
-    target_link_libraries(${self} 
-        opentrack-cv "${SDK_ONNX_LIBPATH}" opencv_imgproc opencv_core 
+        ${OpenCV_INCLUDE_DIRS} "${ONNXRuntime_INCLUDE_DIRS}")
+    target_link_libraries(${self} "${ONNXRuntime_LIBRARIES}"
+        opentrack-cv opencv_imgproc opencv_core
         opencv_imgcodecs opencv_calib3d
         OpenMP::OpenMP_C)
 
