@@ -1,7 +1,7 @@
 include(opentrack-opencv)
 find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.
-find_package(ONNXRuntime REQUIRED)
+find_package(ONNXRuntime QUIET)
 
 if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
     otr_module(tracker-neuralnet)
