@@ -4,6 +4,7 @@
 
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 5.01)
+set(CMAKE_SYSTEM_PROCESSOR x86)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
