@@ -5,14 +5,9 @@ find_package(ONNXRuntime QUIET)
 
 if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
     otr_module(tracker-neuralnet)
-    target_include_directories(${self} 
-        SYSTEM PRIVATE 
-        ${OpenCV_INCLUDE_DIRS} 
-        ${ONNXRuntime_INCLUDE_DIRS}
-        )
     target_link_libraries(${self} 
-        opentrack-cv 
-        ${ONNXRuntime_LIBRARIES} 
+        opentrack-cv
+        onnxruntime
         ${OpenCV_LIBS} 
         OpenMP::OpenMP_C
         )

@@ -19,7 +19,9 @@
 
 find_library(ORT_LIB onnxruntime
     CMAKE_FIND_ROOT_PATH_BOTH)
-find_path(ORT_INCLUDE onnxruntime/core/session/onnxruntime_cxx_api.h
+
+find_path(ORT_INCLUDE onnxruntime_cxx_api.h
+    PATH_SUFFIXES onnxruntime/core/session
     CMAKE_FIND_ROOT_PATH_BOTH)
 
 if(ORT_LIB AND ORT_INCLUDE)
