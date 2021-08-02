@@ -63,7 +63,13 @@ void proc_detector_settings::set_is_enabled(bool enabled)
 QHash<QString, QString> proc_detector_settings::split_process_names()
 {
     QString str = get_game_list();
-    QStringList pairs = str.split(RECORD_SEPARATOR, QString::SkipEmptyParts);
+    constexpr auto split_flag =
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        Qt::SkipEmptyParts;
+#else
+        QString::SkipEmptyParts;
+#endif
+    QStringList pairs = str.split(RECORD_SEPARATOR, split_flag);
     QHash<QString, QString> ret;
     ret.reserve(pairs.size() * 2);
     for (auto const& pair : pairs)
