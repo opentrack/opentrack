@@ -15,7 +15,7 @@ if(OpenCV_FOUND)
         if(CMAKE_COMPILER_IS_GNUCXX)
             add_compile_options(-Wno-sign-compare)
         elseif(MSVC)
-            add_compile_definitions(-wd4018)
+            add_compile_options(-wd4018)
         endif()
 
         otr_module(tracker-easy)
