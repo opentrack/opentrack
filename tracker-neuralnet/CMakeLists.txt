@@ -5,16 +5,20 @@ find_package(ONNXRuntime QUIET)
 
 if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
     otr_module(tracker-neuralnet)
+
     target_link_libraries(${self} 
         opentrack-cv
-        onnxruntime
+        onnxruntime::onnxruntime
         ${OpenCV_LIBS} 
         OpenMP::OpenMP_C
         )
+
     install(
         FILES "models/head-localizer.onnx" 
               "models/head-pose.onnx"
         DESTINATION "${opentrack-libexec}/models"
         PERMISSIONS ${opentrack-perms-file}
         )
+
+    otr_install_lib("${ONNXRuntime_RUNTIME}" ".")
 endif()
