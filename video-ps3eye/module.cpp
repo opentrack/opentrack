@@ -116,6 +116,8 @@ ps3eye_camera::ps3eye_camera()
     wrapper.setWorkingDirectory(library_path);
 #ifdef _WIN32
     wrapper.setProgram("\"ps3eye-subprocess.exe\"");
+    // workaround apparent Qt 5.15.2 bug -sh 20210817
+    wrapper.setProcessChannelMode(QProcess::ForwardedChannels);
 #else
     wrapper.setProgram("ps3eye-subprocess");
 #endif
