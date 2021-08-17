@@ -61,7 +61,7 @@ int main(int argc, char** argv)
         error(out, "no camera found");
 
     auto& camera = cameras[0];
-    camera->set_debug(false);
+    camera->set_debug(true);
     auto* frame = (uint8_t*)out.data_640x480;
     decltype(out.timecode) timecode = 0;
 
