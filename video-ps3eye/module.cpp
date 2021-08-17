@@ -132,6 +132,11 @@ void ps3eye_camera::stop()
 
     if (wrapper.state() != QProcess::NotRunning)
     {
+        volatile auto& ptr = *(ps3eye::shm*)shm.ptr();
+        ptr.in.do_exit = 1;
+        std::atomic_thread_fence(std::memory_order_seq_cst);
+        wrapper.waitForFinished(5000);
+
         if (wrapper.state() != QProcess::NotRunning)
             wrapper.kill();
         wrapper.waitForFinished(1000);
