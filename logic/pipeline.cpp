@@ -442,14 +442,13 @@ void pipeline::logic()
         nan_check(value);
     }
 
-    if (!hold_ordered)
-        goto ok;
+    goto ok;
 
 error:
     {
         QMutexLocker foo(&mtx);
 
-        value = output_pose;
+        value = last_value;
         raw = raw_6dof;
 
         // for widget last value display
@@ -465,8 +464,10 @@ ok:
         for (int i = 0; i < 6; i++)
             value(i) = 0;
 
-    if (hold_ordered) value = output_pose;
-    else value = apply_zero_pos(value);
+    if (hold_ordered)
+        value = last_value;
+    last_value = value;
+    value = apply_zero_pos(value);
 
     ev.run_events(EV::ev_finished, value);
     libs.pProtocol->pose(value, raw);

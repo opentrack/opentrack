@@ -87,7 +87,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     event_handler& ev;
 
     Timer t;
-    Pose output_pose, raw_6dof;
+    Pose output_pose, raw_6dof, last_value;
 
     Pose newpose;
     runtime_libraries const& libs;
