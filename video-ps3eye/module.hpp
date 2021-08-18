@@ -47,6 +47,7 @@ protected:
 
 public:
     explicit dialog(QWidget* parent = nullptr);
+    static void show_open_failure_msgbox(const QString& error);
 };
 
 struct ps3eye_camera final : video::impl::camera

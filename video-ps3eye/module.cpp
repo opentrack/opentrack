@@ -190,13 +190,13 @@ bool ps3eye_camera::start(info& args)
     }
 
     if (ptr.out.error_string[0] == '\0')
-        error = "Unknown error";
+        error = QString{};
     else
         error = QString::fromLatin1((const char*)ptr.out.error_string,
                                     strnlen((const char*)ptr.out.error_string, sizeof(ptr.out.error_string)));
 
-    run_in_thread_async(qApp, [=]() {
-        QMessageBox::critical(nullptr, "Can't open camera", "PS3 Eye driver error: " + error, QMessageBox::Close);
+    run_in_thread_async(qApp, [error = std::move(error)] {
+        dialog::show_open_failure_msgbox(error);
     });
 
     return false;
@@ -266,6 +266,14 @@ dialog::dialog(QWidget* parent) : QWidget(parent)
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &dialog::do_ok);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &dialog::do_cancel);
     connect(&t, &QTimer::timeout, this, [this] { s.set_exposure(); s.set_gain(); });
+}
+void dialog::show_open_failure_msgbox(const QString& error)
+{
+    const QString& error_ = error.isNull() ? tr("Unknown error") : error;
+    QMessageBox::critical(nullptr,
+                          tr("Can't open camera"),
+                          tr("PS3 Eye driver error: %1").arg(error_),
+                          QMessageBox::Close);
 }
 
 // XXX copypasta -sh 20200329

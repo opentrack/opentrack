@@ -20,4 +20,19 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>dialog</name>
+    <message>
+        <source>Can&apos;t open camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>PS3 Eye driver error: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
