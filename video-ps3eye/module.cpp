@@ -254,16 +254,18 @@ OTR_REGISTER_CAMERA(ps3eye_camera_)
 dialog::dialog(QWidget* parent) : QWidget(parent)
 {
     ui.setupUi(this);
+    t.setInterval(500); t.setSingleShot(true);
     tie_setting(s.exposure, ui.exposure_slider);
     tie_setting(s.gain, ui.gain_slider);
     ui.exposure_label->setValue((int)*s.exposure);
     ui.gain_label->setValue((int)*s.gain);
-    connect(&s.exposure, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_exposure(); });
-    connect(&s.gain, value_::value_changed<slider_value>(), this, [this](const slider_value&) { s.set_gain(); });
+    connect(&s.exposure, value_::value_changed<slider_value>(), this, [this](const slider_value&) { t.stop(); t.start(); });
+    connect(&s.gain, value_::value_changed<slider_value>(), this, [this](const slider_value&) { t.stop(); t.start(); });
     connect(ui.exposure_slider, &QSlider::valueChanged, ui.exposure_label, &QSpinBox::setValue);
     connect(ui.gain_slider, &QSlider::valueChanged, ui.gain_label, &QSpinBox::setValue);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &dialog::do_ok);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &dialog::do_cancel);
+    connect(&t, &QTimer::timeout, this, [this] { s.set_exposure(); s.set_gain(); });
 }
 
 // XXX copypasta -sh 20200329

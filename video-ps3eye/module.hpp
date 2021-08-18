@@ -10,6 +10,7 @@
 
 #include <QDialog>
 #include <QProcess>
+#include <QTimer>
 
 using namespace options;
 
@@ -34,6 +35,7 @@ class dialog final : public QWidget
     Q_OBJECT
     Ui_Dialog ui;
     settings s;
+    QTimer t{this};
 
     shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
 
@@ -41,7 +43,7 @@ class dialog final : public QWidget
     void do_cancel() { s.b->reload(); close(); deleteLater(); }
 
 protected:
-    void closeEvent(QCloseEvent*) override { do_cancel(); }
+    void closeEvent(QCloseEvent*) override { do_cancel(); if (t.isActive()) { s.set_exposure(); s.set_gain(); } }
 
 public:
     explicit dialog(QWidget* parent = nullptr);
