@@ -157,7 +157,7 @@ bool ps3eye_camera::start(info& args)
 
     open = false;
     fr = {};
-    fr.channels = 3;
+    fr.channels = 1;
     fr.channel_size = 1;
 
     if (!args.width || args.width > 320)

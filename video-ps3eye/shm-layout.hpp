@@ -23,8 +23,8 @@ struct shm_out
     status status_;
     char error_string[256];
     union {
-        uint8_t data_320x240[320][240][3];
-        uint8_t data_640x480[640][480][3];
+        uint8_t data_320x240[320][240][1];
+        uint8_t data_640x480[640][480][1];
     };
 };
 
