@@ -3,6 +3,8 @@
 
 namespace ps3eye {
 
+static constexpr unsigned num_channels = 1;
+
 struct shm_in {
     enum class mode : uint8_t { qvga, vga, };
 
@@ -23,8 +25,8 @@ struct shm_out
     status status_;
     char error_string[256];
     union {
-        uint8_t data_320x240[320][240][1];
-        uint8_t data_640x480[640][480][1];
+        uint8_t data_320x240[320][240][num_channels];
+        uint8_t data_640x480[640][480][num_channels];
     };
 };
 

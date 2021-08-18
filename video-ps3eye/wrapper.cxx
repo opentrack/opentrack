@@ -65,12 +65,16 @@ int main(int argc, char** argv)
     auto* frame = (uint8_t*)out.data_640x480;
     decltype(out.timecode) timecode = 0;
 
+    constexpr auto fmt = ps3eye::num_channels == 1
+                         ? ps3eye::format::Gray
+                         : ps3eye::format::BGR;
+
     {
         int framerate = in.framerate;
         if (framerate <= 0)
             framerate = 60;
 
-        if (!camera->init(get_mode(in.resolution), framerate, ps3eye::format::Gray))
+        if (!camera->init(get_mode(in.resolution), framerate, fmt))
             error(out, "camera init failed: %s", camera->error_string());
 
         update_settings(*camera, in);
@@ -94,7 +98,7 @@ int main(int argc, char** argv)
                 int framerate = in.framerate;
                 if (framerate <= 0)
                     framerate = 60;
-                if (!camera->init(get_mode(in.resolution), framerate, ps3eye::format::Gray))
+                if (!camera->init(get_mode(in.resolution), framerate, fmt))
                     error(out, "camera init failed: %s", camera->error_string());
                 if (!camera->start())
                     error(out, "can't start camera: %s", camera->error_string());

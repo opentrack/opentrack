@@ -57,7 +57,7 @@ struct ps3eye_camera final : video::impl::camera
     settings s;
     frame fr;
     Timer t;
-    unsigned char data[640 * 480 * 3] = {};
+    unsigned char data[640 * 480 * ps3eye::num_channels] = {};
     int framerate = 30, sleep_ms = 1;
     bool open = false;
     unsigned timecode = 0;
