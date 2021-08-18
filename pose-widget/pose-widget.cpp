@@ -47,6 +47,8 @@ pose_widget::pose_widget(QWidget* parent) : QWidget(parent)
     p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
     p.drawImage(QPointF(0,0), front);		
     p.end();
+
+    mirror.setFocusPolicy(Qt::NoFocus);
 }
 
 void pose_widget::present(double yaw, double pitch, double roll, double x, double y, double z)
