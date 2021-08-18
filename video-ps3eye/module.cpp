@@ -176,7 +176,7 @@ bool ps3eye_camera::start(info& args)
     ptr.in.gain = (uint8_t)s.gain;
     ptr.in.exposure = (uint8_t)s.exposure;
 
-    sleep_ms = std::clamp(int(std::floor(1000./ptr.in.framerate*2)), 1, 10);
+    sleep_ms = std::clamp(int(std::floor(450./ptr.in.framerate)), 1, 10);
 
     wrapper.start();
 
