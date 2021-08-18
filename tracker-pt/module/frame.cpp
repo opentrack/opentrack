@@ -8,19 +8,32 @@ namespace pt_module {
 
 Preview& Preview::operator=(const pt_frame& frame_)
 {
-    const cv::Mat& frame = frame_.as_const<const Frame>()->mat;
+    const cv::Mat& frame2 = frame_.as_const<const Frame>()->mat;
+    const cv::Mat* frame;
 
-    if (frame.channels() != 3)
+    if (frame2.channels() == 1)
     {
-        eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
+        frame_tmp.create(frame2.rows, frame2.cols, CV_8UC3);
+        const cv::Mat channels[] = { frame2, frame2, frame2 };
+        cv::merge(channels, std::size(channels), frame_tmp);
+        frame = &frame_tmp;
+    }
+    else
+        frame = &frame2;
+
+    if (frame->channels() != 3)
+    {
+        eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame->channels());
+        frame_copy.create(cv::Size{frame_out.cols, frame_out.rows}, CV_8UC3);
+        frame_copy.setTo({0});
         return *this;
     }
 
-    const bool need_resize = frame.cols != frame_out.cols || frame.rows != frame_out.rows;
+    const bool need_resize = frame2.cols != frame_out.cols || frame2.rows != frame_out.rows;
     if (need_resize)
-        cv::resize(frame, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
+        cv::resize(frame2, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
     else
-        frame.copyTo(frame_copy);
+        frame->copyTo(frame_copy);
 
     return *this;
 }

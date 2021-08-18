@@ -34,7 +34,7 @@ struct Preview final : pt_preview
 private:
     static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
-    cv::Mat frame_copy, frame_out;
+    cv::Mat frame_copy, frame_out, frame_tmp;
 };
 
 } // ns pt_module

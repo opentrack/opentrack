@@ -124,6 +124,13 @@ void PointExtractor::filter_single_channel(const cv::Mat& orig_frame, float r, f
 
 void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
 {
+    if (frame.channels() == 1)
+    {
+        output.create(frame.rows, frame.cols);
+        frame.copyTo(output);
+        return;
+    }
+
     switch (s.blob_color)
     {
     case pt_color_green_only:
