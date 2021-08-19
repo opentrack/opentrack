@@ -77,18 +77,20 @@ void register_camera(std::unique_ptr<impl::camera_> metadata);
 
 #ifdef _MSC_VER
     // shared library targets without any symbols break cmake build
-#   define OTR_REGISTER_CAMERA_IMPL() \
-    extern "C" __declspec(dllexport) [[maybe_unused]] void _opentrack_module(void) {}
+#   define OTR_REGISTER_CAMERA_IMPL(type)                               \
+        extern "C" __declspec(dllexport) [[maybe_unused]]               \
+        void _opentrack_module_video_ ##type (void) {}
+#   define OTR_REGISTER_CAMERA_IMPL2(type)                              \
+        OTR_REGISTER_CAMERA_IMPL(type)
 #else
-#   define OTR_REGISTER_CAMERA_IMPL()
+#   define OTR_REGISTER_CAMERA_IMPL2(type)
 #endif
 
 #define OTR_REGISTER_CAMERA2(type, ctr) \
     OTR_REGISTER_CAMERA3(type, ctr)     \
-    OTR_REGISTER_CAMERA_IMPL()
+    OTR_REGISTER_CAMERA_IMPL2(type)
 #define OTR_REGISTER_CAMERA(type) \
     OTR_REGISTER_CAMERA2(type, __COUNTER__)
-
 namespace video
 {
 using camera_impl = impl::camera;
