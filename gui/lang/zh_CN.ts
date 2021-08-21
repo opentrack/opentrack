@@ -377,6 +377,18 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Roll compensated VR 360</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Hold in-game center of the screen while the mode is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Treat this device orientation as the in-game center of the screen.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Freeze the position returned by the tracker while this mode is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

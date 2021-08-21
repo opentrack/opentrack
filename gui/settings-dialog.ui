@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>548</width>
-    <height>600</height>
+    <width>565</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -103,6 +103,9 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Treat this device orientation as the in-game center of the screen.</string>
                </property>
                <property name="text">
                 <string>Center</string>
@@ -267,6 +270,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="toolTip">
+                <string>Hold in-game center of the screen while the mode is active.</string>
+               </property>
                <property name="text">
                 <string>Zero</string>
                </property>
@@ -282,6 +288,9 @@
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Freeze the position returned by the tracker while this mode is active.</string>
                </property>
                <property name="text">
                 <string>Toggle</string>
