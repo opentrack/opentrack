@@ -175,9 +175,9 @@ module_status freetrack::set_protocols()
             return {tr("Can't copy library to selected custom location '%1'").arg(s.custom_location_pathname)};
     }
 
+    location.replace('\\', '/');
     if (!location.endsWith('/'))
         location += '/';
-    location.replace('\\', '/');
 
     settings_ft.setValue("Path", use_freetrack ? location : "");
     settings_npclient.setValue("Path", use_npclient ? location : "");
