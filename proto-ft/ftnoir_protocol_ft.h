@@ -27,11 +27,12 @@
 using namespace options;
 
 struct settings : opts {
-    value<int> intUsedInterface;
-    settings() :
-        opts("proto-freetrack"),
-        intUsedInterface(b, "used-interfaces", 0)
-    {}
+    enum enable_status { enable_both, enable_freetrack, enable_npclient, };
+    value<int>      used_interface{b, "used-interfaces", (int)enable_both};
+    value<bool>     ephemeral_library_location{b, "ephemeral-library-location", false};
+    value<bool>     use_custom_location{b, "use-custom-location", false};
+    value<QString>  custom_location_pathname{b, "custom-library-location", {}};
+    settings() : opts("proto-freetrack") {}
 };
 
 class freetrack : TR, public IProtocol
@@ -58,7 +59,9 @@ private:
     void start_dummy();
 
 public:
-    static void set_protocols(bool ft, bool npclient);
+    enum class status { starting, stopping };
+    [[nodiscard]] module_status set_protocols();
+    void clear_protocols();
 };
 
 class FTControls: public IProtocolDialog
@@ -75,6 +78,7 @@ private slots:
     void selectDLL();
     void doOK();
     void doCancel();
+    void set_custom_location();
 };
 
 class freetrackDll : public Metadata

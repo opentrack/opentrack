@@ -11,6 +11,10 @@
         <source>Dll file (*.dll);;All Files (*)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select library location</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UICFTControls</name>
@@ -24,10 +28,6 @@
     </message>
     <message>
         <source>Disable one of the protocols if game is confused by presence of both at the same time.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Repair NPClient location</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -52,6 +52,30 @@ Starting tracking will again overwrite the DLL locations.</source>
         <source>Use TrackIR, disable freetrack</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Library location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This is useful when you&apos;re only evaluating opentrack, and haven&apos;t yet  decided to use it all the time.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear location when tracking is stopped</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Useful for titles like Elite: Dangerous that require the library to reside in a specified location. Use this to avoid relocating your opentrack installation.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>freetrack</name>
@@ -61,6 +85,10 @@ Starting tracking will again overwrite the DLL locations.</source>
     </message>
     <message>
         <source>Can&apos;t load freetrack memory mapping</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t copy library to selected custom location &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

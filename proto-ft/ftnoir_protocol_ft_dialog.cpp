@@ -22,7 +22,17 @@ FTControls::FTControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
-    tie_setting(s.intUsedInterface, ui.cbxSelectInterface);
+    const settings::enable_status cbx[] = {
+        settings::enable_both,
+        settings::enable_freetrack,
+        settings::enable_npclient,
+    };
+    tie_setting(s.used_interface, ui.cbxSelectInterface);
+    tie_setting(s.ephemeral_library_location, ui.ephemeral_registry_entry);
+    tie_setting(s.custom_location_pathname, ui.custom_location);
+    tie_setting(s.use_custom_location, ui.enable_custom_location);
+
+    connect(ui.set_custom_location, &QAbstractButton::clicked, this, &FTControls::set_custom_location);
 }
 
 void FTControls::doOK()
@@ -50,4 +60,16 @@ void FTControls::selectDLL()
             node.setValue("Path", dllname.dir().path());
     }
 }
-
+void FTControls::set_custom_location()
+{
+    static const auto program_directory = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
+    auto previous_location = *s.custom_location_pathname;
+    if (!s.use_custom_location || previous_location.isEmpty() || !QDir{previous_location}.exists())
+        previous_location = program_directory;
+    auto dir = QFileDialog::getExistingDirectory(this, tr("Select library location"), previous_location);
+    if (dir.isEmpty() || !QDir{dir}.exists())
+        dir = QString{};
+    else
+        ui.enable_custom_location->setEnabled(true);
+    ui.custom_location->setText(dir);
+}

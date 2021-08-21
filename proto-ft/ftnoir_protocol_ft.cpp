@@ -10,6 +10,7 @@
 
 #include "ftnoir_protocol_ft.h"
 #include "csv/csv.h"
+#include <QDir>
 
 #include <cstddef>
 #include <cmath>
@@ -17,7 +18,15 @@
 
 freetrack::~freetrack()
 {
-    dummyTrackIR.close();
+    //dummyTrackIR.kill(); dummyTrackIR.waitForFinished();
+    if (s.ephemeral_library_location)
+    {
+        QSettings settings_ft("Freetrack", "FreetrackClient");
+        QSettings settings_npclient("NaturalPoint", "NATURALPOINT\\NPClient Location");
+
+        settings_ft.setValue("Path", "");
+        settings_npclient.setValue("Path", "");
+    }
 }
 
 static_assert(sizeof(LONG) == sizeof(std::int32_t));
@@ -133,7 +142,7 @@ void freetrack::start_dummy() {
     dummyTrackIR.start();
 }
 
-void freetrack::set_protocols(bool ft, bool npclient)
+module_status freetrack::set_protocols()
 {
     static const QString program_dir = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
 
@@ -141,15 +150,39 @@ void freetrack::set_protocols(bool ft, bool npclient)
     QSettings settings_ft("Freetrack", "FreetrackClient");
     QSettings settings_npclient("NaturalPoint", "NATURALPOINT\\NPClient Location");
 
-    if (ft)
-        settings_ft.setValue("Path", program_dir);
-    else
-        settings_ft.setValue("Path", "");
+    QString location = *s.custom_location_pathname;
+    const auto selection = *s.used_interface;
 
-    if (npclient)
-        settings_npclient.setValue("Path", program_dir);
+    bool use_freetrack = ~selection & settings::enable_freetrack,
+         use_npclient  = ~selection & settings::enable_npclient;
+
+    if (!s.use_custom_location || s.custom_location_pathname->isEmpty() || !QDir{s.custom_location_pathname}.exists())
+        location = program_dir;
     else
-        settings_npclient.setValue("Path", "");
+    {
+        bool copy = true;
+
+        if (use_npclient && !QFile{location + "/NPClient.dll"}.exists())
+            copy &= QFile::copy(program_dir + "/NPClient.dll", location + "/NPClient.dll");
+        if (use_npclient && !QFile{location + "/NPClient64.dll"}.exists())
+            copy &= QFile::copy(program_dir + "/NPClient64.dll", location + "/NPClient64.dll");
+        if (use_freetrack && !QFile{location + "/freetrackclient.dll"}.exists())
+            copy &= QFile::copy(program_dir + "/freetrackclient.dll", location + "/freetrackclient.dll");
+        if (use_freetrack && !QFile{location + "/freetrackclient64.dll"}.exists())
+            copy &= QFile::copy(program_dir + "/freetrackclient64.dll", location + "/freetrackclient64.dll");
+
+        if (!copy)
+            return {tr("Can't copy library to selected custom location '%1'").arg(s.custom_location_pathname)};
+    }
+
+    if (!location.endsWith('/'))
+        location += '/';
+    location.replace('\\', '/');
+
+    settings_ft.setValue("Path", use_freetrack ? location : "");
+    settings_npclient.setValue("Path", use_npclient ? location : "");
+
+    return {};
 }
 
 module_status freetrack::initialize()
@@ -157,24 +190,8 @@ module_status freetrack::initialize()
     if (!shm.success())
         return error(tr("Can't load freetrack memory mapping"));
 
-    bool use_ft = false, use_npclient = false;
-
-    switch (s.intUsedInterface) {
-    case 0:
-        use_ft = true;
-        use_npclient = true;
-        break;
-    case 1:
-        use_ft = true;
-        break;
-    case 2:
-        use_npclient = true;
-        break;
-    default:
-        break;
-    }
-
-    set_protocols(use_ft, use_npclient);
+    if (auto ret = set_protocols(); !ret.is_ok())
+        return ret;
 
     pMemData->data.DataID = 1;
     pMemData->data.CamWidth = 100;
@@ -195,7 +212,7 @@ module_status freetrack::initialize()
         store(pMemData->table_ints[k], 0);
 
     // more games need the dummy executable than previously thought
-    if (use_npclient)
+    if (~s.used_interface & settings::enable_npclient)
         start_dummy();
 
     return status_ok();
