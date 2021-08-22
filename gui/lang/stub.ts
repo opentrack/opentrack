@@ -189,10 +189,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Never translate the application interface</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Minimize to tray</source>
         <translation type="unfinished"></translation>
     </message>
@@ -386,6 +382,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Freeze the position returned by the tracker while this mode is active.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Disable user interface localization</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

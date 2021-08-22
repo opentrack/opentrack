@@ -305,7 +305,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Y</translation>
     </message>
     <message>
-        <source>Never translate the application interface</source>
+        <source>Disable user interface localization</source>
         <translation>De applicatie nooit vertaald weergeven</translation>
     </message>
     <message>

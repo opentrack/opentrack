@@ -190,7 +190,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>启动时自动回中</translation>
     </message>
     <message>
-        <source>Never translate the application interface</source>
+        <source>Disable user interface localization</source>
         <translation>关闭翻译界面</translation>
     </message>
     <message>

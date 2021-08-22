@@ -830,7 +830,7 @@
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Never translate the application interface</string>
+             <string>Disable user interface localization</string>
             </property>
            </widget>
           </item>
