@@ -361,19 +361,19 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Centering method</source>
-        <translation type="unfinished"></translation>
+        <translation>Метод центровки</translation>
     </message>
     <message>
         <source>Point</source>
-        <translation type="unfinished"></translation>
+        <translation>Точечная</translation>
     </message>
     <message>
         <source>Wireless VR 360</source>
-        <translation type="unfinished"></translation>
+        <translation>Беспроводная VR 360</translation>
     </message>
     <message>
         <source>Roll compensated VR 360</source>
-        <translation type="unfinished"></translation>
+        <translation>Roll компенсированная VR 360</translation>
     </message>
     <message>
         <source>Hold in-game center of the screen while the mode is active.</source>
@@ -389,7 +389,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Disable user interface localization</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать английский интерфейс</translation>
     </message>
 </context>
 <context>

@@ -306,7 +306,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Disable user interface localization</source>
-        <translation>De applicatie nooit vertaald weergeven</translation>
+        <translation type="unfinished">Geen</translation>
     </message>
     <message>
         <source>Z</source>
@@ -362,19 +362,19 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Centering method</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geen</translation>
     </message>
     <message>
         <source>Point</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geen</translation>
     </message>
     <message>
         <source>Wireless VR 360</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geen</translation>
     </message>
     <message>
         <source>Roll compensated VR 360</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geen</translation>
     </message>
     <message>
         <source>Hold in-game center of the screen while the mode is active.</source>
