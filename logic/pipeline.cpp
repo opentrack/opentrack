@@ -310,7 +310,7 @@ void pipeline::maybe_set_center_pose(const centering_state mode, const Pose& val
 Pose pipeline::apply_center(const centering_state mode, Pose value) const
 {
     if (mode != center_disabled)
-	{
+        {
         for (unsigned k = TX; k <= TZ; k++)
             value(k) -= center.P(k);
 
@@ -342,6 +342,7 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
             value[Yaw]   =  v.y();
             value[Roll]  = -v.z();
             break;
+        case center_disabled: break;
         }
     }
 
