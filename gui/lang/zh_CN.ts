@@ -191,7 +191,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Disable user interface localization</source>
-        <translation type="unfinished">Geen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Minimize to tray</source>
@@ -363,7 +363,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Centering method</source>
-        <translation type="unfinished">Geen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Point</source>
