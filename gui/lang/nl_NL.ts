@@ -306,7 +306,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Disable user interface localization</source>
-        <translation type="unfinished"></translation>
+        <translation>De applicatie nooit vertaald weergeven</translation>
     </message>
     <message>
         <source>Z</source>

@@ -191,7 +191,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Disable user interface localization</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭翻译界面</translation>
     </message>
     <message>
         <source>Minimize to tray</source>
@@ -367,15 +367,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Point</source>
-        <translation type="unfinished">Geen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Wireless VR 360</source>
-        <translation type="unfinished">Geen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Roll compensated VR 360</source>
-        <translation type="unfinished">Geen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Hold in-game center of the screen while the mode is active.</source>
