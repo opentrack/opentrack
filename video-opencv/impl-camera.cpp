@@ -33,7 +33,7 @@ bool cam::is_open()
 bool cam::start(info& args)
 {
     stop();
-    cap.emplace(idx + video_capture_backend);
+    cap.emplace(idx, cv::CAP_DSHOW);
 
     if (args.width > 0 && args.height > 0)
     {
@@ -42,6 +42,9 @@ bool cam::start(info& args)
     }
     if (args.fps > 0)
         cap->set(cv::CAP_PROP_FPS, args.fps);
+
+    if (args.use_mjpeg)
+        cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
     if (!cap->isOpened())
         goto fail;

@@ -10,8 +10,6 @@
 #include "compat/math.hpp"
 #include "video/camera.hpp"
 
-#include <opencv2/core.hpp>
-
 #include <QString>
 #include <QtGlobal>
 #include <QDebug>
@@ -39,6 +37,7 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     tie_setting(s.cam_res_x, ui.res_x_spin);
     tie_setting(s.cam_res_y, ui.res_y_spin);
     tie_setting(s.cam_fps, ui.fps_spin);
+    tie_setting(s.use_mjpeg, ui.use_mjpeg);
 
     tie_setting(s.threshold_slider, ui.threshold_slider);
 

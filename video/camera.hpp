@@ -53,6 +53,7 @@ struct OTR_VIDEO_EXPORT camera
         double fx = 0, fy = 0;          // focal length
         double P_x = 0, P_y = 0;        // principal point
         double dist_c[8] {};            // distortion coefficients
+        bool use_mjpeg = false;
     };
 
     camera();

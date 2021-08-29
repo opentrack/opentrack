@@ -32,6 +32,7 @@ struct pt_camera_info final
     int res_x = 0;
     int res_y = 0;
     QString name;
+    bool use_mjpeg = false;
 };
 
 struct pt_pixel_pos_mixin

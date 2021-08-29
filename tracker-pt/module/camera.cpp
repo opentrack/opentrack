@@ -77,6 +77,7 @@ bool Camera::start(const pt_settings& s)
 {
     int fps = s.cam_fps, res_x = s.cam_res_x, res_y = s.cam_res_y;
     QString name = s.camera_name;
+    bool use_mjpeg = s.use_mjpeg;
 
     if (fps >= 0 && res_x >= 0 && res_y >= 0)
     {
@@ -84,15 +85,17 @@ bool Camera::start(const pt_settings& s)
             (int)cam_desired.fps != fps ||
             cam_desired.res_x != res_x ||
             cam_desired.res_y != res_y ||
+            cam_desired.use_mjpeg != use_mjpeg ||
             !cap || !cap->is_open())
         {
             stop();
 
             cam_desired.name = name;
-            cam_desired.fps = fps;
+            cam_desired.fps = (f)fps;
             cam_desired.res_x = res_x;
             cam_desired.res_y = res_y;
             cam_desired.fov = fov;
+            cam_desired.use_mjpeg = use_mjpeg;
 
             cap = video::make_camera(name);
 
@@ -103,12 +106,15 @@ bool Camera::start(const pt_settings& s)
             info.fps = fps;
             info.width = res_x;
             info.height = res_y;
+            info.use_mjpeg = use_mjpeg;
 
             if (!cap->start(info))
                 goto fail;
 
             cam_info = pt_camera_info();
             cam_info.name = name;
+            cam_info.use_mjpeg = use_mjpeg;
+            cam_info.fov = (f)s.fov;
             dt_mean = 0;
 
             cv::Mat tmp;
