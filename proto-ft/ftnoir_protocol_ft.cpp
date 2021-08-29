@@ -26,7 +26,15 @@ freetrack::~freetrack()
 
         settings_ft.setValue("Path", "");
         settings_npclient.setValue("Path", "");
+
+        if (dummyTrackIR.state() == dummyTrackIR.Running)
+        {
+            dummyTrackIR.kill();
+            dummyTrackIR.waitForFinished(100);
+        }
     }
+    else
+        dummyTrackIR.close();
 }
 
 static_assert(sizeof(LONG) == sizeof(std::int32_t));
