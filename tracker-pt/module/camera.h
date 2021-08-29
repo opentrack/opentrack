@@ -23,7 +23,7 @@ struct Camera final : pt_camera
 {
     Camera(const QString& module_name);
 
-    bool start(const QString& name, int fps, int res_x, int res_y) override;
+    bool start(const pt_settings& s) override;
     void stop() override;
 
     result get_frame(pt_frame& Frame) override;

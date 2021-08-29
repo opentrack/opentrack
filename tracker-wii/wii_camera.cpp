@@ -86,7 +86,7 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 	return result(true, cam_info);
 }
 
-bool WIICamera::start(const QString&, int, int, int)
+bool WIICamera::start(const pt_settings&)
 {
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;

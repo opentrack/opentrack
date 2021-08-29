@@ -73,8 +73,11 @@ Camera::result Camera::get_frame(pt_frame& frame_)
         return { false, {} };
 }
 
-bool Camera::start(const QString& name, int fps, int res_x, int res_y)
+bool Camera::start(const pt_settings& s)
 {
+    int fps = s.cam_fps, res_x = s.cam_res_x, res_y = s.cam_res_y;
+    QString name = s.camera_name;
+
     if (fps >= 0 && res_x >= 0 && res_y >= 0)
     {
         if (cam_desired.name != name ||

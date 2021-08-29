@@ -75,7 +75,7 @@ struct pt_camera
     pt_camera();
     virtual ~pt_camera();
 
-    [[nodiscard]] virtual bool start(const QString& name, int fps, int res_x, int res_y) = 0;
+    [[nodiscard]] virtual bool start(const pt_settings& s) = 0;
     virtual void stop() = 0;
 
     virtual result get_frame(pt_frame& frame) = 0;

@@ -30,7 +30,7 @@ struct WIICamera final : pt_camera
     WIICamera(const QString& module_name);
     ~WIICamera() override;
 
-    bool start(const QString& name, int fps, int res_x, int res_y) override;
+    bool start(const pt_settings&) override;
     void stop() override;
 
     result get_frame(pt_frame& Frame) override;

@@ -125,8 +125,7 @@ bool Tracker_PT::maybe_reopen_camera()
 {
     QMutexLocker l(&camera_mtx);
 
-    return camera->start(s.camera_name,
-                         s.cam_fps, s.cam_res_x, s.cam_res_y);
+    return camera->start(s);
 }
 
 void Tracker_PT::set_fov(int value)
