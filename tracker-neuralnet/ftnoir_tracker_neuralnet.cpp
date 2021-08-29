@@ -481,7 +481,7 @@ void neuralnet_tracker::draw_gizmos(
     if (last_roi) 
     {
         const int col = 255;
-        cv::rectangle(frame, *last_roi, cv::Scalar(0, 255, 0), /*thickness=*/1);
+        cv::rectangle(frame, *last_roi, cv::Scalar(0, col, 0), /*thickness=*/1);
     }
     if (last_localizer_roi)
     {
