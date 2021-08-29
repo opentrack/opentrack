@@ -261,6 +261,30 @@ ROLL или X/Y-смещения.</translation>
         <source>Magenta chroma key</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>This should be 56° or 76° for the PS3 Eye, dependent upon the physical lens setting. It&apos;s only neccessary to get position correspond to real-world values.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable MJPEG compression for high-speed cameras other than the PS3 Eye. Windows only.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Set minimum size to avoid small stray lights from being treated as points.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Track dependent on point size and not absolute brightness. This may allow more stable tracking.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;For LEDs, &apos;Natural&apos; is the fastest grayscale mode thanks to optimized SIMD code. Color key allows to track regular pieces of colored paper.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>MJPEG compression</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>
