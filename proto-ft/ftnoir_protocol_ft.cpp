@@ -227,7 +227,7 @@ module_status freetrack::initialize()
         store(pMemData->table_ints[k], 0);
 
     // more games need the dummy executable than previously thought
-    if (~s.used_interface & settings::enable_npclient)
+    if (s.used_interface != settings::enable_freetrack)
         start_dummy();
 
     return status_ok();
