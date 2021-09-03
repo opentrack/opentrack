@@ -107,6 +107,7 @@ bool Camera::start(const pt_settings& s)
             info.width = res_x;
             info.height = res_y;
             info.use_mjpeg = use_mjpeg;
+            info.num_channels = 1;
 
             if (!cap->start(info))
                 goto fail;
