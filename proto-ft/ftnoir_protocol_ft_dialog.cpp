@@ -22,11 +22,6 @@ FTControls::FTControls()
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.bntLocateNPClient, SIGNAL(clicked()), this, SLOT(selectDLL()));
 
-    const settings::enable_status cbx[] = {
-        settings::enable_both,
-        settings::enable_freetrack,
-        settings::enable_npclient,
-    };
     tie_setting(s.used_interface, ui.cbxSelectInterface);
     tie_setting(s.ephemeral_library_location, ui.ephemeral_registry_entry);
     tie_setting(s.custom_location_pathname, ui.custom_location);
