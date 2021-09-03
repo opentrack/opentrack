@@ -52,6 +52,7 @@ int main(int argc, char** argv)
     volatile auto& ptr_ = *(ps3eye::shm*)mem_.ptr();
     volatile auto& in = ptr_.in;
     volatile auto& out = ptr_.out;
+    int num_channels = in.channels;
 
     auto cameras = ps3eye::list_devices();
 
@@ -65,9 +66,7 @@ int main(int argc, char** argv)
     auto* frame = (uint8_t*)out.data_640x480;
     decltype(out.timecode) timecode = 0;
 
-    constexpr auto fmt = ps3eye::num_channels == 1
-                         ? ps3eye::format::Gray
-                         : ps3eye::format::BGR;
+    auto fmt = num_channels == 1 ? ps3eye::format::Gray : ps3eye::format::BGR;
 
     {
         int framerate = in.framerate;

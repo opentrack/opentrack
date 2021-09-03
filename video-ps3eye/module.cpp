@@ -157,7 +157,7 @@ bool ps3eye_camera::start(info& args)
 
     open = false;
     fr = {};
-    fr.channels = 1;
+    fr.channels = args.num_channels == 1 ? 1 : 3;
     fr.channel_size = 1;
 
     if (!args.width || args.width > 320)
@@ -175,6 +175,7 @@ bool ps3eye_camera::start(info& args)
     ptr.in.framerate = (uint8_t)std::clamp(args.fps, 30, 187);
     ptr.in.gain = (uint8_t)s.gain;
     ptr.in.exposure = (uint8_t)s.exposure;
+    ptr.in.channels = args.num_channels == 1 ? 1 : 3;
 
     sleep_ms = std::clamp(int(std::floor(450./ptr.in.framerate)), 1, 10);
 

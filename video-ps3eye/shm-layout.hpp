@@ -9,7 +9,7 @@ struct shm_in {
     enum class mode : uint8_t { qvga, vga, };
 
     uint32_t settings_updated;
-    uint8_t framerate;
+    uint8_t framerate, channels;
     mode resolution;
     //uint8_t sharpness, contrast, brightness hue, saturation;
     uint8_t gain, exposure, auto_gain, test_pattern;

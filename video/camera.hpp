@@ -48,12 +48,14 @@ struct OTR_VIDEO_EXPORT camera
 {
     struct info final
     {
+        enum : unsigned char { channels_gray = 1, channels_bgr = 3 };
         // TODO: expose FOV-based focal length for regular webcams
         int width = 0, height = 0, fps = 0;
         double fx = 0, fy = 0;          // focal length
         double P_x = 0, P_y = 0;        // principal point
         double dist_c[8] {};            // distortion coefficients
         bool use_mjpeg = false;
+        int num_channels = channels_bgr;
     };
 
     camera();
