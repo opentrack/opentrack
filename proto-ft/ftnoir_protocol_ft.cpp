@@ -159,10 +159,17 @@ module_status freetrack::set_protocols()
     QSettings settings_npclient("NaturalPoint", "NATURALPOINT\\NPClient Location");
 
     QString location = *s.custom_location_pathname;
-    const auto selection = *s.used_interface;
 
-    bool use_freetrack = ~selection & settings::enable_freetrack,
-         use_npclient  = ~selection & settings::enable_npclient;
+    bool use_freetrack, use_npclient;
+    switch (*s.used_interface)
+    {
+    case settings::enable_npclient: use_freetrack = false; break;
+    case settings::enable_freetrack: use_npclient = false; break;
+    case settings::enable_both: use_freetrack = true; use_npclient = true; break;
+    default:
+        return error(tr("proto/freetrack: wrong interface selection '%1'")
+               .arg(*s.used_interface));
+    }
 
     if (!s.use_custom_location || s.custom_location_pathname->isEmpty() || !QDir{s.custom_location_pathname}.exists())
         location = program_dir;

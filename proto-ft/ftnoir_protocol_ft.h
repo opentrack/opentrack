@@ -27,7 +27,7 @@
 using namespace options;
 
 struct settings : opts {
-    enum enable_status { enable_both, enable_freetrack, enable_npclient, };
+    enum enable_status : int { enable_both, enable_freetrack, enable_npclient, };
     value<int>      used_interface{b, "used-interfaces", (int)enable_both};
     value<bool>     ephemeral_library_location{b, "ephemeral-library-location", false};
     value<bool>     use_custom_location{b, "use-custom-location", false};

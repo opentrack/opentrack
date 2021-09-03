@@ -91,6 +91,10 @@ Starting tracking will again overwrite the DLL locations.</source>
         <source>Can&apos;t copy library to selected custom location &apos;%1&apos;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>proto/freetrack: wrong interface selection &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>freetrackDll</name>
