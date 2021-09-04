@@ -379,6 +379,7 @@ void aruco_tracker::run()
 
             if (!res)
             {
+                camera_mtx.unlock();
                 portable::sleep(100);
                 continue;
             }
