@@ -33,7 +33,7 @@ bool cam::is_open()
 bool cam::start(info& args)
 {
     stop();
-    cap.emplace(idx, cv::CAP_DSHOW);
+    cap.emplace(idx, video_capture_backend);
 
     if (args.width > 0 && args.height > 0)
     {
