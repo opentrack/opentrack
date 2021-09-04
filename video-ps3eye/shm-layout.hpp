@@ -3,7 +3,7 @@
 
 namespace ps3eye {
 
-static constexpr unsigned num_channels = 1;
+static constexpr unsigned num_channels = 3;
 
 struct shm_in {
     enum class mode : uint8_t { qvga, vga, };
