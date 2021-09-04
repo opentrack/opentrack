@@ -388,7 +388,9 @@ void aruco_tracker::run()
             switch (img.channels)
             {
             case 1:
-                grayscale.setTo(color); break;
+                grayscale.create(img.height, img.width, CV_8UC1);
+                color.copyTo(grayscale);
+                break;
             case 3:
                 cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
                 break;
