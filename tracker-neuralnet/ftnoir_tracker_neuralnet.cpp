@@ -67,18 +67,6 @@ cv::Rect_<T> squarize(const cv::Rect_<T> &r)
 }
 
 
-int compute_padding(const cv::Rect &r, int w, int h)
-{
-    using std::max;
-    return max({
-        max(-r.x, 0),
-        max(-r.y, 0),
-        max(r.x+r.width-w, 0),
-        max(r.y+r.height-h, 0)
-    });
-}
-
-
 cv::Rect2f unnormalize(const cv::Rect2f &r, int h, int w)
 {
     auto unnorm = [](float x) -> float { return 0.5*(x+1); };
