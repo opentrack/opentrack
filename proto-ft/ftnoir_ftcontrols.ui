@@ -137,7 +137,7 @@ Starting tracking will again overwrite the DLL locations.</string>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QWidget" name="widget" native="true">
+       <widget class="QWidget" name="widget2" native="true">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <property name="spacing">
           <number>6</number>
