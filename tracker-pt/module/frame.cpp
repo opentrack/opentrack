@@ -14,8 +14,7 @@ Preview& Preview::operator=(const pt_frame& frame_)
     if (frame2.channels() == 1)
     {
         frame_tmp.create(frame2.rows, frame2.cols, CV_8UC3);
-        const cv::Mat channels[] = { frame2, frame2, frame2 };
-        cv::merge(channels, std::size(channels), frame_tmp);
+        cv::cvtColor(frame2, frame_tmp, cv::COLOR_GRAY2BGR);
         frame = &frame_tmp;
     }
     else
