@@ -13,6 +13,7 @@
 #include "compat/math-imports.hpp"
 #include "compat/check-visible.hpp"
 #include "compat/thread-name.hpp"
+#include "compat/qt-dpi.hpp"
 
 #include <QHBoxLayout>
 #include <QDebug>
@@ -29,7 +30,7 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     point_extractor { traits->make_point_extractor() },
     camera { traits->make_camera() },
     frame { traits->make_frame() },
-    preview_frame { traits->make_preview(preview_width, preview_height) }
+    preview_frame {}
 {
     opencv_init();
 
@@ -145,6 +146,10 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
     video_frame->setLayout(layout.get());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
+    double dpi = screen_dpi(video_frame);
+
+    preview_frame = traits->make_preview(iround(preview_width * dpi),
+                                         iround(preview_height * dpi));
 
     start(QThread::HighPriority);
 
