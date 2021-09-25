@@ -50,7 +50,6 @@ class hatire_thread : public QThread
     char buf[1024];
 
     void run() override;
-    static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }
 
     void serial_debug_info_str(const QString& str);
 

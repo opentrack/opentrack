@@ -42,8 +42,6 @@ private:
     int frame_cnt = 0;
 
     std::atomic<int> CptError { 0 };
-
-    static inline QByteArray to_latin1(const QString& str) { return str.toLatin1(); }
 };
 
 class hatire_metadata : public Metadata

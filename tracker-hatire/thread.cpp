@@ -71,7 +71,7 @@ void hatire_thread::Log(const QString& message)
     {
         QTextStream out(&flDiagnostics);
         QString milliSeconds;
-        milliSeconds = QString("%1").arg(QTime::currentTime().msec(), 3, 10, QChar('0'));
+        milliSeconds = QStringLiteral("%1").arg(QTime::currentTime().msec(), 3, 10, QChar('0'));
         // We have a file
         out << QTime::currentTime().toString() << "." << milliSeconds << ": " << message << "\r\n";
         flDiagnostics.close();
@@ -111,7 +111,7 @@ void hatire_thread::teardown_serial()
     {
         QByteArray msg;
         Log("Tracker shut down");
-        com_port.write(to_latin1(s.CmdStop));
+        com_port.write(s.CmdStop->toUtf8());
         if (!com_port.waitForBytesWritten(1000))
         {
             emit serial_debug_info("TimeOut in writing CMD");
@@ -120,7 +120,7 @@ void hatire_thread::teardown_serial()
         {
             msg.append("\r\n");
             msg.append("SEND '");
-            msg.append(s.CmdStop);
+            msg.append(s.CmdStop->toUtf8());
             msg.append("'\r\n");
         }
         emit serial_debug_info(msg);
@@ -200,7 +200,7 @@ serial_result hatire_thread::init_serial_port_impl()
             }
             Log(tr("Waiting on init"));
             qDebug()  << QTime::currentTime()  << " HAT send INIT ";
-            sendcmd_str(s.CmdInit);
+            emit sendcmd_str(s.CmdInit);
             // Wait init MPU sequence
             for (int i = 1; i <= s.DelayStart; i+=50)
             {
@@ -208,7 +208,7 @@ serial_result hatire_thread::init_serial_port_impl()
             }
             // Send  START cmd to IMU
             qDebug()  << QTime::currentTime()  << " HAT send START ";
-            sendcmd_str(s.CmdStart);
+            emit sendcmd_str(s.CmdStart);
 
             // Wait start MPU sequence
             for (int i = 1; i <=s.DelaySeq; i+=50)
@@ -241,13 +241,13 @@ void hatire_thread::serial_info_impl()
     if (com_port.isOpen())
     {
         msg.append("\r\n");
-        msg.append(com_port.portName());
+        msg.append(com_port.portName().toUtf8());
         msg.append("\r\n");
         msg.append("BAUDRATE :");
-        msg.append(QString::number(com_port.baudRate()));
+        msg.append(QString::number(com_port.baudRate()).toLatin1());
         msg.append("\r\n");
         msg.append("DataBits :");
-        msg.append(QString::number(com_port.dataBits()));
+        msg.append(QString::number(com_port.dataBits()).toLatin1());
         msg.append("\r\n");
         msg.append("Parity :");
 
