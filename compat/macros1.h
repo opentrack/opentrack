@@ -39,4 +39,10 @@
 #   define eval_once2(expr, ctr) eval_once3(expr, ctr)
 #   define eval_once3(expr, ctr) ([&] { [[maybe_unused]] static const char init_ ## ctr = ((void)(expr), 0); }())
 #   define eval_once(expr) eval_once2(expr, __COUNTER__)
+
+#define OTR_DISABLE_MOVE_COPY(type)         \
+    type(const type&) = delete;             \
+    type(type&&) = delete;                  \
+    type& operator=(const type&) = delete;  \
+    type& operator=(type&&) = delete
 #endif
