@@ -100,12 +100,15 @@ void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& w
 		1);
 }
 
-void WIIPointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
+void WIIPointExtractor::extract_points(const pt_frame& frame_,
+                                       pt_preview& preview_frame_,
+                                       bool preview_visible,
+                                       std::vector<vec2>& points)
 {
 	const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
 	cv::Mat& preview_frame = *preview_frame_.as<WIIPreview>();
 
-    if (wii.status == wii_cam_data_change)
+    if (preview_visible && wii.status == wii_cam_data_change)
     {
         draw_bg(preview_frame, wii);
         draw_points(preview_frame, wii, points);

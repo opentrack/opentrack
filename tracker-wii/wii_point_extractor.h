@@ -23,7 +23,10 @@ class WIIPointExtractor final : public pt_point_extractor
 public:
     // extracts points from frame and draws some processing info into frame, if draw_output is set
     // dt: time since last call in seconds
-    void extract_points(const pt_frame& frame, pt_preview& preview_frame, std::vector<vec2>& points) override;
+    void extract_points(const pt_frame& frame,
+                        pt_preview& preview_frame,
+                        bool preview_visible,
+                        std::vector<vec2>& points) override;
     WIIPointExtractor(const QString& module_name);
 
 private:

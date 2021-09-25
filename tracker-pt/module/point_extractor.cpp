@@ -282,7 +282,10 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
     }
 }
 
-void PointExtractor::extract_points(const pt_frame& frame_, pt_preview& preview_frame_, std::vector<vec2>& points)
+void PointExtractor::extract_points(const pt_frame& frame_,
+                                    pt_preview& preview_frame_,
+                                    bool preview_visible,
+                                    std::vector<vec2>& points)
 {
     const cv::Mat& frame = frame_.as_const<Frame>()->mat;
 
@@ -402,9 +405,10 @@ end:
         b.pos[1] = pos[1] + rect.y;
     }
 
-    draw_blobs(preview_frame_.as<Frame>()->mat,
-               blobs.data(), blobs.size(),
-               frame_gray.size());
+    if (preview_visible)
+        draw_blobs(preview_frame_.as<Frame>()->mat,
+                   blobs.data(), blobs.size(),
+                   frame_gray.size());
 
 
     // End of mean shift code. At this point, blob positions are updated with hopefully less noisy less biased values.

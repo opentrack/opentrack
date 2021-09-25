@@ -74,7 +74,7 @@ void Tracker_PT::run()
             if (preview_visible)
                 *preview_frame = *frame;
 
-            point_extractor->extract_points(*frame, *preview_frame, points);
+            point_extractor->extract_points(*frame, *preview_frame, preview_visible, points);
             point_count.store(points.size(), std::memory_order_relaxed);
 
             const bool success = points.size() >= PointModel::N_POINTS;
