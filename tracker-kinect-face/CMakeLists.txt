@@ -35,11 +35,11 @@ if (WIN32 AND opentrack-intel)
 		install(DIRECTORY "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/NuiDatabase" DESTINATION "${opentrack-libexec}")
 
 		set(redist-dir "${CMAKE_SOURCE_DIR}/redist/${kinect-arch-dir}")
-		install(
-		  FILES "${redist-dir}/msvcp110.dll" "${redist-dir}/msvcr110.dll"
-		  DESTINATION "${opentrack-libexec}"
-		  PERMISSIONS ${opentrack-perms-exec}
-		)
+		#install(
+		#  FILES "${redist-dir}/msvcp110.dll" "${redist-dir}/msvcr110.dll"
+		#  DESTINATION "${opentrack-libexec}"
+		#  PERMISSIONS ${opentrack-perms-exec}
+		#)
 
         # Optional OpenCV support
         # Needed for Point Tracker to support Kinect V2 IR Sensor
