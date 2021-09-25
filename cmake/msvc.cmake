@@ -18,6 +18,7 @@ set(CMAKE_GENERATOR "Ninja")
 add_definitions(-diagnostics:caret)
 #add_compile_options(-Qvec-report:2)
 #add_compile_options(-d2cgsummary)
+add_definitions(-D_HAS_EXCEPTIONS=0)
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
@@ -46,7 +47,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "QtBase")
         set(FEATURE_shared ON)
 endif()
 
-if(CMAKE_PROJECT_NAME STREQUAL "opencv")
+if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG TRUE)
 endif()
 

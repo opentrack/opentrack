@@ -118,8 +118,8 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_CPP_OVERLOAD_STANDARD_NAMES=1)
     add_definitions(-D_SCL_SECURE_NO_WARNINGS)
 
-    add_compile_options(-EHsc)
-    #add_definitions(-D_HAS_EXCEPTIONS=0)
+    #add_compile_options(-EHsc)
+    add_definitions(-D_HAS_EXCEPTIONS=0)
 
     add_definitions(-D_ENABLE_EXTENDED_ALIGNED_STORAGE)
     add_definitions(-D_ENABLE_ATOMIC_ALIGNMENT_FIX)
