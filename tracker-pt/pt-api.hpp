@@ -59,6 +59,12 @@ struct pt_frame : pt_pixel_pos_mixin
     {
         return static_cast<t const*>(this);
     }
+
+protected:
+    pt_frame(const pt_frame&) = default;
+    pt_frame(pt_frame&&) = default;
+    pt_frame& operator=(const pt_frame&) = default;
+    pt_frame& operator=(pt_frame&&) = default;
 };
 
 struct pt_preview : pt_frame
