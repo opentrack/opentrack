@@ -53,6 +53,22 @@ Checks:
     -readability-magic-numbers,
     -modernize-loop-convert,
     -modernize-use-nodiscard,
+    -modernize-use-trailing-return-type,
+    -llvmlibc-*,
+    -google-readability-braces-around-statements,
+    -hicpp-braces-around-statements,
+    -readability-braces-around-statements,
+    -performance-no-int-to-ptr,
+    -altera-*,
+    -hicpp-named-parameter,
+    -cppcoreguidelines-macro-usage,
+    -misc-non-private-member-variables-in-classes,
+    -google-readability-casting,
+    -readability-isolate-declaration,
+    -fuchsia-*,
+    -modernize-return-braced-init-list,
+    -cppcoreguidelines-init-variables,
+    -cppcoreguidelines-avoid-c-arrays,
 
 AnalyzeTemporaryDtors: true
 #HeaderFilterRegex: '/dev/opentrack'
