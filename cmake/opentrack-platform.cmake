@@ -126,7 +126,6 @@ if(MSVC)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
 
-    add_compile_options(-diagnostics:caret)
     add_compile_options(-permissive-)
 
     if(opentrack-64bit)
