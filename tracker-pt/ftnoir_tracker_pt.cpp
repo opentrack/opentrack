@@ -139,8 +139,8 @@ module_status Tracker_PT::start_tracker(QFrame* video_frame)
     video_frame->setLayout(layout.get());
     //video_widget->resize(video_frame->width(), video_frame->height());
     video_frame->show();
-    double dpi = screen_dpi(video_frame);
 
+    double dpi = screen_dpi(video_frame);
     preview_frame = traits->make_preview(iround(preview_width * dpi),
                                          iround(preview_height * dpi));
 
