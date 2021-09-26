@@ -25,7 +25,6 @@ void Preview::set_last_frame(const pt_frame& frame_)
         eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame->channels());
         frame_copy.create(cv::Size{frame_out.cols, frame_out.rows}, CV_8UC3);
         frame_copy.setTo({0});
-        return *this;
     }
 
     const bool need_resize = frame2.cols != frame_out.cols || frame2.rows != frame_out.rows;
@@ -33,8 +32,6 @@ void Preview::set_last_frame(const pt_frame& frame_)
         cv::resize(frame2, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
     else
         frame->copyTo(frame_copy);
-
-    return *this;
 }
 
 Preview::Preview(int w, int h)
