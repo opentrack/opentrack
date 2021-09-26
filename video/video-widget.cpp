@@ -19,7 +19,7 @@ video_widget::video_widget(QWidget* parent) : QWidget(parent)
 {
     init_image_nolock();
     connect(&timer, &QTimer::timeout, this, &video_widget::draw_image, Qt::DirectConnection);
-    timer.start(65);
+    timer.start(15);
 }
 
 void video_widget::update_image(const QImage& img)
