@@ -2,6 +2,12 @@
 #include <opencv2/imgproc.hpp>
 #include "compat/math.hpp"
 
+trackhat_preview::trackhat_preview(int w, int h)
+{
+    frame_bgr.create(h, w, CV_8UC3);
+    frame_bgra.create(h, w, CV_8UC4);
+}
+
 void trackhat_preview::set_last_frame(const pt_frame& frame_)
 {
     center = {-1, -1};

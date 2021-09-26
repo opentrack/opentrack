@@ -122,8 +122,3 @@ void trackhat_camera::stop()
     device = {};
 }
 
-trackhat_preview::trackhat_preview(int w, int h)
-{
-    frame_bgr.create(h, w, CV_8UC3);
-    frame_bgra.create(h, w, CV_8UC4);
-}
