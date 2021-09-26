@@ -15,7 +15,7 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 set(CMAKE_GENERATOR "Ninja")
 
 #add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
-add_definitions(-diagnostics:caret)
+add_compile_options(-diagnostics:classic)
 #add_compile_options(-Qvec-report:2)
 #add_compile_options(-d2cgsummary)
 add_definitions(-D_HAS_EXCEPTIONS=0)
