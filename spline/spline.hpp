@@ -110,7 +110,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     double bucket_size_coefficient(const QList<QPointF>& points) const;
     void update_interp_data() const;
     double get_value_internal(int x) const;
-    static bool sort_fn(const QPointF& one, const QPointF& two);
+    static bool sort_fn(QPointF one, QPointF two);
 
     static void ensure_in_bounds(const QList<QPointF>& points, int i, f& x, f& y);
     static int element_count(const QList<QPointF>& points, double max_input);

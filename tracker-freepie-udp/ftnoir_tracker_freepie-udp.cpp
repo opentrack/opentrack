@@ -40,9 +40,9 @@ void tracker_freepie::run() {
     {
         int order[] =
         {
-            clamp(s.idx_x, 0, 2),
-            clamp(s.idx_y, 0, 2),
-            clamp(s.idx_z, 0, 2)
+            std::clamp(*s.idx_x, 0, 2),
+            std::clamp(*s.idx_y, 0, 2),
+            std::clamp(*s.idx_z, 0, 2)
         };
 
         double orient[3] = {0, 0, 0};

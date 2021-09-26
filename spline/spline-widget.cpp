@@ -635,8 +635,8 @@ QPointF spline_widget::pixel_to_point(const QPointF& point)
     if (snap_y > 0)
         y = snap(y, snap_y);
 
-    x = clamp(x, 0, config->max_input());
-    y = clamp(y, 0, config->max_output());
+    x = std::clamp(x, 0., config->max_input());
+    y = std::clamp(y, 0., config->max_output());
 
     return { x, y };
 }

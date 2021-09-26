@@ -525,7 +525,7 @@ void neuralnet_tracker::draw_gizmos(
     }
 
     char buf[128];
-    ::snprintf(buf, sizeof(buf), "%d Hz, pose inference: %d ms", clamp(int(fps), 0, 9999), int(last_inference_time));
+    ::snprintf(buf, sizeof(buf), "%d Hz, pose inference: %d ms", std::clamp(int(fps), 0, 9999), int(last_inference_time));
     cv::putText(frame, buf, cv::Point(10, frame.rows-10), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1);
 }
 

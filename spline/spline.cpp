@@ -101,7 +101,7 @@ double spline::get_value_internal(int x) const
     const float sign = signum(x);
     x = std::abs(x);
     const float ret_ = data[std::min(unsigned(x), value_count - 1)];
-    return (double)(sign * clamp(ret_, 0, 1000));
+    return (double)(sign * std::clamp(ret_, 0.f, 1000.f));
 }
 
 void spline::ensure_in_bounds(const QList<QPointF>& points, int i, f& x, f& y)
@@ -129,7 +129,7 @@ void spline::ensure_in_bounds(const QList<QPointF>& points, int i, f& x, f& y)
 
 int spline::element_count(const QList<QPointF>& points, double max_input)
 {
-    const unsigned sz = (unsigned)points.size();
+    const int sz = points.size();
     for (int k = sz-1; k >= 0; k--)
     {
         const QPointF& pt = points[k];
@@ -139,7 +139,7 @@ int spline::element_count(const QList<QPointF>& points, double max_input)
     return sz;
 }
 
-bool spline::sort_fn(const QPointF& one, const QPointF& two)
+bool spline::sort_fn(QPointF one, QPointF two)
 {
     return one.x() < two.x();
 }
@@ -165,7 +165,7 @@ void spline::update_interp_data() const
         const QPointF& pt = list[0];
         const double x = pt.x();
         const double y = pt.y();
-        const unsigned max = clamp(uround(x * c), 0, value_count-1);
+        const unsigned max = std::clamp((unsigned)iround(x * c), 0u, value_count-1);
 
         for (unsigned k = 0; k <= max; k++)
             data[k] = float(y * k / max); // no need for bresenham
@@ -235,7 +235,7 @@ void spline::update_interp_data() const
     {
         if (data[i] == magic_fill_value)
             data[i] = last;
-        data[i] = clamp(data[i], 0, maxy);
+        data[i] = std::clamp(data[i], 0.f, maxy);
         last = data[i];
     }
 
@@ -472,7 +472,7 @@ double spline::bucket_size_coefficient(const QList<QPointF>& points) const
     const int sz = element_count(points, maxx);
     const double last_x = sz ? points[sz - 1].x() : maxx;
 
-    return clamp((value_count-1) / clamp(last_x, eps, maxx), 0., (value_count-1));
+    return std::clamp((value_count-1) / std::clamp(last_x, eps, maxx), 0., (value_count-1.));
 }
 
 void spline::disconnect_signals()

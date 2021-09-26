@@ -88,7 +88,7 @@ int vjoystick::to_axis_value(unsigned axis_id, double val) const
     const double min = axis_min[axis_id];
     const double max = axis_max[axis_id];
 
-    return (int)(clamp((val+minmax) * max / (2*minmax) - min, min, max));
+    return (int)(std::clamp((val+minmax) * max / (2*minmax) - min, min, max));
 }
 
 vjoystick::vjoystick() = default;

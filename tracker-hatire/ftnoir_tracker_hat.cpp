@@ -122,7 +122,7 @@ void hatire::data(double *data)
     }
 
     for (unsigned k = 0; k < 3; k++)
-        HAT.Rot[k] = clamp(HAT.Rot[k], -180, 180);
+        HAT.Rot[k] = std::clamp(HAT.Rot[k], -180.f, 180.f);
 
     const struct
     {

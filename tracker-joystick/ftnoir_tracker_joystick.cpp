@@ -56,8 +56,8 @@ void joystick::data(double *data)
             if (k < 0 || k >= 8)
                 data[i] = 0;
             else
-                data[i] = clamp(axes[k] * limits[i] / AXIS_MAX,
-                                -limits[i], limits[i]);
+                data[i] = std::clamp(axes[k] * limits[i] / AXIS_MAX,
+                                     -limits[i], limits[i]);
         }
     }
 }

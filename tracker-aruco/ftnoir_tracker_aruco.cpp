@@ -102,8 +102,8 @@ bool aruco_tracker::detect_with_roi()
 {
     if (last_roi.width > 1 && last_roi.height > 1)
     {
-        detector.setMinMaxSize(clamp(size_min * grayscale.cols / last_roi.width, .01f, 1.f),
-                               clamp(size_max * grayscale.cols / last_roi.width, .01f, 1.f));
+        detector.setMinMaxSize(std::clamp(size_min * grayscale.cols / last_roi.width, .01f, 1.f),
+                               std::clamp(size_max * grayscale.cols / last_roi.width, .01f, 1.f));
 
         detector.detect(grayscale(last_roi), markers, cv::Mat(), cv::Mat(), -1, false);
 
@@ -225,7 +225,7 @@ void aruco_tracker::draw_ar(bool ok)
     }
 
     char buf[9];
-    ::snprintf(buf, sizeof(buf), "Hz: %d", clamp(int(fps), 0, 9999));
+    ::snprintf(buf, sizeof(buf), "Hz: %d", std::clamp(int(fps), 0, 9999));
     cv::putText(frame, buf, cv::Point(10, 32), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0, 255, 0), 1);
 }
 

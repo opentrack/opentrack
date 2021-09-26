@@ -49,7 +49,7 @@ bool correlation_calibrator::check_buckets(const vec6& data)
 
     for (unsigned k = 0; k < 6; k++)
     {
-        const double val = clamp(data[k], min[k], max[k]);
+        const double val = std::clamp(data[k], min[k], max[k]);
         pos[k] = unsigned((val-min[k])/spacing[k]);
 
         if (pos[k] >= nbuckets[k])

@@ -37,7 +37,7 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
 
     for (unsigned k = 0; k < N; k++)
     {
-        const double c = dist > 1e-6 ? clamp((fabs(deltas[k]) / dist), 0., 1.) : 0;
+        const double c = dist > 1e-6 ? std::clamp((fabs(deltas[k]) / dist), 0., 1.) : 0;
         norm[k] = c;
     }
 

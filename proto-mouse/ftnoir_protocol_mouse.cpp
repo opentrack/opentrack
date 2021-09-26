@@ -31,12 +31,12 @@ void mouse::pose(const double* headpose, const double*)
 
     int mouse_x = 0, mouse_y = 0;
 
-    if (axis_x == clamp(axis_x, Axis_MIN, Axis_MAX))
+    if (axis_x == std::clamp(axis_x, (int)Axis_MIN, (int)Axis_MAX))
         mouse_x = get_value(headpose[axis_x] * invert[axis_x],
                             *s.sensitivity_x,
                             axis_x >= 3);
 
-    if (axis_y == clamp(axis_y, Axis_MIN, Axis_MAX))
+    if (axis_y == std::clamp(axis_y, (int)Axis_MIN, (int)Axis_MAX))
         mouse_y = get_value(headpose[axis_y] * invert[axis_y],
                             *s.sensitivity_y,
                             axis_y >= 3);

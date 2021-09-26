@@ -57,9 +57,9 @@ void tracker_s2bot::run() {
 
             int order[] =
             {
-                clamp(s.idx_x, 0, 3),
-                clamp(s.idx_y, 0, 3),
-                clamp(s.idx_z, 0, 3),
+                std::clamp(*s.idx_x, 0, 3),
+                std::clamp(*s.idx_y, 0, 3),
+                std::clamp(*s.idx_z, 0, 3),
             };
 
             int add_indices[] = { s.add_yaw, s.add_pitch, s.add_roll, };
