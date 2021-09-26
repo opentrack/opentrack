@@ -26,7 +26,7 @@ struct trackhat_camera final : pt_camera
     void set_fov(f value) override;
     void show_camera_settings() override;
 
-    static constexpr int sensor_size = 2940*2;
+    static constexpr int sensor_size = 2940;
     static constexpr int sensor_fov = 52;
     static constexpr int point_count = TRACK_HAT_NUMBER_OF_POINTS;
 

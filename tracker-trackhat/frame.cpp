@@ -67,8 +67,8 @@ void trackhat_preview::draw_points()
             continue;
 
         constexpr f sz = trackhat_camera::sensor_size;
-        f x = std::clamp((f)pt.m_x, f(0), sz-1) * (f)frame_bgr.cols / sz,
-          y = std::clamp((f)pt.m_y, f(0), sz-1) * (f)frame_bgr.rows / sz;
+        int x = iround(std::clamp((f)pt.m_x, f(0), sz-1) * (f)frame_bgr.cols / sz),
+            y = iround(std::clamp((f)pt.m_y, f(0), sz-1) * (f)frame_bgr.rows / sz);
 
         const f dpi = (f)frame_bgr.cols / f(320);
         int c = (int)pt.m_brightness;
@@ -76,13 +76,13 @@ void trackhat_preview::draw_points()
         auto outline_color = i < 3 ? cv::Scalar{255, 255, 0} : cv::Scalar{192, 192, 192};
 
         cv::circle(frame_bgr,
-                   {iround(x*dpi), iround(y*dpi)},
+                   {x, y},
                    iround(point_size * dpi),
                    outline_color,
                    iround(dpi), cv::LINE_AA);
 
         cv::circle(frame_bgr,
-                   {iround(x*dpi), iround(y*dpi)},
+                   {x, y},
                    iround((point_size-2) * dpi),
                    cv::Scalar(c, c, c),
                    -1);
