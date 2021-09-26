@@ -28,7 +28,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install Linux Dependencies
-      run: sudo apt update && sudo apt install libprocps-dev libopencv-dev
+      run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev
       if: matrix.os == 'ubuntu-latest'
 
     - name: Cache Qt
