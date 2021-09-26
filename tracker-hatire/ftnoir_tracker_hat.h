@@ -31,8 +31,8 @@ public:
     void serial_info();
     void send_serial_command(const QByteArray& x);
 
-    hatire_thread t;
 private:
+    hatire_thread t;
     TArduinoData ArduinoData {}, HAT {};
     QByteArray Begin;
     QByteArray End;
