@@ -110,13 +110,6 @@ void Tracker_PT::run()
                     preview_frame->draw_head_center((p[0] * fx) / p[2], (p[1] * fx) / p[2]);
 
                 widget->update_image(preview_frame->get_bitmap());
-
-                auto [ w, h ] = widget->preview_size();
-                if (w != preview_width || h != preview_height)
-                {
-                    preview_width = w; preview_height = h;
-                    preview_frame = traits->make_preview(w, h);
-                }
             }
         }
     }
