@@ -43,18 +43,6 @@ jobs:
       with:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-    - name: Cache OpenCV
-      id: cache-open-cv
-      uses: actions/cache@v1
-      with:
-        path: ../OpenCV
-        key: ${{ runner.os }}-OpenCVCache
-        
-    - name: Install OpenCV
-      uses: florianblume/install-opencv-action@v1
-      with:
-        cached: ${{ steps.cache-open-cv.outputs.cache-hit }}
-
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
