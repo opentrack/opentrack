@@ -71,10 +71,10 @@ void Tracker_PT::run()
         {
             const bool preview_visible = check_is_visible();
 
-            if (preview_visible)
+            if (preview_visible && !widget->fresh())
                 preview_frame->set_last_frame(*frame);
 
-            point_extractor->extract_points(*frame, *preview_frame, preview_visible, points);
+            point_extractor->extract_points(*frame, *preview_frame, preview_visible && !widget->fresh(), points);
             point_count.store(points.size(), std::memory_order_relaxed);
 
             const bool success = points.size() >= PointModel::N_POINTS;
@@ -99,7 +99,7 @@ void Tracker_PT::run()
                 X_CM = point_tracker.pose();
             }
 
-            if (preview_visible)
+            if (preview_visible && !widget->fresh())
             {
                 const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
                 Affine X_MH(mat33::eye(), vec3(s.t_MH_x, s.t_MH_y, s.t_MH_z));

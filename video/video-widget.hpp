@@ -29,12 +29,12 @@ struct OTR_VIDEO_EXPORT video_widget : QWidget
     void resizeEvent(QResizeEvent*) override;
     void paintEvent(QPaintEvent*) override;
     void draw_image();
+    bool fresh() const;
 
 protected:
     mutable QMutex mtx { QMutex::NonRecursive };
     QImage texture;
     std::vector<unsigned char> vec;
-    bool fresh() const;
     void set_fresh(bool x);
     void set_image(const unsigned char* src, int width, int height, int stride, QImage::Format fmt);
 
