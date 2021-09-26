@@ -68,7 +68,7 @@ void PointModel::set_model(const pt_settings& s)
     }
 }
 
-void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const
+void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& d)
 {
     constexpr unsigned cnt = PointModel::N_POINTS;
     // fit line to orthographically projected points
@@ -78,9 +78,7 @@ void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& 
     for (unsigned i = 0; i < cnt; ++i)
         d_vals[i] = t(d.dot(points[i]), i);
 
-    std::sort(d_vals,
-              d_vals + 3,
-              [](const t& a, const t& b) { return a.first < b.first; });
+    std::sort(d_vals, d_vals + 3, [](t a, t& b) { return a.first < b.first; });
 
     for (unsigned i = 0; i < cnt; ++i)
         d_order[i] = d_vals[i].second;
@@ -94,10 +92,11 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
                                                                      const pt_camera_info& info)
 {
     const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
-    PointTracker::PointOrder p;
-    p[0] = project(vec3(0,0,0), fx);
-    p[1] = project(model.M01, fx);
-    p[2] = project(model.M02, fx);
+    PointTracker::PointOrder p {
+        project(vec3(0,0,0), fx),
+        project(model.M01, fx),
+        project(model.M02, fx)
+    };
 
     constexpr unsigned sz = PointModel::N_POINTS;
 

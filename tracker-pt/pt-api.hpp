@@ -86,6 +86,8 @@ struct pt_camera
     pt_camera();
     virtual ~pt_camera();
 
+    OTR_DISABLE_MOVE_COPY(pt_point_extractor);
+
     [[nodiscard]] virtual bool start(const pt_settings& s) = 0;
     virtual void stop() = 0;
 
@@ -105,6 +107,8 @@ struct pt_point_extractor : pt_pixel_pos_mixin
     using vec2 = numeric_types::vec2;
     using f = numeric_types::f;
 
+    OTR_DISABLE_MOVE_COPY(pt_point_extractor);
+
     pt_point_extractor();
     virtual ~pt_point_extractor();
     virtual void extract_points(const pt_frame& image, pt_preview& preview_frame, bool preview_visible, std::vector<vec2>& points) = 0;
@@ -115,6 +119,8 @@ struct pt_point_extractor : pt_pixel_pos_mixin
 struct pt_runtime_traits
 {
     template<typename t> using pointer = std::shared_ptr<t>;
+
+    OTR_DISABLE_MOVE_COPY(pt_runtime_traits);
 
     pt_runtime_traits();
     virtual ~pt_runtime_traits();

@@ -58,7 +58,7 @@ private:
     static void ensure_size(cv::Mat& frame, int w, int h, int type);
 
     cv::Mat frame_copy, frame_out;
-	wii_camera_status status;
+	wii_camera_status status = wii_cam_wait_for_connect;
 };
 
 } // ns pt_module

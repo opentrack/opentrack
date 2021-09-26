@@ -50,5 +50,4 @@ std::tuple<f, f> pt_pixel_pos_mixin::to_screen_pos(f px, f py, int w, int h)
 }
 
 pt_frame::pt_frame() = default;
-
 pt_frame::~pt_frame() = default;

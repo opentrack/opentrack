@@ -46,7 +46,7 @@ struct PointModel final
     explicit PointModel(const pt_settings& s);
     void set_model(const pt_settings& s);
 
-    void get_d_order(const vec2* points, unsigned* d_order, const vec2& d) const;
+    static void get_d_order(const vec2* points, unsigned* d_order, const vec2& d);
 };
 
 // ----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ private:
     // the points in model order
     using PointOrder = std::array<vec2, 3>;
 
-    PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
+    static PointOrder find_correspondences(const vec2* projected_points, const PointModel &model);
     PointOrder find_correspondences_previous(const vec2* points, const PointModel &model, const pt_camera_info& info);
     // The POSIT algorithm, returns the number of iterations
     int POSIT(const PointModel& point_model, const PointOrder& order, f focal_length);
