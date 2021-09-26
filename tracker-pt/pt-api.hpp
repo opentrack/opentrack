@@ -86,7 +86,7 @@ struct pt_camera
     pt_camera();
     virtual ~pt_camera();
 
-    OTR_DISABLE_MOVE_COPY(pt_point_extractor);
+    OTR_DISABLE_MOVE_COPY(pt_camera);
 
     [[nodiscard]] virtual bool start(const pt_settings& s) = 0;
     virtual void stop() = 0;
