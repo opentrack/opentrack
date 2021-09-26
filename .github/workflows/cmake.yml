@@ -31,7 +31,6 @@ jobs:
       run: sudo apt update && sudo apt install libprocps-dev libopencv-dev
       if: matrix.os == 'ubuntu-latest'
 
-    - name: Install OpenCV
     - uses: actions/checkout@v2
     - uses: Dovyski/setup-opencv-action@v1
       with:
