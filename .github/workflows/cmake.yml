@@ -31,10 +31,12 @@ jobs:
       run: sudo apt update && sudo apt install libprocps-dev libopencv-dev
       if: matrix.os == 'ubuntu-latest'
 
-    - uses: actions/checkout@v2
-    - uses: Dovyski/setup-opencv-action@v1
+    - name: Cache OpenCV
+      id: cache-open-cv
+      uses: actions/cache@v1
       with:
-        opencv-version: master
+        path: ../OpenCV
+        key: ${{ runner.os }}-OpenCVCache
 
     - name: Cache Qt
       id: cache-qt
@@ -42,6 +44,11 @@ jobs:
       with:
         path: ../Qt
         key: ${{ runner.os }}-QtCache
+        
+    - name: Install OpenCV
+      uses: florianblume/install-opencv-action@v1
+      with:
+        cached: ${{ steps.cache-open-cv.outputs.cache-hit }}
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
