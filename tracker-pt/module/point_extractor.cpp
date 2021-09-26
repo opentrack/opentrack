@@ -221,7 +221,7 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
         const f radius = threshold_radius_value(frame_gray.cols, frame_gray.rows, threshold_slider_value);
 
         float const* const __restrict ptr = hist.ptr<float>(0);
-        const unsigned area = uround(3 * pi * radius*radius);
+        const unsigned area = unsigned(iround(3 * pi * radius*radius));
         const unsigned sz = unsigned(hist.cols * hist.rows);
         constexpr unsigned min_thres = 64;
         unsigned thres = min_thres;
