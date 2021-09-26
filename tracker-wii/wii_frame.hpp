@@ -47,7 +47,7 @@ struct WIIPreview final : pt_preview
 {
     WIIPreview(int w, int h);
 
-    WIIPreview& operator=(const pt_frame& frame) override;
+    void set_last_frame(const pt_frame& frame) override;
     QImage get_bitmap() override;
     void draw_head_center(f x, f y) override;
 

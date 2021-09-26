@@ -6,7 +6,7 @@
 
 namespace pt_module {
 
-Preview& Preview::operator=(const pt_frame& frame_)
+void Preview::set_last_frame(const pt_frame& frame_)
 {
     const cv::Mat& frame2 = frame_.as_const<const Frame>()->mat;
     const cv::Mat* frame;

@@ -72,7 +72,7 @@ void Tracker_PT::run()
             const bool preview_visible = check_is_visible();
 
             if (preview_visible)
-                *preview_frame = *frame;
+                preview_frame->set_last_frame(*frame);
 
             point_extractor->extract_points(*frame, *preview_frame, preview_visible, points);
             point_count.store(points.size(), std::memory_order_relaxed);

@@ -69,7 +69,11 @@ protected:
 
 struct pt_preview : pt_frame
 {
-    virtual pt_preview& operator=(const pt_frame&) = 0;
+    pt_preview() = default;
+
+    OTR_DISABLE_MOVE_COPY(pt_preview);
+
+    virtual void set_last_frame(const pt_frame&) = 0;
     virtual QImage get_bitmap() = 0;
     virtual void draw_head_center(f x, f y) = 0;
 };

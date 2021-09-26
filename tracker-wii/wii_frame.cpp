@@ -17,7 +17,7 @@
 
 using namespace pt_module;
 
-WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
+void WIIPreview::set_last_frame(const pt_frame& frame_)
 {
     const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
     const cv::Mat& frame = frame_.as_const<const WIIFrame>()->mat;
@@ -25,18 +25,13 @@ WIIPreview& WIIPreview::operator=(const pt_frame& frame_)
     status = wii.status;
 
     if (frame.channels() != 3)
-    {
         eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame.channels());
-        return *this;
-    }
 
     const bool need_resize = frame.cols != frame_out.cols || frame.rows != frame_out.rows;
     if (need_resize)
         cv::resize(frame, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
     else
         frame.copyTo(frame_copy);
-
-    return *this;
 }
 
 WIIPreview::WIIPreview(int w, int h)
