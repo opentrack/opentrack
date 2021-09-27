@@ -8,30 +8,33 @@ namespace pt_module {
 
 void Preview::set_last_frame(const pt_frame& frame_)
 {
-    const cv::Mat& frame2 = frame_.as_const<const Frame>()->mat;
-    const cv::Mat* frame;
+    const cv::Mat& frame = frame_.as_const<const Frame>()->mat;
+    const bool need_resize = frame.size != frame_copy.size;
 
-    if (frame2.channels() == 1)
+    if (frame.channels() == 1)
     {
-        frame_tmp.create(frame2.rows, frame2.cols, CV_8UC3);
-        cv::cvtColor(frame2, frame_tmp, cv::COLOR_GRAY2BGR);
-        frame = &frame_tmp;
+        if (need_resize)
+        {
+            frame_tmp.create(frame.size(), CV_8UC3);
+            cv::cvtColor(frame, frame_tmp, cv::COLOR_GRAY2BGR);
+            cv::resize(frame_tmp, frame_copy, frame_copy.size(), 0, 0, cv::INTER_NEAREST);
+        }
+        else
+            cv::cvtColor(frame, frame_copy, cv::COLOR_GRAY2BGR);
+    }
+    else if (frame.channels() == 3)
+    {
+        if (need_resize)
+            cv::resize(frame, frame_copy, frame_copy.size(), 0, 0, cv::INTER_NEAREST);
+        else
+            frame.copyTo(frame_copy);
     }
     else
-        frame = &frame2;
-
-    if (frame->channels() != 3)
     {
-        eval_once(qDebug() << "tracker/pt: camera frame depth: 3 !=" << frame->channels());
-        frame_copy.create(cv::Size{frame_out.rows, frame_out.cols}, CV_8UC3);
-        frame_copy.setTo(cv::Scalar{0, 0, 0});
+        eval_once(qDebug() << "tracker/pt: camera frame depth" << frame.channels() << "!= 3");
+        frame_copy.create(frame_copy.size(), CV_8UC3);
+        frame_copy.setTo({0});
     }
-
-    const bool need_resize = frame->cols != frame_out.cols || frame->rows != frame_out.rows;
-    if (need_resize)
-        cv::resize(*frame, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
-    else
-        frame->copyTo(frame_copy);
 }
 
 Preview::Preview(int w, int h)
