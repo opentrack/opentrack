@@ -45,7 +45,7 @@ QImage Preview::get_bitmap()
 {
     int stride = (int)frame_out.step.p[0];
 
-    if (stride < 64 || stride < frame_out.cols * 4)
+    if (stride < frame_out.cols * 4)
     {
         eval_once(qDebug() << "bad stride" << stride
                            << "for bitmap size" << frame_copy.cols << frame_copy.rows);
