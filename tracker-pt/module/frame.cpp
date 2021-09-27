@@ -27,9 +27,9 @@ void Preview::set_last_frame(const pt_frame& frame_)
         frame_copy.setTo(cv::Scalar{0, 0, 0});
     }
 
-    const bool need_resize = frame2.cols != frame_out.cols || frame2.rows != frame_out.rows;
+    const bool need_resize = frame->cols != frame_out.cols || frame->rows != frame_out.rows;
     if (need_resize)
-        cv::resize(frame2, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
+        cv::resize(*frame, frame_copy, cv::Size(frame_out.cols, frame_out.rows), 0, 0, cv::INTER_NEAREST);
     else
         frame->copyTo(frame_copy);
 }
