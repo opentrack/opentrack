@@ -248,10 +248,7 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
                 cy = preview_frame.rows / f(size.height),
                 c  = std::fmax(f(1), cx+cy)/2;
 
-        constexpr unsigned fract_bits = 8;
-        constexpr int c_fract(1 << fract_bits);
-
-        cv::Point p(iround(b.pos[0] * cx * c_fract), iround(b.pos[1] * cy * c_fract));
+        cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
 
         auto circle_color = k >= PointModel::N_POINTS
                             ? cv::Scalar(192, 192, 192)
@@ -259,9 +256,8 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
 
         const int overlay_size = iround(dpi);
 
-        cv::circle(preview_frame, p, iround((b.radius + f(3.3) * c) * c_fract),
-                   circle_color, overlay_size,
-                   cv::LINE_AA, fract_bits);
+        cv::circle(preview_frame, p, iround((b.radius + f(2)) * c),
+                   circle_color, overlay_size, cv::LINE_AA);
 
         char buf[16];
         std::snprintf(buf, sizeof(buf), "%.2fpx", (double)b.radius);
