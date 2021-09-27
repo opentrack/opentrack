@@ -20,7 +20,7 @@ void trackhat_extractor::extract_points(const pt_frame& data,
         if (pt.m_brightness == 0)
             continue;
         constexpr int sz = trackhat_camera::sensor_size;
-        auto [ x, y ] = to_screen_pos(pt.m_x, pt.m_y, sz, sz);
+        auto [ x, y ] = to_screen_pos(sz-1-pt.m_x, pt.m_y, sz, sz);
         points.push_back({x, y});
     }
 }
