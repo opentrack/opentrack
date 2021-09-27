@@ -23,9 +23,9 @@ void tobii::data(double *data)
             else {
                 center_pose = p;
             }
-            data[0] = clamp(p.position_xyz[0] * 30.0 / 300.0, -30.0, 30.0);
-            data[1] = clamp(p.position_xyz[1] * 30.0 / 300.0, -30.0, 30.0);
-            data[2] = clamp(p.position_xyz[2] * 30.0 / 300.0, -30.0, 30.0);
+            data[0] = std::clamp(p.position_xyz[0] * 30.0 / 300.0, -30.0, 30.0);
+            data[1] = std::clamp(p.position_xyz[1] * 30.0 / 300.0, -30.0, 30.0);
+            data[2] = std::clamp(p.position_xyz[2] * 30.0 / 300.0, -30.0, 30.0);
         }
 
         double max_yaw = 90.0;
@@ -33,7 +33,7 @@ void tobii::data(double *data)
             if (center_pose.rotation_validity_xyz[1] == TOBII_VALIDITY_VALID) {
                 p.rotation_xyz[1] = p.rotation_xyz[1] - center_pose.rotation_xyz[1];
             }
-            data[3] = clamp(p.rotation_xyz[1] * 100.0 * max_yaw / 90.0, -max_yaw, max_yaw);
+            data[3] = std::clamp(p.rotation_xyz[1] * 100.0 * max_yaw / 90.0, -max_yaw, max_yaw);
         }
 
         double max_pitch = 90.0;
@@ -41,7 +41,7 @@ void tobii::data(double *data)
             if (center_pose.rotation_validity_xyz[0] == TOBII_VALIDITY_VALID) {
                 p.rotation_xyz[0] = p.rotation_xyz[0] - center_pose.rotation_xyz[0];
             }
-            data[4] = clamp(p.rotation_xyz[0] * 100.0 * max_pitch / 90.0, -max_pitch, max_pitch);
+            data[4] = std::clamp(p.rotation_xyz[0] * 100.0 * max_pitch / 90.0, -max_pitch, max_pitch);
         }
 
         double max_roll = 90.0;
@@ -49,7 +49,7 @@ void tobii::data(double *data)
             if (center_pose.rotation_validity_xyz[2] == TOBII_VALIDITY_VALID) {
                 p.rotation_xyz[2] = p.rotation_xyz[2] - center_pose.rotation_xyz[2];
             }
-            data[5] = clamp(p.rotation_xyz[2] * 100.0 * max_roll / 90.0, -max_roll, max_roll);
+            data[5] = std::clamp(p.rotation_xyz[2] * 100.0 * max_roll / 90.0, -max_roll, max_roll);
         }
     }
 }

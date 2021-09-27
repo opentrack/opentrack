@@ -605,8 +605,7 @@ void pipeline::run()
             backlog_time = {};
         }
 
-        const int sleep_ms = (int)clamp(interval - backlog_time,
-                                        ms{0}, ms{10}).count();
+        const int sleep_ms = (int)std::clamp(interval - backlog_time, ms{0}, ms{10}).count();
 
 #ifdef DEBUG_TIMINGS
         debug_timings(backlog_time.count(), sleep_ms);

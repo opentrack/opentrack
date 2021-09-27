@@ -120,7 +120,7 @@ void evdev::pose(const double* headpose, const double*) {
     for (int i = 0; i < 6; i++)
     {
         int value = (int)(headpose[i] * mid_input / max_value[i] + mid_input);
-        int normalized = clamp(value, min_input, max_input);
+        int normalized = std::clamp(value, min_input, max_input);
         (void) libevdev_uinput_write_event(uidev, EV_ABS, axes[i], normalized);
     }
 
