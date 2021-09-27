@@ -87,21 +87,17 @@ PointExtractor::PointExtractor(const QString& module_name) : s(module_name)
 
 void PointExtractor::ensure_channel_buffers(const cv::Mat& orig_frame)
 {
-    if (ch[0].rows != orig_frame.rows || ch[0].cols != orig_frame.cols)
-        for (cv::Mat1b& x : ch)
-            x = cv::Mat1b(orig_frame.rows, orig_frame.cols);
+    for (cv::Mat1b& x : ch)
+        x.create(orig_frame.rows, orig_frame.cols);
 }
 
 void PointExtractor::ensure_buffers(const cv::Mat& frame)
 {
     const int W = frame.cols, H = frame.rows;
 
-    if (frame_gray.rows != W || frame_gray.cols != H)
-    {
-        frame_gray = cv::Mat1b(H, W);
-        frame_bin = cv::Mat1b(H, W);
-        frame_gray_unmasked = cv::Mat1b(H, W);
-    }
+    frame_gray.create(H, W);
+    frame_bin.create(H, W);
+    frame_gray_unmasked.create(H, W);
 }
 
 void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, cv::Mat1b& dest)

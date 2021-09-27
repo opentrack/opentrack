@@ -36,15 +36,14 @@ void Preview::set_last_frame(const pt_frame& frame_)
 
 Preview::Preview(int w, int h)
 {
-    ensure_size(frame_out, w, h, CV_8UC4);
-    ensure_size(frame_copy, w, h, CV_8UC3);
-
-    frame_copy.setTo(cv::Scalar(0, 0, 0));
+    frame_out.create(w, h, CV_8UC4);
+    frame_copy.create(w, h, CV_8UC3);
+    frame_copy.setTo({0});
 }
 
 QImage Preview::get_bitmap()
 {
-    int stride = frame_out.step.p[0];
+    int stride = (int)frame_out.step.p[0];
 
     if (stride < 64 || stride < frame_out.cols * 4)
     {
@@ -78,12 +77,6 @@ void Preview::draw_head_center(f x, f y)
              cv::Point(px, py - len),
              cv::Point(px, py + len),
              color, 1);
-}
-
-void Preview::ensure_size(cv::Mat& frame, int w, int h, int type)
-{
-    if (frame.cols != w || frame.rows != h || frame.type() != type)
-        frame = cv::Mat(h, w, type);
 }
 
 } // ns pt_module

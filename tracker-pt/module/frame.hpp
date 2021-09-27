@@ -32,8 +32,6 @@ struct Preview final : pt_preview
     operator cv::Mat const&() const { return frame_copy; }
 
 private:
-    static void ensure_size(cv::Mat& frame, int w, int h, int type);
-
     cv::Mat frame_copy, frame_out, frame_tmp;
 };
 

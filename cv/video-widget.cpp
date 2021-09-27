@@ -13,15 +13,8 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         return;
 
     cv::Mat const* __restrict scaled = nullptr;
-
-    if (frame3.cols != W || frame3.rows != H)
-    {
-        frame3 = cv::Mat(H, W, frame.type());
-        frame2 = cv::Mat(H, W, CV_8UC4);
-
-        if (!frame2.isContinuous() || !frame3.isContinuous())
-            std::abort();
-    }
+    frame3.create(H, W, frame.type());
+    frame2.create(H, W, CV_8UC4);
 
     if (frame.cols != W || frame.rows != H)
     {
@@ -37,7 +30,6 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         scaled = &frame;
 
     int color_cvt = cv::COLOR_COLORCVT_MAX;
-    constexpr int nchannels = 4;
 
     switch (scaled->channels())
     {
@@ -47,7 +39,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
     case 3:
         color_cvt = cv::COLOR_BGR2BGRA;
         break;
-    case nchannels:
+    case 4:
         break;
     default:
         unreachable();
