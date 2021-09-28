@@ -29,8 +29,7 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     s { traits->get_module_name() },
     point_extractor { traits->make_point_extractor() },
     camera { traits->make_camera() },
-    frame { traits->make_frame() },
-    preview_frame {}
+    frame { traits->make_frame() }
 {
     opencv_init();
 

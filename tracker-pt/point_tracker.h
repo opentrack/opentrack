@@ -82,7 +82,6 @@ private:
 
     Affine X_CM;  // transform from model to camera
     Affine X_CM_expected;
-    PointOrder prev_positions;
     Timer t;
     bool init_phase = true;
 };
