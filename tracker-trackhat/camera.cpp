@@ -1,4 +1,5 @@
 #include "trackhat.hpp"
+#include "compat/sleep.hpp"
 #include <QDebug>
 
 pt_camera::result trackhat_camera::get_info() const
@@ -80,6 +81,12 @@ error:
 
 bool trackhat_camera::start(const pt_settings&)
 {
+    int attempts = 0;
+
+    if (status >= th_running)
+        return true;
+
+start:
     stop();
     trackHat_EnableDebugMode();
 
@@ -99,6 +106,11 @@ bool trackhat_camera::start(const pt_settings&)
     return true;
 error:
     stop();
+    if (++attempts < 5)
+    {
+        portable::sleep(100);
+        goto start;
+    }
     return false;
 }
 
