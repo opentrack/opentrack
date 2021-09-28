@@ -1,6 +1,4 @@
 ./cleye.config
-./doc
-./doc/3rdparty-notices
 ./doc/3rdparty-notices/EIGEN-COPYING.txt
 ./doc/3rdparty-notices/FACETRACKNOIR-COPYING.txt
 ./doc/3rdparty-notices/NFAILCLIENT-CREDIT.txt
@@ -14,12 +12,10 @@
 ./doc/settings
 ./doc/settings/facetracknoir supported games.csv
 ./doc/WARRANTY.txt
-./i18n
 ./i18n/nl_NL.qm
 ./i18n/ru_RU.qm
 ./i18n/stub.qm
 ./i18n/zh_CN.qm
-./modules
 ./modules/cleye.config
 ./modules/freetrackclient.dll
 ./modules/freetrackclient64.dll
