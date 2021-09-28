@@ -13,6 +13,7 @@
 #include "point_tracker.h"
 #include "cv/numeric.hpp"
 #include "video/video-widget.hpp"
+#include "point-filter.hpp"
 
 #include <atomic>
 #include <memory>
@@ -74,6 +75,7 @@ private:
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success = false;
     mutable QMutex center_lock, data_lock;
+    point_filter filter{s};
 };
 
 } // ns pt_impl

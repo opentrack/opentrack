@@ -120,6 +120,12 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     tie_setting(s.auto_threshold,
                 this,
                 [this](bool) { s.threshold_slider.notify(); });
+
+    tie_setting(s.enable_point_filter, ui.enable_point_filter);
+    tie_setting(s.point_filter_coefficient, ui.point_filter_slider);
+    connect(&s.point_filter_coefficient, value_::value_changed<slider_value>(),
+            ui.point_filter_label, [this] { ui.point_filter_label->setValue(*s.point_filter_coefficient); } );
+    ui.point_filter_label->setValue(*s.point_filter_coefficient);
 }
 
 QString TrackerDialog_PT::threshold_display_text(int threshold_value)

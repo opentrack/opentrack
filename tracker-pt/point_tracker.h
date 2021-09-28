@@ -11,6 +11,7 @@
 #include "cv/affine.hpp"
 #include "cv/numeric.hpp"
 #include "pt-api.hpp"
+#include "point-filter.hpp"
 
 #include <cstddef>
 #include <memory>
@@ -60,7 +61,11 @@ public:
     // track the pose using the set of normalized point coordinates (x pos in range -0.5:0.5)
     // f : (focal length)/(sensor width)
     // dt : time since last call
-    void track(const std::vector<vec2>& projected_points, const PointModel& model, const pt_camera_info& info, int init_phase_timeout);
+    void track(const std::vector<vec2>& projected_points,
+               const PointModel& model,
+               const pt_camera_info& info,
+               int init_phase_timeout,
+               point_filter& filter);
     Affine pose() const { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);

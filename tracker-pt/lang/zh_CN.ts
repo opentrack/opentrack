@@ -280,6 +280,18 @@ Don&apos;t roll or change position.</source>
         <source>MJPEG compression</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Point filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Filter point centers prior to pose estimation.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>

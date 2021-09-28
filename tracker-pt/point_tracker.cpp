@@ -135,7 +135,8 @@ PointTracker::PointOrder PointTracker::find_correspondences_previous(const vec2*
 void PointTracker::track(const std::vector<vec2>& points,
                          const PointModel& model,
                          const pt_camera_info& info,
-                         int init_phase_timeout)
+                         int init_phase_timeout,
+                         point_filter& filter)
 {
     const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointOrder order;
@@ -148,7 +149,7 @@ void PointTracker::track(const std::vector<vec2>& points,
     else
         order = find_correspondences_previous(points.data(), model, info);
 
-    if (POSIT(model, order, fx) != -1)
+    if (POSIT(model, filter(order), fx) != -1)
     {
         init_phase = false;
         t.start();
