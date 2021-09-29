@@ -182,7 +182,7 @@ void spline::update_interp_data() const
     }
     else
     {
-        if (list[0].x() > 1e-2)
+        if (list[0].x() > 1e-6)
             list.push_front({});
 
         // now this is hella expensive due to `c_interp'
