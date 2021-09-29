@@ -249,6 +249,17 @@ void spline::update_interp_data() const
         last = data[i];
     }
 
+    // make sure empty places stay empty (see #1341)
+    if (auto it = std::find_if(list.cbegin(), list.cend(),
+                               [](QPointF x) { return x.x() >= 1e-6 && x.y() >= 1e-6; });
+        it != list.cend() && it != list.cbegin())
+    {
+        it--;
+        unsigned max = std::clamp((unsigned)iround(it->x() * c), 0u, value_count-1);
+
+        for (unsigned x = 0; x < max; x++)
+            data[x] = 0;
+    }
 #ifdef __clang__
 #   pragma clang diagnostic pop
 #endif
