@@ -165,7 +165,7 @@ void spline::update_interp_data() const
         const QPointF& pt = list[0];
         const double x = pt.x();
         const double y = pt.y();
-        const unsigned max = std::clamp((unsigned)iround(x * c), 0u, value_count-1);
+        const unsigned max = std::clamp((unsigned)iround(x * c), 1u, value_count-1);
 
         for (unsigned k = 0; k <= max; k++)
             data[k] = float(y * k / max); // no need for bresenham
