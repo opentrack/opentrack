@@ -170,6 +170,16 @@ void spline::update_interp_data() const
         for (unsigned k = 0; k <= max; k++)
             data[k] = float(y * k / max); // no need for bresenham
     }
+    else if (sz == 2 && list[0].y() < 1e-6)
+    {
+        unsigned start = std::clamp((unsigned)iround(list[0].x() * c), 1u, value_count-1);
+        unsigned end = std::clamp((unsigned)iround(list[1].x() * c), 2u, value_count-1);
+        unsigned max = end - start;
+        for (unsigned x = 0; x < start; x++)
+            data[x] = 0;
+        for (unsigned x = 0; x < max; x++)
+            data[start + x] = (float)(list[1].y() * x / max);
+    }
     else
     {
         if (list[0].x() > 1e-2)
