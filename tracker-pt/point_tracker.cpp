@@ -78,7 +78,8 @@ void PointModel::get_d_order(const vec2* points, unsigned* d_order, const vec2& 
     for (unsigned i = 0; i < cnt; ++i)
         d_vals[i] = t(d.dot(points[i]), i);
 
-    std::sort(d_vals, d_vals + 3, [](t a, t& b) { return a.first < b.first; });
+    std::sort(std::begin(d_vals), std::end(d_vals),
+              [](t a, t& b) { return a.first < b.first; });
 
     for (unsigned i = 0; i < cnt; ++i)
         d_order[i] = d_vals[i].second;
