@@ -50,7 +50,6 @@ struct Tracker_PT : QThread, ITracker
 private:
     void run() override;
 
-    bool maybe_reopen_camera();
     void set_fov(int value);
 
     pointer<pt_runtime_traits> traits;
@@ -74,6 +73,7 @@ private:
 
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success = false;
+    std::atomic<bool> reopen_camera_flag = true;
     mutable QMutex center_lock, data_lock;
     point_filter filter{s};
 };

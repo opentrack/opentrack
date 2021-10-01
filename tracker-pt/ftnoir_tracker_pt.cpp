@@ -28,16 +28,12 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     traits { traits },
     s { traits->get_module_name() },
     point_extractor { traits->make_point_extractor() },
-    camera { traits->make_camera() },
     frame { traits->make_frame() }
 {
     opencv_init();
 
-    connect(s.b.get(), &bundle_::saving, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
-    connect(s.b.get(), &bundle_::reloading, this, &Tracker_PT::maybe_reopen_camera, Qt::DirectConnection);
-
+    connect(s.b.get(), &bundle_::saving, this, [this]{ reopen_camera_flag = true; }, Qt::DirectConnection);
     connect(&s.fov, value_::value_changed<int>(), this, &Tracker_PT::set_fov, Qt::DirectConnection);
-    set_fov(s.fov);
 }
 
 Tracker_PT::~Tracker_PT()
@@ -53,11 +49,21 @@ void Tracker_PT::run()
 {
     portable::set_curthread_name("tracker/pt");
 
-    if (!maybe_reopen_camera())
-        return;
-
     while(!isInterruptionRequested())
     {
+        if (reopen_camera_flag)
+        {
+            reopen_camera_flag = false;
+            if (camera)
+                camera->stop();
+            camera = traits->make_camera();
+            set_fov(s.fov);
+            {
+                QMutexLocker l(&camera_mtx);
+                (void)camera->start(s);
+            }
+        }
+
         pt_camera_info info;
         bool new_frame = false;
 
@@ -111,17 +117,11 @@ void Tracker_PT::run()
     }
 }
 
-bool Tracker_PT::maybe_reopen_camera()
-{
-    QMutexLocker l(&camera_mtx);
-
-    return camera->start(s);
-}
-
 void Tracker_PT::set_fov(int value)
 {
     QMutexLocker l(&camera_mtx);
-    camera->set_fov(value);
+    if (camera)
+        camera->set_fov(value);
 }
 
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
@@ -206,9 +206,10 @@ int Tracker_PT::get_n_points()
 bool Tracker_PT::get_cam_info(pt_camera_info& info)
 {
     QMutexLocker l(&camera_mtx);
-    bool ret;
+    bool ret = false;
 
-    std::tie(ret, info) = camera->get_info();
+    if (camera)
+        std::tie(ret, info) = camera->get_info();
     return ret;
 }
 
