@@ -736,7 +736,7 @@
              <number>0</number>
             </property>
             <property name="maximum">
-             <number>400</number>
+             <number>300</number>
             </property>
             <property name="singleStep">
              <number>1</number>
