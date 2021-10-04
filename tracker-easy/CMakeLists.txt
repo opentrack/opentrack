@@ -8,7 +8,7 @@ if(OpenCV_FOUND)
                             "-DCXX_STANDARD=17" "-DCXX_STANDARD_REQUIRED=1"
                 OUTPUT_VARIABLE krap)
     if(tracker-easy_ocv-check)
-        foreach(k video highgui)
+        foreach(k highgui videoio imgcodecs imgproc calib3d video features2d flann)
             otr_install_lib("opencv_${k}" "${opentrack-libexec}")
         endforeach()
 
