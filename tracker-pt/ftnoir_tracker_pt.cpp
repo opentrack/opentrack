@@ -60,7 +60,8 @@ void Tracker_PT::run()
             set_fov(s.fov);
             {
                 QMutexLocker l(&camera_mtx);
-                (void)camera->start(s);
+                if (!camera->start(s))
+                    break;
             }
         }
 
