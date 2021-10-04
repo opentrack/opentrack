@@ -6,6 +6,10 @@ SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 5.01)
 set(CMAKE_SYSTEM_PROCESSOR x86)
 
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
+    include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
+endif()
+
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 # don't poison with system compile-time data
@@ -21,7 +25,7 @@ add_compile_options(-diagnostics:classic)
 add_definitions(-D_HAS_EXCEPTIONS=0)
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
-    include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
+    #include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 
     add_compile_options("-W4")
 
