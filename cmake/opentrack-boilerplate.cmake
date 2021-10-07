@@ -235,7 +235,8 @@ function(otr_module n_)
             endif()
         else()
             # Plugins
-            install(TARGETS "${n}" ${opentrack-install-src}
+            install(TARGETS "${n}"
+                    RUNTIME DESTINATION ${opentrack-libexec}
                     PERMISSIONS ${opentrack-perms-exec})
         endif()
 
