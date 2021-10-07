@@ -21,7 +21,7 @@ set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 set(opentrack_maintainer-mode TRUE CACHE INTERNAL "" FORCE)
 
 setq(EIGEN3_INCLUDE_DIR "eigen")
-setq(OpenCV_DIR "opencv/build")
+setq(OpenCV_DIR "opencv/build/install")
 setq(SDL2_DIR "SDL2-win32")
 setq(SDK_ARUCO_LIBPATH "aruco/build/src/aruco.lib")
 setq(SDK_FSUIPC "fsuipc")
