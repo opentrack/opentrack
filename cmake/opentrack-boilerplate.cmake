@@ -237,6 +237,7 @@ function(otr_module n_)
             # Plugins
             install(TARGETS "${n}"
                     RUNTIME DESTINATION ${opentrack-libexec}
+                    LIBRARY DESTINATION ${opentrack-libexec}
                     PERMISSIONS ${opentrack-perms-exec})
         endif()
 
