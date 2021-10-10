@@ -12,6 +12,10 @@ void point_filter::reset()
 
 const PointOrder& point_filter::operator()(const PointOrder& input)
 {
+    using std::fmod;
+    using std::sqrt;
+    using std::pow;
+
     if (!s.enable_point_filter)
     {
         t = std::nullopt;
@@ -31,7 +35,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
         constexpr int A = 1'000'000;
         double K = *s.point_filter_coefficient;
         f log10_pos = -2 + (int)K, rest = (f)(.999-fmod(K, 1.)*.9);
-        return A * std::pow((f)10, (f)-log10_pos) * rest;
+        return A * pow((f)10, (f)-log10_pos) * rest;
     );
 
     f dist = 0;
@@ -47,7 +51,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
         return state_;
 
     f dt = (f)t->elapsed_seconds(); t->start();
-    f delta = std::pow(dist, E) * C * dt; // gain
+    f delta = pow(dist, E) * C * dt; // gain
 
     //qDebug() << "gain" << std::min((f)1, delta);
 

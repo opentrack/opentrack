@@ -222,22 +222,22 @@ function(otr_module n_)
         if(arg_BIN)
             if (APPLE)
                 install(TARGETS "${n}"
-                RUNTIME DESTINATION ${opentrack-bin}
-                BUNDLE	DESTINATION ${opentrack-bin}
-                LIBRARY DESTINATION ${opentrack-bin}/Library
-                RESOURCE DESTINATION ${opentrack-bin}/opentrack.app/Resource
+                RUNTIME DESTINATION "${opentrack-bin}"
+                BUNDLE	DESTINATION "${opentrack-bin}"
+                LIBRARY DESTINATION "${opentrack-bin}/Library"
+                RESOURCE DESTINATION "${opentrack-bin}/opentrack.app/Resource"
                 PERMISSIONS ${opentrack-perms-exec})
             else()
                 install(TARGETS "${n}"
-                    RUNTIME DESTINATION ${opentrack-bin}
-                    LIBRARY DESTINATION ${opentrack-libexec}
+                    RUNTIME DESTINATION "${opentrack-bin}"
+                    LIBRARY DESTINATION "${opentrack-libexec}"
                     PERMISSIONS ${opentrack-perms-exec})
             endif()
         else()
             # Plugins
             install(TARGETS "${n}"
-                    RUNTIME DESTINATION ${opentrack-libexec}
-                    LIBRARY DESTINATION ${opentrack-libexec}
+                    RUNTIME DESTINATION "${opentrack-libexec}"
+                    LIBRARY DESTINATION "${opentrack-libexec}"
                     PERMISSIONS ${opentrack-perms-exec})
         endif()
 
