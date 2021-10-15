@@ -31,7 +31,7 @@ f pt_point_extractor::threshold_radius_value(int w, int h, int threshold)
     f cx = w / f{640}, cy = h / f{480};
 
     const f min_radius = f{1.75} * cx;
-    const f max_radius = f{15} * cy;
+    const f max_radius = f{30} * cy;
 
     const f radius = std::fmax(f{0}, (max_radius-min_radius) * threshold / f(255) + min_radius);
 
