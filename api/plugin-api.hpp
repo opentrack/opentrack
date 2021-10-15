@@ -55,15 +55,18 @@ private slots:
 #define OPENTRACK_DECLARE_PLUGIN_INTERNAL(ctor_class, ctor_ret_class, metadata_class, dialog_class, dialog_ret_class) \
     extern "C"                                                  \
     {                                                           \
-        OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor(void)  \
+        OTR_PLUGIN_EXPORT ctor_ret_class* GetConstructor(void); \
+        ctor_ret_class* GetConstructor(void)                    \
         {                                                       \
             return new ctor_class;                              \
         }                                                       \
-        OTR_PLUGIN_EXPORT Metadata_* GetMetadata(void)          \
+        OTR_PLUGIN_EXPORT Metadata_* GetMetadata(void);         \
+        Metadata_* GetMetadata(void)                            \
         {                                                       \
             return new metadata_class;                          \
         }                                                       \
-        OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog(void)     \
+        OTR_PLUGIN_EXPORT dialog_ret_class* GetDialog(void);    \
+        dialog_ret_class* GetDialog(void)                       \
         {                                                       \
             return new dialog_class;                            \
         }                                                       \
