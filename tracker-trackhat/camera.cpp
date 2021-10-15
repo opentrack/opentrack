@@ -32,7 +32,15 @@ QString trackhat_camera::get_active_name() const
 void trackhat_camera::set_fov(pt_camera::f) {}
 void trackhat_camera::show_camera_settings() {}
 
-trackhat_camera::trackhat_camera() = default;
+trackhat_camera::trackhat_camera()
+{
+    s.set_raii_dtor_state(false);
+    t.set_raii_dtor_state(false);
+
+    QObject::connect(t.b.get(), &options::bundle_::changed,
+                     &sig, &trackhat_impl::setting_receiver::settings_changed,
+                     Qt::DirectConnection);
+}
 
 trackhat_camera::~trackhat_camera()
 {
@@ -41,6 +49,13 @@ trackhat_camera::~trackhat_camera()
 
 pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
 {
+    if (sig.test_and_clear())
+    {
+        set_pt_options();
+        qDebug() << "tracker/trackhat: set regs";
+        init_regs();
+    }
+
     auto& ret = *frame_.as<trackhat_frame>();
     trackhat_frame frame;
     trackHat_ExtendedPoints_t points = {};
@@ -81,6 +96,9 @@ int trackhat_camera::init_regs()
     constexpr uint8_t regs[][3] = {
         { 0x0c, 0x0f, 0xf0 },  // exposure lo
         { 0x0c, 0x10, 0x7f },  // exposure hi
+        { 0x00, 0x0b, 0xff },  // blob area max size
+        { 0x00, 0x0c, 0x03 },  // blob area min size
+        { 0x00, 0x01, 0x01 },  // bank0 sync
         { 0x01, 0x01, 0x01 },  // bank1 sync
     };
 
@@ -97,6 +115,8 @@ int trackhat_camera::init_regs()
 bool trackhat_camera::start(const pt_settings&)
 {
     int attempts = 0;
+
+    set_pt_options();
 
     if (status >= th_running)
         return true;

@@ -3,9 +3,52 @@
 #include "../tracker-pt/pt-api.hpp"
 #include "track_hat_driver.h"
 #include "compat/macros.hpp"
+#include "options/options.hpp"
 
 #include <array>
+#include <atomic>
 #include <opencv2/core.hpp>
+
+enum model_type : int
+{
+    model_cap = 1,
+    model_clip_left,
+    model_clip_right,
+    model_mini_clip_left,
+    model_mini_clip_right,
+};
+
+namespace trackhat_impl
+{
+using namespace options;
+
+struct trackhat_settings : opts
+{
+    trackhat_settings();
+    value<slider_value> exposure{b, "exposure", {0xfff0, 1, 0xfff0}};
+    value<slider_value> threshold{b, "threshold", {0x97, 64, 0xff}};
+    value<model_type> model{b, "model", model_mini_clip_left};
+    value<double> min_pt_size{b, "min-point-size", 2};
+    value<double> max_pt_size{b, "max-point-size", 8};
+    value<bool> enable_point_filter{b, "enable-point-filter", true };
+    value<slider_value> point_filter_coefficient{b, "point-filter-coefficient", { 1, 0, 4 }};
+};
+
+class setting_receiver : public QObject
+{
+    Q_OBJECT
+
+public:
+    bool test_and_clear();
+public slots:
+    void settings_changed();
+private:
+    std::atomic<bool> changed{false};
+};
+
+} // ns trackhat_impl
+
+using typename trackhat_impl::trackhat_settings;
 
 struct trackhat_metadata final : pt_runtime_traits
 {
@@ -25,7 +68,6 @@ struct trackhat_metadata final : pt_runtime_traits
 
 struct point
 {
-    double radius;
     int brightness = 0, x, y, W, H;
     bool ok = false;
 };
@@ -40,6 +82,7 @@ struct trackhat_camera final : pt_camera
     bool start(const pt_settings& s) override;
     void stop() override;
     [[nodiscard]] int init_regs();
+    void set_pt_options();
 
     pt_camera::result get_frame(pt_frame& frame) override;
     pt_camera::result get_info() const override;
@@ -57,11 +100,13 @@ struct trackhat_camera final : pt_camera
 
 private:
     enum device_status { th_noinit, th_init, th_detect, th_connect, th_running, };
+    trackhat_impl::setting_receiver sig;
 
     trackHat_Device_t device {};
     device_status status = th_noinit;
     TH_ErrorCode error_code = TH_SUCCESS;
     pt_settings s{trackhat_metadata::module_name};
+    trackhat_settings t;
 };
 
 struct trackhat_frame final : pt_frame
@@ -99,7 +144,4 @@ struct trackhat_extractor final : pt_point_extractor
 
     trackhat_extractor() = default;
     ~trackhat_extractor() override = default;
-
-private:
-    pt_settings s{trackhat_metadata::module_name};
 };

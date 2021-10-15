@@ -102,7 +102,6 @@ void trackhat_frame::init_points(trackHat_ExtendedPoints_t points_, double min_s
         if (i < 3 && radius >= min_size && radius <= max_size)
             p.ok = true;
 
-        p.radius = radius;
         p.brightness = pt.m_averageBrightness;
         p.W = std::max(1, pt.m_boundryRigth - pt.m_boundryLeft);
         p.H = std::max(1, pt.m_boundryDown  - pt.m_boundryUp);
