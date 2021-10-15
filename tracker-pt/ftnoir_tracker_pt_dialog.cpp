@@ -91,8 +91,6 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
 
     poll_tracker_info_impl();
 
-    connect(this, &TrackerDialog_PT::poll_tracker_info, this, &TrackerDialog_PT::poll_tracker_info_impl, Qt::DirectConnection);
-
     constexpr pt_color_type color_types[] = {
         pt_color_average,
         pt_color_natural,
@@ -278,7 +276,7 @@ void TrackerDialog_PT::register_tracker(ITracker *t)
 {
     tracker = static_cast<Tracker_PT*>(t);
     ui.tcalib_button->setEnabled(true);
-    poll_tracker_info();
+    poll_tracker_info_impl();
     timer.start();
 }
 
@@ -286,7 +284,7 @@ void TrackerDialog_PT::unregister_tracker()
 {
     tracker = nullptr;
     ui.tcalib_button->setEnabled(false);
-    poll_tracker_info();
+    poll_tracker_info_impl();
     timer.stop();
 }
 
