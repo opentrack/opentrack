@@ -27,9 +27,13 @@ struct OTR_OPTIONS_EXPORT opts
     opts& operator=(const opts&) = delete;
     opts(const opts&) = delete;
 
+    void set_raii_dtor_state(bool x) { raii = x; }
+
 protected:
     explicit opts(const QString& name);
     ~opts();
+private:
+    bool raii = true;
 };
 
 }

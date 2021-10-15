@@ -47,7 +47,7 @@ static bool is_tracker_teardown()
 
 opts::~opts()
 {
-    if (!is_tracker_teardown())
+    if (!is_tracker_teardown() && raii)
         b->reload();
 #if 0
     else
