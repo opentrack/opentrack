@@ -59,32 +59,56 @@ void trackhat_preview::draw_center()
 
 void trackhat_preview::draw_points()
 {
-    for (unsigned i = 0; i < std::size(points.m_point); i++)
+    for (const auto& pt : points)
     {
-        const auto pt = points.m_point[i];
-
-        if (pt.m_brightness == 0)
+        if (pt.brightness == 0)
             continue;
 
-        constexpr f sz = trackhat_camera::sensor_size;
-        int x = iround(std::clamp((f)pt.m_x, f(0), sz-1) * (f)frame_bgr.cols / sz),
-            y = iround(std::clamp((f)pt.m_y, f(0), sz-1) * (f)frame_bgr.rows / sz);
-
+        constexpr int sz = trackhat_camera::sensor_size;
+        constexpr f scaling_factor = 5;
+        const int x = pt.x * frame_bgr.cols / sz, y = pt.y * frame_bgr.rows / sz;
         const f dpi = (f)frame_bgr.cols / f(320);
-        int c = (int)pt.m_brightness;
-        constexpr int point_size = 6;
-        auto outline_color = i < 3 ? cv::Scalar{255, 255, 0} : cv::Scalar{192, 192, 192};
+        const int W = std::max(1, iround(pt.W * frame_bgr.cols * scaling_factor / sz)),
+                  H = std::max(1, iround(pt.H * frame_bgr.rows * scaling_factor / sz));
+        const auto point_color = progn(double c = pt.brightness; return cv::Scalar{c, c, c};);
+        const auto outline_color = pt.ok
+                                   ? cv::Scalar{255, 255, 0}
+                                   : cv::Scalar{192, 192, 192};
 
-        cv::circle(frame_bgr,
-                   {x, y},
-                   iround(point_size * dpi),
-                   outline_color,
-                   iround(dpi), cv::LINE_AA);
+        cv::ellipse(frame_bgr, cv::Point{x, y}, {W, H},
+                    0, 0, 360, point_color, -1, cv::LINE_AA);
+        cv::ellipse(frame_bgr, {x, y}, {iround(W + 2*dpi), iround(H + 2*dpi)},
+                    0, 0, 360, outline_color, iround(dpi), cv::LINE_AA);
+    }
+}
 
-        cv::circle(frame_bgr,
-                   {x, y},
-                   iround((point_size-2) * dpi),
-                   cv::Scalar(c, c, c),
-                   -1);
+void trackhat_frame::init_points(trackHat_ExtendedPoints_t points_, double min_size, double max_size)
+{
+    std::sort(std::begin(points_.m_point), std::end(points_.m_point),
+        [](trackHat_ExtendedPoint_t p1, trackHat_ExtendedPoint_t p2) {
+      return p1.m_averageBrightness > p2.m_averageBrightness;
+    });
+
+    unsigned i = 0;
+
+    for (const trackHat_ExtendedPoint_t& pt : points_.m_point)
+    {
+        if (pt.m_averageBrightness == 0)
+            continue;
+
+        point p = {};
+
+        const double radius = std::sqrt(pt.m_area) / std::sqrt(M_PI);
+        if (i < 3 && radius >= min_size && radius <= max_size)
+            p.ok = true;
+
+        p.radius = radius;
+        p.brightness = pt.m_averageBrightness;
+        p.W = std::max(1, pt.m_boundryRigth - pt.m_boundryLeft);
+        p.H = std::max(1, pt.m_boundryDown  - pt.m_boundryUp);
+        p.x = trackhat_camera::sensor_size-1-pt.m_coordinateX;
+        p.y = pt.m_coordinateY;
+
+        points[i++] = p;
     }
 }

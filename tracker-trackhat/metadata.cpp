@@ -1,8 +1,9 @@
 #include "metadata.hpp"
 #include "api/plugin-api.hpp"
+#include "trackhat.hpp"
 
 // XXX TODO
-static const QString bundle_name = QStringLiteral("tracker-pt");
+const QString trackhat_metadata::module_name = QStringLiteral("tracker-pt");
 
 pt_runtime_traits::pointer<pt_camera> trackhat_metadata::make_camera() const
 {
@@ -26,7 +27,7 @@ pt_runtime_traits::pointer<pt_preview> trackhat_metadata::make_preview(int w, in
 
 QString trackhat_metadata::get_module_name() const
 {
-    return bundle_name;
+    return trackhat_metadata::module_name;
 }
 
 trackhat_pt::trackhat_pt() :
@@ -34,7 +35,7 @@ trackhat_pt::trackhat_pt() :
 {
 }
 
-trackhat_pt_dialog::trackhat_pt_dialog() : TrackerDialog_PT(bundle_name)
+trackhat_pt_dialog::trackhat_pt_dialog() : TrackerDialog_PT(trackhat_metadata::module_name)
 {
 }
 

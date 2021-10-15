@@ -26,4 +26,5 @@ class trackhat_module final : public Metadata
 public:
     QString name() override { return tr("TrackHat Point Tracker"); }
     QIcon icon() override { return QIcon(":/images/trackhat-64x64.png"); }
+    static const QString module_name;
 };

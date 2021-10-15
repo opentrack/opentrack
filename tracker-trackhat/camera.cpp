@@ -43,27 +43,24 @@ pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
 {
     auto& ret = *frame_.as<trackhat_frame>();
     trackhat_frame frame;
+    trackHat_ExtendedPoints_t points = {};
 
     if (status < th_running || error_code != TH_SUCCESS)
-    {
-        if (status >= th_running)
-            qDebug() << "trackhat: disconnected, status" << (void*)error_code;
         goto error;
-    }
 
-    if (TH_ErrorCode error = trackHat_GetDetectedPoints(&device, &frame.points); error != TH_SUCCESS)
+    if (TH_ErrorCode error = trackHat_GetDetectedPointsExtended(&device, &points); error != TH_SUCCESS)
     {
         error_code = error;
         goto error;
     }
 
-    ret.points = frame.points;
+    ret.init_points(points, s.min_point_size, s.max_point_size);
     return {true, get_desired()};
 
 error:
-    if (error_code != TH_SUCCESS)
+    if (status >= th_running)
         qDebug() << "trackhat: error" << (void*)error_code;
-    ret.points = {};
+    ret.init_points(points, s.min_point_size, s.max_point_size);
     stop();
     return {false, get_desired()};
 }
@@ -78,6 +75,24 @@ error:
             goto error;                                         \
         }                                                       \
     } while (false)
+
+int trackhat_camera::init_regs()
+{
+    constexpr uint8_t regs[][3] = {
+        { 0x0c, 0x0f, 0xf0 },  // exposure lo
+        { 0x0c, 0x10, 0x7f },  // exposure hi
+        { 0x01, 0x01, 0x01 },  // bank1 sync
+    };
+
+    for (const auto& reg : regs)
+    {
+        trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
+        if (TH_ErrorCode error = trackHat_SetRegisterValue(&device, &r); error != TH_SUCCESS)
+            return error;
+    }
+
+    return TH_SUCCESS;
+}
 
 bool trackhat_camera::start(const pt_settings&)
 {
@@ -96,12 +111,9 @@ start:
 
     CHECK(trackHat_Initialize(&device)); status = th_init;
     CHECK(trackHat_DetectDevice(&device)); status = th_detect;
-    CHECK(trackHat_Connect(&device)); status = th_connect;
-    CHECK(trackHat_GetUptime(&device, &uptime)); status = th_running;
-
-#if 0
-    qDebug() << "trackhat start: device uptime" << uptime << "seconds";
-#endif
+    CHECK(trackHat_Connect(&device, TH_FRAME_EXTENDED)); status = th_connect;
+    CHECK(trackHat_GetUptime(&device, &uptime));
+    CHECK((TH_ErrorCode)init_regs()); status = th_running;
 
     return true;
 error:
@@ -133,4 +145,3 @@ void trackhat_camera::stop()
     status = th_noinit;
     device = {};
 }
-

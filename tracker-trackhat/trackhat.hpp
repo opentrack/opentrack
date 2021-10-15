@@ -4,7 +4,31 @@
 #include "track_hat_driver.h"
 #include "compat/macros.hpp"
 
+#include <array>
 #include <opencv2/core.hpp>
+
+struct trackhat_metadata final : pt_runtime_traits
+{
+    pt_runtime_traits::pointer<pt_camera> make_camera() const override;
+    pt_runtime_traits::pointer<pt_point_extractor> make_point_extractor() const override;
+    pt_runtime_traits::pointer<pt_frame> make_frame() const override;
+    pt_runtime_traits::pointer<pt_preview> make_preview(int w, int h) const override;
+    QString get_module_name() const override;
+
+    OTR_DISABLE_MOVE_COPY(trackhat_metadata);
+
+    trackhat_metadata() = default;
+    ~trackhat_metadata() override = default;
+
+    static const QString module_name;
+};
+
+struct point
+{
+    double radius;
+    int brightness = 0, x, y, W, H;
+    bool ok = false;
+};
 
 struct trackhat_camera final : pt_camera
 {
@@ -15,6 +39,7 @@ struct trackhat_camera final : pt_camera
 
     bool start(const pt_settings& s) override;
     void stop() override;
+    [[nodiscard]] int init_regs();
 
     pt_camera::result get_frame(pt_frame& frame) override;
     pt_camera::result get_info() const override;
@@ -36,14 +61,16 @@ private:
     trackHat_Device_t device {};
     device_status status = th_noinit;
     TH_ErrorCode error_code = TH_SUCCESS;
+    pt_settings s{trackhat_metadata::module_name};
 };
 
 struct trackhat_frame final : pt_frame
 {
-    trackHat_Points_t points = {};
-
+    void init_points(trackHat_ExtendedPoints_t points, double min_size, double max_size);
     trackhat_frame() = default;
     ~trackhat_frame() override = default;
+
+    std::array<point, trackhat_camera::point_count> points;
 };
 
 struct trackhat_preview final : pt_preview
@@ -61,7 +88,7 @@ struct trackhat_preview final : pt_preview
 
     cv::Mat frame_bgr, frame_bgra;
     numeric_types::vec2 center{-1, -1};
-    trackHat_Points_t points = {};
+    std::array<point, trackhat_camera::point_count> points;
 };
 
 struct trackhat_extractor final : pt_point_extractor
@@ -72,18 +99,7 @@ struct trackhat_extractor final : pt_point_extractor
 
     trackhat_extractor() = default;
     ~trackhat_extractor() override = default;
-};
 
-struct trackhat_metadata final : pt_runtime_traits
-{
-    pt_runtime_traits::pointer<pt_camera> make_camera() const override;
-    pt_runtime_traits::pointer<pt_point_extractor> make_point_extractor() const override;
-    pt_runtime_traits::pointer<pt_frame> make_frame() const override;
-    pt_runtime_traits::pointer<pt_preview> make_preview(int w, int h) const override;
-    QString get_module_name() const override;
-
-    OTR_DISABLE_MOVE_COPY(trackhat_metadata);
-
-    trackhat_metadata() = default;
-    ~trackhat_metadata() override = default;
+private:
+    pt_settings s{trackhat_metadata::module_name};
 };
