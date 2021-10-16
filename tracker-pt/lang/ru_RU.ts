@@ -346,6 +346,13 @@ ROLL или X/Y-смещения.</translation>
     </message>
 </context>
 <context>
+    <name>pt_impl::Tracker_PT</name>
+    <message>
+        <source>Failed to open camera &apos;%1&apos;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>pt_module::metadata_pt</name>
     <message>
         <source>PointTracker 1.1</source>

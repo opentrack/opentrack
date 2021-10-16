@@ -42,7 +42,8 @@ Tracker_PT::~Tracker_PT()
     wait();
 
     QMutexLocker l(&camera_mtx);
-    camera->stop();
+    if (camera)
+        camera->stop();
 }
 
 void Tracker_PT::run()
@@ -53,13 +54,14 @@ void Tracker_PT::run()
     {
         if (reopen_camera_flag)
         {
+            QMutexLocker l(&camera_mtx);
+
             reopen_camera_flag = false;
             if (camera)
                 camera->stop();
             camera = traits->make_camera();
             set_fov(s.fov);
             {
-                QMutexLocker l(&camera_mtx);
                 if (!camera->start(s))
                     break;
             }
@@ -127,7 +129,12 @@ void Tracker_PT::set_fov(int value)
 
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
 {
-    //video_frame->setAttribute(Qt::WA_NativeWindow);
+    {
+        QMutexLocker l(&camera_mtx);
+        auto camera = traits->make_camera();
+        if (!camera || !camera->start(s))
+            return error(tr("Failed to open camera '%1'").arg(s.camera_name));
+    }
 
     widget = std::make_unique<video_widget>(video_frame);
     layout = std::make_unique<QHBoxLayout>(video_frame);
