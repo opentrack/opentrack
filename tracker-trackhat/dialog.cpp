@@ -24,6 +24,10 @@ trackhat_dialog::trackhat_dialog()
     for (auto x : model_types)
         ui.model_type->addItem(QIcon{}, tr(x.name), (QVariant)(int)x.t);
 
+    ui.exposure_label->setValue((int)*t.exposure);
+    ui.threshold_label->setValue((int)*t.threshold);
+    ui.point_filter_label->setValue((int)*t.point_filter_coefficient);
+
     tie_setting(t.min_pt_size, ui.min_point_size);
     tie_setting(t.max_pt_size, ui.max_point_size);
     tie_setting(t.exposure, ui.exposure_slider);

@@ -75,23 +75,25 @@ void trackhat_preview::draw_points()
                                    ? cv::Scalar{255, 255, 0}
                                    : cv::Scalar{192, 192, 192};
 
-        cv::ellipse(frame_bgr, cv::Point{x, y}, {W, H},
+        cv::ellipse(frame_bgr, {x, y}, {W, H},
                     0, 0, 360, point_color, -1, cv::LINE_AA);
         cv::ellipse(frame_bgr, {x, y}, {iround(W + 2*dpi), iround(H + 2*dpi)},
                     0, 0, 360, outline_color, iround(dpi), cv::LINE_AA);
     }
 }
 
-void trackhat_frame::init_points(trackHat_ExtendedPoints_t points_, double min_size, double max_size)
+void trackhat_frame::init_points(const trackHat_ExtendedPoints_t& points_, double min_size, double max_size)
 {
-    std::sort(std::begin(points_.m_point), std::end(points_.m_point),
+    trackHat_ExtendedPoints_t copy = points_;
+
+    std::sort(std::begin(copy.m_point), std::end(copy.m_point),
         [](trackHat_ExtendedPoint_t p1, trackHat_ExtendedPoint_t p2) {
       return p1.m_averageBrightness > p2.m_averageBrightness;
     });
 
     unsigned i = 0;
 
-    for (const trackHat_ExtendedPoint_t& pt : points_.m_point)
+    for (const trackHat_ExtendedPoint_t& pt : copy.m_point)
     {
         if (pt.m_averageBrightness == 0)
             continue;
@@ -110,4 +112,7 @@ void trackhat_frame::init_points(trackHat_ExtendedPoints_t points_, double min_s
 
         points[i++] = p;
     }
+
+    for (; i < std::size(points); i++)
+        points[i] = {};
 }

@@ -37,7 +37,11 @@ trackhat_camera::trackhat_camera()
     s.set_raii_dtor_state(false);
     t.set_raii_dtor_state(false);
 
-    QObject::connect(t.b.get(), &options::bundle_::changed,
+    QObject::connect(&t.exposure, options::value_::value_changed<options::slider_value>(),
+                     &sig, &trackhat_impl::setting_receiver::settings_changed,
+                     Qt::DirectConnection);
+
+    QObject::connect(&t.threshold, options::value_::value_changed<options::slider_value>(),
                      &sig, &trackhat_impl::setting_receiver::settings_changed,
                      Qt::DirectConnection);
 }
@@ -49,34 +53,36 @@ trackhat_camera::~trackhat_camera()
 
 pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
 {
-    if (sig.test_and_clear())
-    {
-        set_pt_options();
-        qDebug() << "tracker/trackhat: set regs";
-        init_regs();
-    }
-
-    auto& ret = *frame_.as<trackhat_frame>();
-    trackhat_frame frame;
-    trackHat_ExtendedPoints_t points = {};
-
+start:
     if (status < th_running || error_code != TH_SUCCESS)
         goto error;
 
-    if (TH_ErrorCode error = trackHat_GetDetectedPointsExtended(&device, &points); error != TH_SUCCESS)
+    if (sig.test_and_clear())
     {
-        error_code = error;
-        goto error;
+        set_pt_options();
+        if ((error_code = (decltype(error_code))init_regs()) != TH_SUCCESS)
+            goto error;
     }
 
-    ret.init_points(points, s.min_point_size, s.max_point_size);
+    if (trackHat_ExtendedPoints_t points = {};
+        (error_code = trackHat_GetDetectedPointsExtended(&device, &points)) == TH_SUCCESS)
+    {
+        auto& frame = *frame_.as<trackhat_frame>();
+        frame.init_points(points, t.min_pt_size, t.max_pt_size);
+    }
+    else
+        goto error;
+
     return {true, get_desired()};
 
 error:
     if (status >= th_running)
+    {
         qDebug() << "trackhat: error" << (void*)error_code;
-    ret.init_points(points, s.min_point_size, s.max_point_size);
+    }
     stop();
+    if (start(s))
+        goto start;
     return {false, get_desired()};
 }
 
@@ -93,23 +99,40 @@ error:
 
 int trackhat_camera::init_regs()
 {
-    constexpr uint8_t regs[][3] = {
-        { 0x0c, 0x0f, 0xf0 },  // exposure lo
-        { 0x0c, 0x10, 0x7f },  // exposure hi
-        { 0x00, 0x0b, 0xff },  // blob area max size
-        { 0x00, 0x0c, 0x03 },  // blob area min size
-        { 0x00, 0x01, 0x01 },  // bank0 sync
-        { 0x01, 0x01, 0x01 },  // bank1 sync
+    auto exp = (uint8_t)t.exposure;
+    auto thres = (uint8_t)t.threshold;
+    unsigned attempts = 0;
+    constexpr unsigned max_attempts = 5;
+
+    const uint8_t regs[][3] = {
+        { 0x0c, 0x0f, 0xf0  },  // exposure lo
+        { 0x0c, 0x10, exp   },  // exposure hi
+        { 0x00, 0x0b, 0xff  },  // blob area max size
+        { 0x00, 0x0c, 0x03  },  // blob area min size
+        { 0x0c, 0x47, thres },  // min brightness
+        { 0x00, 0x0f, (uint8_t)(thres/10) }, // brightness margin, formula is `thres >= px > thres - fuzz'
+        { 0x00, 0x01, 0x01  },  // bank0 sync
+        { 0x01, 0x01, 0x01  },  // bank1 sync
     };
+
+start:
 
     for (const auto& reg : regs)
     {
         trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
         if (TH_ErrorCode error = trackHat_SetRegisterValue(&device, &r); error != TH_SUCCESS)
-            return error;
+            goto error;
     }
 
     return TH_SUCCESS;
+error:
+    if (attempts++ < max_attempts)
+    {
+        portable::sleep(50);
+        goto start;
+    }
+
+    return error_code;
 }
 
 bool trackhat_camera::start(const pt_settings&)
@@ -123,7 +146,7 @@ bool trackhat_camera::start(const pt_settings&)
 
 start:
     stop();
-    trackHat_EnableDebugMode();
+    trackHat_DisableDebugMode();
 
     [[maybe_unused]] uint32_t uptime = 0;
     error_code = TH_SUCCESS;

@@ -39,10 +39,10 @@
          </sizepolicy>
         </property>
         <property name="maximum">
-         <number>65535</number>
+         <number>239</number>
         </property>
         <property name="pageStep">
-         <number>50</number>
+         <number>10</number>
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>

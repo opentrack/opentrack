@@ -1,9 +1,10 @@
 #pragma once
 
 #include "../tracker-pt/pt-api.hpp"
-#include "track_hat_driver.h"
 #include "compat/macros.hpp"
 #include "options/options.hpp"
+
+#include <track_hat_driver.h>
 
 #include <array>
 #include <atomic>
@@ -25,7 +26,7 @@ using namespace options;
 struct trackhat_settings : opts
 {
     trackhat_settings();
-    value<slider_value> exposure{b, "exposure", {0xfff0, 1, 0xfff0}};
+    value<slider_value> exposure{b, "exposure", {0x80, 0x10, 0xff}};
     value<slider_value> threshold{b, "threshold", {0x97, 64, 0xff}};
     value<model_type> model{b, "model", model_mini_clip_left};
     value<double> min_pt_size{b, "min-point-size", 2};
@@ -111,7 +112,7 @@ private:
 
 struct trackhat_frame final : pt_frame
 {
-    void init_points(trackHat_ExtendedPoints_t points, double min_size, double max_size);
+    void init_points(const trackHat_ExtendedPoints_t& points, double min_size, double max_size);
     trackhat_frame() = default;
     ~trackhat_frame() override = default;
 
