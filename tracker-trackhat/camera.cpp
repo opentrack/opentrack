@@ -90,7 +90,7 @@ error:
         if (TH_ErrorCode status_ = (x); status_ != TH_SUCCESS)  \
         {                                                       \
             qDebug() << "trackhat: error"                       \
-                     << (void*)status_ << "in" << #x;           \
+                     << (void*)-status_ << "in" << #x;          \
             error_code = status_;                               \
             goto error;                                         \
         }                                                       \
@@ -147,6 +147,7 @@ error:
 bool trackhat_camera::start(const pt_settings&)
 {
     int attempts = 0;
+    constexpr int max_attempts = 5;
 
     set_pt_options();
 
@@ -170,10 +171,18 @@ start:
     return true;
 error:
     stop();
-    if (++attempts < 5)
+    switch (error_code)
     {
-        portable::sleep(100);
-        goto start;
+    case TH_ERROR_DEVICE_NOT_DETECTED:
+    case TH_ERROR_CAMERA_SELFT_TEST_FAILD:
+    case TH_ERROR_CAMERA_INTERNAL_BROKEN:
+        break;
+    default:
+        if (attempts++ < max_attempts)
+        {
+            portable::sleep(10);
+            goto start;
+        }
     }
     return false;
 }

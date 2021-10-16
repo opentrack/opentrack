@@ -85,8 +85,6 @@ struct trackhat_camera final : pt_camera
 
     bool start(const pt_settings& s) override;
     void stop() override;
-    [[nodiscard]] int init_regs();
-    void set_pt_options();
 
     pt_camera::result get_frame(pt_frame& frame) override;
     pt_camera::result get_info() const override;
@@ -105,6 +103,9 @@ struct trackhat_camera final : pt_camera
 private:
     enum device_status { th_noinit, th_init, th_detect, th_connect, th_running, };
     trackhat_impl::setting_receiver sig;
+
+    [[nodiscard]] int init_regs();
+    void set_pt_options();
 
     trackHat_Device_t device {};
     device_status status = th_noinit;
