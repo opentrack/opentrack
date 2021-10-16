@@ -30,6 +30,7 @@ void trackhat_camera::set_pt_options()
     case model_cap:
         s.t_MH_x = 0; s.t_MH_y = 0; s.t_MH_z = 0;
         break;
+    case model_mystery_meat:
     case model_clip_left:
     case model_mini_clip_left:
         s.t_MH_x = -135; s.t_MH_y = 0; s.t_MH_z = 0;
@@ -55,6 +56,9 @@ void trackhat_camera::set_pt_options()
         break;
     case model_cap:
         s.cap_x = 60; s.cap_y = 90; s.cap_z = 95;
+        break;
+    case model_mystery_meat:
+        s.clip_tz = 15; s.clip_ty = 40; s.clip_by = 70; s.clip_bz = 40;
         break;
     }
 

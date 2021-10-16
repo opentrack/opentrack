@@ -17,6 +17,7 @@ trackhat_dialog::trackhat_dialog()
         { "Clip (right)", model_clip_right },
         { "Mini Clip (left)", model_mini_clip_left },
         { "Mini Clip (right)", model_mini_clip_right },
+        { "Mystery Meat", model_mystery_meat },
     };
 
     ui.model_type->clear();

@@ -17,6 +17,7 @@ enum model_type : int
     model_clip_right,
     model_mini_clip_left,
     model_mini_clip_right,
+    model_mystery_meat,
 };
 
 namespace trackhat_impl
