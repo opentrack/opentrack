@@ -34,7 +34,7 @@ struct trackhat_settings : opts
     value<double> min_pt_size{b, "min-point-size", 2};
     value<double> max_pt_size{b, "max-point-size", 8};
     value<bool> enable_point_filter{b, "enable-point-filter", true };
-    value<slider_value> point_filter_coefficient{b, "point-filter-coefficient", { 1, 0, 4 }};
+    value<slider_value> point_filter_coefficient{b, "point-filter-coefficient", { 1.5, 1, 4 }};
 };
 
 class setting_receiver : public QObject

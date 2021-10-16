@@ -100,13 +100,14 @@ int trackhat_camera::init_regs()
 {
     unsigned attempts = 0;
     constexpr unsigned max_attempts = 5;
+    TH_ErrorCode error;
 
     auto exp = (uint8_t)t.exposure;
     auto thres = (uint8_t)t.threshold;
-    auto thres2 = (uint8_t)std::clamp((int)*t.threshold_2, 0, std::max(0, (int)*t.threshold - 1));
+    auto thres2 = (uint8_t)std::clamp((int)*t.threshold_2, 0, std::max(64, thres-1));
 
     auto gain = (uint8_t)*t.gain;
-    auto gain_c = (uint8_t)(gain < 0x0f ? 0 : (gain / 0x0f + 1) & 3);
+    auto gain_c = (uint8_t)((gain/0x0f + !!(gain/0x0f)) & 3);
     gain %= 0x0f;
 
     const uint8_t regs[][3] = {
@@ -117,21 +118,22 @@ int trackhat_camera::init_regs()
         { 0x0c, 0x08, gain   },  // gain
         { 0x0c, 0x0c, gain_c },  // gain multiplier
         { 0x0c, 0x47, thres  },  // min brightness
-        { 0x00, 0x0f, thres2 }, // brightness margin, formula is `thres >= px > thres - fuzz'
+        { 0x00, 0x0f, thres2 },  // brightness margin, formula is `thres >= px > thres - fuzz'
         { 0x00, 0x01, 0x01   },  // bank0 sync
         { 0x01, 0x01, 0x01   },  // bank1 sync
     };
 
 start:
-
     for (const auto& reg : regs)
     {
         trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
-        if (TH_ErrorCode error = trackHat_SetRegisterValue(&device, &r); error != TH_SUCCESS)
+        error = trackHat_SetRegisterValue(&device, &r);
+        if (error != TH_SUCCESS)
             goto error;
     }
 
     return TH_SUCCESS;
+
 error:
     if (attempts++ < max_attempts)
     {
@@ -139,7 +141,7 @@ error:
         goto start;
     }
 
-    return error_code;
+    return error;
 }
 
 bool trackhat_camera::start(const pt_settings&)
