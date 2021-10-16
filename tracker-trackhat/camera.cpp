@@ -96,54 +96,6 @@ error:
         }                                                       \
     } while (false)
 
-int trackhat_camera::init_regs()
-{
-    unsigned attempts = 0;
-    constexpr unsigned max_attempts = 5;
-    TH_ErrorCode error;
-
-    auto exp = (uint8_t)t.exposure;
-    auto thres = (uint8_t)t.threshold;
-    auto thres2 = (uint8_t)std::clamp((int)*t.threshold_2, 0, std::max(64, thres-1));
-
-    auto gain = (uint8_t)*t.gain;
-    auto gain_c = (uint8_t)((gain/0x0f + !!(gain/0x0f)) & 3);
-    gain %= 0x0f;
-
-    const uint8_t regs[][3] = {
-        { 0x0c, 0x0f, 0xf0   },  // exposure lo
-        { 0x0c, 0x10, exp    },  // exposure hi
-        { 0x00, 0x0b, 0xff   },  // blob area max size
-        { 0x00, 0x0c, 0x03   },  // blob area min size
-        { 0x0c, 0x08, gain   },  // gain
-        { 0x0c, 0x0c, gain_c },  // gain multiplier
-        { 0x0c, 0x47, thres  },  // min brightness
-        { 0x00, 0x0f, thres2 },  // brightness margin, formula is `thres >= px > thres - fuzz'
-        { 0x00, 0x01, 0x01   },  // bank0 sync
-        { 0x01, 0x01, 0x01   },  // bank1 sync
-    };
-
-start:
-    for (const auto& reg : regs)
-    {
-        trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
-        error = trackHat_SetRegisterValue(&device, &r);
-        if (error != TH_SUCCESS)
-            goto error;
-    }
-
-    return TH_SUCCESS;
-
-error:
-    if (attempts++ < max_attempts)
-    {
-        portable::sleep(50);
-        goto start;
-    }
-
-    return error;
-}
-
 bool trackhat_camera::start(const pt_settings&)
 {
     int attempts = 0;
