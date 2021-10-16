@@ -62,6 +62,8 @@ void trackhat_camera::set_pt_options()
         break;
     }
 
+    s.camera_name = "TrackHat Sensor (WIP)";
+
     s.active_model_panel = t.model == model_cap ? 1 : 0;
     s.enable_point_filter = t.enable_point_filter;
     s.point_filter_coefficient = *t.point_filter_coefficient;
