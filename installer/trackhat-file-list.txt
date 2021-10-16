@@ -51,7 +51,6 @@
 ./opentrack-user-interface.dll
 ./opentrack-video.dll
 ./opentrack.exe
-./platforms
 ./platforms/qwindows.dll
 ./qt.conf
 ./Qt5Core.dll
