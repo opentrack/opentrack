@@ -37,13 +37,12 @@ trackhat_camera::trackhat_camera()
     s.set_raii_dtor_state(false);
     t.set_raii_dtor_state(false);
 
-    QObject::connect(&t.exposure, options::value_::value_changed<options::slider_value>(),
-                     &sig, &trackhat_impl::setting_receiver::settings_changed,
-                     Qt::DirectConnection);
-
-    QObject::connect(&t.threshold, options::value_::value_changed<options::slider_value>(),
-                     &sig, &trackhat_impl::setting_receiver::settings_changed,
-                     Qt::DirectConnection);
+    for (auto* slider : { &t.exposure, &t.gain, &t.threshold, &t.threshold_2 })
+    {
+        QObject::connect(slider, options::value_::value_changed<options::slider_value>(),
+                         &sig, &trackhat_impl::setting_receiver::settings_changed,
+                         Qt::DirectConnection);
+    }
 }
 
 trackhat_camera::~trackhat_camera()
@@ -99,20 +98,28 @@ error:
 
 int trackhat_camera::init_regs()
 {
-    auto exp = (uint8_t)t.exposure;
-    auto thres = (uint8_t)t.threshold;
     unsigned attempts = 0;
     constexpr unsigned max_attempts = 5;
 
+    auto exp = (uint8_t)t.exposure;
+    auto thres = (uint8_t)t.threshold;
+    auto thres2 = (uint8_t)std::clamp((int)*t.threshold_2, 0, std::max(0, (int)*t.threshold - 1));
+
+    auto gain = (uint8_t)*t.gain;
+    auto gain_c = (uint8_t)(gain < 0x0f ? 0 : (gain / 0x0f + 1) & 3);
+    gain %= 0x0f;
+
     const uint8_t regs[][3] = {
-        { 0x0c, 0x0f, 0xf0  },  // exposure lo
-        { 0x0c, 0x10, exp   },  // exposure hi
-        { 0x00, 0x0b, 0xff  },  // blob area max size
-        { 0x00, 0x0c, 0x03  },  // blob area min size
-        { 0x0c, 0x47, thres },  // min brightness
-        { 0x00, 0x0f, (uint8_t)(thres/10) }, // brightness margin, formula is `thres >= px > thres - fuzz'
-        { 0x00, 0x01, 0x01  },  // bank0 sync
-        { 0x01, 0x01, 0x01  },  // bank1 sync
+        { 0x0c, 0x0f, 0xf0   },  // exposure lo
+        { 0x0c, 0x10, exp    },  // exposure hi
+        { 0x00, 0x0b, 0xff   },  // blob area max size
+        { 0x00, 0x0c, 0x03   },  // blob area min size
+        { 0x0c, 0x08, gain   },  // gain
+        { 0x0c, 0x0c, gain_c },  // gain multiplier
+        { 0x0c, 0x47, thres  },  // min brightness
+        { 0x00, 0x0f, thres2 }, // brightness margin, formula is `thres >= px > thres - fuzz'
+        { 0x00, 0x01, 0x01   },  // bank0 sync
+        { 0x01, 0x01, 0x01   },  // bank1 sync
     };
 
 start:
