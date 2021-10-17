@@ -80,10 +80,6 @@ bool spline_widget::is_preview_only() const
     return preview_only;
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
-#   define OTR_OBSOLETE_QT_WORKAROUND
-#endif
-
 void spline_widget::drawBackground()
 {
     QPainter painter(&background_img);
@@ -114,11 +110,7 @@ void spline_widget::drawBackground()
     const double maxx = config->max_input();
     const double maxy = config->max_output();
 
-#ifndef OTR_OBSOLETE_QT_WORKAROUND
     double space_width = metrics.horizontalAdvance(' ');
-#else
-    double space_width = metrics.averageCharWidth();
-#endif
 
     painter.setPen(palette().text().color());
 
@@ -153,11 +145,7 @@ void spline_widget::drawBackground()
 
         const QString text = QString::number(i);
         QRectF rect = metrics.boundingRect(text);
-#ifndef OTR_OBSOLETE_QT_WORKAROUND
         double advance = metrics.horizontalAdvance(text);
-#else
-        double advance = rect.right();
-#endif
 
         painter.drawText(QPointF(x - advance/2 - rect.left(),
                                  pixel_bounds.bottom() + metrics.lineSpacing()),
