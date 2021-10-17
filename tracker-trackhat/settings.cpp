@@ -1,5 +1,6 @@
 #include "trackhat.hpp"
 #include "compat/sleep.hpp"
+#include "compat/timer.hpp"
 
 namespace trackhat_impl {
 
@@ -89,6 +90,8 @@ int trackhat_camera::init_regs()
     auto gain_c = (uint8_t)(gain/0x10);
     gain %= 0x10; gain_c %= 4;
 
+    Timer t;
+
     const uint8_t regs[][3] = {
         { 0x0c, 0x0f, exp2   },  // exposure lo
         { 0x0c, 0x10, exp    },  // exposure hi
@@ -111,14 +114,21 @@ start:
             goto error;
     }
 
+    if (int elapsed = (int)t.elapsed_ms(); elapsed > 250)
+        qDebug() << "tracker/trackhat: setting registers took" << elapsed << "ms";
+
     return TH_SUCCESS;
 
 error:
     if (attempts++ < max_attempts)
     {
+        qDebug() << "tracker/trackhat: set register retry attempt"
+                 << attempts << "/" << max_attempts;
         portable::sleep(10);
         goto start;
     }
+
+    qDebug() << "tracker/trackhat: failed to set registers";
 
     return error;
 }
