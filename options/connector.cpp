@@ -64,6 +64,8 @@ void connector::on_value_created(value_type val)
 
 void connector::notify_values(const QString& name) const
 {
+    QMutexLocker l(get_mtx());
+
     auto it = connected_values.find(name);
     if (it != connected_values.cend())
         for (value_type val : it->second)
@@ -72,6 +74,8 @@ void connector::notify_values(const QString& name) const
 
 void connector::notify_all_values() const
 {
+    QMutexLocker l(get_mtx());
+
     for (const auto& [k, v] : connected_values)
         for (value_type val : v)
             val->notify();
@@ -79,6 +83,8 @@ void connector::notify_all_values() const
 
 void connector::set_all_to_default_()
 {
+    QMutexLocker l(get_mtx());
+
     for (auto& pair : connected_values)
         for (auto& val : pair.second)
             val->set_to_default();
