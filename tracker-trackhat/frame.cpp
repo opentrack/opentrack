@@ -85,6 +85,7 @@ void trackhat_preview::draw_points()
 void trackhat_frame::init_points(const trackHat_ExtendedPoints_t& points_, double min_size, double max_size)
 {
     trackHat_ExtendedPoints_t copy = points_;
+    points = {};
 
     std::sort(std::begin(copy.m_point), std::end(copy.m_point),
         [](trackHat_ExtendedPoint_t p1, trackHat_ExtendedPoint_t p2) {
@@ -100,11 +101,11 @@ void trackhat_frame::init_points(const trackHat_ExtendedPoints_t& points_, doubl
 
         point p = {};
 
-        const double radius = std::sqrt(pt.m_area) / std::sqrt(M_PI);
-        if (i < 3 && radius >= min_size && radius <= max_size)
+        if (pt.m_area >= min_size && pt.m_area <= max_size)
             p.ok = true;
 
         p.brightness = pt.m_averageBrightness;
+        p.area = pt.m_area;
         p.W = std::max(1, pt.m_boundryRigth - pt.m_boundryLeft);
         p.H = std::max(1, pt.m_boundryDown  - pt.m_boundryUp);
         p.x = trackhat_camera::sensor_size-1-pt.m_coordinateX;
@@ -112,7 +113,4 @@ void trackhat_frame::init_points(const trackHat_ExtendedPoints_t& points_, doubl
 
         points[i++] = p;
     }
-
-    for (; i < std::size(points); i++)
-        points[i] = {};
 }

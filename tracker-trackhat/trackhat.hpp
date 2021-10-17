@@ -32,8 +32,8 @@ struct trackhat_settings : opts
     value<slider_value> threshold{b, "threshold", {0x97, 64, 0xff}};
     value<slider_value> threshold_2{b, "threshold-2", {0x03, 1, 0xfe}};
     value<model_type> model{b, "model", model_mini_clip_left};
-    value<double> min_pt_size{b, "min-point-size", 2};
-    value<double> max_pt_size{b, "max-point-size", 8};
+    value<double> min_pt_size{b, "min-point-size", 10};
+    value<double> max_pt_size{b, "max-point-size", 50};
     value<bool> enable_point_filter{b, "enable-point-filter", true };
     value<slider_value> point_filter_coefficient{b, "point-filter-coefficient", { 1.5, 1, 4 }};
 };
@@ -72,7 +72,7 @@ struct trackhat_metadata final : pt_runtime_traits
 
 struct point
 {
-    int brightness = 0, x, y, W, H;
+    int brightness = 0, area, x, y, W, H;
     bool ok = false;
 };
 
