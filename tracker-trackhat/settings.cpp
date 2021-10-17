@@ -18,6 +18,10 @@ bool setting_receiver::test_and_clear()
     return changed.compare_exchange_strong(x, false);
 }
 
+setting_receiver::setting_receiver(bool value) : changed{value}
+{
+}
+
 } // ns trackhat_impl
 
 void trackhat_camera::set_pt_options()

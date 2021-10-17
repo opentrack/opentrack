@@ -43,6 +43,7 @@ class setting_receiver : public QObject
     Q_OBJECT
 
 public:
+    explicit setting_receiver(bool value);
     bool test_and_clear();
 public slots:
     void settings_changed();
@@ -102,7 +103,7 @@ struct trackhat_camera final : pt_camera
 
 private:
     enum device_status { th_noinit, th_init, th_detect, th_connect, th_running, };
-    trackhat_impl::setting_receiver sig;
+    trackhat_impl::setting_receiver sig{true};
 
     [[nodiscard]] int init_regs();
     void set_pt_options();

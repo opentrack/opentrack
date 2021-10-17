@@ -50,11 +50,37 @@ trackhat_camera::~trackhat_camera()
     stop();
 }
 
+#define CHECK(x)                                                \
+    do {                                                        \
+        if (TH_ErrorCode status_ = (x); status_ != TH_SUCCESS)  \
+        {                                                       \
+            qDebug() << "trackhat: error"                       \
+                     << (void*)-status_ << "in" << #x;          \
+            error_code = status_;                               \
+            goto error;                                         \
+        }                                                       \
+    } while (false)
+
 pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
 {
 start:
-    if (status < th_running || error_code != TH_SUCCESS)
-        goto error;
+    switch (status)
+    {
+    case th_noinit:
+    case th_init:
+        return {false, get_desired()};
+    case th_detect:
+        CHECK(trackHat_Connect(&device, TH_FRAME_EXTENDED));
+        status = th_connect;
+        goto start;
+    case th_connect:
+        uint32_t uptime;
+        CHECK(trackHat_GetUptime(&device, &uptime));
+        status = th_running;
+        break;
+    case th_running:
+        break;
+    }
 
     if (sig.test_and_clear())
     {
@@ -76,49 +102,28 @@ start:
 
 error:
     if (status >= th_running)
-    {
         qDebug() << "trackhat: error" << (void*)error_code;
-    }
     stop();
-    if (start(s))
-        goto start;
     return {false, get_desired()};
 }
-
-#define CHECK(x)                                                \
-    do {                                                        \
-        if (TH_ErrorCode status_ = (x); status_ != TH_SUCCESS)  \
-        {                                                       \
-            qDebug() << "trackhat: error"                       \
-                     << (void*)-status_ << "in" << #x;          \
-            error_code = status_;                               \
-            goto error;                                         \
-        }                                                       \
-    } while (false)
 
 bool trackhat_camera::start(const pt_settings&)
 {
     int attempts = 0;
     constexpr int max_attempts = 5;
 
-    set_pt_options();
-
-    if (status >= th_running)
+    if (status != th_noinit)
         return true;
 
 start:
-    stop();
-    trackHat_DisableDebugMode();
+    trackHat_EnableDebugMode();
+    set_pt_options();
 
-    [[maybe_unused]] uint32_t uptime = 0;
     error_code = TH_SUCCESS;
     status = th_noinit;
 
     CHECK(trackHat_Initialize(&device)); status = th_init;
     CHECK(trackHat_DetectDevice(&device)); status = th_detect;
-    CHECK(trackHat_Connect(&device, TH_FRAME_EXTENDED)); status = th_connect;
-    CHECK(trackHat_GetUptime(&device, &uptime));
-    CHECK((TH_ErrorCode)init_regs()); status = th_running;
 
     return true;
 error:
