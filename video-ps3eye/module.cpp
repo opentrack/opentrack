@@ -150,6 +150,8 @@ bool ps3eye_camera::start(info& args)
     if (!shm.success())
         return false;
 
+    stop();
+
     volatile auto& ptr = *(ps3eye::shm*)shm.ptr();
     QString error;
 
