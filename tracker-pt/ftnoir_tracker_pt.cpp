@@ -33,7 +33,6 @@ Tracker_PT::Tracker_PT(pointer<pt_runtime_traits> const& traits) :
     opencv_init();
 
     connect(s.b.get(), &bundle_::saving, this, [this]{ reopen_camera_flag = true; }, Qt::DirectConnection);
-    connect(&s.fov, value_::value_changed<int>(), this, &Tracker_PT::set_fov, Qt::DirectConnection);
 }
 
 Tracker_PT::~Tracker_PT()
@@ -60,9 +59,8 @@ void Tracker_PT::run()
                 camera = nullptr;
             }
             auto camera_ = traits->make_camera();
-            if (!camera_->start(s))
+            if (!camera_ || !camera_->start(s))
                 break;
-            camera_->set_fov(s.fov);
             camera = std::move(camera_);
         }
 
@@ -71,6 +69,7 @@ void Tracker_PT::run()
 
         {
             QMutexLocker l(&camera_mtx);
+            camera->set_fov(s.fov);
             std::tie(new_frame, info) = camera->get_frame(*frame);
         }
 
@@ -117,13 +116,6 @@ void Tracker_PT::run()
             }
         }
     }
-}
-
-void Tracker_PT::set_fov(int value)
-{
-    QMutexLocker l(&camera_mtx);
-    if (camera)
-        camera->set_fov(value);
 }
 
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
