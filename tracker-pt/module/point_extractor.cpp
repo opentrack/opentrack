@@ -250,14 +250,13 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
 
         cv::Point p(iround(b.pos[0] * cx), iround(b.pos[1] * cy));
 
-        auto circle_color = k >= PointModel::N_POINTS
-                            ? cv::Scalar(192, 192, 192)
-                            : cv::Scalar(255, 255, 0);
+        auto outline_color = k >= PointModel::N_POINTS
+                             ? cv::Scalar(192, 192, 192)
+                             : cv::Scalar(255, 255, 0);
 
-        const int overlay_size = iround(dpi);
-
-        cv::circle(preview_frame, p, iround((b.radius + f(2)) * c),
-                   circle_color, overlay_size, cv::LINE_AA);
+        cv::ellipse(preview_frame, p,
+                    {iround(b.rect.width/(f)2+2*c), iround(b.rect.height/(f)2+2*c)},
+                    0, 0, 360, outline_color, iround(dpi), cv::LINE_AA);
 
         char buf[16];
         std::snprintf(buf, sizeof(buf), "%.2fpx", (double)b.radius);
@@ -268,7 +267,7 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
 
         cv::Point pos(iround(b.pos[0]*cx+offx), iround(b.pos[1]*cy+offy));
         cv::putText(preview_frame, buf, pos,
-                    cv::FONT_HERSHEY_PLAIN, overlay_size, text_color,
+                    cv::FONT_HERSHEY_PLAIN, iround(dpi), text_color,
                     1);
     }
 }
