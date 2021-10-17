@@ -65,7 +65,7 @@ void trackhat_preview::draw_points()
             continue;
 
         constexpr int sz = trackhat_camera::sensor_size;
-        constexpr f scaling_factor = 5;
+        constexpr f scaling_factor = 10;
         const int x = pt.x * frame_bgr.cols / sz, y = pt.y * frame_bgr.rows / sz;
         const f dpi = (f)frame_bgr.cols / f(320);
         const int W = std::max(1, iround(pt.W * frame_bgr.cols * scaling_factor / sz)),
@@ -79,6 +79,17 @@ void trackhat_preview::draw_points()
                     0, 0, 360, point_color, -1, cv::LINE_AA);
         cv::ellipse(frame_bgr, {x, y}, {iround(W + 2*dpi), iround(H + 2*dpi)},
                     0, 0, 360, outline_color, iround(dpi), cv::LINE_AA);
+
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%dpx", pt.area);
+        auto text_color = pt.ok
+                          ? cv::Scalar(0, 0, 255)
+                          : cv::Scalar(160, 160, 160);
+        const int offx = iround(W + 9*dpi), offy = H*3/2;
+
+        cv::putText(frame_bgr, buf, {x+offx, y+offy},
+                    cv::FONT_HERSHEY_PLAIN, iround(dpi), text_color,
+                    1);
     }
 }
 
