@@ -73,7 +73,7 @@ trackhat_dialog::trackhat_dialog()
 
     tie_setting(t.enable_point_filter, ui.enable_point_filter);
     tie_setting(t.point_filter_coefficient, ui.point_filter_slider);
-    ui.point_filter_label->setValue((int)*t.point_filter_coefficient);
+    ui.point_filter_label->setValue(*t.point_filter_coefficient);
 
     connect(&t.point_filter_coefficient, value_::value_changed<slider_value>(), ui.point_filter_label,
         [this] { ui.point_filter_label->setValue(*t.point_filter_coefficient); }, Qt::QueuedConnection);
