@@ -85,15 +85,17 @@ trackhat_dialog::trackhat_dialog()
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &trackhat_dialog::doCancel);
 }
 
-void trackhat_dialog::register_tracker(ITracker* tracker)
+void trackhat_dialog::register_tracker(ITracker* tracker_)
 {
-    tracker = static_cast<Tracker_PT*>(tracker);
+    tracker = static_cast<Tracker_PT*>(tracker_);
+    poll_tracker_info();
     poll_timer.start();
 }
 
 void trackhat_dialog::unregister_tracker()
 {
     tracker = nullptr;
+    poll_tracker_info();
     poll_timer.stop();
 }
 
@@ -112,13 +114,11 @@ void trackhat_dialog::doCancel()
 void trackhat_dialog::poll_tracker_info()
 {
     if (!tracker)
-    {
-        poll_timer.stop();
-        ui.status_label->setText(tr("Tracking stopped."));
-        return;
-    }
-
-    ui.status_label->setText(tr("Tracking. %1 points detected.").arg(tracker->get_n_points()));
+        ui.status_label->setText(tr("Status: Tracking stopped."));
+    else if (tracker->get_n_points() == 3)
+        ui.status_label->setText(tr("Status: %1 points detected. Good!").arg(tracker->get_n_points()));
+    else
+        ui.status_label->setText(tr("Status: %1 points detected. BAD!").arg(tracker->get_n_points()));
 }
 
 trackhat_dialog::~trackhat_dialog() = default;

@@ -48,14 +48,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Tracking stopped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tracking. %1 points detected.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
@@ -65,6 +57,18 @@
     </message>
     <message>
         <source>Fuzz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: Tracking stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1 points detected. Good!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1 points detected. BAD!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
