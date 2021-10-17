@@ -54,17 +54,16 @@ void Tracker_PT::run()
     {
         if (reopen_camera_flag)
         {
-            QMutexLocker l(&camera_mtx);
-
             reopen_camera_flag = false;
-            if (camera)
-                camera->stop();
-            camera = traits->make_camera();
-            set_fov(s.fov);
             {
-                if (!camera->start(s))
-                    break;
+                QMutexLocker l(&camera_mtx);
+                camera = nullptr;
             }
+            auto camera_ = traits->make_camera();
+            if (!camera_->start(s))
+                break;
+            camera_->set_fov(s.fov);
+            camera = std::move(camera_);
         }
 
         pt_camera_info info;

@@ -237,7 +237,8 @@ void TrackerDialog_PT::show_camera_settings()
     if (tracker)
     {
         QMutexLocker l(&tracker->camera_mtx);
-        tracker->camera->show_camera_settings();
+        if (tracker->camera)
+            tracker->camera->show_camera_settings();
     }
     else
         (void)video::show_dialog(s.camera_name);
