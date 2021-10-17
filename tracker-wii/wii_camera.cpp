@@ -56,9 +56,7 @@ void WIICamera::show_camera_settings()
 
 WIICamera::result WIICamera::get_info() const
 {
-    if (cam_info.res_x == 0 || cam_info.res_y == 0)
-        return result(false, pt_camera_info());
-    return result(true, cam_info);
+    return {true, cam_info};
 }
 
 WIICamera::result WIICamera::get_frame(pt_frame& frame_)
@@ -88,22 +86,18 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 
 bool WIICamera::start(const pt_settings&)
 {
+	if (m_pDev)
+		return true;
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;
 	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED |
 		EXTENSION_CHANGED |
 		MOTIONPLUS_CHANGED);
-        return true;
+	return true;
 }
 
 void WIICamera::stop()
 {
-    desired_name = QString();
-    active_name = QString();
-    cam_info = pt_camera_info();
-    cam_desired = pt_camera_info();
-    onExit = true;
-
     if (m_pDev)
     {
         m_pDev->ChangedCallback = nullptr;
@@ -111,7 +105,7 @@ void WIICamera::stop()
         m_pDev = nullptr;
     }
 
-	Beep(1000, 200);
+    //Beep(1000, 200);
 }
 
 #ifdef __MINGW32__

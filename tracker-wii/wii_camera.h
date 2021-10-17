@@ -48,7 +48,6 @@ private:
 	static void on_state_change(wiimote &remote,
 		state_change_flags changed,
 		const wiimote_state &new_state);
-	bool onExit = false;
 
 	wii_camera_status pair();
 	wii_camera_status get_frame(cv::Mat& Frame);
