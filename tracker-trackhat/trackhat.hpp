@@ -127,6 +127,7 @@ private:
     trackhat_impl::setting_receiver sig{true};
 
     [[nodiscard]] bool init_regs();
+    bool set_regs(const uint8_t (*regs)[3], unsigned len);
     void set_pt_options();
 
     camera_handle device;

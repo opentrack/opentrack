@@ -75,11 +75,42 @@ void trackhat_camera::set_pt_options()
     s.point_filter_coefficient = *t.point_filter_coefficient;
 }
 
-bool trackhat_camera::init_regs()
+bool trackhat_camera::set_regs(const uint8_t(*regs)[3], unsigned len)
 {
     unsigned attempts = 0;
     constexpr unsigned max_attempts = 5;
 
+start:
+    for (unsigned i = 0; i < len; i++)
+    {
+        const auto& reg = regs[i];
+        trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
+        auto status = th_check(trackHat_SetRegisterValue(&*device, &r));
+        if (status == TH_SUCCESS)
+            continue;
+        else if (status == TH_FAILED_TO_SET_REGISTER)
+            goto retry;
+        else
+            goto error;
+    }
+
+retry:
+    if (attempts++ < max_attempts)
+    {
+        auto dbg = qDebug();
+        dbg << "tracker/trackhat: set register retry attempt";
+        dbg.space(); dbg.nospace();
+        dbg << attempts << "/" << max_attempts;
+        portable::sleep(50);
+        goto start;
+    }
+
+error:
+    return false;
+}
+
+bool trackhat_camera::init_regs()
+{
     auto exp    = (uint8_t)t.exposure;
     auto exp2   = (uint8_t)(exp == 0xff ? 0xf0 : 0xff);
     auto thres  = (uint8_t)t.threshold;
@@ -88,8 +119,6 @@ bool trackhat_camera::init_regs()
     auto gain   = (uint8_t)((int)*t.gain);
     auto gain_c = (uint8_t)(gain/0x10);
     gain %= 0x10; gain_c %= 4;
-
-    Timer t;
 
     const uint8_t regs[][3] = {
         { 0x0c, 0x0f, exp2   },  // exposure lo
@@ -104,36 +133,16 @@ bool trackhat_camera::init_regs()
         { 0x01, 0x01, 0x01   },  // bank1 sync
     };
 
-start:
-    for (const auto& reg : regs)
+    Timer t;
+
+    if (!set_regs(regs))
     {
-        trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
-        auto status = th_check(trackHat_SetRegisterValue(&*device, &r));
-        if (status == TH_SUCCESS)
-            continue;
-        else if (status == TH_FAILED_TO_SET_REGISTER)
-            goto retry;
-        else
-            goto error;
+        device.disconnect();
+        return false;
     }
 
     if (int elapsed = (int)t.elapsed_ms(); elapsed > 250)
         qDebug() << "tracker/trackhat: setting registers took" << elapsed << "ms";
 
     return true;
-
-retry:
-    if (attempts++ < max_attempts)
-    {
-        auto dbg = qDebug();
-        dbg << "tracker/trackhat: set register retry attempt";
-        dbg.space(); dbg.nospace();
-        dbg << attempts << "/" << max_attempts;
-        portable::sleep(50);
-        goto start;
-    }
-
-error:
-    device.disconnect();
-    return false;
 }
