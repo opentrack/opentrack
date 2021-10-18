@@ -235,11 +235,7 @@ void TrackerDialog_PT::set_camera_settings_available(const QString& /* camera_na
 void TrackerDialog_PT::show_camera_settings()
 {
     if (tracker)
-    {
-        QMutexLocker l(&tracker->camera_mtx);
-        if (tracker->camera)
-            tracker->camera->show_camera_settings();
-    }
+        tracker->open_camera_dialog_flag = true;
     else
         (void)video::show_dialog(s.camera_name);
 }

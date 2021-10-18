@@ -6,6 +6,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#undef NDEBUG
 #include "ftnoir_tracker_pt.h"
 #include "pt-api.hpp"
 #include "cv/init.hpp"
@@ -15,6 +16,7 @@
 #include "compat/thread-name.hpp"
 #include "compat/qt-dpi.hpp"
 
+#include <cassert>
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QFile>
@@ -40,7 +42,6 @@ Tracker_PT::~Tracker_PT()
     requestInterruption();
     wait();
 
-    QMutexLocker l(&camera_mtx);
     if (camera)
         camera->stop();
 }
@@ -50,22 +51,15 @@ bool Tracker_PT::check_camera()
     if (reopen_camera_flag)
     {
         reopen_camera_flag = false;
-        if (!camera || last_camera_name != s.camera_name)
-        {
-            // deadlock avoidance
 
-            decltype(camera) camera_;
-            {
-                QMutexLocker l(&camera_mtx);
-                camera_ = std::move(camera);
-            }
-            camera_ = traits->make_camera();
-            if (!camera_ || !camera_->start(s))
-                return false;
-            camera = std::move(camera_);
-            last_camera_name = s.camera_name;
-        }
+        camera = nullptr;
+        camera = traits->make_camera();
+        if (!camera || !camera->start(s))
+            return false;
     }
+    assert(camera);
+    if (progn(bool x = true; return open_camera_dialog_flag.compare_exchange_strong(x, false);))
+        camera->show_camera_settings();
     return true;
 }
 
@@ -82,7 +76,6 @@ void Tracker_PT::run()
         bool new_frame = false;
 
         {
-            QMutexLocker l(&camera_mtx);
             camera->set_fov(s.fov);
             std::tie(new_frame, info) = camera->get_frame(*frame);
         }
@@ -135,7 +128,6 @@ void Tracker_PT::run()
 module_status Tracker_PT::start_tracker(QFrame* video_frame)
 {
     {
-        QMutexLocker l(&camera_mtx);
         auto camera = traits->make_camera();
         if (!camera || !camera->start(s))
             return error(tr("Failed to open camera '%1'").arg(s.camera_name));
@@ -218,7 +210,6 @@ int Tracker_PT::get_n_points()
 
 bool Tracker_PT::get_cam_info(pt_camera_info& info)
 {
-    QMutexLocker l(&camera_mtx);
     bool ret = false;
 
     if (camera)

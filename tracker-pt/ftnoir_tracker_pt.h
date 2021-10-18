@@ -53,9 +53,6 @@ private:
 
     pointer<pt_runtime_traits> traits;
 
-    mutable QRecursiveMutex camera_mtx;
-    QString last_camera_name;
-
     PointTracker point_tracker;
 
     pt_settings s;
@@ -74,6 +71,7 @@ private:
     std::atomic<unsigned> point_count { 0 };
     std::atomic<bool> ever_success = false;
     std::atomic<bool> reopen_camera_flag = true;
+    std::atomic<bool> open_camera_dialog_flag = false;
     mutable QMutex center_lock, data_lock;
     point_filter filter{s};
 };
