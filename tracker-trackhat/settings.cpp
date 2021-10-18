@@ -75,11 +75,10 @@ void trackhat_camera::set_pt_options()
     s.point_filter_coefficient = *t.point_filter_coefficient;
 }
 
-int trackhat_camera::init_regs()
+bool trackhat_camera::init_regs()
 {
     unsigned attempts = 0;
     constexpr unsigned max_attempts = 5;
-    TH_ErrorCode error;
 
     auto exp    = (uint8_t)t.exposure;
     auto exp2   = (uint8_t)(exp == 0xff ? 0xf0 : 0xff);
@@ -109,26 +108,32 @@ start:
     for (const auto& reg : regs)
     {
         trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
-        error = trackHat_SetRegisterValue(&device, &r);
-        if (error != TH_SUCCESS)
+        auto status = th_check(trackHat_SetRegisterValue(&*device, &r));
+        if (status == TH_SUCCESS)
+            continue;
+        else if (status == TH_FAILED_TO_SET_REGISTER)
+            goto retry;
+        else
             goto error;
     }
 
     if (int elapsed = (int)t.elapsed_ms(); elapsed > 250)
         qDebug() << "tracker/trackhat: setting registers took" << elapsed << "ms";
 
-    return TH_SUCCESS;
+    return true;
 
-error:
+retry:
     if (attempts++ < max_attempts)
     {
-        qDebug() << "tracker/trackhat: set register retry attempt"
-                 << attempts << "/" << max_attempts;
-        portable::sleep(10);
+        auto dbg = qDebug();
+        dbg << "tracker/trackhat: set register retry attempt";
+        dbg.space(); dbg.nospace();
+        dbg << attempts << "/" << max_attempts;
+        portable::sleep(50);
         goto start;
     }
 
-    qDebug() << "tracker/trackhat: failed to set registers";
-
-    return error;
+error:
+    device.disconnect();
+    return false;
 }

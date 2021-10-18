@@ -1,6 +1,20 @@
 #include "trackhat.hpp"
 #include "compat/sleep.hpp"
-#include <QDebug>
+#include <cstdio>
+
+namespace trackhat_impl {
+
+TH_ErrorCode log_error(TH_ErrorCode error, const char* source)
+{
+    if (error == TH_ERROR_DEVICE_ALREADY_OPEN)
+        error = TH_SUCCESS;
+    if (error)
+        fprintf(stderr, "error 0x%x in %s\n", -error, source);
+    fflush(stderr);
+    return error;
+}
+
+} // ns trackhat_impl
 
 pt_camera::result trackhat_camera::get_info() const
 {
@@ -50,116 +64,57 @@ trackhat_camera::~trackhat_camera()
     stop();
 }
 
-#define CHECK(x)                                                \
-    do {                                                        \
-        if (TH_ErrorCode status_ = (x); status_ != TH_SUCCESS)  \
-        {                                                       \
-            qDebug() << "trackhat: error"                       \
-                     << (void*)-status_ << "in" << #x;          \
-            error_code = status_;                               \
-            goto error;                                         \
-        }                                                       \
-    } while (false)
-
 pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
 {
-start:
-    switch (status)
-    {
-    case th_noinit:
-    case th_init:
-        return {false, get_desired()};
-    case th_detect:
-        CHECK(trackHat_Connect(&device, TH_FRAME_EXTENDED));
-        status = th_connect;
-        goto start;
-    case th_connect:
-        uint32_t uptime;
-        CHECK(trackHat_GetUptime(&device, &uptime));
-        status = th_running;
-        break;
-    case th_running:
-        break;
-    }
+    if (!device.ensure_connected())
+        goto error;
 
     if (sig.test_and_clear())
     {
         set_pt_options();
-        if ((error_code = (decltype(error_code))init_regs()) != TH_SUCCESS)
+        TH_ErrorCode status;
+        int i;
+        for (i = 0; i < 5; i++)
+        {
+            status = (TH_ErrorCode)init_regs();
+            if (status != TH_FAILED_TO_SET_REGISTER)
+                break;
+        }
+        if (i == 5)
             goto error;
     }
 
-    if (trackHat_ExtendedPoints_t points = {};
-        (error_code = trackHat_GetDetectedPointsExtended(&device, &points)) == TH_SUCCESS)
     {
+        trackHat_ExtendedPoints_t points;
+        if (!!th_check(trackHat_GetDetectedPointsExtended(&*device, &points)))
+            goto error;
         auto& frame = *frame_.as<trackhat_frame>();
         frame.init_points(points, t.min_pt_size, t.max_pt_size);
     }
-    else
-        goto error;
 
     return {true, get_desired()};
 
 error:
-    if (status >= th_running)
-        qDebug() << "trackhat: error" << (void*)error_code;
     stop();
-    return {false, get_desired()};
+    return {false, {}};
 }
 
 bool trackhat_camera::start(const pt_settings&)
 {
-    int attempts = 0;
-    constexpr int max_attempts = 5;
+    if constexpr(debug_mode)
+        trackHat_EnableDebugMode();
+    else
+        trackHat_DisableDebugMode();
 
-    if (status != th_noinit)
-        return true;
+    if (!device.ensure_device_exists())
+        return false;
 
-start:
-    trackHat_EnableDebugMode();
     set_pt_options();
 
-    error_code = TH_SUCCESS;
-    status = th_noinit;
-
-    CHECK(trackHat_Initialize(&device)); status = th_init;
-    CHECK(trackHat_DetectDevice(&device)); status = th_detect;
-
     return true;
-error:
-    stop();
-    switch (error_code)
-    {
-    case TH_ERROR_DEVICE_NOT_DETECTED:
-    case TH_ERROR_CAMERA_SELFT_TEST_FAILD:
-    case TH_ERROR_CAMERA_INTERNAL_BROKEN:
-        break;
-    default:
-        if (attempts++ < max_attempts)
-        {
-            portable::sleep(10);
-            goto start;
-        }
-    }
-    return false;
 }
 
 void trackhat_camera::stop()
 {
-#if 0
-    if (status >= th_connect)
-    {
-        uint32_t uptime = 0;
-        if (TH_ErrorCode status = trackHat_GetUptime(&device, &uptime); status == TH_SUCCESS)
-            qDebug() << "trackhat stop: device uptime" << uptime << "seconds";
-    }
-#endif
-
-    if (status >= th_connect)
-        (void)trackHat_Disconnect(&device);
-    if (status >= th_init)
-        (void)trackHat_Deinitialize(&device);
-
-    status = th_noinit;
-    device = {};
+    device.disconnect();
 }

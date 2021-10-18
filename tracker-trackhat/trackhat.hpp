@@ -24,6 +24,9 @@ namespace trackhat_impl
 {
 using namespace options;
 
+TH_ErrorCode log_error(TH_ErrorCode error, const char* source);
+#define th_check(expr) ::trackhat_impl::log_error((expr), #expr)
+
 struct trackhat_settings : opts
 {
     trackhat_settings();
@@ -77,6 +80,24 @@ struct point
     bool ok = false;
 };
 
+struct camera_handle final
+{
+    OTR_DISABLE_MOVE_COPY(camera_handle);
+    trackHat_Device_t* operator->() { return &device_; }
+    trackHat_Device_t& operator*() { return device_; }
+
+    camera_handle() = default;
+    ~camera_handle() = default;
+
+    [[nodiscard]] bool ensure_connected();
+    [[nodiscard]] bool ensure_device_exists();
+    void disconnect();
+private:
+    trackHat_Device_t device_ = {};
+    enum state { st_stopped, st_detected, st_streaming, };
+    state state_ = st_stopped;
+};
+
 struct trackhat_camera final : pt_camera
 {
     trackhat_camera();
@@ -100,17 +121,15 @@ struct trackhat_camera final : pt_camera
     static constexpr int sensor_size = 2940;
     static constexpr int sensor_fov = 52;
     static constexpr int point_count = TRACK_HAT_NUMBER_OF_POINTS;
+    static constexpr bool debug_mode = true;
 
 private:
-    enum device_status { th_noinit, th_init, th_detect, th_connect, th_running, };
     trackhat_impl::setting_receiver sig{true};
 
-    [[nodiscard]] int init_regs();
+    [[nodiscard]] bool init_regs();
     void set_pt_options();
 
-    trackHat_Device_t device {};
-    device_status status = th_noinit;
-    TH_ErrorCode error_code = TH_SUCCESS;
+    camera_handle device;
     pt_settings s{trackhat_metadata::module_name};
     trackhat_settings t;
 };
