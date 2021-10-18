@@ -45,24 +45,38 @@ Tracker_PT::~Tracker_PT()
         camera->stop();
 }
 
+bool Tracker_PT::check_camera()
+{
+    if (reopen_camera_flag)
+    {
+        reopen_camera_flag = false;
+        if (!camera || last_camera_name != s.camera_name)
+        {
+            // deadlock avoidance
+
+            decltype(camera) camera_;
+            {
+                QMutexLocker l(&camera_mtx);
+                camera_ = std::move(camera);
+            }
+            camera_ = traits->make_camera();
+            if (!camera_ || !camera_->start(s))
+                return false;
+            camera = std::move(camera_);
+            last_camera_name = s.camera_name;
+        }
+    }
+    return true;
+}
+
 void Tracker_PT::run()
 {
     portable::set_curthread_name("tracker/pt");
 
     while(!isInterruptionRequested())
     {
-        if (reopen_camera_flag)
-        {
-            reopen_camera_flag = false;
-            {
-                QMutexLocker l(&camera_mtx);
-                camera = nullptr;
-            }
-            auto camera_ = traits->make_camera();
-            if (!camera_ || !camera_->start(s))
-                break;
-            camera = std::move(camera_);
-        }
+        if (!check_camera())
+            break;
 
         pt_camera_info info;
         bool new_frame = false;

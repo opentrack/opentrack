@@ -49,10 +49,12 @@ struct Tracker_PT : QThread, ITracker
 
 private:
     void run() override;
+    [[nodiscard]] bool check_camera();
 
     pointer<pt_runtime_traits> traits;
 
     mutable QRecursiveMutex camera_mtx;
+    QString last_camera_name;
 
     PointTracker point_tracker;
 
