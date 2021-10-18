@@ -232,6 +232,7 @@ namespace Kinect {
         // Release previous frame if any
         SafeRelease(iInfraredFrame);
 
+        Sleep(34); // FIXME
         HRESULT hr = iInfraredFrameReader->AcquireLatestFrame(&iInfraredFrame);
 
         if (SUCCEEDED(hr))
