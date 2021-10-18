@@ -23,26 +23,24 @@ void Timer::start()
     gettime(&state);
 }
 
-struct timespec Timer::gettime_() const
+struct timespec Timer::get_delta() const
 {
     struct timespec ts; // NOLINT
     gettime(&ts);
-    unsigned long long a = ts.tv_sec, b = state.tv_sec;
-    int c = ts.tv_nsec, d = state.tv_nsec;
-    return { (time_t)(a - b), (long)(c - d) };
+    return { ts.tv_sec - state.tv_sec, ts.tv_nsec - state.tv_nsec };
 }
 
 // milliseconds
 
 double Timer::elapsed_ms() const
 {
-    struct timespec delta = gettime_();
+    struct timespec delta = get_delta();
     return delta.tv_sec * 1000 + delta.tv_nsec * 1e-6;
 }
 
 double Timer::elapsed_seconds() const
 {
-    struct timespec delta = gettime_();
+    struct timespec delta = get_delta();
     return delta.tv_sec + delta.tv_nsec * 1e-9;
 }
 
@@ -63,20 +61,14 @@ static auto otr_get_clock_frequency()
 
 void Timer::gettime(timespec* state)
 {
-    static const unsigned long long freq = otr_get_clock_frequency();
+    static const auto freq = otr_get_clock_frequency();
     LARGE_INTEGER d;
     BOOL ret = QueryPerformanceCounter(&d);
     assert(ret && "QueryPerformanceCounter failed");
 
-    constexpr int usec = 1000000;
-    unsigned long long tm = d.QuadPart;
-    tm *= usec;
-    tm /= freq;
-    tm %= usec;
-    tm *= 1000;
-
-    state->tv_sec = (time_t)((unsigned long long)d.QuadPart/freq);
-    state->tv_nsec = (long)tm;
+    constexpr int nsec = 1'000'000'000;
+    state->tv_sec  = (time_t)(d.QuadPart/freq);
+    state->tv_nsec = (decltype(state->tv_nsec))(d.QuadPart % freq * nsec / freq);
 }
 
 #elif defined __MACH__

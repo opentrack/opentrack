@@ -23,6 +23,6 @@ struct OTR_COMPAT_EXPORT Timer final
 private:
     struct timespec state {};
     static void gettime(struct timespec* state);
-    struct timespec gettime_() const;
+    struct timespec get_delta() const;
     using ns = time_units::ns;
 };
