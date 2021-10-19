@@ -1,4 +1,5 @@
 #include "scoped.hpp"
+#include "compat/run-in-thread.hpp"
 #include <QApplication>
 #include <QThread>
 
@@ -48,7 +49,12 @@ static bool is_tracker_teardown()
 opts::~opts()
 {
     if (!is_tracker_teardown() && raii)
+#if 1
+        run_in_thread_sync(qApp->thread(), [this]{ b->reload(); });
+#else
+        assert(b);
         b->reload();
+#endif
 #if 0
     else
         qDebug() << "in teardown, not reloading" << b->name();
