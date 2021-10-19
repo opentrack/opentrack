@@ -581,7 +581,7 @@ void main_window::show_tracker_settings()
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
     if (pTrackerDialog)
         QObject::connect(pTrackerDialog.get(), &ITrackerDialog::closing,
-                         this, [this] { QTimer::singleShot(0, [this] { pTrackerDialog = nullptr; }); });
+                         this, [this] { pTrackerDialog = nullptr; });
 }
 
 void main_window::show_proto_settings()
@@ -590,7 +590,7 @@ void main_window::show_proto_settings()
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
     if (pProtocolDialog)
         QObject::connect(pProtocolDialog.get(), &IProtocolDialog::closing,
-                         this, [this] { QTimer::singleShot(0, [this] { pProtocolDialog = nullptr; }); });
+                         this, [this] { pProtocolDialog = nullptr; });
 }
 
 void main_window::show_filter_settings()
@@ -599,7 +599,7 @@ void main_window::show_filter_settings()
         pFilterDialog->register_filter(work->libs.pFilter.get());
     if (pFilterDialog)
         QObject::connect(pFilterDialog.get(), &IFilterDialog::closing,
-                         this, [this] { QTimer::singleShot(0, [this] { pFilterDialog = nullptr; }); });
+                         this, [this] { pFilterDialog = nullptr; });
 }
 
 void main_window::show_options_dialog()
