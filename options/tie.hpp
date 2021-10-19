@@ -38,16 +38,12 @@ std::enable_if_t<std::is_enum_v<t>> tie_setting(value<t>& v, QComboBox* cb)
     v = static_cast<t>(cb->currentData().toInt());
 
     value_::connect(cb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                    &v, [&v, cb](int idx) {
-                        run_in_thread_sync(cb, [&] {
-                            v = static_cast<t>(cb->itemData(idx).toInt());
-                        });
-                    }, v.DIRECT_CONNTYPE);
+                    &v, [&v, cb](int idx) { v = static_cast<t>(cb->itemData(idx).toInt()); },
+                    v.DIRECT_CONNTYPE);
 
     value_::connect(&v, value_::value_changed<int>(),
-                    cb, [cb](int x) {
-                            run_in_thread_sync(cb, [=] { cb->setCurrentIndex(cb->findData(x)); });
-                    }, v.DIRECT_CONNTYPE);
+                    cb, [cb](int x) { cb->setCurrentIndex(cb->findData(x)); },
+                    v.SAFE_CONNTYPE);
 }
 
 template<typename t, typename From, typename To>
@@ -57,17 +53,11 @@ void tie_setting(value<t>& v, QComboBox* cb, From&& fn_to_index, To&& fn_to_valu
     v = fn_to_value(cb->currentIndex(), cb->currentData());
 
     value_::connect(cb, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                        &v, [&v, cb, fn_to_value](int idx) {
-        run_in_thread_sync(cb, [&] {
-            v = fn_to_value(idx, cb->currentData());
-        });
-    }, v.DIRECT_CONNTYPE);
+                    &v, [&v, cb, fn_to_value](int idx) { v = fn_to_value(idx, cb->currentData()); },
+                    v.DIRECT_CONNTYPE);
     value_::connect(&v, value_::value_changed<t>(),
-                    cb, [cb, fn_to_index](cv_qualified<t>& v) {
-        run_in_thread_sync(cb, [&] {
-            cb->setCurrentIndex(fn_to_index(v));
-        });
-    }, v.DIRECT_CONNTYPE);
+                    cb, [cb, fn_to_index](cv_qualified<t>& v) { cb->setCurrentIndex(fn_to_index(v)); },
+                    v.DIRECT_CONNTYPE);
 }
 
 template<typename t, typename F>

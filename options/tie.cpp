@@ -58,16 +58,11 @@ void tie_setting(value<QVariant>& v, QComboBox* cb)
         v = {};
 
     value_::connect(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                    &v, [cb, &v](int idx) {
-        v = cb->itemData(idx);
-    }, v.DIRECT_CONNTYPE);
+                    &v, [cb, &v](int idx) { v = cb->itemData(idx); },
+                    v.DIRECT_CONNTYPE);
     value_::connect(&v, value_::value_changed<QVariant>(),
-                    cb,
-                    [cb, set_idx](const QVariant& var) {
-        run_in_thread_sync(cb, [&] {
-            set_idx(var);
-        });
-    }, v.DIRECT_CONNTYPE);
+                    cb, [set_idx](const QVariant& var) { set_idx(var); },
+                    v.SAFE_CONNTYPE);
 }
 
 void tie_setting(value<bool>& v, QRadioButton* cb)
@@ -128,35 +123,21 @@ void tie_setting(value<slider_value>& v, QSlider* w)
         v = v().update_from_slider(w->value(), q_min, q_max);
     }
 
-    value_::connect(w,
-                    &QSlider::valueChanged,
-                    &v,
-                    [=, &v](int pos)
+    value_::connect(w, &QSlider::valueChanged, &v, [=, &v](int pos)
     {
-        run_in_thread_sync(w, [&]()
-        {
-            const int q_min = w->minimum();
-            const int q_max = w->maximum();
-            v = v().update_from_slider(pos, q_min, q_max);
-            w->setValue(v().to_slider_pos(q_min, q_max));
-        });
+        int q_min = w->minimum();
+        int q_max = w->maximum();
+        v = v->update_from_slider(pos, q_min, q_max);
     },
     v.DIRECT_CONNTYPE);
 
-    value_::connect(&v,
-                    value_::value_changed<slider_value>(),
-                    w,
-                    [=, &v](double) {
-        run_in_thread_sync(w, [=, &v]()
-        {
-            const int q_min = w->minimum();
-            const int q_max = w->maximum();
-            const int pos = v->to_slider_pos(q_min, q_max);
-            v = v->update_from_slider(pos, q_min, q_max);
-            w->setValue(pos);
-        });
+    value_::connect(&v, value_::value_changed<slider_value>(), w, [=, &v](double) {
+        const int q_min = w->minimum();
+        const int q_max = w->maximum();
+        const int pos = v->to_slider_pos(q_min, q_max);
+        w->setValue(pos);
     },
-    v.DIRECT_CONNTYPE);
+    v.SAFE_CONNTYPE);
 }
 
 } // ns options
