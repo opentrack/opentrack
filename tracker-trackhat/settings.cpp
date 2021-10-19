@@ -94,6 +94,8 @@ start:
             goto error;
     }
 
+    return true;
+
 retry:
     if (attempts++ < max_attempts)
     {
@@ -135,7 +137,7 @@ bool trackhat_camera::init_regs()
 
     Timer t;
 
-    if (!set_regs(regs))
+    if (!set_regs(regs, std::size(regs)))
     {
         device.disconnect();
         return false;
