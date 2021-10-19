@@ -67,7 +67,7 @@ protected:
     virtual void store_variant(QVariant&&) noexcept = 0;
     virtual void store_variant(const QVariant&) noexcept = 0;
 
-    void maybe_trace(bool x) const;
+    void maybe_trace(const char* str) const;
 
     template<typename t>
     void store_(const t& datum)

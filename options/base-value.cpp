@@ -26,9 +26,8 @@ value_::~value_()
     b->on_value_destructed(this);
 }
 
-void value_::maybe_trace(bool x) const
+void value_::maybe_trace(const char* str) const
 {
     if (TRACE_NOTIFY)
-        qDebug().noquote() << "notify" << (x ? '+' : '-')
-                           << QThread::currentThreadId() << b->name() << self_name;
+        qDebug().noquote() << str << QThread::currentThreadId() << b->name() << self_name;
 }

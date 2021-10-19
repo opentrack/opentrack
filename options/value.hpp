@@ -39,7 +39,9 @@ template<typename t>
 class value final : public value_
 {
     static_assert(std::is_same_v<t, remove_cvref_t<t>>);
+    mutable QMutex mtx;
     const t def;
+    mutable t cached_value;
     using traits = detail::value_traits<t>;
 
     never_inline
@@ -95,11 +97,25 @@ public:
     never_inline
     void notify() const override
     {
-        if (!is_null())
+        if (is_null())
+            return;
+
+        auto x = get();
         {
-            maybe_trace(true);
-            emit valueChanged(traits::storage_from_value(get()));
-            maybe_trace(false);
+            QMutexLocker l(&mtx);
+            if (traits::is_equal(x, cached_value))
+            {
+                //maybe_trace("notify ~");
+                return;
+            }
+            else
+            {
+                cached_value = x;
+                l.unlock();
+                maybe_trace("notify +");
+                emit valueChanged(traits::storage_from_value(x));
+                maybe_trace("notify -");
+            }
         }
     }
 
@@ -131,7 +147,7 @@ public:
     static constexpr Qt::ConnectionType DIRECT_CONNTYPE = Qt::DirectConnection;
     static constexpr Qt::ConnectionType SAFE_CONNTYPE = Qt::QueuedConnection;
 
-    value(bundle b, const QString& name, t def) noexcept : value_(b, name), def(std::move(def))
+    value(bundle b, const QString& name, t def) noexcept : value_(b, name), def(std::move(def)), cached_value{get()}
     {
     }
 
