@@ -38,6 +38,7 @@
 ./modules/opentrack-tracker-udp.dll
 ./modules/opentrack-video-opencv.dll
 ./modules/opentrack-video-ps3eye.dll
+./modules/ps3eye-subprocess.exe
 ./modules/TrackIR.exe
 ./modules/vJoyInterface.dll
 ./opentrack-api.dll
