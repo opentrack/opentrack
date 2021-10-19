@@ -2,7 +2,7 @@
 
 #include "pt-api.hpp"
 
-#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 #include <QImage>
 
 #ifdef __clang__

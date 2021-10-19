@@ -9,9 +9,10 @@
 #include "point_extractor.h"
 #include "point_tracker.h"
 #include "frame.hpp"
-
 #include "cv/numeric.hpp"
 #include "compat/math.hpp"
+
+#include <opencv2/imgproc.hpp>
 
 #undef PREVIEW
 //#define PREVIEW

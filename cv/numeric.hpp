@@ -1,7 +1,7 @@
 #pragma once
 
 #include <type_traits>
-#include <opencv2/core.hpp>
+#include <opencv2/core/matx.hpp>
 
 namespace numeric_types {
     using f = float;

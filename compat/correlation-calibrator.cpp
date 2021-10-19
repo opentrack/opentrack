@@ -2,6 +2,7 @@
 #include "variance.hpp"
 #include "compat/math.hpp"
 #include "compat/meta.hpp"
+#include "compat/macros1.h"
 
 #include <cmath>
 #include <iterator>

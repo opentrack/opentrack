@@ -13,12 +13,8 @@
 #include "pt-api.hpp"
 #include "point-filter.hpp"
 
-#include <cstddef>
-#include <memory>
 #include <vector>
 #include <array>
-
-#include <opencv2/core.hpp>
 
 #include <QObject>
 

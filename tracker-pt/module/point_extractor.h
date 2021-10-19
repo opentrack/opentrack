@@ -9,11 +9,9 @@
 #pragma once
 
 #include "pt-api.hpp"
-
+#include <opencv2/core/mat.hpp>
+#include <opencv2/core/types.hpp>
 #include <vector>
-
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc.hpp>
 
 namespace pt_module {
 

@@ -8,17 +8,12 @@
 #pragma once
 
 #include "video/camera.hpp"
-
 #include <optional>
-
-#include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 
 namespace opencv_camera_impl {
 
 using namespace video::impl;
-
-struct cam;
 
 struct metadata : camera_
 {

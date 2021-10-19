@@ -19,8 +19,6 @@
 #include <memory>
 #include <vector>
 
-#include <opencv2/core.hpp>
-
 #include <QThread>
 #include <QMutex>
 #include <QLayout>

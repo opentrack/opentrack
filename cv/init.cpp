@@ -1,6 +1,7 @@
 #include "init.hpp"
 #include <type_traits>
-#include <opencv2/core.hpp>
+#include <opencv2/core/base.hpp>
+#include <opencv2/core/utility.hpp>
 
 [[noreturn]]
 static

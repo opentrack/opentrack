@@ -6,10 +6,8 @@
 #include "options/options.hpp"
 
 #include <tuple>
-#include <type_traits>
+#include <vector>
 #include <memory>
-
-#include <opencv2/core.hpp>
 
 #include <QImage>
 #include <QString>

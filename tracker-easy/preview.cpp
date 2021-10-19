@@ -9,6 +9,7 @@
 #include "preview.h"
 
 #include "compat/math.hpp"
+#include "compat/macros1.h"
 
 #include <opencv2/imgproc.hpp>
 #include <QDebug>

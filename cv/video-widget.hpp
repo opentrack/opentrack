@@ -8,7 +8,7 @@
 #pragma once
 
 #include "video/video-widget.hpp"
-#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 
 struct cv_video_widget final : video_widget
 {

@@ -7,10 +7,7 @@
 
 #include "camera.h"
 #include "frame.hpp"
-
-#include "compat/math-imports.hpp"
-
-#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 
 namespace pt_module {
 
@@ -158,7 +155,7 @@ bool Camera::get_frame_(cv::Mat& img)
             int stride = frame.stride;
             if (stride == 0)
                 stride = cv::Mat::AUTO_STEP;
-            img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, stride);
+            img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, (size_t)stride);
             return true;
         }
     }

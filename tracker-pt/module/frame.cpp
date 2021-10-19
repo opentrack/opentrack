@@ -1,7 +1,5 @@
 #include "frame.hpp"
-
 #include "compat/math.hpp"
-
 #include <opencv2/imgproc.hpp>
 
 namespace pt_module {

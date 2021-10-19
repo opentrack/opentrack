@@ -13,8 +13,6 @@
 
 #include <memory>
 
-#include <opencv2/core.hpp>
-
 #include <QString>
 
 namespace pt_module {

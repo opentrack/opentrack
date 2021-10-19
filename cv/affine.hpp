@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include <opencv2/core.hpp>
 #include "numeric.hpp"
 
 namespace affine_impl {
