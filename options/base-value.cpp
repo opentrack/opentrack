@@ -1,6 +1,19 @@
 #include "base-value.hpp"
+#include <QThread>
 
 using namespace options;
+
+//#define OTR_TRACE_NOTIFY
+
+const bool value_::TRACE_NOTIFY =
+#ifdef OTR_TRACE_NOTIFY
+    true;
+#else
+    [] {
+    auto b = qgetenv("OTR_TRACE_NOTIFY");
+    return !b.isEmpty() && b != "0";
+    }();
+#endif
 
 value_::value_(bundle const& b, const QString& name) noexcept :
     b(b), self_name(name)
@@ -11,4 +24,11 @@ value_::value_(bundle const& b, const QString& name) noexcept :
 value_::~value_()
 {
     b->on_value_destructed(this);
+}
+
+void value_::maybe_trace(bool x) const
+{
+    if (TRACE_NOTIFY)
+        qDebug().noquote() << "notify" << (x ? '+' : '-')
+                           << QThread::currentThreadId() << b->name() << self_name;
 }

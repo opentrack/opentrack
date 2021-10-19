@@ -40,6 +40,8 @@ public:
         return static_cast<signal_sig<t>>(&value_::valueChanged);
     }
 
+    static const bool TRACE_NOTIFY;
+
 signals:
     OTR_OPTIONS_SIGNAL(double);
     OTR_OPTIONS_SIGNAL(float);
@@ -64,6 +66,8 @@ protected:
 
     virtual void store_variant(QVariant&&) noexcept = 0;
     virtual void store_variant(const QVariant&) noexcept = 0;
+
+    void maybe_trace(bool x) const;
 
     template<typename t>
     void store_(const t& datum)

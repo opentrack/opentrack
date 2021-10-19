@@ -92,10 +92,15 @@ public:
         return traits::qvariant_from_value(def);
     }
 
+    never_inline
     void notify() const override
     {
         if (!is_null())
+        {
+            maybe_trace(true);
             emit valueChanged(traits::storage_from_value(get()));
+            maybe_trace(false);
+        }
     }
 
     auto& operator=(t&& datum) noexcept
