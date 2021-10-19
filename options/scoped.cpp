@@ -48,6 +48,7 @@ static bool is_tracker_teardown()
 
 opts::~opts()
 {
+    // XXX TODO debug crash with ps3eye dialog in pt tracker -sh 20211019
     if (!is_tracker_teardown() && raii)
 #if 1
         run_in_thread_sync(qApp->thread(), [this]{ b->reload(); });
