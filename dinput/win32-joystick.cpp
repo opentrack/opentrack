@@ -226,6 +226,9 @@ win32_joy_ctx::enum_state::~enum_state()
 void win32_joy_ctx::enum_state::refresh()
 {
     all.clear();
+#ifdef __SANITIZE_ADDRESS__
+    return;
+#endif
 
     if (!di)
     {
