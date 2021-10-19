@@ -8,7 +8,7 @@
 
 #include <array>
 #include <atomic>
-#include <opencv2/core.hpp>
+#include <opencv2/core/mat.hpp>
 
 enum model_type : int
 {
