@@ -59,7 +59,7 @@ bool Tracker_PT::check_camera()
     }
     assert(camera);
     if (progn(bool x = true; return open_camera_dialog_flag.compare_exchange_strong(x, false);))
-        camera->show_camera_settings();
+        run_in_thread_sync(qApp->thread(), [this] { camera->show_camera_settings(); });
     return true;
 }
 
