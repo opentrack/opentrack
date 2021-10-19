@@ -19,25 +19,18 @@
 
 namespace qt_impl_detail {
 
-template<typename t>
+template<typename u>
 struct run_in_thread_traits
 {
-    using type = t;
-    using ret_type = t;
-    static inline void assign(t& lvalue, const t& rvalue) { lvalue = rvalue; }
-    static inline t pass(const t& val) { return val; }
-    template<typename F> static inline t call(F&& fun) { return std::move(fun()); }
-};
+    using ret_type = std::remove_reference_t<u>;
 
-template<typename u>
-struct run_in_thread_traits<u&&>
-{
-    using t = typename std::remove_reference<u>::type;
-    using type = t;
-    using ret_type = u;
-    static inline void assign(t& lvalue, t&& rvalue) { lvalue = rvalue; }
-    static inline t&& pass(t&& val) { return val; }
-    template<typename F> static inline t&& call(F&& fun) { return std::move(fun()); }
+    template<typename t>
+    static inline void assign(u& lvalue, t&& rvalue) { std::forward<u>(lvalue) = std::forward<t>(rvalue); }
+
+    template<typename t>
+    static inline auto pass(t&& val) -> decltype(auto) { return std::forward<t>(val); }
+
+    template<typename F> static inline auto call(F&& fun) -> decltype(auto) { return std::forward<F>(fun)(); }
 };
 
 template<>
@@ -45,9 +38,9 @@ struct run_in_thread_traits<void>
 {
     using type = unsigned char;
     using ret_type = void;
-    static inline void assign(unsigned char&, unsigned char&&) {}
-    static inline void pass(type&&) {}
-    template<typename F> static type call(F&& fun) { fun(); return type(0); }
+    static inline void assign(unsigned char&, unsigned char) {}
+    static inline void pass(type) {}
+    template<typename F> static type call(F&& fun) { std::forward<F>(fun)(); return type(0); }
 };
 
 }
@@ -67,9 +60,9 @@ run_in_thread_sync(QObject* obj, F&& fun)
     {
         std::mutex mtx;
         std::condition_variable cvar;
-        bool flag;
+        bool flag = false;
 
-        semaphore() : flag(false) {}
+        semaphore() = default;
 
         void wait()
         {
@@ -86,18 +79,19 @@ run_in_thread_sync(QObject* obj, F&& fun)
         }
     };
 
+    if (obj->thread() == QThread::currentThread())
+        return traits::pass(traits::call(fun));
+
     semaphore sem;
 
     {
         QObject src;
-        QObject::connect(&src,
-                         &QObject::destroyed,
-                         obj,
-                         [&] {
+        src.moveToThread(QThread::currentThread());
+        QObject::connect(&src, &QObject::destroyed, obj, [&] {
             traits::assign(ret, traits::call(fun));
             sem.notify();
         },
-        Qt::AutoConnection);
+        Qt::QueuedConnection);
     }
 
     sem.wait();
@@ -107,9 +101,9 @@ run_in_thread_sync(QObject* obj, F&& fun)
 template<typename F>
 void run_in_thread_async(QObject* obj, F&& fun)
 {
+    if (obj->thread() == QThread::currentThread())
+        return (void)fun();
+
     QObject src;
-    QThread* t = obj->thread();
-    if (!t) abort();
-    src.moveToThread(t);
-    QObject::connect(&src, &QObject::destroyed, obj, std::move(fun), Qt::AutoConnection);
+    QObject::connect(&src, &QObject::destroyed, obj, std::forward<F>(fun), Qt::QueuedConnection);
 }
