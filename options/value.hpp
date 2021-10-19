@@ -39,9 +39,7 @@ template<typename t>
 class value final : public value_
 {
     static_assert(std::is_same_v<t, remove_cvref_t<t>>);
-    mutable QMutex mtx;
     const t def;
-    mutable t cached_value = def;
     using traits = detail::value_traits<t>;
 
     never_inline
@@ -97,24 +95,10 @@ public:
     never_inline
     void notify() const override
     {
-        if (is_null())
-            return;
-
-        auto x = get();
-
-        bool b = progn(
-            QMutexLocker l(&mtx);
-            if (!traits::is_equal(x, cached_value))
-            {
-                cached_value = x;
-                return true;
-            }
-            return false;
-        );
-
-        if (b) {
+        if (!is_null())
+        {
             maybe_trace(true);
-            emit valueChanged(traits::storage_from_value(x));
+            emit valueChanged(traits::storage_from_value(get()));
             maybe_trace(false);
         }
     }
