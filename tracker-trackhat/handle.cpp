@@ -31,7 +31,7 @@ bool camera_handle::ensure_connected()
         auto dbg = qDebug();
         dbg << "tracker/trackhat: connect failed, retry";
         dbg.space(); dbg.nospace();
-        dbg << i << "/" << max_attempts;
+        dbg << (i+1) << "/" << max_attempts;
         portable::sleep(50);
     }
 
