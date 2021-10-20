@@ -1,4 +1,5 @@
 ./cleye.config
+./doc/3rdparty-notices/ps3eyedriver
 ./doc/3rdparty-notices/EIGEN-COPYING.txt
 ./doc/3rdparty-notices/FACETRACKNOIR-COPYING.txt
 ./doc/3rdparty-notices/NFAILCLIENT-CREDIT.txt
@@ -9,7 +10,6 @@
 ./doc/CONTRIBUTING.md
 ./doc/OPENTRACK-LICENSING.txt
 ./doc/README.md
-./doc/settings
 ./doc/settings/facetracknoir supported games.csv
 ./doc/WARRANTY.txt
 ./i18n/nl_NL.qm
@@ -21,6 +21,10 @@
 ./modules/freetrackclient64.dll
 ./modules/NPClient.dll
 ./modules/NPClient64.dll
+./modules/opencv_core454.dll
+./modules/opencv_imgcodecs454.dll
+./modules/opencv_imgproc454.dll
+./modules/opencv_videoio454.dll
 ./modules/opentrack-filter-accela.dll
 ./modules/opentrack-filter-ewma.dll
 ./modules/opentrack-filter-hamilton.dll
