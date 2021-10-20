@@ -46,7 +46,7 @@ class OTR_OPTIONS_EXPORT bundle final : public QObject, public connector
 
     friend struct bundler;
 
-    mutable QRecursiveMutex mtx;
+    mutable QMutex mtx { QMutex::Recursive };
     const QString group_name;
     group saved;
     group transient;
@@ -62,7 +62,7 @@ public:
     bundle(const bundle&) = delete;
     bundle& operator=(const bundle&) = delete;
 
-    QRecursiveMutex* get_mtx() const override { return &mtx; }
+    QMutex* get_mtx() const override { return &mtx; }
     QString name() const { return group_name; }
 
     explicit bundle(const QString& group_name);

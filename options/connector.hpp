@@ -38,7 +38,7 @@ class OTR_OPTIONS_EXPORT connector
 protected:
     void notify_values(const QString& name) const;
     void notify_all_values() const;
-    virtual QRecursiveMutex* get_mtx() const = 0;
+    virtual QMutex* get_mtx() const = 0;
     void set_all_to_default_();
 
 public:
