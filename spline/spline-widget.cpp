@@ -109,9 +109,11 @@ void spline_widget::drawBackground()
     const int ystep = (int)std::ceil(y_step_), xstep = (int)std::ceil(x_step_);
     const double maxx = config->max_input();
     const double maxy = config->max_output();
-
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
     double space_width = metrics.horizontalAdvance(' ');
-
+#else
+    double space_width = metrics.boundingRect(' ').right();
+#endif
     painter.setPen(palette().text().color());
 
     // vertical grid
@@ -145,8 +147,11 @@ void spline_widget::drawBackground()
 
         const QString text = QString::number(i);
         QRectF rect = metrics.boundingRect(text);
+#ifndef OTR_OBSOLETE_QT_WORKAROUND
         double advance = metrics.horizontalAdvance(text);
-
+#else
+        double advance = metrics.boundingRect(text).right();
+#endif
         painter.drawText(QPointF(x - advance/2 - rect.left(),
                                  pixel_bounds.bottom() + metrics.lineSpacing()),
                          text);

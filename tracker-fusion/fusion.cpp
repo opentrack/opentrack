@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QApplication>
+#include <cassert>
 
 static const char* own_name = "fusion";
 
