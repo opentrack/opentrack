@@ -14,6 +14,10 @@
 
 #include <QDebug>
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 11, 0)
+#   define OTR_OBSOLETE_QT_WORKAROUND
+#endif
+
 namespace spline_detail {
 
 spline_widget::spline_widget(QWidget *parent) : QWidget(parent)
