@@ -568,16 +568,12 @@ bool neuralnet_tracker::load_and_initialize_model()
         // before running the inference pass.
         opts.SetIntraOpNumThreads(num_threads);
         opts.SetInterOpNumThreads(num_threads);
-        opts.SetGraphOptimizationLevel(
-            GraphOptimizationLevel::ORT_ENABLE_EXTENDED);
-
-        opts.EnableCpuMemArena();
         allocator_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
         localizer.emplace(
             allocator_info, 
             Ort::Session{env, convert(localizer_model_path_enc).c_str(), opts});
-        
+
         poseestimator.emplace(
             allocator_info,
             Ort::Session{env, convert(poseestimator_model_path_enc).c_str(), opts});
