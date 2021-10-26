@@ -315,7 +315,16 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
 
     const auto nt = omp_get_num_threads();
     omp_set_num_threads(num_threads);
-    session.Run(Ort::RunOptions{nullptr}, input_names, &input_val, 1, output_names, output_val, 3);
+    try
+    {
+        session.Run(Ort::RunOptions{ nullptr }, input_names, &input_val, 1, output_names, output_val, 3);
+    }
+    catch (const Ort::Exception &e)
+    {
+        qDebug() << "Failed to run the model: " << e.what();
+        omp_set_num_threads(nt);
+        return {};
+    }
     omp_set_num_threads(nt);
 
     // FIXME: Execution time fluctuates wildly. 19 to 26 ms. Why???
