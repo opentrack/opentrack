@@ -44,7 +44,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
     {
         vec2 tmp = input[i] - state_[i];
         f x = sqrt(tmp.dot(tmp));
-        dist = std::max((f)0, x);
+        dist = std::max(dist, x);
     }
 
     if (dist < (f)1e-6)
