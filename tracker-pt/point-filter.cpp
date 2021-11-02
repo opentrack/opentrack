@@ -31,6 +31,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
     }
 
     constexpr f E = (f)1.75;
+    constexpr f max = .25;
     const f C = progn(
         constexpr int A = 1'000'000;
         double K = *s.point_filter_coefficient;
@@ -57,7 +58,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
 
     for (unsigned i = 0; i < 3; i++)
     {
-        f x = std::clamp(delta, (f)0, (f)1);
+        f x = std::clamp(delta, (f)0, max);
         state_[i] += x*(input[i] - state_[i]);
     }
 
