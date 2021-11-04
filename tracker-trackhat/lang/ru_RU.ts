@@ -71,6 +71,10 @@
         <source>Status: %1 points detected. BAD!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Limit</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>trackhat_module</name>

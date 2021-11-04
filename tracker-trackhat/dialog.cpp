@@ -30,6 +30,7 @@ trackhat_dialog::trackhat_dialog()
     tie_setting(t.model, ui.model_type);
     tie_setting(t.min_pt_size, ui.min_point_size);
     tie_setting(t.max_pt_size, ui.max_point_size);
+    tie_setting(t.point_filter_limit, ui.point_filter_limit);
 
     // exposure
 
@@ -37,11 +38,14 @@ trackhat_dialog::trackhat_dialog()
     tie_setting(t.gain, ui.gain_slider);
     ui.exposure_label->setValue((int)*t.exposure);
     ui.gain_label->setValue((int)*t.gain);
+    ui.point_filter_limit_label->setValue(*t.point_filter_limit);
 
     connect(&t.exposure, value_::value_changed<slider_value>(), ui.exposure_label,
         [this] { ui.exposure_label->setValue((int)*t.exposure); }, Qt::QueuedConnection);
     connect(&t.gain, value_::value_changed<slider_value>(), ui.gain_label,
         [this] { ui.gain_label->setValue((int)*t.gain); }, Qt::QueuedConnection);
+    connect(&t.point_filter_limit, value_::value_changed<slider_value>(), ui.point_filter_limit_label,
+        [this] { ui.point_filter_limit_label->setValue(*t.point_filter_limit); }, Qt::QueuedConnection);
 
     // threshold
 
