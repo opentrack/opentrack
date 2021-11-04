@@ -91,8 +91,21 @@ error:
     return {false, {}};
 }
 
+static void log_handler(const char* file, int line, const char* function, char level, const char* str, size_t len)
+{
+    if (level != 'E')
+        return;
+    char file_[128];
+    snprintf(file_, std::size(file_), "trackhat/%s", file);
+    auto logger = QMessageLogger(file_, line, function).debug();
+    logger << "tracker/trackhat:";
+    logger.noquote() << QLatin1String(str, (int)len);
+}
+
 bool trackhat_camera::start(const pt_settings&)
 {
+    trackHat_SetDebugHandler(log_handler);
+
     if constexpr(debug_mode)
         trackHat_EnableDebugMode();
     else
