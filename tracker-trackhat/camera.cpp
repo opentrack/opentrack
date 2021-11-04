@@ -72,15 +72,7 @@ pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
     if (sig.test_and_clear())
     {
         set_pt_options();
-        TH_ErrorCode status;
-        int i;
-        for (i = 0; i < 5; i++)
-        {
-            status = (TH_ErrorCode)init_regs();
-            if (status != TH_FAILED_TO_SET_REGISTER)
-                break;
-        }
-        if (i == 5)
+        if (!init_regs())
             goto error;
     }
 
