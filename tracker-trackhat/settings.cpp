@@ -145,7 +145,7 @@ bool trackhat_camera::init_regs()
         return false;
     }
 
-    if (int elapsed = (int)t.elapsed_ms(); elapsed > 250)
+    if (int elapsed = (int)t.elapsed_ms(); elapsed > 500)
         qDebug() << "tracker/trackhat: setting registers took" << elapsed << "ms";
 
     return true;
