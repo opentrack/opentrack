@@ -90,6 +90,8 @@ start:
             continue;
         else if (status == TH_FAILED_TO_SET_REGISTER)
             goto retry;
+        else if (status == TH_ERROR_DEVICE_COMUNICATION_TIMEOUT)
+            goto retry;
         else
             goto error;
     }
