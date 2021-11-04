@@ -24,8 +24,9 @@ namespace trackhat_impl
 {
 using namespace options;
 
-TH_ErrorCode log_error(TH_ErrorCode error, const char* source);
-#define th_check(expr) ::trackhat_impl::log_error((expr), #expr)
+TH_ErrorCode log_error(TH_ErrorCode error, const char* source, const char* file, int line, const char* function);
+#define th_check_(expr, expr2) ::trackhat_impl::log_error((expr), expr2)
+#define th_check(expr) ::trackhat_impl::log_error((expr), #expr, __FILE__, __LINE__, function_name)
 
 struct trackhat_settings : opts
 {

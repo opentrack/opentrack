@@ -4,13 +4,16 @@
 
 namespace trackhat_impl {
 
-TH_ErrorCode log_error(TH_ErrorCode error, const char* source)
+TH_ErrorCode log_error(TH_ErrorCode error, const char* source,
+                       const char* file, int line, const char* function)
 {
     if (error == TH_ERROR_DEVICE_ALREADY_OPEN)
         error = TH_SUCCESS;
     if (error)
-        fprintf(stderr, "error 0x%x in %s\n", -error, source);
-    fflush(stderr);
+    {
+        auto logger = QMessageLogger(file, line, function).warning();
+        logger << "tracker/trackhat: error" << (void*)-error << "in" << source;
+    }
     return error;
 }
 
