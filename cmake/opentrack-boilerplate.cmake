@@ -84,7 +84,7 @@ function(otr_compat target)
     endif()
 
     get_property(type TARGET "${n}" PROPERTY TYPE)
-    if (".${TYPE}" STREQUAL ".EXECUTABLE")
+    if (type STREQUAL "EXECUTABLE")
         otr_fixup_subsystem(${target})
     endif()
 endfunction()
