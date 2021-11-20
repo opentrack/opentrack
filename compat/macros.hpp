@@ -20,7 +20,6 @@ template<typename t>
 using to_const_ref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>;
 
 template<typename t>
-using cv_qualified = std::conditional_t<sizeof(remove_cvref_t<t>) <= sizeof(void*)*4 && std::is_trivially_copyable_v<t> ||
-                                        std::is_fundamental_v<remove_cvref_t<t>>,
+using cv_qualified = std::conditional_t<std::is_fundamental_v<remove_cvref_t<t>>,
                                         remove_cvref_t<t>,
                                         to_const_ref_t<t>>;
