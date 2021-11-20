@@ -19,11 +19,8 @@ std::vector<QString> metadata::camera_names() const
 {
     std::vector<std::tuple<QString, int>> names = get_camera_names();
     std::vector<QString> ret;
-    for (const auto& t : names)
-    {
-        const auto& [str, idx] = t;
+    for (const auto& [str, idx] : names)
         ret.push_back(str);
-    }
     return ret;
 }
 
