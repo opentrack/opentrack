@@ -10,96 +10,104 @@
 
 namespace options::detail {
 
-template<typename t, typename Enable = void>
-struct value_traits;
-
 template<typename t, typename u = t, typename Enable = void>
 struct default_value_traits
 {
     using value_type = t;
     using stored_type = u;
-    using self = value_traits<value_type>;
 
-    static value_type value_with_default(const value_type& val, const value_type&)
+    static inline
+    value_type value_with_default(cv_qualified<value_type> val, cv_qualified<value_type>)
     {
         return val;
     }
 
-    static value_type value_from_storage(const stored_type& x)
+    static inline
+    value_type value_from_storage(cv_qualified<stored_type> x)
     {
         return static_cast<value_type>(x);
     }
 
-    static stored_type storage_from_value(const value_type& val)
+    static inline
+    stored_type storage_from_value(cv_qualified<value_type> val)
     {
         return static_cast<stored_type>(val);
     }
 
-    static value_type value_from_qvariant(const QVariant& x)
+    static inline
+    value_type value_from_qvariant(const QVariant& x)
     {
-        return self::value_from_storage(self::storage_from_qvariant(x));
+        return value_from_storage(storage_from_qvariant(x));
     }
 
-    static QVariant qvariant_from_value(const value_type& val)
+    static inline
+    QVariant qvariant_from_value(cv_qualified<value_type> val)
     {
-        return self::qvariant_from_storage(self::storage_from_value(val));
+        return qvariant_from_storage(storage_from_value(val));
     }
 
-    static constexpr value_type pass_value(const value_type& x)
+    static constexpr inline
+    value_type pass_value(cv_qualified<value_type> x)
     {
         if constexpr(std::is_same_v<value_type, stored_type>)
             return x;
         else
-            return self::value_from_storage(self::storage_from_value(x));
+            return value_from_storage(storage_from_value(x));
     }
 
-    static stored_type storage_from_qvariant(const QVariant& x)
+    static inline
+    stored_type storage_from_qvariant(const QVariant& x)
     {
         // XXX TODO
         return x.value<stored_type>();
     }
 
-    static QVariant qvariant_from_storage(const stored_type& val)
+    static inline
+    QVariant qvariant_from_storage(cv_qualified<stored_type> val)
     {
         // XXX TODO
         return QVariant::fromValue<stored_type>(val);
     }
 
-    static bool is_equal(const value_type& x, const value_type& y)
+    static inline
+    bool is_equal(cv_qualified<value_type> x, cv_qualified<value_type> y)
     {
         return x == y;
     }
 };
 
-template<typename t, typename Enable>
+template<typename t, typename Enable = void>
 struct value_traits : default_value_traits<t> {};
 
 template<>
-struct value_traits<double> : default_value_traits<double>
+inline
+bool default_value_traits<double>::is_equal(double x, double y)
 {
-    static bool is_equal(value_type x, value_type y) { return std::fabs(x - y) < 1e-6; }
+    return std::fabs(x - y) < 1e-6;
+};
+
+template<> struct value_traits<float, double> : default_value_traits<float> {};
+
+template<>
+inline
+bool default_value_traits<float, double>::is_equal(float x, float y)
+{
+    return std::fabs(x - y) < 1e-6f;
 };
 
 template<>
-struct value_traits<float> : default_value_traits<float>
+inline
+slider_value default_value_traits<slider_value>::value_with_default(cv_qualified<slider_value> val, cv_qualified<slider_value> def)
 {
-    static bool is_equal(value_type x, value_type y) { return std::fabs(x - y) < 1e-6f; }
-};
+    return { val.cur(), def.min(), def.max() };
+}
 
 template<>
-struct value_traits<slider_value> : default_value_traits<slider_value>
+inline
+bool default_value_traits<slider_value>::is_equal(cv_qualified<slider_value> x, cv_qualified<slider_value> y)
 {
-    static slider_value value_with_default(const slider_value& val, const slider_value& def)
-    {
-        return { val.cur(), def.min(), def.max() };
-    }
-
-    static bool is_equal(const slider_value& x, const slider_value& y)
-    {
-        using tr = value_traits<double>;
-        return tr::is_equal(x.cur(), y.cur());
-    }
-};
+    return value_traits<double>::is_equal(x.cur(), y.cur());
+}
 
 // Qt uses int a lot in slots so use it for all enums
 template<typename t>
