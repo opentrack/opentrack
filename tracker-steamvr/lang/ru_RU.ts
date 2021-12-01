@@ -26,7 +26,7 @@
 <context>
     <name>steamvr_metadata</name>
     <message>
-        <source>Valve SteamVR</source>
+        <source>COVISART NG SIMULATOR</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

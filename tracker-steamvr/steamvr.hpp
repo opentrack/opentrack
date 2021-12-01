@@ -99,6 +99,6 @@ class steamvr_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() override { return tr("Valve SteamVR"); }
-    QIcon icon() override { return QIcon(":/images/rift_tiny.png"); }
+    QString name() override { return tr("COVISART NG SIMULATOR"); }
+    QIcon icon() override { return QIcon(":/images/steamvr.png"); }
 };
