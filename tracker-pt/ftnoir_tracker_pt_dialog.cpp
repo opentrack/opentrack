@@ -121,9 +121,13 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
 
     tie_setting(s.enable_point_filter, ui.enable_point_filter);
     tie_setting(s.point_filter_coefficient, ui.point_filter_slider);
+    tie_setting(s.point_filter_limit, ui.point_filter_limit_slider);
     connect(&s.point_filter_coefficient, value_::value_changed<slider_value>(),
             ui.point_filter_label, [this] { ui.point_filter_label->setValue(*s.point_filter_coefficient); } );
+    connect(&s.point_filter_limit, value_::value_changed<slider_value>(), ui.point_filter_limit_label,
+        [this] { ui.point_filter_limit_label->setValue(*s.point_filter_limit); }, Qt::QueuedConnection);
     ui.point_filter_label->setValue(*s.point_filter_coefficient);
+    ui.point_filter_limit_label->setValue(*s.point_filter_limit);
 }
 
 QString TrackerDialog_PT::threshold_display_text(int threshold_value)

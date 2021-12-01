@@ -415,7 +415,7 @@ void main_window::start_tracker_()
     if (pProtocolDialog)
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
 
-    pose_update_timer.start(50);
+    pose_update_timer.start(15);
 
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates

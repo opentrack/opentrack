@@ -48,7 +48,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - Relaying UDP to another computer
 - Virtual joystick output (Windows, Linux, OSX)
 - Wine freetrack glue protocol (Linux, OSX)
-- X-Plane plugin (Linux)
+- X-Plane plugin (Linux; uses the Wine output option)
 - Tablet-like mouse output (Windows)
 - FlightGear
 - FSUIPC for Microsoft Flight Simulator 2002/2004 (Windows)
