@@ -64,9 +64,11 @@ void trackhat_camera::set_pt_options()
         s.cap_x = 60; s.cap_y = 90; s.cap_z = 95;
         break;
     case model_mystery_meat:
-        s.clip_tz = 15; s.clip_ty = 40; s.clip_by = 70; s.clip_bz = 40;
         break;
     }
+
+    s.dynamic_pose = t.model == model_cap;
+    s.init_phase_timeout = 500;
 
     s.camera_name = "TrackHat Sensor (WIP)";
 
