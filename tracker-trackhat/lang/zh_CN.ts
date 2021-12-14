@@ -20,6 +20,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fuzz</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Model</source>
         <translation type="unfinished"></translation>
     </message>
@@ -48,15 +56,35 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Gain</source>
+        <source>Cap</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fuzz</source>
+        <source>Clip (left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip (right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mini Clip (left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mini Clip (right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -69,10 +97,6 @@
     </message>
     <message>
         <source>Status: %1 points detected. BAD!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Limit</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
