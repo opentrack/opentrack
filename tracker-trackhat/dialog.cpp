@@ -9,12 +9,12 @@ trackhat_dialog::trackhat_dialog()
     poll_timer.setInterval(250);
 
     const std::tuple<QString, model_type> model_types[] = {
-        { "Cap",                model_cap },
-        { "Clip (left)",        model_clip_left },
-        { "Clip (right)",       model_clip_right },
-        { "Mini Clip (left)",   model_mini_clip_left },
-        { "Mini Clip (right)",  model_mini_clip_right },
-        { "Custom",             model_mystery_meat },
+        { tr("Cap"),                model_cap },
+        { tr("Clip (left)"),        model_clip_left },
+        { tr("Clip (right)"),       model_clip_right },
+        { tr("Mini Clip (left)"),   model_mini_clip_left },
+        { tr("Mini Clip (right)"),  model_mini_clip_right },
+        { tr("Custom"),             model_mystery_meat },
     };
 
     ui.model_type->clear();
