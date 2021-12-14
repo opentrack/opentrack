@@ -87,10 +87,10 @@ void main_window::init_dylibs()
             this, [&](const QString&) { pTrackerDialog = nullptr; });
 
     connect(ui.iconcomboProtocol, &QComboBox::currentTextChanged,
-            this, [&](const QString&) { pProtocolDialog = nullptr; });
+            this, [this](const QString&) { pProtocolDialog = nullptr; });
 
     connect(ui.iconcomboFilter, &QComboBox::currentTextChanged,
-            this, [&](const QString&) { pFilterDialog = nullptr; });
+            this, [this](const QString&) { pFilterDialog = nullptr; });
 
     connect(&m.tracker_dll, value_::value_changed<QString>(),
             this, &main_window::save_modules,
@@ -176,7 +176,7 @@ void main_window::init_tray_menu()
     menu_action_show.setIconVisibleInMenu(true);
     menu_action_show.setText(isHidden() ? tr("Show the Octopus") : tr("Hide the Octopus"));
     menu_action_show.setIcon(QIcon(":/images/opentrack.png"));
-    QObject::connect(&menu_action_show, &QAction::triggered, this, [&] { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
+    QObject::connect(&menu_action_show, &QAction::triggered, this, [this] { toggle_restore_from_tray(QSystemTrayIcon::Trigger); });
     tray_menu.addAction(&menu_action_show);
 
     tray_menu.addSeparator();
