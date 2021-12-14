@@ -559,8 +559,8 @@ static bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
 template<typename t, typename... Args>
 static bool mk_window(std::unique_ptr<t>& place, Args&&... params)
 {
-    return mk_window_common(place, [&] {
-        return std::make_unique<t>(params...);
+    return mk_window_common(place, show, [&] {
+        return std::make_unique<t>(std::forward<Args>(params)...);
     });
 }
 
