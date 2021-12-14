@@ -4,6 +4,42 @@
 <context>
     <name>trackhat_dialog</name>
     <message>
+        <source>Cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip (left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip (right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mini Clip (left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mini Clip (right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: Tracking stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1 points detected. Good!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1 points detected. BAD!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>TrackHat</source>
         <translation type="unfinished"></translation>
     </message>
@@ -61,42 +97,6 @@
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clip (left)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clip (right)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mini Clip (left)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mini Clip (right)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status: Tracking stopped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status: %1 points detected. Good!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status: %1 points detected. BAD!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

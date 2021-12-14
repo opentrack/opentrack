@@ -100,16 +100,23 @@ void trackhat_dialog::unregister_tracker()
     poll_timer.stop();
 }
 
-void trackhat_dialog::doOK()
+void trackhat_dialog::save()
 {
     s.b->save();
     t.b->save();
-    close();
 }
 
-void trackhat_dialog::doCancel()
+void trackhat_dialog::reload()
 {
-    close();
+    s.b->reload();
+    s.b->reload();
+}
+
+void trackhat_dialog::doCancel() { reload(); close(); }
+void trackhat_dialog::doOK() { save(); close(); }
+
+trackhat_dialog::~trackhat_dialog()
+{
 }
 
 void trackhat_dialog::poll_tracker_info()
@@ -122,4 +129,8 @@ void trackhat_dialog::poll_tracker_info()
         ui.status_label->setText(tr("Status: %1 points detected. BAD!").arg(tracker->get_n_points()));
 }
 
-trackhat_dialog::~trackhat_dialog() = default;
+void trackhat_dialog::set_buttons_visible(bool x)
+{
+    ui.buttonBox->setVisible(x);
+    adjustSize();
+}

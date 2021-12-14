@@ -5,10 +5,11 @@
 #include "api/plugin-api.hpp"
 #include <QTimer>
 
-class trackhat_dialog : public ITrackerDialog
+class trackhat_dialog final : public ITrackerDialog
 {
     Q_OBJECT
 
+protected:
     Ui_trackhat_dialog ui;
     Tracker_PT* tracker = nullptr;
     QTimer poll_timer{this};
@@ -16,11 +17,16 @@ class trackhat_dialog : public ITrackerDialog
     pt_settings s{trackhat_metadata::module_name};
     trackhat_settings t;
 
+    void set_buttons_visible(bool x) override;
+
 public:
     trackhat_dialog();
     ~trackhat_dialog() override;
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;
+    bool embeddable() noexcept override { return true; }
+    void save() override;
+    void reload() override;
 
 public slots:
     void doOK();
