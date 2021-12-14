@@ -49,6 +49,7 @@ function(otr_i18n_for_target_directory n)
                        ${to-null}
                        COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
                        DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-uih} ${${k}-moc}
+                       BYPRODUCTS ${ts-files}
                        COMMENT "Running lupdate for ${n}"
                        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
     set(target-name "i18n-module-${n}")
