@@ -15,10 +15,9 @@ function(otr_i18n_for_target_directory n)
 
     set(ts-files "")
     foreach(k ${opentrack_all-translations})
-        list(APPEND ts-files "lang/${k}.ts")
+        list(APPEND ts-files "${CMAKE_CURRENT_SOURCE_DIR}/lang/${k}.ts")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${k}" "${CMAKE_CURRENT_SOURCE_DIR}/lang/${k}.ts")
     endforeach()
-    set(stamp "${CMAKE_CURRENT_BINARY_DIR}/lupdate.stamp")
 
     foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
@@ -37,7 +36,7 @@ function(otr_i18n_for_target_directory n)
         set(to-null "2>/dev/null")
     endif()
 
-    add_custom_command(OUTPUT "${stamp}"
+    add_custom_command(OUTPUT "${ts-files}"
                        COMMAND "${lupdate-binary}"
                        -I "${CMAKE_SOURCE_DIR}"
                        -silent
@@ -47,14 +46,11 @@ function(otr_i18n_for_target_directory n)
                        .
                        -ts ${ts-files}
                        ${to-null}
-                       COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
                        DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-uih} ${${k}-moc}
-                       BYPRODUCTS ${ts-files}
                        COMMENT "Running lupdate for ${n}"
                        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
     set(target-name "i18n-module-${n}")
-    add_custom_target(${target-name} DEPENDS "${stamp}" COMMENT "")
-    set_property(TARGET ${target-name} PROPERTY FOLDER "i18n")
+    add_custom_target(${target-name} DEPENDS "${ts-files}" COMMENT "")
     add_dependencies(i18n-lupdate ${target-name})
 endfunction()
 
@@ -83,7 +79,7 @@ function(otr_merge_translations)
                 ${ts-files}
                 -qm "${qm-output}"
                 ${to-null}
-            DEPENDS ${ts-files} i18n-lupdate
+            DEPENDS i18n-lupdate "${ts-files}"
             COMMENT "Running lrelease for ${i}"
             WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
