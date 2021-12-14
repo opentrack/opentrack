@@ -55,6 +55,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     connect(&det_timer, &QTimer::timeout,
             this, &main_window::maybe_start_profile_from_executable);
     det_timer.start(1000);
+    connect(&*s.b, &options::bundle_::reloading, this, &main_window::register_shortcuts);
+    connect(&*s.b, &options::bundle_::saving, this, &main_window::register_shortcuts);
 }
 
 void main_window::init_shortcuts()
@@ -606,11 +608,7 @@ void main_window::show_options_dialog()
 {
     if (mk_window(options_widget, [&](bool flag) { set_keys_enabled(!flag); }))
     {
-        // XXX this should logically connect to a bundle
-        // also doesn't work when switching profiles with options dialog open
         // move shortcuts to a separate bundle and add a migration -sh 20180218
-        connect(options_widget.get(), &options_dialog::closing,
-                this, &main_window::register_shortcuts);
     }
 }
 
