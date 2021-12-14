@@ -8,22 +8,19 @@ trackhat_dialog::trackhat_dialog()
     poll_tracker_info();
     poll_timer.setInterval(250);
 
-    struct {
-        const char* name;
-        model_type t;
-    } model_types[] = {
-        { "Cap", model_cap },
-        { "Clip (left)", model_clip_left },
-        { "Clip (right)", model_clip_right },
-        { "Mini Clip (left)", model_mini_clip_left },
-        { "Mini Clip (right)", model_mini_clip_right },
-        { "Mystery Meat", model_mystery_meat },
+    const std::tuple<QString, model_type> model_types[] = {
+        { "Cap",                model_cap },
+        { "Clip (left)",        model_clip_left },
+        { "Clip (right)",       model_clip_right },
+        { "Mini Clip (left)",   model_mini_clip_left },
+        { "Mini Clip (right)",  model_mini_clip_right },
+        { "Custom",             model_mystery_meat },
     };
 
     ui.model_type->clear();
 
-    for (auto x : model_types)
-        ui.model_type->addItem(QIcon{}, tr(x.name), (QVariant)(int)x.t);
+    for (const auto& [name, type] : model_types)
+        ui.model_type->addItem(QIcon{}, name, (QVariant)(int)type);
 
     // model
 
