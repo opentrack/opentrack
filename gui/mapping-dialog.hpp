@@ -16,6 +16,7 @@ class OTR_GUI_EXPORT mapping_dialog final : public QDialog
 public:
     mapping_dialog(Mappings& m);
     void refresh_tab();
+    inline bool embeddable() noexcept { return false; }
 private:
     Ui::mapping_dialog ui;
     Mappings& m;

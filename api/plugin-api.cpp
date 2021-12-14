@@ -23,6 +23,8 @@ void BaseDialog::done(int)
     }
 }
 
+bool BaseDialog::embeddable() noexcept { return false; }
+
 } // ns plugin_api::detail
 
 // these exist so that vtable is emitted in a single compilation unit, not all of them.
@@ -47,6 +49,7 @@ ITrackerDialog::ITrackerDialog() = default;
 ITrackerDialog::~ITrackerDialog() = default;
 void ITrackerDialog::register_tracker(ITracker*) {}
 void ITrackerDialog::unregister_tracker() {}
+void ITrackerDialog::set_buttons_visible(bool) {}
 IExtension::~IExtension() = default;
 IExtensionDialog::~IExtensionDialog() = default;
 
