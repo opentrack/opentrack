@@ -86,7 +86,7 @@ void main_window::init_dylibs()
         ui.iconcomboFilter->addItem(x->icon, x->name, x->module_name);
 
     connect(ui.iconcomboTrackerSource, &QComboBox::currentTextChanged,
-            this, [&](const QString&) { pTrackerDialog = nullptr; });
+            this, [this](const QString&) { pTrackerDialog = nullptr; if (options_widget) options_widget->tracker_module_changed(); });
 
     connect(ui.iconcomboProtocol, &QComboBox::currentTextChanged,
             this, [this](const QString&) { pProtocolDialog = nullptr; });
@@ -409,7 +409,18 @@ void main_window::start_tracker_()
     }
 
     if (pTrackerDialog)
-        pTrackerDialog->register_tracker(work->libs.pTracker.get());
+    {
+        auto* tracker = &*work->libs.pTracker;
+        pTrackerDialog->register_tracker(tracker);
+    }
+
+    if (options_widget)
+    {
+        // XXX TODO other module types
+        auto* tracker = &*work->libs.pTracker;
+        if (tracker)
+            options_widget->register_tracker(tracker);
+    }
 
     if (pFilterDialog)
         pFilterDialog->register_filter(work->libs.pFilter.get());
@@ -437,6 +448,12 @@ void main_window::stop_tracker_()
 
     pose_update_timer.stop();
     ui.pose_display->present(0,0,0, 0,0,0);
+
+    if (options_widget)
+    {
+        // XXX TODO other module types
+        options_widget->unregister_tracker();
+    }
 
     if (pTrackerDialog)
         pTrackerDialog->unregister_tracker();
@@ -543,7 +560,7 @@ static void show_window(QWidget& d, bool fresh)
 }
 
 template<typename t, typename F>
-static bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
+static bool mk_window_common(std::unique_ptr<t>& d, bool show, F&& fun)
 {
     bool fresh = false;
 
@@ -551,13 +568,16 @@ static bool mk_window_common(std::unique_ptr<t>& d, F&& fun)
         d = fun(), fresh = !!d;
 
     if (d)
-        show_window(*d, fresh);
+    {
+        if (show && !d->embeddable())
+            show_window(*d, fresh);
+    }
 
     return fresh;
 }
 
 template<typename t, typename... Args>
-static bool mk_window(std::unique_ptr<t>& place, Args&&... params)
+static bool mk_window(std::unique_ptr<t>& place, bool show, Args&&... params)
 {
     return mk_window_common(place, show, [&] {
         return std::make_unique<t>(std::forward<Args>(params)...);
@@ -565,11 +585,11 @@ static bool mk_window(std::unique_ptr<t>& place, Args&&... params)
 }
 
 template<typename t>
-static bool mk_dialog(std::unique_ptr<t>& place, const std::shared_ptr<dylib>& lib)
+static bool mk_dialog(std::unique_ptr<t>& place, bool show, const std::shared_ptr<dylib>& lib)
 {
     using u = std::unique_ptr<t>;
 
-    return mk_window_common(place, [&] {
+    return mk_window_common(place, show, [&] {
         if (lib && lib->Dialog)
             return u{ (t*)lib->Dialog() };
         else
@@ -577,44 +597,59 @@ static bool mk_dialog(std::unique_ptr<t>& place, const std::shared_ptr<dylib>& l
     });
 }
 
-void main_window::show_tracker_settings()
+void main_window::show_tracker_settings_(bool show)
 {
-    if (mk_dialog(pTrackerDialog, current_tracker()) && work && work->libs.pTracker)
+    if (mk_dialog(pTrackerDialog, show, current_tracker()) && work && work->libs.pTracker)
+    {
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
-    if (pTrackerDialog)
-        QObject::connect(pTrackerDialog.get(), &ITrackerDialog::closing,
-                         this, [this] { pTrackerDialog = nullptr; });
+        QObject::connect(&*pTrackerDialog, &ITrackerDialog::closing,
+                         this, [this] { pTrackerDialog = nullptr; qDebug() << "deleted dialog"; });
+    }
+    else if (show && pTrackerDialog && pTrackerDialog->embeddable())
+    {
+        show_options_dialog();
+        options_widget->switch_to_tracker_tab();
+    }
 }
 
-void main_window::show_proto_settings()
+void main_window::show_proto_settings_(bool show)
 {
-    if (mk_dialog(pProtocolDialog, current_protocol()) && work && work->libs.pProtocol)
+    if (mk_dialog(pProtocolDialog, show, current_protocol()) && work && work->libs.pProtocol)
+    {
         pProtocolDialog->register_protocol(work->libs.pProtocol.get());
-    if (pProtocolDialog)
-        QObject::connect(pProtocolDialog.get(), &IProtocolDialog::closing,
+        QObject::connect(&*pProtocolDialog, &IProtocolDialog::closing,
                          this, [this] { pProtocolDialog = nullptr; });
+    }
 }
 
-void main_window::show_filter_settings()
+void main_window::show_filter_settings_(bool show)
 {
-    if (mk_dialog(pFilterDialog, current_filter()) && work && work->libs.pFilter)
+    if (mk_dialog(pFilterDialog, show, current_filter()) && work && work->libs.pFilter)
+    {
         pFilterDialog->register_filter(work->libs.pFilter.get());
-    if (pFilterDialog)
-        QObject::connect(pFilterDialog.get(), &IFilterDialog::closing,
+        QObject::connect(&*pFilterDialog, &IFilterDialog::closing,
                          this, [this] { pFilterDialog = nullptr; });
+    }
 }
 
 void main_window::show_options_dialog()
 {
-    if (mk_window(options_widget, [&](bool flag) { set_keys_enabled(!flag); }))
+    if (options_widget)
+        return;
+
+    show_tracker_settings_(false);
+
+    if (mk_window(options_widget, true, pTrackerDialog,
+                  [this](bool flag) { set_keys_enabled(!flag); }))
     {
         // move shortcuts to a separate bundle and add a migration -sh 20180218
+        connect(&*options_widget, &options_dialog::closing, [this] { options_widget = nullptr; });
     }
 }
 
 void main_window::show_mapping_window()
 {
-    mk_window(mapping_widget, pose);
+    mk_window(mapping_widget, true, pose);
 }
 
 void main_window::exit(int status)

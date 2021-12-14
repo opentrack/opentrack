@@ -391,6 +391,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Disable user interface localization</source>
         <translation>Использовать английский интерфейс</translation>
     </message>
+    <message>
+        <source>Tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

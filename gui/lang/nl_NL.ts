@@ -388,6 +388,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Freeze the position returned by the tracker while this mode is active.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

@@ -103,9 +103,12 @@ class main_window final : public QMainWindow, private State
     void closeEvent(QCloseEvent *event) override;
     bool event(QEvent *event) override;
 
-    void show_tracker_settings();
-    void show_proto_settings();
-    void show_filter_settings();
+    void show_tracker_settings_(bool show);
+    void show_proto_settings_(bool show);
+    void show_filter_settings_(bool show);
+    void show_tracker_settings() { show_tracker_settings_(true); }
+    void show_proto_settings() { show_proto_settings_(true); }
+    void show_filter_settings() { show_filter_settings_(true); }
 
     void show_options_dialog();
     void show_mapping_window();

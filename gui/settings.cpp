@@ -46,13 +46,14 @@ void options_dialog::set_disable_translation_state(bool value)
     });
 }
 
-options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
+options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
+                               std::function<void(bool)> pause_keybindings) :
     pause_keybindings(std::move(pause_keybindings))
 {
     ui.setupUi(this);
 
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &options_dialog::doOK);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &options_dialog::close);
 
     tie_setting(main.tray_enabled, ui.trayp);
     tie_setting(main.tray_start, ui.tray_start);
@@ -169,11 +170,13 @@ options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
             connect(val.button, &QPushButton::clicked, this, [=] { bind_key(val.opt, val.label); });
         }
     }
-}
 
-void options_dialog::closeEvent(QCloseEvent *)
-{
-    done(result());
+    if (tracker_dialog_ && tracker_dialog_->embeddable())
+    {
+        tracker_dialog = tracker_dialog_.release();
+        tracker_dialog->set_buttons_visible(false);
+        ui.tabWidget->addTab(tracker_dialog, tr("Tracker"));
+    }
 }
 
 void options_dialog::bind_key(key_opts& kopts, QLabel* label)
@@ -228,41 +231,88 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
         label->setText(kopts_to_string(kopts));
 }
 
-void options_dialog::doOK()
+void options_dialog::switch_to_tracker_tab()
 {
-    if (isHidden()) // close() can return true twice in a row it seems
-        return;
-    hide();
-    if (!close()) // dialog was closed already
-        return;
+    if (tracker_dialog)
+        ui.tabWidget->setCurrentWidget(tracker_dialog);
+    else
+        eval_once(qDebug() << "options: asked for tab widget with old-style widget dialog!");
+}
 
+void options_dialog::unregister_tracker()
+{
+    if (tracker_dialog)
+    {
+        qDebug() << "options: unregister tracker";
+        tracker_dialog->unregister_tracker();
+    }
+}
+
+void options_dialog::register_tracker(ITracker* t)
+{
+    if (tracker_dialog)
+    {
+        qDebug() << "options: register tracker";
+        tracker_dialog->register_tracker(t);
+    }
+}
+
+void options_dialog::tracker_module_changed()
+{
+    if (tracker_dialog)
+    {
+        unregister_tracker();
+        reload();
+        delete tracker_dialog;
+        tracker_dialog = nullptr;
+    }
+}
+
+void options_dialog::save()
+{
     main.b->save();
     ui.game_detector->save();
     set_disable_translation_state(ui.disable_translation->isChecked());
-    emit closing();
+
+    if (tracker_dialog)
+        tracker_dialog->save();
+}
+
+void options_dialog::reload()
+{
+    ui.game_detector->revert();
+
+    main.b->reload();
+    if (tracker_dialog)
+        tracker_dialog->reload();
+}
+
+void options_dialog::doOK()
+{
+    if (isVisible())
+    {
+        save();
+        close();
+    }
 }
 
 void options_dialog::doCancel()
 {
-    ui.game_detector->revert();
+    if (isVisible())
+    {
+        reload();
+        close();
+    }
+}
 
-    if (isHidden()) // close() can return true twice in a row it seems
-        return;
-    hide();
-    if (!close()) // dialog was closed already
-        return;
-
-    main.b->reload();
+void options_dialog::closeEvent(QCloseEvent *)
+{
+    reload();
     emit closing();
 }
 
-void options_dialog::done(int res)
+options_dialog::~options_dialog()
 {
-    if (isVisible())
-    {
-        if (res == QDialog::Accepted)
-            doOK();
-        else
-            doCancel();
-    }
+    if (tracker_dialog)
+        tracker_dialog->unregister_tracker();
 }
