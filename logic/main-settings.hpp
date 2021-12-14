@@ -15,14 +15,14 @@
 
 #include "export.hpp"
 
-enum reltrans_state
+enum reltrans_state : int
 {
     reltrans_disabled   = 0,
     reltrans_enabled    = 1,
     reltrans_non_center = 2,
 };
 
-enum centering_state
+enum centering_state : int
 {
     center_disabled         = 0,
     center_point            = 1,

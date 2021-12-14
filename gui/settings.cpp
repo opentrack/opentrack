@@ -65,8 +65,8 @@ options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
         center_vr360,
         center_roll_compensated,
     };
-    for (unsigned k = 0; k < 4; k++)
-        ui.cbox_centering->setItemData(k, int(centering_modes[k]));
+    for (int k = 0; k < 4; k++)
+        ui.cbox_centering->setItemData(k, centering_modes[k]);
     tie_setting(main.centering_mode, ui.cbox_centering);
 
     const reltrans_state reltrans_modes[] = {
@@ -75,8 +75,8 @@ options_dialog::options_dialog(std::function<void(bool)> pause_keybindings) :
         reltrans_non_center,
     };
 
-    for (unsigned k = 0; k < 3; k++)
-        ui.reltrans_mode->setItemData(k, int(reltrans_modes[k]));
+    for (int k = 0; k < 3; k++)
+        ui.reltrans_mode->setItemData(k, reltrans_modes[k]);
 
     tie_setting(main.reltrans_mode, ui.reltrans_mode);
 
