@@ -15,6 +15,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
     using std::fmod;
     using std::sqrt;
     using std::pow;
+    using std::clamp;
 
     if (!s.enable_point_filter)
     {
@@ -39,16 +40,15 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
         return A * pow((f)10, (f)-log10_pos) * rest;
     );
 
-    f dist = 0;
+    f dist = 1e6;
 
     for (unsigned i = 0; i < 3; i++)
     {
         vec2 tmp = input[i] - state_[i];
-        f x = sqrt(tmp.dot(tmp));
-        dist = std::max(dist, x);
+        dist = std::min(dist, sqrt(tmp.dot(tmp)));
     }
 
-    if (dist < (f)1e-6)
+    if (dist < (f)1e-6 || dist > (f)1e4)
         return state_;
 
     f dt = (f)t->elapsed_seconds(); t->start();
@@ -58,7 +58,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
 
     for (unsigned i = 0; i < 3; i++)
     {
-        f x = std::clamp(delta, (f)0, limit);
+        f x = clamp(delta, (f)0, limit);
         state_[i] += x*(input[i] - state_[i]);
     }
 
