@@ -56,9 +56,8 @@ jobs:
       # Build your program with the given configuration
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
-# See <https://github.com/actions/upload-artifact/issues/270>
-#    - name: Upload build
-#      uses: actions/upload-artifact@v2
-#      with:
-#        name: buildoutput
-#        path: ${{github.workspace}}/build/
+    - name: Upload build
+      uses: actions/upload-artifact@v2.2.4
+      with:
+        name: buildoutput
+        path: ${{github.workspace}}/build/
