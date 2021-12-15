@@ -210,7 +210,7 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
                     k->close();
                 }
             });
-    connect(main.b.get(), &options::detail::bundle::reloading, k, &QDialog::close);
+    connect(&*main.b, &options::detail::bundle::reloading, k, &QDialog::close);
     pause_keybindings(true);
     k->exec();
     pause_keybindings(false);

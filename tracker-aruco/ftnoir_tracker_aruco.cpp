@@ -82,8 +82,8 @@ module_status aruco_tracker::start_tracker(QFrame* videoframe)
     videoWidget = std::make_unique<cv_video_widget>(videoframe);
     layout = std::make_unique<QHBoxLayout>();
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->addWidget(videoWidget.get());
-    videoframe->setLayout(layout.get());
+    layout->addWidget(&*videoWidget);
+    videoframe->setLayout(&*layout);
     videoWidget->show();
     start();
 

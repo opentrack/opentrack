@@ -56,8 +56,8 @@ namespace EasyTracker
     {
         opencv_init();
 
-        connect(iSettings.b.get(), &bundle_::saving, this, &Tracker::CheckCamera, Qt::DirectConnection);
-        connect(iSettings.b.get(), &bundle_::reloading, this, &Tracker::CheckCamera, Qt::DirectConnection);
+        connect(&*iSettings.b, &bundle_::saving, this, &Tracker::CheckCamera, Qt::DirectConnection);
+        connect(&*iSettings.b, &bundle_::reloading, this, &Tracker::CheckCamera, Qt::DirectConnection);
 
         connect(&iSettings.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
         set_fov(iSettings.fov);
@@ -842,8 +842,8 @@ namespace EasyTracker
         widget = std::make_unique<video_widget>(video_frame);
         layout = std::make_unique<QHBoxLayout>(video_frame);
         layout->setContentsMargins(0, 0, 0, 0);
-        layout->addWidget(widget.get());
-        video_frame->setLayout(layout.get());
+        layout->addWidget(&*widget);
+        video_frame->setLayout(&*layout);
         //video_widget->resize(video_frame->width(), video_frame->height());
         video_frame->show();
 

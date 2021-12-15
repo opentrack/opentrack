@@ -115,7 +115,7 @@ module_status fusion_tracker::start_tracker(QFrame* frame)
         other_frame->setFixedSize(320, 240); // XXX magic frame size
         other_frame->setVisible(false);
 
-        rot_tracker->start_tracker(other_frame.get());
+        rot_tracker->start_tracker(&*other_frame);
     }
 
 end:

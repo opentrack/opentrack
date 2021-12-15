@@ -49,12 +49,12 @@ static uint8_t valueToStick(FooHIDJoystick *stick, double min, double value, dou
 
 void IOKitProtocol::pose(const double *headpose, const double*)
 {
-    const uint8_t x  = valueToStick(joystick.get(), -75., headpose[0], +75.);
-    const uint8_t y  = valueToStick(joystick.get(), -75., headpose[1], +75.);
-    const uint8_t z  = valueToStick(joystick.get(), -75., headpose[2], +75.);
-    const uint8_t rx = valueToStick(joystick.get(), -180., headpose[3], +180.);
-    const uint8_t ry = valueToStick(joystick.get(), -180., headpose[4], +180.);
-    const uint8_t rz = valueToStick(joystick.get(), -180., headpose[5], +180.);
+    const uint8_t x  = valueToStick(&*joystick, -75., headpose[0], +75.);
+    const uint8_t y  = valueToStick(&*joystick, -75., headpose[1], +75.);
+    const uint8_t z  = valueToStick(&*joystick, -75., headpose[2], +75.);
+    const uint8_t rx = valueToStick(&*joystick, -180., headpose[3], +180.);
+    const uint8_t ry = valueToStick(&*joystick, -180., headpose[4], +180.);
+    const uint8_t rz = valueToStick(&*joystick, -180., headpose[5], +180.);
     joystick->setValue({x, y, z, rx, ry, rz});
 }
 

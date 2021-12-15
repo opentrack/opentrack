@@ -87,27 +87,27 @@ dylib_ptr module_mixin::current_filter()
 void module_mixin::show_tracker_settings_()
 {
     if (mk_dialog(tracker_dialog, current_tracker()) && state.work && state.work->libs.pTracker)
-        tracker_dialog->register_tracker(state.work->libs.pTracker.get());
+        tracker_dialog->register_tracker(&*state.work->libs.pTracker);
     if (tracker_dialog)
-        QObject::connect(tracker_dialog.get(), &ITrackerDialog::closing,
+        QObject::connect(&*tracker_dialog, &ITrackerDialog::closing,
                          &fuzz, [this] { tracker_dialog = nullptr; });
 }
 
 void module_mixin::show_proto_settings_()
 {
     if (mk_dialog(proto_dialog, current_protocol()) && state.work && state.work->libs.pProtocol)
-        proto_dialog->register_protocol(state.work->libs.pProtocol.get());
+        proto_dialog->register_protocol(&*state.work->libs.pProtocol);
     if (proto_dialog)
-        QObject::connect(proto_dialog.get(), &IProtocolDialog::closing,
+        QObject::connect(&*proto_dialog, &IProtocolDialog::closing,
                          &fuzz, [this] { proto_dialog = nullptr; });
 }
 
 void module_mixin::show_filter_settings_()
 {
     if (mk_dialog(filter_dialog, current_filter()) && state.work && state.work->libs.pFilter)
-        filter_dialog->register_filter(state.work->libs.pFilter.get());
+        filter_dialog->register_filter(&*state.work->libs.pFilter);
     if (filter_dialog)
-        QObject::connect(filter_dialog.get(), &IFilterDialog::closing,
+        QObject::connect(&*filter_dialog, &IFilterDialog::closing,
                          &fuzz, [this] { filter_dialog = nullptr; });
 }
 

@@ -391,11 +391,11 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
         S = s;
 
         conn_points = QObject::connect(&s->points, value_::value_changed<QList<QPointF>>(),
-                                       ctx.get(), [this] { invalidate_settings(); }, Qt::DirectConnection);
+                                       &*ctx, [this] { invalidate_settings(); }, Qt::DirectConnection);
         conn_maxx   = QObject::connect(&s->opts.clamp_x_, value_::value_changed<int>(),
-                                       ctx.get(), [this](double) { invalidate_settings(); }, Qt::DirectConnection);
+                                       &*ctx, [this](double) { invalidate_settings(); }, Qt::DirectConnection);
         conn_maxy   = QObject::connect(&s->opts.clamp_y_, value_::value_changed<int>(),
-                                       ctx.get(), [this](double) { invalidate_settings(); }, Qt::DirectConnection);
+                                       &*ctx, [this](double) { invalidate_settings(); }, Qt::DirectConnection);
     }
 
     emit S->recomputed();

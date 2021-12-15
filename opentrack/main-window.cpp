@@ -423,10 +423,10 @@ void main_window::start_tracker_()
     }
 
     if (pFilterDialog)
-        pFilterDialog->register_filter(work->libs.pFilter.get());
+        pFilterDialog->register_filter(&*work->libs.pFilter);
 
     if (pProtocolDialog)
-        pProtocolDialog->register_protocol(work->libs.pProtocol.get());
+        pProtocolDialog->register_protocol(&*work->libs.pProtocol);
 
     pose_update_timer.start(15);
 
@@ -601,7 +601,7 @@ void main_window::show_tracker_settings_(bool show)
 {
     if (mk_dialog(pTrackerDialog, show, current_tracker()) && work && work->libs.pTracker)
     {
-        pTrackerDialog->register_tracker(work->libs.pTracker.get());
+        pTrackerDialog->register_tracker(&*work->libs.pTracker);
         QObject::connect(&*pTrackerDialog, &ITrackerDialog::closing,
                          this, [this] { pTrackerDialog = nullptr; });
     }
@@ -616,7 +616,7 @@ void main_window::show_proto_settings_(bool show)
 {
     if (mk_dialog(pProtocolDialog, show, current_protocol()) && work && work->libs.pProtocol)
     {
-        pProtocolDialog->register_protocol(work->libs.pProtocol.get());
+        pProtocolDialog->register_protocol(&*work->libs.pProtocol);
         QObject::connect(&*pProtocolDialog, &IProtocolDialog::closing,
                          this, [this] { pProtocolDialog = nullptr; });
     }
@@ -626,7 +626,7 @@ void main_window::show_filter_settings_(bool show)
 {
     if (mk_dialog(pFilterDialog, show, current_filter()) && work && work->libs.pFilter)
     {
-        pFilterDialog->register_filter(work->libs.pFilter.get());
+        pFilterDialog->register_filter(&*work->libs.pFilter);
         QObject::connect(&*pFilterDialog, &IFilterDialog::closing,
                          this, [this] { pFilterDialog = nullptr; });
     }
@@ -739,10 +739,8 @@ void main_window::ensure_tray()
             tray->setContextMenu(&tray_menu);
             tray->show();
 
-            connect(tray.get(),
-                    &QSystemTrayIcon::activated,
-                    this,
-                    &main_window::toggle_restore_from_tray);
+            connect(&*tray, &QSystemTrayIcon::activated,
+                    this, &main_window::toggle_restore_from_tray);
         }
 
         QApplication::setQuitOnLastWindowClosed(false);

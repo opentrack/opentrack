@@ -16,7 +16,7 @@ udp::udp()
 {
     set_dest_address();
 
-    QObject::connect(s.b.get(), &bundle_::changed,
+    QObject::connect(&*s.b, &bundle_::changed,
                      this, &udp::set_dest_address,
                      Qt::DirectConnection);
 }

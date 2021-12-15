@@ -136,8 +136,8 @@ module_status KinectFaceTracker::start_tracker(QFrame* aFrame)
 		iVideoWidget = std::make_unique<video_widget>(aFrame);
 		iLayout = std::make_unique<QHBoxLayout>(aFrame);
 		iLayout->setContentsMargins(0, 0, 0, 0);
-		iLayout->addWidget(iVideoWidget.get());
-		aFrame->setLayout(iLayout.get());
+		iLayout->addWidget(&*iVideoWidget);
+		aFrame->setLayout(&*iLayout);
 		//video_widget->resize(video_frame->width(), video_frame->height());
 		aFrame->show();
 
