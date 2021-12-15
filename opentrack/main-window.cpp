@@ -418,8 +418,7 @@ void main_window::start_tracker_()
     {
         // XXX TODO other module types
         auto* tracker = &*work->libs.pTracker;
-        if (tracker)
-            options_widget->register_tracker(tracker);
+        options_widget->register_tracker(tracker);
     }
 
     if (pFilterDialog)
