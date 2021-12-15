@@ -1,2 +1,0 @@
-#include <windows.h>
-IDI_ICON1               ICON                    "trackmouse.ico"
