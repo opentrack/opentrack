@@ -243,7 +243,6 @@ void options_dialog::unregister_tracker()
 {
     if (tracker_dialog)
     {
-        qDebug() << "options: unregister tracker";
         tracker_dialog->unregister_tracker();
     }
 }
@@ -252,7 +251,6 @@ void options_dialog::register_tracker(ITracker* t)
 {
     if (tracker_dialog)
     {
-        qDebug() << "options: register tracker";
         tracker_dialog->register_tracker(t);
     }
 }

@@ -603,7 +603,7 @@ void main_window::show_tracker_settings_(bool show)
     {
         pTrackerDialog->register_tracker(work->libs.pTracker.get());
         QObject::connect(&*pTrackerDialog, &ITrackerDialog::closing,
-                         this, [this] { pTrackerDialog = nullptr; qDebug() << "deleted dialog"; });
+                         this, [this] { pTrackerDialog = nullptr; });
     }
     else if (show && pTrackerDialog && pTrackerDialog->embeddable())
     {
