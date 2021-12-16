@@ -45,9 +45,12 @@ public:
     dialog_accela();
     void register_filter(IFilter*) override {}
     void unregister_filter() override {}
+    void save() override;
+    void reload() override;
+    bool embeddable() noexcept override { return true; }
+    void set_buttons_visible(bool x) override;
 private:
     Ui::AccelaUICdialog_accela ui;
-    void save();
     settings_accela s;
 private slots:
     void doOK();

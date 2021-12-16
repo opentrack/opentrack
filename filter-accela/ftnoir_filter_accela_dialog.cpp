@@ -78,3 +78,13 @@ void dialog_accela::save()
 {
     s.b->save();
 }
+
+void dialog_accela::reload()
+{
+    s.b->reload();
+}
+
+void dialog_accela::set_buttons_visible(bool x)
+{
+    ui.buttonBox->setVisible(x);
+}
