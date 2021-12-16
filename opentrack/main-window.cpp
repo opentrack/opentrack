@@ -498,20 +498,29 @@ void main_window::show_pose_(const double* mapped, const double* raw)
     ui.pose_display->present(mapped[Yaw], mapped[Pitch], -mapped[Roll],
                              mapped[TX], mapped[TY], mapped[TZ]);
 
+#ifndef UI_NO_RAW_DATA
     QLCDNumber* raw_[] = {
         ui.raw_x, ui.raw_y, ui.raw_z,
         ui.raw_yaw, ui.raw_pitch, ui.raw_roll,
     };
-
+#endif
+#ifndef UI_NO_GAME_DATA
     QLCDNumber* mapped_[] = {
         ui.pose_x, ui.pose_y, ui.pose_z,
         ui.pose_yaw, ui.pose_pitch, ui.pose_roll,
     };
+#endif
 
+#if !defined UI_NO_RAW_DATA || !defined UI_NO_GAME_DATA
     for (int k = 0; k < 6; k++)
+#endif
     {
+#ifndef UI_NO_RAW_DATA
         raw_[k]->display(iround(raw[k]));
+#endif
+#ifndef UI_NO_GAME_DATA
         mapped_[k]->display(iround(mapped[k]));
+#endif
     }
 
     QString game_title;
