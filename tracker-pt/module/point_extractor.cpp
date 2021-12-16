@@ -337,7 +337,7 @@ void PointExtractor::extract_points(const pt_frame& frame_,
                 }
             }
 
-            const f radius = (f)(std::sqrt(cnt) / std::sqrt(pi));
+            const f radius = std::sqrt((f)cnt) / std::sqrt(pi);
             if (radius > region_size_max || radius < region_size_min)
                 continue;
 
