@@ -40,15 +40,15 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
         return A * pow((f)10, (f)-log10_pos) * rest;
     );
 
-    f dist = 1e6;
+    f dist = 0;
 
     for (unsigned i = 0; i < 3; i++)
     {
         vec2 tmp = input[i] - state_[i];
-        dist = std::min(dist, sqrt(tmp.dot(tmp)));
+        dist = std::max(dist, sqrt(tmp.dot(tmp)));
     }
 
-    if (dist < (f)1e-6 || dist > (f)1e4)
+    if (dist < (f)1e-6)
         return state_;
 
     f dt = (f)t->elapsed_seconds(); t->start();
