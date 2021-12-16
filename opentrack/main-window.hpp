@@ -38,6 +38,8 @@
 #define UI_NO_FILTER_COMBOBOX
 #define UI_NO_TRACKER_SETTINGS_BUTTON
 #define UI_NO_FILTER_SETTINGS_BUTTON
+#define UI_NO_RAW_DATA
+#define UI_NO_GAME_DATA
 
 class main_window final : public QMainWindow, private State
 {
