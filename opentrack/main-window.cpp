@@ -76,23 +76,31 @@ void main_window::init_dylibs()
     modules.filters().insert(modules.filters().begin(),
                              std::make_shared<dylib>("", dylib_type::Filter));
 
+#ifndef UI_NO_TRACKER_COMBOBOX
     for (dylib_ptr& x : modules.trackers())
         ui.iconcomboTrackerSource->addItem(x->icon, x->name, x->module_name);
+#endif
 
     for (dylib_ptr& x : modules.protocols())
         ui.iconcomboProtocol->addItem(x->icon, x->name, x->module_name);
 
+#ifndef UI_NO_FILTER_COMBOBOX
     for (dylib_ptr& x : modules.filters())
         ui.iconcomboFilter->addItem(x->icon, x->name, x->module_name);
+#endif
 
+#ifndef UI_NO_TRACKER_COMBOBOX
     connect(ui.iconcomboTrackerSource, &QComboBox::currentTextChanged,
             this, [this](const QString&) { pTrackerDialog = nullptr; if (options_widget) options_widget->tracker_module_changed(); });
+#endif
 
     connect(ui.iconcomboProtocol, &QComboBox::currentTextChanged,
             this, [this](const QString&) { pProtocolDialog = nullptr; if (options_widget) options_widget->proto_module_changed(); });
 
+#ifndef UI_NO_FILTER_COMBOBOX
     connect(ui.iconcomboFilter, &QComboBox::currentTextChanged,
             this, [this](const QString&) { pFilterDialog = nullptr; if (options_widget) options_widget->filter_module_changed(); });
+#endif
 
     connect(&m.tracker_dll, value_::value_changed<QString>(),
             this, &main_window::save_modules,
@@ -114,9 +122,13 @@ void main_window::init_dylibs()
         };
 
         list types[] {
+#ifndef UI_NO_TRACKER_COMBOBOX
             { modules.trackers(), ui.iconcomboTrackerSource, m.tracker_dll },
+#endif
             { modules.protocols(), ui.iconcomboProtocol, m.protocol_dll },
+#ifndef UI_NO_FILTER_COMBOBOX
             { modules.filters(), ui.iconcomboFilter, m.filter_dll },
+#endif
         };
 
         for (list& type : types)
@@ -225,9 +237,13 @@ void main_window::init_buttons()
     update_button_state(false, false);
     connect(ui.btnEditCurves, &QPushButton::clicked, this, &main_window::show_mapping_window);
     connect(ui.btnShortcuts, &QPushButton::clicked, this, &main_window::show_options_dialog);
+#ifndef UI_NO_TRACKER_SETTINGS_BUTTON
     connect(ui.btnShowEngineControls, &QPushButton::clicked, this, &main_window::show_tracker_settings);
+#endif
     connect(ui.btnShowServerControls, &QPushButton::clicked, this, &main_window::show_proto_settings);
+#ifndef UI_NO_FILTER_SETTINGS_BUTTON
     connect(ui.btnShowFilterControls, &QPushButton::clicked, this, &main_window::show_filter_settings);
+#endif
     connect(ui.btnStartTracker, &QPushButton::clicked, this, &main_window::start_tracker_);
     connect(ui.btnStopTracker, &QPushButton::clicked, this, &main_window::stop_tracker_);
 }
@@ -377,8 +393,12 @@ void main_window::update_button_state(bool running, bool inertialp)
     ui.btnStartTracker->setEnabled(not_running);
     ui.btnStopTracker->setEnabled(running);
     ui.iconcomboProtocol->setEnabled(not_running);
+#ifndef UI_NO_FILTER_COMBOBOX
     ui.iconcomboFilter->setEnabled(not_running);
+#endif
+#ifndef UI_NO_TRACKER_COMBOBOX
     ui.iconcomboTrackerSource->setEnabled(not_running);
+#endif
     ui.profile_button->setEnabled(not_running);
     ui.video_frame_label->setVisible(not_running || inertialp);
     if(not_running)
