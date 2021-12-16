@@ -47,6 +47,8 @@ void options_dialog::set_disable_translation_state(bool value)
 }
 
 options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
+                               std::unique_ptr<IProtocolDialog>& proto_dialog_,
+                               std::unique_ptr<IFilterDialog>& filter_dialog_,
                                std::function<void(bool)> pause_keybindings) :
     pause_keybindings(std::move(pause_keybindings))
 {
@@ -177,6 +179,18 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
         tracker_dialog->set_buttons_visible(false);
         ui.tabWidget->addTab(tracker_dialog, tr("Tracker"));
     }
+    if (proto_dialog_ && proto_dialog_->embeddable())
+    {
+        proto_dialog = proto_dialog_.release();
+        proto_dialog->set_buttons_visible(false);
+        ui.tabWidget->addTab(proto_dialog, tr("Output"));
+    }
+    if (filter_dialog_ && filter_dialog_->embeddable())
+    {
+        filter_dialog = filter_dialog_.release();
+        filter_dialog->set_buttons_visible(false);
+        ui.tabWidget->addTab(filter_dialog, tr("Filter"));
+    }
 }
 
 void options_dialog::bind_key(key_opts& kopts, QLabel* label)
@@ -236,23 +250,23 @@ void options_dialog::switch_to_tracker_tab()
     if (tracker_dialog)
         ui.tabWidget->setCurrentWidget(tracker_dialog);
     else
-        eval_once(qDebug() << "options: asked for tab widget with old-style widget dialog!");
+        eval_once(qDebug() << "options: asked for tracker tab widget with old-style widget dialog!");
 }
 
-void options_dialog::unregister_tracker()
+void options_dialog::switch_to_proto_tab()
 {
-    if (tracker_dialog)
-    {
-        tracker_dialog->unregister_tracker();
-    }
+    if (proto_dialog)
+        ui.tabWidget->setCurrentWidget(proto_dialog);
+    else
+        eval_once(qDebug() << "options: asked for proto tab widget with old-style widget dialog!");
 }
 
-void options_dialog::register_tracker(ITracker* t)
+void options_dialog::switch_to_filter_tab()
 {
-    if (tracker_dialog)
-    {
-        tracker_dialog->register_tracker(t);
-    }
+    if (filter_dialog)
+        ui.tabWidget->setCurrentWidget(filter_dialog);
+    else
+        eval_once(qDebug() << "options: asked for filter tab widget with old-style widget dialog!");
 }
 
 void options_dialog::tracker_module_changed()
@@ -266,14 +280,75 @@ void options_dialog::tracker_module_changed()
     }
 }
 
+void options_dialog::proto_module_changed()
+{
+    if (proto_dialog)
+    {
+        unregister_protocol();
+        reload();
+        delete proto_dialog;
+        proto_dialog = nullptr;
+    }
+}
+
+void options_dialog::filter_module_changed()
+{
+    if (filter_dialog)
+    {
+        unregister_filter();
+        reload();
+        delete filter_dialog;
+        filter_dialog = nullptr;
+    }
+}
+
+void options_dialog::register_tracker(ITracker* t)
+{
+    if (tracker_dialog)
+        tracker_dialog->register_tracker(t);
+}
+
+void options_dialog::unregister_tracker()
+{
+    if (tracker_dialog)
+        tracker_dialog->unregister_tracker();
+}
+
+void options_dialog::register_protocol(IProtocol* p)
+{
+    if (proto_dialog)
+        proto_dialog->register_protocol(p);
+}
+
+void options_dialog::unregister_protocol()
+{
+    if (proto_dialog)
+        proto_dialog->unregister_protocol();
+}
+
+void options_dialog::register_filter(IFilter* f)
+{
+    if (filter_dialog)
+        filter_dialog->register_filter(f);
+}
+
+void options_dialog::unregister_filter()
+{
+    if (filter_dialog)
+        filter_dialog->unregister_filter();
+}
+
+using module_list = std::initializer_list<plugin_api::detail::BaseDialog*>;
+
 void options_dialog::save()
 {
     main.b->save();
     ui.game_detector->save();
     set_disable_translation_state(ui.disable_translation->isChecked());
 
-    if (tracker_dialog)
-        tracker_dialog->save();
+    for (auto* dlg : module_list{ tracker_dialog, proto_dialog, filter_dialog })
+        if (dlg)
+            dlg->save();
 }
 
 void options_dialog::reload()
@@ -281,8 +356,9 @@ void options_dialog::reload()
     ui.game_detector->revert();
 
     main.b->reload();
-    if (tracker_dialog)
-        tracker_dialog->reload();
+    for (auto* dlg : module_list{ tracker_dialog, proto_dialog, filter_dialog })
+        if (dlg)
+            dlg->reload();
 }
 
 void options_dialog::doOK()
@@ -313,4 +389,8 @@ options_dialog::~options_dialog()
 {
     if (tracker_dialog)
         tracker_dialog->unregister_tracker();
+    if (proto_dialog)
+        proto_dialog->unregister_protocol();
+    if (filter_dialog)
+        filter_dialog->unregister_filter();
 }

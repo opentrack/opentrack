@@ -43,6 +43,9 @@ protected:
 public:
     void closeEvent(QCloseEvent *) override;
     virtual bool embeddable() noexcept;
+    virtual void set_buttons_visible(bool x);   // XXX TODO remove it once all modules are converted
+    virtual void save();                        // XXX HACK should be pure virtual
+    virtual void reload();                      // XXX HACK should be pure virtual -sh 20211214
 signals:
     void closing();
 private slots:
@@ -216,16 +219,10 @@ struct OTR_API_EXPORT ITrackerDialog : public plugin_api::detail::BaseDialog
     virtual void register_tracker(ITracker *tracker);
     // received tracker pointer is about to get deleted
     virtual void unregister_tracker();
-    virtual void set_buttons_visible(bool x);   // XXX TODO remove it once all modules are converted
-    virtual void save();                        // XXX HACK should be pure virtual
-    virtual void reload();                      // XXX HACK should be pure virtual -sh 20211214
 
     ITrackerDialog();
     ~ITrackerDialog() override;
 };
-
-inline void ITrackerDialog::save() {}
-inline void ITrackerDialog::reload() {}
 
 // call once with your chosen class names in the plugin
 #define OPENTRACK_DECLARE_TRACKER(tracker_class, dialog_class, metadata_class) \

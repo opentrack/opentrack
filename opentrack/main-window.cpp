@@ -89,10 +89,10 @@ void main_window::init_dylibs()
             this, [this](const QString&) { pTrackerDialog = nullptr; if (options_widget) options_widget->tracker_module_changed(); });
 
     connect(ui.iconcomboProtocol, &QComboBox::currentTextChanged,
-            this, [this](const QString&) { pProtocolDialog = nullptr; });
+            this, [this](const QString&) { pProtocolDialog = nullptr; if (options_widget) options_widget->proto_module_changed(); });
 
     connect(ui.iconcomboFilter, &QComboBox::currentTextChanged,
-            this, [this](const QString&) { pFilterDialog = nullptr; });
+            this, [this](const QString&) { pFilterDialog = nullptr; if (options_widget) options_widget->filter_module_changed(); });
 
     connect(&m.tracker_dll, value_::value_changed<QString>(),
             this, &main_window::save_modules,
@@ -409,23 +409,21 @@ void main_window::start_tracker_()
     }
 
     if (pTrackerDialog)
-    {
-        auto* tracker = &*work->libs.pTracker;
-        pTrackerDialog->register_tracker(tracker);
-    }
+        pTrackerDialog->register_tracker(&*work->libs.pTracker);
 
-    if (options_widget)
-    {
-        // XXX TODO other module types
-        auto* tracker = &*work->libs.pTracker;
-        options_widget->register_tracker(tracker);
-    }
-
-    if (pFilterDialog)
+    if (pFilterDialog && work->libs.pFilter)
         pFilterDialog->register_filter(&*work->libs.pFilter);
 
     if (pProtocolDialog)
         pProtocolDialog->register_protocol(&*work->libs.pProtocol);
+
+    if (options_widget)
+    {
+        options_widget->register_tracker(&*work->libs.pTracker);
+        options_widget->register_protocol(&*work->libs.pProtocol);
+        if (work->libs.pFilter)
+            options_widget->register_filter(&*work->libs.pFilter);
+    }
 
     pose_update_timer.start(15);
 
@@ -619,6 +617,11 @@ void main_window::show_proto_settings_(bool show)
         QObject::connect(&*pProtocolDialog, &IProtocolDialog::closing,
                          this, [this] { pProtocolDialog = nullptr; });
     }
+    else if (show && pFilterDialog && pProtocolDialog->embeddable())
+    {
+        show_options_dialog();
+        options_widget->switch_to_proto_tab();
+    }
 }
 
 void main_window::show_filter_settings_(bool show)
@@ -629,6 +632,11 @@ void main_window::show_filter_settings_(bool show)
         QObject::connect(&*pFilterDialog, &IFilterDialog::closing,
                          this, [this] { pFilterDialog = nullptr; });
     }
+    else if (show && pFilterDialog && pFilterDialog->embeddable())
+    {
+        show_options_dialog();
+        options_widget->switch_to_filter_tab();
+    }
 }
 
 void main_window::show_options_dialog()
@@ -637,8 +645,10 @@ void main_window::show_options_dialog()
         return;
 
     show_tracker_settings_(false);
+    show_proto_settings_(false);
+    show_filter_settings_(false);
 
-    if (mk_window(options_widget, true, pTrackerDialog,
+    if (mk_window(options_widget, true, pTrackerDialog, pProtocolDialog, pFilterDialog,
                   [this](bool flag) { set_keys_enabled(!flag); }))
     {
         // move shortcuts to a separate bundle and add a migration -sh 20180218
