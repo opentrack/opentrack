@@ -6,7 +6,7 @@
  * notice appear in all copies.
  */
 
-#include "settings.hpp"
+#include "options-dialog.hpp"
 #include "keyboard.h"
 #include "compat/library-path.hpp"
 

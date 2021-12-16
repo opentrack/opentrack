@@ -10,7 +10,7 @@
 
 #include "api/plugin-support.hpp"
 #include "gui/mapping-dialog.hpp"
-#include "gui/settings.hpp"
+#include "gui/options-dialog.hpp"
 #include "gui/process_detector.h"
 #include "logic/main-settings.hpp"
 #include "logic/pipeline.hpp"
