@@ -18,6 +18,7 @@ protected:
     trackhat_settings t;
 
     void set_buttons_visible(bool x) override;
+    void update_raw_data();
 
 public:
     trackhat_dialog();
