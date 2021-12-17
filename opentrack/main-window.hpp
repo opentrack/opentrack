@@ -78,10 +78,10 @@ class main_window final : public QMainWindow, private State
 
     bool exiting_already { false };
 
-    qt_sig::nullary start_tracker { this, &main_window::start_tracker_, Qt::QueuedConnection };
-    qt_sig::nullary stop_tracker { this, &main_window::stop_tracker_, Qt::QueuedConnection };
-    qt_sig::nullary toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
-    qt_sig::nullary restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
+    qt_signal<void> start_tracker { this, &main_window::start_tracker_, Qt::QueuedConnection };
+    qt_signal<void> stop_tracker { this, &main_window::stop_tracker_, Qt::QueuedConnection };
+    qt_signal<void> toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
+    qt_signal<void> restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
 
 public:
     void init_dylibs();
