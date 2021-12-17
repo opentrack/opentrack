@@ -732,6 +732,9 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
@@ -810,6 +813,9 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1589,8 +1595,8 @@ Don't roll or change position.</string>
   <tabstop>fps_spin</tabstop>
   <tabstop>use_mjpeg</tabstop>
   <tabstop>fov</tabstop>
-  <tabstop>init_phase_timeout</tabstop>
   <tabstop>dynamic_pose</tabstop>
+  <tabstop>init_phase_timeout</tabstop>
   <tabstop>camera_settings</tabstop>
   <tabstop>blob_color</tabstop>
   <tabstop>auto_threshold</tabstop>
@@ -1599,9 +1605,7 @@ Don't roll or change position.</string>
   <tabstop>maxdiam_spin</tabstop>
   <tabstop>enable_point_filter</tabstop>
   <tabstop>point_filter_slider</tabstop>
-  <tabstop>point_filter_label</tabstop>
   <tabstop>point_filter_limit_slider</tabstop>
-  <tabstop>point_filter_limit_label</tabstop>
   <tabstop>model_tabs</tabstop>
   <tabstop>clip_tlength_spin</tabstop>
   <tabstop>clip_theight_spin</tabstop>
