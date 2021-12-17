@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>439</width>
-    <height>211</height>
+    <height>124</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -31,6 +31,12 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="2">
        <widget class="QSpinBox" name="exposure_label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -64,8 +70,8 @@
       <item row="0" column="1">
        <widget class="QSlider" name="exposure_slider">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-          <horstretch>1</horstretch>
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
@@ -87,7 +93,7 @@
       <item row="1" column="1">
        <widget class="QSlider" name="gain_slider">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
