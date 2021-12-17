@@ -95,6 +95,19 @@ public:
     }
 
     never_inline
+    void notify_() const override
+    {
+        auto x = get();
+        {
+            QMutexLocker l(&mtx);
+            cached_value = x;
+        }
+        maybe_trace("notify +");
+        emit valueChanged(traits::storage_from_value(x));
+        maybe_trace("notify -");
+    }
+
+    never_inline
     void notify() const override
     {
         if (is_null())

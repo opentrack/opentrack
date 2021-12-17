@@ -115,9 +115,7 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     });
 
     // refresh threshold display on auto-threshold checkbox state change
-    tie_setting(s.auto_threshold,
-                this,
-                [this](bool) { s.threshold_slider.notify(); });
+    tie_setting(s.auto_threshold, this, [this](bool) { s.threshold_slider.notify_(); });
 
     tie_setting(s.enable_point_filter, ui.enable_point_filter);
     tie_setting(s.point_filter_coefficient, ui.point_filter_slider);

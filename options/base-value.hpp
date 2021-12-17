@@ -95,6 +95,7 @@ public slots:
 
     virtual void set_to_default() noexcept = 0;
     virtual void notify() const = 0;
+    virtual void notify_() const = 0;
     virtual QVariant get_variant() const noexcept = 0;
 };
 
