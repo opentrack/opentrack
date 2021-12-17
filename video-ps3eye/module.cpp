@@ -257,6 +257,8 @@ OTR_REGISTER_CAMERA(ps3eye_camera_)
 dialog::dialog(QWidget* parent) : QWidget(parent)
 {
     ui.setupUi(this);
+    setAttribute(Qt::WA_DeleteOnClose);
+
     t.setInterval(500); t.setSingleShot(true);
     tie_setting(s.exposure, ui.exposure_slider);
     tie_setting(s.gain, ui.gain_slider);
