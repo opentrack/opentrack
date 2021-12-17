@@ -922,7 +922,7 @@
             </item>
             <item>
              <property name="text">
-              <string>Roll compensated VR 360</string>
+              <string>Roll compensated</string>
              </property>
             </item>
            </widget>

@@ -369,7 +369,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Roll compensated VR 360</source>
+        <source>Roll compensated</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

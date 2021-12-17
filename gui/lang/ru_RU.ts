@@ -372,8 +372,8 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Беспроводная VR 360</translation>
     </message>
     <message>
-        <source>Roll compensated VR 360</source>
-        <translation>Roll компенсированная VR 360</translation>
+        <source>Roll compensated</source>
+        <translation>Roll компенсированная</translation>
     </message>
     <message>
         <source>Hold in-game center of the screen while the mode is active.</source>
