@@ -38,7 +38,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     annoy_if_root();
 #endif
 
-    setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | windowFlags());
+    setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     init_profiles();
@@ -219,7 +219,7 @@ void main_window::init_tray_menu()
 
     menu_action_options.setIcon(QIcon(":/images/tools.png"));
     menu_action_options.setText(tr("Options"));
-    QObject::connect(&menu_action_options, &QAction::triggered, this, &main_window::show_options_dialog);
+    QObject::connect(&menu_action_options, &QAction::triggered, this, [this] { show_options_dialog(true); });
     tray_menu.addAction(&menu_action_options);
 
     tray_menu.addSeparator();
@@ -236,7 +236,7 @@ void main_window::init_buttons()
 {
     update_button_state(false, false);
     connect(ui.btnEditCurves, &QPushButton::clicked, this, &main_window::show_mapping_window);
-    connect(ui.btnShortcuts, &QPushButton::clicked, this, &main_window::show_options_dialog);
+    connect(ui.btnShortcuts, &QPushButton::clicked, this, [this] { show_options_dialog(true); });
 #ifndef UI_NO_TRACKER_SETTINGS_BUTTON
     connect(ui.btnShowEngineControls, &QPushButton::clicked, this, &main_window::show_tracker_settings);
 #endif
@@ -565,11 +565,10 @@ static void show_window(QWidget& d, bool fresh)
 {
     if (fresh)
     {
-        d.setWindowFlags(Qt::MSWindowsFixedSizeDialogHint | d.windowFlags());
-        d.setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-
-        d.show();
+        d.setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
         d.adjustSize();
+        d.setFixedSize(d.size());
+        d.show();
 #ifdef __APPLE__
         d.raise();
 #endif
@@ -623,66 +622,83 @@ static bool mk_dialog(std::unique_ptr<t>& place, bool show, const std::shared_pt
     });
 }
 
+template<typename Instance, typename Dialog>
+static void show_module_settings(std::shared_ptr<Instance> instance,
+                                 std::unique_ptr<Dialog>& dialog,
+                                 Modules::dylib_ptr lib,
+                                 std::unique_ptr<options_dialog>& options_widget,
+                                 main_window* win,
+                                 bool show,
+                                 void(Dialog::*register_fun)(Instance*),
+                                 void(options_dialog::*switch_tab_fun)())
+{
+    using BaseDialog = plugin_api::detail::BaseDialog;
+    bool fresh = !options_widget;
+    if (mk_dialog(dialog, show, lib) && !dialog->embeddable())
+    {
+        if (instance)
+            ((*dialog).*register_fun)(&*instance);
+        QObject::connect(&*dialog, &BaseDialog::closing, win, [&] { dialog = nullptr; });
+    }
+    else if (show && dialog && dialog->embeddable())
+    {
+        win->show_options_dialog(false);
+        ((*options_widget).*switch_tab_fun)();
+        if (show)
+            show_window(*options_widget, fresh);
+    }
+}
+
 void main_window::show_tracker_settings_(bool show)
 {
-    if (mk_dialog(pTrackerDialog, show, current_tracker()) && work && work->libs.pTracker)
-    {
-        pTrackerDialog->register_tracker(&*work->libs.pTracker);
-        QObject::connect(&*pTrackerDialog, &ITrackerDialog::closing,
-                         this, [this] { pTrackerDialog = nullptr; });
-    }
-    else if (show && pTrackerDialog && pTrackerDialog->embeddable())
-    {
-        show_options_dialog();
-        options_widget->switch_to_tracker_tab();
-    }
+    show_module_settings(work ? work->libs.pTracker : nullptr, pTrackerDialog, current_tracker(),
+                         options_widget, this, show,
+                         &ITrackerDialog::register_tracker, &options_dialog::switch_to_tracker_tab);
 }
 
 void main_window::show_proto_settings_(bool show)
 {
-    if (mk_dialog(pProtocolDialog, show, current_protocol()) && work && work->libs.pProtocol)
-    {
-        pProtocolDialog->register_protocol(&*work->libs.pProtocol);
-        QObject::connect(&*pProtocolDialog, &IProtocolDialog::closing,
-                         this, [this] { pProtocolDialog = nullptr; });
-    }
-    else if (show && pFilterDialog && pProtocolDialog->embeddable())
-    {
-        show_options_dialog();
-        options_widget->switch_to_proto_tab();
-    }
+    show_module_settings(work ? work->libs.pProtocol : nullptr, pProtocolDialog, current_protocol(),
+                         options_widget, this, show,
+                         &IProtocolDialog::register_protocol, &options_dialog::switch_to_proto_tab);
 }
 
 void main_window::show_filter_settings_(bool show)
 {
-    if (mk_dialog(pFilterDialog, show, current_filter()) && work && work->libs.pFilter)
-    {
-        pFilterDialog->register_filter(&*work->libs.pFilter);
-        QObject::connect(&*pFilterDialog, &IFilterDialog::closing,
-                         this, [this] { pFilterDialog = nullptr; });
-    }
-    else if (show && pFilterDialog && pFilterDialog->embeddable())
-    {
-        show_options_dialog();
-        options_widget->switch_to_filter_tab();
-    }
+    show_module_settings(work ? work->libs.pFilter : nullptr, pFilterDialog, current_filter(),
+                         options_widget, this, show,
+                         &IFilterDialog::register_filter, &options_dialog::switch_to_filter_tab);
 }
 
-void main_window::show_options_dialog()
+void main_window::show_options_dialog(bool show)
 {
     if (options_widget)
+    {
+        if (show)
+            show_window(*options_widget, false);
         return;
+    }
 
     show_tracker_settings_(false);
     show_proto_settings_(false);
     show_filter_settings_(false);
 
-    if (mk_window(options_widget, true, pTrackerDialog, pProtocolDialog, pFilterDialog,
-                  [this](bool flag) { set_keys_enabled(!flag); }))
+    mk_window(options_widget, false, pTrackerDialog, pProtocolDialog, pFilterDialog,
+              [this](bool flag) { set_keys_enabled(!flag); });
+    connect(&*options_widget, &options_dialog::closing, [this] { options_widget = nullptr; });
+
+    if (work)
     {
-        // move shortcuts to a separate bundle and add a migration -sh 20180218
-        connect(&*options_widget, &options_dialog::closing, [this] { options_widget = nullptr; });
+        if (work->libs.pTracker)
+            options_widget->register_tracker(&*work->libs.pTracker);
+        if (work->libs.pProtocol)
+            options_widget->register_protocol(&*work->libs.pProtocol);
+        if (work->libs.pFilter)
+            options_widget->register_filter(&*work->libs.pFilter);
     }
+
+    if (show)
+        show_window(*options_widget, true);
 }
 
 void main_window::show_mapping_window()

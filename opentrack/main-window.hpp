@@ -83,6 +83,7 @@ class main_window final : public QMainWindow, private State
     qt_sig::nullary toggle_tracker { this, &main_window::toggle_tracker_, Qt::QueuedConnection };
     qt_sig::nullary restart_tracker { this, &main_window::restart_tracker_, Qt::QueuedConnection };
 
+public:
     void init_dylibs();
     void init_tray_menu();
     void init_profiles();
@@ -110,7 +111,7 @@ class main_window final : public QMainWindow, private State
     void show_proto_settings() { show_proto_settings_(true); }
     void show_filter_settings() { show_filter_settings_(true); }
 
-    void show_options_dialog();
+    void show_options_dialog(bool show);
     void show_mapping_window();
 
     void show_pose();
