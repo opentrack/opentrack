@@ -92,7 +92,11 @@ std::unique_ptr<camera> ps3eye_camera_::make_camera(const QString& name)
 
 static bool show_dialog_()
 {
-    (new dialog)->show();
+    auto& dlg = *new dialog;
+    dlg.setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
+    dlg.setAttribute(Qt::WA_DeleteOnClose);
+    dlg.adjustSize(); dlg.setFixedSize(dlg.size());
+    dlg.show();
     return true;
 }
 
@@ -257,9 +261,6 @@ OTR_REGISTER_CAMERA(ps3eye_camera_)
 dialog::dialog(QWidget* parent) : QWidget(parent)
 {
     ui.setupUi(this);
-    adjustSize(); setFixedSize(size());
-    setAttribute(Qt::WA_DeleteOnClose);
-
     t.setInterval(500); t.setSingleShot(true);
     tie_setting(s.exposure, ui.exposure_slider);
     tie_setting(s.gain, ui.gain_slider);
