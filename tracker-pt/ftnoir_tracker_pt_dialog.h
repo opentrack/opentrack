@@ -26,7 +26,10 @@ public:
     TrackerDialog_PT(const QString& module_name);
     void register_tracker(ITracker *tracker) override;
     void unregister_tracker() override;
-    void save();
+    bool embeddable() noexcept override { return true; }
+    void set_buttons_visible(bool x) override;
+    void save() override;
+    void reload() override;
 public slots:
     void doOK();
     void doCancel();

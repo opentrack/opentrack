@@ -287,4 +287,14 @@ void TrackerDialog_PT::unregister_tracker()
     timer.stop();
 }
 
+void TrackerDialog_PT::set_buttons_visible(bool x)
+{
+    ui.buttonBox->setVisible(x);
+}
+
+void TrackerDialog_PT::reload()
+{
+    s.b->reload();
+}
+
 } // ns pt_impl
