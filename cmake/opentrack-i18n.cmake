@@ -1,9 +1,7 @@
 include_guard(GLOBAL)
 
 add_custom_target(i18n-lupdate)
-set_property(TARGET i18n-lupdate PROPERTY FOLDER "i18n")
 add_custom_target(i18n-lrelease DEPENDS i18n-lupdate)
-set_property(TARGET i18n-lrelease PROPERTY FOLDER "i18n")
 add_custom_target(i18n ALL DEPENDS i18n-lrelease)
 
 function(otr_i18n_for_target_directory n)
@@ -18,6 +16,7 @@ function(otr_i18n_for_target_directory n)
         list(APPEND ts-files "${CMAKE_CURRENT_SOURCE_DIR}/lang/${k}.ts")
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${k}" "${CMAKE_CURRENT_SOURCE_DIR}/lang/${k}.ts")
     endforeach()
+    set(stamp "${CMAKE_CURRENT_BINARY_DIR}/lupdate.stamp")
 
     foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
@@ -36,7 +35,7 @@ function(otr_i18n_for_target_directory n)
         set(to-null "2>/dev/null")
     endif()
 
-    add_custom_command(OUTPUT "${ts-files}"
+    add_custom_command(OUTPUT "${stamp}"
                        COMMAND "${lupdate-binary}"
                        -I "${CMAKE_SOURCE_DIR}"
                        -silent
@@ -46,11 +45,13 @@ function(otr_i18n_for_target_directory n)
                        .
                        -ts ${ts-files}
                        ${to-null}
-                       DEPENDS ${${k}-cc} ${${k}-hh} ${${k}-uih} ${${k}-moc}
+                       COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
+                       #BYPRODUCTS ${ts-files}
+                       DEPENDS "opentrack-${n}"
                        COMMENT "Running lupdate for ${n}"
                        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
     set(target-name "i18n-module-${n}")
-    add_custom_target(${target-name} DEPENDS "${ts-files}" COMMENT "")
+    add_custom_target(${target-name} DEPENDS "${stamp}" COMMENT "")
     add_dependencies(i18n-lupdate ${target-name})
 endfunction()
 
@@ -79,13 +80,12 @@ function(otr_merge_translations)
                 ${ts-files}
                 -qm "${qm-output}"
                 ${to-null}
-            DEPENDS i18n-lupdate "${ts-files}"
+            DEPENDS i18n-lupdate ${ts-files}
             COMMENT "Running lrelease for ${i}"
             WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
         set(target-name i18n-qm-${i})
         add_custom_target(${target-name} DEPENDS "${qm-output}")
-        set_property(TARGET ${target-name} PROPERTY FOLDER "i18n")
         add_dependencies(i18n-lrelease ${target-name})
 
         install(FILES "${qm-output}"
