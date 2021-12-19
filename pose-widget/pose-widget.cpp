@@ -65,19 +65,6 @@ void pose_widget::resizeEvent(QResizeEvent *event)
     float w = event->size().width();
     float h = event->size().height();
 
-    // draw axes
-    QImage background(QImage(w, h, QImage::Format_ARGB32));
-    QPainter p(&background);
-    p.setPen(QPen(Qt::gray, 1, Qt::SolidLine));
-    p.drawLine(0.5*w,   0  , 0.5*w,   h  );
-    p.drawLine(  0  , 0.5*h,   w  , 0.5*h);
-
-    // set AutoFillBackground
-    QPalette palette;
-    palette.setBrush(this->backgroundRole(), QBrush(background));
-    setPalette(palette);
-    setAutoFillBackground(true);
-
     // move the mirror checkbox in the lower right corner of the widget
     mirror.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     mirror.move(w - mirror.width(), h - mirror.height());
@@ -99,6 +86,17 @@ void pose_widget::paintEvent(QPaintEvent*)
     // use antialiasing for correct frame around the Octopus, only if TEST defined
     p.setRenderHint(QPainter::Antialiasing, true);
     #endif
+
+    {
+        p.fillRect(rect(), palette().brush(backgroundRole()));
+        // draw axes
+        p.save();
+        p.setPen(QPen(Qt::gray, 1, Qt::SolidLine));
+        int w = width(), h = height();
+        p.drawLine(w/2,   0, w/2, h);
+        p.drawLine(  0, h/2, w,   h/2);
+        p.restore();
+    }
 
     // check mirror state
     if   (mirror.checkState() == Qt::Checked) x = -x;
