@@ -57,6 +57,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     det_timer.start(1000);
     connect(&*s.b, &options::bundle_::reloading, this, &main_window::register_shortcuts);
     connect(&*s.b, &options::bundle_::saving, this, &main_window::register_shortcuts);
+
+    ui.btnStartTracker->setFocus();
 }
 
 void main_window::init_shortcuts()
