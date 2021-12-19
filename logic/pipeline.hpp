@@ -8,7 +8,6 @@
 #include "compat/euler.hpp"
 #include "compat/enum-operators.hpp"
 #include "runtime-libraries.hpp"
-#include "extensions.hpp"
 
 #include "spline/spline.hpp"
 #include "main-settings.hpp"
@@ -85,7 +84,6 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     mutable QMutex mtx;
     main_settings s;
     const Mappings& m;
-    event_handler& ev;
 
     Timer t;
     Pose output_pose, raw_6dof, last_value;
@@ -125,7 +123,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     bits b;
 
 public:
-    pipeline(const Mappings& m, const runtime_libraries& libs, event_handler& ev, TrackLogger& logger);
+    pipeline(const Mappings& m, const runtime_libraries& libs, TrackLogger& logger);
     ~pipeline() override;
 
     void raw_and_mapped_pose(double* mapped, double* raw) const;

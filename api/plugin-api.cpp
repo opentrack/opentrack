@@ -56,8 +56,6 @@ ITrackerDialog::ITrackerDialog() = default;
 ITrackerDialog::~ITrackerDialog() = default;
 void ITrackerDialog::register_tracker(ITracker*) {}
 void ITrackerDialog::unregister_tracker() {}
-IExtension::~IExtension() = default;
-IExtensionDialog::~IExtensionDialog() = default;
 
 bool module_status::is_ok() const
 {

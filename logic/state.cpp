@@ -22,7 +22,6 @@ std::tuple<dylib_ptr, int> State::module_by_name(const QString& name, dylib_list
 
 State::State(const QString& library_path) :
     modules(library_path),
-    ev(modules.extensions()),
     pose(s.all_axis_opts)
 {}
 

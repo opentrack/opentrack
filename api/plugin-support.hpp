@@ -38,7 +38,6 @@ enum class dylib_type : unsigned
     Filter    = 0xdeadbabe,
     Tracker   = 0xcafebeef,
     Protocol  = 0xdeadf00d,
-    Extension = 0xcafebabe,
     Video     = 0xbadf00d,
     Invalid   = (unsigned)-1,
 };
@@ -154,7 +153,6 @@ private:
                     OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-",
                     OPENTRACK_LIBRARY_PREFIX "opentrack-proto-",
                     OPENTRACK_LIBRARY_PREFIX "opentrack-filter-",
-                    OPENTRACK_LIBRARY_PREFIX "opentrack-ext-",
                     OPENTRACK_LIBRARY_PREFIX "opentrack-video-",
                 };
 
@@ -180,20 +178,17 @@ struct Modules final
         filter_modules(filter(type::Filter)),
         tracker_modules(filter(type::Tracker)),
         protocol_modules(filter(type::Protocol)),
-        extension_modules(filter(type::Extension)),
         video_modules(filter(type::Video))
     {}
     dylib_list& filters() { return filter_modules; }
     dylib_list& trackers() { return tracker_modules; }
     dylib_list& protocols() { return protocol_modules; }
-    dylib_list& extensions() { return extension_modules; }
 
 private:
     dylib_list module_list;
     dylib_list filter_modules;
     dylib_list tracker_modules;
     dylib_list protocol_modules;
-    dylib_list extension_modules;
     dylib_list video_modules;
 
     static dylib_list& sorted(dylib_list& xs)
@@ -229,7 +224,6 @@ private:
             { type::Filter, OPENTRACK_LIBRARY_PREFIX "opentrack-filter-*." OPENTRACK_LIBRARY_EXTENSION, },
             { type::Tracker, OPENTRACK_LIBRARY_PREFIX "opentrack-tracker-*." OPENTRACK_LIBRARY_EXTENSION, },
             { type::Protocol, OPENTRACK_LIBRARY_PREFIX "opentrack-proto-*." OPENTRACK_LIBRARY_EXTENSION, },
-            { type::Extension, OPENTRACK_LIBRARY_PREFIX "opentrack-ext-*." OPENTRACK_LIBRARY_EXTENSION, },
             { type::Video, OPENTRACK_LIBRARY_PREFIX "opentrack-video-*." OPENTRACK_LIBRARY_EXTENSION, dylib_load_none, },
         };
 

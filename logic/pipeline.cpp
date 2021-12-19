@@ -184,8 +184,8 @@ Pose_ reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
     return neck;
 }
 
-pipeline::pipeline(const Mappings& m, const runtime_libraries& libs, event_handler& ev, TrackLogger& logger) :
-    m(m), ev(ev), libs(libs), logger(logger)
+pipeline::pipeline(const Mappings& m, const runtime_libraries& libs, TrackLogger& logger) :
+    m(m), libs(libs), logger(logger)
 {
 }
 
@@ -422,7 +422,6 @@ Pose pipeline::apply_reltrans(Pose value, vec6_bool disabled, bool centerp)
 void pipeline::logic()
 {
     using namespace euler;
-    using EV = event_handler::event_ordinal;
 
     logger.write_dt();
     logger.reset_dt();
@@ -435,7 +434,6 @@ void pipeline::logic()
     {
         Pose tmp;
         libs.pTracker->data(tmp);
-        ev.run_events(EV::ev_raw, tmp);
         newpose = tmp;
     }
 
@@ -454,7 +452,6 @@ void pipeline::logic()
     }
 
     {
-        ev.run_events(EV::ev_before_filter, value);
         // we must proceed with all the filtering since the filter
         // needs fresh values to prevent deconvergence
         if (center_ordered)
@@ -466,7 +463,6 @@ void pipeline::logic()
     }
 
     {
-        ev.run_events(EV::ev_before_mapping, value);
         // CAVEAT rotation only, due to reltrans
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
@@ -508,7 +504,6 @@ ok:
     last_value = value;
     value = apply_zero_pos(value);
 
-    ev.run_events(EV::ev_finished, value);
     libs.pProtocol->pose(value, raw);
 
     QMutexLocker foo(&mtx);

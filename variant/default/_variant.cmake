@@ -6,7 +6,6 @@ function(otr_init_variant)
         "tracker-*"
         "proto-*"
         "filter-*"
-        "ext-*"
         "options"
         "api"
         "compat"

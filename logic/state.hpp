@@ -12,7 +12,6 @@
 #include "api/plugin-support.hpp"
 #include "main-settings.hpp"
 #include "mappings.hpp"
-#include "extensions.hpp"
 #include "work.hpp"
 #include "export.hpp"
 
@@ -32,7 +31,6 @@ struct OTR_LOGIC_EXPORT State
     dylib_ptr current_filter();
 
     Modules modules;
-    event_handler ev;
     main_settings s;
     module_settings m;
     Mappings pose;

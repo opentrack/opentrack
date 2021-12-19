@@ -57,10 +57,10 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
 }
 
 
-Work::Work(const Mappings& m, event_handler& ev, QFrame* frame,
+Work::Work(const Mappings& m, QFrame* frame,
            const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto) :
     libs(frame, tracker, filter, proto),
-    pipeline_{ m, libs, ev, *logger }
+    pipeline_{ m, libs, *logger }
 {
     if (!is_ok())
         return;
