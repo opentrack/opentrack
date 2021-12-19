@@ -395,6 +395,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Tracker</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>
