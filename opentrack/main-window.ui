@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>500</height>
+    <height>502</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -995,7 +995,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QWidget" name="groupStartStop" native="true">
+        <widget class="QGroupBox" name="groupStartStop">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
            <horstretch>4</horstretch>
@@ -1008,9 +1008,12 @@
            <height>0</height>
           </size>
          </property>
+         <property name="title">
+          <string>Tracking</string>
+         </property>
          <layout class="QHBoxLayout" name="horizontalLayout_4">
           <property name="spacing">
-           <number>8</number>
+           <number>7</number>
           </property>
           <property name="leftMargin">
            <number>4</number>
