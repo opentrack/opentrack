@@ -38,6 +38,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     annoy_if_root();
 #endif
 
+    adjustSize();
     setWindowFlag(Qt::MSWindowsFixedSizeDialogHint);
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
