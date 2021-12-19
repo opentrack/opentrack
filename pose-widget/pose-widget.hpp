@@ -26,7 +26,6 @@ struct OTR_POSE_WIDGET_EXPORT pose_widget final : QWidget
 public:
     pose_widget(QWidget *parent = nullptr);
     void present(double xAngle, double yAngle, double zAngle, double x, double y, double z);
-    QSize sizeHint() const override;
     QCheckBox mirror{"Mirror", this};
 private:
     void resizeEvent(QResizeEvent *event) override;

@@ -136,9 +136,4 @@ void pose_widget::paintEvent(QPaintEvent*)
     p.drawImage(QPointF(0,0), forward == (alpha >= 0.0) ? shine : shadow);
 }
 
-QSize pose_widget::sizeHint() const
-{
-    return { 1 << 16, 1 << 16 };
-}
-
 } // ns pose_widget_impl
