@@ -1,5 +1,5 @@
 #include "state.hpp"
-
+#include "opentrack/defs.hpp"
 #include <iterator>
 
 using dylib_ptr = Modules::dylib_ptr;
@@ -28,7 +28,13 @@ State::State(const QString& library_path) :
 
 dylib_ptr State::current_tracker()
 {
-    auto [ptr, idx] = module_by_name(m.tracker_dll, modules.trackers());
+    const QString& module =
+#ifdef UI_FORCED_TRACKER
+        UI_FORCED_TRACKER;
+#else
+        m.tracker_dll;
+#endif
+    auto [ptr, idx] = module_by_name(module, modules.trackers());
     return ptr;
 }
 
@@ -40,6 +46,12 @@ dylib_ptr State::current_protocol()
 
 dylib_ptr State::current_filter()
 {
-    auto [ptr, idx] = module_by_name(m.filter_dll, modules.filters());
+    const QString& module =
+#ifdef UI_FORCED_FILTER
+        UI_FORCED_FILTER;
+#else
+        m.filter_dll;
+#endif
+    auto [ptr, idx] = module_by_name(module, modules.filters());
     return ptr;
 }

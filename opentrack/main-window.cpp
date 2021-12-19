@@ -17,8 +17,8 @@
 #include "compat/library-path.hpp"
 #include "compat/math.hpp"
 #include "compat/sysexits.hpp"
+#include "opentrack/defs.hpp"
 
-#include <algorithm>
 #include <utility>
 
 #include <QMessageBox>
