@@ -137,6 +137,10 @@ if(MSVC)
     add_link_options(-ignore:4020)
     add_link_options(-ignore:4217) # debug build
 
+    if (MSVC_VERSION MATCHES "^(19[3-9]..|2...)$")
+        add_compile_options(-external:W0 -external:anglebrackets)
+    endif()
+
     #C4457: declaration of 'id' hides function parameter
     #C4456: declaration of 'i' hides previous local declaration
     #C4263 - member function does not override any base class virtual member function
