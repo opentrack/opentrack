@@ -1,7 +1,7 @@
 include_guard(GLOBAL)
 
 function(otr_dist_select_variant)
-    file(GLOB variants "variant/*")
+    file(GLOB variants CONFIGURE_DEPENDS "variant/*")
 
     set(variant-list "")
 
