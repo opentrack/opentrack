@@ -23,6 +23,7 @@ set(CMAKE_GENERATOR "Ninja")
 #add_compile_options(-d2cgsummary)
 add_definitions(-D_HAS_EXCEPTIONS=0)
 add_definitions(-D_CRT_USE_BUILTIN_OFFSETOF)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
