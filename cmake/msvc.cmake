@@ -65,9 +65,9 @@ set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 add_link_options(-cgthreads:1)
 
-set(_CFLAGS "-diagnostics:classic -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0")
+set(_CFLAGS "-diagnostics:classic -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0 -MT")
 set(_CXXFLAGS "${_CFLAGS}")
-set(_CFLAGS_RELEASE "-O2 -Oit -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy -arch:SSE2 -MT")
+set(_CFLAGS_RELEASE "-O2 -Oit -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy -arch:SSE2")
 set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
