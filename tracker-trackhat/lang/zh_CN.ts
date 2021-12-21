@@ -99,6 +99,38 @@
         <source>Status</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Raw data</source>
+        <translation>跟踪器原始数据</translation>
+    </message>
+    <message>
+        <source>X</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yaw</source>
+        <translation>偏航</translation>
+    </message>
+    <message>
+        <source>Roll</source>
+        <translation>横滚</translation>
+    </message>
+    <message>
+        <source>Y</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Z</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pitch</source>
+        <translation>仰俯</translation>
+    </message>
 </context>
 <context>
     <name>trackhat_module</name>
