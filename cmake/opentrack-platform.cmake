@@ -140,6 +140,7 @@ if(MSVC)
     if (MSVC_VERSION MATCHES "^(19[3-9]..|2...)$")
         add_compile_options(-external:W0 -external:anglebrackets)
     endif()
+    add_compile_options(-Zc:preprocessor)
 
     #C4457: declaration of 'id' hides function parameter
     #C4456: declaration of 'i' hides previous local declaration
