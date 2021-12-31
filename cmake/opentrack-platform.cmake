@@ -137,7 +137,10 @@ if(MSVC)
     add_link_options(-ignore:4020)
     add_link_options(-ignore:4217) # debug build
 
-    if (MSVC_VERSION MATCHES "^(19[3-9]..|2...)$")
+    if(MSVC_VERSION GREATER_EQUAL 1913)
+        if(NOT MSVC_VERSION GREATER_EQUAL 1929)
+            add_compile_options(-experimental:external)
+        endif()
         add_compile_options(-external:W0 -external:anglebrackets)
     endif()
     add_compile_options(-Zc:preprocessor)
