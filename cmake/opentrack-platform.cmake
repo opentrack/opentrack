@@ -144,7 +144,7 @@ if(MSVC)
         add_compile_options(-external:W0 -external:anglebrackets)
     endif()
     add_compile_options(-Zc:preprocessor)
-    add_compile_options(-Zc:inline)
+    #add_compile_options(-Zc:inline)
 
     #C4457: declaration of 'id' hides function parameter
     #C4456: declaration of 'i' hides previous local declaration
