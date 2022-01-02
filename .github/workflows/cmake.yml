@@ -40,7 +40,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       
     - name: Kill gcc
-      run: foreach ($i in @("cc","c++","gcc","g++","ld")) { remove-item -force -path C:\ProgramData\chocolatey\bin\$i.exe }
+      run: foreach ($i in @("cc","c++","gcc","g++","ld")) { $x = "C:\ProgramData\chocolatey\bin\$i.exe"; if (test-path $x) { remove-item -force -path $x } }
       if: matrix.os == 'windows-latest'
 
     - name: Cache Qt
