@@ -31,7 +31,6 @@ jobs:
             CXX: c++
           - os: windows-latest
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-
     steps:
     - uses: actions/checkout@v2
     - uses: seanmiddleditch/gha-setup-ninja@master
@@ -39,6 +38,9 @@ jobs:
     - name: Install Linux Dependencies
       run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev
       if: matrix.os == 'ubuntu-latest'
+      
+    - name: Kill gcc
+      run: del /f C:\ProgramData\chocolatey\bin\c++.exe C:\ProgramData\chocolatey\bin\cc.exe C:\ProgramData\chocolatey\bin\ld.exe
 
     - name: Cache Qt
       id: cache-qt
