@@ -31,8 +31,6 @@ jobs:
             CXX: c++
           - os: windows-latest
             environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
-            CC: cl
-            CXX: cl
 
     steps:
     - uses: actions/checkout@v2
