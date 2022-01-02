@@ -22,7 +22,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            CC: clang
+            CXX: clang++
+          - os: ubuntu-latest
+            CC: cc
+            CXX: c++
+          - os: windows-latest
+            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+            CC: cl
+            CXX: cl
 
     steps:
     - uses: actions/checkout@v2
@@ -48,6 +58,9 @@ jobs:
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
       run: cmake -S ${{github.workspace}}/ -B ${{github.workspace}}/build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      env:
+        CC: ${{ matrix.CC }}
+        CXX: ${{ matrix.CXX }}
 
     - name: Build
       # Build your program with the given configuration
