@@ -40,7 +40,7 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       
     - name: Kill gcc
-      run: rm -force C:\ProgramData\chocolatey\bin\c++.exe C:\ProgramData\chocolatey\bin\cc.exe C:\ProgramData\chocolatey\bin\ld.exe
+      run: foreach ($i in @("cc","c++","gcc","g++","ld")) { remove-item -force -path C:\ProgramData\chocolatey\bin\$i.exe }
       if: matrix.os == 'windows-latest'
 
     - name: Cache Qt
