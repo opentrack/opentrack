@@ -22,30 +22,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: macos-latest
-            CC: clang
-            CXX: clang++
-          - os: ubuntu-latest
-            CC: cc
-            CXX: c++
-          - os: windows-latest
-            environment_script: "C:/Program Files (x86)/Microsoft Visual Studio/2019/Enterprise/VC/Auxiliary/Build/vcvars64.bat"
+        os: [macos-latest, windows-latest, ubuntu-latest]
+
     steps:
     - uses: actions/checkout@v2
-    - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Install Linux Dependencies
       run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev
       if: matrix.os == 'ubuntu-latest'
-      
-    - name: Show path
-      run: echo $ENV:PATH
-      if: matrix.os == 'windows-latest'
-      
-    - name: bail
-      run: error
-      if: matrix.os == 'windows-latest'
 
     - name: Cache Qt
       id: cache-qt
@@ -62,10 +46,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -S ${{github.workspace}}/ -B ${{github.workspace}}/build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-      env:
-        CC: ${{ matrix.CC }}
-        CXX: ${{ matrix.CXX }}
+      run: cmake -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
 
     - name: Build
       # Build your program with the given configuration
