@@ -40,7 +40,8 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       
     - name: Kill gcc
-      run: del /f C:\ProgramData\chocolatey\bin\c++.exe C:\ProgramData\chocolatey\bin\cc.exe C:\ProgramData\chocolatey\bin\ld.exe
+      run: rm -force C:\ProgramData\chocolatey\bin\c++.exe C:\ProgramData\chocolatey\bin\cc.exe C:\ProgramData\chocolatey\bin\ld.exe
+      if: matrix.os == 'windows-latest'
 
     - name: Cache Qt
       id: cache-qt
