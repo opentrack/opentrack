@@ -39,12 +39,12 @@ jobs:
       run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev
       if: matrix.os == 'ubuntu-latest'
       
-    - name: Kill chocolatey gcc
-      run: foreach ($i in @("cc","c++","gcc","g++","ld")) { $x = "C:\ProgramData\chocolatey\bin\$i.exe"; if (test-path $x) { remove-item -force -path $x } }
+    - name: Show path
+      run: echo $ENV:PATH
       if: matrix.os == 'windows-latest'
-
-    - name: Kill strawberry gcc
-      run: foreach ($i in @("cc","c++","gcc","g++","ld")) { $x = "C:\Strawberry\c\bin\$i.exe"; if (test-path $x) { remove-item -force -path $x } }
+      
+    - name: bail
+      run: error
       if: matrix.os == 'windows-latest'
 
     - name: Cache Qt
