@@ -76,7 +76,7 @@ std::vector<std::tuple<QString, int>> get_camera_names()
                 {
                     // Display the name in your UI somehow.
                     QString str((QChar*)var.bstrVal, int(std::wcslen(var.bstrVal)));
-                    ret.push_back({ str, ret.size() });
+                    ret.push_back({ str, (int)ret.size() });
                 }
                 VariantClear(&var);
                 pPropBag->Release();
