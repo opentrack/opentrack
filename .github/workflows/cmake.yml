@@ -22,7 +22,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, windows-latest, ubuntu-latest]
+        os: [macos-latest, ubuntu-latest, windows-latest]
+        include:
+        - os: macos-latest
+          CMAKE: cmake
+        - os: ubuntu-latest
+          CMAKE: cmake
+        - os: windows-latest
+          CMAKE: ${{github.workspace}}\.github\workflows\build-windows.bat cmake
 
     steps:
     - uses: actions/checkout@v2
@@ -44,23 +51,11 @@ jobs:
       with:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -G "Ninja Multi-Config" -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
-      if: matrix.os != 'windows-latest'
+    - name: Configure
+      run: ${{matrix.cmake}} cmake -G "Ninja Multi-Config" -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
 
     - name: Build
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
-      if: matrix.os != 'windows-latest'
-
-    - name: Configure win32
-      run: ${{github.workspace}}\.github\workflows\build-windows.bat cmake -G "Ninja Multi-Config" -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
-      if: matrix.os == 'windows-latest'
-
-    - name: Build win32
-      run: ${{github.workspace}}\.github\workflows\build-windows.bat cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
-      if: matrix.os == 'windows-latest'
+      run: ${{matrix.cmake}} --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
     - name: Upload build
       uses: actions/upload-artifact@v2.2.4
