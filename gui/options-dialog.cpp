@@ -173,24 +173,18 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
         }
     }
 
-    if (tracker_dialog_ && tracker_dialog_->embeddable())
-    {
-        tracker_dialog = tracker_dialog_.release();
-        tracker_dialog->set_buttons_visible(false);
-        ui.tabWidget->addTab(tracker_dialog, tr("Tracker"));
-    }
-    if (proto_dialog_ && proto_dialog_->embeddable())
-    {
-        proto_dialog = proto_dialog_.release();
-        proto_dialog->set_buttons_visible(false);
-        ui.tabWidget->addTab(proto_dialog, tr("Output"));
-    }
-    if (filter_dialog_ && filter_dialog_->embeddable())
-    {
-        filter_dialog = filter_dialog_.release();
-        filter_dialog->set_buttons_visible(false);
-        ui.tabWidget->addTab(filter_dialog, tr("Filter"));
-    }
+    auto add_module_tab = [this] (auto& place, auto&& dlg, const QString& label) {
+        if (dlg && dlg->embeddable())
+        {
+            dlg->set_buttons_visible(false);
+            place = dlg.release();
+            ui.tabWidget->addTab(place, label);
+        }
+    };
+
+    add_module_tab(tracker_dialog, tracker_dialog_, tr("Tracker"));
+    add_module_tab(proto_dialog, proto_dialog_, tr("Output"));
+    add_module_tab(filter_dialog, filter_dialog_, tr("Filter"));
 }
 
 void options_dialog::bind_key(key_opts& kopts, QLabel* label)
