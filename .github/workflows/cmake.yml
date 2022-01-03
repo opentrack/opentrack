@@ -55,7 +55,7 @@ jobs:
       if: matrix.os != 'windows-latest'
 
     - name: Configure win32
-      run: ${{github.workspace}}\.github\workflows\build-windows.bat cmake -G "Ninja Multi-Config" -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}}
+      run: ${{github.workspace}}\.github\workflows\build-windows.bat cmake -G "Ninja Multi-Config" -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
       if: matrix.os == 'windows-latest'
 
     - name: Build win32
