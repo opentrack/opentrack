@@ -84,7 +84,7 @@ inline
 bool default_value_traits<double>::is_equal(double x, double y)
 {
     return std::fabs(x - y) < 1e-6;
-};
+}
 
 template<> struct value_traits<float, double> : default_value_traits<float> {};
 
@@ -93,7 +93,7 @@ inline
 bool default_value_traits<float, double>::is_equal(float x, float y)
 {
     return std::fabs(x - y) < 1e-6f;
-};
+}
 
 template<>
 inline
