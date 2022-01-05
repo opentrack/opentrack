@@ -42,7 +42,7 @@ private:
 
     pt_settings s;
 
-    cv::Mat1b frame_gray_unmasked, frame_bin, frame_gray;
+    cv::Mat1b frame_bin, frame_gray;
     cv::Mat1f hist;
     std::vector<blob> blobs;
     cv::Mat1b ch[3];

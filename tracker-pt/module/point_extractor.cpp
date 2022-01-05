@@ -98,7 +98,6 @@ void PointExtractor::ensure_buffers(const cv::Mat& frame)
 
     frame_gray.create(H, W);
     frame_bin.create(H, W);
-    frame_gray_unmasked.create(H, W);
 }
 
 void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, cv::Mat1b& dest)
@@ -303,15 +302,14 @@ void PointExtractor::extract_points(const pt_frame& frame_,
     const cv::Mat& frame = frame_.as_const<Frame>()->mat;
 
     ensure_buffers(frame);
-    color_to_grayscale(frame, frame_gray_unmasked);
+    color_to_grayscale(frame, frame_gray);
 
 #if defined PREVIEW
     cv::imshow("capture", frame_gray);
     cv::waitKey(1);
 #endif
 
-    threshold_image(frame_gray_unmasked, frame_bin);
-    frame_gray_unmasked.copyTo(frame_gray, frame_bin);
+    threshold_image(frame_gray, frame_bin);
 
     const f region_size_min = (f)s.min_point_size;
     const f region_size_max = (f)s.max_point_size;
