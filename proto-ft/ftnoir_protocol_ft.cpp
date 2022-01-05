@@ -160,7 +160,7 @@ module_status freetrack::set_protocols()
 
     QString location = *s.custom_location_pathname;
 
-    bool use_freetrack, use_npclient;
+    bool use_freetrack = true, use_npclient = true;
     switch (*s.used_interface)
     {
     case settings::enable_npclient: use_freetrack = false; break;
