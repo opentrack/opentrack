@@ -200,14 +200,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Average</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Natural</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Red only</source>
         <translation type="unfinished"></translation>
     </message>
@@ -294,6 +286,14 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Limit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grayscale BT.709</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Grayscale (from hardware)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

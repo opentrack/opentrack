@@ -8,9 +8,9 @@ enum pt_color_type
 {
     // explicit values, gotta preserve the numbering in .ini
     // don't reuse when removing some of the modes
-    pt_color_natural = 2,
+    pt_color_bt709 = 2,
+    pt_color_hardware = 14,
     pt_color_red_only = 3,
-    pt_color_average = 5,
     pt_color_blue_only = 6,
     pt_color_green_only = 7,
     pt_color_red_chromakey = 8,
@@ -63,7 +63,7 @@ struct pt_settings final : options::opts
     value<bool> dynamic_pose { b, "dynamic-pose-resolution", false };
     value<int> init_phase_timeout { b, "init-phase-timeout", 250 };
     value<bool> auto_threshold { b, "automatic-threshold", true };
-    value<pt_color_type> blob_color { b, "blob-color", pt_color_natural };
+    value<pt_color_type> blob_color { b, "blob-color", pt_color_bt709 };
     value<bool> use_mjpeg { b, "use-mjpeg", false };
 
     value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };

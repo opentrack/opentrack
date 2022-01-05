@@ -175,18 +175,14 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         filter_single_channel(frame, 0.5, -1, 0.5, output);
         break;
     }
-    case pt_color_average:
-    {
-        const int W = frame.cols, H = frame.rows, sz = W*H;
-        cv::reduce(frame.reshape(1, sz),
-                   output.reshape(1, sz),
-                   1, cv::REDUCE_AVG);
-        break;
-    }
+    case pt_color_hardware:
+        eval_once(qDebug() << "camera driver doesn't support grayscale");
+        goto do_grayscale;
     default:
         eval_once(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
     [[fallthrough]];
-    case pt_color_natural:
+    case pt_color_bt709:
+do_grayscale:
         cv::cvtColor(frame, output, cv::COLOR_BGR2GRAY);
         break;
     }

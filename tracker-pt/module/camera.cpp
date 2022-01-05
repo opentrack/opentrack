@@ -104,14 +104,7 @@ bool Camera::start(const pt_settings& s)
             info.width = res_x;
             info.height = res_y;
             info.use_mjpeg = use_mjpeg;
-            switch (*s.blob_color)
-            {
-            case pt_color_natural:
-            case pt_color_average:
-                info.num_channels = 1; break;
-            default:
-                info.num_channels = 3; break;
-            }
+            info.num_channels = s.blob_color == pt_color_hardware ? 1 : 3;
 
             if (!cap->start(info))
                 goto fail;

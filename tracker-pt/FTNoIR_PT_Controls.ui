@@ -157,12 +157,12 @@
             </property>
             <item>
              <property name="text">
-              <string>Average</string>
+              <string>Grayscale BT.709</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>Natural</string>
+              <string>Grayscale (from hardware)</string>
              </property>
             </item>
             <item>

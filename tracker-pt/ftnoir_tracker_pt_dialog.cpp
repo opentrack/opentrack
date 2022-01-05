@@ -92,8 +92,8 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     poll_tracker_info_impl();
 
     constexpr pt_color_type color_types[] = {
-        pt_color_average,
-        pt_color_natural,
+        pt_color_bt709,
+        pt_color_hardware,
         pt_color_red_only,
         pt_color_green_only,
         pt_color_blue_only,
