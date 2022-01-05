@@ -270,6 +270,32 @@ static void draw_blobs(cv::Mat& preview_frame, const blob* blobs, unsigned nblob
     }
 }
 
+#if 0
+static vec2 meanshift_initial_guess(const cv::Rect rect, cv::Mat& frame_roi)
+{
+    vec2 ret = {rect.width/(f)2, rect.height/(f)2};
+
+    // compute center initial guess
+    double ynorm = 0, xnorm = 0, y = 0, x = 0;
+    for (int j = 0; j < rect.height; j++)
+    {
+        const unsigned char* __restrict ptr = frame_roi.ptr<unsigned char>(j);
+        for (int i = 0; i < rect.width; i++)
+        {
+            double val = ptr[i] * 1./255;
+            x += i * val;
+            y += j * val;
+            xnorm += val;
+            ynorm += val;
+        }
+    }
+    constexpr double eps = 1e-4;
+    if (xnorm > eps && ynorm > eps)
+        ret = { (f)(x / xnorm), (f)(y / ynorm) };
+    return ret;
+}
+#endif
+
 void PointExtractor::extract_points(const pt_frame& frame_,
                                     pt_preview& preview_frame_,
                                     bool preview_visible,
@@ -378,6 +404,7 @@ end:
         static constexpr f radius_c = f(1.75);
 
         const f kernel_radius = b.radius * radius_c;
+        //vec2 pos = meanshift_initial_guess(rect, frame_roi); // position relative to ROI.
         vec2 pos(rect.width/f(2), rect.height/f(2)); // position relative to ROI.
 
         for (int iter = 0; iter < 10; ++iter)
