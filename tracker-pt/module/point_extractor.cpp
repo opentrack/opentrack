@@ -390,14 +390,7 @@ end:
     for (idx = 0; idx < sz; ++idx)
     {
         blob& b = blobs[idx];
-        cv::Rect rect = b.rect;
-
-        rect.x -= rect.width / 2;
-        rect.y -= rect.height / 2;
-        rect.width *= 2;
-        rect.height *= 2;
-        rect &= cv::Rect(0, 0, W, H);  // crop at frame boundaries
-
+        cv::Rect rect = b.rect & cv::Rect(0, 0, W, H); // crop at frame boundaries
         cv::Mat frame_roi = frame_gray(rect);
 
         // smaller values mean more changes. 1 makes too many changes while 1.5 makes about .1
