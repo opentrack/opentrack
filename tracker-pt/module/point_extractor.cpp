@@ -216,9 +216,8 @@ void PointExtractor::threshold_image(const cv::Mat& frame_gray, cv::Mat1b& outpu
         float const* const __restrict ptr = hist.ptr<float>(0);
         const unsigned area = unsigned(iround(3 * pi * radius*radius));
         const unsigned sz = unsigned(hist.cols * hist.rows);
-        constexpr unsigned min_thres = 64;
-        unsigned thres = min_thres;
-        for (unsigned i = sz-1, cnt = 0; i > 32; i--)
+        unsigned thres = 1;
+        for (unsigned i = sz-1, cnt = 0; i > 1; i--)
         {
             cnt += (unsigned)ptr[i];
             if (cnt >= area)
