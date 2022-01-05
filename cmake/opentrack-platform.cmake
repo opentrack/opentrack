@@ -154,8 +154,9 @@ if(MSVC)
     #C4266 - no override available for virtual member function from base type, function is hidden
     #C4928 - illegal copy-initialization, more than one user-defined conversion has been implicitly applied
     #C4200: nonstandard extension used: zero-sized array in struct/union
+    #C4459: declaration of 'eps' hides global declaration
 
-    set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 4702 4457 4200)
+    set(warns-disable 4530 4577 4789 4244 4702 4530 4244 4127 4458 4456 4251 4100 4702 4457 4200 4459)
 
     foreach(i ${warns-disable})
         add_compile_options(-wd${i})
