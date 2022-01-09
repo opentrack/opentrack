@@ -14,7 +14,7 @@ Checks: '
 -cert-err34-c,
 -cert-err58-cpp,
 -cert-flp30-c,
-clang-analyze-core.CallAndMessage,
+clang-analyzer-core.CallAndMessage,
 clang-analyzer-deadcode.DeadStores,
 -clang-diagnostic-nonportable-include-path,
 -cppcoreguidelines-avoid-c-arrays,
@@ -36,12 +36,13 @@ clang-analyzer-deadcode.DeadStores,
 -cppcoreguidelines-pro-type-union-access,
 -cppcoreguidelines-pro-type-vararg,
 -cppcoreguidelines-special-member-functions,
--cppcoreguidelines-special-member-functions-hicpp-special-member-functions,
+-hicpp-special-member-functions,
 -google-readability-braces-around-statements,
 -google-readability-casting,
 -hicpp-avoid-c-arrays,
 -hicpp-avoid-goto,
 -hicpp-braces-around-statements,
+-hicpp-exception-baseclass,
 -hicpp-explicit-conversions,
 -hicpp-function-size,
 -hicpp-member-init,
@@ -83,7 +84,6 @@ modernize-use-equals-default,
 '
 
 AnalyzeTemporaryDtors: true
-#HeaderFilterRegex: '/dev/opentrack'
 
 CheckOptions:
   - key:      cert-dcl59-cpp.HeaderFileExtensions
