@@ -19,11 +19,13 @@
 #include "compat/sysexits.hpp"
 #include "opentrack/defs.hpp"
 
+#include <cstring>
 #include <utility>
 
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QDir>
+#include <QDesktopWidget>
 #include <QApplication>
 
 extern "C" const char* const opentrack_version;
@@ -565,6 +567,46 @@ void main_window::show_pose()
     show_pose_(mapped, raw);
 }
 
+bool main_window::module_tabs_enabled() const
+{
+    enum module_tab_state { tabs_maybe = -1, tabs_disable, tabs_enable };
+
+    static const auto force = progn(
+        auto str = getenv("OPENTRACK_MODULE_TABS");
+        if (!str || !*str)
+            return tabs_maybe;
+        constexpr const char* strings_for_false[] = {
+            "0", "-1", "no", "n", "disable", "disabled", "false", "f",
+        };
+        constexpr const char* strings_for_true[] = {
+            "1", "yes", "y", "enable", "enabled", "true", "t",
+        };
+        for (const auto* x : strings_for_false)
+            if (!strcasecmp(str, x))
+                return tabs_disable;
+        for (const auto* x : strings_for_true)
+            if (!strcasecmp(str, x))
+                return tabs_enable;
+        qDebug() << "main-window: invalid boolean for OPENTRACK_MODULE_TABS:"
+                 << QLatin1String{str};
+        return tabs_maybe;
+    );
+    switch (force)
+    {
+    case tabs_disable: return false;
+    case tabs_enable: return true;
+    case tabs_maybe: (void)0;
+    }
+    auto* d = QApplication::desktop();
+    if (!d)
+        return false;
+    // Windows 10: 40px,  Windows 11: 48px, KDE: 51px
+    constexpr int taskbar_size = 51;
+    constexpr int min_avail_height = 864 - taskbar_size;
+    QRect rect = d->availableGeometry(this);
+    return rect.height() >= min_avail_height;
+}
+
 static void show_window(QWidget& d, bool fresh)
 {
     if (fresh)
@@ -613,23 +655,10 @@ static bool mk_window(std::unique_ptr<t>& place, bool show, Args&&... params)
     });
 }
 
-template<typename t>
-static bool mk_dialog(std::unique_ptr<t>& place, bool show, const std::shared_ptr<dylib>& lib)
-{
-    using u = std::unique_ptr<t>;
-
-    return mk_window_common(place, show, [&] {
-        if (lib && lib->Dialog)
-            return u{ (t*)lib->Dialog() };
-        else
-            return u{};
-    });
-}
-
 template<typename Instance, typename Dialog>
 static void show_module_settings(std::shared_ptr<Instance> instance,
                                  std::unique_ptr<Dialog>& dialog,
-                                 Modules::dylib_ptr lib,
+                                 const Modules::dylib_ptr& lib,
                                  std::unique_ptr<options_dialog>& options_widget,
                                  main_window* win,
                                  bool show,
@@ -637,19 +666,28 @@ static void show_module_settings(std::shared_ptr<Instance> instance,
                                  void(options_dialog::*switch_tab_fun)())
 {
     using BaseDialog = plugin_api::detail::BaseDialog;
-    bool fresh = !options_widget;
-    if (mk_dialog(dialog, show, lib) && !dialog->embeddable())
+    if (!lib || !lib->Dialog)
+        return;
+
+    bool fresh = !dialog;
+    if (fresh)
+        dialog = std::unique_ptr<Dialog>{(Dialog*)lib->Dialog()};
+    bool embed = dialog->embeddable() && win->module_tabs_enabled();
+
+    if (!embed)
     {
         if (instance)
             ((*dialog).*register_fun)(&*instance);
         QObject::connect(&*dialog, &BaseDialog::closing, win, [&] { dialog = nullptr; });
+        if (show)
+            show_window(*dialog, fresh);
     }
-    else if (show && dialog && dialog->embeddable())
+    else if (show)
     {
+        bool fresh = !options_widget;
         win->show_options_dialog(false);
         ((*options_widget).*switch_tab_fun)();
-        if (show)
-            show_window(*options_widget, fresh);
+        show_window(*options_widget, fresh);
     }
 }
 
@@ -683,11 +721,24 @@ void main_window::show_options_dialog(bool show)
         return;
     }
 
-    show_tracker_settings_(false);
-    show_proto_settings_(false);
-    show_filter_settings_(false);
+    bool embed = module_tabs_enabled();
 
-    mk_window(options_widget, false, pTrackerDialog, pProtocolDialog, pFilterDialog,
+    if (embed)
+    {
+        show_tracker_settings_(false);
+        show_proto_settings_(false);
+        show_filter_settings_(false);
+    }
+
+    // make them into unique_ptr<BaseDialog>
+    std::unique_ptr<ITrackerDialog> empty_ITD;
+    std::unique_ptr<IProtocolDialog> empty_IPD;
+    std::unique_ptr<IFilterDialog> empty_IFD;
+
+    mk_window(options_widget, false,
+              embed ? pTrackerDialog : empty_ITD,
+              embed ? pProtocolDialog : empty_IPD,
+              embed ? pFilterDialog : empty_IFD,
               [this](bool flag) { set_keys_enabled(!flag); });
     connect(&*options_widget, &options_dialog::closing, [this] { options_widget = nullptr; });
 

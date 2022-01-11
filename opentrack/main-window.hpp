@@ -135,6 +135,7 @@ public:
     bool start_in_tray();
 
     void save_modules();
+    bool module_tabs_enabled() const;
 
     void exit(int status = EXIT_SUCCESS);
 
