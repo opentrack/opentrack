@@ -676,9 +676,12 @@ static void show_module_settings(std::shared_ptr<Instance> instance,
 
     if (!embed)
     {
-        if (instance)
-            ((*dialog).*register_fun)(&*instance);
-        QObject::connect(&*dialog, &BaseDialog::closing, win, [&] { dialog = nullptr; });
+        if (fresh)
+        {
+            if (instance)
+                ((*dialog).*register_fun)(&*instance);
+            QObject::connect(&*dialog, &BaseDialog::closing, win, [&] { dialog = nullptr; });
+        }
         if (show)
             show_window(*dialog, fresh);
     }
