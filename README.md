@@ -86,9 +86,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 
 ## Contributing
 
-Code, translations, 
-
-Please see [basic rules for contributing](https://github.com/opentrack/opentrack/blob/unstable/CONTRIBUTING.md). There's also a guide for [working with core code](https://github.com/opentrack/opentrack/wiki/Hacking-opentrack). For writing input and output modules you don't need this guide except for 
+See guides for writing new modules\[[1](https://github.com/opentrack/opentrack/blob/master/api/plugin-api.hpp)\]\[[2](https://github.com/opentrack/opentrack/blob/master/tracker-test/test.h)\], and for [working with core code](https://github.com/opentrack/opentrack/wiki/Hacking-opentrack).
 
 ## License and warranty
 
