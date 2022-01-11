@@ -21,7 +21,6 @@ using namespace options;
 #include <QStyleFactory>
 #include <QLocale>
 #include <QTranslator>
-#include <QApplication>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>

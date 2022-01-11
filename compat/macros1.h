@@ -46,3 +46,8 @@
     type& operator=(const type&) = delete;  \
     type& operator=(type&&) = delete
 #endif
+
+#ifdef _MSC_VER
+#   define strncasecmp _strnicmp
+#   define strcasecmp _stricmp
+#endif

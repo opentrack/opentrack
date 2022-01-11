@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QDesktopServices>
 #include <QDir>
+#include <QApplication>
 
 extern "C" const char* const opentrack_version;
 

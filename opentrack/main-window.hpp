@@ -20,21 +20,16 @@
 #include "options/options.hpp"
 #include "compat/qt-signal.hpp"
 
-#include <QApplication>
 #include <QMainWindow>
 #include <QKeySequence>
 #include <QShortcut>
-#include <QPixmap>
 #include <QTimer>
 #include <QSystemTrayIcon>
 #include <QString>
 #include <QMenu>
 #include <QAction>
-#include <QEvent>
-#include <QCloseEvent>
 #include <QList>
 
-#include <tuple>
 #include <memory>
 
 #include "ui_main-window.h"
