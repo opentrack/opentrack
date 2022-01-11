@@ -576,16 +576,16 @@ bool main_window::module_tabs_enabled() const
         if (!str || !*str)
             return tabs_maybe;
         constexpr const char* strings_for_false[] = {
-            "0", "-1", "no", "n", "disable", "disabled", "false", "f",
+            "0", "n", "f", "disable",
         };
         constexpr const char* strings_for_true[] = {
-            "1", "yes", "y", "enable", "enabled", "true", "t",
+            "1", "y", "t", "enable",
         };
         for (const auto* x : strings_for_false)
-            if (!strcasecmp(str, x))
+            if (!strncasecmp(str, x, strlen(x)))
                 return tabs_disable;
         for (const auto* x : strings_for_true)
-            if (!strcasecmp(str, x))
+            if (!strncasecmp(str, x, strlen(x)))
                 return tabs_enable;
         qDebug() << "main-window: invalid boolean for OPENTRACK_MODULE_TABS:"
                  << QLatin1String{str};
