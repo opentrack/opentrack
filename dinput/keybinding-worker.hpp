@@ -67,7 +67,6 @@ private:
     ~KeybindingWorker() override;
 
     static constexpr int num_keyboard_states = 64;
-    DIDEVICEOBJECTDATA keyboard_states[num_keyboard_states] {};
 public:
     class Token
     {

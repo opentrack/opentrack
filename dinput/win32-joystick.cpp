@@ -11,13 +11,13 @@
 #include <QWidget>
 #include <QDebug>
 
+#include <dinput.h>
 #include <objbase.h>
 
 namespace win32_joy_impl {
 
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
-DIDEVICEOBJECTDATA win32_joy_ctx::joy::keystate_buffers[num_buffers] = {};
 
 void win32_joy_ctx::poll(fn const& f)
 {
@@ -141,6 +141,8 @@ bool win32_joy_ctx::joy::poll(fn const& f)
         //Sleep(0);
         return false;
     }
+
+    DIDEVICEOBJECTDATA keystate_buffers[num_buffers] = {};
 
     DWORD sz = num_buffers;
     if (FAILED(hr = joy_handle->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keystate_buffers, &sz, 0)))
@@ -273,7 +275,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
 
     {
         HRESULT hr;
-        LPDIRECTINPUTDEVICE8 h;
+        IDirectInputDevice8A* h;
         if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
             qDebug() << "dinput: failed joystick CreateDevice" << guid << (void*)hr;
@@ -339,7 +341,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
 
         HRESULT hr;
 
-        if (FAILED(hr = reinterpret_cast<LPDIRECTINPUTDEVICE8>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
+        if (FAILED(hr = reinterpret_cast<IDirectInputDevice8A*>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
         {
             qDebug() << "dinput: failed joystick DIPROP_RANGE" << (void*)hr;
             return DIENUM_STOP;
@@ -349,7 +351,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
     return DIENUM_CONTINUE;
 }
 
-win32_joy_ctx::joy::joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString &name)
+win32_joy_ctx::joy::joy(IDirectInputDevice8A* handle, const QString& guid, const QString &name)
     : joy_handle(handle), guid(guid), name(name)
 {
     //qDebug() << "make joy" << guid << name << joy_handle;

@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <dinput.h>
 
 #include <QDebug>
 
@@ -60,7 +61,7 @@ diptr di_t::init_di_()
 
 di_t::di_t() = default;
 
-bool di_t::poll_device(LPDIRECTINPUTDEVICE8 dev)
+bool di_t::poll_device(IDirectInputDevice8A* dev)
 {
     HRESULT hr;
     assert(handle);

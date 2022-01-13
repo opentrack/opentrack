@@ -15,7 +15,19 @@
 #undef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION 0x800
 
-#include <dinput.h>
+struct IDirectInputDevice8A;
+typedef struct IDirectInputDevice8A IDirectInputDevice8A;
+struct IDirectInput8A;
+typedef struct IDirectInput8A IDirectInput8A;
+struct _GUID;
+typedef struct _GUID GUID;
+struct _DIDATAFORMAT;
+typedef struct _DIDATAFORMAT DIDATAFORMAT;
+typedef int BOOL;
+struct DIDEVICEINSTANCEA;
+typedef struct DIDEVICEINSTANCEA DIDEVICEINSTANCEA;
+struct DIDEVICEOBJECTINSTANCEA;
+typedef struct DIDEVICEOBJECTINSTANCEA DIDEVICEOBJECTINSTANCEA;
 
 // XXX TODO -sh 20190209
 // keybinding_worker and joystick context are badly named
@@ -39,5 +51,5 @@ public:
     operator bool() const;
     operator diptr() const;
 
-    static bool poll_device(LPDIRECTINPUTDEVICE8 dev);
+    static bool poll_device(IDirectInputDevice8A* dev);
 };

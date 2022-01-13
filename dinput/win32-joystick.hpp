@@ -10,6 +10,7 @@
 #include "dinput.hpp"
 #include "compat/timer.hpp"
 #include "export.hpp"
+#include "compat/qhash.hpp"
 
 #include <memory>
 #include <vector>
@@ -17,15 +18,13 @@
 #include <unordered_map>
 #include <iterator>
 
-#include "compat/qhash.hpp"
 #include <QString>
 #include <QMutex>
 
 namespace win32_joy_impl {
 
-static constexpr unsigned max_buttons = std::size(DIJOYSTATE2().rgbButtons);
-static constexpr unsigned max_pov_hats = std::size(DIJOYSTATE2().rgdwPOV);
-
+static constexpr unsigned max_buttons = 128;
+static constexpr unsigned max_pov_hats = 4;
 static constexpr unsigned pov_hat_directions = 8;
 
 // cf. https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee416628(v=vs.85)
@@ -48,13 +47,11 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx final
 
     struct joy final
     {
-        LPDIRECTINPUTDEVICE8 joy_handle;
+        IDirectInputDevice8A* joy_handle;
         QString guid, name;
         bool last_state[max_buttons_and_pov_hats] {};
 
-        static DIDEVICEOBJECTDATA keystate_buffers[num_buffers];
-
-        joy(LPDIRECTINPUTDEVICE8 handle, const QString& guid, const QString& name);
+        joy(IDirectInputDevice8A* handle, const QString& guid, const QString& name);
         ~joy();
 
         void release();
@@ -89,8 +86,8 @@ private:
         joys_t joys;
         di_t di;
 
-        static BOOL CALLBACK EnumJoysticksCallback(const DIDEVICEINSTANCE* pdidInstance, VOID* pContext);
-        static BOOL CALLBACK EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID* ctx);
+        static BOOL __stdcall EnumJoysticksCallback(const DIDEVICEINSTANCEA* pdidInstance, void* pContext);
+        static BOOL __stdcall EnumObjectsCallback(const DIDEVICEOBJECTINSTANCEA* pdidoi, void* ctx);
 
     public:
         static QMutex mtx;

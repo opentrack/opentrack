@@ -15,7 +15,7 @@
 #include <QDebug>
 #include <QMutexLocker>
 
-#include <windows.h>
+#include <dinput.h>
 
 Key::Key() = default;
 
@@ -152,6 +152,8 @@ bool KeybindingWorker::run_keyboard_nolock()
 
     if (!di_t::poll_device(dinkeyboard))
         eval_once(qDebug() << "dinput: keyboard poll failed");
+
+    DIDEVICEOBJECTDATA keyboard_states[num_keyboard_states] = {};
 
     DWORD sz = num_keyboard_states;
     HRESULT hr = dinkeyboard->GetDeviceData(sizeof(*keyboard_states), keyboard_states, &sz, 0);
