@@ -30,7 +30,10 @@ QString options_dialog::kopts_to_string(const key_opts& kopts)
         if (mods & Qt::ControlModifier) mm += "Control+";
         if (mods & Qt::AltModifier) mm += "Alt+";
         if (mods & Qt::ShiftModifier) mm += "Shift+";
-        return mm + tr("Joy button %1").arg(QString::number(btn));
+        const auto& str = kopts.guid == QStringLiteral("mouse")
+                          ? tr("Mouse %1")
+                          : tr("Joy button %1");
+        return mm + str.arg(QString::number(btn));
     }
     if (kopts.keycode->isEmpty())
         return tr("None");

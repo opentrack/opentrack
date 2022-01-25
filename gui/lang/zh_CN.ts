@@ -397,6 +397,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Filter</source>
         <translation>过滤器</translation>
     </message>
+    <message>
+        <source>Mouse %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>
