@@ -51,6 +51,12 @@ void Shortcuts::bind_shortcut(K& key, const key_opts& k, bool held)
     int idx = 0;
     QKeySequence code(QKeySequence::UnknownKey);
 
+    if (k.guid == QStringLiteral("mouse"))
+    {
+        key.guid = k.guid;
+        key.keycode = k.button;
+        key.held = held;
+    }
     if (!k.guid->isEmpty())
     {
         key.guid = k.guid;
