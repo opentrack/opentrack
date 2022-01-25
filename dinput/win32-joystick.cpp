@@ -48,7 +48,7 @@ bool win32_joy_ctx::poll_axis(const QString &guid, int* axes)
 
         auto& j = iter->second;
         auto& joy_handle = j->joy_handle;
-        DIJOYSTATE2 js = {};
+        DIJOYSTATE2 js;
 
         if (!di_t::poll_device(joy_handle))
             continue;
@@ -142,7 +142,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
         return false;
     }
 
-    DIDEVICEOBJECTDATA keystate_buffers[num_buffers] = {};
+    DIDEVICEOBJECTDATA keystate_buffers[num_buffers];
 
     DWORD sz = num_buffers;
     if (FAILED(hr = joy_handle->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keystate_buffers, &sz, 0)))
