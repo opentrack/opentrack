@@ -70,7 +70,7 @@ void Shortcuts::bind_shortcut(K& key, const key_opts& k, bool held)
             code != QKeySequence{ QKeySequence::UnknownKey } &&
             win_key::from_qt(code, idx, mods))
         {
-            key.guid = "";
+            key.guid = QString{};
             key.keycode = idx;
             key.held = held;
             key.ctrl = !!(mods & Qt::ControlModifier);
@@ -88,7 +88,7 @@ void Shortcuts::receiver(const Key& key)
     const unsigned sz = keys.size();
     for (unsigned i = 0; i < sz; i++)
     {
-        K& k = std::get<0>(keys[i]);
+        auto& [k, f, held] = keys[i];
         if (key.guid != k.guid)
             continue;
         if (key.keycode != k.keycode)
@@ -103,7 +103,6 @@ void Shortcuts::receiver(const Key& key)
             if (!k.should_process())
                 continue;
         }
-        fun& f = std::get<1>(keys[i]);
         f(key.held);
     }
 }
