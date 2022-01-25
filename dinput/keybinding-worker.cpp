@@ -218,6 +218,10 @@ bool KeybindingWorker::run_keyboard_nolock()
         const int idx = keyboard_states[k].dwOfs & 0xff; // defensive programming
         const bool held = !!(keyboard_states[k].dwData & 0x80);
 
+        if (held == keystate[idx])
+            continue;
+        keystate[idx] = held;
+
         switch (idx)
         {
         case DIK_LCONTROL:
@@ -243,8 +247,6 @@ bool KeybindingWorker::run_keyboard_nolock()
         }
             break;
         }
-
-        keystate[idx] = held;
     }
 
     return true;
