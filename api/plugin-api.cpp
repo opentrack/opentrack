@@ -1,7 +1,5 @@
 #include "plugin-api.hpp"
 
-#include <utility>
-
 namespace plugin_api::detail {
 
 BaseDialog::BaseDialog() = default;
