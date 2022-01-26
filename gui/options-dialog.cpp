@@ -179,9 +179,12 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     auto add_module_tab = [this] (auto& place, auto&& dlg, const QString& label) {
         if (dlg && dlg->embeddable())
         {
+            using BaseDialog = plugin_api::detail::BaseDialog;
+
             dlg->set_buttons_visible(false);
             place = dlg.release();
             ui.tabWidget->addTab(place, label);
+            QObject::connect(place, &BaseDialog::closing, this, &QDialog::close);
         }
     };
 

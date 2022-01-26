@@ -1,4 +1,5 @@
 #include "plugin-api.hpp"
+#include <QDebug>
 
 namespace plugin_api::detail {
 
@@ -7,18 +8,15 @@ void BaseDialog::closeEvent(QCloseEvent*)
 {
     if (isVisible())
     {
-        hide();
         emit closing();
+        close();
     }
 }
 
 void BaseDialog::done(int)
 {
     if (isVisible())
-    {
-        hide();
         close();
-    }
 }
 
 bool BaseDialog::embeddable() noexcept { return false; }
