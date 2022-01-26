@@ -9,7 +9,7 @@ void BaseDialog::closeEvent(QCloseEvent*)
     if (isVisible())
     {
         emit closing();
-        close();
+        reject();
     }
 }
 

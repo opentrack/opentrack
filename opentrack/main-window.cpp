@@ -635,7 +635,7 @@ static bool mk_window(std::unique_ptr<t>& d, bool show, Args&&... params)
 {
     bool fresh = false;
 
-    if (!d)
+    if (!(d && d->isVisible()))
     {
         d = std::make_unique<t>(std::forward<Args>(params)...);
         fresh = !!d;
@@ -664,7 +664,7 @@ static void show_module_settings(std::shared_ptr<Instance> instance,
     if (!lib || !lib->Dialog)
         return;
 
-    bool fresh = !dialog;
+    bool fresh = !(dialog && dialog->isVisible());
     if (fresh)
         dialog = std::unique_ptr<Dialog>{(Dialog*)lib->Dialog()};
     bool embed = dialog->embeddable() && win->module_tabs_enabled();
@@ -675,7 +675,6 @@ static void show_module_settings(std::shared_ptr<Instance> instance,
         {
             if (instance)
                 ((*dialog).*register_fun)(&*instance);
-            QObject::connect(&*dialog, &BaseDialog::closing, win, [&] { dialog = nullptr; });
         }
         if (show)
             show_window(*dialog, fresh);
@@ -712,7 +711,7 @@ void main_window::show_filter_settings_(bool show)
 
 void main_window::show_options_dialog(bool show)
 {
-    if (options_widget)
+    if (options_widget && options_widget->isVisible())
     {
         if (show)
             show_window(*options_widget, false);
@@ -738,7 +737,6 @@ void main_window::show_options_dialog(bool show)
               embed ? pProtocolDialog : empty_IPD,
               embed ? pFilterDialog : empty_IFD,
               [this](bool flag) { set_keys_enabled(!flag); });
-    connect(&*options_widget, &options_dialog::closing, this, [this] { options_widget = nullptr; });
 
     if (work)
     {
