@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <iterator>
-#include <QRegularExpression>
 
 #ifdef _WIN32
 #   include <cwchar>
@@ -42,6 +41,9 @@ int camera_name_to_index(const QString &name)
     return -1;
 }
 
+#ifdef _WIN32
+#   include <QRegularExpression>
+
 static QString prop_to_qstring(IPropertyBag* pPropBag, const wchar_t* name)
 {
     QString ret{};
@@ -66,6 +68,8 @@ static QString device_path_from_qstring(const QString& str)
     id.replace('&', '_');
     return id;
 }
+
+#endif
 
 std::vector<std::tuple<QString, int>> get_camera_names()
 {
