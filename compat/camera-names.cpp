@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <QRegularExpression>
 
 #ifdef _WIN32
 #   include <cwchar>
@@ -41,6 +42,31 @@ int camera_name_to_index(const QString &name)
     return -1;
 }
 
+static QString prop_to_qstring(IPropertyBag* pPropBag, const wchar_t* name)
+{
+    QString ret{};
+    VARIANT var;
+    VariantInit(&var);
+    HRESULT hr = pPropBag->Read(name, &var, nullptr);
+    if (SUCCEEDED(hr))
+        ret = QString{(const QChar*)var.bstrVal, int(std::wcslen(var.bstrVal))};
+    VariantClear(&var);
+    return ret;
+}
+
+static QString device_path_from_qstring(const QString& str)
+{
+    // language=RegExp prefix=R"/( suffix=)/"
+    static const QRegularExpression regexp{R"/(#vid_([0-9a-f]{4})&pid_([0-9a-f]{4})&mi_([0-9a-f]{2})#([^#]+))/",
+                                           QRegularExpression::CaseInsensitiveOption};
+    auto match = regexp.match(str);
+    if (!match.hasMatch())
+        return {};
+    QString id = match.captured(4);
+    id.replace('&', '_');
+    return id;
+}
+
 std::vector<std::tuple<QString, int>> get_camera_names()
 {
     std::vector<std::tuple<QString, int>> ret;
@@ -67,18 +93,16 @@ std::vector<std::tuple<QString, int>> get_camera_names()
         {
             IPropertyBag *pPropBag;
             hr = pMoniker->BindToStorage(nullptr, nullptr, IID_IPropertyBag, (void **)&pPropBag);
-            if (SUCCEEDED(hr))	{
+            if (SUCCEEDED(hr)) {
                 // To retrieve the filter's friendly name, do the following:
-                VARIANT var;
-                VariantInit(&var);
-                hr = pPropBag->Read(L"FriendlyName", &var, nullptr);
                 if (SUCCEEDED(hr))
                 {
-                    // Display the name in your UI somehow.
-                    QString str((QChar*)var.bstrVal, int(std::wcslen(var.bstrVal)));
+                    QString str = prop_to_qstring(pPropBag, L"FriendlyName");
+                    QString path = device_path_from_qstring(prop_to_qstring(pPropBag, L"DevicePath"));
+                    if (!path.isNull())
+                        str += QStringLiteral(" [%1]").arg(path);
                     ret.push_back({ str, (int)ret.size() });
                 }
-                VariantClear(&var);
                 pPropBag->Release();
             }
             pMoniker->Release();
