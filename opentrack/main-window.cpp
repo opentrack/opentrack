@@ -743,7 +743,7 @@ void main_window::show_options_dialog(bool show)
               embed ? pProtocolDialog : empty_IPD,
               embed ? pFilterDialog : empty_IFD,
               [this](bool flag) { set_keys_enabled(!flag); });
-    connect(&*options_widget, &options_dialog::closing, [this] { options_widget = nullptr; });
+    connect(&*options_widget, &options_dialog::closing, this, [this] { options_widget = nullptr; });
 
     if (work)
     {
