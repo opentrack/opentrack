@@ -630,13 +630,16 @@ static void show_window(QWidget& d, bool fresh)
     }
 }
 
-template<typename t, typename F>
-static bool mk_window_common(std::unique_ptr<t>& d, bool show, F&& fun)
+template<typename t, typename... Args>
+static bool mk_window(std::unique_ptr<t>& d, bool show, Args&&... params)
 {
     bool fresh = false;
 
     if (!d)
-        d = fun(), fresh = !!d;
+    {
+        d = std::make_unique<t>(std::forward<Args>(params)...);
+        fresh = !!d;
+    }
 
     if (d)
     {
@@ -645,14 +648,6 @@ static bool mk_window_common(std::unique_ptr<t>& d, bool show, F&& fun)
     }
 
     return fresh;
-}
-
-template<typename t, typename... Args>
-static bool mk_window(std::unique_ptr<t>& place, bool show, Args&&... params)
-{
-    return mk_window_common(place, show, [&] {
-        return std::make_unique<t>(std::forward<Args>(params)...);
-    });
 }
 
 template<typename Instance, typename Dialog>
