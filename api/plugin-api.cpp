@@ -1,16 +1,15 @@
 #include "plugin-api.hpp"
+#include <QCloseEvent>
 #include <QDebug>
 
 namespace plugin_api::detail {
 
 BaseDialog::BaseDialog() = default;
-void BaseDialog::closeEvent(QCloseEvent*)
+void BaseDialog::closeEvent(QCloseEvent* e)
 {
     if (isVisible())
-    {
         emit closing();
-        reject();
-    }
+    e->accept();
 }
 
 void BaseDialog::done(int)
