@@ -1,5 +1,5 @@
 include(opentrack-opencv)
-find_package(OpenCV QUIET COMPONENTS imgproc core imgcodecs calib3d)
+find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.
 find_package(ONNXRuntime QUIET)
 
