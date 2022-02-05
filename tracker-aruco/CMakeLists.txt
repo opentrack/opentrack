@@ -10,7 +10,7 @@ endfunction()
 include(opentrack-opencv)
 find_package(OpenCV QUIET)
 
-if(OpenCV_FOUND AND TARGET opencv_calib3d)
+if(OpenCV_FOUND AND TARGET opencv_calib3d AND TARGET opencv_features2d)
     foreach(k core calib3d imgproc features2d flann)
         otr_install_lib("opencv_${k}" "${opentrack-libexec}")
     endforeach()
