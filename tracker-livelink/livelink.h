@@ -12,7 +12,7 @@ struct settings : opts {
     value<int> add_yaw, add_pitch, add_roll;
     settings() :
         opts("livelink-tracker"),
-        port(b, "port", 42068),
+        port(b, "port", 11111),
         add_yaw(b, "add-yaw", 0),
         add_pitch(b, "add-pitch", 0),
         add_roll(b, "add-roll", 0)
@@ -31,7 +31,7 @@ protected:
     void run() override;
 private:
     QUdpSocket sock;
-    float last_recv_pose[128], last_recv_pose2[128];;
+    float last_recv_pose[3], last_recv_pose2[3];
     QMutex mutex;
     settings s;
 };
@@ -51,11 +51,11 @@ private slots:
     void doCancel();
 };
 
-class livelink_receiver_dll : public Metadata
+class meta_livelink : public Metadata
 {
     Q_OBJECT
 
     QString name() { return tr("IPhone LiveLink Tracker"); }
-    QIcon icon() { return QIcon(":/images/opentrack.png"); }
+    QIcon icon() { return QIcon(":/livelink.png"); }
 };
 

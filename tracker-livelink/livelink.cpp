@@ -9,8 +9,6 @@
 #include "livelink.h"
 #include "api/plugin-api.hpp"
 
-#include <QDebug>
-
 #include <cmath>
 #include <iterator>
 
@@ -28,7 +26,6 @@ livelink::~livelink()
 void livelink::run()
 {
     QByteArray datagram;
-    datagram.resize(sizeof(last_recv_pose));
 
     while (!isInterruptionRequested())
     {
@@ -41,24 +38,23 @@ void livelink::run()
             do
             {
                 const qint64 sz = sock.pendingDatagramSize();
-                // sock.readDatagram(reinterpret_cast<char*>(last_recv_pose2), sz);
-                QByteArray temp;
-                temp.resize(sz);
-                sock.readDatagram(temp.data(), sz);
-                temp = temp.right(36);
-                temp = temp.left(12);
-                // qDebug() << temp.toHex();
-                if (temp.size() > 0)
+                datagram.resize(sz);
+                sock.readDatagram(datagram.data(), sz); // Grab the datagram
+
+                // There is static data with length depending on IPhone name at the left of the datagram.
+                // Our three head rotation values are located 9th from the right of the datagram.
+                // Discard the rest of the face data
+                datagram = datagram.right(sizeof(float[9])).left(sizeof(float[3]));
+                if (datagram.size() > 0)
                 {
                     ok = true;
-                    QDataStream dataStream(&temp, QIODevice::ReadOnly);
+                    QDataStream dataStream(&datagram, QIODevice::ReadOnly);
                     dataStream.setByteOrder(QDataStream::BigEndian);
                     dataStream.setFloatingPointPrecision(QDataStream::SinglePrecision);
                     int i = 0;
                     while (!dataStream.atEnd())
                     {
                         dataStream >> last_recv_pose2[i];
-                        // qDebug() << last_recv_pose2[i];
                         i ++;
                     }
                 }
@@ -103,12 +99,12 @@ module_status livelink::start_tracker(QFrame*)
 void livelink::data(double *data)
 {
     QMutexLocker foo(&mutex);
-    for (int i = 0; i < 3; i++) {
-        data[i+3] = last_recv_pose[i];
-        // qDebug() << last_recv_pose[i];
+    for (int i = 3; i < 6; i++) {
+        data[i] = last_recv_pose[i];
     }
 
-    int fixedValues[] = {
+    // All values are 0-1, multiply pitch and yaw by 90 and roll by 30
+    int axisMultipliers[] = {
         90,
         90,
         30,
@@ -130,10 +126,10 @@ void livelink::data(double *data)
     {
         const int k = indices[i];
         if (k >= 0 && k < std::distance(std::begin(values), std::end(values)))
-            data[Yaw + i] *= fixedValues[i];
+            data[Yaw + i] *= axisMultipliers[i];
             data[Yaw + i] += values[k];
     }
 }
 
 
-OPENTRACK_DECLARE_TRACKER(livelink, dialog_livelink, livelink_receiver_dll)
+OPENTRACK_DECLARE_TRACKER(livelink, dialog_livelink, meta_livelink)

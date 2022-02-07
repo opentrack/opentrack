@@ -56,7 +56,7 @@
     </message>
 </context>
 <context>
-    <name>livelink_receiver_dll</name>
+    <name>meta_livelink</name>
     <message>
         <source>IPhone LiveLink Tracker</source>
         <translation type="unfinished"></translation>
