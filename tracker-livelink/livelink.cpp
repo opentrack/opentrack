@@ -41,12 +41,14 @@ void livelink::run()
                 datagram.resize(sz);
                 sock.readDatagram(datagram.data(), sz); // Grab the datagram
 
-                // There is static data with length depending on IPhone name at the left of the datagram.
-                // Our three head rotation values are located 9th from the right of the datagram.
-                // Discard the rest of the face data
-                datagram = datagram.right(sizeof(float[9])).left(sizeof(float[3]));
-                if (datagram.size() > 0)
+                // If the IPhone loses face tracking, it will send a smaller datagram. Full face-tracking data has 61 floats,
+                // so make we actually have the data before we do anything.
+                if (sz > sizeof(float[61]))
                 {
+                    // There is static data with length depending on IPhone name at the left of the datagram.
+                    // Our three head rotation values are located 9th from the right of the datagram.
+                    // Discard the rest of the face data
+                    datagram = datagram.right(sizeof(float[9])).left(sizeof(float[3]));
                     ok = true;
                     QDataStream dataStream(&datagram, QIODevice::ReadOnly);
                     dataStream.setByteOrder(QDataStream::BigEndian);
