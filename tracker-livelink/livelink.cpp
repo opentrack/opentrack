@@ -105,11 +105,11 @@ void livelink::data(double *data)
         data[i] = last_recv_pose[i];
     }
 
-    // All values are 0-1, multiply pitch and yaw by 90 and roll by 30
+    // All values are 0-1, multiply yaw by -90, pitch by 90, and roll by -30
     int axisMultipliers[] = {
+        -90,
         90,
-        90,
-        30,
+        -30,
     };
     int values[] = {
         0,
