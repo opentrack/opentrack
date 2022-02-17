@@ -352,6 +352,29 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label4out">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Max output</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_x_out">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -432,6 +455,29 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QLabel" name="label5out">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Max output</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_y_out">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -504,6 +550,29 @@
           </item>
           <item>
            <widget class="QComboBox" name="max_z_translation">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="label6out">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Max output</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="max_z_out">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
               <horstretch>0</horstretch>

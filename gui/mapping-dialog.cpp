@@ -59,6 +59,10 @@ mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
     tie_setting(s.a_y.clamp_x_, ui.max_y_translation);
     tie_setting(s.a_z.clamp_x_, ui.max_z_translation);
 
+    tie_setting(s.a_x.clamp_y_, ui.max_x_out);
+    tie_setting(s.a_y.clamp_y_, ui.max_y_out);
+    tie_setting(s.a_z.clamp_y_, ui.max_z_out);
+
     tie_setting(s.a_pitch.clamp_y_, ui.max_pitch_output);
 }
 
@@ -96,8 +100,12 @@ void mapping_dialog::load()
             x->addItem(tr("%1°").arg(y), y);
 
     for (QComboBox* x : { ui.max_x_translation, ui.max_y_translation, ui.max_z_translation })
-        for (a y : { a::t30, a::t20, a::t15, a::t10, a::t100 })
+        for (a y : { a::t30, a::t20, a::t15, a::t10, a::t75, a::t100, a::t150, a::t300, a::t600 })
             x->addItem(tr("%1 cm").arg(int(y)), y);
+
+    for (QComboBox* x : { ui.max_x_out, ui.max_y_out, ui.max_z_out })
+        for (a y : { a::o_t75, a::o_t100, a::o_t150, a::o_t300, a::o_t600 })
+            x->addItem(tr("%1 cm").arg(abs(int(y))), y);
 
     for (int i = 0; qfcs[i].qfc; i++)
     {
@@ -122,8 +130,12 @@ void mapping_dialog::load()
                 value = 1;
             else if (clamp_x <= a::r45)
                 value = 5;
-            else
+            else if (clamp_x <= a::t150)
                 value = 10;
+            else if (clamp_x <= a::t300)
+                value = 25;
+            else
+                value = 50;
 
             qfc.set_x_step(value);
         };
@@ -139,6 +151,13 @@ void mapping_dialog::load()
                 value = 10; break;
             case a::o_t75:
                 value = 5; break;
+            case a::o_t100:
+            case a::o_t150:
+                value = 10; break;
+            case a::o_t300:
+                value = 50; break;
+            case a::o_t600:
+                value = 100; break;
             }
             qfc.set_y_step(value);
         };
