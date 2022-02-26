@@ -131,6 +131,7 @@ class PoseEstimator
             Ort::Value{nullptr}, 
             Ort::Value{nullptr}};
         double last_inference_time = 0;
+        int64_t model_version = 0;
 };
 
 
@@ -160,8 +161,6 @@ private:
     void update_fps(double dt);
 
     Affine compute_pose(const PoseEstimator::Face &face) const;
-    numeric_types::vec3 image_to_world(float x, float y, float size, float real_size) const;
-    numeric_types::vec2 world_to_image(const numeric_types::vec3& p) const;
 
     settings s;
     std::optional<Localizer> localizer;

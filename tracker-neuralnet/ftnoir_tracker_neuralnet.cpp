@@ -34,12 +34,14 @@
 // https://github.com/microsoft/onnxruntime/blob/master/csharp/test/Microsoft.ML.OnnxRuntime.EndToEndTests.Capi/C_Api_Sample.cpp
 // https://github.com/leimao/ONNX-Runtime-Inference/blob/main/src/inference.cpp
 
-namespace
+namespace neuralnet_tracker_ns
 {
+
 
 using numeric_types::vec3;
 using numeric_types::vec2;
 using numeric_types::mat33;
+using quat = std::array<numeric_types::f,4>;
 
 // Minimal difference if at all going from 1 to 2 threads.
 static constexpr int num_threads = 1;
@@ -136,6 +138,42 @@ mat33 quaternion_to_mat33(const std::array<float,4> quat)
 }
 
 
+vec3 image_to_world(float x, float y, float size, float reference_size_in_mm, const cv::Size2i& image_size, const CamIntrinsics& intrinsics)
+{
+    // Compute the location the network outputs in 3d space.
+    const float xpos = -(intrinsics.focal_length_w * image_size.width * 0.5f) / size * reference_size_in_mm;
+    const float zpos = (x / image_size.width * 2.f - 1.f) * xpos / intrinsics.focal_length_w;
+    const float ypos = (y / image_size.height * 2.f - 1.f) * xpos / intrinsics.focal_length_h;
+    return {xpos, ypos, zpos};
+}
+
+
+vec2 world_to_image(const vec3& pos, const cv::Size2i& image_size, const CamIntrinsics& intrinsics)
+{
+    const float xscr = pos[2] / pos[0] * intrinsics.focal_length_w;
+    const float yscr = pos[1] / pos[0] * intrinsics.focal_length_h;
+    const float x = (xscr+1.)*0.5f*image_size.width;
+    const float y = (yscr+1.)*0.5f*image_size.height;
+    return {x, y};
+}
+
+
+quat image_to_world(quat q)
+{
+    std::swap(q[1], q[3]);
+    q[1] = -q[1];
+    q[2] = -q[2];
+    q[3] = -q[3];
+    return q;
+}
+
+quat world_to_image(quat q)
+{
+    // It's its own inverse.
+    return image_to_world(q);
+}
+
+
 template<class T>
 T iou(const cv::Rect_<T> &a, const cv::Rect_<T> &b)
 {
@@ -156,13 +194,6 @@ cv::Size get_input_image_shape(const Ort::Session &session)
         throw std::invalid_argument("Model takes the input tensor in the wrong shape");
     return { static_cast<int>(shape[3]), static_cast<int>(shape[2]) };
 }
-
-
-} // namespace
-
-
-namespace neuralnet_tracker_ns
-{
 
 
 int enum_to_fps(int value)
@@ -235,8 +266,9 @@ double Localizer::last_inference_time_millis() const
 }
 
 
-PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&_session) :
-    session{std::move(_session)}
+PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&_session) 
+    : session{std::move(_session)}
+    , model_version(session.GetModelMetadata().GetVersion())
 {
     const cv::Size input_image_shape = get_input_image_shape(session);
 
@@ -296,7 +328,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     const cv::Mat &frame, const cv::Rect &box)
 {
     cv::Mat cropped;
-    
+
     const int patch_size = std::max(box.width, box.height)*1.05;
     const cv::Point2f patch_center = {
         std::clamp<float>(box.x + 0.5f*box.width, 0.f, frame.cols),
@@ -308,7 +340,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     // Have to catch this case.
     if (cropped.rows != patch_size || cropped.cols != patch_size)
         return {};
-    
+
     auto p = input_mat.ptr(0);
 
     cv::resize(cropped, scaled_frame, scaled_frame.size(), 0, 0, cv::INTER_AREA);
@@ -359,11 +391,17 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     const float size = patch_size*0.5f*output_coord[2];
 
     // Following Eigen which uses quat components in the order w, x, y, z.
-    const std::array<float,4> rotation = { 
+    quat rotation = { 
         output_quat[3], 
         output_quat[0], 
         output_quat[1], 
         output_quat[2] };
+
+    if (model_version < 2)
+    {
+        // Due to a change in coordinate conventions
+        rotation = world_to_image(rotation);
+    }
 
     const cv::Rect2f outbox = {
         patch_center.x + (0.5f*patch_size)*output_box[0],
@@ -453,7 +491,8 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
         normalize(face.center, frame.rows, frame.cols),
         intrinsics.focal_length_w);
 
-    const mat33 m = rot_correction * quaternion_to_mat33(face.rotation);
+    const mat33 m = rot_correction * quaternion_to_mat33(
+        image_to_world(face.rotation));
 
     /*
          
@@ -469,7 +508,10 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
     */
 
     // Compute the location the network outputs in 3d space.
-    const vec3 face_world_pos = image_to_world(face.center.x, face.center.y, face.size, head_size_mm);
+    const vec3 face_world_pos = image_to_world(
+        face.center.x, face.center.y, face.size, head_size_mm,
+        frame.size(),
+        intrinsics);
 
     // But this is in general not the location of the rotation joint in the neck.
     // So we need an extra offset. Which we determine by solving
@@ -520,7 +562,7 @@ void neuralnet_tracker::draw_gizmos(
         draw_coord_line(2, {255, 0, 0});
 
         // Draw the computed joint position
-        auto xy = world_to_image(pose.t);
+        auto xy = world_to_image(pose.t, frame.size(), intrinsics);
         cv::circle(frame, cv::Point(xy[0],xy[1]), 5, cv::Scalar(0,0,255), -1);
     }
 
@@ -655,26 +697,6 @@ void neuralnet_tracker::set_intrinsics()
     intrinsics.fov_w = fov_w;
     intrinsics.focal_length_w = focal_length_w;
     intrinsics.focal_length_h = focal_length_h;
-}
-
-
-vec3 neuralnet_tracker::image_to_world(float x, float y, float size, float real_size) const
-{
-    // Compute the location the network outputs in 3d space.
-    const float xpos = -(intrinsics.focal_length_w * frame.cols * 0.5f) / size * real_size;
-    const float zpos = (x / frame.cols * 2.f - 1.f) * xpos / intrinsics.focal_length_w;
-    const float ypos = (y / frame.rows * 2.f - 1.f) * xpos / intrinsics.focal_length_h;
-    return {xpos, ypos, zpos};
-}
-
-
-vec2 neuralnet_tracker::world_to_image(const vec3& pos) const
-{
-    const float xscr = pos[2] / pos[0] * intrinsics.focal_length_w;
-    const float yscr = pos[1] / pos[0] * intrinsics.focal_length_h;
-    const float x = (xscr+1.)*0.5f*frame.cols;
-    const float y = (yscr+1.)*0.5f*frame.rows;
-    return {x, y};
 }
 
 
