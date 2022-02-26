@@ -63,6 +63,10 @@
         <source>1280x720</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>MJPEG</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>aruco_dialog</name>

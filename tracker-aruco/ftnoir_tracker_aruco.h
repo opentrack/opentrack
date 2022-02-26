@@ -62,6 +62,7 @@ struct settings : opts {
     value<int> resolution { b, "force-resolution", 0 };
     value<int> fov { b, "field-of-view", 56 };
     value<aruco_fps> force_fps { b, "force-fps", fps_default };
+    value<bool> use_mjpeg { b, "use-mjpeg", false };
 
     settings();
 };

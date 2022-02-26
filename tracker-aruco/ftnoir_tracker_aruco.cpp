@@ -179,6 +179,8 @@ bool aruco_tracker::open_camera()
     if (fps)
         args.fps = fps;
 
+    args.use_mjpeg = s.use_mjpeg;
+
     if (!camera->start(args))
     {
         qDebug() << "aruco tracker: can't open camera";
@@ -526,6 +528,7 @@ aruco_dialog::aruco_dialog() :
     tie_setting(s.headpos_x, ui.cx);
     tie_setting(s.headpos_y, ui.cy);
     tie_setting(s.headpos_z, ui.cz);
+    tie_setting(s.use_mjpeg, ui.use_mjpeg);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
