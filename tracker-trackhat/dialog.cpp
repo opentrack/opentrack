@@ -110,7 +110,7 @@ void trackhat_dialog::save()
 void trackhat_dialog::reload()
 {
     s.b->reload();
-    s.b->reload();
+    t.b->reload();
 }
 
 void trackhat_dialog::doCancel() { reload(); close(); }
