@@ -21,10 +21,10 @@
 ./modules/freetrackclient64.dll
 ./modules/NPClient.dll
 ./modules/NPClient64.dll
-./modules/opencv_core454.dll
-#./modules/opencv_imgcodecs454.dll
-./modules/opencv_imgproc454.dll
-#./modules/opencv_videoio454.dll
+./modules/opencv_core455.dll
+#./modules/opencv_imgcodecs455.dll
+./modules/opencv_imgproc455.dll
+#./modules/opencv_videoio455.dll
 ./modules/opentrack-filter-accela.dll
 ./modules/opentrack-filter-ewma.dll
 ./modules/opentrack-filter-hamilton.dll
