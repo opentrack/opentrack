@@ -11,3 +11,4 @@
 
 //#define UI_NO_RAW_DATA
 //#define UI_NO_GAME_DATA
+//define UI_ACCELA_OLD_STAIRCASE

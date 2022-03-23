@@ -7,6 +7,7 @@
 #include "ftnoir_filter_accela.h"
 #include "compat/math.hpp"
 #include "api/plugin-api.hpp"
+#include "opentrack/defs.hpp"
 
 #include <algorithm>
 #include <QDebug>
@@ -62,6 +63,14 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
     }
 }
 
+template<typename F>
+[[maybe_unused]]
+never_inline
+static void do_delta(double delta, double* output, F&& fun)
+{
+    *output = fun(fabs(delta)) * signum(delta);
+}
+
 void accela::filter(const double* input, double *output)
 {
     static constexpr double full_turn = 360.0;	
@@ -111,9 +120,16 @@ void accela::filter(const double* input, double *output)
         deltas[i] = d / rot_thres;
     }
 
+#ifdef UI_ACCELA_OLD_STAIRCASE
+    for (int i = Yaw; i <= Roll; i++)
+        do_delta(deltas[i], &output[i], [this](double x) {
+          return spline_rot.get_value_no_save(x);
+        });
+#else
     do_deltas(&deltas[Yaw], &output[Yaw], [this](double x) {
         return spline_rot.get_value_no_save(x);
     });
+#endif
 
     // pos
 
