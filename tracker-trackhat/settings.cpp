@@ -70,11 +70,12 @@ void trackhat_camera::set_pt_options()
     s.dynamic_pose = t.model == model_cap;
     s.init_phase_timeout = 500;
 
-    s.camera_name = "TrackHat Sensor (WIP)";
+    s.camera_name = QStringLiteral("TrackHat Sensor (WIP)");
 
     s.active_model_panel = t.model == model_cap ? 1 : 0;
     s.enable_point_filter = t.enable_point_filter;
     s.point_filter_coefficient = *t.point_filter_coefficient;
+    s.point_filter_deadzone = *t.point_filter_deadzone;
 }
 
 bool trackhat_camera::set_regs(const uint8_t(*regs)[3], unsigned len)

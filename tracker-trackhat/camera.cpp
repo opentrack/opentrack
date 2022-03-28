@@ -72,12 +72,10 @@ pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
     if (!device.ensure_connected())
         goto error;
 
-    if (sig.test_and_clear())
-    {
-        set_pt_options();
-        if (!init_regs())
-            goto error;
-    }
+    if (sig.test_and_clear() && !init_regs())
+        goto error;
+
+    set_pt_options();
 
     {
         trackHat_ExtendedPoints_t points;
