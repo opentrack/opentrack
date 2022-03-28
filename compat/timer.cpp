@@ -66,7 +66,7 @@ void Timer::gettime(timespec* state)
     BOOL ret = QueryPerformanceCounter(&d);
     assert(ret && "QueryPerformanceCounter failed");
 
-    constexpr int nsec = 1'000'000'000;
+    constexpr int nsec = 1'000'000 * 1000;
     state->tv_sec  = (time_t)(d.QuadPart/freq);
     state->tv_nsec = (decltype(state->tv_nsec))(d.QuadPart % freq * nsec / freq);
 }
