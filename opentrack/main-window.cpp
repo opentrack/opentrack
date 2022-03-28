@@ -602,7 +602,7 @@ bool main_window::module_tabs_enabled() const
         return false;
     // Windows 10: 40px,  Windows 11: 48px, KDE: 51px
     constexpr int taskbar_size = 51;
-    constexpr int min_avail_height = 864 - taskbar_size;
+    constexpr int min_avail_height = 910 - taskbar_size;
     QRect rect = d->availableGeometry(this);
     return rect.height() >= min_avail_height;
 }
