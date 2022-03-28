@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="nl_NL">
 <context>
     <name>trackhat_dialog</name>
     <message>
@@ -129,6 +129,10 @@
     </message>
     <message>
         <source>Pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Deadzone</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

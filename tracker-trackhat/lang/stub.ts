@@ -1,44 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1">
+<TS version="2.1" language="stub">
 <context>
     <name>trackhat_dialog</name>
-    <message>
-        <source>Cap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clip (left)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Clip (right)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mini Clip (left)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Mini Clip (right)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Custom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status: Tracking stopped.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status: %1 points detected. Good!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Status: %1 points detected. BAD!</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>TrackHat</source>
         <translation type="unfinished"></translation>
@@ -88,11 +52,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Point filter</source>
+        <source>Limit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Limit</source>
+        <source>Deadzone</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Point filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -129,6 +97,42 @@
     </message>
     <message>
         <source>Pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip (left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clip (right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mini Clip (left)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mini Clip (right)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: Tracking stopped.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1 points detected. Good!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status: %1 points detected. BAD!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
