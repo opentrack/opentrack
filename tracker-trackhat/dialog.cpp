@@ -79,6 +79,12 @@ trackhat_dialog::trackhat_dialog()
     connect(&t.point_filter_coefficient, value_::value_changed<slider_value>(), ui.point_filter_label,
         [this] { ui.point_filter_label->setValue(*t.point_filter_coefficient); }, Qt::QueuedConnection);
 
+    tie_setting(t.point_filter_deadzone, ui.point_filter_deadzone);
+    ui.point_filter_deadzone_label->setValue(*t.point_filter_deadzone);
+
+    connect(&t.point_filter_deadzone, value_::value_changed<slider_value>(), ui.point_filter_deadzone_label,
+        [this] { ui.point_filter_deadzone_label->setValue(*t.point_filter_deadzone); }, Qt::QueuedConnection);
+
     // stuff
 
     connect(&poll_timer, &QTimer::timeout, this, &trackhat_dialog::poll_tracker_info);
