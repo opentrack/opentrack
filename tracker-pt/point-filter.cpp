@@ -40,12 +40,14 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
         return A * pow((f)10, (f)-log10_pos) * rest;
     );
 
-    f dist = 0;
+    f dist = 0, dz = (float)s.point_filter_deadzone / 800; // sqrt(640^2 + 480^2)
 
     for (unsigned i = 0; i < 3; i++)
     {
         vec2 tmp = input[i] - state_[i];
-        dist = std::max(dist, sqrt(tmp.dot(tmp)));
+        f x = sqrt(tmp.dot(tmp));
+        x = std::max((f)0, x - dz);
+        dist = std::max(dist, x);
     }
 
     if (dist < (f)1e-6)

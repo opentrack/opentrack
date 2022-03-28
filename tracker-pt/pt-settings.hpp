@@ -71,6 +71,7 @@ struct pt_settings final : options::opts
     value<bool> enable_point_filter{ b, "enable-point-filter", false };
     value<slider_value> point_filter_coefficient { b, "point-filter-coefficient", { 1.0, 0, 4 } };
     value<slider_value> point_filter_limit { b, "point-filter-limit", { 0.1, 0.01, 1 }};
+    value<slider_value> point_filter_deadzone { b, "point-filter-deadzone", {0, 0, 1} };
 
     explicit pt_settings(const QString& name) : opts(name) {}
 };
