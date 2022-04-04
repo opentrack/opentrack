@@ -78,44 +78,6 @@ void trackhat_camera::set_pt_options()
     s.point_filter_deadzone = *t.point_filter_deadzone;
 }
 
-bool trackhat_camera::set_regs(const uint8_t(*regs)[3], unsigned len)
-{
-    unsigned attempts = 0;
-    constexpr unsigned max_attempts = 5;
-
-start:
-    for (unsigned i = 0; i < len; i++)
-    {
-        const auto& reg = regs[i];
-        trackHat_SetRegister_t r{reg[0], reg[1], reg[2]};
-        auto status = th_check(trackHat_SetRegisterValue(&*device, &r));
-        if (status == TH_SUCCESS)
-            continue;
-        else if (status == TH_FAILED_TO_SET_REGISTER)
-            goto retry;
-        else if (status == TH_ERROR_DEVICE_COMUNICATION_TIMEOUT)
-            goto retry;
-        else
-            goto error;
-    }
-
-    return true;
-
-retry:
-    if (attempts++ < max_attempts)
-    {
-        auto dbg = qDebug();
-        dbg << "tracker/trackhat: set register retry attempt";
-        dbg.space(); dbg.nospace();
-        dbg << attempts << "/" << max_attempts;
-        portable::sleep(50);
-        goto start;
-    }
-
-error:
-    return false;
-}
-
 bool trackhat_camera::init_regs()
 {
     auto exp    = (uint8_t)t.exposure;
@@ -127,28 +89,48 @@ bool trackhat_camera::init_regs()
     auto gain_c = (uint8_t)(gain/0x10);
     gain %= 0x10; gain_c %= 4;
 
-    const uint8_t regs[][3] = {
-        { 0x0c, 0x0f, exp2   },  // exposure lo
-        { 0x0c, 0x10, exp    },  // exposure hi
-        { 0x00, 0x0b, 0xff   },  // blob area max size
-        { 0x00, 0x0c, 0x03   },  // blob area min size
-        { 0x0c, 0x08, gain   },  // gain
-        { 0x0c, 0x0c, gain_c },  // gain multiplier
-        { 0x0c, 0x47, thres  },  // min brightness
-        { 0x00, 0x0f, thres2 },  // brightness margin, formula is `thres >= px > thres - fuzz'
-        { 0x00, 0x01, 0x01   },  // bank0 sync
-        { 0x01, 0x01, 0x01   },  // bank1 sync
+    trackHat_SetRegisterGroup_t regs = {
+        {
+            { 0x0c, 0x0f, exp2   },  // exposure lo
+            { 0x0c, 0x10, exp    },  // exposure hi
+            { 0x00, 0x0b, 0xff   },  // blob area max size
+            { 0x00, 0x0c, 0x03   },  // blob area min size
+            { 0x0c, 0x08, gain   },  // gain
+            { 0x0c, 0x0c, gain_c },  // gain multiplier
+            { 0x0c, 0x47, thres  },  // min brightness
+            { 0x00, 0x0f, thres2 },  // brightness margin, formula is `thres >= px > thres - fuzz'
+            { 0x00, 0x01, 0x01   },  // bank0 sync
+            { 0x01, 0x01, 0x01   },  // bank1 sync
+        },
+        10
     };
 
     Timer t;
 
-    if (!set_regs(regs, std::size(regs)))
+    constexpr int max = 5;
+    int i = 0;
+    for (i = 0; i < max; i++)
     {
-        device.disconnect();
-        return false;
+        auto status = th_check(trackHat_SetRegisterGroupValue(&*device, &regs));
+        if (status == TH_SUCCESS)
+            break;
+        else if (status != TH_FAILED_TO_SET_REGISTER &&
+                 status != TH_ERROR_DEVICE_COMUNICATION_TIMEOUT)
+            return false;
+        else
+        {
+            auto dbg = qDebug();
+            dbg << "tracker/trackhat: set register retry attempt";
+            dbg.space(); dbg.nospace();
+            dbg << i << "/" << max;
+            portable::sleep(50);
+        }
     }
 
-    if (int elapsed = (int)t.elapsed_ms(); elapsed > 500)
+    if (i == max)
+        return false;
+
+    if (int elapsed = (int)t.elapsed_ms(); elapsed > 100)
         qDebug() << "tracker/trackhat: setting registers took" << elapsed << "ms";
 
     return true;
