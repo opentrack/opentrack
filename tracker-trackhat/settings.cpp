@@ -83,7 +83,7 @@ bool trackhat_camera::init_regs()
     auto exp    = (uint8_t)t.exposure;
     auto exp2   = (uint8_t)(exp == 0xff ? 0xf0 : 0xff);
     auto thres  = (uint8_t)t.threshold;
-    auto thres2 = (uint8_t)std::clamp((int)*t.threshold_2, 0, std::max(64, thres-1));
+    auto thres2 = (uint8_t)3;
 
     auto gain   = (uint8_t)((int)*t.gain);
     auto gain_c = (uint8_t)(gain/0x10);

@@ -24,10 +24,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Fuzz</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation type="unfinished"></translation>
     </message>

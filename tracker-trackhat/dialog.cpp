@@ -46,28 +46,12 @@ trackhat_dialog::trackhat_dialog()
 
     // threshold
 
-    connect(ui.threshold_slider, &QSlider::valueChanged, this, [this] (int value) {
-            if (value <= ui.threshold_2_slider->value())
-                ui.threshold_2_slider->setValue(value-1);
-        }, Qt::DirectConnection);
-
-    connect(ui.threshold_2_slider, &QSlider::valueChanged, this, [this] (int value) {
-            if (value >= ui.threshold_slider->value())
-                ui.threshold_slider->setValue(value+1);
-        }, Qt::DirectConnection);
-
     tie_setting(t.threshold, ui.threshold_slider);
-    tie_setting(t.threshold_2, ui.threshold_2_slider);
 
     ui.threshold_label->setValue((int)*t.threshold);
-    ui.threshold_2_label->setValue((int)*t.threshold_2);
 
     connect(&t.threshold, value_::value_changed<slider_value>(), ui.threshold_label, [=] {
             ui.threshold_label->setValue((int)*t.threshold);
-        }, Qt::QueuedConnection);
-
-    connect(&t.threshold_2, value_::value_changed<slider_value>(), ui.threshold_2_label, [=] {
-            ui.threshold_2_label->setValue((int)*t.threshold_2);
         }, Qt::QueuedConnection);
 
     // point filter
