@@ -29,4 +29,7 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
         )
 
     otr_install_lib("${ONNXRuntime_RUNTIME}" ".")
+    if(MSVC)
+        otr_install_lib("redist/vcomp140.dll" "${opentrack-bin}")
+    endif()
 endif()
