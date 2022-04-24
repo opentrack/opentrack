@@ -28,5 +28,10 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
         PERMISSIONS ${opentrack-perms-file}
         )
 
-    otr_install_lib("${ONNXRuntime_RUNTIME}" ".")
+    if(WIN32)
+        otr_install_lib("${ONNXRuntime_RUNTIME}" ".")
+    endif()
+    if(MSVC)
+        otr_install_lib("redist/vcomp140.dll" "${opentrack-bin}")
+    endif()
 endif()
