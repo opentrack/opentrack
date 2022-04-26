@@ -305,6 +305,10 @@ ROLL или X/Y-смещения.</translation>
         <source>Deadzone</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>
