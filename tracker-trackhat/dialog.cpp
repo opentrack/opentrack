@@ -31,16 +31,15 @@ trackhat_dialog::trackhat_dialog()
 
     // exposure
 
+    ui.exposure_slider->setMinimum((int)t.exposure->min());
+    ui.exposure_slider->setMaximum((int)t.exposure->max());
+
     tie_setting(t.exposure, ui.exposure_slider);
-    tie_setting(t.gain, ui.gain_slider);
     ui.exposure_label->setValue((int)*t.exposure);
-    ui.gain_label->setValue((int)*t.gain);
     ui.point_filter_limit_label->setValue(*t.point_filter_limit);
 
     connect(&t.exposure, value_::value_changed<slider_value>(), ui.exposure_label,
         [this] { ui.exposure_label->setValue((int)*t.exposure); }, Qt::QueuedConnection);
-    connect(&t.gain, value_::value_changed<slider_value>(), ui.gain_label,
-        [this] { ui.gain_label->setValue((int)*t.gain); }, Qt::QueuedConnection);
     connect(&t.point_filter_limit, value_::value_changed<slider_value>(), ui.point_filter_limit_label,
         [this] { ui.point_filter_limit_label->setValue(*t.point_filter_limit); }, Qt::QueuedConnection);
 

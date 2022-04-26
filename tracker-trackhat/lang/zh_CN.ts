@@ -56,10 +56,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Gain</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Model</source>
         <translation type="unfinished"></translation>
     </message>
