@@ -300,6 +300,10 @@ Don&apos;t roll or change position.</source>
         <source>Deadzone</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>
