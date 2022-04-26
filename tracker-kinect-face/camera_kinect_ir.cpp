@@ -48,7 +48,12 @@ namespace Kinect {
 
     std::vector<QString> CamerasProvider::camera_names() const
     {
-        if (camera_name_to_index("Kinect V2 Video Sensor") != -1)
+        auto list = get_camera_names();
+        auto it = std::find_if(list.cbegin(), list.cend(), [](const auto& x) {
+          const auto& [name, idx] = x;
+          return name.startsWith("Kinect V2 Video Sensor [");
+        });
+        if (it != list.cend())
         {
             // We found Kinect V2 Video Sensor therefore we have a kinect V2 connected.
             // Publish our Kinect V2 IR Sensor implementation then.
