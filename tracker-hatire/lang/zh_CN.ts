@@ -269,6 +269,10 @@ p, li { white-space: pre-wrap; }
         <source>Enable logging to diagnostic file</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>DTR</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>dialog_hatire</name>

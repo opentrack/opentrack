@@ -91,6 +91,7 @@ dialog_hatire::dialog_hatire() : theTracker(nullptr), timer(this)
     tie_setting(s.DelaySeq, ui.spb_AfterStart);
 
     tie_setting(s.BigEndian, ui.cb_Endian);
+    tie_setting(s.pDTR, ui.QCB_Serial_dtr);
 
     tie_setting(s.pBaudRate, ui.QCB_Serial_baudRate);
     tie_setting(s.pDataBits, ui.QCB_Serial_dataBits);
