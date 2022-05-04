@@ -168,6 +168,7 @@ serial_result hatire_thread::init_serial_port_impl()
             && com_port.setParity((QSerialPort::Parity)s.pParity)
             && com_port.setStopBits((QSerialPort::StopBits)s.pStopBits)
             && com_port.setFlowControl((QSerialPort::FlowControl)s.pFlowControl)
+            && com_port.setDataTerminalReady(s.pDTR)
             && com_port.clear(QSerialPort::AllDirections)
            )
         {

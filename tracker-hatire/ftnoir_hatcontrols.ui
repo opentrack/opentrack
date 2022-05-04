@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>389</width>
-    <height>488</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -1136,16 +1136,6 @@ p, li { white-space: pre-wrap; }
           <string>Serial Parameters</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
-          <item row="0" column="1">
-           <widget class="QComboBox" name="QCB_Serial_baudRate">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
           <item row="3" column="1">
            <widget class="QComboBox" name="QCB_Serial_stopBits">
             <property name="sizePolicy">
@@ -1163,8 +1153,56 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="baudRateLabel">
+            <property name="text">
+             <string>BaudRate:</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1">
            <widget class="QComboBox" name="QCB_Serial_parity">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="dataBitsLabel">
+            <property name="text">
+             <string>Data bits</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="stopBitsLabel">
+            <property name="text">
+             <string>Stop bits</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="QCB_Serial_baudRate">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="parityLabel">
+            <property name="text">
+             <string>Parity</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="QCB_Serial_dataBits">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1183,41 +1221,23 @@ p, li { white-space: pre-wrap; }
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="stopBitsLabel">
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>Stop bits</string>
+             <string>DTR</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="parityLabel">
-            <property name="text">
-             <string>Parity</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="baudRateLabel">
-            <property name="text">
-             <string>BaudRate:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="QCB_Serial_dataBits">
+          <item row="5" column="1">
+           <widget class="QCheckBox" name="QCB_Serial_dtr">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="dataBitsLabel">
             <property name="text">
-             <string>Data bits</string>
+             <string/>
             </property>
            </widget>
           </item>
@@ -1371,6 +1391,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
   <tabstop>cbSerialPort</tabstop>
   <tabstop>btnZero</tabstop>
   <tabstop>btnReset</tabstop>
@@ -1393,24 +1414,27 @@ p, li { white-space: pre-wrap; }
   <tabstop>cb_z</tabstop>
   <tabstop>chkInvertZ</tabstop>
   <tabstop>le_cmd_init</tabstop>
+  <tabstop>spb_BeforeInit</tabstop>
   <tabstop>le_cmd_start</tabstop>
+  <tabstop>spb_BeforeStart</tabstop>
   <tabstop>spb_AfterStart</tabstop>
   <tabstop>le_cmd_stop</tabstop>
   <tabstop>le_cmd_center</tabstop>
   <tabstop>le_cmd_zero</tabstop>
-  <tabstop>le_cmd_reset</tabstop>
   <tabstop>spb_Fps</tabstop>
+  <tabstop>le_cmd_reset</tabstop>
   <tabstop>cb_Endian</tabstop>
   <tabstop>QCB_Serial_baudRate</tabstop>
   <tabstop>QCB_Serial_dataBits</tabstop>
   <tabstop>QCB_Serial_parity</tabstop>
   <tabstop>QCB_Serial_stopBits</tabstop>
   <tabstop>QCB_Serial_flowControl</tabstop>
+  <tabstop>QCB_Serial_dtr</tabstop>
+  <tabstop>btn_icone</tabstop>
+  <tabstop>chkEnableLogging</tabstop>
   <tabstop>lineSend</tabstop>
   <tabstop>btnSend</tabstop>
   <tabstop>pteINFO</tabstop>
-  <tabstop>tabWidget</tabstop>
-  <tabstop>btn_icone</tabstop>
  </tabstops>
  <resources>
   <include location="ftnoir_hat.qrc"/>
