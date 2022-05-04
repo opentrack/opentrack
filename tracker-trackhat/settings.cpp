@@ -119,7 +119,17 @@ bool trackhat_camera::init_regs()
     int i = 0;
     for (i = 0; i < max; i++)
     {
-        auto status = th_check(trackHat_SetRegisterGroupValue(&*device, &regs));
+        TH_ErrorCode status = TH_SUCCESS;
+#if 1
+        for (trackHat_SetRegister_t& reg : regs.setRegisterGroupValue)
+        {
+            status = th_check(trackHat_SetRegisterValue(&*device, &reg));
+            if (status)
+                break;
+        }
+#else
+        status = th_check(trackHat_SetRegisterGroupValue(&*device, &regs));
+#endif
         if (status == TH_SUCCESS)
             break;
         else if (status != TH_FAILED_TO_SET_REGISTER &&
