@@ -120,7 +120,7 @@ bool trackhat_camera::init_regs()
     for (i = 0; i < max; i++)
     {
         TH_ErrorCode status = TH_SUCCESS;
-#if 1
+#if 0
         for (trackHat_SetRegister_t& reg : regs.setRegisterGroupValue)
         {
             status = th_check(trackHat_SetRegisterValue(&*device, &reg));
@@ -133,7 +133,7 @@ bool trackhat_camera::init_regs()
         if (status == TH_SUCCESS)
             break;
         else if (status != TH_FAILED_TO_SET_REGISTER &&
-                 status != TH_ERROR_DEVICE_COMUNICATION_TIMEOUT)
+                 status != TH_ERROR_DEVICE_COMMUNICATION_TIMEOUT)
             return false;
         else
         {
