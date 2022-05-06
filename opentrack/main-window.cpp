@@ -18,6 +18,7 @@
 #include "compat/math.hpp"
 #include "compat/sysexits.hpp"
 #include "opentrack/defs.hpp"
+#include "software-update-dialog.hpp"
 
 #include <cstring>
 #include <utility>
@@ -63,6 +64,11 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     connect(&*s.b, &options::bundle_::saving, this, &main_window::register_shortcuts);
 
     ui.btnStartTracker->setFocus();
+
+    {
+        auto dlg = update_query{this};
+        dlg.maybe_show_dialog();
+    }
 }
 
 void main_window::init_shortcuts()
