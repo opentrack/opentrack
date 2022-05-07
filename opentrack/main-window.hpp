@@ -118,6 +118,7 @@ public:
     void restart_tracker_();
     void toggle_tracker_();
 
+    [[nodiscard]] bool maybe_create_profile(const QString& name);
     void set_profile(const QString& new_name, bool migrate = true);
     void set_profile_in_registry(const QString& profile);
     void refresh_profile_list();
