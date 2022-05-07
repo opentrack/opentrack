@@ -35,4 +35,5 @@ struct OTR_LOGIC_EXPORT State
     module_settings m;
     Mappings pose;
     std::shared_ptr<Work> work;
+    QString library_path;
 };

@@ -320,7 +320,8 @@ void main_window::create_empty_profile()
     QString name;
     if (profile_name_from_dialog(name))
     {
-        QFile(ini_combine(name)).open(QFile::ReadWrite);
+        if (!maybe_profile_from_preset(name))
+            (void)QFile(ini_combine(name)).open(QFile::ReadWrite);
         refresh_profile_list();
 
         if (profile_list.contains(name))
@@ -784,10 +785,11 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
 
     QString new_name = new_name_;
 
-    if (!profile_list.contains(new_name))
+    if (!profile_list.contains(new_name_))
     {
-        new_name = OPENTRACK_DEFAULT_PROFILE;
-        if (!profile_list.contains(new_name))
+        new_name = QStringLiteral(OPENTRACK_DEFAULT_PROFILE);
+        if ((migrate && !maybe_profile_from_preset(new_name)) &&
+            !profile_list.contains(new_name))
             migrate = false;
     }
 
@@ -1000,6 +1002,30 @@ void main_window::toggle_tracker_()
         stop_tracker_();
     else
         start_tracker_();
+}
+
+bool main_window::maybe_profile_from_preset(const QString& name_)
+{
+    const QString& default_name = QStringLiteral(OPENTRACK_DEFAULT_PROFILE);
+    const QString* name_ptr = &name_;
+    if (name_.isEmpty())
+        name_ptr = &default_name;
+    const QString dest = ini_combine(*name_ptr);
+    if (QFile::exists(dest))
+        return false;
+
+    for (const QString& filename : { *name_ptr, default_name })
+    {
+        QString file = (library_path + "/presets/%1").arg(filename);
+        if (QFile::exists(file))
+        {
+            bool ret = QFile::copy(file, dest);
+            if (ret)
+                qDebug() << "create profile" << *name_ptr << "from preset" << file;
+            return ret;
+        }
+    }
+    return false;
 }
 
 #if !defined _WIN32
