@@ -65,10 +65,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 
     ui.btnStartTracker->setFocus();
 
-    {
-        auto dlg = update_query{this};
-        dlg.maybe_show_dialog();
-    }
+    updater = std::make_unique<update_query>(this);
+    updater->maybe_show_dialog();
 }
 
 void main_window::init_shortcuts()

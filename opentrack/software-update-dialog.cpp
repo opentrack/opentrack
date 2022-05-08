@@ -13,11 +13,12 @@ update_dialog::update_dialog(QWidget* parent, update_query& q, const QString& ne
 
 void update_query::on_finished()
 {
-    if (abort)
+    if (!t.isActive())
         return;
+    t.stop();
     if (r->error() != QNetworkReply::NoError)
     {
-        qDebug() << "update error" << r->errorString();
+        qDebug() << "updater: error" << r->error() << r->errorString();
         return;
     }
     QString str(buf);
@@ -31,8 +32,8 @@ void update_query::on_finished()
 
         if (!str.isEmpty() && str != opentrack_version && str != quiet_version)
         {
-            qDebug() << "update version" << str;
-            update_dialog dlg(parent, *this, str);
+            qDebug() << "updater: new version" << str;
+            update_dialog dlg(qobject_cast<QWidget*>(parent()), *this, str);
             dlg.show();
             dlg.raise();
             dlg.exec();
@@ -40,26 +41,25 @@ void update_query::on_finished()
                 s.setValue("quiet-update-version", str);
         }
     }
+    else
+    {
+        if (buf.isEmpty())
+            qDebug() << "updater: empty response";
+        else
+            qDebug() << "updater: can't parse response";
+    }
     buf.clear();
     r->deleteLater();
 }
 
 void update_query::maybe_show_dialog()
 {
-    QEventLoop ev;
-    QTimer t{&ev}; t.setSingleShot(true);
+    t.stop();
+    t.setSingleShot(true);
     t.start(1000 * 10);
-    QObject::connect(&t, &QTimer::timeout, [this, &ev] {
-      abort = true;
-      ev.quit();
-    });
 
     r = qnam.get(QNetworkRequest(QStringLiteral("https://www.trackhat.org/thotversion")));
 
-    QObject::connect(r, &QIODevice::readyRead, [this] { on_ready(); });
-    QObject::connect(r, &QNetworkReply::finished, [&]() {
-      on_finished();
-      ev.quit();
-    });
-    ev.exec();
+    QObject::connect(r, &QIODevice::readyRead, this, &update_query::on_ready);
+    QObject::connect(r, &QNetworkReply::finished, this, &update_query::on_finished);
 }

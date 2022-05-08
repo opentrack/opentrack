@@ -2,35 +2,33 @@
 
 #include <QtNetwork>
 #include <QDialog>
+#include <QTimer>
 #include "ui_software-update.h"
 
 extern "C" const char* const opentrack_version;
 
-struct update_query final
+class update_query final : public QObject
 {
-    explicit update_query(QWidget* parent) : parent(parent), qnam(parent) {}
+    Q_OBJECT
+public:
+    explicit update_query(QWidget* parent) : QObject{parent} {}
 
-    QWidget* parent;
     QNetworkReply* r = nullptr;
-    QNetworkAccessManager qnam;
+    QNetworkAccessManager qnam{this};
     QByteArray buf;
-    bool abort = false;
+    QTimer t{this};
 
     void on_finished();
     void on_ready() { buf.append(r->readAll()); }
     void maybe_show_dialog();
 };
 
-class update_dialog : public QDialog
+class update_dialog : QDialog
 {
     Q_OBJECT
-    friend struct update_query;
+    friend class update_query;
 private:
     Ui::UpdateDialog ui;
     update_query& q;
-private slots:
-    void close(QAbstractButton*) { QDialog::close(); }
-public:
     update_dialog(QWidget* parent, update_query& q, const QString& new_version);
 };
-
