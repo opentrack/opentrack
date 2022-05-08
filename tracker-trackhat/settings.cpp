@@ -83,6 +83,7 @@ void trackhat_camera::set_pt_options()
     s.active_model_panel = t.model == model_cap ? 1 : 0;
     s.enable_point_filter = t.enable_point_filter;
     s.point_filter_coefficient = *t.point_filter_coefficient;
+    s.point_filter_limit = *t.point_filter_limit;
     s.point_filter_deadzone = *t.point_filter_deadzone;
 }
 
