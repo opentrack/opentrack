@@ -98,6 +98,7 @@ struct pt_camera
 
     virtual void set_fov(f value) = 0;
     virtual void show_camera_settings() = 0;
+    virtual f deadzone_amount() const { return 1; }
 };
 
 struct pt_point_extractor : pt_pixel_pos_mixin

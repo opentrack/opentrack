@@ -137,7 +137,8 @@ void PointTracker::track(const std::vector<vec2>& points,
                          const PointModel& model,
                          const pt_camera_info& info,
                          int init_phase_timeout,
-                         point_filter& filter)
+                         point_filter& filter,
+                         f deadzone_amount)
 {
     const f fx = pt_camera_info::get_focal_length(info.fov, info.res_x, info.res_y);
     PointOrder order;
@@ -150,7 +151,7 @@ void PointTracker::track(const std::vector<vec2>& points,
     else
         order = find_correspondences_previous(points.data(), model, info);
 
-    if (POSIT(model, filter(order), fx) != -1)
+    if (POSIT(model, filter(order, deadzone_amount), fx) != -1)
     {
         init_phase = false;
         t.start();

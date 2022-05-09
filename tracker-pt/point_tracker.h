@@ -61,7 +61,8 @@ public:
                const PointModel& model,
                const pt_camera_info& info,
                int init_phase_timeout,
-               point_filter& filter);
+               point_filter& filter,
+               f deadzone_amount);
     Affine pose() const { return X_CM; }
     vec2 project(const vec3& v_M, f focal_length);
     vec2 project(const vec3& v_M, f focal_length, const Affine& X_CM);

@@ -101,7 +101,7 @@ void Tracker_PT::run()
                 {
                     int dynamic_pose_ms = s.dynamic_pose ? s.init_phase_timeout : 0;
 
-                    point_tracker.track(points, PointModel(s), info, dynamic_pose_ms, filter);
+                    point_tracker.track(points, PointModel(s), info, dynamic_pose_ms, filter, camera->deadzone_amount());
                     ever_success.store(true, std::memory_order_relaxed);
                 }
 
