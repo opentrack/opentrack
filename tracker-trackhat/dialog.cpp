@@ -45,6 +45,7 @@ trackhat_dialog::trackhat_dialog()
 
     // threshold
 
+#if 0
     tie_setting(t.threshold, ui.threshold_slider);
 
     ui.threshold_label->setValue((int)*t.threshold);
@@ -52,6 +53,7 @@ trackhat_dialog::trackhat_dialog()
     connect(&t.threshold, value_::value_changed<slider_value>(), ui.threshold_label, [=] {
             ui.threshold_label->setValue((int)*t.threshold);
         }, Qt::QueuedConnection);
+#endif
 
     // point filter
 

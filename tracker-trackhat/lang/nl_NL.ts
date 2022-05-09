@@ -48,10 +48,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Threshold</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Exposure</source>
         <translation type="unfinished"></translation>
     </message>

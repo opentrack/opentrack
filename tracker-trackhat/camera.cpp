@@ -54,7 +54,7 @@ trackhat_camera::trackhat_camera()
     s.set_raii_dtor_state(false);
     t.set_raii_dtor_state(false);
 
-    for (auto* slider : { &t.exposure, &t.threshold, })
+    for (auto* slider : { &t.exposure, /*&t.threshold,*/ })
     {
         QObject::connect(slider, options::value_::value_changed<options::slider_value>(),
                          &sig, &trackhat_impl::setting_receiver::settings_changed,

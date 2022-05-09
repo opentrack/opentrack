@@ -37,7 +37,7 @@ struct trackhat_settings : opts
     int effective_gain() const;
     trackhat_settings();
     value<slider_value> exposure{b, "exposure", {min_exposure, min_exposure, max_exposure + max_gain - min_gain}};
-    value<slider_value> threshold{b, "threshold", {0x97, 64, 0xfe}};
+    //value<slider_value> threshold{b, "threshold", {0x97, 64, 0xfe}};
     value<model_type> model{b, "model", model_mini_clip_left};
     value<double> min_pt_size{b, "min-point-size", 10};
     value<double> max_pt_size{b, "max-point-size", 50};

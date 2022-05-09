@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>365</width>
-    <height>460</height>
+    <height>429</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -30,32 +30,6 @@
       <string>Camera</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="1">
-       <widget class="QSlider" name="threshold_slider">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimum">
-         <number>64</number>
-        </property>
-        <property name="maximum">
-         <number>254</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Threshold</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="2">
        <widget class="QSpinBox" name="exposure_label">
         <property name="focusPolicy">
@@ -91,25 +65,6 @@
         </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QSpinBox" name="threshold_label">
-        <property name="focusPolicy">
-         <enum>Qt::NoFocus</enum>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-        <property name="buttonSymbols">
-         <enum>QAbstractSpinBox::NoButtons</enum>
-        </property>
-        <property name="maximum">
-         <number>999</number>
         </property>
        </widget>
       </item>
@@ -553,7 +508,6 @@
  </widget>
  <tabstops>
   <tabstop>exposure_slider</tabstop>
-  <tabstop>threshold_slider</tabstop>
   <tabstop>model_type</tabstop>
   <tabstop>min_point_size</tabstop>
   <tabstop>max_point_size</tabstop>
