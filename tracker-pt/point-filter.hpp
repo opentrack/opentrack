@@ -19,7 +19,7 @@ class point_filter final
 
 public:
     void reset();
-    const PointOrder& operator()(const PointOrder& input);
+    const PointOrder& operator()(const PointOrder& input, f deadzone_amount);
 
     explicit point_filter(const pt_settings& s);
     ~point_filter() = default;

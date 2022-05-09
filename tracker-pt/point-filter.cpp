@@ -10,7 +10,7 @@ void point_filter::reset()
     t = std::nullopt;
 }
 
-const PointOrder& point_filter::operator()(const PointOrder& input)
+const PointOrder& point_filter::operator()(const PointOrder& input, f deadzone_amount)
 {
     using std::fmod;
     using std::sqrt;
@@ -40,7 +40,7 @@ const PointOrder& point_filter::operator()(const PointOrder& input)
         return A * pow((f)10, (f)-log10_pos) * rest;
     );
 
-    f dist = 0, dz = (float)s.point_filter_deadzone / 800; // sqrt(640^2 + 480^2)
+    f dist = 0, dz = deadzone_amount * (f)s.point_filter_deadzone / 800; // sqrt(640^2 + 480^2)
 
     for (unsigned i = 0; i < 3; i++)
     {
