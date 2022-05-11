@@ -20,7 +20,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={pf}\{#MyAppName}
+DefaultDirName={commonpf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 AllowNoIcons=yes
 OutputBaseFilename={#MyAppVersion}-win32-setup
@@ -34,7 +34,6 @@ RestartIfNeededByRun=False
 InternalCompressLevel=ultra
 CompressionThreads=4
 LZMANumFastBytes=273
-MinVersion=0,6
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
