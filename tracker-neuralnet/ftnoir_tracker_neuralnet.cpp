@@ -607,6 +607,8 @@ bool neuralnet_tracker::open_camera()
     if (fps)
         args.fps = fps;
 
+    args.use_mjpeg = s.use_mjpeg;
+
     if (!camera->start(args))
     {
         qDebug() << "neuralnet tracker: can't open camera";
@@ -786,6 +788,7 @@ neuralnet_dialog::neuralnet_dialog() :
     tie_setting(s.offset_up, ui.ty_spin);
     tie_setting(s.offset_right, ui.tz_spin);
     tie_setting(s.show_network_input, ui.showNetworkInput);
+    tie_setting(s.use_mjpeg, ui.use_mjpeg);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));

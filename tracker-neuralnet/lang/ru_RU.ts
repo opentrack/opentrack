@@ -60,6 +60,10 @@ Don&apos;t roll or change position.</source>
         <source>Show Network Input</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>MJPEG</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::neuralnet_dialog</name>

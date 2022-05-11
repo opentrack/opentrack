@@ -58,6 +58,7 @@ struct settings : opts {
     value<int> fov { b, "field-of-view", 56 };
     value<fps_choices> force_fps { b, "force-fps", fps_default };
     value<bool> show_network_input { b, "show-network-input", false };
+    value<bool> use_mjpeg { b, "use-mjpeg", false };
     settings();
 };
 
