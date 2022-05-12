@@ -31,7 +31,7 @@ if(OpenCV_FOUND)
         try_compile(tracker-aruco_has-working-abi "${CMAKE_CURRENT_BINARY_DIR}"
                            SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/compile-test/abi.cpp"
                            CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${dir}"
-                                       "-DCXX_STANDARD=17" "-DCXX_STANDARD_REQUIRED=1"
+                                       "-DCXX_STANDARD=20" "-DCXX_STANDARD_REQUIRED=1"
                            OUTPUT_VARIABLE krap)
         if(NOT tracker-aruco_has-working-abi)
             message(FATAL_ERROR "${krap}\n" "Must use Aruco fork from <https://github.com/opentrack/aruco>")
