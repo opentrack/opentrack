@@ -50,7 +50,7 @@ enum fps_choices
 };
 
 
-struct settings : opts {
+struct Settings : opts {
     value<int> offset_fwd { b, "offset-fwd", 200 }, // Millimeters
                offset_up { b, "offset-up", 0 },
                offset_right { b, "offset-right", 0 };
@@ -58,8 +58,11 @@ struct settings : opts {
     value<int> fov { b, "field-of-view", 56 };
     value<fps_choices> force_fps { b, "force-fps", fps_default };
     value<bool> show_network_input { b, "show-network-input", false };
+    value<double> roi_filter_alpha{ b, "roi-filter-alpha", 1. };
+    value<double> roi_zoom{ b, "roi-zoom", 1. };
     value<bool> use_mjpeg { b, "use-mjpeg", false };
-    settings();
+    value<int> num_threads { b, "num-threads", 1 };
+    Settings();
 };
 
 
@@ -118,21 +121,24 @@ class PoseEstimator
     private:
         // Operates on the private image data members
         int find_input_intensity_90_pct_quantile() const;
+
+        int64_t model_version = 0;
         Ort::Session session{nullptr};
+        Ort::Allocator allocator;
         // Inputs
         cv::Mat scaled_frame{}, input_mat{};
-        Ort::Value input_val{nullptr};
+        std::vector<Ort::Value> input_val;
+        std::vector<const char*> input_names;
         // Outputs
         cv::Vec<float, 3> output_coord{};
         cv::Vec<float, 4> output_quat{};
         cv::Vec<float, 4> output_box{};
-        Ort::Value output_val[3] = {
-            Ort::Value{nullptr}, 
-            Ort::Value{nullptr}, 
-            Ort::Value{nullptr}};
+        std::vector<Ort::Value> output_val;
+        std::vector<const char*> output_names;
+        size_t num_recurrent_states = 0;
         double last_inference_time = 0;
-        int64_t model_version = 0;
 };
+
 
 
 class neuralnet_tracker : protected virtual QThread, public ITracker
@@ -162,7 +168,7 @@ private:
 
     Affine compute_pose(const PoseEstimator::Face &face) const;
 
-    settings s;
+    Settings settings;
     std::optional<Localizer> localizer;
     std::optional<PoseEstimator> poseestimator;
     Ort::Env env{nullptr};
@@ -177,6 +183,7 @@ private:
     double fps = 0;
     double last_inference_time = 0;
     static constexpr double RC = .25;
+    int num_threads = 1;
 
     QMutex mtx; // Protects the pose
     Affine pose_;
@@ -197,7 +204,7 @@ private:
     void make_fps_combobox();
 
     Ui::Form ui;
-    settings s;
+    Settings settings;
     
     // Calibration code mostly taken from point tracker
     QTimer calib_timer;

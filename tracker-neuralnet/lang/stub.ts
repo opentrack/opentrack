@@ -64,6 +64,22 @@ Don&apos;t roll or change position.</source>
         <source>MJPEG</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tuning / Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ROI Smoothing Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ROI Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread Count</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::neuralnet_dialog</name>

@@ -16,6 +16,7 @@
 #include <opencv2/imgcodecs.hpp>
 #include "compat/timer.hpp"
 #include <omp.h>
+#include <stdexcept>
 
 #ifdef _MSC_VER
 #   pragma warning(disable : 4702)
@@ -29,6 +30,7 @@
 #include <cmath>
 #include <algorithm>
 #include <chrono>
+#include <string>
 
 // Some demo code for onnx
 // https://github.com/microsoft/onnxruntime/blob/master/csharp/test/Microsoft.ML.OnnxRuntime.EndToEndTests.Capi/C_Api_Sample.cpp
@@ -42,9 +44,6 @@ using numeric_types::vec3;
 using numeric_types::vec2;
 using numeric_types::mat33;
 using quat = std::array<numeric_types::f,4>;
-
-// Minimal difference if at all going from 1 to 2 threads.
-static constexpr int num_threads = 1;
 
 
 #if _MSC_VER
@@ -66,6 +65,41 @@ cv::Rect_<T> squarize(const cv::Rect_<T> &r)
     cv::Point_<T> c{r.x + r.width/T(2), r.y + r.height/T(2)};
     const T sz = std::max(r.height, r.width);
     return {c.x - sz/T(2), c.y - sz/T(2), sz, sz};
+}
+
+
+template<class T>
+cv::Point_<T> as_point(const cv::Size_<T>& s)
+{
+    return { s.width, s.height };
+}
+
+
+template<class T>
+cv::Size_<T> as_size(const cv::Point_<T>& p)
+{
+    return { p.x, p.y };
+}
+
+
+template<class T>
+cv::Rect_<T> expand(const cv::Rect_<T>& r, T factor)
+{
+    // xnew = l+.5*w - w*f*0.5 = l + .5*(w - new_w)
+    const cv::Size_<T> new_size = { r.width * factor, r.height * factor };
+    const cv::Point_<T> new_tl = r.tl() + (as_point(r.size()) - as_point(new_size)) / T(2);
+    return cv::Rect_<T>(new_tl, new_size);
+}
+
+
+template<class T>
+cv::Rect_<T> ewa_filter(const cv::Rect_<T>& last, const cv::Rect_<T>& current, T alpha)
+{
+    const auto last_center = T(0.5) * (last.tl() + last.br());
+    const auto cur_center = T(0.5) * (current.tl() + current.br());
+    const cv::Point_<T> new_size = as_point(last.size()) + alpha * (as_point(current.size()) - as_point(last.size()));
+    const cv::Point_<T> new_center = last_center + alpha * (cur_center - last_center);
+    return cv::Rect_<T>(new_center - T(0.5) * new_size, as_size(new_size));
 }
 
 
@@ -138,6 +172,30 @@ mat33 quaternion_to_mat33(const std::array<float,4> quat)
 }
 
 
+vec3 rotate_vec(const quat& q, const vec3& p)
+{
+    const float qw = q[0];
+    const float qi = q[1];
+    const float qj = q[2];
+    const float qk = q[3];
+    const float pi = p[0];
+    const float pj = p[1];
+    const float pk = p[2];
+    const quat tmp{
+                        - qi*pi - qj*pj - qk*pk,
+        qw*pi                   + qj*pk - qk*pj,
+        qw*pj - qi*pk                   + qk*pi,
+        qw*pk + qi*pj - qj*pi                  
+    };
+    const vec3 out {
+        -tmp[0]*qi + tmp[1]*qw - tmp[2]*qk + tmp[3]*qj,
+        -tmp[0]*qj + tmp[1]*qk + tmp[2]*qw - tmp[3]*qi,
+        -tmp[0]*qk - tmp[1]*qj + tmp[2]*qi + tmp[3]*qw
+    };
+    return out;
+}
+
+
 vec3 image_to_world(float x, float y, float size, float reference_size_in_mm, const cv::Size2i& image_size, const CamIntrinsics& intrinsics)
 {
     // Compute the location the network outputs in 3d space.
@@ -186,14 +244,25 @@ T iou(const cv::Rect_<T> &a, const cv::Rect_<T> &b)
 // have the shape B x C x H x W, where B=C=1.
 cv::Size get_input_image_shape(const Ort::Session &session)
 {
-    if (session.GetInputCount() != 1)
-        throw std::invalid_argument("Model must take exactly one input tensor");
+    if (session.GetInputCount() < 1)
+        throw std::invalid_argument("Model must take at least one input tensor");
     const std::vector<std::int64_t> shape = 
         session.GetInputTypeInfo(0).GetTensorTypeAndShapeInfo().GetShape();
     if (shape.size() != 4)
         throw std::invalid_argument("Model takes the input tensor in the wrong shape");
     return { static_cast<int>(shape[3]), static_cast<int>(shape[2]) };
 }
+
+
+Ort::Value create_tensor(const Ort::TypeInfo& info, Ort::Allocator& alloc)
+{
+    const auto shape = info.GetTensorTypeAndShapeInfo().GetShape();
+    auto t = Ort::Value::CreateTensor<float>(
+        alloc, shape.data(), shape.size());
+    memset(t.GetTensorMutableData<float>(), 0, sizeof(float)*info.GetTensorTypeAndShapeInfo().GetElementCount());
+    return t;
+}
+
 
 
 int enum_to_fps(int value)
@@ -241,10 +310,7 @@ std::pair<float, cv::Rect2f> Localizer::run(
 
     Timer t; t.start();
 
-    const auto nt = omp_get_num_threads();
-    omp_set_num_threads(num_threads);
     session.Run(Ort::RunOptions{nullptr}, input_names, &input_val, 1, output_names, &output_val, 1);
-    omp_set_num_threads(nt);
 
     last_inference_time = t.elapsed_ms();
 
@@ -267,36 +333,85 @@ double Localizer::last_inference_time_millis() const
 
 
 PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&_session) 
-    : session{std::move(_session)}
-    , model_version(session.GetModelMetadata().GetVersion())
+    : model_version{_session.GetModelMetadata().GetVersion()}
+    , session{std::move(_session)}
+    , allocator{session, allocator_info}
 {
+    using namespace std::literals::string_literals;
+
+    if (session.GetOutputCount() < 2)
+        throw std::runtime_error("Invalid Model: must have at least two outputs");
+
+    // WARNING
+    // If the model was saved without meta data, it seems the version field is uninitialized.
+    // In that case reading from it is UB. However, we will just get same arbitrary number
+    // which is hopefully different from the numbers used by models where the version is set.
+    if (model_version != 2)
+        model_version = 1;
+
     const cv::Size input_image_shape = get_input_image_shape(session);
 
     scaled_frame = cv::Mat(input_image_shape, CV_8U);
-    input_mat = cv::Mat(input_image_shape, CV_32F);
+    input_mat = cv::Mat(input_image_shape, CV_32F); 
 
     {
         const std::int64_t input_shape[4] = { 1, 1, input_image_shape.height, input_image_shape.width };
-        input_val = Ort::Value::CreateTensor<float>(allocator_info, input_mat.ptr<float>(0), input_mat.total(), input_shape, 4);
+        input_val.push_back(
+            Ort::Value::CreateTensor<float>(allocator_info, input_mat.ptr<float>(0), input_mat.total(), input_shape, 4));
     }
 
     {
         const std::int64_t output_shape[2] = { 1, 3 };
-        output_val[0] = Ort::Value::CreateTensor<float>(
-            allocator_info, &output_coord[0], output_coord.rows, output_shape, 2);
+        output_val.push_back(Ort::Value::CreateTensor<float>(
+            allocator_info, &output_coord[0], output_coord.rows, output_shape, 2));
     }
 
     {
         const std::int64_t output_shape[2] = { 1, 4 };
-        output_val[1] = Ort::Value::CreateTensor<float>(
-            allocator_info, &output_quat[0], output_quat.rows, output_shape, 2);
+        output_val.push_back(Ort::Value::CreateTensor<float>(
+            allocator_info, &output_quat[0], output_quat.rows, output_shape, 2));
     }
 
+    size_t num_regular_outputs = 2;
+
+    if (session.GetOutputCount() >= 3 && "box"s == session.GetOutputName(2, allocator))
     {
         const std::int64_t output_shape[2] = { 1, 4 };
-        output_val[2] = Ort::Value::CreateTensor<float>(
-            allocator_info, &output_box[0], output_box.rows, output_shape, 2);
+        output_val.push_back(Ort::Value::CreateTensor<float>(
+            allocator_info, &output_box[0], output_box.rows, output_shape, 2));
+        ++num_regular_outputs;
+        qDebug() << "Note: Legacy model output for face ROI is currently ignored";
     }
+
+    num_recurrent_states = session.GetInputCount()-1;
+    if (session.GetOutputCount()-num_regular_outputs != num_recurrent_states)
+        throw std::runtime_error("Invalid Model: After regular inputs and outputs the model must have equal number of inputs and outputs for tensors holding hidden states of recurrent layers.");
+
+    // Create tensors for recurrent state
+    for (size_t i = 0; i < num_recurrent_states; ++i)
+    {
+        const auto& input_info = session.GetInputTypeInfo(1+i);
+        const auto& output_info = session.GetOutputTypeInfo(num_regular_outputs+i);
+        if (input_info.GetTensorTypeAndShapeInfo().GetShape() != 
+            output_info.GetTensorTypeAndShapeInfo().GetShape())
+            throw std::runtime_error("Invalid Model: Tensors for recurrent hidden states should have same shape on intput and output");
+        input_val.push_back(create_tensor(input_info, allocator));
+        output_val.push_back(create_tensor(output_info, allocator));
+    }
+
+    for (size_t i = 0; i < session.GetInputCount(); ++i)
+    {
+        input_names.push_back(session.GetInputName(i, allocator));
+    }
+    for (size_t i = 0; i < session.GetOutputCount(); ++i)
+    {
+        output_names.push_back(session.GetOutputName(i, allocator));
+    }
+
+    qDebug() << "Model inputs: " << session.GetInputCount() << ", outputs: " << session.GetOutputCount() << ", recurrent states: " << num_recurrent_states;
+
+    assert (input_names.size() == input_val.size());
+    assert (output_names.size() == output_val.size());
 }
 
 
@@ -336,7 +451,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     };
     cv::getRectSubPix(frame, {patch_size, patch_size}, patch_center, cropped);
 
-    // Will get failure if patch_center is outside image boundaries.
+    // Will get failure if patch_center is outside image boundariesettings.
     // Have to catch this case.
     if (cropped.rows != patch_size || cropped.cols != patch_size)
         return {};
@@ -355,26 +470,37 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     assert (input_mat.ptr(0) == p);
     assert (!input_mat.empty() && input_mat.isContinuous());
 
-    const char* input_names[] = {"x"};
-    const char* output_names[] = {"pos_size", "quat", "box"};
 
     Timer t; t.start();
 
-    const auto nt = omp_get_num_threads();
-    omp_set_num_threads(num_threads);
     try
     {
-        session.Run(Ort::RunOptions{ nullptr }, input_names, &input_val, 1, output_names, output_val, 3);
+        session.Run(
+            Ort::RunOptions{ nullptr }, 
+            input_names.data(), 
+            input_val.data(), 
+            input_val.size(), 
+            output_names.data(), 
+            output_val.data(), 
+            output_val.size());
     }
     catch (const Ort::Exception &e)
     {
         qDebug() << "Failed to run the model: " << e.what();
-        omp_set_num_threads(nt);
         return {};
     }
-    omp_set_num_threads(nt);
 
-    // FIXME: Execution time fluctuates wildly. 19 to 26 ms. Why???
+    for (size_t i = 0; i<num_recurrent_states; ++i)
+    {
+        // Next step, the current output becomes the input.
+        // Thus we realize the recurrent connection.
+        // Only swaps the internal pointers. There is no copy of data.
+        std::swap(
+            output_val[output_val.size()-num_recurrent_states+i],
+            input_val[input_val.size()-num_recurrent_states+i]);
+    }
+
+    // FIXME: Execution time fluctuates wildly. 19 to 26 msec. Why?
     //        The instructions are always the same. Maybe a memory allocation
     //        issue. The ONNX api suggests that tensor are allocated in an
     //        arena. Does that matter? Maybe the issue is something else?
@@ -383,7 +509,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
 
     // Perform coordinate transformation.
     // From patch-local normalized in [-1,1] to
-    // frame unnormalized pixel coordinates.
+    // frame unnormalized pixel coordinatesettings.
 
     const cv::Point2f center = patch_center + 
         (0.5f*patch_size)*cv::Point2f{output_coord[0], output_coord[1]};
@@ -462,7 +588,7 @@ bool neuralnet_tracker::detect()
 
     auto face = poseestimator->run(grayscale, *last_roi);
     last_inference_time += poseestimator->last_inference_time_millis();
-    
+
     if (!face)
     {
         last_roi.reset();
@@ -470,7 +596,23 @@ bool neuralnet_tracker::detect()
         return false;
     }
 
-    last_roi = face->box;
+    {
+        // Here: compute ROI from head size estimate. This helps make the size prediction more
+        //       invariant to mouth opening. The tracking can be lost more often at extreme
+        //       rotations, depending on the implementation details. The code down here has
+        //       been tweaked so that it works pretty well.
+        // In old behaviour  ROI is taken from the model outputs
+        const vec3 offset = rotate_vec(face->rotation, vec3{0.f, 0.1f*face->size, face->size*0.3f});
+        const float halfsize = face->size/float(settings.roi_zoom);
+        face->box = cv::Rect2f(
+            face->center.x + offset[0] - halfsize,
+            face->center.y + offset[1] - halfsize,
+            halfsize*2.f,
+            halfsize*2.f
+        );
+    }
+
+    last_roi = ewa_filter(*last_roi, face->box, float(settings.roi_filter_alpha));
 
     Affine pose = compute_pose(*face);
 
@@ -487,6 +629,8 @@ bool neuralnet_tracker::detect()
 
 Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
 {
+    // Compute the location the network outputs in 3d space.
+
     const mat33 rot_correction = compute_rotation_correction(
         normalize(face.center, frame.rows, frame.cols),
         intrinsics.focal_length_w);
@@ -507,7 +651,6 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
                ------------------------
     */
 
-    // Compute the location the network outputs in 3d space.
     const vec3 face_world_pos = image_to_world(
         face.center.x, face.center.y, face.size, head_size_mm,
         frame.size(),
@@ -519,9 +662,9 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
 
     const vec3 pos = face_world_pos
         + m * vec3{
-            static_cast<float>(s.offset_fwd), 
-            static_cast<float>(s.offset_up),
-            static_cast<float>(s.offset_right)};
+            static_cast<float>(settings.offset_fwd), 
+            static_cast<float>(settings.offset_up),
+            static_cast<float>(settings.offset_right)};
 
     return { m, pos };
 }
@@ -566,7 +709,7 @@ void neuralnet_tracker::draw_gizmos(
         cv::circle(frame, cv::Point(xy[0],xy[1]), 5, cv::Scalar(0,0,255), -1);
     }
 
-    if (s.show_network_input)
+    if (settings.show_network_input)
     {
         cv::Mat netinput = poseestimator->last_network_input();
         if (!netinput.empty())
@@ -587,7 +730,6 @@ void neuralnet_tracker::draw_gizmos(
 neuralnet_tracker::neuralnet_tracker()
 {
     opencv_init();
-    cv::setNumThreads(num_threads);
 }
 
 
@@ -609,6 +751,8 @@ module_status neuralnet_tracker::start_tracker(QFrame* videoframe)
     layout->addWidget(&*videoWidget);
     videoframe->setLayout(&*layout);
     videoWidget->show();
+    num_threads = settings.num_threads;
+    cv::setNumThreads(num_threads);
     start();
     return status_ok();
 }
@@ -633,7 +777,7 @@ bool neuralnet_tracker::load_and_initialize_model()
         // openmp settings. Which is what we do. omp_set_num_threads directly
         // before running the inference pass.
         opts.SetIntraOpNumThreads(num_threads);
-        opts.SetInterOpNumThreads(num_threads);
+        opts.SetInterOpNumThreads(1);
         allocator_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
         localizer.emplace(
@@ -656,11 +800,11 @@ bool neuralnet_tracker::load_and_initialize_model()
 
 bool neuralnet_tracker::open_camera()
 {
-    int fps = enum_to_fps(s.force_fps);
+    int fps = enum_to_fps(settings.force_fps);
 
     QMutexLocker l(&camera_mtx);
 
-    camera = video::make_camera(s.camera_name);
+    camera = video::make_camera(settings.camera_name);
 
     if (!camera)
         return false;
@@ -673,7 +817,7 @@ bool neuralnet_tracker::open_camera()
     if (fps)
         args.fps = fps;
 
-    args.use_mjpeg = s.use_mjpeg;
+    args.use_mjpeg = settings.use_mjpeg;
 
     if (!camera->start(args))
     {
@@ -687,7 +831,7 @@ bool neuralnet_tracker::open_camera()
 void neuralnet_tracker::set_intrinsics()
 {
     const int w = grayscale.cols, h = grayscale.rows;
-    const double diag_fov = s.fov * M_PI / 180.;
+    const double diag_fov = settings.fov * M_PI / 180.;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
     const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
     const double focal_length_w = 1. / tan(.5 * fov_w);
@@ -746,7 +890,12 @@ void neuralnet_tracker::run()
 
         set_intrinsics();
 
+        const auto nt = omp_get_num_threads();
+        omp_set_num_threads(num_threads);
+
         detect();
+
+        omp_set_num_threads(nt);
 
         if (frame.rows > 0)
             videoWidget->update_image(frame);
@@ -823,26 +972,29 @@ neuralnet_dialog::neuralnet_dialog() :
     ui.setupUi(this);
 
     make_fps_combobox();
-    tie_setting(s.force_fps, ui.cameraFPS);
+    tie_setting(settings.force_fps, ui.cameraFPS);
 
     for (const auto& str : video::camera_names())
         ui.cameraName->addItem(str);
 
-    tie_setting(s.camera_name, ui.cameraName);
-    tie_setting(s.fov, ui.cameraFOV);
-    tie_setting(s.offset_fwd, ui.tx_spin);
-    tie_setting(s.offset_up, ui.ty_spin);
-    tie_setting(s.offset_right, ui.tz_spin);
-    tie_setting(s.show_network_input, ui.showNetworkInput);
-    tie_setting(s.use_mjpeg, ui.use_mjpeg);
+    tie_setting(settings.camera_name, ui.cameraName);
+    tie_setting(settings.fov, ui.cameraFOV);
+    tie_setting(settings.offset_fwd, ui.tx_spin);
+    tie_setting(settings.offset_up, ui.ty_spin);
+    tie_setting(settings.offset_right, ui.tz_spin);
+    tie_setting(settings.show_network_input, ui.showNetworkInput);
+    tie_setting(settings.roi_filter_alpha, ui.roiFilterAlpha);
+    tie_setting(settings.use_mjpeg, ui.use_mjpeg);
+	tie_setting(settings.roi_zoom, ui.roiZoom);
+    tie_setting(settings.num_threads, ui.threadCount);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
 
-    connect(&s.camera_name, value_::value_changed<QString>(), this, &neuralnet_dialog::update_camera_settings_state);
+    connect(&settings.camera_name, value_::value_changed<QString>(), this, &neuralnet_dialog::update_camera_settings_state);
 
-    update_camera_settings_state(s.camera_name);
+    update_camera_settings_state(settings.camera_name);
 
     connect(&calib_timer, &QTimer::timeout, this, &neuralnet_dialog::trans_calib_step);
     calib_timer.setInterval(35);
@@ -852,7 +1004,7 @@ neuralnet_dialog::neuralnet_dialog() :
 
 void neuralnet_dialog::doOK()
 {
-    s.b->save();
+    settings.b->save();
     close();
 }
 
@@ -871,7 +1023,7 @@ void neuralnet_dialog::camera_settings()
         (void)tracker->camera->show_dialog();
     }
     else
-        (void)video::show_dialog(s.camera_name);
+        (void)video::show_dialog(settings.camera_name);
 }
 
 
@@ -942,9 +1094,9 @@ void neuralnet_dialog::startstop_trans_calib(bool start)
         trans_calib.reset();
         ui.sample_count_display->setText(QString());
         // Tracker must run with zero'ed offset for calibration.
-        s.offset_fwd = 0;
-        s.offset_up = 0;
-        s.offset_right = 0;
+        settings.offset_fwd = 0;
+        settings.offset_up = 0;
+        settings.offset_right = 0;
     }
     else
     {
@@ -952,9 +1104,9 @@ void neuralnet_dialog::startstop_trans_calib(bool start)
         qDebug() << "pt: stopping translation calibration";
         {
             auto [tmp, nsamples] = trans_calib.get_estimate();
-            s.offset_fwd = int(tmp[0]);
-            s.offset_up = int(tmp[1]);
-            s.offset_right = int(tmp[2]);
+            settings.offset_fwd = int(tmp[0]);
+            settings.offset_up = int(tmp[1]);
+            settings.offset_right = int(tmp[2]);
         }
     }
     ui.tx_spin->setEnabled(!start);
@@ -968,7 +1120,7 @@ void neuralnet_dialog::startstop_trans_calib(bool start)
 }
 
 
-settings::settings() : opts("neuralnet-tracker") {}
+Settings::Settings() : opts("neuralnet-tracker") {}
 
 } // neuralnet_tracker_ns
 
