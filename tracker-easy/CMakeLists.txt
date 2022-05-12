@@ -5,7 +5,7 @@ if(OpenCV_FOUND)
     try_compile(tracker-easy_ocv-check "${CMAKE_CURRENT_BINARY_DIR}"
                 SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/ocv-check.cxx"
                 CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${OpenCV_INCLUDE_DIRS}"
-                            "-DCXX_STANDARD=17" "-DCXX_STANDARD_REQUIRED=1"
+                            "-DCXX_STANDARD=20" "-DCXX_STANDARD_REQUIRED=1"
                 OUTPUT_VARIABLE krap)
     if(tracker-easy_ocv-check)
         foreach(k highgui videoio imgcodecs imgproc calib3d video features2d flann)
