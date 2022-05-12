@@ -141,10 +141,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Bind</source>
         <translation type="unfinished"></translation>
     </message>
@@ -289,14 +285,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Output remap</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Assign input axis to output axis.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>X</source>
         <translation type="unfinished"></translation>
     </message>
@@ -373,14 +361,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hold in-game center of the screen while the mode is active.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Treat this device orientation as the in-game center of the screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Freeze the position returned by the tracker while this mode is active.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -398,6 +378,18 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Mouse %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use current tracker pose as looking perfectly forward.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep looking forward until next zero keypress.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Axis assignment</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

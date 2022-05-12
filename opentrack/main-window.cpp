@@ -569,6 +569,8 @@ void main_window::show_pose()
 
 bool main_window::module_tabs_enabled() const
 {
+    return true;
+#if 0
     enum module_tab_state { tabs_maybe = -1, tabs_disable, tabs_enable };
 
     static const auto force = progn(
@@ -602,9 +604,10 @@ bool main_window::module_tabs_enabled() const
         return false;
     // Windows 10: 40px,  Windows 11: 48px, KDE: 51px
     constexpr int taskbar_size = 51;
-    constexpr int min_avail_height = 910 - taskbar_size;
+    constexpr int min_avail_height = 768 - taskbar_size;
     QRect rect = d->availableGeometry(this);
     return rect.height() >= min_avail_height;
+#endif
 }
 
 static void show_window(QWidget& d, bool fresh)

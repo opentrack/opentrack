@@ -142,10 +142,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>全局快捷键</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;回中位置&lt;/span&gt; - 以现在的姿势为最完美向前看.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;盯着看&lt;/span&gt; - 盯着固定位置直到再次按键.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;归零位置&lt;/span&gt; - 保持向前看直到再次按键.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Center</source>
         <translation>回中位置</translation>
     </message>
@@ -210,10 +206,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>输出</translation>
     </message>
     <message>
-        <source>Output remap</source>
-        <translation>输出重新映射</translation>
-    </message>
-    <message>
         <source>X</source>
         <translation></translation>
     </message>
@@ -256,10 +248,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     <message>
         <source>Destination</source>
         <translation>目标</translation>
-    </message>
-    <message>
-        <source>Assign input axis to output axis.</source>
-        <translation>指定输入坐标到输出坐标.</translation>
     </message>
     <message>
         <source>Custom center pose</source>
@@ -378,14 +366,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hold in-game center of the screen while the mode is active.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Treat this device orientation as the in-game center of the screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Freeze the position returned by the tracker while this mode is active.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -400,6 +380,18 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     <message>
         <source>Mouse %1</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use current tracker pose as looking perfectly forward.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep looking forward until next zero keypress.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Axis assignment</source>
+        <translation>输出重新映射</translation>
     </message>
 </context>
 <context>
