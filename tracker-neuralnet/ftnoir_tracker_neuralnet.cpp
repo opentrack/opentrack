@@ -16,7 +16,6 @@
 #include <opencv2/imgcodecs.hpp>
 #include "compat/timer.hpp"
 #include <omp.h>
-#include <stdexcept>
 
 #ifdef _MSC_VER
 #   pragma warning(disable : 4702)
@@ -31,6 +30,8 @@
 #include <algorithm>
 #include <chrono>
 #include <string>
+#include <stdexcept>
+
 
 // Some demo code for onnx
 // https://github.com/microsoft/onnxruntime/blob/master/csharp/test/Microsoft.ML.OnnxRuntime.EndToEndTests.Capi/C_Api_Sample.cpp
@@ -56,6 +57,35 @@ std::string convert(const QString &s) { return s.toStdString(); }
 float sigmoid(float x)
 {
     return 1.f/(1.f + std::exp(-x));
+}
+
+
+cv::Rect make_crop_rect_for_aspect(const cv::Size &size, int aspect_w, int aspect_h)
+{
+    auto [w, h] = size;
+    if ( w*aspect_h > aspect_w*h )
+    {
+        // Image is too wide
+        const int new_w = (aspect_w*h)/aspect_h;
+        return cv::Rect((w - new_w)/2, 0, new_w, h);
+    }
+    else
+    {
+        const int new_h = (aspect_h*w)/aspect_w;
+        return cv::Rect(0, (h - new_h)/2, w, new_h);
+    }
+}
+
+cv::Rect make_crop_rect_multiple_of(const cv::Size &size, int multiple)
+{
+    const int new_w = (size.width / multiple) * multiple;
+    const int new_h = (size.height / multiple) * multiple;
+    return cv::Rect(
+        (size.width-new_w)/2,
+        (size.height-new_h)/2,
+        new_w,
+        new_h
+    );
 }
 
 
@@ -752,7 +782,6 @@ module_status neuralnet_tracker::start_tracker(QFrame* videoframe)
     videoframe->setLayout(&*layout);
     videoWidget->show();
     num_threads = settings.num_threads;
-    cv::setNumThreads(num_threads);
     start();
     return status_ok();
 }
@@ -774,8 +803,7 @@ bool neuralnet_tracker::load_and_initialize_model()
         auto opts = Ort::SessionOptions{};
         // Do thread settings here do anything?
         // There is a warning which says to control number of threads via
-        // openmp settings. Which is what we do. omp_set_num_threads directly
-        // before running the inference pass.
+        // openmp settings. Which is what we do.
         opts.SetIntraOpNumThreads(num_threads);
         opts.SetInterOpNumThreads(1);
         allocator_info = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
@@ -800,6 +828,8 @@ bool neuralnet_tracker::load_and_initialize_model()
 
 bool neuralnet_tracker::open_camera()
 {
+    int rint = std::clamp(*settings.resolution, 0, (int)std::size(resolution_choices)-1);
+    resolution_tuple res = resolution_choices[rint];
     int fps = enum_to_fps(settings.force_fps);
 
     QMutexLocker l(&camera_mtx);
@@ -811,9 +841,11 @@ bool neuralnet_tracker::open_camera()
 
     video::impl::camera::info args {};
 
-    args.width = 320;
-    args.height = 240;
-
+    if (res.width)
+    {
+        args.width = res.width;
+        args.height = res.height;
+    }
     if (fps)
         args.fps = fps;
 
@@ -844,8 +876,34 @@ void neuralnet_tracker::set_intrinsics()
 }
 
 
+class GuardedThreadCountSwitch
+{
+    int old_num_threads_cv = 1;
+    int old_num_threads_omp = 1;
+    public:
+        GuardedThreadCountSwitch(int num_threads)
+        {
+            old_num_threads_cv = cv::getNumThreads();
+            old_num_threads_omp = omp_get_num_threads();
+            omp_set_num_threads(num_threads);
+            cv::setNumThreads(num_threads);
+        }
+            
+        ~GuardedThreadCountSwitch()
+        {
+            omp_set_num_threads(old_num_threads_omp);
+            cv::setNumThreads(old_num_threads_cv);
+        }
+
+        GuardedThreadCountSwitch(const GuardedThreadCountSwitch&) = delete;
+        GuardedThreadCountSwitch& operator=(const GuardedThreadCountSwitch&) = delete;
+};
+
+
 void neuralnet_tracker::run()
 {
+    GuardedThreadCountSwitch switch_num_threads_to(num_threads);
+
     if (!open_camera())
         return;
 
@@ -870,7 +928,8 @@ void neuralnet_tracker::run()
                 continue;
             }
 
-            auto color = cv::Mat(img.height, img.width, CV_8UC(img.channels), (void*)img.data, img.stride);
+            auto color = prepare_input_image(img);
+
             color.copyTo(frame);
 
             switch (img.channels)
@@ -890,12 +949,7 @@ void neuralnet_tracker::run()
 
         set_intrinsics();
 
-        const auto nt = omp_get_num_threads();
-        omp_set_num_threads(num_threads);
-
         detect();
-
-        omp_set_num_threads(nt);
 
         if (frame.rows > 0)
             videoWidget->update_image(frame);
@@ -904,6 +958,33 @@ void neuralnet_tracker::run()
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 clk.now() - t).count()*1.e-3);
     }
+}
+
+
+cv::Mat neuralnet_tracker::prepare_input_image(const video::frame& frame)
+{
+    auto img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
+
+    // Crop if aspect ratio is not 4:3
+    if (img.rows*4 != img.cols*3)
+    {
+        img = img(make_crop_rect_for_aspect(img.size(), 4, 3));
+    }
+
+    img = img(make_crop_rect_multiple_of(img.size(), 4));
+
+    if (img.cols > 640)
+    {
+        cv::pyrDown(img, downsized_original_images_[0]);
+        img = downsized_original_images_[0];
+    }
+    if (img.cols > 640)
+    {
+        cv::pyrDown(img, downsized_original_images_[1]);
+        img = downsized_original_images_[1];
+    }
+
+    return img;
 }
 
 
@@ -965,6 +1046,18 @@ void neuralnet_dialog::make_fps_combobox()
     }
 }
 
+void neuralnet_dialog::make_resolution_combobox()
+{
+    int k=0;
+    for (const auto [w, h] : resolution_choices)
+    {
+        const QString s = (w == 0) 
+            ? tr("Default") 
+            : QString::number(w) + " x " + QString::number(h);
+        ui.resolution->addItem(s, k++);
+    }
+}
+
 
 neuralnet_dialog::neuralnet_dialog() :
     trans_calib(1, 2)
@@ -972,7 +1065,7 @@ neuralnet_dialog::neuralnet_dialog() :
     ui.setupUi(this);
 
     make_fps_combobox();
-    tie_setting(settings.force_fps, ui.cameraFPS);
+    make_resolution_combobox();
 
     for (const auto& str : video::camera_names())
         ui.cameraName->addItem(str);
@@ -987,6 +1080,8 @@ neuralnet_dialog::neuralnet_dialog() :
     tie_setting(settings.use_mjpeg, ui.use_mjpeg);
 	tie_setting(settings.roi_zoom, ui.roiZoom);
     tie_setting(settings.num_threads, ui.threadCount);
+    tie_setting(settings.resolution, ui.resolution);
+    tie_setting(settings.force_fps, ui.cameraFPS);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));

@@ -25,6 +25,7 @@
 
 #include <memory>
 #include <cinttypes>
+#include <array>
 
 #include <onnxruntime_cxx_api.h>
 
@@ -49,6 +50,23 @@ enum fps_choices
     fps_MAX     = 3
 };
 
+struct resolution_tuple
+{
+    int width;
+    int height;
+};
+
+static const std::array<resolution_tuple, 7> resolution_choices =
+{{
+    { 320, 240 },
+    { 640, 480 },
+    { 800, 600 },
+    { 1024, 768 },
+    { 1280, 720 },
+    { 1920, 1080},
+    { 0, 0 }
+}};
+
 
 struct Settings : opts {
     value<int> offset_fwd { b, "offset-fwd", 200 }, // Millimeters
@@ -62,6 +80,7 @@ struct Settings : opts {
     value<double> roi_zoom{ b, "roi-zoom", 1. };
     value<bool> use_mjpeg { b, "use-mjpeg", false };
     value<int> num_threads { b, "num-threads", 1 };
+    value<int> resolution { b, "force-resolution", 0 };
     Settings();
 };
 
@@ -159,6 +178,7 @@ private:
     bool detect();
     bool open_camera();
     void set_intrinsics();
+    cv::Mat prepare_input_image(const video::frame& frame);
     bool load_and_initialize_model();
     void draw_gizmos(
         cv::Mat frame,  
@@ -176,6 +196,7 @@ private:
 
     CamIntrinsics intrinsics{};
     cv::Mat frame, grayscale;
+    std::array<cv::Mat,2> downsized_original_images_ = {}; // Image pyramid
     std::optional<cv::Rect2f> last_localizer_roi;
     std::optional<cv::Rect2f> last_roi;
     static constexpr float head_size_mm = 200.f;
@@ -202,6 +223,7 @@ public:
     void unregister_tracker() override;
 private:
     void make_fps_combobox();
+    void make_resolution_combobox();
 
     Ui::Form ui;
     Settings settings;

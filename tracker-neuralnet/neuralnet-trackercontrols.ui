@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>721</width>
-    <height>277</height>
+    <width>647</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,13 +60,10 @@
          <string>Camera Configuration</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_4">
-         <item row="3" column="1">
-          <widget class="QComboBox" name="cameraName">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <item row="4" column="0">
+          <widget class="QLabel" name="resolution_label">
+           <property name="text">
+            <string>Resolution</string>
            </property>
           </widget>
          </item>
@@ -77,6 +74,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Field of view. Needed to transform the pose to world coordinates.</string>
            </property>
            <property name="locale">
             <locale language="English" country="UnitedStates"/>
@@ -96,20 +96,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_11">
-           <property name="text">
-            <string>MJPEG</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QLabel" name="label_10">
-           <property name="text">
-            <string>Camera name</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="label_9">
            <property name="text">
@@ -125,9 +111,49 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="toolTip">
+            <string>Requested video frame rate. Actual setting may not be supported by the camera.</string>
+           </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="7" column="1">
+          <widget class="QPushButton" name="camera_settings">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="text">
+            <string>Camera settings</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="resolution">
+           <property name="toolTip">
+            <string>The requested resolution for cases where the camera delivers maximum frame rate only for a particular resolution. The image may still be downscaled to the internal resolution.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QComboBox" name="cameraName">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Camera name</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
           <widget class="QCheckBox" name="use_mjpeg">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
@@ -140,16 +166,10 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
-          <widget class="QPushButton" name="camera_settings">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_11">
            <property name="text">
-            <string>Camera settings</string>
+            <string>MJPEG</string>
            </property>
           </widget>
          </item>
@@ -189,6 +209,12 @@
             <enum>QFrame::Raised</enum>
            </property>
            <layout class="QGridLayout" name="gridLayout_11">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetDefaultConstraint</enum>
+            </property>
+            <property name="verticalSpacing">
+             <number>0</number>
+            </property>
             <item row="1" column="1">
              <widget class="QSpinBox" name="ty_spin">
               <property name="maximumSize">
@@ -382,21 +408,34 @@ Don't roll or change position.</string>
       <string>Tuning / Debug</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="7">
-       <widget class="Line" name="line_3">
+      <item row="0" column="10">
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="threadCount">
+        <property name="toolTip">
+         <string>Number of threads. Can be used to balance the CPU load between the game and the tracker.</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>32</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="Line" name="line">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
       <item row="0" column="8">
-       <widget class="QLabel" name="threadCountLabel">
-        <property name="text">
-         <string>Thread Count</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
        <widget class="QLabel" name="roiFilterAlphaLabel">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -409,14 +448,21 @@ Don't roll or change position.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="Line" name="line">
+      <item row="0" column="11">
+       <widget class="QLabel" name="roiZoomLabel">
+        <property name="text">
+         <string>ROI Zoom</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="Line" name="line_3">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="0" column="3">
        <widget class="QCheckBox" name="showNetworkInput">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -424,12 +470,15 @@ Don't roll or change position.</string>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="toolTip">
+         <string>Show the image patch that the pose estimation model sees.</string>
+        </property>
         <property name="text">
          <string>Show Network Input</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="0" column="9">
        <widget class="QDoubleSpinBox" name="roiFilterAlpha">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -442,6 +491,9 @@ Don't roll or change position.</string>
           <width>150</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>Amount of smoothing of the face region coordinates. Can help stabilize the pose.</string>
         </property>
         <property name="wrapping">
          <bool>false</bool>
@@ -460,22 +512,18 @@ Don't roll or change position.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="5">
-       <widget class="QLabel" name="roiZoomLabel">
+      <item row="0" column="0">
+       <widget class="QLabel" name="threadCountLabel">
         <property name="text">
-         <string>ROI Zoom</string>
+         <string>Thread Count</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="4">
-       <widget class="Line" name="line_2">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="6">
+      <item row="0" column="12">
        <widget class="QDoubleSpinBox" name="roiZoom">
+        <property name="toolTip">
+         <string>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</string>
+        </property>
         <property name="minimum">
          <double>0.100000000000000</double>
         </property>
@@ -490,15 +538,18 @@ Don't roll or change position.</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="9">
-       <widget class="QSpinBox" name="threadCount">
-        <property name="minimum">
-         <number>1</number>
+      <item row="0" column="13">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="maximum">
-         <number>32</number>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
         </property>
-       </widget>
+       </spacer>
       </item>
      </layout>
     </widget>
