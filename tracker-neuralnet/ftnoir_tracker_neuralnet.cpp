@@ -15,6 +15,7 @@
 #include <opencv2/calib3d.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include "compat/timer.hpp"
+#include "compat/check-visible.hpp"
 #include <omp.h>
 
 #ifdef _MSC_VER
@@ -54,6 +55,18 @@ std::string convert(const QString &s) { return s.toStdString(); }
 #endif
 
 
+template<class F>
+struct OnScopeExit
+{
+    explicit OnScopeExit(F&& f) : f_{ f } {}
+    ~OnScopeExit() noexcept
+    {
+        f_();
+    }
+    F f_;
+};
+
+
 float sigmoid(float x)
 {
     return 1.f/(1.f + std::exp(-x));
@@ -87,7 +100,6 @@ cv::Rect make_crop_rect_multiple_of(const cv::Size &size, int multiple)
         new_h
     );
 }
-
 
 template<class T>
 cv::Rect_<T> squarize(const cv::Rect_<T> &r)
@@ -592,12 +604,20 @@ double PoseEstimator::last_inference_time_millis() const
 
 bool neuralnet_tracker::detect()
 {
+    double inference_time = 0.;
+
+    OnScopeExit update_inference_time{ [&]() {
+
+            QMutexLocker lck{ &stats_mtx_ };
+            inference_time_ = inference_time;
+    } };
+
     // Note: BGR colors!
     if (!last_localizer_roi || !last_roi ||
         iou(*last_localizer_roi,*last_roi)<0.25)
     {
-        auto [p, rect] = localizer->run(grayscale);
-        last_inference_time += localizer->last_inference_time_millis();
+        auto [p, rect] = localizer->run(grayscale_);
+        inference_time += localizer->last_inference_time_millis();
         if (p > 0.5 || rect.height < 5 || rect.width < 5)
         {
             last_localizer_roi = rect;
@@ -612,17 +632,17 @@ bool neuralnet_tracker::detect()
 
     if (!last_roi)
     {
-        draw_gizmos(frame, {}, {});
+        draw_gizmos({}, {});
         return false;
     }
 
-    auto face = poseestimator->run(grayscale, *last_roi);
-    last_inference_time += poseestimator->last_inference_time_millis();
+    auto face = poseestimator->run(grayscale_, *last_roi);
+    inference_time += poseestimator->last_inference_time_millis();
 
     if (!face)
     {
         last_roi.reset();
-        draw_gizmos(frame, *face, {});
+        draw_gizmos(*face, {});
         return false;
     }
 
@@ -646,7 +666,7 @@ bool neuralnet_tracker::detect()
 
     Affine pose = compute_pose(*face);
 
-    draw_gizmos(frame, *face, pose);
+    draw_gizmos(*face, pose);
 
     {
         QMutexLocker lck(&mtx);
@@ -657,12 +677,31 @@ bool neuralnet_tracker::detect()
 }
 
 
+void neuralnet_tracker::draw_gizmos(
+    const std::optional<PoseEstimator::Face> &face,
+    const Affine& pose)
+{
+    if (!is_visible_)
+        return;
+
+    preview_.draw_gizmos(face, pose, last_roi, last_localizer_roi, world_to_image(pose.t, grayscale_.size(), intrinsics));
+
+    if (settings.show_network_input)
+    {
+        cv::Mat netinput = poseestimator->last_network_input();
+        preview_.overlay_netinput(netinput);
+    }
+
+    //preview_.draw_fps(fps, last_inference_time);
+}
+
+
 Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
 {
     // Compute the location the network outputs in 3d space.
 
     const mat33 rot_correction = compute_rotation_correction(
-        normalize(face.center, frame.rows, frame.cols),
+        normalize(face.center, grayscale_.rows, grayscale_.cols),
         intrinsics.focal_length_w);
 
     const mat33 m = rot_correction * quaternion_to_mat33(
@@ -683,16 +722,15 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
 
     const vec3 face_world_pos = image_to_world(
         face.center.x, face.center.y, face.size, head_size_mm,
-        frame.size(),
+        grayscale_.size(),
         intrinsics);
 
     // But this is in general not the location of the rotation joint in the neck.
     // So we need an extra offset. Which we determine by solving
     // z,y,z-pos = head_joint_loc + R_face * offset
-
     const vec3 pos = face_world_pos
         + m * vec3{
-            static_cast<float>(settings.offset_fwd), 
+            static_cast<float>(settings.offset_fwd),
             static_cast<float>(settings.offset_up),
             static_cast<float>(settings.offset_right)};
 
@@ -700,27 +738,50 @@ Affine neuralnet_tracker::compute_pose(const PoseEstimator::Face &face) const
 }
 
 
-void neuralnet_tracker::draw_gizmos(
-    cv::Mat frame,
-    const std::optional<PoseEstimator::Face> &face,
-    const Affine& pose) const
+void Preview::init(const cv_video_widget& widget)
 {
+    auto [w,h] = widget.preview_size();
+    preview_size_ = { w, h };
+}
+
+
+void Preview::copy_video_frame(const cv::Mat& frame)
+{
+    cv::Rect roi = make_crop_rect_for_aspect(frame.size(), preview_size_.width, preview_size_.height);
+    
+    cv::resize(frame(roi), preview_image_, preview_size_, 0, 0, cv::INTER_NEAREST);
+
+    offset_ = { (float)-roi.x, (float)-roi.y };
+    scale_ = float(preview_image_.cols) / float(roi.width);
+}
+
+
+void Preview::draw_gizmos(
+    const std::optional<PoseEstimator::Face> &face,
+    const Affine& pose,
+    const std::optional<cv::Rect2f>& last_roi,
+    const std::optional<cv::Rect2f>& last_localizer_roi,
+    const cv::Point2f& neckjoint_position)
+{
+    if (preview_image_.empty())
+        return;
+
     if (last_roi) 
     {
         const int col = 255;
-        cv::rectangle(frame, *last_roi, cv::Scalar(0, col, 0), /*thickness=*/1);
+        cv::rectangle(preview_image_, transform(*last_roi), cv::Scalar(0, col, 0), /*thickness=*/1);
     }
     if (last_localizer_roi)
     {
         const int col = 255;
-        cv::rectangle(frame, *last_localizer_roi, cv::Scalar(col, 0, 255-col), /*thickness=*/1);
+        cv::rectangle(preview_image_, transform(*last_localizer_roi), cv::Scalar(col, 0, 255-col), /*thickness=*/1);
     }
 
     if (face)
     {
         if (face->size>=1.f)
-            cv::circle(frame, static_cast<cv::Point>(face->center), int(face->size), cv::Scalar(255,255,255), 2);
-        cv::circle(frame, static_cast<cv::Point>(face->center), 3, cv::Scalar(255,255,255), -1);
+            cv::circle(preview_image_, static_cast<cv::Point>(transform(face->center)), int(transform(face->size)), cv::Scalar(255,255,255), 2);
+        cv::circle(preview_image_, static_cast<cv::Point>(transform(face->center)), 3, cv::Scalar(255,255,255), -1);
 
         auto draw_coord_line = [&](int i, const cv::Scalar& color)
         {
@@ -728,32 +789,57 @@ void neuralnet_tracker::draw_gizmos(
             const float vy = -pose.R(1,i);
             static constexpr float len = 100.f;
             cv::Point q = face->center + len*cv::Point2f{vx, vy};
-            cv::line(frame, static_cast<cv::Point>(face->center), static_cast<cv::Point>(q), color, 2);
+            cv::line(preview_image_, static_cast<cv::Point>(transform(face->center)), static_cast<cv::Point>(transform(q)), color, 2);
         };
         draw_coord_line(0, {0, 0, 255});
         draw_coord_line(1, {0, 255, 0});
         draw_coord_line(2, {255, 0, 0});
 
         // Draw the computed joint position
-        auto xy = world_to_image(pose.t, frame.size(), intrinsics);
-        cv::circle(frame, cv::Point(xy[0],xy[1]), 5, cv::Scalar(0,0,255), -1);
+        auto xy = transform(neckjoint_position);
+        cv::circle(preview_image_, cv::Point(xy.x,xy.y), 5, cv::Scalar(0,0,255), -1);
     }
+}
 
-    if (settings.show_network_input)
-    {
-        cv::Mat netinput = poseestimator->last_network_input();
-        if (!netinput.empty())
-        {
-            const int w = std::min(netinput.cols, frame.cols);
-            const int h = std::min(netinput.rows, frame.rows);
-            cv::Rect roi(0, 0, w, h);
-            netinput(roi).copyTo(frame(roi));
-        }
-    }
+void Preview::overlay_netinput(const cv::Mat& netinput)
+{
+    if (netinput.empty())
+        return;
 
+    const int w = std::min(netinput.cols, preview_image_.cols);
+    const int h = std::min(netinput.rows, preview_image_.rows);
+    cv::Rect roi(0, 0, w, h);
+    netinput(roi).copyTo(preview_image_(roi));
+}
+
+void Preview::draw_fps(double fps, double last_inference_time)
+{
     char buf[128];
     ::snprintf(buf, sizeof(buf), "%d Hz, pose inference: %d ms", std::clamp(int(fps), 0, 9999), int(last_inference_time));
-    cv::putText(frame, buf, cv::Point(10, frame.rows-10), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1);
+    cv::putText(preview_image_, buf, cv::Point(10, preview_image_.rows-10), cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0), 1);
+}
+
+
+void Preview::copy_to_widget(cv_video_widget& widget)
+{
+    if (preview_image_.rows > 0)
+        widget.update_image(preview_image_);
+}
+
+
+cv::Rect2f Preview::transform(const cv::Rect2f& r) const
+{
+    return { (r.x - offset_.x)*scale_, (r.y - offset_.y)*scale_, r.width*scale_, r.height*scale_ };
+}
+
+cv::Point2f Preview::transform(const cv::Point2f& p) const
+{
+    return { (p.x - offset_.x)*scale_ , (p.y - offset_.y)*scale_ };
+}
+
+float Preview::transform(float s) const
+{
+    return s * scale_;
 }
 
 
@@ -856,13 +942,14 @@ bool neuralnet_tracker::open_camera()
         qDebug() << "neuralnet tracker: can't open camera";
         return false;
     }
+
     return true;
 }
 
 
 void neuralnet_tracker::set_intrinsics()
 {
-    const int w = grayscale.cols, h = grayscale.rows;
+    const int w = grayscale_.cols, h = grayscale_.rows;
     const double diag_fov = settings.fov * M_PI / 180.;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
     const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
@@ -902,6 +989,8 @@ class GuardedThreadCountSwitch
 
 void neuralnet_tracker::run()
 {
+    preview_.init(*videoWidget);
+
     GuardedThreadCountSwitch switch_num_threads_to(num_threads);
 
     if (!open_camera())
@@ -914,7 +1003,7 @@ void neuralnet_tracker::run()
 
     while (!isInterruptionRequested())
     {
-        last_inference_time = 0;
+        is_visible_ = check_is_visible();
         auto t = clk.now();
         {
             QMutexLocker l(&camera_mtx);
@@ -928,18 +1017,24 @@ void neuralnet_tracker::run()
                 continue;
             }
 
+            {
+                QMutexLocker lck{&stats_mtx_};
+                resolution_ = { img.width, img.height };
+            }
+
             auto color = prepare_input_image(img);
 
-            color.copyTo(frame);
+            if (is_visible_)
+                preview_.copy_video_frame(color);
 
             switch (img.channels)
             {
             case 1:
-                grayscale.create(img.height, img.width, CV_8UC1);
-                color.copyTo(grayscale);
+                grayscale_.create(img.height, img.width, CV_8UC1);
+                color.copyTo(grayscale_);
                 break;
             case 3:
-                cv::cvtColor(color, grayscale, cv::COLOR_BGR2GRAY);
+                cv::cvtColor(color, grayscale_, cv::COLOR_BGR2GRAY);
                 break;
             default:
                 qDebug() << "Can't handle" << img.channels << "color channels";
@@ -951,8 +1046,8 @@ void neuralnet_tracker::run()
 
         detect();
 
-        if (frame.rows > 0)
-            videoWidget->update_image(frame);
+        if (is_visible_)
+            preview_.copy_to_widget(*videoWidget);
         
         update_fps(
             std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -991,9 +1086,9 @@ cv::Mat neuralnet_tracker::prepare_input_image(const video::frame& frame)
 void neuralnet_tracker::update_fps(double dt)
 {
     const double alpha = dt/(dt + RC);
-
     if (dt > 1e-6)
     {
+        QMutexLocker lck{&stats_mtx_};
         fps *= 1 - alpha;
         fps += alpha * 1./dt;
     }
@@ -1035,6 +1130,11 @@ Affine neuralnet_tracker::pose()
     return pose_;
 }
 
+std::tuple<cv::Size,double, double> neuralnet_tracker::stats() const
+{
+    QMutexLocker lck(&stats_mtx_);
+    return { resolution_, fps, inference_time_ };
+}
 
 void neuralnet_dialog::make_fps_combobox()
 {
@@ -1094,6 +1194,10 @@ neuralnet_dialog::neuralnet_dialog() :
     connect(&calib_timer, &QTimer::timeout, this, &neuralnet_dialog::trans_calib_step);
     calib_timer.setInterval(35);
     connect(ui.tcalib_button,SIGNAL(toggled(bool)), this, SLOT(startstop_trans_calib(bool)));
+
+    connect(&tracker_status_poll_timer, &QTimer::timeout, this, &neuralnet_dialog::status_poll);
+    tracker_status_poll_timer.setInterval(250);
+    tracker_status_poll_timer.start();
 }
 
 
@@ -1140,6 +1244,22 @@ void neuralnet_dialog::unregister_tracker()
 {
     tracker = nullptr;
     ui.tcalib_button->setEnabled(false);
+}
+
+
+void neuralnet_dialog::status_poll()
+{
+    QString status;
+    if (!tracker)
+    {
+        status = tr("Tracker Offline");
+    }
+    else
+    {
+        auto [ res, fps, inference_time ] = tracker->stats();
+        status = tr("%1x%2 @ %3 FPS / Inference: %4 ms").arg(res.width).arg(res.height).arg(int(fps)).arg(int(inference_time));
+    }
+    ui.resolution_display->setText(status);
 }
 
 

@@ -159,6 +159,32 @@ class PoseEstimator
 };
 
 
+class Preview
+{
+public:
+    void init(const cv_video_widget& widget);
+    void copy_video_frame(const cv::Mat& frame);
+    void draw_gizmos(
+        const std::optional<PoseEstimator::Face> &face,
+        const Affine& pose,
+        const std::optional<cv::Rect2f>& last_roi,
+        const std::optional<cv::Rect2f>& last_localizer_roi,
+        const cv::Point2f& neckjoint_position);
+    void overlay_netinput(const cv::Mat& netinput);
+    void draw_fps(double fps, double last_inference_time);
+    void copy_to_widget(cv_video_widget& widget);
+private:
+    // Transform from camera frame to preview
+    cv::Rect2f transform(const cv::Rect2f& r) const;
+    cv::Point2f transform(const cv::Point2f& p) const;
+    float transform(float s) const;
+
+    cv::Mat preview_image_;
+    cv::Size preview_size_ = { 0, 0 };
+    float scale_ = 1.f;  
+    cv::Point2f offset_ = { 0.f, 0.f};
+};
+
 
 class neuralnet_tracker : protected virtual QThread, public ITracker
 {
@@ -170,6 +196,7 @@ public:
     void data(double *data) override;
     void run() override;
     Affine pose();
+    std::tuple<cv::Size, double, double> stats() const;
 
     QMutex camera_mtx;
     std::unique_ptr<video::impl::camera> camera;
@@ -181,11 +208,9 @@ private:
     cv::Mat prepare_input_image(const video::frame& frame);
     bool load_and_initialize_model();
     void draw_gizmos(
-        cv::Mat frame,  
         const std::optional<PoseEstimator::Face> &face,
-        const Affine& pose) const;
+        const Affine& pose);
     void update_fps(double dt);
-
     Affine compute_pose(const PoseEstimator::Face &face) const;
 
     Settings settings;
@@ -195,20 +220,25 @@ private:
     Ort::MemoryInfo allocator_info{nullptr};
 
     CamIntrinsics intrinsics{};
-    cv::Mat frame, grayscale;
+    cv::Mat grayscale_;
     std::array<cv::Mat,2> downsized_original_images_ = {}; // Image pyramid
     std::optional<cv::Rect2f> last_localizer_roi;
     std::optional<cv::Rect2f> last_roi;
     static constexpr float head_size_mm = 200.f;
 
+    mutable QMutex stats_mtx_;
     double fps = 0;
-    double last_inference_time = 0;
+    double inference_time_ = 0;
+    cv::Size resolution_ = {};
+    
     static constexpr double RC = .25;
     int num_threads = 1;
+    bool is_visible_ = true;
 
     QMutex mtx; // Protects the pose
     Affine pose_;
 
+    Preview preview_;
     std::unique_ptr<cv_video_widget> videoWidget;
     std::unique_ptr<QHBoxLayout> layout;
 };
@@ -232,8 +262,9 @@ private:
     QTimer calib_timer;
     TranslationCalibrator trans_calib;
     QMutex calibrator_mutex;
-
+    QTimer tracker_status_poll_timer;
     neuralnet_tracker* tracker = nullptr;
+    
 
 private Q_SLOTS:
     void doOK();
@@ -242,6 +273,7 @@ private Q_SLOTS:
     void update_camera_settings_state(const QString& name);
     void startstop_trans_calib(bool start);
     void trans_calib_step();
+    void status_poll();
 };
 
 

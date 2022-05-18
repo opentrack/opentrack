@@ -139,5 +139,13 @@ Don&apos;t roll or change position.</source>
         <source>Start calibration</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tracker Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>
