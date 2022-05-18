@@ -114,10 +114,18 @@ Don&apos;t roll or change position.</source>
     </message>
 </context>
 <context>
-    <name>neuralnet_tracker_ns::neuralnet_dialog</name>
+    <name>neuralnet_tracker_ns::NeuralNetDialog</name>
     <message>
         <source>Default</source>
         <translation type="unfinished">Standaard</translation>
+    </message>
+    <message>
+        <source>Tracker Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
@@ -137,14 +145,6 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Tracker Offline</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
