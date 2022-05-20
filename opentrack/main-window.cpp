@@ -24,9 +24,13 @@
 
 #include <QMessageBox>
 #include <QDesktopServices>
-#include <QDir>
 #include <QDesktopWidget>
 #include <QApplication>
+
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
+#include <QDateTime>
 
 extern "C" const char* const opentrack_version;
 
@@ -158,6 +162,7 @@ void main_window::init_dylibs()
 
 void main_window::init_profiles()
 {
+    copy_presets();
     refresh_profile_list();
     // implicitly created by `ini_directory()'
     if (ini_directory().isEmpty() || !QDir(ini_directory()).isReadable())
@@ -320,7 +325,7 @@ void main_window::create_empty_profile()
     QString name;
     if (profile_name_from_dialog(name))
     {
-        (void)maybe_create_profile(name);
+        (void)create_profile_from_preset(name);
         refresh_profile_list();
 
         if (profile_list.contains(name))
@@ -786,16 +791,24 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
     QSignalBlocker b(ui.iconcomboProfile);
 
     QString new_name = new_name_;
+    bool do_refresh = false;
 
     if (!profile_list.contains(new_name_))
     {
         new_name = QStringLiteral(OPENTRACK_DEFAULT_PROFILE);
         if (!profile_list.contains(new_name))
+        {
             migrate = false;
+            do_refresh = true;
+        }
     }
 
-    if (maybe_create_profile(new_name))
+    if (create_profile_from_preset(new_name))
         migrate = true;
+
+     if (do_refresh)
+         refresh_profile_list();
+     assert(profile_list.contains(new_name));
 
     const bool status = new_name != ini_filename();
 
@@ -1008,7 +1021,33 @@ void main_window::toggle_tracker_()
         start_tracker_();
 }
 
-bool main_window::maybe_create_profile(const QString& name)
+void main_window::copy_presets()
+{
+    const QString preset_dir = library_path + "/presets/";
+    const QDir dir{preset_dir};
+    if (!dir.exists())
+    {
+        qDebug() << "no preset dir";
+        return;
+    }
+    with_global_settings_object([&](QSettings& s) {
+      const QString& key = QStringLiteral("last-preset-copy-time");
+      const auto last_time = s.value(key, -1LL).toLongLong();
+      for (const auto& file : dir.entryInfoList({ "*.ini" }, QDir::Files, QDir::Name))
+      {
+          if (file.fileName() == QStringLiteral("default.ini"))
+              continue;
+          if (last_time < file.lastModified().toSecsSinceEpoch())
+          {
+              qDebug() << "copy preset" << file.fileName();
+              (void)QFile::copy(file.filePath(), ini_combine(file.fileName()));
+          }
+      }
+      s.setValue(key, QDateTime::currentSecsSinceEpoch());
+    });
+}
+
+bool main_window::create_profile_from_preset(const QString& name)
 {
     const QString dest = ini_combine(name);
 
