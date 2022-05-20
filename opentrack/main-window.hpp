@@ -118,13 +118,14 @@ public:
     void restart_tracker_();
     void toggle_tracker_();
 
-    [[nodiscard]] bool maybe_create_profile(const QString& name);
+    [[nodiscard]] bool create_profile_from_preset(const QString& name);
     void set_profile(const QString& new_name, bool migrate = true);
     void set_profile_in_registry(const QString& profile);
     void refresh_profile_list();
     void die_on_profile_not_writable();
     void maybe_start_profile_from_executable();
     [[nodiscard]] static bool profile_name_from_dialog(QString& ret);
+    void copy_presets();
 
     void create_empty_profile();
     void create_copied_profile();
