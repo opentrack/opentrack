@@ -45,6 +45,7 @@ void trackhat_camera::set_pt_options()
         s.t_MH_x = 0; s.t_MH_y = 0; s.t_MH_z = 0;
         break;
     case model_mystery_meat:
+        break;
     case model_clip_left:
     case model_mini_clip_left:
         s.t_MH_x = -135; s.t_MH_y = 0; s.t_MH_z = 0;
@@ -63,13 +64,16 @@ void trackhat_camera::set_pt_options()
     case model_clip_left:
     case model_clip_right:
         s.clip_tz = 27; s.clip_ty = 43; s.clip_by = 62; s.clip_bz = 74;
+        s.active_model_panel = 0;
         break;
     case model_mini_clip_left:
     case model_mini_clip_right:
         s.clip_tz = 13; s.clip_ty = 42; s.clip_by = 60; s.clip_bz = 38;
+        s.active_model_panel = 0;
         break;
     case model_cap:
         s.cap_x = 60; s.cap_y = 90; s.cap_z = 95;
+        s.active_model_panel = 1;
         break;
     case model_mystery_meat:
         break;
@@ -80,7 +84,6 @@ void trackhat_camera::set_pt_options()
 
     s.camera_name = QStringLiteral("TrackHat Sensor (WIP)");
 
-    s.active_model_panel = t.model == model_cap ? 1 : 0;
     s.enable_point_filter = t.enable_point_filter;
     s.point_filter_coefficient = *t.point_filter_coefficient;
     s.point_filter_limit = *t.point_filter_limit;
