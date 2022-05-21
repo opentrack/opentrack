@@ -273,7 +273,7 @@ quat world_to_image(quat q)
     return image_to_world(q);
 }
 
-
+// Intersection over union. A value between 0 and 1 which measures the match between the bounding boxes.
 template<class T>
 T iou(const cv::Rect_<T> &a, const cv::Rect_<T> &b)
 {
@@ -611,19 +611,33 @@ bool NeuralNetTracker::detect()
             inference_time_ = inference_time;
     } };
 
-    // Note: BGR colors!
+    // If there is no past ROI from the localizer or if the match of its output
+    // with the current ROI is too poor we have to run it again. This causes a
+    // latency spike of maybe an additional 50%. But it only occurs when the user
+    // moves his head far enough - or when the tracking ist lost ...
     if (!last_localizer_roi_ || !last_roi_ ||
         iou(*last_localizer_roi_,*last_roi_)<0.25)
     {
         auto [p, rect] = localizer_->run(grayscale_);
         inference_time += localizer_->last_inference_time_millis();
-        if (p > 0.5 || rect.height < 5 || rect.width < 5)
+        
+        if (last_roi_ && iou(rect,*last_roi_)>=0.25 && p > 0.5)
         {
+            // The new ROI matches the result from tracking, so the user is
+            // still there and to not disturb recurrent models, we only update
+            // ...
+            last_localizer_roi_ = rect;
+        }
+        else if (p > 0.5 && rect.height > 32 && rect.width > 32)
+        {
+            // Tracking probably got lost since the ROI's don't match, but the
+            // localizer still finds a face, so we use the ROI from the localizer
             last_localizer_roi_ = rect;
             last_roi_ = rect;
         }
         else
         {
+            // Tracking lost and no localization result. The user probably can't be seen.
             last_roi_.reset();
             last_localizer_roi_.reset();
         }
