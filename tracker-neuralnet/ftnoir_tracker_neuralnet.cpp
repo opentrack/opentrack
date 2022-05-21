@@ -394,8 +394,8 @@ PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&_se
 
     const cv::Size input_image_shape = get_input_image_shape(session_);
 
-    scaled_frame_ = cv::Mat(input_image_shape, CV_8U);
-    input_mat_ = cv::Mat(input_image_shape, CV_32F); 
+    scaled_frame_ = cv::Mat(input_image_shape, CV_8U, cv::Scalar(0));
+    input_mat_ = cv::Mat(input_image_shape, CV_32F, cv::Scalar(0.f));
 
     {
         const std::int64_t input_shape[4] = { 1, 1, input_image_shape.height, input_image_shape.width };
@@ -587,12 +587,10 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
 
 cv::Mat PoseEstimator::last_network_input() const
 {
+    assert(!input_mat_.empty());
     cv::Mat ret;
-    if (!input_mat_.empty())
-    {
-        input_mat_.convertTo(ret, CV_8U, 255., 127.);
-        cv::cvtColor(ret, ret, cv::COLOR_GRAY2RGB);
-    }
+    input_mat_.convertTo(ret, CV_8U, 255., 127.);
+    cv::cvtColor(ret, ret, cv::COLOR_GRAY2RGB);
     return ret;
 }
 
