@@ -44,6 +44,7 @@ void wine::pose(const double *headpose, const double*)
 #ifndef OTR_WINE_NO_WRAPPER
         if (shm->gameid != gameid)
         {
+            qDebug() << "proto/wine: looking up gameData";
             QString gamename;
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
@@ -51,6 +52,9 @@ void wine::pose(const double *headpose, const double*)
             CSV::getGameData(shm->gameid, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
+        }
+        else {
+            //qDebug() << "proto/wine: not looking up gameData";
         }
 #endif
         lck_shm.unlock();
@@ -63,6 +67,13 @@ module_status wine::initialize()
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
     QString wine_path = "wine";
+    if (!s.wine_path->isEmpty())
+            wine_path = s.wine_path;
+    if (wine_path[0] == '~')
+            wine_path = qgetenv("HOME") + wine_path.mid(1);
+
+    qDebug() << "proto/wine: wine_path:" << wine_path;
+
     auto env = QProcessEnvironment::systemEnvironment();
 
     if (s.variant_proton)
@@ -90,6 +101,8 @@ module_status wine::initialize()
 
         if (wineprefix[0] != '/')
             return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
+
+        qDebug() << "proto/wine: wineprefix:" << wineprefix;
 
         env.insert("WINEPREFIX", wineprefix);
     }

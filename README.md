@@ -1,3 +1,26 @@
+# This Fork
+
+This is a fork of the open source project [opentrack](https://github.com/opentrack/opentrack) aiming to improve compatibility with the game [Star Citizen](https://robertsspaceindustries.com/) on Linux.
+
+## Changes:
+ - The ability to select your own wine exectuable for the wine output module since SC players might change runners and are not using system wine but lutris instead.
+ - Enabled to build the wine output module by default with CMake which is required to use headtracking in SC.
+
+## Installation:
+ 1. Clone this repository: `git clone https://github.com/Priton-CE/opentrack-StarCitizen.git`
+ 2. Create a build directory: `mkdir build`
+ 3. Move into the directory: `cd build`
+ 4. Run CMake: `cmake ..`
+ 5. Build opentrack: `make`
+ 6. Install opentrack to the install directory: `make install`
+ (you can find opentrack in `install/bin/opentrack` and the updated modules in `install/libexec/opentrack/`)
+
+Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos) for further deatils about the game on Linux.
+
+# opentrack README
+
+The rest of the opentrack README.md file:
+
 ## Intro
 
 [<img src="https://ci.appveyor.com/api/projects/status/n0j9h38jnif5qbe9/branch/unstable?svg=true"/>](https://ci.appveyor.com/project/sthalik/opentrack/branch/unstable)

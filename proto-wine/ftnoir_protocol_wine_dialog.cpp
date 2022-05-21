@@ -30,6 +30,7 @@ FTControls::FTControls()
     tie_setting(s.esync, ui.esync);
     tie_setting(s.fsync, ui.fsync);
     tie_setting(s.proton_appid, ui.proton_appid);
+    tie_setting(s.wine_path, ui.wine_path);
     tie_setting(s.wineprefix, ui.wineprefix);
     tie_setting(s.protocol, ui.protocol_selection);
 

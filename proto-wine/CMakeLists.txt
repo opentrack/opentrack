@@ -1,5 +1,5 @@
 if(NOT WIN32)
-    set(SDK_WINE "" CACHE BOOL "Build for Wine")
+    set(SDK_WINE TRUE CACHE BOOL "Build for Wine")
     set(no-wrapper FALSE)
     if(NOT SDK_WINE AND SDK_XPLANE)
         set(no-wrapper TRUE)

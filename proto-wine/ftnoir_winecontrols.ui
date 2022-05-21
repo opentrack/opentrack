@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
+    <width>779</width>
     <height>424</height>
    </rect>
   </property>
@@ -42,11 +42,40 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Wine (system)</string>
+         <string>Wine (select exectuable)</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="1" alignment="Qt::AlignRight">
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="variant_proton">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Proton (Steam Play)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="wineprefix">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>286</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2" alignment="Qt::AlignRight">
        <widget class="QComboBox" name="proton_version">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -63,7 +92,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="wineprefix">
+       <widget class="QLineEdit" name="wine_path">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -75,19 +104,6 @@
           <width>286</width>
           <height>0</height>
          </size>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QRadioButton" name="variant_proton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Proton (Steam Play)</string>
         </property>
        </widget>
       </item>
