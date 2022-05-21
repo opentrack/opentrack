@@ -12,10 +12,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Wine (system)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Advanced</source>
         <translation type="unfinished"></translation>
     </message>
@@ -53,6 +49,10 @@
     </message>
     <message>
         <source>Both</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine (select path and prefix)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

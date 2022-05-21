@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>779</width>
+    <width>917</width>
     <height>424</height>
    </rect>
   </property>
@@ -42,7 +42,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Wine (select exectuable)</string>
+         <string>Wine (select path and prefix)</string>
         </property>
        </widget>
       </item>
@@ -101,7 +101,7 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>286</width>
+          <width>400</width>
           <height>0</height>
          </size>
         </property>
