@@ -13,6 +13,33 @@
     </message>
 </context>
 <context>
+    <name>UpdateDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Software update released</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Current version:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>TextLabel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Released version:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Don&apos;t remind me again about this version</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>main_window</name>
     <message>
         <source>Profile</source>
