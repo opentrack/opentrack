@@ -87,48 +87,12 @@ Exiting now.</source>
         <translation> :: </translation>
     </message>
     <message>
-        <source>Raw tracker data</source>
-        <translation>Исходные данные</translation>
-    </message>
-    <message>
-        <source>Z</source>
-        <translation>Z</translation>
-    </message>
-    <message>
-        <source>Pitch</source>
-        <translation>Pitch</translation>
-    </message>
-    <message>
-        <source>Y</source>
-        <translation>Y</translation>
-    </message>
-    <message>
-        <source>X</source>
-        <translation>X</translation>
-    </message>
-    <message>
-        <source>Roll</source>
-        <translation>Roll</translation>
-    </message>
-    <message>
-        <source>Yaw</source>
-        <translation>Yaw</translation>
-    </message>
-    <message>
-        <source>Game data</source>
-        <translation>Игровые данные</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>Профиль</translation>
     </message>
     <message>
         <source>Mapping</source>
         <translation> Кривые</translation>
-    </message>
-    <message>
-        <source>Tracking</source>
-        <translation>Статус работы трекера</translation>
     </message>
     <message>
         <source>Start</source>
@@ -139,20 +103,12 @@ Exiting now.</source>
         <translation>Остановить</translation>
     </message>
     <message>
-        <source>Input</source>
-        <translation>Источник данных</translation>
-    </message>
-    <message>
         <source>🔨</source>
         <translation></translation>
     </message>
     <message>
         <source>Output</source>
         <translation>Выходной интерфейс</translation>
-    </message>
-    <message>
-        <source>Filter</source>
-        <translation>Фильтрация/сглаживание</translation>
     </message>
     <message>
         <source>Running as root is bad</source>

@@ -15,38 +15,6 @@
 <context>
     <name>main_window</name>
     <message>
-        <source>Raw tracker data</source>
-        <translation>跟踪器原始数据</translation>
-    </message>
-    <message>
-        <source>Z</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Pitch</source>
-        <translation>仰俯</translation>
-    </message>
-    <message>
-        <source>Y</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>X</source>
-        <translation></translation>
-    </message>
-    <message>
-        <source>Roll</source>
-        <translation>横滚</translation>
-    </message>
-    <message>
-        <source>Yaw</source>
-        <translation>偏航</translation>
-    </message>
-    <message>
-        <source>Game data</source>
-        <translation>游戏得到的数据</translation>
-    </message>
-    <message>
         <source>Profile</source>
         <translation>配置文件</translation>
     </message>
@@ -59,10 +27,6 @@
         <translation>映射</translation>
     </message>
     <message>
-        <source>Tracking</source>
-        <translation>跟踪</translation>
-    </message>
-    <message>
         <source>Start</source>
         <translation>开始</translation>
     </message>
@@ -71,20 +35,12 @@
         <translation>停止</translation>
     </message>
     <message>
-        <source>Input</source>
-        <translation>输入</translation>
-    </message>
-    <message>
         <source>🔨</source>
         <translation></translation>
     </message>
     <message>
         <source>Output</source>
         <translation>输出</translation>
-    </message>
-    <message>
-        <source>Filter</source>
-        <translation>过滤器</translation>
     </message>
     <message>
         <source>Running as root is bad</source>
