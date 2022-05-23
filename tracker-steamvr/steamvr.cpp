@@ -216,9 +216,17 @@ module_status steamvr::start_tracker(QFrame*)
             err = tr("Can't find device with that serial");
 
         if (err.isEmpty())
-            return status_ok();
-        else
-            return error(err);
+        {
+            if (auto* c = vr::VRCompositor(); c != nullptr)
+            {
+                c->SetTrackingSpace(origin::TrackingUniverseSeated);
+                return status_ok();
+            }
+            else
+                return error("vr::VRCompositor == NULL");
+        }
+
+      return error(err);
     });
 }
 
@@ -253,8 +261,11 @@ bool steamvr::center()
         {
             if (v->GetTrackedDeviceClass(device_index) == vr::ETrackedDeviceClass::TrackedDeviceClass_HMD)
             {
-                // Reset yaw and position
-                v->ResetSeatedZeroPose();
+                auto* c = vr::VRChaperone();
+                if (!c)
+                    eval_once(qDebug() << "vr::VRChaperone == NULL");
+                else
+                    c->ResetZeroPose(origin::TrackingUniverseSeated);
 
                 // Use chaperone universe real world up instead of opentrack's initial pose centering
                 // Note: Controllers will be centered based on initial headset position.
