@@ -3,10 +3,13 @@
 This is a fork of the open source project [opentrack](https://github.com/opentrack/opentrack) aiming to improve compatibility with the game [Star Citizen](https://robertsspaceindustries.com/) on Linux.
 
 ## Changes:
+
  - The ability to select your own wine exectuable for the wine output module since SC players might change runners and are not using system wine but lutris instead.
  - Enabled to build the wine output module by default with CMake which is required to use headtracking in SC.
+ - Fixed a crucial issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key was cleared. (See proto-wine/opentrack-wrapper-wine-main.cxx)
 
 ## Installation:
+
  1. Clone this repository: `git clone https://github.com/Priton-CE/opentrack-StarCitizen.git`
  2. Create a build directory: `mkdir build`
  3. Move into the directory: `cd build`
@@ -16,6 +19,11 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
  (you can find opentrack in `install/bin/opentrack` and the updated modules in `install/libexec/opentrack/`)
 
 Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos) for further deatils about the game on Linux.
+
+## Known Issues:
+
+I should have fixed all issues with Star Citizen and Opentrack I found using both myself.
+If you still have issues with Star Citizen not starting or using TrackIR correctly check the registry `Software/Freetrack/FreeTrackClient` for the key `Path` and make sure it's value is nothing or open an issue on GitHub.
 
 # opentrack README
 
