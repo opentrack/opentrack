@@ -67,5 +67,6 @@ void create_registry_key(void)
     }
 
     write_path("Software\\NaturalPoint\\NATURALPOINT\\NPClient Location", "Path", use_npclient);
-    write_path("Software\\Freetrack\\FreeTrackClient", "Path", use_freetrack);
+    //write_path("Software\\Freetrack\\FreeTrackClient", "Path", use_freetrack); DO NOT! This causes issues. The Key "Path" recieves the value "Z:/usr/bin/../libexec/opentrack/" which is outside of the bottle. My theory is that Star Citizen is trying to load that client path and breaks down since it cannot reach that path. (Adding that key while the game is running has no influence, but it does on a restart.)
+    write_path("Software\\Freetrack\\FreeTrackClient", "Path", false); // clear this in case the normal opentrack client has been used.
 }

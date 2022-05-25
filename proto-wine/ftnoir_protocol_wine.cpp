@@ -54,7 +54,7 @@ void wine::pose(const double *headpose, const double*)
             connected_game = gamename;
         }
         else {
-            //qDebug() << "proto/wine: not looking up gameData";
+            //qDebug() << "proto/wine: not looking up gameData. name: " << connected_game << " ID: " << shm->gameid << " ID2:" << shm->gameid2;
         }
 #endif
         lck_shm.unlock();
@@ -123,6 +123,11 @@ module_status wine::initialize()
     {
         shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
+
+        qDebug() << "proto/wine: shm success";
+    }
+    else {
+        qDebug() << "proto/wine: shm no success";
     }
 
     if (lck_shm.success())

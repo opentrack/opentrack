@@ -58,7 +58,7 @@ int main(void)
     WineSHM* shm_posix = (WineSHM*) lck_posix.ptr();
     FTHeap* shm_wine = (FTHeap*) lck_wine.ptr();
     FTData* data = &shm_wine->data;
-    create_registry_key();
+    create_registry_key(); // FORK: EDIT FOR SC. FreeTrack Key has been removed. See function for details.
     while (1) {
         if (shm_posix->stop)
             break;
