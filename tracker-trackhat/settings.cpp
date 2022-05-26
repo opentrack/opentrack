@@ -7,14 +7,6 @@ namespace trackhat_impl {
 trackhat_settings::trackhat_settings() : opts{"tracker-trackhat"}
 {
 }
-int trackhat_settings::effective_exposure() const
-{
-    return std::clamp((int)*exposure, min_exposure, max_exposure);
-}
-int trackhat_settings::effective_gain() const
-{
-    return min_gain + std::clamp((int)*exposure - max_exposure, 0, max_gain - min_gain);
-}
 
 void setting_receiver::settings_changed()
 {
@@ -92,12 +84,12 @@ void trackhat_camera::set_pt_options()
 
 bool trackhat_camera::init_regs()
 {
-    auto exp    = (uint8_t)t.effective_exposure();
+    auto exp    = (uint8_t)t.exposure;
     auto exp2   = (uint8_t)(exp == 0xff ? 0xf0 : 0xff);
     auto thres  = (uint8_t)0xfe;
     auto thres2 = (uint8_t)3;
 
-    auto gain   = (uint8_t)t.effective_gain();
+    auto gain   = (uint8_t)t.gain;
     auto gain_c = (uint8_t)(gain/0x10);
     gain %= 0x10; gain_c %= 4;
 
