@@ -74,7 +74,7 @@ void trackhat_camera::set_pt_options()
     s.dynamic_pose = t.model == model_cap;
     s.init_phase_timeout = 500;
 
-    s.camera_name = QStringLiteral("TrackHat Sensor (WIP)");
+    s.camera_name = QStringLiteral("TrackHat Sensor");
 
     s.enable_point_filter = t.enable_point_filter;
     s.point_filter_coefficient = *t.point_filter_coefficient;
