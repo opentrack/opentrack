@@ -64,12 +64,68 @@ Don&apos;t roll or change position.</source>
         <source>MJPEG</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tuning / Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ROI Smoothing Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ROI Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Thread Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Resolution</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Field of view. Needed to transform the pose to world coordinates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Requested video frame rate. Actual setting may not be supported by the camera.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The requested resolution for cases where the camera delivers maximum frame rate only for a particular resolution. The image may still be downscaled to the internal resolution.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of threads. Can be used to balance the CPU load between the game and the tracker.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show the image patch that the pose estimation model sees.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Amount of smoothing of the face region coordinates. Can help stabilize the pose.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
-    <name>neuralnet_tracker_ns::neuralnet_dialog</name>
+    <name>neuralnet_tracker_ns::NeuralNetDialog</name>
     <message>
         <source>Default</source>
         <translation type="unfinished">Standaard</translation>
+    </message>
+    <message>
+        <source>Tracker Offline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
