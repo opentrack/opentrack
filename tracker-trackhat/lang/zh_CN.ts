@@ -123,6 +123,10 @@
         <source>Deadzone</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Gain</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>trackhat_module</name>

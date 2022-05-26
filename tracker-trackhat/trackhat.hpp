@@ -30,13 +30,12 @@ TH_ErrorCode log_error(TH_ErrorCode error, const char* source, const char* file,
 
 struct trackhat_settings : opts
 {
-    static constexpr int min_gain = 16, max_gain = 47,
+    static constexpr int min_gain = 1, max_gain = 47,
                          min_exposure = 0x10, max_exposure = 0xff;
     static constexpr int num_exposure_steps = max_gain + max_exposure - min_gain - min_exposure;
-    int effective_exposure() const;
-    int effective_gain() const;
     trackhat_settings();
-    value<slider_value> exposure{b, "exposure", {min_exposure, min_exposure, max_exposure + max_gain - min_gain}};
+    value<slider_value> exposure{b, "exposure", {min_exposure + max_exposure*2/3, min_exposure, max_exposure}};
+    value<slider_value> gain{b, "gain", {min_gain + max_gain*2/3, min_gain, max_gain}};
     //value<slider_value> threshold{b, "threshold", {0x97, 64, 0xfe}};
     value<model_type> model{b, "model", model_mini_clip_left};
     value<double> min_pt_size{b, "min-point-size", 10};
