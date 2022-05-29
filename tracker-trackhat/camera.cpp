@@ -1,5 +1,6 @@
 #include "trackhat.hpp"
 #include "compat/sleep.hpp"
+#include <algorithm>
 #include <cstdio>
 
 namespace trackhat_impl {
@@ -83,6 +84,15 @@ pt_camera::result trackhat_camera::get_frame(pt_frame& frame_)
             goto error;
         auto& frame = *frame_.as<trackhat_frame>();
         frame.init_points(points, t.min_pt_size, t.max_pt_size);
+
+        using trackhat_impl::led_state;
+        int count =
+            std::count_if(frame.points.cbegin(), frame.points.cend(),
+                          [](const point& pt) { return pt.ok; });
+        led.update(&*device, *t.led,
+                   count == 3
+                   ? led_state::tracking
+                   : led_state::not_tracking);
     }
 
     return {true, get_desired()};
@@ -117,10 +127,14 @@ bool trackhat_camera::start(const pt_settings&)
 
     set_pt_options();
 
+    led.update(&*device, *t.led, trackhat_impl::led_state::stopped);
+
     return true;
 }
 
 void trackhat_camera::stop()
 {
+    if (device)
+        led.update(&*device, *t.led, trackhat_impl::led_state::stopped);
     device.disconnect();
 }

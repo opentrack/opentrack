@@ -127,6 +127,22 @@
         <source>Gain</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>LED</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Constant</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dynamic</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>trackhat_module</name>
