@@ -82,6 +82,15 @@ trackhat_dialog::trackhat_dialog()
     connect(&t.point_filter_deadzone, value_::value_changed<slider_value>(), ui.point_filter_deadzone_label,
         [this] { ui.point_filter_deadzone_label->setValue(*t.point_filter_deadzone); }, Qt::QueuedConnection);
 
+    // led
+
+    using trackhat_impl::led_mode;
+    ui.led_mode->setItemData(0, (int)led_mode::off);
+    ui.led_mode->setItemData(1, (int)led_mode::constant);
+    ui.led_mode->setItemData(2, (int)led_mode::dynamic);
+
+    tie_setting(t.led, ui.led_mode);
+
     // stuff
 
     connect(&poll_timer, &QTimer::timeout, this, &trackhat_dialog::poll_tracker_info);
