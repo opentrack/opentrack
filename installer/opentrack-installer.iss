@@ -3,7 +3,7 @@
 
 #include "../build/opentrack-version.hxx"
 #define MyAppName "TrackHat opentrack"
-#define MyAppVersion "trackhat-opentrack-2.1"
+#define MyAppVersion "trackhat-opentrack-2.2"
 #define MyAppPublisher "opentrack"
 #define MyAppURL "http://github.com/opentrack/opentrack"
 #define MyAppExeName "opentrack.exe"
