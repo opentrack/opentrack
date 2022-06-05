@@ -263,13 +263,17 @@ bool steamvr::center()
             {
                 auto* c = vr::VRChaperone();
                 if (!c)
+                {
                     eval_once(qDebug() << "vr::VRChaperone == NULL");
+                    return false;
+                }
                 else
+                {
                     c->ResetZeroPose(origin::TrackingUniverseSeated);
-
-                // Use chaperone universe real world up instead of opentrack's initial pose centering
-                // Note: Controllers will be centered based on initial headset position.
-                return true;
+                    // Use chaperone universe real world up instead of opentrack's initial pose centering
+                    // Note: Controllers will be centered based on initial headset position.
+                    return true;
+                }
             }
             else
                 // with controllers, resetting the seated pose does nothing
