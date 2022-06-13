@@ -21,7 +21,7 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
 Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos) for further deatils about the game on Linux.
 
 ## Known Issues:
-There is still something that screws with installation. You have to run a windows opentrack instance in the same prefix/bottle as SC (and with the same runner and sync settings) before or after using this fork.
+There is still something that screws with initialisation. You have to run a windows opentrack instance in the same prefix/bottle as SC (and with the same runner and sync settings) before or after using this fork.
 
 I should have fixed all issues with Star Citizen and Opentrack I found using both myself.
 If you still have issues with Star Citizen not starting or using TrackIR correctly check the registry `Software/Freetrack/FreeTrackClient` for the key `Path` and make sure it's value is nothing or open an issue on GitHub.
