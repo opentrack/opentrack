@@ -264,7 +264,7 @@ bool steamvr::center()
                 auto* c = vr::VRChaperone();
                 if (!c)
                 {
-                    eval_once(qDebug() << "vr::VRChaperone == NULL");
+                    eval_once(qDebug() << "steamvr: vr::VRChaperone == NULL");
                     return false;
                 }
                 else
