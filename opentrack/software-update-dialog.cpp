@@ -1,4 +1,5 @@
 #include "software-update-dialog.hpp"
+#include "opentrack-org.hxx"
 
 update_dialog::update_dialog(QWidget* parent, update_query& q, const QString& new_version)
     : QDialog(parent), q(q)
