@@ -103,10 +103,12 @@ bool trackhat_camera::init_regs()
             { 0x0c, 0x0c, gain_c },  // gain multiplier
             { 0x0c, 0x47, thres  },  // min brightness
             { 0x00, 0x0f, thres2 },  // brightness margin, formula is `thres >= px > thres - fuzz'
+            { 0x0c, 0x60, 0xff   },  // scale resolution lo
+            { 0x0c, 0x61, 0x0f   },  // scale resolution hi
             { 0x00, 0x01, 0x01   },  // bank0 sync
             { 0x01, 0x01, 0x01   },  // bank1 sync
         },
-        10
+        12,
     };
 
     Timer t;
