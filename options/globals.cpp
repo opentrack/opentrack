@@ -1,6 +1,7 @@
 #include "globals.hpp"
 #include "compat/base-path.hpp"
 #include "defs.hpp"
+#include "opentrack-org.hxx"
 
 #include <QFile>
 #include <QFileInfo>
