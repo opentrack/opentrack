@@ -1,6 +1,3 @@
-./cleye.config
-./doc/3rdparty-notices/ps3eyedriver
-./doc/3rdparty-notices/EIGEN-COPYING.txt
 ./doc/3rdparty-notices/FACETRACKNOIR-COPYING.txt
 ./doc/3rdparty-notices/NFAILCLIENT-CREDIT.txt
 ./doc/3rdparty-notices/OPENCV-COPYING.txt
@@ -12,23 +9,13 @@
 ./doc/README.md
 ./doc/settings/facetracknoir supported games.csv
 ./doc/WARRANTY.txt
-#./i18n/nl_NL.qm
-#./i18n/ru_RU.qm
-#./i18n/stub.qm
-#./i18n/zh_CN.qm
-./modules/cleye.config
 ./modules/freetrackclient.dll
 ./modules/freetrackclient64.dll
 ./modules/NPClient.dll
 ./modules/NPClient64.dll
 ./modules/opencv_core455.dll
-#./modules/opencv_imgcodecs455.dll
 ./modules/opencv_imgproc455.dll
-#./modules/opencv_videoio455.dll
 ./modules/opentrack-filter-accela.dll
-./modules/opentrack-filter-ewma.dll
-./modules/opentrack-filter-hamilton.dll
-./modules/opentrack-filter-kalman.dll
 ./modules/opentrack-proto-fgfs.dll
 ./modules/opentrack-proto-freetrack.dll
 ./modules/opentrack-proto-fsuipc.dll
@@ -36,13 +23,7 @@
 ./modules/opentrack-proto-udp.dll
 ./modules/opentrack-proto-vjoy.dll
 ./modules/opentrack-proto-win32-mouse.dll
-./modules/opentrack-tracker-pt.dll
-./modules/opentrack-tracker-test.dll
 ./modules/opentrack-tracker-trackhat.dll
-./modules/opentrack-tracker-udp.dll
-./modules/opentrack-video-opencv.dll
-#./modules/opentrack-video-ps3eye.dll
-./modules/ps3eye-subprocess.exe
 ./modules/TrackIR.exe
 ./modules/vJoyInterface.dll
 ./opentrack-api.dll
