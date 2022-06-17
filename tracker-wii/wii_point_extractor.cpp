@@ -50,16 +50,13 @@ void WIIPointExtractor::draw_point(cv::Mat& preview_frame, const vec2& p, const 
 		thickness);
 };
 
-bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_info& wii, std::vector<vec2>& points)
+void WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_info& wii)
 {
 	constexpr int W = 1024;
 	constexpr int H = 768;
-	points.reserve(4);
-	points.clear();
 
-	for (unsigned index = 0; index < 4; index++) // NOLINT(modernize-loop-convert)
+	for (const wii_info_points& dot : wii.Points)
 	{
-		const struct wii_info_points &dot = wii.Points[index];
 		if (dot.bvis) {
 			//qDebug() << "wii:" << dot.RawX << "+" << dot.RawY;
 			//anti-clockwise rotate the 2D point
@@ -70,14 +67,9 @@ bool WIIPointExtractor::draw_points(cv::Mat& preview_frame, const struct wii_inf
 			//vec2 dt((2.0f*RX - W) / W, -(2.0f*RY - H ) / W);
 			vec2 dt;
 			std::tie(dt[0], dt[1]) = to_screen_pos(RX, RY, W, H);
-
-			points.push_back(dt);
             draw_point(preview_frame, dt, cv::Scalar(0, 255, 0), std::clamp(dot.isize, 1, 32));
 		}
 	}
-	const bool success = points.size() >= PointModel::N_POINTS;
-
-	return success;
 }
 
 void WIIPointExtractor::draw_bg(cv::Mat& preview_frame, const struct wii_info& wii)
@@ -108,10 +100,38 @@ void WIIPointExtractor::extract_points(const pt_frame& frame_,
 	const struct wii_info& wii = frame_.as_const<WIIFrame>()->wii;
 	cv::Mat& preview_frame = *preview_frame_.as<WIIPreview>();
 
+    map_points(wii, points);
     if (preview_visible && wii.status == wii_cam_data_change)
     {
         draw_bg(preview_frame, wii);
-        draw_points(preview_frame, wii, points);
+        draw_points(preview_frame, wii);
     }
 }
 
+bool WIIPointExtractor::map_points(const struct wii_info& wii, std::vector<vec2>& points)
+{
+    constexpr int W = 1024;
+    constexpr int H = 768;
+    points.reserve(4);
+    points.clear();
+
+    for (unsigned index = 0; index < 4; index++) // NOLINT(modernize-loop-convert)
+    {
+        const struct wii_info_points &dot = wii.Points[index];
+        if (dot.bvis) {
+            //qDebug() << "wii:" << dot.RawX << "+" << dot.RawY;
+            //anti-clockwise rotate the 2D point
+            const float RX = W - dot.ux;
+            const float RY = H - dot.uy;
+            //vec2 dt((dot.RawX - W / 2.0f) / W, -(dot.RawY - H / 2.0f) / W);
+            //vec2 dt((RX - W / 2.0f) / W, -(RY - H / 2.0f) / W);
+            //vec2 dt((2.0f*RX - W) / W, -(2.0f*RY - H ) / W);
+            vec2 dt;
+            std::tie(dt[0], dt[1]) = to_screen_pos(RX, RY, W, H);
+
+            points.push_back(dt);
+        }
+    }
+
+    return points.size() >= PointModel::N_POINTS;
+}
