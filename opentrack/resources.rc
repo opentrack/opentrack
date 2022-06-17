@@ -1,2 +1,2 @@
 #include <windows.h>
-IDI_ICON1               ICON                    "opentrack.ico"
+IDI_ICON1               ICON                    "trackhat.ico"
