@@ -33,8 +33,7 @@ WIICamera::WIICamera(const QString& module_name) : s { module_name }
 
 WIICamera::~WIICamera()
 {
-    // XXX why is this commented out? -sh 20190414
-    //stop();
+	stop();
 }
 
 QString WIICamera::get_desired_name() const
