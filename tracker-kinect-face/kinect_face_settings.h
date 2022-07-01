@@ -8,7 +8,6 @@
 
 #pragma once
 #include "ui_kinect_face_settings.h"
-#include "compat/macros.hpp"
 #include "api/plugin-api.hpp"
 
 class KinectFaceSettings : public ITrackerDialog

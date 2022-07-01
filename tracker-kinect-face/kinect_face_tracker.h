@@ -12,7 +12,6 @@
 
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
-#include "compat/macros.hpp"
 #include "video/video-widget.hpp"
 
 // Kinect Header files

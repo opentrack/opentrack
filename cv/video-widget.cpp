@@ -1,5 +1,5 @@
 #include "video-widget.hpp"
-#include "compat/macros1.h"
+#include "compat/macros.h"
 #include <opencv2/imgproc.hpp>
 
 void cv_video_widget::update_image(const cv::Mat& frame)

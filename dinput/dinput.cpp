@@ -1,7 +1,7 @@
 #undef NDEBUG
 
 #include "dinput.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 
 #include <cassert>
 #include <cstdlib>

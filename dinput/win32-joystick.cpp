@@ -1,7 +1,7 @@
 #ifdef _WIN32
 
 #include "win32-joystick.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 
 #include <cstddef>
 #include <algorithm>

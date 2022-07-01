@@ -1,7 +1,7 @@
 #pragma once
 
 #include "export.hpp"
-#include "macros1.h"
+#include "macros.h"
 
 class QWidget;
 

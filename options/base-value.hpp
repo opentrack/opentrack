@@ -6,7 +6,6 @@
 #include "metatype.hpp"
 
 #include "export.hpp"
-#include "compat/macros.hpp"
 #include "value-traits.hpp"
 
 #include <utility>

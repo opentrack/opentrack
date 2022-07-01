@@ -13,7 +13,7 @@
 #include "migration/migration.hpp"
 #include "compat/check-visible.hpp"
 #include "compat/sleep.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 #include "compat/library-path.hpp"
 #include "compat/math.hpp"
 #include "compat/sysexits.hpp"

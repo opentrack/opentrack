@@ -10,8 +10,6 @@
 #include "foohidjoystick.h"
 #include "iokitprotocoldialog.h"
 
-#include "compat/macros.hpp"
-
 #include <QDebug>
 
 IOKitProtocol::IOKitProtocol()

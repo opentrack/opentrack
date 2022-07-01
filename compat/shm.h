@@ -20,7 +20,7 @@
 #endif
 
 #include "export.hpp"
-#include "macros1.h"
+#include "macros.h"
 
 class OTR_COMPAT_EXPORT shm_wrapper final
 {
@@ -39,4 +39,6 @@ public:
     bool unlock();
     bool success();
     inline void* ptr() { return mem; }
+
+    OTR_DISABLE_MOVE_COPY(shm_wrapper);
 };

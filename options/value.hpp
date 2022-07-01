@@ -14,7 +14,6 @@
 #include "slider.hpp"
 #include "base-value.hpp"
 #include "value-traits.hpp"
-#include "compat/macros.hpp"
 
 #include <type_traits>
 #include <utility>

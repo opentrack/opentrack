@@ -1,7 +1,5 @@
 #pragma once
 
-#include "compat/macros.hpp"
-
 #include <type_traits>
 #include <cinttypes>
 #include <vector>

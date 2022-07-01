@@ -2,7 +2,6 @@
 #include "ui_test.h"
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
-#include "compat/macros.hpp"
 
 #include <cmath>
 

@@ -10,7 +10,7 @@ static bool visible = true;
 #if defined _WIN32
 
 #include "timer.hpp"
-#include "macros.hpp"
+#include "macros.h"
 
 static Timer timer;
 

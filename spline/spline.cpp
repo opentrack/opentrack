@@ -390,9 +390,9 @@ void spline::set_bundle(bundle b, const QString& axis_name, Axis axis)
         invalidate_settings_();
         S = s;
 
-        conn_points = s->points.connect_to(&*ctx, &spline::invalidate_settings(), Qt::DirectConnection);
-        conn_maxx   = s->opts.clamp_x_.connect_to(&*ctx, &spline::invalidate_settings, Qt::DirectConnection);
-        conn_maxy   = s->opts.clamp_y_.connect_to(&*ctx, &spline::invalidate_settings(), Qt::DirectConnection);
+        conn_points = s->points.connect_to(&*ctx, [this] { invalidate_settings(); }, Qt::DirectConnection);
+        conn_maxx   = s->opts.clamp_x_.connect_to(&*ctx, [this] { invalidate_settings(); }, Qt::DirectConnection);
+        conn_maxy   = s->opts.clamp_y_.connect_to(&*ctx, [this] { invalidate_settings(); }, Qt::DirectConnection);
     }
 
     emit S->recomputed();

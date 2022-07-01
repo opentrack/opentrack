@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../tracker-pt/pt-api.hpp"
-#include "compat/macros.hpp"
 #include "compat/timer.hpp"
 #include "options/options.hpp"
 
