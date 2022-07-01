@@ -265,8 +265,8 @@ dialog_kalman::dialog_kalman()
     tie_setting(s.noise_rot_slider_value, ui.noiseRotSlider);
     tie_setting(s.noise_pos_slider_value, ui.noisePosSlider);
 
-    connect(&s.noise_rot_slider_value, SIGNAL(valueChanged(const slider_value&)), this, SLOT(updateLabels(const slider_value&)));
-    connect(&s.noise_pos_slider_value, SIGNAL(valueChanged(const slider_value&)), this, SLOT(updateLabels(const slider_value&)));
+    s.noise_rot_slider_value.connect_to(this, &dialog_kalman::updateLabels);
+    s.noise_pos_slider_value.connect_to(this, &dialog_kalman::updateLabels);
 
     updateLabels(slider_value());
 }

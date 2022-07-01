@@ -57,9 +57,7 @@ trackhat_camera::trackhat_camera()
 
     for (auto* slider : { &t.exposure, &t.gain, /*&t.threshold,*/ })
     {
-        QObject::connect(slider, options::value_::value_changed<options::slider_value>(),
-                         &sig, &trackhat_impl::setting_receiver::settings_changed,
-                         Qt::DirectConnection);
+        slider->connect_to(&sig, &trackhat_impl::setting_receiver::settings_changed, Qt::DirectConnection);
     }
 }
 

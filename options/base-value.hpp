@@ -10,6 +10,7 @@
 #include "value-traits.hpp"
 
 #include <utility>
+#include <type_traits>
 
 #include <QObject>
 #include <QString>
@@ -26,20 +27,14 @@ class OTR_OPTIONS_EXPORT value_ : public QObject
 {
     Q_OBJECT
 
-    template<typename t> using cv_qualified = detail::cv_qualified<t>;
-    template<typename t>
-    using signal_sig = void(value_::*)(cv_qualified<t>) const;
+protected:
+    template<typename t> using signal_sig_ = void(value_::*)(detail::cv_qualified<detail::maybe_enum_type_t<t>>) const;
+    template<typename t> using slot_sig_ = void(value_::*)(detail::cv_qualified<detail::maybe_enum_type_t<t>>);
 
 public:
     QString name() const { return self_name; }
     value_(bundle const& b, const QString& name) noexcept;
     ~value_() override;
-
-    template<typename t>
-    static constexpr auto value_changed()
-    {
-        return static_cast<signal_sig<t>>(&value_::valueChanged);
-    }
 
     static const bool TRACE_NOTIFY;
 

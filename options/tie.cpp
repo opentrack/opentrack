@@ -8,7 +8,6 @@
 
 #include "tie.hpp"
 #include "compat/run-in-thread.hpp"
-#include "compat/macros.hpp"
 
 #include "value-traits.hpp"
 
@@ -20,16 +19,16 @@ void tie_setting(value<int>& v, QComboBox* cb)
 {
     cb->setCurrentIndex(v);
     v = cb->currentIndex();
-    value_::connect(cb, SIGNAL(currentIndexChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(int)), cb, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
+    v.connect_to(cb, &QComboBox::setCurrentIndex);
+    v.connect_from(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged));
 }
 
 void tie_setting(value<QString>& v, QComboBox* cb)
 {
     cb->setCurrentText(v);
     v = cb->currentText();
-    value_::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(const QString&)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(const QString&)), cb, SLOT(setCurrentText(const QString&)), v.SAFE_CONNTYPE);
+    v.connect_to(cb, &QComboBox::currentTextChanged);
+    v.connect_from(cb, &QComboBox::setCurrentText);
 }
 
 void tie_setting(value<QVariant>& v, QComboBox* cb)
@@ -57,60 +56,57 @@ void tie_setting(value<QVariant>& v, QComboBox* cb)
     else
         v = {};
 
-    value_::connect(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-                    &v, [cb, &v](int idx) { v = cb->itemData(idx); },
-                    v.DIRECT_CONNTYPE);
-    value_::connect(&v, value_::value_changed<QVariant>(),
-                    cb, [set_idx](const QVariant& var) { set_idx(var); },
-                    v.SAFE_CONNTYPE);
+    v.connect_from(cb, static_cast<void(QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
+                   [cb, &v](int idx) { v = cb->itemData(idx); });
+    v.connect_to(cb, [fn = std::move(set_idx)](const QVariant& var) { fn(var); });
 }
 
 void tie_setting(value<bool>& v, QRadioButton* cb)
 {
     cb->setChecked(v);
-    value_::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
+    v.connect_to(cb, &QRadioButton::setChecked);
+    v.connect_from(cb, &QRadioButton::toggled);
 }
 
 void tie_setting(value<bool>& v, QCheckBox* cb)
 {
     cb->setChecked(v);
-    value_::connect(cb, SIGNAL(toggled(bool)), &v, SLOT(setValue(bool)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(bool)), cb, SLOT(setChecked(bool)), v.SAFE_CONNTYPE);
+    v.connect_to(cb, &QCheckBox::setChecked);
+    v.connect_from(cb, &QCheckBox::toggled);
 }
 
 void tie_setting(value<double>& v, QDoubleSpinBox* dsb)
 {
     dsb->setValue(v);
-    value_::connect(dsb, SIGNAL(valueChanged(double)), &v, SLOT(setValue(double)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(double)), dsb, SLOT(setValue(double)), v.SAFE_CONNTYPE);
+    v.connect_to(dsb, &QDoubleSpinBox::setValue);
+    v.connect_from(dsb, static_cast<void(QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged));
 }
 
 void tie_setting(value<int>& v, QSpinBox* sb)
 {
     sb->setValue(v);
-    value_::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
+    v.connect_to(sb, &QSpinBox::setValue);
+    v.connect_from(sb, static_cast<void(QSpinBox::*)(int)>(&QSpinBox::valueChanged));
 }
 
 void tie_setting(value<QString>& v, QLineEdit* le)
 {
     le->setText(v);
-    value_::connect(le, SIGNAL(textChanged(QString)), &v, SLOT(setValue(QString)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, value_::value_changed<QString>(), le, &QLineEdit::setText, v.SAFE_CONNTYPE);
+    v.connect_to(le, &QLineEdit::setText);
+    v.connect_from(le, &QLineEdit::textChanged);
 }
 
 void tie_setting(value<QString>& v, QLabel* lb)
 {
     lb->setText(v);
-    value_::connect(&v, value_::value_changed<QString>(), lb, &QLabel::setText, v.SAFE_CONNTYPE);
+    v.connect_to(lb, &QLabel::setText);
 }
 
 void tie_setting(value<int>& v, QTabWidget* t)
 {
     t->setCurrentIndex(v);
-    value_::connect(t, SIGNAL(currentChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(int)), t, SLOT(setCurrentIndex(int)), v.SAFE_CONNTYPE);
+    v.connect_to(t, &QTabWidget::setCurrentIndex);
+    v.connect_from(t, &QTabWidget::currentChanged);
 }
 
 void tie_setting(value<slider_value>& v, QSlider* w)
@@ -123,32 +119,24 @@ void tie_setting(value<slider_value>& v, QSlider* w)
         v = v().update_from_slider(w->value(), q_min, q_max);
     }
 
-    value_::connect(w, &QSlider::valueChanged, &v, [=, &v](int pos)
-    {
-        run_in_thread_sync(w, [&]()
-        {
+    v.connect_from(w, &QSlider::valueChanged, [=, &v](int pos) {
+        run_in_thread_sync(w, [&]() {
             const int q_min = w->minimum();
             const int q_max = w->maximum();
             v = v().update_from_slider(pos, q_min, q_max);
             w->setValue(v().to_slider_pos(q_min, q_max));
         });
-    },
-    v.DIRECT_CONNTYPE);
+    }, v.DIRECT_CONNTYPE);
 
-    value_::connect(&v,
-                    value_::value_changed<slider_value>(),
-                    w,
-                    [=, &v](double) {
-        run_in_thread_sync(w, [=, &v]()
-        {
+    v.connect_to(w, [=, &v](double) {
+        run_in_thread_sync(w, [=, &v]() {
             const int q_min = w->minimum();
             const int q_max = w->maximum();
             const int pos = v->to_slider_pos(q_min, q_max);
             v = v->update_from_slider(pos, q_min, q_max);
             w->setValue(pos);
         });
-    },
-    v.DIRECT_CONNTYPE);
+    }, v.DIRECT_CONNTYPE);
 }
 
 } // ns options

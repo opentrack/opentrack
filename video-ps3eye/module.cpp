@@ -266,8 +266,9 @@ dialog::dialog(QWidget* parent) : QWidget(parent)
     tie_setting(s.gain, ui.gain_slider);
     ui.exposure_label->setValue((int)*s.exposure);
     ui.gain_label->setValue((int)*s.gain);
-    connect(&s.exposure, value_::value_changed<slider_value>(), this, [this](const slider_value&) { t.stop(); t.start(); });
-    connect(&s.gain, value_::value_changed<slider_value>(), this, [this](const slider_value&) { t.stop(); t.start(); });
+    s.exposure.connect_to(this, [this] { t.stop(); t.start(); });
+    s.gain.connect_to(this, [this] { t.stop(); t.start(); });
+
     connect(ui.exposure_slider, &QSlider::valueChanged, ui.exposure_label, &QSpinBox::setValue);
     connect(ui.gain_slider, &QSlider::valueChanged, ui.gain_label, &QSpinBox::setValue);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &dialog::do_ok);
