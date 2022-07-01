@@ -9,6 +9,11 @@
 #include <QString>
 
 namespace options::detail {
+template<typename t>
+using cv_qualified =
+    std::conditional_t<std::is_fundamental_v<std::remove_cvref_t<t>>,
+                       std::remove_cvref_t<t>,
+                       std::add_lvalue_reference_t<std::add_const_t<std::remove_cvref_t<t>>>>;
 
 template<typename t, typename u = t, typename Enable = void>
 struct default_value_traits

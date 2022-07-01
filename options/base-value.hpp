@@ -26,6 +26,7 @@ class OTR_OPTIONS_EXPORT value_ : public QObject
 {
     Q_OBJECT
 
+    template<typename t> using cv_qualified = detail::cv_qualified<t>;
     template<typename t>
     using signal_sig = void(value_::*)(cv_qualified<t>) const;
 

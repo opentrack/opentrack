@@ -15,11 +15,3 @@ namespace cxx20_compat {
 
 template<typename t>
 using remove_cvref_t = typename cxx20_compat::remove_cvref<t>::type;
-
-template<typename t>
-using to_const_ref_t = std::add_lvalue_reference_t<std::add_const_t<remove_cvref_t<t>>>;
-
-template<typename t>
-using cv_qualified = std::conditional_t<std::is_fundamental_v<remove_cvref_t<t>>,
-                                        remove_cvref_t<t>,
-                                        to_const_ref_t<t>>;
