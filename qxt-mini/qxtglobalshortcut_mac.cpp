@@ -54,8 +54,10 @@ OSStatus qxt_mac_handle_hot_key(EventHandlerCallRef nextHandler, EventRef event,
         EventHotKeyID keyID;
         GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(keyID), NULL, &keyID);
         Identifier id = keyIDs.key(keyID.id);
-        if(id != Identifier())
+        if(id != Identifier()) {
             QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first, true);
+            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first, false);
+        }
     }
     return noErr;
 }
