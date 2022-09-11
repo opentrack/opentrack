@@ -26,14 +26,25 @@ using namespace options::globals;
 
 namespace migrations::detail {
 
-static std::vector<mptr> migration_list;
-static std::vector<mfun> migration_thunks;
+
+std::vector<mptr>& migrator::migration_list()
+{
+    static std::vector<mptr> v;
+    return v;
+}
+
+std::vector<mfun>& migrator::migration_thunks()
+{
+    static std::vector<mfun> v;
+    return v;
+}
+
 
 void migrator::register_migration(mptr const& m)
 {
     const QString date = m->unique_date();
 
-    for (mptr const& m2 : migration_list)
+    for (mptr const& m2 : migration_list())
         if (m2->unique_date() == date)
             std::abort();
 
@@ -65,35 +76,35 @@ void migrator::register_migration(mptr const& m)
     if (day_ < 1 || day_ > 31)
         abort();
 
-    migration_list.push_back(m);
+    migration_list().push_back(m);
 }
 
 void migrator::eval_thunks()
 {
-    for (auto& fun : migration_thunks)
+    for (auto& fun : migration_thunks())
     {
         mptr m = fun();
         register_migration(m);
     }
-    if (!migration_thunks.empty())
+    if (!migration_thunks().empty())
         sort_migrations();
-    migration_thunks.clear();
+    migration_thunks().clear();
 }
 
 void migrator::add_migration_thunk(mfun& thunk)
 {
-    migration_thunks.push_back(thunk);
+    migration_thunks().push_back(thunk);
 }
 
 std::vector<mptr>& migrator::migrations()
 {
     eval_thunks();
-    return migration_list;
+    return migration_list();
 }
 
 void migrator::sort_migrations()
 {
-    std::sort(migration_list.begin(), migration_list.end(),
+    std::sort(migration_list().begin(), migration_list().end(),
               [](const mptr x, const mptr y) {
         return x->unique_date() < y->unique_date();
     });
