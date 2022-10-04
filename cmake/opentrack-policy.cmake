@@ -13,6 +13,7 @@ set(_policies
     CMP0012
     CMP0069
     CMP0063
+    CMP0074
 )
 foreach(k ${_policies})
     if(POLICY ${k})
