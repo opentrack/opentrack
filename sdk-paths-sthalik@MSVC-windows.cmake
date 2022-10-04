@@ -35,10 +35,10 @@ setq(SDK_VALVE_STEAMVR "steamvr")
 setq(SDK_VJOYSTICK "vjoystick")
 setq(ONNXRuntime_INCLUDE_DIR "onnxruntime-1.10.0//include")
 setq(ONNXRuntime_LIBRARY "onnxruntime-1.10.0/lib/onnxruntime.lib")
-setq(ONNXRuntime_RUNTIME "onnxruntime-1.10.0/lib/onnxruntime.dll")
+setq(ONNXRuntime_RUNTIME "onnxruntime-1.10.0/bin/onnxruntime.dll")
 setq(SDK_TRACKHAT_SENSOR "../trackhat/trackhat-c-library-driver/build/install")
 
-setq(Qt5_DIR "../qt-5.15.0kde0/lib/cmake/Qt5")
+setq(Qt5_DIR "../qt-5.15-kde/lib/cmake/Qt5")
 set(Qt5Core_DIR "${Qt5_DIR}Core" CACHE PATH "" FORCE)
 set(Qt5Gui_DIR "${Qt5_DIR}Gui" CACHE PATH "" FORCE)
 
