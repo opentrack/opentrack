@@ -9,8 +9,11 @@ Checks: '
 -llvmlibc-*,
 -objc-*,
 -bugprone-easily-swappable-parameters,
+bugprone-exception-escape,
+-bugprone-implicit-widening-of-multiplication-result,
 -bugprone-narrowing-conversions,
 -cert-*,
+llvm-namespace-comment,
 clang-analyzer-core.CallAndMessage,
 clang-analyzer-deadcode.DeadStores,
 -clang-diagnostic-nonportable-include-path,
@@ -69,6 +72,7 @@ modernize-use-equals-default,
 -performance-no-int-to-ptr,
 -readability-braces-around-statements,
 -readability-else-after-return,
+readability-function-cognitive-complexity,
 -readability-identifier-length,
 -readability-implicit-bool-conversion,
 -readability-inconsistent-declaration-parameter-name,
@@ -76,6 +80,7 @@ modernize-use-equals-default,
 -readability-magic-numbers,
 -readability-named-parameter,
 -readability-redundant-access-specifiers,
+-readability-simplify-boolean-expr,
 -readability-static-accessed-through-instance,
 -readability-uppercase-literal-suffix,
 '
@@ -103,5 +108,7 @@ CheckOptions:
     value:    '90'
   - key:      readability-function-size.VariableThreshold
     value:    '10'
+  - key:      readability-function-cognitive-complexity.IgnoreMacros
+    value:    '1'
 
 # vim: ft=yaml
