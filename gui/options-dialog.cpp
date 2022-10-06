@@ -167,8 +167,13 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     {
         tmp val = val_;
         val.label->setText(kopts_to_string(val.opt));
-        val.opt.keycode.connect_to(val.label, [=] { val.label->setText(kopts_to_string(val.opt)); }, Qt::DirectConnection);
-        connect(val.button, &QPushButton::clicked, this, [=] { bind_key(val.opt, val.label); });
+        connect(&val.opt.keycode,
+                static_cast<void (value_::*)(const QString&) const>(&value_::valueChanged),
+                val.label,
+                [=](const QString&) { val.label->setText(kopts_to_string(val.opt)); });
+        {
+            connect(val.button, &QPushButton::clicked, this, [=] { bind_key(val.opt, val.label); });
+        }
     }
 
     auto add_module_tab = [this] (auto& place, auto&& dlg, const QString& label) {

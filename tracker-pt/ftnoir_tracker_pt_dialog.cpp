@@ -120,22 +120,18 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
     tie_setting(s.enable_point_filter, ui.enable_point_filter);
     tie_setting(s.point_filter_coefficient, ui.point_filter_slider);
     tie_setting(s.point_filter_limit, ui.point_filter_limit_slider);
-    s.point_filter_coefficient.connect_to(ui.point_filter_label, [this](double x) {
-        ui.point_filter_label->setValue(x);
-    });
-
-    s.point_filter_limit.connect_to(ui.point_filter_limit_label, [this] {
-        ui.point_filter_limit_label->setValue(*s.point_filter_limit);
-    });
+    connect(&s.point_filter_coefficient, value_::value_changed<slider_value>(),
+            ui.point_filter_label, [this] { ui.point_filter_label->setValue(*s.point_filter_coefficient); } );
+    connect(&s.point_filter_limit, value_::value_changed<slider_value>(), ui.point_filter_limit_label,
+        [this] { ui.point_filter_limit_label->setValue(*s.point_filter_limit); }, Qt::QueuedConnection);
     ui.point_filter_label->setValue(*s.point_filter_coefficient);
     ui.point_filter_limit_label->setValue(*s.point_filter_limit);
 
     tie_setting(s.point_filter_deadzone, ui.point_filter_deadzone_slider);
     ui.point_filter_deadzone_label->setValue(*s.point_filter_deadzone);
 
-    s.point_filter_deadzone.connect_to(ui.point_filter_deadzone_label, [this](double x) {
-        ui.point_filter_deadzone_label->setValue(x);
-    });
+    connect(&s.point_filter_deadzone, value_::value_changed<slider_value>(), ui.point_filter_deadzone_label,
+        [this] { ui.point_filter_deadzone_label->setValue(*s.point_filter_deadzone); }, Qt::QueuedConnection);
 }
 
 QString TrackerDialog_PT::threshold_display_text(int threshold_value)

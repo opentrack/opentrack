@@ -26,10 +26,10 @@ namespace options::detail {
     {
         t x;
     public:
+        constexpr t const* operator->() const { return &x; }
         constexpr t* operator->() { return &x; }
         constexpr explicit dereference_wrapper(t&& x) : x(x) {}
     };
-    template<typename t, typename...> /*MSVC workaround*/ static constexpr bool is_enum_v = std::is_enum_v<t>;
 } // ns options::detail
 
 namespace options {
@@ -85,9 +85,6 @@ class value final : public value_
     }
 
 public:
-    using signal_sig = typename value_::signal_sig_<t>;
-    using slot_sig = typename value_::slot_sig_<t>;
-
     QVariant get_variant() const noexcept override
     {
         if (QVariant ret{b->get_variant(self_name)}; ret.isValid() && !ret.isNull())
@@ -196,22 +193,6 @@ public:
     u to() const noexcept
     {
         return static_cast<u>(get());
-    }
-
-    template<typename Q, typename F>
-    QMetaObject::Connection
-    connect_to(Q* qobject, F&& writer, Qt::ConnectionType conn = Qt::QueuedConnection) {
-        return QObject::connect(this, static_cast<signal_sig>(&value<t>::valueChanged), qobject, std::forward<F>(writer), conn);
-    }
-    template<typename Q, typename F>
-    QMetaObject::Connection
-    connect_from(Q* qobject, F&& reader, Qt::ConnectionType conn = Qt::DirectConnection) {
-        return QObject::connect(qobject, std::forward<F>(reader), this, static_cast<slot_sig>(&value<t>::setValue), conn);
-    }
-    template<typename Q, typename F, typename G>
-    QMetaObject::Connection
-    connect_from(Q* qobject, F&& reader, G&& fn, Qt::ConnectionType conn = Qt::DirectConnection) {
-        return QObject::connect(qobject, std::forward<F>(reader), this, std::forward<G>(fn), conn);
     }
 };
 

@@ -117,7 +117,9 @@ void mapping_dialog::load()
 
         if (altp)
         {
-            axis.opts.altp.connect_to(this, [&](bool f) { qfc.setEnabled(f); });
+            connect(&axis.opts.altp,
+                    value_::value_changed<bool>(),
+                    this, [&](bool f) { qfc.setEnabled(f); });
             qfc.setEnabled(axis.opts.altp);
         }
 
@@ -162,8 +164,8 @@ void mapping_dialog::load()
 
         qfc.set_snap(.5, 1);
 
-        axis.opts.clamp_x_.connect_to(&qfc, update_xstep);
-        axis.opts.clamp_y_.connect_to(&qfc, update_ystep);
+        connect(&axis.opts.clamp_x_, value_::value_changed<int>(), &qfc, update_xstep);
+        connect(&axis.opts.clamp_y_, value_::value_changed<int>(), &qfc, update_ystep);
 
         // force signal to avoid duplicating the slot's logic
         qfc.set_config(&conf);

@@ -112,9 +112,17 @@ void main_window::init_dylibs()
             this, [this](const QString&) { pFilterDialog = nullptr; if (options_widget) options_widget->filter_module_changed(); });
 #endif
 
-    m.tracker_dll.connect_to(this, &main_window::save_modules, Qt::DirectConnection);
-    m.protocol_dll.connect_to(this, &main_window::save_modules, Qt::DirectConnection);
-    m.filter_dll.connect_to(this, &main_window::save_modules, Qt::DirectConnection);
+    connect(&m.tracker_dll, value_::value_changed<QString>(),
+            this, &main_window::save_modules,
+            Qt::DirectConnection);
+
+    connect(&m.protocol_dll, value_::value_changed<QString>(),
+            this, &main_window::save_modules,
+            Qt::DirectConnection);
+
+    connect(&m.filter_dll, value_::value_changed<QString>(),
+            this, &main_window::save_modules,
+            Qt::DirectConnection);
 
     {
         struct list {
@@ -231,7 +239,8 @@ void main_window::init_tray_menu()
     QObject::connect(&menu_action_exit, &QAction::triggered, this, &main_window::exit);
     tray_menu.addAction(&menu_action_exit);
 
-    s.tray_enabled.connect_to(this, &main_window::ensure_tray, Qt::DirectConnection);
+    connect(&s.tray_enabled, value_::value_changed<bool>(),
+            this, &main_window::ensure_tray);
 }
 
 void main_window::init_buttons()

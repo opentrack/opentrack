@@ -1200,7 +1200,7 @@ NeuralNetDialog::NeuralNetDialog() :
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui_.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
 
-    settings_.camera_name.connect_to(this, &NeuralNetDialog::update_camera_settings_state);
+    connect(&settings_.camera_name, value_::value_changed<QString>(), this, &NeuralNetDialog::update_camera_settings_state);
 
     update_camera_settings_state(settings_.camera_name);
 

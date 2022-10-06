@@ -59,31 +59,31 @@ namespace EasyTracker
         connect(&*iSettings.b, &bundle_::saving, this, &Tracker::CheckCamera, Qt::DirectConnection);
         connect(&*iSettings.b, &bundle_::reloading, this, &Tracker::CheckCamera, Qt::DirectConnection);
 
-        iSettings.fov.connect_to(this, &Tracker::set_fov, Qt::DirectConnection);
+        connect(&iSettings.fov, value_::value_changed<int>(), this, &Tracker::set_fov, Qt::DirectConnection);
         set_fov(iSettings.fov);
         // We could not get this working, nevermind
         //connect(&iSettings.cam_fps, value_::value_changed<int>(), this, &Tracker::SetFps, Qt::DirectConnection);
 
         // Make sure deadzones are updated whenever the settings are changed
-        iSettings.DeadzoneRectHalfEdgeSize.connect_to(this, &Tracker::UpdateSettings, Qt::DirectConnection);
+        connect(&iSettings.DeadzoneRectHalfEdgeSize, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
 
         // Update point extractor whenever some of the settings it needs are changed
-        iSettings.iMinBlobSize.connect_to(this, &Tracker::UpdateSettings, Qt::DirectConnection);
-        iSettings.iMaxBlobSize.connect_to(this, &Tracker::UpdateSettings, Qt::DirectConnection);
+        connect(&iSettings.iMinBlobSize, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
+        connect(&iSettings.iMaxBlobSize, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
 
         // Make sure solver is updated whenever the settings are changed
-        iSettings.PnpSolver.connect_to(this, &Tracker::UpdateSettings, Qt::DirectConnection);
+        connect(&iSettings.PnpSolver, value_::value_changed<int>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
 
         // Debug
-        iSettings.debug.connect_to(this, &Tracker::UpdateSettings, Qt::DirectConnection);
+        connect(&iSettings.debug, value_::value_changed<bool>(), this, &Tracker::UpdateSettings, Qt::DirectConnection);
 
         // Make sure model is updated whenever it is changed
-        iSettings.iCustomModelThree.connect_to(this, &Tracker::UpdateModel, Qt::DirectConnection);
-        iSettings.iCustomModelFour .connect_to(this, &Tracker::UpdateModel, Qt::DirectConnection);
-        iSettings.iCustomModelFive .connect_to(this, &Tracker::UpdateModel, Qt::DirectConnection);
+        connect(&iSettings.iCustomModelThree, value_::value_changed<bool>(), this, &Tracker::UpdateModel, Qt::DirectConnection);
+        connect(&iSettings.iCustomModelFour, value_::value_changed<bool>(), this, &Tracker::UpdateModel, Qt::DirectConnection);
+        connect(&iSettings.iCustomModelFive, value_::value_changed<bool>(), this, &Tracker::UpdateModel, Qt::DirectConnection);
 
         // Update model logic
-        #define UM(v) iSettings.v.connect_to(this, &Tracker::UpdateModel, Qt::DirectConnection)
+        #define UM(v) connect(&iSettings.v, value_::value_changed<int>(), this, &Tracker::UpdateModel, Qt::DirectConnection)
         UM(iVertexTopX); UM(iVertexTopY); UM(iVertexTopZ);
         UM(iVertexTopRightX); UM(iVertexTopRightY); UM(iVertexTopRightZ);
         UM(iVertexTopLeftX); UM(iVertexTopLeftY); UM(iVertexTopLeftZ);

@@ -537,7 +537,7 @@ aruco_dialog::aruco_dialog() :
     connect(&calib_timer, SIGNAL(timeout()), this, SLOT(update_tracker_calibration()));
     connect(ui.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
 
-    s.camera_name.connect_to(this, &aruco_dialog::update_camera_settings_state);
+    connect(&s.camera_name, value_::value_changed<QString>(), this, &aruco_dialog::update_camera_settings_state);
 
     update_camera_settings_state(s.camera_name);
 }

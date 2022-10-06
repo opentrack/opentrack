@@ -37,7 +37,8 @@ trackhat_dialog::trackhat_dialog()
     tie_setting(t.exposure, ui.exposure_slider);
     ui.exposure_label->setValue((int)*t.exposure);
 
-    t.exposure.connect_to(ui.exposure_label, [this] { ui.exposure_label->setValue((int)*t.exposure); });
+    connect(&t.exposure, value_::value_changed<slider_value>(), ui.exposure_label,
+        [this] { ui.exposure_label->setValue((int)*t.exposure); }, Qt::QueuedConnection);
 
     // gain
 
@@ -47,7 +48,8 @@ trackhat_dialog::trackhat_dialog()
     tie_setting(t.gain, ui.gain_slider);
     ui.gain_label->setValue((int)*t.gain);
 
-    t.gain.connect_to(ui.gain_label, [this] { ui.gain_label->setValue((int)*t.gain); });
+    connect(&t.gain, value_::value_changed<slider_value>(), ui.gain_label,
+        [this] { ui.gain_label->setValue((int)*t.gain); }, Qt::QueuedConnection);
 
 #if 0
     // threshold
@@ -64,24 +66,21 @@ trackhat_dialog::trackhat_dialog()
     // point filter
 
     ui.point_filter_limit_label->setValue(*t.point_filter_limit);
-    t.point_filter_limit.connect_to(ui.point_filter_limit_label, [this] {
-        ui.point_filter_limit_label->setValue(*t.point_filter_limit);
-    });
+    connect(&t.point_filter_limit, value_::value_changed<slider_value>(), ui.point_filter_limit_label,
+            [this] { ui.point_filter_limit_label->setValue(*t.point_filter_limit); }, Qt::QueuedConnection);
 
     tie_setting(t.enable_point_filter, ui.enable_point_filter);
     tie_setting(t.point_filter_coefficient, ui.point_filter_slider);
     ui.point_filter_label->setValue(*t.point_filter_coefficient);
 
-    t.point_filter_coefficient.connect_to(ui.point_filter_label, [this] {
-        ui.point_filter_label->setValue(*t.point_filter_coefficient);
-    });
+    connect(&t.point_filter_coefficient, value_::value_changed<slider_value>(), ui.point_filter_label,
+        [this] { ui.point_filter_label->setValue(*t.point_filter_coefficient); }, Qt::QueuedConnection);
 
     tie_setting(t.point_filter_deadzone, ui.point_filter_deadzone);
     ui.point_filter_deadzone_label->setValue(*t.point_filter_deadzone);
 
-    t.point_filter_deadzone.connect_to(ui.point_filter_deadzone_label, [this] {
-        ui.point_filter_deadzone_label->setValue(*t.point_filter_deadzone);
-    });
+    connect(&t.point_filter_deadzone, value_::value_changed<slider_value>(), ui.point_filter_deadzone_label,
+        [this] { ui.point_filter_deadzone_label->setValue(*t.point_filter_deadzone); }, Qt::QueuedConnection);
 
     // led
 
