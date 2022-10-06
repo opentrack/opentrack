@@ -27,7 +27,7 @@
 #include <cinttypes>
 #include <array>
 
-#include <onnxruntime_cxx_api.h>
+#include <onnxruntime/core/session/onnxruntime_cxx_api.h>
 
 #include <opencv2/core.hpp>
 #include <opencv2/core/types.hpp>
