@@ -89,12 +89,17 @@ void device_list::fill_device_specs(QList<device_spec>& list)
 
             switch (v->GetTrackedDeviceClass(k))
             {
-            case vr::ETrackedDeviceClass::TrackedDeviceClass_HMD:
+            using enum vr::ETrackedDeviceClass;
+            case TrackedDeviceClass_HMD:
                 dev.type = "HMD"; break;
-            case vr::ETrackedDeviceClass::TrackedDeviceClass_Controller:
+            case TrackedDeviceClass_Controller:
                 dev.type = "Controller"; break;
-            case vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference:
-                dev.type = "Tracker"; break;
+            case TrackedDeviceClass_TrackingReference:
+                dev.type = "Tracking reference"; break;
+            case TrackedDeviceClass_DisplayRedirect:
+                dev.type = "Display redirect"; break;
+            case TrackedDeviceClass_GenericTracker:
+                dev.type = "Generic"; break;
             default:
                 dev.type = "Unknown"; break;
             }
