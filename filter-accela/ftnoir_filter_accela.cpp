@@ -154,7 +154,8 @@ void accela::filter(const double* input, double *output)
     {
         output[k] *= dt;
         output[k] += last_output[k];
-        if (fabs(output[k]) > half_turn) output[k] -= copysign(full_turn, output[k]);
+        if (k >= Yaw && fabs(output[k]) > half_turn)
+            output[k] -= copysign(full_turn, output[k]);
 
         last_output[k] = output[k];
     }
