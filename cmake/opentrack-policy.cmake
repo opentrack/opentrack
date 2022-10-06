@@ -20,3 +20,5 @@ foreach(k ${_policies})
         cmake_policy(SET ${k} NEW)
     endif()
 endforeach()
+
+set(CMAKE_INSTALL_MESSAGE LAZY)
