@@ -30,6 +30,11 @@ if(NOT CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     add_definitions(-D_CRT_USE_BUILTIN_OFFSETOF)
 endif()
 
+if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    # ignore cmake warning: Manually-specified variable not used by the project
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}}")
+endif()
+
 include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 set(CMAKE_POLICY_DEFAULT_CMP0069 NEW CACHE INTERNAL "" FORCE)
 #set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
