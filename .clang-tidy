@@ -83,6 +83,7 @@ readability-function-cognitive-complexity,
 -readability-simplify-boolean-expr,
 -readability-static-accessed-through-instance,
 -readability-uppercase-literal-suffix,
+-readability-use-anyofallof,
 '
 
 AnalyzeTemporaryDtors: true
