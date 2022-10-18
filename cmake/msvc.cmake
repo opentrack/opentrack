@@ -100,7 +100,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 add_link_options(-cgthreads:1)
 
-set(_CFLAGS "-diagnostics:classic -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0")
+set(_CFLAGS "-diagnostics:caret -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0")
 if(NOT opentrack-no-static-crt)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
 else()
@@ -116,11 +116,11 @@ set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
 set(_LDFLAGS "")
-set(_LDFLAGS_RELEASE "-OPT:REF,ICF=10 -LTCG:INCREMENTAL -DEBUG:FULL")
+set(_LDFLAGS_RELEASE "-OPT:REF,ICF=10 -LTCG -DEBUG:FULL")
 set(_LDFLAGS_DEBUG "-DEBUG:FULL")
 
 set(_LDFLAGS_STATIC "")
-set(_LDFLAGS_STATIC_RELEASE "-LTCG:INCREMENTAL")
+set(_LDFLAGS_STATIC_RELEASE "-LTCG")
 set(_LDFLAGS_STATIC_DEBUG "")
 
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
