@@ -42,7 +42,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0069 NEW CACHE INTERNAL "" FORCE)
 set(CMAKE_C_EXTENSIONS FALSE)
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-unset(CMAKE_CROSSCOMPILING)
+set(CMAKE_CROSSCOMPILING 0)
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
@@ -101,7 +101,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 add_link_options(-cgthreads:1)
 
-set(_CFLAGS "-diagnostics:caret -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0")
+set(_CFLAGS "-diagnostics:caret -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0 -permissive-")
 if(NOT opentrack-no-static-crt)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
 else()
@@ -116,11 +116,11 @@ set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "")
+set(_LDFLAGS "-WX")
 set(_LDFLAGS_RELEASE "-OPT:REF,ICF=10 -LTCG -DEBUG:FULL")
 set(_LDFLAGS_DEBUG "-DEBUG:FULL")
 
-set(_LDFLAGS_STATIC "")
+set(_LDFLAGS_STATIC "-WX")
 set(_LDFLAGS_STATIC_RELEASE "-LTCG")
 set(_LDFLAGS_STATIC_DEBUG "")
 
