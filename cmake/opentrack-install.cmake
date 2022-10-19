@@ -24,6 +24,8 @@ endfunction()
 otr_install_dir("${opentrack-doc}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
 otr_install_dir("${opentrack-doc}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
 
+INSTALL(CODE "FILE(MAKE_DIRECTORY \${CMAKE_INSTALL_PREFIX}/\${opentrack-hier-libexec}/presets)")
+
 if(WIN32)
     otr_install_misc(. FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf")
     otr_install_misc(. FILES "${CMAKE_SOURCE_DIR}/bin/cleye.config")
