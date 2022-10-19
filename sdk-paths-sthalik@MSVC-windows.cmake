@@ -38,6 +38,8 @@ setq(ONNXRuntime_LIBRARY "onnxruntime-1.10.0/lib/onnxruntime.lib")
 setq(ONNXRuntime_RUNTIME "onnxruntime-1.10.0/bin/onnxruntime.dll")
 setq(SDK_TRACKHAT_SENSOR "../trackhat/trackhat-c-library-driver/build/install")
 
+set(CMAKE_ASM_NASM_COMPILER nasm.exe CACHE FILEPATH "" FORCE)
+
 setq(Qt5_DIR "../qt-5.15-kde/lib/cmake/Qt5")
 set(Qt5Core_DIR "${Qt5_DIR}Core" CACHE PATH "" FORCE)
 set(Qt5Gui_DIR "${Qt5_DIR}Gui" CACHE PATH "" FORCE)
