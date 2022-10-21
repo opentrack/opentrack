@@ -16,10 +16,11 @@ public:
     RSdialog_realsense();
     void register_tracker(ITracker *) {}
     void unregister_tracker() {}
+    bool embeddable() noexcept override { return true; }
+    void set_buttons_visible(bool x) override;
 private:
     Ui::UIRSControls ui;
 private slots:
     void doOK();
     void doCancel();
-    void doInstallRSRuntime();
 };

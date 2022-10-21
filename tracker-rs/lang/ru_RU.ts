@@ -4,15 +4,7 @@
 <context>
     <name>RSTracker</name>
     <message>
-        <source>Intel® RealSense™ Runtime Installation</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Installation process failed to start.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Couldn&apos;t initialize RealSense tracking. Please make sure SDK Runtime 2016 R3 is installed.</source>
+        <source>Couldn&apos;t initialize RealSense tracking. Open the tracker settings dialog for links to the camera driver and the SDK.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -21,10 +13,6 @@
     </message>
     <message>
         <source>Tracking stopped after another program changed camera streams configuration.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Install SDK 2016 R3 Runtime</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -42,7 +30,25 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;In order to use this tracker, you need a PC equipped with an Intel® RealSense™ F200 or SR300 camera and the RealSense™ &lt;a href=&quot;https://software.intel.com/en-us/realsense-sdk-windows-eol&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;SDK 2016 R3 runtime&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Scroll down to the bottom of the page, choosing &lt;span style=&quot; font-weight:600;&quot;&gt;2016 R3 Full SDK&lt;/span&gt; on the right-hand side. Unfortunately it&apos;s necessary to create an account prior to downloading.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
+In order to use this tracker, you need:
+
+&lt;ul&gt;
+&lt;li&gt;
+	A PC equipped with an Intel® RealSense™ F200 or SR300 camera
+&lt;/li&gt;
+&lt;li&gt;
+	Depth Camera Manager &lt;a href=&quot;https://www.intel.com/content/www/us/en/download/18309/intel-realsense-depth-camera-manager.html&quot;&gt;&lt;span&gt;driver&lt;/span&gt;&lt;/a&gt;
+	&lt;blockquote&gt;
+	To avoid problems with the DCM installer updating the camera&apos;s firmware it is recomended to run the DCM installer from the command line with the following flags:&lt;br/&gt;
+	&lt;span style=&quot; font-weight: bold; font-family:monospace, &apos;Courier New&apos;;&quot;&gt;--ignore-fw-update --silent --no-progress --acceptlicense=yes&lt;/span&gt;
+	&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+	RealSense™ &lt;a href=&quot;http://registrationcenter-download.intel.com/akdlm/irc_nas/vcp/9078/intel_rs_sdk_offline_package_10.0.26.0396.exe&quot;&gt;&lt;span&gt;SDK 2016 R2 runtime&lt;/span&gt;&lt;/a&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

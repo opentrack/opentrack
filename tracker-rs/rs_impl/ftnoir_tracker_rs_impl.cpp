@@ -9,18 +9,21 @@
 #ifdef _WIN32
 #   include <windows.h>
 #endif
-
-#include <pxcsensemanager.h>
-#include <RealSense/Face/FaceModule.h>
-#include <RealSense/Face/FaceConfiguration.h>
-
 #include <cstdlib>
 
-const size_t kPreviewStreamWidth = 640;
-const size_t kPreviewStreamHeight = 480;
-
+#include <pxcsensemanager.h>
+#if 0
+#include <RealSense/Face/FaceModule.h>
+#include <RealSense/Face/FaceConfiguration.h>
 using PXCFaceData = Intel::RealSense::Face::FaceData;
 using PXCFaceConfiguration = Intel::RealSense::Face::FaceConfiguration;
+#else
+#include <pxcfacemodule.h>
+#include <pxcfaceconfiguration.h>
+#endif
+
+constexpr size_t kPreviewStreamWidth = 640;
+constexpr size_t kPreviewStreamHeight = 480;
 
 PXCSenseManager* g_senseManager = NULL;
 PXCFaceData* g_faceData = NULL;

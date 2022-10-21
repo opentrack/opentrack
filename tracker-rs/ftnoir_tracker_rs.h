@@ -24,9 +24,6 @@ public:
     module_status start_tracker(QFrame *) override;
     void data(double *data) override;
 
-public slots:
-    static bool startSdkInstallationProcess();
-
 protected:
     void configurePreviewFrame();
 
