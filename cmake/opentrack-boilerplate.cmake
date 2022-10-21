@@ -177,7 +177,7 @@ function(otr_module n_)
 
     set(self "${n}" PARENT_SCOPE)
 
-    if(NOT arg_RELINK)
+    if(NOT arg_RELINK AND FALSE)
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)
     else()
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED FALSE)
