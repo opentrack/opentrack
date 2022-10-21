@@ -14,6 +14,10 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 endif()
 
+set(CMAKE_C_COMPILER_INIT cl.exe)
+set(CMAKE_CXX_COMPILER_INIT cl.exe)
+set(CMAKE_ASM_NASM_COMPILER_INIT nasm.exe)
+
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 # don't poison with system compile-time data
@@ -26,9 +30,6 @@ set(CMAKE_GENERATOR "Ninja")
 #add_compile_options(-Qvec-report:2)
 #add_compile_options(-d2cgsummary)
 add_definitions(-D_HAS_EXCEPTIONS=0)
-if(NOT CMAKE_PROJECT_NAME STREQUAL "OpenCV")
-    add_definitions(-D_CRT_USE_BUILTIN_OFFSETOF)
-endif()
 
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
     # ignore cmake warning: Manually-specified variable not used by the project
