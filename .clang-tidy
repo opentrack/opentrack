@@ -45,6 +45,7 @@ clang-analyzer-deadcode.DeadStores,
 -hicpp-exception-baseclass,
 -hicpp-explicit-conversions,
 -hicpp-function-size,
+-hicpp-invalid-access-moved,
 -hicpp-member-init,
 -hicpp-move-const-arg,
 -hicpp-named-parameter,
@@ -74,6 +75,7 @@ modernize-use-equals-default,
 -readability-braces-around-statements,
 -readability-else-after-return,
 readability-function-cognitive-complexity,
+-readability-function-size,
 -readability-identifier-length,
 -readability-implicit-bool-conversion,
 -readability-inconsistent-declaration-parameter-name,
@@ -112,5 +114,9 @@ CheckOptions:
     value:    '10'
   - key:      readability-function-cognitive-complexity.IgnoreMacros
     value:    '1'
+  - key:      readability-function-cognitive-complexity.DescribeBasicIncrements
+    value:    '1'
+  - key:      misc-const-correctness.AnalyzeValues
+    value:    '0'
 
 # vim: ft=yaml
