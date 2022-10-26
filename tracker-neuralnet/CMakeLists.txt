@@ -9,6 +9,10 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
         add_definitions(-D_HAS_EXCEPTIONS=1)
     endif()
 
+    if(EXISTS "${ONNXRuntime_INCLUDE_DIR}/onnxruntime/core/session/.")
+        include_directories("${ONNXRuntime_INCLUDE_DIR}/onnxruntime/core/session")
+    endif()
+
     otr_module(tracker-neuralnet)
 
     target_link_libraries(${self} 
