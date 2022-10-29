@@ -61,8 +61,7 @@ module_status wine::initialize()
 {
 #ifndef OTR_WINE_NO_WRAPPER
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
-
-    QString wine_path = "wine";
+    QString wine_path = s.wine_exec_location;
     auto env = QProcessEnvironment::systemEnvironment();
 
     if (s.variant_proton)
