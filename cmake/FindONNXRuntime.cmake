@@ -26,35 +26,57 @@ set(ONNXRuntime_DIR CACHE PATH "Root directory of the ONNX Runtime installation"
 # Finding of the DLLs was added so we can install them with the application.
 # We adhere to modern CMake standards and also define an import library.
 
+# Determine architecture string for subdir in nuget package
+# This is only relevant when we point `ONNXRuntime_DIR` to the
+# extracted nuget package content.
+if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	if (CMAKE_SIZEOF_VOID_P GREATER_EQUAL 8)
+		set(ONNXRuntime_Arch "linux-x64")
+	else()
+		message(FATAL_ERROR "32 Bit Linux builds are not supported")
+	endif()
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    if (CMAKE_SIZEOF_VOID_P GREATER_EQUAL 8)
+        set(ONNXRuntime_Arch "win-x64")
+    else()
+        set(ONNXRuntime_Arch "win-x86")
+    endif()
+endif()
+
+
 find_library(ONNXRuntime_LIBRARY onnxruntime
-    HINTS
-        ${ONNXRuntime_DIR}
-    PATHS
-        ${CMAKE_INSTALL_PREFIX}
-    PATH_SUFFIXES lib lib64 bin
-    CMAKE_FIND_ROOT_PATH_BOTH)
+    HINTS ${ONNXRuntime_DIR}
+    PATH_SUFFIXES 
+        # For a "normal" installation
+        "lib" "lib64" "bin"
+        # For the nuget package
+        "runtimes/${ONNXRuntime_Arch}/native"
+    )
 
 if(WIN32)
     SET(CMAKE_FIND_LIBRARY_SUFFIXES ".dll" ".DLL")
     find_library(ONNXRuntime_RUNTIME onnxruntime
-        HINTS
-            ${ONNXRuntime_DIR}
-        PATHS
-            ${CMAKE_INSTALL_PREFIX}
-        PATH_SUFFIXES lib lib64 bin
-        CMAKE_FIND_ROOT_PATH_BOTH)
+        HINTS ${ONNXRuntime_DIR}
+        PATH_SUFFIXES 
+        # For a "normal" installation
+        "lib" "lib64" "bin"
+        # For the nuget package
+        "runtimes/${ONNXRuntime_Arch}/native"
+    )
 else()
     SET(ONNXRuntime_RUNTIME ${ONNXRuntime_LIBRARY})
 endif()
 
 find_path(ONNXRuntime_INCLUDE_DIR onnxruntime_cxx_api.h
-    HINTS
-        ${ONNXRuntime_DIR}/include
-        ${ONNXRuntime_DIR}
-    PATHS
-        ${CMAKE_INSTALL_PREFIX}/include
-    PATH_SUFFIXES onnxruntime/core/session
-    CMAKE_FIND_ROOT_PATH_BOTH)
+    HINTS ${ONNXRuntime_DIR}
+	PATH_SUFFIXES
+		# For .nuget packages
+		"build/native/include"
+		# For when the directory structure of the onnx source repo is preserved
+		"include/onnxruntime/core/session" 
+		# For when we copy the files somewhere
+		"include"
+		)
 
 
 include(FindPackageHandleStandardArgs)
