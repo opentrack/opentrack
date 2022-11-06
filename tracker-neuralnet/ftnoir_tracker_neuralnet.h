@@ -7,6 +7,11 @@
 
 #pragma once
 
+#include "ui_neuralnet-trackercontrols.h"
+#include "model_adapters.h"
+#include "deadzone_filter.h"
+#include "preview.h"
+
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
@@ -27,13 +32,9 @@
 #include <cinttypes>
 #include <array>
 
-#include <onnxruntime_cxx_api.h>
-
 #include <opencv2/core.hpp>
-#include <opencv2/core/types.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include "ui_neuralnet-trackercontrols.h"
 
 namespace neuralnet_tracker_ns
 {
@@ -81,6 +82,8 @@ struct Settings : opts {
     value<bool> use_mjpeg { b, "use-mjpeg", false };
     value<int> num_threads { b, "num-threads", 1 };
     value<int> resolution { b, "force-resolution", 0 };
+    value<double> deadzone_size { b, "deadzone-size", 1. };
+    value<double> deadzone_hardness { b, "deadzone-hardness", 1.5 };
     Settings();
 };
 
@@ -91,101 +94,6 @@ struct CamIntrinsics
     float focal_length_h;
     float fov_w;
     float fov_h;
-};
-
-
-class Localizer
-{
-    public:
-        Localizer(Ort::MemoryInfo &allocator_info,
-                    Ort::Session &&session);
-        
-        // Returns bounding wrt image coordinate of the input image
-        // The preceeding float is the score for being a face normalized to [0,1].
-        std::pair<float, cv::Rect2f> run(
-            const cv::Mat &frame);
-
-        double last_inference_time_millis() const;
-    private:
-        inline static constexpr int INPUT_IMG_WIDTH = 288;
-        inline static constexpr int INPUT_IMG_HEIGHT = 224;
-        Ort::Session session_{nullptr};
-        // Inputs / outputs
-        cv::Mat scaled_frame_{}, input_mat_{};
-        Ort::Value input_val_{nullptr}, output_val_{nullptr};
-        std::array<float, 5> results_;
-        double last_inference_time_ = 0;
-};
-
-
-class PoseEstimator
-{
-    public:
-        struct Face
-        {
-            std::array<float,4> rotation; // Quaternion, (w, x, y, z)
-            cv::Rect2f box;
-            cv::Point2f center;
-            float size;
-        };
-
-        PoseEstimator(Ort::MemoryInfo &allocator_info,
-                        Ort::Session &&session);
-        /** Inference
-        *
-        * Coordinates are defined wrt. the image space of the input `frame`.
-        * X goes right, Z (depth) into the image, Y points down (like pixel coordinates values increase from top to bottom)
-        */
-        std::optional<Face> run(const cv::Mat &frame, const cv::Rect &box);
-        // Returns an image compatible with the 'frame' image for displaying.
-        cv::Mat last_network_input() const;
-        double last_inference_time_millis() const;
-    private:
-        // Operates on the private image data members
-        int find_input_intensity_90_pct_quantile() const;
-
-        int64_t model_version_ = 0;  // Queried meta data from the ONNX file
-        Ort::Session session_{nullptr};  // ONNX's runtime context for running the model
-        Ort::Allocator allocator_;   // Memory allocator for tensors
-        // Inputs
-        cv::Mat scaled_frame_{}, input_mat_{};  // Input. One is the original crop, the other is rescaled (?)
-        std::vector<Ort::Value> input_val_;    // Tensors to put into the model
-        std::vector<const char*> input_names_; // Refers to the names in the onnx model. 
-        // Outputs
-        cv::Vec<float, 3> output_coord_{};  // 2d Coordinate and head size output.
-        cv::Vec<float, 4> output_quat_{};   //  Quaternion output
-        cv::Vec<float, 4> output_box_{};    // Bounding box output
-        std::vector<Ort::Value> output_val_; // Tensors to put the model outputs in.
-        std::vector<const char*> output_names_; // Refers to the names in the onnx model. 
-        size_t num_recurrent_states_ = 0;
-        double last_inference_time_ = 0;
-};
-
-
-class Preview
-{
-public:
-    void init(const cv_video_widget& widget);
-    void copy_video_frame(const cv::Mat& frame);
-    void draw_gizmos(
-        const std::optional<PoseEstimator::Face> &face,
-        const Affine& pose,
-        const std::optional<cv::Rect2f>& last_roi,
-        const std::optional<cv::Rect2f>& last_localizer_roi,
-        const cv::Point2f& neckjoint_position);
-    void overlay_netinput(const cv::Mat& netinput);
-    void draw_fps(double fps, double last_inference_time);
-    void copy_to_widget(cv_video_widget& widget);
-private:
-    // Transform from camera frame to preview
-    cv::Rect2f transform(const cv::Rect2f& r) const;
-    cv::Point2f transform(const cv::Point2f& p) const;
-    float transform(float s) const;
-
-    cv::Mat preview_image_;
-    cv::Size preview_size_ = { 0, 0 };
-    float scale_ = 1.f;  
-    cv::Point2f offset_ = { 0.f, 0.f};
 };
 
 
@@ -214,7 +122,10 @@ private:
         const std::optional<PoseEstimator::Face> &face,
         const Affine& pose);
     void update_fps(double dt);
-    Affine compute_pose(const PoseEstimator::Face &face) const;
+    // Secretly applies filtering while computing the pose in 3d space.
+    QuatPose compute_filtered_pose(const PoseEstimator::Face &face);
+    // Compute the pose in 3d space taking the network outputs
+    QuatPose transform_to_world_pose(const cv::Quatf &face_rotation, const cv::Point2f& face_xy, const float face_size) const;
 
     Settings settings_;
     std::optional<Localizer> localizer_;
@@ -227,7 +138,7 @@ private:
     std::array<cv::Mat,2> downsized_original_images_ = {}; // Image pyramid
     std::optional<cv::Rect2f> last_localizer_roi_;
     std::optional<cv::Rect2f> last_roi_;
-    static constexpr float HEAD_SIZE_MM = 200.f;
+    static constexpr float HEAD_SIZE_MM = 200.f; // In the vertical. Approximately.
 
     mutable QMutex stats_mtx_;
     double fps_ = 0;
@@ -238,8 +149,9 @@ private:
     int num_threads_ = 1;
     bool is_visible_ = true;
 
-    QMutex mtx_; // Protects the pose
-    Affine pose_;
+    QMutex mtx_ = {}; // Protects the pose
+    std::optional<QuatPose> last_pose_ = {};
+    Affine last_pose_affine_ = {};
 
     Preview preview_;
     std::unique_ptr<cv_video_widget> video_widget_;
@@ -287,6 +199,15 @@ class NeuralNetMetadata : public Metadata
 
 
 } // neuralnet_tracker_ns
+
+
+namespace neuralnet_tracker_tests
+{
+
+void run();
+
+}
+
 
 using neuralnet_tracker_ns::NeuralNetTracker;
 using neuralnet_tracker_ns::NeuralNetDialog;
