@@ -41,24 +41,24 @@ jobs:
 
     - name: Cache Qt
       id: cache-qt
-      uses: actions/cache@v1
+      uses: actions/cache@v3
       with:
         path: ../Qt
         key: ${{ runner.os }}-QtCache
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v2
+      uses: jurplel/install-qt-action@v3
       with:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Configure
-      run: ${{matrix.cmake}} -G "Ninja Multi-Config" -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
+      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
 
     - name: Build
       run: ${{matrix.cmake}} --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
     - name: Upload build
-      uses: actions/upload-artifact@v2.2.4
+      uses: actions/upload-artifact@v3
       with:
         name: buildoutput
         path: ${{github.workspace}}/build/
