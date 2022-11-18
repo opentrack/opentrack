@@ -6,7 +6,7 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
 
  - The ability to select your own wine exectuable for the wine output module since SC players might change runners and are not using system wine but lutris instead.
  - Enabled to build the wine output module by default with CMake which is required to use headtracking in SC.
- - Fixed a crucial issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key was cleared. (See [opentrack issue 1479](https://github.com/opentrack/opentrack/issues/1479))
+ - Fixed a issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key was cleared. (See [opentrack issue 1479](https://github.com/opentrack/opentrack/issues/1479))
 
 ## Installation:
 
@@ -18,12 +18,36 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
  6. Install opentrack to the install directory: `make install`
  (you can find opentrack in `install/bin/opentrack` and the updated modules in `install/libexec/opentrack/`)
 
-Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos) for further deatils about the game on Linux.
+Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos/wiki) for further deatils about the game on Linux.
+
+## Usage:
+
+ 1. Open Lutris and check your selected runner, prefix, esync and fsync settings
+ 2. Open Opentrack-SC and select the wine module as the output module
+ 3. Configure the wine module by pressing the configure button next to it
+ 4. Type the path to your custom wine exectuable into the first field (prefer absolute paths like: `/home/$USER/.local/share/lutris/runners/wine/[your runner name]/bin/wine`)
+ 5. Type the path to your wine prefix into the second field (prefer absolute paths as well like: `/home/$USER/.lutris-games/star-citizen/`)
+ 6. Make sure that your esync and fsync settings match the ones in Lutris
+ 7. Select `Freetrack` or `Both` as the output
+ 8. Launch Star Citizen and navigate to the `COMMS, FOIP & HEAD TRACKING` settings
+ 9. Set `Head Tracking - General - Source` to `TrackIR`
+ 10. Set `Head Tracking - General - Toggle - Enabled` to `Yes`
+ 11. Adjust other `Head Tracking - General - *` settings to your liking
 
 ## Known Issues:
-There is still something that screws with initialisation. You have to run a windows opentrack instance in the same prefix/bottle as SC (and with the same runner and sync settings) before or after using this fork.
+On some systems Head Tracking might stop working after restarting the game. There is still something that screws with freetrack initialisation AFTER a Linux Opentrack version has been run.
+In that case you have to run a windows opentrack instance in the same prefix/bottle as SC (and with the same runner and sync settings) before or after using this fork to "reset" the freetrack environment.
+To setup a windows opentrack instance:
+ 1. In Lutris press the add game button (the + in the top left corner)
+ 2. Select `Install a Windows game from media` and give it a name like "Star Citizen Opentrack"
+ 3. Select `Install` next to "Setup file"
+ 4. Select `Install` again after adjusting settings if you like
+ 5. Make sure to have a [opentrack-win32-setup.exe](https://github.com/opentrack/opentrack/releases) ready to go and point to it in the path field
+ 6. Make sure that the new "Game" you just added has the same runner, prefix, esync and fsync settings as Star Citizen
+ 7. Open the windows opentrack instance and select `testtracker` as an input and `freetrack 2.0 Enhanced` as an output
+ 8. Everytime before or after running Star Citizen you now have to open that windows opentrack instance and hit track to "reset" freetrack in your prefix so the game loads freetrack correctly
 
-I should have fixed all issues with Star Citizen and Opentrack I found using both myself.
+I should have fixed all other issues with Star Citizen and Opentrack I found using both myself.
 If you still have issues with Star Citizen not starting or using TrackIR correctly check the registry `Software/Freetrack/FreeTrackClient` for the key `Path` and make sure it's value is nothing or open an issue on GitHub.
 
 # opentrack README
