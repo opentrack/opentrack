@@ -10,7 +10,7 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
 
 ## Installation:
 
- 1. Clone this repository: `git clone https://github.com/Priton-CE/opentrack-StarCitizen.git`
+ 1. Clone this repository: `git clone https://github.com/Priton-CE/opentrack-StarCitizen.git` and cd into the new directory
  2. Create a build directory: `mkdir build`
  3. Move into the directory: `cd build`
  4. Run CMake: `cmake ..`
