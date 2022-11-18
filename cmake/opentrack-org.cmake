@@ -1,0 +1,21 @@
+include_guard(GLOBAL)
+function(otr_write_org)
+    get_property(ident GLOBAL PROPERTY opentrack-ident)
+    if (ident STREQUAL "")
+        message(FATAL_ERROR "must set global property `opentrack-ident' in `opentrack-variant.cmake'")
+    endif()
+    otr_escape_string(ident "${ident}")
+    set(new-str "#pragma once
+#define OPENTRACK_ORG \"${ident}\"
+")
+
+    set(filename "${CMAKE_BINARY_DIR}/opentrack-org.hxx")
+    set(old-str "")
+    if(EXISTS "${filename}")
+        file(READ "${filename}" old-str)
+    endif()
+    if(NOT old-str STREQUAL new-str)
+        file(WRITE "${filename}" "${new-str}")
+    endif()
+endfunction()
+otr_write_org()

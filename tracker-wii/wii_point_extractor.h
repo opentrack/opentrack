@@ -32,8 +32,9 @@ public:
 private:
     pt_settings s;
     static void draw_point(cv::Mat& preview_frame, const vec2& p, const cv::Scalar& color, int thickness = 1);
-    static bool draw_points(cv::Mat& preview_frame, const struct wii_info& wii, std::vector<vec2>& points);
+    static void draw_points(cv::Mat& preview_frame, const struct wii_info& wii);
     static void draw_bg(cv::Mat& preview_frame, const struct wii_info& wii);
+    static bool map_points(const struct wii_info& wii, std::vector<vec2>& points);
 };
 
 } // ns impl

@@ -4,11 +4,23 @@
 
 SET(CMAKE_SYSTEM_NAME Windows)
 SET(CMAKE_SYSTEM_VERSION 5.01)
-set(CMAKE_SYSTEM_PROCESSOR x86)
+if(opentrack-64bit)
+    set(CMAKE_SYSTEM_PROCESSOR AMD64)
+else()
+    set(CMAKE_SYSTEM_PROCESSOR x86)
+endif()
+
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
+endif()
 
 if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 endif()
+
+set(CMAKE_C_COMPILER_INIT cl.exe)
+set(CMAKE_CXX_COMPILER_INIT cl.exe)
+set(CMAKE_ASM_NASM_COMPILER_INIT nasm.exe)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -22,8 +34,36 @@ set(CMAKE_GENERATOR "Ninja")
 #add_compile_options(-Qvec-report:2)
 #add_compile_options(-d2cgsummary)
 add_definitions(-D_HAS_EXCEPTIONS=0)
-add_definitions(-D_CRT_USE_BUILTIN_OFFSETOF)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
+
+if(DEFINED CMAKE_TOOLCHAIN_FILE)
+    # ignore cmake warning: Manually-specified variable not used by the project
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}}")
+endif()
+
+include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
+set(CMAKE_POLICY_DEFAULT_CMP0069 NEW CACHE INTERNAL "" FORCE)
+#set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+
+set(CMAKE_C_EXTENSIONS FALSE)
+set(CMAKE_CXX_EXTENSIONS FALSE)
+
+set(CMAKE_CROSSCOMPILING 0)
+
+function(sets type)
+    set(i 0)
+    list(LENGTH ARGN max)
+    math(EXPR foo "${max} % 2")
+    if(NOT foo EQUAL 0)
+        message(FATAL_ERROR "argument count not even")
+    endif()
+    while(i LESS max)
+        list(GET ARGN "${i}" name)
+        math(EXPR i "${i} + 1")
+        list(GET ARGN "${i}" value)
+        math(EXPR i "${i} + 1")
+        set(${name} "${value}" CACHE "${type}" "" FORCE)
+    endwhile()
+endfunction()
 
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
@@ -40,52 +80,86 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
 endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL "QtBase")
-        unset(CMAKE_CROSSCOMPILING)
-        set(QT_BUILD_TOOLS_WHEN_CROSSCOMPILING TRUE CACHE BOOL "" FORCE)
-        set(QT_DEBUG_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
-        set(QT_USE_DEFAULT_CMAKE_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
+    set(QT_BUILD_TOOLS_WHEN_CROSSCOMPILING TRUE CACHE BOOL "" FORCE)
+    set(QT_DEBUG_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
+    set(QT_USE_DEFAULT_CMAKE_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
 
-        set(FEATURE_debug OFF)
-        set(FEATURE_debug_and_release OFF)
-        set(FEATURE_force_debug_info ON)
-        set(FEATURE_ltcg ON)
-        set(FEATURE_shared ON)
+    set(FEATURE_debug OFF)
+    set(FEATURE_debug_and_release OFF)
+    set(FEATURE_force_debug_info ON)
+    set(FEATURE_ltcg ON)
+    set(FEATURE_shared ON)
 endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
-    set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG TRUE)
     set(PARALLEL_ENABLE_PLUGINS FALSE)
     set(HIGHGUI_ENABLE_PLUGINS FALSE)
     set(VIDEOIO_ENABLE_PLUGINS FALSE)
+
+    set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG TRUE)
     set(OPENCV_DISABLE_THREAD_SUPPORT TRUE)
+
+    set(ENABLE_FAST_MATH    ON)
+    set(BUILD_TESTS         OFF)
+    set(BUILD_PERF_TESTS    OFF)
+    set(BUILD_opencv_apps   OFF)
+    set(BUILD_opencv_gapi   OFF)
+endif()
+
+set(opentrack-simd "SSE2")
+
+if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
+    set(opentrack-simd "AVX")
+
+    sets(BOOL
+         onnxruntime_USE_AVX ON
+         onnxruntime_USE_AVX2 OFF
+         onnxruntime_USE_AVX512 OFF
+         ONNX_USE_MSVC_STATIC_RUNTIME ON
+         protobuf_MSVC_STATIC_RUNTIME ON
+         onnxruntime_BUILD_BENCHMARKS OFF
+         onnxruntime_BUILD_FOR_NATIVE_MACHINE OFF
+         onnxruntime_BUILD_SHARED_LIB ON
+         onnxruntime_BUILD_UNIT_TESTS OFF
+         protobuf_BUILD_EXAMPLES OFF
+         protobuf_BUILD_SHARED_LIBS OFF
+         ONNX_BUILD_BENCHMARKS OFF
+         ONNX_BUILD_TESTS OFF
+         ONNX_DISABLE_EXCEPTIONS OFF # important!
+         ONNX_GEN_PB_TYPE_STUBS OFF
+         onnxruntime_DISABLE_CONTRIB_OPS ON
+         BUILD_TESTING OFF
+    )
+elseif(opentrack-64bit)
+    set(opentrack-simd "AVX")
 endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
 
 add_link_options(-cgthreads:1)
 
-set(_CFLAGS "-diagnostics:classic -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0 -MT")
-set(_CXXFLAGS "${_CFLAGS} -Zc:throwingNew -Zc:lambda -Zc:inline")
+set(_CFLAGS "-diagnostics:caret -Zc:inline -Zc:preprocessor -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0 -permissive-")
+if(NOT opentrack-no-static-crt)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
+else()
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE INTERNAL "" FORCE)
+endif()
+set(_CXXFLAGS "${_CFLAGS} -Zc:throwingNew -Zc:lambda")
 set(_CFLAGS_RELEASE "-O2 -Oit -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy")
-if(NOT opentrack-64bit)
-    set(_CFLAGS_RELEASE "${_CFLAGS_RELEASE} -arch:SSE2")
+if(NOT opentrack-simd STREQUAL "")
+    set(_CFLAGS_RELEASE "${_CFLAGS_RELEASE} -arch:${opentrack-simd}")
 endif()
 set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "")
-set(_LDFLAGS_RELEASE "-OPT:REF -OPT:ICF=10 -LTCG:INCREMENTAL -DEBUG:FULL")
+set(_LDFLAGS "-WX")
+set(_LDFLAGS_RELEASE "-OPT:REF,ICF=10 -LTCG -DEBUG:FULL")
 set(_LDFLAGS_DEBUG "-DEBUG:FULL")
 
-set(_LDFLAGS_STATIC "")
-set(_LDFLAGS_STATIC_RELEASE "-LTCG:INCREMENTAL")
+set(_LDFLAGS_STATIC "-WX")
+set(_LDFLAGS_STATIC_RELEASE "-LTCG")
 set(_LDFLAGS_STATIC_DEBUG "")
-
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE STRING "" FORCE)
-endif()
 
 set(CMAKE_BUILD_TYPE_INIT "RELEASE" CACHE INTERNAL "")
 

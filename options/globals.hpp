@@ -1,7 +1,7 @@
 #pragma once
 
 #include "export.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 
 #include <optional>
 

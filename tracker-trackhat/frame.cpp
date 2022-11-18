@@ -114,9 +114,10 @@ void trackhat_frame::init_points(const trackHat_ExtendedPoints_t& points_, doubl
 
         if (pt.m_area >= min_size && pt.m_area <= max_size)
             p.ok = true;
+        constexpr f c = (f)2941/trackhat_camera::sensor_size;
 
         p.brightness = pt.m_averageBrightness;
-        p.area = pt.m_area;
+        p.area = pt.m_area * c;
         p.W = std::max(1, pt.m_boundryRigth - pt.m_boundryLeft);
         p.H = std::max(1, pt.m_boundryDown  - pt.m_boundryUp);
         p.x = trackhat_camera::sensor_size-1-pt.m_coordinateX;

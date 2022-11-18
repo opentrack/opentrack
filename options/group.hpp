@@ -4,7 +4,7 @@
 
 #include "compat/base-path.hpp"
 #include "compat/library-path.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 #include "compat/qhash.hpp"
 #include "export.hpp"
 

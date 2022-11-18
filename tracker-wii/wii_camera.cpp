@@ -15,11 +15,9 @@
 #include "wii_camera.h"
 #include "wii_frame.hpp"
 
-#include "compat/sleep.hpp"
 #include "compat/math-imports.hpp"
 
 #include <opencv2/imgproc.hpp>
-
 #include <bluetoothapis.h>
 
 using namespace pt_module;
@@ -35,52 +33,51 @@ WIICamera::WIICamera(const QString& module_name) : s { module_name }
 
 WIICamera::~WIICamera()
 {
-    // XXX why is this commented out? -sh 20190414
-    //stop();
+	stop();
 }
 
 QString WIICamera::get_desired_name() const
 {
-    return desired_name;
+	return QStringLiteral("Wii");
 }
 
 QString WIICamera::get_active_name() const
 {
-    return active_name;
+	return get_desired_name();
 }
 
 void WIICamera::show_camera_settings()
 {
-
 }
 
 WIICamera::result WIICamera::get_info() const
 {
-    if (cam_info.res_x == 0 || cam_info.res_y == 0)
-        return result(false, pt_camera_info());
-    return result(true, cam_info);
+	if (cam_info.res_x == 0 || cam_info.res_y == 0)
+		return result(false, pt_camera_info());
+	return result(true, cam_info);
 }
 
 WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 {
-    cv::Mat& frame = frame_.as<WIIFrame>()->mat;
+	cv::Mat& frame = frame_.as<WIIFrame>()->mat;
 	struct wii_info& wii = frame_.as<WIIFrame>()->wii;
+	const wii_camera_status new_frame = get_frame(frame);
 
-    const wii_camera_status new_frame = get_frame(frame);
 	//create a fake blank frame
-	frame = cv::Mat(cam_info.res_x, cam_info.res_y, CV_8UC3, cv::Scalar(0, 0, 0));
+	frame.create(cam_info.res_x, cam_info.res_y, CV_8UC3);
+	frame.setTo({0});
 	wii.status = new_frame;
 
-    switch (new_frame)
-    {
+	switch (new_frame)
+	{
 	case wii_cam_data_change:
-        get_status(wii);
-        get_points(wii);
+		get_status(wii);
+		get_points(wii);
 		break;
 	case wii_cam_data_no_change:
 		return result(false, cam_info);
-    default:
-        break;
+	default:
+		break;
 	}
 
 	return result(true, cam_info);
@@ -88,30 +85,28 @@ WIICamera::result WIICamera::get_frame(pt_frame& frame_)
 
 bool WIICamera::start(const pt_settings&)
 {
+	if (m_pDev)
+		return true;
 	m_pDev = std::make_unique<wiimote>();
 	m_pDev->ChangedCallback = on_state_change;
 	m_pDev->CallbackTriggerFlags = (state_change_flags)(CONNECTED |
 		EXTENSION_CHANGED |
 		MOTIONPLUS_CHANGED);
-        return true;
+	return true;
 }
 
 void WIICamera::stop()
 {
-    desired_name = QString();
-    active_name = QString();
-    cam_info = pt_camera_info();
-    cam_desired = pt_camera_info();
-    onExit = true;
+	if (!m_pDev)
+		return;
 
-    if (m_pDev)
-    {
-        m_pDev->ChangedCallback = nullptr;
-        m_pDev->Disconnect();
-        m_pDev = nullptr;
-    }
+	cam_info = {};
+	cam_desired = {};
+	pitch_ = 0; roll_ = 0;
 
-	Beep(1000, 200);
+	m_pDev->ChangedCallback = nullptr;
+	m_pDev->Disconnect();
+	m_pDev = nullptr;
 }
 
 #ifdef __MINGW32__
@@ -148,7 +143,6 @@ wii_camera_status WIICamera::pair()
 		ibtidx++;
 	while (ibtidx < max_devices && BluetoothFindNextRadio(&bt_param, hbtlist + ibtidx));
 	BluetoothFindRadioClose(hbt);
-
 
 	int i;
 	bool error = false;

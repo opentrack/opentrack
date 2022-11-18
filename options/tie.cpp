@@ -8,7 +8,7 @@
 
 #include "tie.hpp"
 #include "compat/run-in-thread.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 
 #include "value-traits.hpp"
 
@@ -39,13 +39,10 @@ void tie_setting(value<QVariant>& v, QComboBox* cb)
         int idx = -1;
 
         for (int k = 0; k < sz; k++)
-        {
-            if (cb->itemData(k) == var)
-            {
+            if (cb->itemData(k) == var) {
                 idx = k;
                 break;
             }
-        }
         cb->setCurrentIndex(idx);
         return idx;
     };

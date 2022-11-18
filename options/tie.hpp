@@ -56,14 +56,14 @@ void tie_setting(value<t>& v, QComboBox* cb, From&& fn_to_index, To&& fn_to_valu
                     &v, [&v, cb, fn_to_value](int idx) { v = fn_to_value(idx, cb->currentData()); },
                     v.DIRECT_CONNTYPE);
     value_::connect(&v, value_::value_changed<t>(),
-                    cb, [cb, fn_to_index](cv_qualified<t>& v) { cb->setCurrentIndex(fn_to_index(v)); },
-                    v.DIRECT_CONNTYPE);
+                    cb, [cb, fn_to_index](detail::cv_qualified<t>& v) { cb->setCurrentIndex(fn_to_index(v)); },
+                    v.SAFE_CONNTYPE);
 }
 
 template<typename t, typename F>
 void tie_setting(value<t>& v, QLabel* lb, F&& fun)
 {
-    auto closure = [lb, fun](cv_qualified<t> v) { lb->setText(fun(v)); };
+    auto closure = [lb, fun](detail::cv_qualified<t> v) { lb->setText(fun(v)); };
 
     closure(v());
     value_::connect(&v, value_::value_changed<t>(),

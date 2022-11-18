@@ -15,7 +15,7 @@
 #include "compat/sleep.hpp"
 #include "compat/math.hpp"
 #include "compat/meta.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 #include "compat/thread-name.hpp"
 
 #include "pipeline.hpp"

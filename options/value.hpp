@@ -14,7 +14,6 @@
 #include "slider.hpp"
 #include "base-value.hpp"
 #include "value-traits.hpp"
-#include "compat/macros.hpp"
 
 #include <type_traits>
 #include <utility>
@@ -38,7 +37,7 @@ namespace options {
 template<typename t>
 class value final : public value_
 {
-    static_assert(std::is_same_v<t, remove_cvref_t<t>>);
+    static_assert(std::is_same_v<t, std::remove_cvref_t<t>>);
     mutable QMutex mtx;
     const t def;
     mutable t cached_value;

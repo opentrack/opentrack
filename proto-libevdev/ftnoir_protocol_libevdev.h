@@ -7,7 +7,6 @@
 #pragma once
 #include "ui_ftnoir_libevdev_controls.h"
 
-#include "compat/macros.hpp"
 #include "api/plugin-api.hpp"
 #include <libevdev/libevdev.h>
 #include <libevdev/libevdev-uinput.h>

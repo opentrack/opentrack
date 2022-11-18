@@ -12,7 +12,6 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "compat/variance.hpp"
-#include "compat/macros.hpp"
 
 #include <QMutex>
 #include <QTimer>

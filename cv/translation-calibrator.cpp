@@ -8,7 +8,7 @@
 #include "translation-calibrator.hpp"
 #include "compat/euler.hpp"
 #include "compat/math.hpp"
-#include "compat/macros1.h"
+#include "compat/macros.h"
 #include <opencv2/core.hpp>
 
 #include <tuple>

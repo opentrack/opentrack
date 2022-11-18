@@ -113,8 +113,10 @@ std::vector<std::tuple<QString, int>> get_camera_names()
         }
         pEnumCat->Release();
     }
+#if 0
     else
         qDebug() << "failed CLSID_VideoInputDeviceCategory" << hr;
+#endif
 
     pSysDevEnum->Release();
 #endif

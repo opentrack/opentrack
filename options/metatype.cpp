@@ -1,5 +1,4 @@
 #include <QMetaType>
-#include "compat/macros.hpp"
 
 namespace options::detail {
 

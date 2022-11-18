@@ -4,7 +4,7 @@
 #include "shm-layout.hpp"
 #include "compat/shm.h"
 #include "options/options.hpp"
-#include "compat/macros1.h"
+#include "compat/macros.h"
 #include "compat/timer.hpp"
 #include "ui_dialog.h"
 

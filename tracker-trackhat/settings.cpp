@@ -7,14 +7,6 @@ namespace trackhat_impl {
 trackhat_settings::trackhat_settings() : opts{"tracker-trackhat"}
 {
 }
-int trackhat_settings::effective_exposure() const
-{
-    return std::clamp((int)*exposure, min_exposure, max_exposure);
-}
-int trackhat_settings::effective_gain() const
-{
-    return min_gain + std::clamp((int)*exposure - max_exposure, 0, max_gain - min_gain);
-}
 
 void setting_receiver::settings_changed()
 {
@@ -45,6 +37,7 @@ void trackhat_camera::set_pt_options()
         s.t_MH_x = 0; s.t_MH_y = 0; s.t_MH_z = 0;
         break;
     case model_mystery_meat:
+        break;
     case model_clip_left:
     case model_mini_clip_left:
         s.t_MH_x = -135; s.t_MH_y = 0; s.t_MH_z = 0;
@@ -63,13 +56,16 @@ void trackhat_camera::set_pt_options()
     case model_clip_left:
     case model_clip_right:
         s.clip_tz = 27; s.clip_ty = 43; s.clip_by = 62; s.clip_bz = 74;
+        s.active_model_panel = 0;
         break;
     case model_mini_clip_left:
     case model_mini_clip_right:
         s.clip_tz = 13; s.clip_ty = 42; s.clip_by = 60; s.clip_bz = 38;
+        s.active_model_panel = 0;
         break;
     case model_cap:
         s.cap_x = 60; s.cap_y = 90; s.cap_z = 95;
+        s.active_model_panel = 1;
         break;
     case model_mystery_meat:
         break;
@@ -78,9 +74,8 @@ void trackhat_camera::set_pt_options()
     s.dynamic_pose = t.model == model_cap;
     s.init_phase_timeout = 500;
 
-    s.camera_name = QStringLiteral("TrackHat Sensor (WIP)");
+    s.camera_name = QStringLiteral("TrackHat Sensor");
 
-    s.active_model_panel = t.model == model_cap ? 1 : 0;
     s.enable_point_filter = t.enable_point_filter;
     s.point_filter_coefficient = *t.point_filter_coefficient;
     s.point_filter_limit = *t.point_filter_limit;
@@ -89,12 +84,12 @@ void trackhat_camera::set_pt_options()
 
 bool trackhat_camera::init_regs()
 {
-    auto exp    = (uint8_t)t.effective_exposure();
+    auto exp    = (uint8_t)t.exposure;
     auto exp2   = (uint8_t)(exp == 0xff ? 0xf0 : 0xff);
     auto thres  = (uint8_t)0xfe;
     auto thres2 = (uint8_t)3;
 
-    auto gain   = (uint8_t)t.effective_gain();
+    auto gain   = (uint8_t)t.gain;
     auto gain_c = (uint8_t)(gain/0x10);
     gain %= 0x10; gain_c %= 4;
 
@@ -108,10 +103,12 @@ bool trackhat_camera::init_regs()
             { 0x0c, 0x0c, gain_c },  // gain multiplier
             { 0x0c, 0x47, thres  },  // min brightness
             { 0x00, 0x0f, thres2 },  // brightness margin, formula is `thres >= px > thres - fuzz'
+            { 0x0c, 0x60, 0xff   },  // scale resolution lo
+            { 0x0c, 0x61, 0x0f   },  // scale resolution hi
             { 0x00, 0x01, 0x01   },  // bank0 sync
             { 0x01, 0x01, 0x01   },  // bank1 sync
         },
-        10
+        12,
     };
 
     Timer t;

@@ -1,6 +1,5 @@
 #include "spline-widget.hpp"
 #include "compat/math.hpp"
-#include "compat/macros.hpp"
 
 #include <algorithm>
 

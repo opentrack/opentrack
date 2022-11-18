@@ -8,7 +8,6 @@
 #pragma once
 
 #include "export.hpp"
-#include "compat/macros.hpp"
 
 #include <type_traits>
 

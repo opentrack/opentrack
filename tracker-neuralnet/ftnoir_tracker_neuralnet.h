@@ -7,6 +7,11 @@
 
 #pragma once
 
+#include "ui_neuralnet-trackercontrols.h"
+#include "model_adapters.h"
+#include "deadzone_filter.h"
+#include "preview.h"
+
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
@@ -25,14 +30,11 @@
 
 #include <memory>
 #include <cinttypes>
-
-#include <onnxruntime_cxx_api.h>
+#include <array>
 
 #include <opencv2/core.hpp>
-#include <opencv2/core/types.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include "ui_neuralnet-trackercontrols.h"
 
 namespace neuralnet_tracker_ns
 {
@@ -49,8 +51,25 @@ enum fps_choices
     fps_MAX     = 3
 };
 
+struct resolution_tuple
+{
+    int width;
+    int height;
+};
 
-struct settings : opts {
+static const std::array<resolution_tuple, 7> resolution_choices =
+{{
+    { 320, 240 },
+    { 640, 480 },
+    { 800, 600 },
+    { 1024, 768 },
+    { 1280, 720 },
+    { 1920, 1080},
+    { 0, 0 }
+}};
+
+
+struct Settings : opts {
     value<int> offset_fwd { b, "offset-fwd", 200 }, // Millimeters
                offset_up { b, "offset-up", 0 },
                offset_right { b, "offset-right", 0 };
@@ -58,8 +77,14 @@ struct settings : opts {
     value<int> fov { b, "field-of-view", 56 };
     value<fps_choices> force_fps { b, "force-fps", fps_default };
     value<bool> show_network_input { b, "show-network-input", false };
+    value<double> roi_filter_alpha{ b, "roi-filter-alpha", 1. };
+    value<double> roi_zoom{ b, "roi-zoom", 1. };
     value<bool> use_mjpeg { b, "use-mjpeg", false };
-    settings();
+    value<int> num_threads { b, "num-threads", 1 };
+    value<int> resolution { b, "force-resolution", 0 };
+    value<double> deadzone_size { b, "deadzone-size", 1. };
+    value<double> deadzone_hardness { b, "deadzone-hardness", 1.5 };
+    Settings();
 };
 
 
@@ -72,142 +97,87 @@ struct CamIntrinsics
 };
 
 
-class Localizer
-{
-    public:
-        Localizer(Ort::MemoryInfo &allocator_info,
-                    Ort::Session &&session);
-        
-        // Returns bounding wrt image coordinate of the input image
-        // The preceeding float is the score for being a face normalized to [0,1].
-        std::pair<float, cv::Rect2f> run(
-            const cv::Mat &frame);
-
-        double last_inference_time_millis() const;
-    private:
-        inline static constexpr int input_img_width = 288;
-        inline static constexpr int input_img_height = 224;
-        Ort::Session session{nullptr};
-        // Inputs / outputs
-        cv::Mat scaled_frame{}, input_mat{};
-        Ort::Value input_val{nullptr}, output_val{nullptr};
-        std::array<float, 5> results;
-        double last_inference_time = 0;
-};
-
-
-class PoseEstimator
-{
-    public:
-        struct Face
-        {
-            std::array<float,4> rotation; // Quaternion, (w, x, y, z)
-            // The following quantities are defined wrt the image space of the input
-            cv::Rect2f box;
-            cv::Point2f center;
-            float size;
-        };
-
-        PoseEstimator(Ort::MemoryInfo &allocator_info,
-                        Ort::Session &&session);
-        // Inference
-        std::optional<Face> run(const cv::Mat &frame, const cv::Rect &box);
-        // Returns an image compatible with the 'frame' image for displaying.
-        cv::Mat last_network_input() const;
-        double last_inference_time_millis() const;
-    private:
-        // Operates on the private image data members
-        int find_input_intensity_90_pct_quantile() const;
-        inline static constexpr int input_img_width = 129;
-        inline static constexpr int input_img_height = 129;
-        Ort::Session session{nullptr};
-        // Inputs
-        cv::Mat scaled_frame{}, input_mat{};
-        Ort::Value input_val{nullptr};
-        // Outputs
-        cv::Vec<float, 3> output_coord{};
-        cv::Vec<float, 4> output_quat{};
-        cv::Vec<float, 4> output_box{};
-        Ort::Value output_val[3] = {
-            Ort::Value{nullptr}, 
-            Ort::Value{nullptr}, 
-            Ort::Value{nullptr}};
-        double last_inference_time = 0;
-};
-
-
-class neuralnet_tracker : protected virtual QThread, public ITracker
+class NeuralNetTracker : protected virtual QThread, public ITracker
 {
     Q_OBJECT
 public:
-    neuralnet_tracker();
-    ~neuralnet_tracker() override;
+    NeuralNetTracker();
+    ~NeuralNetTracker() override;
     module_status start_tracker(QFrame* frame) override;
     void data(double *data) override;
     void run() override;
     Affine pose();
+    std::tuple<cv::Size, double, double> stats() const;
 
-    QMutex camera_mtx;
-    std::unique_ptr<video::impl::camera> camera;
+    QMutex camera_mtx_;
+    std::unique_ptr<video::impl::camera> camera_;
 
 private:
     bool detect();
     bool open_camera();
     void set_intrinsics();
+    cv::Mat prepare_input_image(const video::frame& frame);
     bool load_and_initialize_model();
     void draw_gizmos(
-        cv::Mat frame,  
         const std::optional<PoseEstimator::Face> &face,
-        const Affine& pose) const;
+        const Affine& pose);
     void update_fps(double dt);
+    // Secretly applies filtering while computing the pose in 3d space.
+    QuatPose compute_filtered_pose(const PoseEstimator::Face &face);
+    // Compute the pose in 3d space taking the network outputs
+    QuatPose transform_to_world_pose(const cv::Quatf &face_rotation, const cv::Point2f& face_xy, const float face_size) const;
 
-    Affine compute_pose(const PoseEstimator::Face &face) const;
-    numeric_types::vec3 image_to_world(float x, float y, float size, float real_size) const;
-    numeric_types::vec2 world_to_image(const numeric_types::vec3& p) const;
+    Settings settings_;
+    std::optional<Localizer> localizer_;
+    std::optional<PoseEstimator> poseestimator_;
+    Ort::Env env_{nullptr};
+    Ort::MemoryInfo allocator_info_{nullptr};
 
-    settings s;
-    std::optional<Localizer> localizer;
-    std::optional<PoseEstimator> poseestimator;
-    Ort::Env env{nullptr};
-    Ort::MemoryInfo allocator_info{nullptr};
+    CamIntrinsics intrinsics_{};
+    cv::Mat grayscale_;
+    std::array<cv::Mat,2> downsized_original_images_ = {}; // Image pyramid
+    std::optional<cv::Rect2f> last_localizer_roi_;
+    std::optional<cv::Rect2f> last_roi_;
+    static constexpr float HEAD_SIZE_MM = 200.f; // In the vertical. Approximately.
 
-    CamIntrinsics intrinsics{};
-    cv::Mat frame, grayscale;
-    std::optional<cv::Rect2f> last_localizer_roi;
-    std::optional<cv::Rect2f> last_roi;
-    static constexpr float head_size_mm = 200.f;
-
-    double fps = 0;
-    double last_inference_time = 0;
+    mutable QMutex stats_mtx_;
+    double fps_ = 0;
+    double inference_time_ = 0;
+    cv::Size resolution_ = {};
+    
     static constexpr double RC = .25;
+    int num_threads_ = 1;
+    bool is_visible_ = true;
 
-    QMutex mtx; // Protects the pose
-    Affine pose_;
+    QMutex mtx_ = {}; // Protects the pose
+    std::optional<QuatPose> last_pose_ = {};
+    Affine last_pose_affine_ = {};
 
-    std::unique_ptr<cv_video_widget> videoWidget;
-    std::unique_ptr<QHBoxLayout> layout;
+    Preview preview_;
+    std::unique_ptr<cv_video_widget> video_widget_;
+    std::unique_ptr<QHBoxLayout> layout_;
 };
 
 
-class neuralnet_dialog : public ITrackerDialog
+class NeuralNetDialog : public ITrackerDialog
 {
     Q_OBJECT
 public:
-    neuralnet_dialog();
+    NeuralNetDialog();
     void register_tracker(ITracker * x) override;
     void unregister_tracker() override;
 private:
     void make_fps_combobox();
+    void make_resolution_combobox();
 
-    Ui::Form ui;
-    settings s;
-    
+    Ui::Form ui_;
+    Settings settings_;
     // Calibration code mostly taken from point tracker
-    QTimer calib_timer;
-    TranslationCalibrator trans_calib;
-    QMutex calibrator_mutex;
-
-    neuralnet_tracker* tracker = nullptr;
+    QTimer calib_timer_;
+    TranslationCalibrator trans_calib_;
+    QMutex calibrator_mutex_;
+    QTimer tracker_status_poll_timer_;
+    NeuralNetTracker* tracker_ = nullptr;
 
 private Q_SLOTS:
     void doOK();
@@ -216,10 +186,11 @@ private Q_SLOTS:
     void update_camera_settings_state(const QString& name);
     void startstop_trans_calib(bool start);
     void trans_calib_step();
+    void status_poll();
 };
 
 
-class neuralnet_metadata : public Metadata
+class NeuralNetMetadata : public Metadata
 {
     Q_OBJECT
     QString name() override { return QString("neuralnet tracker"); }
@@ -229,6 +200,15 @@ class neuralnet_metadata : public Metadata
 
 } // neuralnet_tracker_ns
 
-using neuralnet_tracker_ns::neuralnet_tracker;
-using neuralnet_tracker_ns::neuralnet_dialog;
-using neuralnet_tracker_ns::neuralnet_metadata;
+
+namespace neuralnet_tracker_tests
+{
+
+void run();
+
+}
+
+
+using neuralnet_tracker_ns::NeuralNetTracker;
+using neuralnet_tracker_ns::NeuralNetDialog;
+using neuralnet_tracker_ns::NeuralNetMetadata;

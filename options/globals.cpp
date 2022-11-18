@@ -1,10 +1,13 @@
 #include "globals.hpp"
 #include "compat/base-path.hpp"
 #include "defs.hpp"
+#include "opentrack-org.hxx"
 
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
 #include <QStandardPaths>
+#include <QDateTime>
 #include <QDebug>
 
 namespace options::globals::detail {
@@ -124,9 +127,24 @@ QString ini_combine(const QString& filename)
 
 QStringList ini_list()
 {
-    QDir settings_dir(ini_directory());
+    static QMutex mtx;
+    static QStringList list;
+    QMutexLocker l{&mtx};
+
+    const QString dirname = ini_directory();
+
+    {
+        static QDateTime last_time = {};
+        auto time = QFileInfo{dirname}.lastModified();
+        if (time == last_time)
+            return list;
+        last_time = time;
+    }
+
+    QDir settings_dir(dirname);
+
     using f = QDir::Filter;
-    auto list = settings_dir.entryList({ QStringLiteral("*.ini") }, f::Files | f::Readable, QDir::Name);
+    list = settings_dir.entryList({ QStringLiteral("*.ini") }, f::Files | f::Readable, QDir::Name);
     std::sort(list.begin(), list.end());
     return list;
 }

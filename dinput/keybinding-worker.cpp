@@ -9,7 +9,7 @@
 #ifdef _WIN32
 
 #include "keybinding-worker.hpp"
-#include "compat/macros.hpp"
+#include "compat/macros.h"
 #include "compat/thread-name.hpp"
 
 #include <QDebug>

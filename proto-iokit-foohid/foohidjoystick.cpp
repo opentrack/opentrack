@@ -7,8 +7,6 @@
 
 #include "foohidjoystick.h"
 
-#include "compat/macros.hpp"
-
 const char FOOHID_SERVICE_NAME[] = "it_unbit_foohid";
 
 enum class FooHIDMethod {

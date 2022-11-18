@@ -9,12 +9,11 @@ Checks: '
 -llvmlibc-*,
 -objc-*,
 -bugprone-easily-swappable-parameters,
+bugprone-exception-escape,
+-bugprone-implicit-widening-of-multiplication-result,
 -bugprone-narrowing-conversions,
--cert-dcl54-cpp,
--cert-dcl58-cpp,
--cert-err34-c,
--cert-err58-cpp,
--cert-flp30-c,
+-cert-*,
+llvm-namespace-comment,
 clang-analyzer-core.CallAndMessage,
 clang-analyzer-deadcode.DeadStores,
 -clang-diagnostic-nonportable-include-path,
@@ -46,7 +45,9 @@ clang-analyzer-deadcode.DeadStores,
 -hicpp-exception-baseclass,
 -hicpp-explicit-conversions,
 -hicpp-function-size,
+-hicpp-invalid-access-moved,
 -hicpp-member-init,
+-hicpp-move-const-arg,
 -hicpp-named-parameter,
 -hicpp-new-delete-operators,
 -hicpp-no-array-decay,
@@ -73,6 +74,8 @@ modernize-use-equals-default,
 -performance-no-int-to-ptr,
 -readability-braces-around-statements,
 -readability-else-after-return,
+readability-function-cognitive-complexity,
+-readability-function-size,
 -readability-identifier-length,
 -readability-implicit-bool-conversion,
 -readability-inconsistent-declaration-parameter-name,
@@ -80,8 +83,10 @@ modernize-use-equals-default,
 -readability-magic-numbers,
 -readability-named-parameter,
 -readability-redundant-access-specifiers,
+-readability-simplify-boolean-expr,
 -readability-static-accessed-through-instance,
 -readability-uppercase-literal-suffix,
+-readability-use-anyofallof,
 '
 
 AnalyzeTemporaryDtors: true
@@ -107,5 +112,11 @@ CheckOptions:
     value:    '90'
   - key:      readability-function-size.VariableThreshold
     value:    '10'
+  - key:      readability-function-cognitive-complexity.IgnoreMacros
+    value:    '1'
+  - key:      readability-function-cognitive-complexity.DescribeBasicIncrements
+    value:    '1'
+  - key:      misc-const-correctness.AnalyzeValues
+    value:    '0'
 
 # vim: ft=yaml

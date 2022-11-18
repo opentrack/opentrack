@@ -177,7 +177,7 @@ function(otr_module n_)
 
     set(self "${n}" PARENT_SCOPE)
 
-    if(NOT arg_RELINK)
+    if(NOT arg_RELINK AND FALSE)
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED TRUE)
     else()
         set_property(TARGET ${n} PROPERTY LINK_DEPENDS_NO_SHARED FALSE)
@@ -194,12 +194,7 @@ function(otr_module n_)
     string(REPLACE "-" "_" build-n ${n_})
     string(TOUPPER "${build-n}" build-n)
     target_compile_definitions(${n} PRIVATE "BUILD_${build-n}")
-
-    get_property(ident GLOBAL PROPERTY opentrack-ident)
-    if (".${ident}" STREQUAL ".")
-        message(FATAL_ERROR "must set global property `opentrack-ident' in `opentrack-variant.cmake'")
-    endif()
-    target_compile_definitions(${n} PRIVATE OPENTRACK_ORG=\"${ident}\")
+    include(opentrack-org)
 
     if(arg_STATIC)
         set(arg_NO-INSTALL TRUE)

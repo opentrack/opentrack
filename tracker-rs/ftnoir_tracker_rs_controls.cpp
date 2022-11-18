@@ -14,11 +14,9 @@ RSdialog_realsense::RSdialog_realsense()
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &QDialog::close);
 }
 
-void RSdialog_realsense::doInstallRSRuntime()
+void RSdialog_realsense::set_buttons_visible(bool x)
 {
-    bool pStarted = RSTracker::startSdkInstallationProcess();
-    if(pStarted)
-        close();
+    ui.buttonBox->setVisible(x);
 }
 
 void RSdialog_realsense::doOK()

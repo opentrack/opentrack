@@ -8,7 +8,6 @@
 #pragma once
 #include "ui_vjoystick.h"
 #include "api/plugin-api.hpp"
-#include "compat/macros.hpp"
 
 enum status
 {

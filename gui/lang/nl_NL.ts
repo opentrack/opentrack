@@ -141,10 +141,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Algehele sneltoetsen</translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Center&lt;/span&gt; - use current pose as looking perfectly forward.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Toggle&lt;/span&gt; - keep looking at same spot until next toggle keypress.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - keep looking forward until next zero keypress.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Centreren&lt;/span&gt; - gebruik de huidige kijkrichting als ijkpunt voor het centreren.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Wisselen&lt;/span&gt; - kijkrichting blijft op dezelfde plek staan, totdat de ingestelde knop opnieuw wordt ingedrukt.&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Zero&lt;/span&gt; - Kijkrichting blijft recht vooruit, totdat er op de ingestelde toets gedrukt wordt.&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
         <source>Bind</source>
         <translation>Koppelen</translation>
     </message>
@@ -285,14 +281,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Effect uitschakelen bij rol</translation>
     </message>
     <message>
-        <source>Output remap</source>
-        <translation>Uitvoer aanpassen</translation>
-    </message>
-    <message>
-        <source>Assign input axis to output axis.</source>
-        <translation>Ingangs-as toewijzen aan uitgangs-as.</translation>
-    </message>
-    <message>
         <source>X</source>
         <translation>X</translation>
     </message>
@@ -377,14 +365,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Hold in-game center of the screen while the mode is active.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Treat this device orientation as the in-game center of the screen.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Freeze the position returned by the tracker while this mode is active.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -398,6 +378,18 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Mouse %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Use current tracker pose as looking perfectly forward.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Keep looking forward until next zero keypress.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Axis assignment</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

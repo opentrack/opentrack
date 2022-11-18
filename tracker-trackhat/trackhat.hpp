@@ -1,13 +1,14 @@
 #pragma once
 
 #include "../tracker-pt/pt-api.hpp"
-#include "compat/macros.hpp"
+#include "compat/timer.hpp"
 #include "options/options.hpp"
 
 #include <track_hat_driver.h>
 
 #include <array>
 #include <atomic>
+#include <optional>
 #include <opencv2/core/mat.hpp>
 
 enum model_type : int
@@ -28,15 +29,18 @@ TH_ErrorCode log_error(TH_ErrorCode error, const char* source, const char* file,
 #define th_check_(expr, expr2) ::trackhat_impl::log_error((expr), expr2)
 #define th_check(expr) ::trackhat_impl::log_error((expr), #expr, __FILE__, __LINE__, function_name)
 
+enum class led_mode : unsigned char {
+    off, constant, dynamic,
+};
+
 struct trackhat_settings : opts
 {
-    static constexpr int min_gain = 16, max_gain = 47,
+    static constexpr int min_gain = 1, max_gain = 47,
                          min_exposure = 0x10, max_exposure = 0xff;
     static constexpr int num_exposure_steps = max_gain + max_exposure - min_gain - min_exposure;
-    int effective_exposure() const;
-    int effective_gain() const;
     trackhat_settings();
-    value<slider_value> exposure{b, "exposure", {min_exposure, min_exposure, max_exposure + max_gain - min_gain}};
+    value<slider_value> exposure{b, "exposure", {min_exposure + max_exposure*2/3, min_exposure, max_exposure}};
+    value<slider_value> gain{b, "gain", {min_gain + max_gain*2/3, min_gain, max_gain}};
     //value<slider_value> threshold{b, "threshold", {0x97, 64, 0xfe}};
     value<model_type> model{b, "model", model_mini_clip_left};
     value<double> min_pt_size{b, "min-point-size", 10};
@@ -45,6 +49,7 @@ struct trackhat_settings : opts
     value<slider_value> point_filter_coefficient{b, "point-filter-coefficient", { 1.5, 1, 4 }};
     value<slider_value> point_filter_limit { b, "point-filter-limit", { 0.1, 0.01, 1 }};
     value<slider_value> point_filter_deadzone { b, "point-filter-deadzone", {0, 0, 1}};
+    value<led_mode> led { b, "led-mode", led_mode::dynamic };
 };
 
 class setting_receiver : public QObject
@@ -60,9 +65,31 @@ private:
     std::atomic<bool> changed{false};
 };
 
+enum class led_state : unsigned char {
+    invalid, stopped, not_tracking, tracking,
+};
+
+struct led_updater final {
+    trackHat_SetLeds_t leds_ {TH_UNCHANGED, TH_UNCHANGED, TH_UNCHANGED};
+    std::optional<Timer> timer_;
+    led_state state_ = led_state::invalid;
+
+    trackHat_SetLeds_t next_state(led_mode mode, led_state new_state);
+    void update_(trackHat_Device_t* device, trackHat_SetLeds_t leds);
+    void update(trackHat_Device_t* device, led_mode mode, led_state new_state);
+
+    static constexpr int SWITCH_TIME_MS = 2000;
+    static constexpr
+        trackHat_SetLeds_t LED_idle = {TH_OFF, TH_SOLID, TH_OFF},
+                           LED_off  = {TH_OFF, TH_OFF, TH_OFF},
+                           LED_tracking {TH_OFF, TH_SOLID, TH_SOLID},
+                           LED_not_tracking {TH_SOLID, TH_OFF, TH_OFF};
+};
+
 } // ns trackhat_impl
 
-using typename trackhat_impl::trackhat_settings;
+using trackhat_impl::trackhat_settings;
+using trackhat_impl::led_updater;
 
 struct trackhat_metadata final : pt_runtime_traits
 {
@@ -95,6 +122,7 @@ struct camera_handle final
     camera_handle() = default;
     ~camera_handle() = default;
 
+    constexpr operator bool() const { return state_ >= st_streaming; }
     [[nodiscard]] bool ensure_connected();
     [[nodiscard]] bool ensure_device_exists();
     void disconnect();
@@ -126,7 +154,7 @@ struct trackhat_camera final : pt_camera
 
     f deadzone_amount() const override { return 10; }
 
-    static constexpr int sensor_size = 2940;
+    static constexpr int sensor_size = 4096;
     static constexpr int sensor_fov = 52;
     static constexpr int point_count = TRACK_HAT_NUMBER_OF_POINTS;
     static constexpr bool debug_mode = true;
@@ -140,6 +168,7 @@ private:
     camera_handle device;
     pt_settings s{trackhat_metadata::module_name};
     trackhat_settings t;
+    led_updater led;
 };
 
 struct trackhat_frame final : pt_frame
