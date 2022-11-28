@@ -147,10 +147,6 @@ Exiting now.</source>
         <translation></translation>
     </message>
     <message>
-        <source>Output</source>
-        <translation>Выходной интерфейс</translation>
-    </message>
-    <message>
         <source>Filter</source>
         <translation>Фильтрация/сглаживание</translation>
     </message>
@@ -176,6 +172,10 @@ Exiting now.</source>
     </message>
     <message>
         <source>Don&apos;t run as root to remove these annoying messages.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output - NO GAME DETECTED</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

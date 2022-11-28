@@ -549,10 +549,14 @@ void main_window::set_title(const QString& game_title)
 
     const QString current = ini_filename();
 
-    if (game_title.isEmpty())
+    if (game_title.isEmpty()) {
         setWindowTitle(pat2.arg(current));
-    else
+        ui.groupProto->setTitle("Output - NO GAME DETECTED");
+    }
+    else {
         setWindowTitle(pat1.arg(current, game_title));
+        ui.groupProto->setTitle("Output - " + game_title);
+    }
 }
 
 void main_window::show_pose()

@@ -6,6 +6,7 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
 
  - The ability to select your own wine exectuable for the wine output module since SC players might change runners and are not using system wine but lutris instead.
  - Enabled to build the wine output module by default with CMake which is required to use headtracking in SC.
+ - Added a current game label to the output group field, which displays the current game title. This is usually also shown in the opentrack window title but just to make it more noticalbe it is also now shown there.
  - Fixed a issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key was cleared. (See [opentrack issue 1479](https://github.com/opentrack/opentrack/issues/1479))
 
 ## Installation:

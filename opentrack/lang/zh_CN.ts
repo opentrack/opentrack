@@ -79,10 +79,6 @@
         <translation></translation>
     </message>
     <message>
-        <source>Output</source>
-        <translation>输出</translation>
-    </message>
-    <message>
         <source>Filter</source>
         <translation>过滤器</translation>
     </message>
@@ -177,6 +173,10 @@ Exiting now.</source>
     <message>
         <source> :: </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Output - NO GAME DETECTED</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
