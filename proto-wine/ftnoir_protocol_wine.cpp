@@ -42,7 +42,12 @@ void wine::pose(const double *headpose, const double*)
         for (int i = 0; i < 3; i++)
             shm->data[i] = headpose[i] * 10;
 #ifndef OTR_WINE_NO_WRAPPER
-        if (shm->gameid != gameid)
+        if (shm->gameid == 0) {
+            // We have encountered an error: The Shared Memory (FreeTrack) was unable to determine a GameID
+            gameid = shm->gameid2 = shm->gameid;
+            connected_game = "ALERT: FreeTrack failed";
+        }
+        else if (shm->gameid != gameid)
         {
             qDebug() << "proto/wine: looking up gameData";
             QString gamename;
@@ -56,6 +61,13 @@ void wine::pose(const double *headpose, const double*)
         else {
             //qDebug() << "proto/wine: not looking up gameData. name: " << connected_game << " ID: " << shm->gameid << " ID2:" << shm->gameid2;
         }
+
+        /*
+        //Recieve Messages via SHM from the wine wrapper
+        char local_message[1024];
+        strcpy(local_message, shm->message);
+        qDebug() << "SHM MESSAGE: " << local_message;
+        */
 #endif
         lck_shm.unlock();
     }

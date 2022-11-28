@@ -36,7 +36,7 @@ Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos/wiki)
  11. Adjust other `Head Tracking - General - *` settings to your liking
 
 ## Known Issues:
-On some systems Head Tracking might stop working after restarting the game. There is still something that screws with freetrack initialisation AFTER a Linux Opentrack version has been run.
+On some systems Head Tracking might stop working after restarting the game (this might be the case if Opentrack shows `Output - ALERT: FreeTrack failed` above the output module select). There is still something that screws with freetrack initialisation AFTER a Linux Opentrack version has been run.
 In that case you have to run a windows opentrack instance in the same prefix/bottle as SC (and with the same runner and sync settings) before or after using this fork to "reset" the freetrack environment.
 To setup a windows opentrack instance:
  1. In Lutris press the add game button (the + in the top left corner)

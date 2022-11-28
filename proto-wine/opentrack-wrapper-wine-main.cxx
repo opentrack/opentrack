@@ -1,4 +1,7 @@
 #include <cerrno>
+#include <cmath>
+#include <cstring>
+#include <string>
 
 // OSX sdk 10.8 build error otherwise
 #undef _LIBCPP_MSVCRT
@@ -58,8 +61,9 @@ int main(void)
     WineSHM* shm_posix = (WineSHM*) lck_posix.ptr();
     FTHeap* shm_wine = (FTHeap*) lck_wine.ptr();
     FTData* data = &shm_wine->data;
+    //strcpy(shm_posix->message, "SHM SET UP AND STARTING MAIN LOOP");
     create_registry_key(); // FORK: EDIT FOR SC. FreeTrack Key has been removed. See function for details.
-    while (1) {
+    while (true) {
         if (shm_posix->stop)
             break;
         data->Yaw = -shm_posix->data[Yaw];
@@ -75,6 +79,7 @@ int main(void)
         shm_posix->gameid = shm_wine->GameID;
         for (int i = 0; i < 8; i++)
             shm_wine->table[i] = shm_posix->table[i];
+        //strcpy(shm_posix->message, std::string(std::to_string(shm_wine->GameID) + " : " + std::to_string(shm_wine->GameID2)).c_str());
         (void) Sleep(4);
     }
 }

@@ -14,7 +14,8 @@
 
 struct WineSHM {
     double data[6];
-    int gameid, gameid2;
+    int gameid, gameid2; //gameid one is passed to us by FreeTrack. No idea about gameid2. That thing is just mirrored back in this module to FreeTrack.
     unsigned char table[8];
     bool stop;
+    //char message[1024];
 };

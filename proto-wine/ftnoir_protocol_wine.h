@@ -58,7 +58,7 @@ private:
 
 #ifndef OTR_WINE_NO_WRAPPER
     QProcess wrapper;
-    int gameid = 0;
+    int gameid = -1;
     QString connected_game;
     QMutex game_name_mutex;
 #endif
