@@ -4,8 +4,12 @@
 #include <utility>
 #include <QMutex>
 
-static std::vector<std::unique_ptr<video::impl::camera_>> metadata;
-static QMutex mtx;
+std::pair<std::vector<std::unique_ptr<video::impl::camera_>>&, QMutex&> get_metadata()
+{
+    static std::vector<std::unique_ptr<video::impl::camera_>> metadata;
+    static QMutex mtx;
+    return { metadata, mtx };
+}
 
 namespace video::impl {
 
@@ -17,6 +21,7 @@ camera::~camera() = default;
 
 void register_camera(std::unique_ptr<impl::camera_> camera)
 {
+    auto [metadata, mtx] = get_metadata();
     QMutexLocker l(&mtx);
     metadata.push_back(std::move(camera));
 }
@@ -27,6 +32,7 @@ namespace video {
 
 bool show_dialog(const QString& camera_name)
 {
+    auto [metadata, mtx] = get_metadata();
     QMutexLocker l(&mtx);
 
     for (auto& camera : metadata)
@@ -39,6 +45,7 @@ bool show_dialog(const QString& camera_name)
 
 std::unique_ptr<camera_impl> make_camera_(const QString& name)
 {
+    auto [metadata, mtx] = get_metadata();
     QMutexLocker l(&mtx);
 
     for (auto& camera : metadata)
@@ -54,6 +61,7 @@ std::unique_ptr<camera_impl> make_camera(const QString& name)
     if (auto ret = make_camera_(name))
         return ret;
 
+    auto [metadata, mtx] = get_metadata();
     for (auto& camera : metadata)
         for (const QString& name_ : camera->camera_names())
             if (auto ret = camera->make_camera(name_))
@@ -64,6 +72,8 @@ std::unique_ptr<camera_impl> make_camera(const QString& name)
 
 std::vector<QString> camera_names()
 {
+    auto [metadata, mtx] = get_metadata();
+
     QMutexLocker l(&mtx);
     std::vector<QString> names; names.reserve(32);
 
