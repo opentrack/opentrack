@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "opentrack/defs.hpp"
 #include "api/plugin-support.hpp"
 #include "gui/mapping-dialog.hpp"
 #include "gui/options-dialog.hpp"
@@ -49,6 +50,11 @@ class main_window final : public QMainWindow, private State
 
     Shortcuts global_shortcuts;
     QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
+
+#ifdef UI_NO_VIDEO_FEED
+    QWidget fake_video_frame_parent;
+    QFrame fake_video_frame{&fake_video_frame_parent};
+#endif
 
     std::unique_ptr<options_dialog> options_widget;
     std::unique_ptr<mapping_dialog> mapping_widget;
