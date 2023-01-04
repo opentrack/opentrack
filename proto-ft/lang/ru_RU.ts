@@ -101,7 +101,7 @@ Starting tracking will again overwrite the DLL locations.</source>
 <context>
     <name>freetrackDll</name>
     <message>
-        <source>freetrack 2.0 Enhanced</source>
+        <source>freetrack</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

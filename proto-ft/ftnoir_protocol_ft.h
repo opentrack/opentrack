@@ -86,6 +86,6 @@ class freetrackDll : public Metadata
     Q_OBJECT
 
 public:
-    QString name() { return tr("freetrack 2.0 Enhanced"); }
+    QString name() { return tr("freetrack"); }
     QIcon icon() { return QIcon(":/images/freetrack.png"); }
 };
