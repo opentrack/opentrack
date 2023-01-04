@@ -747,10 +747,19 @@ NeuralNetDialog::NeuralNetDialog() :
     tracker_status_poll_timer_.start();
 }
 
+void NeuralNetDialog::save()
+{
+    settings_.b->save();
+}
+
+void NeuralNetDialog::reload()
+{
+    settings_.b->reload();
+}
 
 void NeuralNetDialog::doOK()
 {
-    settings_.b->save();
+    save();
     close();
 }
 
@@ -793,6 +802,15 @@ void NeuralNetDialog::unregister_tracker()
     ui_.tcalib_button->setEnabled(false);
 }
 
+bool NeuralNetDialog::embeddable() noexcept
+{
+    return true;
+}
+
+void NeuralNetDialog::set_buttons_visible(bool x)
+{
+    ui_.buttonBox->setVisible(x);
+}
 
 void NeuralNetDialog::status_poll()
 {

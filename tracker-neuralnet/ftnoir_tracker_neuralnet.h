@@ -166,6 +166,9 @@ public:
     NeuralNetDialog();
     void register_tracker(ITracker * x) override;
     void unregister_tracker() override;
+
+    bool embeddable() noexcept override;
+    void set_buttons_visible(bool x) override;
 private:
     void make_fps_combobox();
     void make_resolution_combobox();
@@ -180,6 +183,8 @@ private:
     NeuralNetTracker* tracker_ = nullptr;
 
 private Q_SLOTS:
+    void save() override;
+    void reload() override;
     void doOK();
     void doCancel();
     void camera_settings();
