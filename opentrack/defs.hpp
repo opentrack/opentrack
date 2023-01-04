@@ -11,7 +11,7 @@
 
 #define UI_NO_RAW_DATA
 #define UI_NO_GAME_DATA
-//#define UI_NO_VIDEO_FEED
+#define UI_NO_VIDEO_FEED
 
 //define UI_ACCELA_OLD_STAIRCASE
 
