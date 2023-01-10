@@ -13,6 +13,7 @@
 #include "compat/math-imports.hpp"
 #include "compat/timer.hpp"
 #include "compat/check-visible.hpp"
+#include "compat/camera-names.hpp"
 #include "cv/init.hpp"
 
 #include <omp.h>
@@ -83,7 +84,8 @@ struct OnScopeExit
 CamIntrinsics make_intrinsics(const cv::Mat& img, const Settings& settings)
 {
     const int w = img.cols, h = img.rows;
-    const double diag_fov = settings.fov * M_PI / 180.;
+    //const double diag_fov = settings.fov * M_PI / 180.;
+    const double diag_fov = 60 * M_PI / 180.; (void)settings;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
     const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
     const double focal_length_w = 1. / tan(.5 * fov_w);
@@ -446,6 +448,9 @@ NeuralNetTracker::~NeuralNetTracker()
 
 module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
 {
+    if (camera_name_to_index("TrackHat sensor") == -1)
+        return error("Can't open camera 'TrackHat sensor'");
+
     videoframe->show();
     video_widget_ = std::make_unique<cv_video_widget>(videoframe);
     layout_ = std::make_unique<QHBoxLayout>();
@@ -501,13 +506,15 @@ bool NeuralNetTracker::load_and_initialize_model()
 
 bool NeuralNetTracker::open_camera()
 {
-    int rint = std::clamp(*settings_.resolution, 0, (int)std::size(resolution_choices)-1);
+    //int rint = std::clamp(*settings_.resolution, 0, (int)std::size(resolution_choices)-1);
+    int rint = 1;
     resolution_tuple res = resolution_choices[rint];
-    int fps = enum_to_fps(settings_.force_fps);
+    //int fps = enum_to_fps(settings_.force_fps);
+    int fps = 60;
 
     QMutexLocker l(&camera_mtx_);
 
-    camera_ = video::make_camera(settings_.camera_name);
+    camera_ = video::make_camera("TrackHat sensor");
 
     if (!camera_)
         return false;
@@ -522,7 +529,8 @@ bool NeuralNetTracker::open_camera()
     if (fps)
         args.fps = fps;
 
-    args.use_mjpeg = settings_.use_mjpeg;
+    //args.use_mjpeg = settings_.use_mjpeg;
+    args.use_mjpeg = true;
 
     if (!camera_->start(args))
     {

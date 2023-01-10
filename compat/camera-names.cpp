@@ -103,8 +103,8 @@ std::vector<std::tuple<QString, int>> get_camera_names()
                 {
                     QString str = prop_to_qstring(pPropBag, L"FriendlyName");
                     QString path = device_path_from_qstring(prop_to_qstring(pPropBag, L"DevicePath"));
-                    if (!path.isNull())
-                        str += QStringLiteral(" [%1]").arg(path);
+                    //if (!path.isNull())
+                    //    str += QStringLiteral(" [%1]").arg(path);
                     ret.push_back({ str, (int)ret.size() });
                 }
                 pPropBag->Release();
