@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>466</width>
-    <height>415</height>
+    <height>490</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -55,8 +55,8 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>320</width>
-        <height>240</height>
+        <width>448</width>
+        <height>315</height>
        </size>
       </property>
      </widget>
@@ -86,7 +86,7 @@
          </property>
          <property name="icon">
           <iconset resource="../gui/opentrack-res.qrc">
-           <normaloff>:/images/tools.png</normaloff>:/images/tools.png</iconset>
+           <normaloff>:/images/newcogicon.png</normaloff>:/images/newcogicon.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -109,7 +109,7 @@
          </property>
          <property name="icon">
           <iconset resource="../gui/opentrack-res.qrc">
-           <normaloff>:/images/curves.png</normaloff>:/images/curves.png</iconset>
+           <normaloff>:/images/newmapicon.png</normaloff>:/images/newmapicon.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -181,7 +181,11 @@
              <enum>Qt::ClickFocus</enum>
             </property>
             <property name="text">
-             <string>🔨</string>
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../gui/opentrack-res.qrc">
+              <normaloff>:/images/newsetticon.png</normaloff>:/images/newsetticon.png</iconset>
             </property>
             <property name="flat" stdset="0">
              <bool>false</bool>

@@ -1,12 +1,16 @@
 <RCC>
-    <qresource prefix="/">
-        <file>images/tools.png</file>
-        <file>images/settings16.png</file>
-        <file>images/curves.png</file>
-        <file>images/opentrack.png</file>
-        <file>images/no-feed.png</file>
-        <file>images/filter-16.png</file>
-        <file>images/tracking-not-started.png</file>
-        <file>images/english.png</file>
-    </qresource>
+  <qresource prefix="/">
+    <file>images/newcogicon.png</file>
+    <file>images/newmapicon.png</file>
+    <file>images/newsetticon.png</file>
+    <file>images/THgriddy.png</file>
+    <file>images/tools.png</file>
+    <file>images/settings16.png</file>
+    <file>images/curves.png</file>
+    <file>images/opentrack.png</file>
+    <file>images/no-feed.png</file>
+    <file>images/filter-16.png</file>
+    <file>images/tracking-not-started.png</file>
+    <file>images/english.png</file>
+  </qresource>
 </RCC>
