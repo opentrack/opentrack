@@ -107,10 +107,6 @@ Exiting now.</source>
         <translation>Остановить</translation>
     </message>
     <message>
-        <source>🔨</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Output</source>
         <translation>Выходной интерфейс</translation>
     </message>
@@ -136,6 +132,10 @@ Exiting now.</source>
     </message>
     <message>
         <source>Don&apos;t run as root to remove these annoying messages.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

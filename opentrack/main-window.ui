@@ -8,7 +8,7 @@
     <x>0</x>
     <y>0</y>
     <width>466</width>
-    <height>490</height>
+    <height>498</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -39,16 +39,10 @@
     </sizepolicy>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>6</number>
-    </property>
-    <property name="bottomMargin">
-     <number>6</number>
-    </property>
-    <item>
-     <widget class="pose_widget" name="pose_display" native="true">
+    <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+     <widget class="QWidget" name="frame_parent" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
@@ -56,9 +50,94 @@
       <property name="minimumSize">
        <size>
         <width>448</width>
-        <height>315</height>
+        <height>320</height>
        </size>
       </property>
+      <widget class="pose_widget" name="pose_display" native="true">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>448</width>
+         <height>320</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>448</width>
+         <height>320</height>
+        </size>
+       </property>
+      </widget>
+      <widget class="QWidget" name="video_frame_parent" native="true">
+       <property name="geometry">
+        <rect>
+         <x>11</x>
+         <y>0</y>
+         <width>426</width>
+         <height>320</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>426</width>
+         <height>320</height>
+        </size>
+       </property>
+       <widget class="QFrame" name="video_frame">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>448</width>
+          <height>320</height>
+         </rect>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>426</width>
+          <height>320</height>
+         </size>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::NoFrame</enum>
+        </property>
+       </widget>
+      </widget>
+      <widget class="QCheckBox" name="preview_checkbox">
+       <property name="geometry">
+        <rect>
+         <x>370</x>
+         <y>290</y>
+         <width>67</width>
+         <height>18</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Preview</string>
+       </property>
+      </widget>
+      <zorder>video_frame_parent</zorder>
+      <zorder>pose_display</zorder>
+      <zorder>preview_checkbox</zorder>
      </widget>
     </item>
     <item>

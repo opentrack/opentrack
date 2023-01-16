@@ -70,6 +70,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 #ifdef UI_NO_VIDEO_FEED
     fake_video_frame.resize(640, 480);
     fake_video_frame_parent.setVisible(false);
+#elif defined UI_COMPACT_VIDEO_FEED
+    connect(ui.preview_checkbox, &QCheckBox::toggled, this, &main_window::toggle_video_preview);
 #endif
 }
 
@@ -419,7 +421,12 @@ void main_window::update_button_state(bool running, bool inertialp)
     ui.iconcomboTrackerSource->setEnabled(not_running);
 #endif
     ui.profile_button->setEnabled(not_running);
-#ifndef UI_NO_VIDEO_FEED
+#ifdef UI_COMPACT_VIDEO_FEED
+    ui.preview_checkbox->setChecked(false);
+    ui.preview_checkbox->raise();
+    ui.preview_checkbox->setVisible(running && !inertialp);
+    toggle_video_preview(false);
+#elif !defined UI_NO_VIDEO_FEED
     ui.video_frame_label->setVisible(not_running || inertialp);
     if(not_running)
     {
@@ -430,6 +437,22 @@ void main_window::update_button_state(bool running, bool inertialp)
     }
 #endif
 }
+
+#ifdef UI_COMPACT_VIDEO_FEED
+void main_window::toggle_video_preview(bool value)
+{
+    value &= ui.video_frame->layout() != nullptr;
+    ui.video_frame_parent->setVisible(value);
+    ui.video_frame_parent->raise();
+    ui.video_frame->raise();
+    ui.pose_display->setVisible(!value);
+    ui.preview_checkbox->raise();
+    if (value)
+        ui.preview_checkbox->setStyleSheet("QCheckBox { color: #32CD32 }");
+    else
+        ui.preview_checkbox->setStyleSheet("");
+}
+#endif
 
 void main_window::start_tracker_()
 {

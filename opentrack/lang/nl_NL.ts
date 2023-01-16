@@ -39,10 +39,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>🔨</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Output</source>
         <translation type="unfinished"></translation>
     </message>
@@ -132,6 +128,10 @@ Exiting now.</source>
     </message>
     <message>
         <source>Don&apos;t run as root to remove these annoying messages.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preview</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

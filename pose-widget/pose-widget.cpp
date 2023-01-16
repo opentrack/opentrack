@@ -8,6 +8,7 @@
 #include "pose-widget.hpp"
 #include "compat/check-visible.hpp"
 #include "compat/math.hpp"
+#include "opentrack/defs.hpp"
 
 #include <QPainter>
 #include <QtEvents>
@@ -38,17 +39,21 @@ pose_widget::pose_widget(QWidget* parent) : QWidget(parent)
     shine.fill(QColor(255,255,255));
     p.begin(&shine);
     p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-    p.drawImage(QPointF(0,0), front);		
+    p.drawImage(QPointF(0,0), front);
     p.end();
 
     //draw Octopus shadow
     shadow.fill(QColor(0,0,0));
     p.begin(&shadow);
     p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-    p.drawImage(QPointF(0,0), front);		
+    p.drawImage(QPointF(0,0), front);
     p.end();
 
     mirror.setFocusPolicy(Qt::NoFocus);
+
+#ifdef UI_COMPACT_VIDEO_FEED
+    mirror.setVisible(false);
+#endif
 }
 
 void pose_widget::present(double yaw, double pitch, double roll, double x, double y, double z)

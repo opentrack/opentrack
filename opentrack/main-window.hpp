@@ -118,6 +118,9 @@ public:
     void show_pose();
     void show_pose_(const double* mapped, const double* raw);
     void set_title(const QString& game_title = QString());
+#ifdef UI_COMPACT_VIDEO_FEED
+    void toggle_video_preview(bool value);
+#endif
 
     void start_tracker_();
     void stop_tracker_();

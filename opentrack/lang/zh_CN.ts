@@ -39,10 +39,6 @@
         <translation>停止</translation>
     </message>
     <message>
-        <source>🔨</source>
-        <translation></translation>
-    </message>
-    <message>
         <source>Output</source>
         <translation>输出</translation>
     </message>
@@ -137,6 +133,10 @@ Exiting now.</source>
     <message>
         <source> :: </source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
