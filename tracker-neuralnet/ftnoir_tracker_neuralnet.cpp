@@ -693,16 +693,19 @@ std::tuple<cv::Size,double, double> NeuralNetTracker::stats() const
 
 void NeuralNetDialog::make_fps_combobox()
 {
+#if 0
     for (int k = 0; k < fps_MAX; k++)
     {
         const int hz = enum_to_fps(k);
         const QString name = (hz == 0) ? tr("Default") : QString::number(hz);
         ui_.cameraFPS->addItem(name, k);
     }
+#endif
 }
 
 void NeuralNetDialog::make_resolution_combobox()
 {
+#if 0
     int k=0;
     for (const auto [w, h] : resolution_choices)
     {
@@ -711,6 +714,7 @@ void NeuralNetDialog::make_resolution_combobox()
             : QString::number(w) + " x " + QString::number(h);
         ui_.resolution->addItem(s, k++);
     }
+#endif
 }
 
 
@@ -722,14 +726,17 @@ NeuralNetDialog::NeuralNetDialog() :
     make_fps_combobox();
     make_resolution_combobox();
 
+#if 0
     for (const auto& str : video::camera_names())
         ui_.cameraName->addItem(str);
 
     tie_setting(settings_.camera_name, ui_.cameraName);
     tie_setting(settings_.fov, ui_.cameraFOV);
+#endif
     tie_setting(settings_.offset_fwd, ui_.tx_spin);
     tie_setting(settings_.offset_up, ui_.ty_spin);
     tie_setting(settings_.offset_right, ui_.tz_spin);
+#if 0
     tie_setting(settings_.show_network_input, ui_.showNetworkInput);
     tie_setting(settings_.roi_filter_alpha, ui_.roiFilterAlpha);
     tie_setting(settings_.use_mjpeg, ui_.use_mjpeg);
@@ -737,6 +744,7 @@ NeuralNetDialog::NeuralNetDialog() :
     tie_setting(settings_.num_threads, ui_.threadCount);
     tie_setting(settings_.resolution, ui_.resolution);
     tie_setting(settings_.force_fps, ui_.cameraFPS);
+#endif
 
     connect(ui_.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
