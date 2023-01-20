@@ -17,6 +17,10 @@ void video_widget::init_image_nolock()
 
 video_widget::video_widget(QWidget* parent) : QWidget(parent)
 {
+    if (parent)
+        setFixedSize(parent->size());
+    else
+        setFixedSize(320, 240);
     init_image_nolock();
     connect(&timer, &QTimer::timeout, this, &video_widget::draw_image, Qt::DirectConnection);
     timer.start(15);
@@ -84,4 +88,3 @@ void video_widget::set_fresh(bool x)
 {
     fresh_.store(x, std::memory_order_release);
 }
-
