@@ -353,7 +353,7 @@ bool NeuralNetTracker::detect()
         last_pose_affine_ = pose_affine;
     }
 
-    draw_gizmos(*face, last_pose_affine_);
+    draw_gizmos(*face, pose_affine);
 
     return true;
 }
@@ -652,11 +652,15 @@ void NeuralNetTracker::update_fps(double dt)
 
 void NeuralNetTracker::data(double *data)
 {
-    Affine tmp = [&]()
+    auto tmp2 = [&]()
     {
         QMutexLocker lck(&mtx_);
         return last_pose_affine_;
     }();
+
+    if (!tmp2)
+        return;
+    const auto& tmp = *tmp2;
 
     const auto& mx = tmp.R.col(0);
     const auto& my = tmp.R.col(1);
@@ -682,7 +686,7 @@ void NeuralNetTracker::data(double *data)
 Affine NeuralNetTracker::pose()
 {
     QMutexLocker lck(&mtx_);
-    return last_pose_affine_;
+    return last_pose_affine_ ? *last_pose_affine_ : Affine{};
 }
 
 std::tuple<cv::Size,double, double> NeuralNetTracker::stats() const
