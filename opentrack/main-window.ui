@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>338</width>
-    <height>418</height>
+    <width>320</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -34,10 +34,16 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <property name="leftMargin">
-     <number>4</number>
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
     </property>
     <property name="rightMargin">
-     <number>4</number>
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
     </property>
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QWidget" name="frame_parent" native="true">
@@ -140,6 +146,9 @@
        <property name="bottomMargin">
         <number>0</number>
        </property>
+       <property name="horizontalSpacing">
+        <number>9</number>
+       </property>
        <item row="1" column="0">
         <widget class="QPushButton" name="btnShortcuts">
          <property name="sizePolicy">
@@ -154,29 +163,6 @@
          <property name="icon">
           <iconset resource="../gui/opentrack-res.qrc">
            <normaloff>:/images/newcogicon.png</normaloff>:/images/newcogicon.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>80</width>
-           <height>24</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QPushButton" name="btnEditCurves">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Mapping</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../gui/opentrack-res.qrc">
-           <normaloff>:/images/newmapicon.png</normaloff>:/images/newmapicon.png</iconset>
          </property>
          <property name="iconSize">
           <size>
@@ -336,87 +322,116 @@
          </layout>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QPushButton" name="btnEditCurves">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Mapping</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../gui/opentrack-res.qrc">
+           <normaloff>:/images/newmapicon.png</normaloff>:/images/newmapicon.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>80</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="groupStartStop">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
-        <horstretch>4</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="title">
-       <string>Tracking</string>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <property name="spacing">
-        <number>7</number>
-       </property>
-       <property name="leftMargin">
-        <number>4</number>
-       </property>
-       <property name="topMargin">
-        <number>3</number>
-       </property>
-       <property name="rightMargin">
-        <number>4</number>
-       </property>
-       <property name="bottomMargin">
-        <number>2</number>
-       </property>
+     <widget class="QWidget" name="widget_2" native="true">
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QToolButton" name="btnStartTracker">
+        <widget class="QGroupBox" name="groupStartStop">
          <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Maximum">
+           <horstretch>4</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>34</height>
-          </size>
+         <property name="title">
+          <string>Tracking</string>
          </property>
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Start</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QToolButton" name="btnStopTracker">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>34</height>
-          </size>
-         </property>
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string>Stop</string>
-         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <property name="spacing">
+           <number>7</number>
+          </property>
+          <property name="leftMargin">
+           <number>4</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QToolButton" name="btnStartTracker">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>34</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Start</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="btnStopTracker">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>34</height>
+             </size>
+            </property>
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Stop</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
        </item>
       </layout>
