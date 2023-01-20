@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>466</width>
-    <height>498</height>
+    <width>338</width>
+    <height>418</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -16,12 +16,6 @@
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
-  </property>
-  <property name="minimumSize">
-   <size>
-    <width>466</width>
-    <height>0</height>
-   </size>
   </property>
   <property name="windowIcon">
    <iconset resource="../gui/opentrack-res.qrc">
@@ -39,18 +33,24 @@
     </sizepolicy>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="leftMargin">
+     <number>4</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
     <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
      <widget class="QWidget" name="frame_parent" native="true">
       <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="minimumSize">
        <size>
-        <width>448</width>
-        <height>320</height>
+        <width>320</width>
+        <height>240</height>
        </size>
       </property>
       <widget class="pose_widget" name="pose_display" native="true">
@@ -58,30 +58,24 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>448</width>
-         <height>320</height>
+         <width>320</width>
+         <height>240</height>
         </rect>
        </property>
        <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>448</width>
-         <height>320</height>
-        </size>
        </property>
       </widget>
       <widget class="QWidget" name="video_frame_parent" native="true">
        <property name="geometry">
         <rect>
-         <x>11</x>
+         <x>0</x>
          <y>0</y>
-         <width>426</width>
-         <height>320</height>
+         <width>320</width>
+         <height>240</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -92,8 +86,8 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>426</width>
-         <height>320</height>
+         <width>320</width>
+         <height>240</height>
         </size>
        </property>
        <widget class="QFrame" name="video_frame">
@@ -101,8 +95,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>448</width>
-          <height>320</height>
+          <width>320</width>
+          <height>240</height>
          </rect>
         </property>
         <property name="sizePolicy">
@@ -110,12 +104,6 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>426</width>
-          <height>320</height>
-         </size>
         </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
@@ -125,8 +113,8 @@
       <widget class="QCheckBox" name="preview_checkbox">
        <property name="geometry">
         <rect>
-         <x>370</x>
-         <y>290</y>
+         <x>250</x>
+         <y>220</y>
          <width>67</width>
          <height>18</height>
         </rect>
@@ -358,12 +346,6 @@
         <horstretch>4</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
-      </property>
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>0</height>
-       </size>
       </property>
       <property name="title">
        <string>Tracking</string>
