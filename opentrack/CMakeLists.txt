@@ -11,4 +11,6 @@ set_target_properties(opentrack-executable PROPERTIES
     PREFIX ""
 )
 
+set_source_files_properties(resources.rc OBJECT_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/opentrack.ico")
+
 target_link_libraries(${self} opentrack-user-interface opentrack-version)
