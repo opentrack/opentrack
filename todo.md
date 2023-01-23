@@ -12,3 +12,4 @@
 - 2023-01-16: 1.5 hours adding video preview
 - 2023-01-20: 1 hour fixing the preview bug
 - 2023-01-20: .5 hours doing the last few tweaks
+- 2023-01-23: 1 hour exposure presets
