@@ -8,6 +8,7 @@
 #pragma once
 
 #include "video/camera.hpp"
+#include "settings.hpp"
 #include <optional>
 #include <opencv2/videoio.hpp>
 
@@ -45,6 +46,8 @@ static constexpr int video_capture_backend =
     bool show_dialog() override;
 
     bool get_frame_();
+
+    dshow_camera_settings s;
 
     std::optional<cv::VideoCapture> cap;
     cv::Mat mat;

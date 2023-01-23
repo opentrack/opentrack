@@ -40,6 +40,10 @@ Don&apos;t roll or change position.</source>
         <source>Up</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Exposure preset</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>

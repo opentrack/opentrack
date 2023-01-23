@@ -20,6 +20,7 @@
 #include "compat/timer.hpp"
 #include "video/camera.hpp"
 #include "cv/affine.hpp"
+#include "video-opencv/settings.hpp"
 
 #include <QObject>
 #include <QThread>
@@ -176,6 +177,8 @@ private:
 
     Ui::Form ui_;
     Settings settings_;
+    dshow_camera_settings cs_;
+
     // Calibration code mostly taken from point tracker
     QTimer calib_timer_;
     TranslationCalibrator trans_calib_;

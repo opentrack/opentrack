@@ -750,6 +750,22 @@ NeuralNetDialog::NeuralNetDialog() :
     tie_setting(settings_.force_fps, ui_.cameraFPS);
 #endif
 
+    {
+        const struct {
+            QString label;
+            exposure_preset preset;
+        } presets[] = {
+            { QStringLiteral("Near (1-4ft)"), exposure_preset::near     },
+            { QStringLiteral("Far (4-8ft)"),  exposure_preset::far      },
+            { QStringLiteral("Custom"),       exposure_preset::ignored  },
+        };
+
+        for (const auto& [label, preset] : presets)
+            ui_.exposure_preset->addItem(label, int(preset));
+
+        tie_setting(cs_.exposure_preset, ui_.exposure_preset);
+    }
+
     connect(ui_.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui_.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));

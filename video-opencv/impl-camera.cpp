@@ -47,12 +47,17 @@ bool cam::start(info& args)
     if (args.use_mjpeg)
         cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
-#if 1
-    cap->set(cv::CAP_PROP_AUTO_EXPOSURE, 0);
-    //cap->set(cv::CAP_PROP_SHARPNESS, 0);
-    if (auto exp = cap->get(cv::CAP_PROP_EXPOSURE); exp > -4 || exp < -5)
-        cap->set(cv::CAP_PROP_EXPOSURE, -5);
-#endif
+    if (s.exposure_preset != exposure_preset::ignored)
+    {
+        cap->set(cv::CAP_PROP_AUTO_EXPOSURE, 0);
+        //cap->set(cv::CAP_PROP_SHARPNESS, 0);
+        switch (s.exposure_preset)
+        {
+            case exposure_preset::near: cap->set(cv::CAP_PROP_EXPOSURE, -5); break;
+            case exposure_preset::far: cap->set(cv::CAP_PROP_EXPOSURE, -4); break;
+            default: break;
+        }
+    }
 
     if (!cap->isOpened())
         goto fail;
