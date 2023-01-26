@@ -37,6 +37,9 @@ using namespace options;
 extern "C" __declspec(dllimport) unsigned __cdecl _controlfp(unsigned, unsigned);
 #endif
 
+extern "C" OTR_GENERIC_EXPORT bool opentrack_using_dark_theme;
+bool opentrack_using_dark_theme = false;
+
 static void set_fp_mask()
 {
 #if defined OTR_ARCH_DENORM_DAZ
@@ -188,6 +191,7 @@ static void apply_dark_windows_theme_if_needed()
         qApp->setPalette(darkPalette);
 
         qApp->setStyleSheet("QToolTip { color: #ffffff; background-color: #2a82da; border: 1px solid white; }");
+        opentrack_using_dark_theme = true;
     }
 }
 
@@ -345,4 +349,3 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
 
     return ret;
 }
-

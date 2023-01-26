@@ -27,6 +27,7 @@ public:
     explicit pose_widget(QWidget *parent = nullptr);
     void present(double xAngle, double yAngle, double zAngle, double x, double y, double z);
     QCheckBox mirror{"Mirror", this};
+    void set_grid_background(bool dark_theme);
 private:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent*) override;
@@ -35,6 +36,8 @@ private:
     QImage front{QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)};
     QImage back {QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)
                                              .mirrored(true,false)};
+    QImage background;
+
     QImage shine {QImage{front.width(), front.height(), QImage::Format_ARGB32}};
     QImage shadow{QImage{front.width(), front.height(), QImage::Format_ARGB32}};
 };

@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>images/side1.png</file>
         <file>images/side6.png</file>
+        <file>images/grid-light.png</file>
+        <file>images/grid-dark.png</file>
     </qresource>
 </RCC>

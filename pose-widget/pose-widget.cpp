@@ -22,6 +22,7 @@ namespace pose_widget_impl {
 pose_widget::pose_widget(QWidget* parent) : QWidget(parent)
 {
     QPainter p;
+    p.setRenderHint(QPainter::SmoothPixmapTransform);
 #ifdef TEST
     //draw rectangle frame around of Octopus, only if TEST defined
     p.begin(&front);
@@ -54,6 +55,14 @@ pose_widget::pose_widget(QWidget* parent) : QWidget(parent)
 #ifdef UI_COMPACT_VIDEO_FEED
     mirror.setVisible(false);
 #endif
+}
+
+void pose_widget::set_grid_background(bool dark_theme)
+{
+    if (dark_theme)
+        background = QImage(":/images/grid-dark.png");
+    else
+        background = QImage(":/images/grid-light.png");
 }
 
 void pose_widget::present(double yaw, double pitch, double roll, double x, double y, double z)
@@ -94,6 +103,8 @@ void pose_widget::paintEvent(QPaintEvent*)
 
     {
         p.fillRect(rect(), palette().brush(backgroundRole()));
+        if (!background.isNull())
+            p.drawImage(rect(), background);
         // draw axes
         p.save();
         p.setPen(QPen(Qt::gray, 1, Qt::SolidLine));

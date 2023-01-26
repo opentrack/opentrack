@@ -33,6 +33,7 @@
 #include <QDateTime>
 
 extern "C" const char* const opentrack_version;
+extern "C" OTR_GENERIC_IMPORT bool opentrack_using_dark_theme;
 
 using namespace options::globals;
 using namespace options;
@@ -57,6 +58,8 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_tray_menu();
     setVisible(!start_in_tray());
     ensure_tray();
+
+    ui.pose_display->set_grid_background(opentrack_using_dark_theme);
 
     connect(&pose_update_timer, &QTimer::timeout,
             this, &main_window::show_pose, Qt::DirectConnection);
