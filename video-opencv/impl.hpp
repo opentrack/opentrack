@@ -44,6 +44,7 @@ static constexpr int video_capture_backend =
     bool is_open() override;
     std::tuple<const frame&, bool> get_frame() override;
     bool show_dialog() override;
+    void set_exposure();
 
     bool get_frame_();
 
@@ -53,6 +54,7 @@ static constexpr int video_capture_backend =
     cv::Mat mat;
     frame frame_;
     int idx = -1;
+    exposure_preset exposure = exposure_preset::ignored;
 };
 
 } // ns opencv_camera_impl

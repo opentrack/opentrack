@@ -31,6 +31,19 @@ bool cam::is_open()
     return !!cap;
 }
 
+void cam::set_exposure()
+{
+    auto e = *s.exposure_preset;
+    if (e != exposure)
+        switch (e)
+        {
+            case exposure_preset::near: cap->set(cv::CAP_PROP_EXPOSURE, -5); qDebug() << "near"; break;
+            case exposure_preset::far: cap->set(cv::CAP_PROP_EXPOSURE, -4); qDebug() << "far"; break;
+            default: break;
+        }
+    exposure = e;
+}
+
 bool cam::start(info& args)
 {
     stop();
@@ -51,13 +64,8 @@ bool cam::start(info& args)
     {
         cap->set(cv::CAP_PROP_AUTO_EXPOSURE, 0);
         //cap->set(cv::CAP_PROP_SHARPNESS, 0);
-        switch (s.exposure_preset)
-        {
-            case exposure_preset::near: cap->set(cv::CAP_PROP_EXPOSURE, -5); break;
-            case exposure_preset::far: cap->set(cv::CAP_PROP_EXPOSURE, -4); break;
-            default: break;
-        }
     }
+    set_exposure();
 
     if (!cap->isOpened())
         goto fail;
@@ -76,6 +84,8 @@ bool cam::get_frame_()
 {
     if (!is_open())
         return false;
+
+    set_exposure();
 
     for (unsigned i = 0; i < 10; i++)
     {

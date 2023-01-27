@@ -786,11 +786,13 @@ NeuralNetDialog::NeuralNetDialog() :
 void NeuralNetDialog::save()
 {
     settings_.b->save();
+    cs_.b->save();
 }
 
 void NeuralNetDialog::reload()
 {
     settings_.b->reload();
+    cs_.b->reload();
 }
 
 void NeuralNetDialog::doOK()
