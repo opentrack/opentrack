@@ -668,7 +668,7 @@ void NeuralNetTracker::data(double *data)
 
     const float yaw = std::atan2(mx(2), mx(0));
     const float pitch = -std::atan2(-mx(1), std::sqrt(mx(2)*mx(2)+mx(0)*mx(0)));
-    const float roll = std::atan2(-my(2), mz(2));
+    const float roll = -std::atan2(-my(2), mz(2));
     {
         constexpr double rad2deg = 180/M_PI;
         data[Yaw]   = rad2deg * yaw;
