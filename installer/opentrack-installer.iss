@@ -2,8 +2,8 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #include "../build/opentrack-version.hxx"
-#define MyAppName "TrackHat opentrack V3"
-#define MyAppVersion "TrackHat opentrack V3.0"
+#define MyAppName "TrackHat opentrack v3"
+#define MyAppVersion "TrackHat opentrack v3.0"
 #define MyAppPublisher "TrackHat"
 #define MyAppURL "http://github.com/opentrack/opentrack"
 #define MyAppExeName "opentrack.exe"

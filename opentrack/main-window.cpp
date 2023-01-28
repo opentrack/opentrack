@@ -584,7 +584,7 @@ void main_window::show_pose_(const double* mapped, const double* raw)
 void main_window::set_title(const QString& game_title)
 {
     //static const QString version{opentrack_version};
-    static const QString version = "TrackHat opentrack V3";
+    static const QString version = "TrackHat opentrack v3";
     static const QString sep { tr(" :: ") };
     static const QString pat1{ version + sep + "%1" + sep + "%2" };
     static const QString pat2{ version + sep + "%1" };
