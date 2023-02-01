@@ -15,3 +15,4 @@
 - 2023-01-23: 1 hour exposure presets
 - 2023-01-26: .5 hours add pose widget grid lines
 - 2023-01-27: .5 hours update exposure while tracking
+- 2023-02-01: 1 hour fixing dumb camera exposure bug
