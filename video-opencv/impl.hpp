@@ -44,7 +44,7 @@ static constexpr int video_capture_backend =
     bool is_open() override;
     std::tuple<const frame&, bool> get_frame() override;
     bool show_dialog() override;
-    void set_exposure();
+    void set_exposure(bool write);
 
     bool get_frame_();
 
