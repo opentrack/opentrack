@@ -23,8 +23,7 @@ endfunction()
 
 otr_install_dir("${opentrack-doc}" ${CMAKE_SOURCE_DIR}/3rdparty-notices)
 otr_install_dir("${opentrack-doc}" "${CMAKE_SOURCE_DIR}/settings" "${CMAKE_SOURCE_DIR}/contrib")
-otr_escape_string(module-dir "${CMAKE_INSTALL_PREFIX}/${opentrack-libexec}")
-INSTALL(CODE "FILE(MAKE_DIRECTORY \"${module-dir}/presets\")")
+otr_install_dir("${opentrack-libexec}" "${CMAKE_SOURCE_DIR}/presets")
 
 if(WIN32)
     otr_install_misc(. FILES "${CMAKE_SOURCE_DIR}/bin/qt.conf")

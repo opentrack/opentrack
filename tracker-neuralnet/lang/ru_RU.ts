@@ -5,147 +5,150 @@
     <name>Form</name>
     <message>
         <source>Tracker settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки трекера</translation>
     </message>
     <message>
         <source>Diagonal FOV</source>
-        <translation type="unfinished"></translation>
+        <translation>Угол обзора</translation>
     </message>
     <message>
         <source>Camera settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки камеры</translation>
     </message>
     <message>
         <source>Frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation>Кадры в секунду</translation>
     </message>
     <message>
         <source>Camera name</source>
-        <translation type="unfinished"></translation>
+        <translation>Камера</translation>
     </message>
     <message>
         <source>Camera Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Конфигурация камеры</translation>
     </message>
     <message>
         <source>Head Center Offset</source>
-        <translation type="unfinished"></translation>
+        <translation>Смещение центра головы</translation>
     </message>
     <message>
         <source> mm</source>
-        <translation type="unfinished"></translation>
+        <translation> мм</translation>
     </message>
     <message>
         <source>Use only yaw and pitch while calibrating.
 Don&apos;t roll or change position.</source>
-        <translation type="unfinished"></translation>
+        <translation>Поворачивайте голову влево-вправо и наклоняйте вверх-вниз.
+Не наклоняйте набок и не смещайте голову в сторону.</translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать калибровку</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Вправо</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"></translation>
+        <translation>Вперед</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation>Вверх</translation>
     </message>
     <message>
         <source>Show Network Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать входные данные</translation>
     </message>
     <message>
         <source>MJPEG</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать MJPEG</translation>
     </message>
     <message>
         <source>Tuning / Debug</source>
-        <translation type="unfinished"></translation>
+        <translation>Тонкая настройка</translation>
     </message>
     <message>
         <source>ROI Smoothing Alpha</source>
-        <translation type="unfinished"></translation>
+        <translation>Сглаживание ROI</translation>
     </message>
     <message>
         <source>ROI Zoom</source>
-        <translation type="unfinished"></translation>
+        <translation>Масштабирование ROI</translation>
     </message>
     <message>
         <source>Thread Count</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество потоков</translation>
     </message>
     <message>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешение</translation>
     </message>
     <message>
         <source>Field of view. Needed to transform the pose to world coordinates.</source>
-        <translation type="unfinished"></translation>
+        <translation>Угол обзора камеры. Требуется для преобразования положения головы в глобальные координаты</translation>
     </message>
     <message>
         <source>Requested video frame rate. Actual setting may not be supported by the camera.</source>
-        <translation type="unfinished"></translation>
+        <translation>Частота кадров. Реальные значения могут не поддерживаться камерой.</translation>
     </message>
     <message>
         <source>The requested resolution for cases where the camera delivers maximum frame rate only for a particular resolution. The image may still be downscaled to the internal resolution.</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешение камеры, для тех случаев, когда быстродействие камеры максимально в определенном разрешении. Может быть масштабировано до внутреннего разрешения.</translation>
     </message>
     <message>
         <source>Number of threads. Can be used to balance the CPU load between the game and the tracker.</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество потоков. Используется для балансировки нагрузки на процессор между игрой и трекером.</translation>
     </message>
     <message>
         <source>Show the image patch that the pose estimation model sees.</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать изображение, используемое моделью определения позиции</translation>
     </message>
     <message>
         <source>Amount of smoothing of the face region coordinates. Can help stabilize the pose.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сглаживание координат области лица. Может помочь стабилизировать позицию.</translation>
     </message>
     <message>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Фактор масштабирования области лица. Применяется перед передачей кадра в модель определения позиции. Наилучшие результаты близки к 1</translation>
     </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
     <message>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation>По умолчанию</translation>
     </message>
     <message>
         <source>Tracker Offline</source>
-        <translation type="unfinished"></translation>
+        <translation>Трекер выключен</translation>
     </message>
     <message>
         <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
-        <translation type="unfinished"></translation>
+        <translation>%1x%2 @ %3 FPS; Время оценки: %4 мс</translation>
     </message>
     <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сэмплов поворота: %1.
+Поворачивайте голову в стороны до %2 сэмплов для стабильной калибрации.</translation>
     </message>
     <message>
         <source>%1 pitch samples. Pitch more to %2 samples for stable calibration.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сэмплов наклона: %1.
+Наклоняйте голову вниз/вверх до %2 сэмплов для стабильной калибрации.</translation>
     </message>
     <message>
         <source>%1 samples. Over %2, good!</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 сэмплов. Более %2, достаточно.</translation>
     </message>
     <message>
         <source>Stop calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Остановить калибровку</translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation type="unfinished"></translation>
+        <translation>Начать калибровку</translation>
     </message>
 </context>
 </TS>
