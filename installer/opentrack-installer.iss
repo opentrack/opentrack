@@ -3,7 +3,7 @@
 
 #include "../build/opentrack-version.hxx"
 #define MyAppName "TrackHat opentrack v3"
-#define MyAppVersion "TrackHat opentrack v3.0"
+#define MyAppVersion "TrackHat opentrack v3.0b"
 #define MyAppPublisher "TrackHat"
 #define MyAppURL "http://github.com/opentrack/opentrack"
 #define MyAppExeName "opentrack.exe"
@@ -49,6 +49,6 @@ Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Flags: nowait postinstall skipifsilent; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; 
+Filename: "{app}\{#MyAppExeName}"; Flags: nowait postinstall skipifsilent; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}";
 
 [Code]
