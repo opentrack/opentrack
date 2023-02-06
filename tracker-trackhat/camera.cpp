@@ -39,7 +39,7 @@ pt_camera_info trackhat_camera::get_desired() const
 
 QString trackhat_camera::get_desired_name() const
 {
-    return QStringLiteral("TrackHat sensor");
+    return QStringLiteral("TrackHat sensor v1");
 }
 
 QString trackhat_camera::get_active_name() const

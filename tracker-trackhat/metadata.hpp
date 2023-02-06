@@ -15,7 +15,7 @@ class trackhat_module final : public Metadata
     Q_OBJECT
 
 public:
-    QString name() override { return tr("TrackHat Point Tracker"); }
+    QString name() override { return tr("TrackHat v1 Sensor"); }
     QIcon icon() override { return QIcon(":/images/trackhat-64x64.png"); }
     static const QString module_name;
 };
