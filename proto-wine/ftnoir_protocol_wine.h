@@ -27,6 +27,7 @@ struct settings : opts
     value<int>     proton_appid{b, "proton-appid", 0};
     value<QVariant> proton_path{b, "proton-version", {} };
     value<QString> wineprefix{b, "wineprefix", "~/.wine"};
+    value<QString> wine_exec_location{b, "wine_exec_location", "wine"};
     value<int>     protocol{b, "protocol", 2};
 };
 

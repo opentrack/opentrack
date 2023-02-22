@@ -55,6 +55,14 @@
         <source>Both</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Wine exec location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>wine</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>wine</name>
