@@ -37,7 +37,7 @@ Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos/wiki)
 
 ## Known Issues:
 I should have fixed all other issues with Star Citizen and Opentrack I found using both myself.
-If you still have issues with Star Citizen not starting or using TrackIR correctly check the registry `Software/Freetrack/FreeTrackClient` for the key `Path` and make sure it's value is nothing or open an issue on GitHub.
+If you still have issues with Star Citizen not starting or using TrackIR correctly check the registry `Software/Freetrack/FreeTrackClient` and `Software/NaturalPoint/NATURALPOINT/NPClient Location` for the keys called `Path` and make sure both have a value leading to your opentrack installation. Alternatively open an issue on GitHub or join the [Star Citizen LUG Discord or Matrix](https://github.com/starcitizen-lug/knowledge-base#socials).
 
 # opentrack README
 
