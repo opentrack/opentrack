@@ -5,6 +5,10 @@
 
 #include "api/plugin-api.hpp"
 
+static const char* lutris_paths[] = {
+    "/.local/share/lutris/runners/wine/"
+};
+
 static const char* proton_paths[] = {
     "/.steam/steam/steamapps/common",
     "/.steam/root/compatibilitytools.d",
@@ -15,6 +19,20 @@ FTControls::FTControls()
 {
     ui.setupUi(this);
 
+    //populate wine select (from lutris)
+    for (const char* path : lutris_paths) {
+        QDir dir(QDir::homePath() + path);
+        dir.setFilter(QDir::Dirs);
+        QFileInfoList list = dir.entryInfoList();
+        for (int i = 0; i < list.size(); ++i) {
+            QFileInfo fileInfo = list.at(i);
+            if (fileInfo.fileName() == "." || fileInfo.fileName() == "..") continue;
+            ui.wine_path_combo->addItem(fileInfo.fileName(), QVariant{fileInfo.filePath() + "/bin/wine"});
+        }
+        ui.wine_path_combo->addItem("Custom Selection", QVariant{"CUSTOM"});
+    }
+
+    //pupulate proton select
     for (const char* path : proton_paths) {
         QDir dir(QDir::homePath() + path);
         dir.setFilter(QDir::Dirs);
@@ -25,6 +43,7 @@ FTControls::FTControls()
             ui.proton_version->addItem(fileInfo.fileName(), QVariant{fileInfo.filePath()});
         }
     }
+
     tie_setting(s.proton_path, ui.proton_version);
     tie_setting(s.variant_wine, ui.variant_wine);
     tie_setting(s.variant_proton, ui.variant_proton);
@@ -35,13 +54,26 @@ FTControls::FTControls()
     tie_setting(s.wineprefix, ui.wineprefix);
     tie_setting(s.protocol, ui.protocol_selection);
 
-    connect(ui.browse_wine_path_button, &QPushButton::clicked, this, &FTControls::pickWinePath);
-    connect(ui.browse_wine_prefix_button, &QPushButton::clicked, this, &FTControls::pickWinePrefix);
+    connect(ui.wine_path_combo, &QComboBox::currentTextChanged, this, &FTControls::onWinePathComboUpdated);
+    connect(ui.browse_wine_path_button, &QPushButton::clicked, this, &FTControls::doBrowseWine);
+    connect(ui.browse_wine_prefix_button, &QPushButton::clicked, this, &FTControls::doBrowsePrefix);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &FTControls::doOK);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &FTControls::doCancel);
 }
 
-void FTControls::pickWinePath() {
+void FTControls::onWinePathComboUpdated(QString selection) {
+    if (selection == "Custom Selection") {
+        ui.wine_path->setEnabled(true);
+        ui.browse_wine_path_button->setEnabled(true);
+    }
+    else {
+        s.wine_path = QDir::homePath() + "/.local/share/lutris/runners/wine/" + ui.wine_path_combo->currentText() + "/bin/wine";
+        ui.wine_path->setEnabled(false);
+        ui.browse_wine_path_button->setEnabled(false);
+    }
+}
+
+void FTControls::doBrowseWine() {
     QFileDialog d(this);
     d.setFileMode(QFileDialog::FileMode::ExistingFile);
     d.setWindowTitle(tr("Select path to Wine Binary"));
@@ -52,7 +84,7 @@ void FTControls::pickWinePath() {
         s.wine_path = d.selectedFiles()[0];
     }
 }
-void FTControls::pickWinePrefix() {
+void FTControls::doBrowsePrefix() {
     QFileDialog d(this);
     d.setFileMode(QFileDialog::FileMode::Directory);
     d.setOption(QFileDialog::Option::ShowDirsOnly, true);

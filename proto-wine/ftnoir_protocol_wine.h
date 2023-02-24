@@ -78,8 +78,10 @@ private:
     settings s;
 
 private slots:
-    void pickWinePath();
-    void pickWinePrefix();
+    void onWinePathComboUpdated(QString selection);
+
+    void doBrowseWine();
+    void doBrowsePrefix();
 
     void doOK();
     void doCancel();
