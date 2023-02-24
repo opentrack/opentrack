@@ -43,6 +43,9 @@ namespace detail {
 
         static void set_last_migration_time(const QString& val);
         static int to_int(const QString& str, bool& ok);
+
+        static std::vector<mptr>& migration_list();
+        static std::vector<mfun>& migration_thunks();
     };
 
     template<typename t>
