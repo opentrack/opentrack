@@ -27,7 +27,7 @@ struct settings : opts
     value<int>     proton_appid{b, "proton-appid", 0};
     value<QVariant> proton_path{b, "proton-version", {} };
     value<QString> wine_path{b, "wine_path", "~/.local/share/lutris/runners/wine/RUNNER/bin/wine"};
-    value<QString> wineprefix{b, "wineprefix", "~/.lutris-games/star-citizen/"};
+    value<QString> wineprefix{b, "wineprefix", "~/Games/star-citizen/"};
     value<int>     protocol{b, "protocol", 2};
 };
 
@@ -78,6 +78,9 @@ private:
     settings s;
 
 private slots:
+    void pickWinePath();
+    void pickWinePrefix();
+
     void doOK();
     void doCancel();
 };

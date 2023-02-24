@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>917</width>
+    <width>889</width>
     <height>424</height>
    </rect>
   </property>
@@ -33,19 +33,6 @@
       <string>Wine variant</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="variant_wine">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Wine (select path and prefix)</string>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="0">
        <widget class="QRadioButton" name="variant_proton">
         <property name="sizePolicy">
@@ -59,35 +46,16 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QLineEdit" name="wineprefix">
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="variant_wine">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="minimumSize">
-         <size>
-          <width>286</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2" alignment="Qt::AlignRight">
-       <widget class="QComboBox" name="proton_version">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>0</height>
-         </size>
+        <property name="text">
+         <string>Wine (select path and prefix)</string>
         </property>
        </widget>
       </item>
@@ -102,6 +70,58 @@
         <property name="minimumSize">
          <size>
           <width>400</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;wine/runner exectuable path&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="wineprefix">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>286</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;prefix&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="browse_wine_prefix_button">
+        <property name="text">
+         <string>Browse Prefix</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="browse_wine_path_button">
+        <property name="text">
+         <string>Browse Wine Path</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QComboBox" name="proton_version">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
           <height>0</height>
          </size>
         </property>

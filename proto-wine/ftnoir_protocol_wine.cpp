@@ -128,7 +128,10 @@ module_status wine::initialize()
 
     wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
-    wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });
+    wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });wrapper.waitForStarted();
+    if (wrapper.state() == QProcess::ProcessState::NotRunning) {
+        return error(tr("Failed to start Wine! Make sure the binary is set correctly."));
+    }
 #endif
 
     if (lck_shm.success())
