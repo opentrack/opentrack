@@ -7,7 +7,7 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
  - The ability to select your own wine exectuable for the wine output module since SC players might change runners and are not using system wine but lutris instead.
  - Enabled to build the wine output module by default with CMake which is required to use headtracking in SC.
  - Added a current game label to the output group field, which displays the current game title. This is usually also shown in the opentrack window title but just to make it more noticalbe it is also now shown there.
- - Fixed a issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key was cleared. (See [opentrack issue 1479](https://github.com/opentrack/opentrack/issues/1479))
+ - Fixed a issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key for both freetrack AND NPClient were created. (DEFAULT: Only one gets created for either option)
 
 ## Installation:
 
@@ -36,18 +36,6 @@ Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos/wiki)
  11. Adjust other `Head Tracking - General - *` settings to your liking
 
 ## Known Issues:
-On some systems Head Tracking might stop working after restarting the game (this might be the case if Opentrack shows `Output - ALERT: FreeTrack failed` above the output module select). There is still something that screws with freetrack initialisation AFTER a Linux Opentrack version has been run.
-In that case you have to run a windows opentrack instance in the same prefix/bottle as SC (and with the same runner and sync settings) before or after using this fork to "reset" the freetrack environment.
-To setup a windows opentrack instance:
- 1. In Lutris press the add game button (the + in the top left corner)
- 2. Select `Install a Windows game from media` and give it a name like "Star Citizen Opentrack"
- 3. Select `Install` next to "Setup file"
- 4. Select `Install` again after adjusting settings if you like
- 5. Make sure to have a [opentrack-win32-setup.exe](https://github.com/opentrack/opentrack/releases) ready to go and point to it in the path field
- 6. Make sure that the new "Game" you just added has the same runner, prefix, esync and fsync settings as Star Citizen
- 7. Open the windows opentrack instance and select `testtracker` as an input and `freetrack 2.0 Enhanced` as an output
- 8. Everytime before or after running Star Citizen you now have to open that windows opentrack instance and hit track to "reset" freetrack in your prefix so the game loads freetrack correctly
-
 I should have fixed all other issues with Star Citizen and Opentrack I found using both myself.
 If you still have issues with Star Citizen not starting or using TrackIR correctly check the registry `Software/Freetrack/FreeTrackClient` for the key `Path` and make sure it's value is nothing or open an issue on GitHub.
 
