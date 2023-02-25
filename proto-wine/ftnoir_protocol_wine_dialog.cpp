@@ -24,6 +24,8 @@ FTControls::FTControls()
         QDir dir(QDir::homePath() + path);
         dir.setFilter(QDir::Dirs);
         QFileInfoList list = dir.entryInfoList();
+        ui.wine_path_combo->addItem("please select an option", QVariant{"WINE"});
+        ui.wine_path_combo->addItem("system Wine", QVariant{"WINE"});
         for (int i = 0; i < list.size(); ++i) {
             QFileInfo fileInfo = list.at(i);
             if (fileInfo.fileName() == "." || fileInfo.fileName() == "..") continue;
@@ -62,14 +64,26 @@ FTControls::FTControls()
 }
 
 void FTControls::onWinePathComboUpdated(QString selection) {
+    //remove the placeholder
+    int placeholder_location = ui.wine_path_combo->findText("please select an option", Qt::MatchExactly);
+    if (placeholder_location != -1) ui.wine_path_combo->removeItem(placeholder_location);
+
     if (selection == "Custom Selection") {
         ui.wine_path->setEnabled(true);
         ui.browse_wine_path_button->setEnabled(true);
     }
     else {
-        s.wine_path = QDir::homePath() + "/.local/share/lutris/runners/wine/" + ui.wine_path_combo->currentText() + "/bin/wine";
         ui.wine_path->setEnabled(false);
         ui.browse_wine_path_button->setEnabled(false);
+        if (selection == "system Wine") {
+            s.wine_path = ""; // if this is cleared it will fall back to system wine
+            ui.wine_path->setPlaceholderText("empty for system wine");
+        }
+        else {
+            s.wine_path = QDir::homePath() + "/.local/share/lutris/runners/wine/" + ui.wine_path_combo->currentText() + "/bin/wine";
+            ui.wine_path->setPlaceholderText("/home/${USER}/.local/share/lutris/runners/wine/RUNNER/bin/wine");
+        }
+        ui.wine_path->setText(s.wine_path);
     }
 }
 

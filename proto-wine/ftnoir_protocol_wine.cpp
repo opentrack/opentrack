@@ -45,7 +45,7 @@ void wine::pose(const double *headpose, const double*)
         if (shm->gameid == 0) {
             // We have encountered an error: The Shared Memory (FreeTrack) was unable to determine a GameID
             gameid = shm->gameid2 = shm->gameid;
-            connected_game = "ALERT: FreeTrack failed";
+            connected_game = "waiting for game...";
         }
         else if (shm->gameid != gameid)
         {
