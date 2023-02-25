@@ -71,7 +71,7 @@ FTControls::FTControls()
 
 void FTControls::onWinePathComboUpdated(QString selection) {
     // enable the custom text field if required
-    if (selection == "Custom Path to Wine Executable") {
+    if (selection == "Custom path to Wine executable") {
         ui.wine_path->setEnabled(true);
         ui.browse_wine_path_button->setEnabled(true);
     }
