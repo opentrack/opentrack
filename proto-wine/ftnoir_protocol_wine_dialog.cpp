@@ -34,7 +34,7 @@ FTControls::FTControls()
             ui.wine_path_combo->addItem(name, QVariant{fileInfo.filePath() + "/bin/wine"});
         }
     }
-    ui.wine_path_combo->addItem("Custom Path to Wine Exectuable", QVariant{"CUSTOM"});
+    ui.wine_path_combo->addItem("Custom path to Wine executable", QVariant{"CUSTOM"});
 
     //pupulate proton select
     for (const char* path : proton_paths) {
