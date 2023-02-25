@@ -7,7 +7,7 @@
 
 static const char* wine_paths[][2] = {
     {"/.local/share/lutris/runners/wine/", "Lutris"},
-    {"/.var/app/net.lutris.Lutris/data/lutris/runners/wine/", "flatpak Lutris"}
+    {"/.var/app/net.lutris.Lutris/data/lutris/runners/wine/", "Flatpak Lutris"}
 };
 
 static const char* proton_paths[] = {
