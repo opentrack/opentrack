@@ -26,10 +26,10 @@ Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos/wiki)
  1. Open Lutris and check your selected runner, prefix, esync and fsync settings
  2. Open Opentrack-SC and select the wine module as the output module
  3. Configure the wine module by pressing the configure button next to it
- 4. Type the path to your custom wine exectuable into the first field (prefer absolute paths like: `/home/$USER/.local/share/lutris/runners/wine/[your runner name]/bin/wine`)
- 5. Type the path to your wine prefix into the second field (prefer absolute paths as well like: `/home/$USER/.lutris-games/star-citizen/`)
+ 4. Select your runner via the dropdown.
+ 5. Type the path to your wine prefix into the second field (prefer absolute paths as well like: `/home/$USER/Games/star-citizen/`) or use the browse button.
  6. Make sure that your esync and fsync settings match the ones in Lutris
- 7. Select `Freetrack` as the output (NOTE: `Both` is required if normal Opentrack is used. This fork has been patched so that `freetrack` works too.)
+ 7. Select `Freetrack` as the output (NOTE: `Both` is required if normal Opentrack is used. This fork has been patched so that `Freetrack` works too.)
  8. Launch Star Citizen and navigate to the `COMMS, FOIP & HEAD TRACKING` settings
  9. Set `Head Tracking - General - Source` to `TrackIR`
  10. Set `Head Tracking - General - Toggle - Enabled` to `Yes`
