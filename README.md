@@ -7,7 +7,7 @@ This is a fork of the open source project [opentrack](https://github.com/opentra
  - The ability to select your own wine exectuable for the wine output module since SC players might change runners and are not using system wine but lutris instead.
  - Enabled to build the wine output module by default with CMake which is required to use headtracking in SC.
  - Added a current game label to the output group field, which displays the current game title. This is usually also shown in the opentrack window title but just to make it more noticalbe it is also now shown there.
- - Fixed a issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key for both freetrack AND NPClient were created. (DEFAULT: Only one gets created for either option)
+ - Fixed a issue with the wine output module that caused SC to no longer start TrackIR correctly until a registry key for both freetrack AND NPClient were created. (DEFAULT: Only one gets created for either option, unless the `Both` protocol is selected.)
 
 ## Installation:
 
@@ -29,7 +29,7 @@ Visit the [LUG Wiki](https://github.com/starcitizen-lug/information-howtos/wiki)
  4. Type the path to your custom wine exectuable into the first field (prefer absolute paths like: `/home/$USER/.local/share/lutris/runners/wine/[your runner name]/bin/wine`)
  5. Type the path to your wine prefix into the second field (prefer absolute paths as well like: `/home/$USER/.lutris-games/star-citizen/`)
  6. Make sure that your esync and fsync settings match the ones in Lutris
- 7. Select `Freetrack` or `Both` as the output
+ 7. Select `Freetrack` as the output (NOTE: `Both` is required if normal Opentrack is used. This fork has been patched so that `freetrack` works too.)
  8. Launch Star Citizen and navigate to the `COMMS, FOIP & HEAD TRACKING` settings
  9. Set `Head Tracking - General - Source` to `TrackIR`
  10. Set `Head Tracking - General - Toggle - Enabled` to `Yes`
