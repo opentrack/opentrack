@@ -79,10 +79,19 @@ module_status wine::initialize()
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
     QString wine_path = "wine";
-    if (!s.wine_path->isEmpty())
-            wine_path = s.wine_path;
+    if (s.wine_select_path().toString() != "WINE") {
+        // if we are not supposed to use system wine then:
+        if (s.wine_select_path().toString() != "CUSTOM") {
+            // if we don't have a custom path then change the wine_path to the path corresponding to the selected version
+            wine_path = s.wine_select_path().toString();
+        }
+        else if (!s.wine_custom_path->isEmpty()) {
+            // if we do have a custom path and it is not empty then
+            wine_path = s.wine_custom_path;
+        }
+    }
     if (wine_path[0] == '~')
-            wine_path = qgetenv("HOME") + wine_path.mid(1);
+        wine_path = qgetenv("HOME") + wine_path.mid(1);
 
     qDebug() << "proto/wine: wine_path:" << wine_path;
 
