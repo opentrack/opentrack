@@ -83,10 +83,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>/home/${USER}/.local/share/lutris/runners/wine/RUNNER/bin/wine</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>/path_to_the_prefix/</source>
         <translation type="unfinished"></translation>
     </message>

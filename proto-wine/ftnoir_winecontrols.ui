@@ -137,7 +137,7 @@
            <string/>
           </property>
           <property name="placeholderText">
-           <string>/home/${USER}/.local/share/lutris/runners/wine/RUNNER/bin/wine</string>
+           <string/>
           </property>
          </widget>
         </item>

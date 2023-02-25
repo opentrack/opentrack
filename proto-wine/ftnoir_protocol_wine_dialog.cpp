@@ -5,8 +5,9 @@
 
 #include "api/plugin-api.hpp"
 
-static const char* lutris_paths[] = {
-    "/.local/share/lutris/runners/wine/"
+static const char* wine_paths[][2] = {
+    {"/.local/share/lutris/runners/wine/", "Lutris"},
+    {"/.var/app/net.lutris.Lutris/data/lutris/runners/wine/", "flatpak Lutris"}
 };
 
 static const char* proton_paths[] = {
@@ -20,19 +21,20 @@ FTControls::FTControls()
     ui.setupUi(this);
 
     //populate wine select (from lutris)
-    for (const char* path : lutris_paths) {
-        QDir dir(QDir::homePath() + path);
+    ui.wine_path_combo->addItem("System Wine", QVariant{"WINE"});
+    for (const char** path : wine_paths) {
+        QDir dir(QDir::homePath() + path[0]);
         dir.setFilter(QDir::Dirs);
         QFileInfoList list = dir.entryInfoList();
-        //ui.wine_path_combo->addItem("please select an option", QVariant{""});
-        ui.wine_path_combo->addItem("system Wine", QVariant{"WINE"});
         for (int i = 0; i < list.size(); ++i) {
             QFileInfo fileInfo = list.at(i);
             if (fileInfo.fileName() == "." || fileInfo.fileName() == "..") continue;
-            ui.wine_path_combo->addItem(fileInfo.fileName(), QVariant{fileInfo.filePath() + "/bin/wine"});
+
+            QString name = fileInfo.fileName() + " (" + path[1] + ")";
+            ui.wine_path_combo->addItem(name, QVariant{fileInfo.filePath() + "/bin/wine"});
         }
-        ui.wine_path_combo->addItem("Custom Selection", QVariant{"CUSTOM"});
     }
+    ui.wine_path_combo->addItem("Custom Path to Wine Exectuable", QVariant{"CUSTOM"});
 
     //pupulate proton select
     for (const char* path : proton_paths) {
@@ -69,7 +71,7 @@ FTControls::FTControls()
 
 void FTControls::onWinePathComboUpdated(QString selection) {
     // enable the custom text field if required
-    if (selection == "Custom Selection") {
+    if (selection == "Custom Path to Wine Exectuable") {
         ui.wine_path->setEnabled(true);
         ui.browse_wine_path_button->setEnabled(true);
     }
