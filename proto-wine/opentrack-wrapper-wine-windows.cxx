@@ -66,7 +66,6 @@ void create_registry_key(void)
     case 3: use_freetrack = true, use_npclient = true; break;
     }*/
 
-    // Star Citizen requires both paths to be present!
     write_path("Software\\NaturalPoint\\NATURALPOINT\\NPClient Location", "Path", true);
     write_path("Software\\Freetrack\\FreeTrackClient", "Path", true);
 }

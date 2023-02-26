@@ -20,7 +20,7 @@ wine::~wine()
         shm->stop = true;
         exit = wrapper.waitForFinished(100);
         if (exit)
-            qDebug() << "proto/wine: wrapper exit code" << wrapper.exitCode();
+            qDebug() << "proto-wine: wrapper exit code" << wrapper.exitCode();
     }
     if (!exit)
     {
@@ -44,7 +44,7 @@ void wine::pose(const double *headpose, const double*)
 #ifndef OTR_WINE_NO_WRAPPER
         if (shm->gameid != gameid)
         {
-            qDebug() << "proto/wine: looking up gameData";
+            qDebug() << "proto-wine: looking up gameData";
             QString gamename;
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
@@ -134,13 +134,13 @@ module_status wine::initialize()
         shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
 
-        qDebug() << "proto/wine: shm success";
+        qDebug() << "proto-wine: shm success";
 
         // display "waiting for game message" (overwritten once a game is detected)
         connected_game = "waiting for game...";
     }
     else {
-        qDebug() << "proto/wine: shm no success";
+        qDebug() << "proto-wine: shm no success";
     }
 
     if (lck_shm.success())
