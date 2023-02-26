@@ -44,7 +44,7 @@ void wine::pose(const double *headpose, const double*)
 #ifndef OTR_WINE_NO_WRAPPER
         if (shm->gameid != gameid)
         {
-            qDebug() << "proto/wine: looking up gameData";
+            //qDebug() << "proto/wine: looking up gameData";
             QString gamename;
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
