@@ -42,12 +42,7 @@ void wine::pose(const double *headpose, const double*)
         for (int i = 0; i < 3; i++)
             shm->data[i] = headpose[i] * 10;
 #ifndef OTR_WINE_NO_WRAPPER
-        if (shm->gameid == 0) {
-            // We have encountered an error: The Shared Memory (FreeTrack) was unable to determine a GameID
-            gameid = shm->gameid2 = shm->gameid;
-            connected_game = "waiting for game...";
-        }
-        else if (shm->gameid != gameid)
+        if (shm->gameid != gameid)
         {
             qDebug() << "proto/wine: looking up gameData";
             QString gamename;
@@ -58,16 +53,6 @@ void wine::pose(const double *headpose, const double*)
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
         }
-        else {
-            //qDebug() << "proto/wine: not looking up gameData. name: " << connected_game << " ID: " << shm->gameid << " ID2:" << shm->gameid2;
-        }
-
-        /*
-        //Recieve Messages via SHM from the wine wrapper
-        char local_message[1024];
-        strcpy(local_message, shm->message);
-        qDebug() << "SHM MESSAGE: " << local_message;
-        */
 #endif
         lck_shm.unlock();
     }
@@ -93,7 +78,7 @@ module_status wine::initialize()
     if (wine_path[0] == '~')
         wine_path = qgetenv("HOME") + wine_path.mid(1);
 
-    qDebug() << "proto/wine: wine_path:" << wine_path;
+    qDebug() << "proto-wine: wine_path:" << wine_path;
 
     auto env = QProcessEnvironment::systemEnvironment();
 
@@ -123,7 +108,7 @@ module_status wine::initialize()
         if (wineprefix[0] != '/')
             return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
 
-        qDebug() << "proto/wine: wineprefix:" << wineprefix;
+        qDebug() << "proto-wine: wineprefix:" << wineprefix;
 
         env.insert("WINEPREFIX", wineprefix);
     }
@@ -137,7 +122,8 @@ module_status wine::initialize()
 
     wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
-    wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });wrapper.waitForStarted();
+    wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });
+    wrapper.waitForStarted();
     if (wrapper.state() == QProcess::ProcessState::NotRunning) {
         return error(tr("Failed to start Wine! Make sure the binary is set correctly."));
     }
@@ -149,6 +135,9 @@ module_status wine::initialize()
         memset(shm, 0, sizeof(*shm));
 
         qDebug() << "proto/wine: shm success";
+
+        // display "waiting for game message" (overwritten once a game is detected)
+        connected_game = "waiting for game...";
     }
     else {
         qDebug() << "proto/wine: shm no success";
