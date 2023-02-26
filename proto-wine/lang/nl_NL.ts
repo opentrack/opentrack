@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nl_NL">
 <context>
+    <name>FTControls</name>
+    <message>
+        <source>Select path to Wine Binary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Wine Prefix</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>UICFTControls</name>
     <message>
         <source>Wine settings</source>
@@ -9,10 +20,6 @@
     </message>
     <message>
         <source>Wine variant</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wine (system)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -55,6 +62,30 @@
         <source>Both</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Wine (select path and prefix)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;prefix&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>/path_to_the_prefix/</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse Prefix</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;wine/runner exectuable path&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Browse Wine Path</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>wine</name>
@@ -68,6 +99,10 @@
     </message>
     <message>
         <source>Wine prefix must be an absolute path (given &apos;%1&apos;)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to start Wine! Make sure the binary is set correctly.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
