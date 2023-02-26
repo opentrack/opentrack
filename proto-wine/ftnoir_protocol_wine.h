@@ -28,7 +28,7 @@ struct settings : opts
     value<QVariant> proton_path{b, "proton-version", {} };
     value<QVariant> wine_select_path{b, "wine-select-version", {"WINE"}};
     value<QString> wine_custom_path{b, "wine-custom-version", ""};
-    value<QString> wineprefix{b, "wineprefix", "~/Games/star-citizen/"};
+    value<QString> wineprefix{b, "wineprefix", "~/.wine/"};
     value<int>     protocol{b, "protocol", 2};
 };
 
