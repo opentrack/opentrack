@@ -1,7 +1,4 @@
 #include <cerrno>
-#include <cmath>
-#include <cstring>
-#include <string>
 
 // OSX sdk 10.8 build error otherwise
 #undef _LIBCPP_MSVCRT

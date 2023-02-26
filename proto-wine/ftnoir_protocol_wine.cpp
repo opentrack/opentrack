@@ -20,7 +20,7 @@ wine::~wine()
         shm->stop = true;
         exit = wrapper.waitForFinished(100);
         if (exit)
-            qDebug() << "proto-wine: wrapper exit code" << wrapper.exitCode();
+            qDebug() << "proto/wine: wrapper exit code" << wrapper.exitCode();
     }
     if (!exit)
     {
@@ -44,7 +44,7 @@ void wine::pose(const double *headpose, const double*)
 #ifndef OTR_WINE_NO_WRAPPER
         if (shm->gameid != gameid)
         {
-            qDebug() << "proto-wine: looking up gameData";
+            qDebug() << "proto/wine: looking up gameData";
             QString gamename;
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
@@ -78,7 +78,7 @@ module_status wine::initialize()
     if (wine_path[0] == '~')
         wine_path = qgetenv("HOME") + wine_path.mid(1);
 
-    qDebug() << "proto-wine: wine_path:" << wine_path;
+    qDebug() << "proto/wine: wine_path:" << wine_path;
 
     auto env = QProcessEnvironment::systemEnvironment();
 
@@ -108,7 +108,7 @@ module_status wine::initialize()
         if (wineprefix[0] != '/')
             return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
 
-        qDebug() << "proto-wine: wineprefix:" << wineprefix;
+        qDebug() << "proto/wine: wineprefix:" << wineprefix;
 
         env.insert("WINEPREFIX", wineprefix);
     }
@@ -134,13 +134,13 @@ module_status wine::initialize()
         shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
 
-        qDebug() << "proto-wine: shm success";
+        qDebug() << "proto/wine: shm success";
 
         // display "waiting for game message" (overwritten once a game is detected)
         connected_game = "waiting for game...";
     }
     else {
-        qDebug() << "proto-wine: shm no success";
+        qDebug() << "proto/wine: shm no success";
     }
 
     if (lck_shm.success())
