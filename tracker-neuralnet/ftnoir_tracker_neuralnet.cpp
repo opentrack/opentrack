@@ -503,9 +503,17 @@ bool NeuralNetTracker::load_and_initialize_model()
 
 bool NeuralNetTracker::open_camera()
 {
+#if 0
     int rint = std::clamp(*settings_.resolution, 0, (int)std::size(resolution_choices)-1);
     resolution_tuple res = resolution_choices[rint];
     int fps = enum_to_fps(settings_.force_fps);
+#endif
+
+    video::impl::camera::info args {};
+    args.width = 640;
+    args.height = 480;
+    args.fps = 60;
+    args.use_mjpeg = true;
 
     QMutexLocker l(&camera_mtx_);
 
@@ -515,16 +523,8 @@ bool NeuralNetTracker::open_camera()
     if (name.isEmpty() || name == "TrackHat sensor")
     {
         camera_ = video::make_camera_("TrackHat sensor");
-        if (camera_)
-        {
-            video::impl::camera::info args {};
-            args.width = 640;
-            args.height = 480;
-            args.fps = 60;
-            args.use_mjpeg = true;
-            if (camera_->start(args))
-                return true;
-        }
+        if (camera_ && camera_->start(args))
+            return true;
         if (!name.isEmpty())
             return false;
     }
@@ -534,6 +534,7 @@ bool NeuralNetTracker::open_camera()
     if (!camera_)
         return false;
 
+#if 0
     video::impl::camera::info args {};
 
     if (res.width)
@@ -545,6 +546,7 @@ bool NeuralNetTracker::open_camera()
         args.fps = fps;
 
     args.use_mjpeg = settings_.use_mjpeg;
+#endif
 
     if (!camera_->start(args))
     {
