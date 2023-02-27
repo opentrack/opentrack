@@ -31,12 +31,8 @@ struct shm_out
 };
 
 struct shm {
-    static constexpr unsigned _cacheline_len = 64;
-    static constexpr unsigned _padding_len =
-        (_cacheline_len - (sizeof(shm_in) & (_cacheline_len - 1))) & (_cacheline_len - 1);
-
     shm_out out;
-    const char* _padding[_padding_len];
+    [[maybe_unused]] const char _padding[128 - sizeof(shm_out) % 128]; // NOLINT
     shm_in in;
 };
 
