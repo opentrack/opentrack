@@ -18,6 +18,7 @@
 #include "compat/math.hpp"
 #include "compat/sysexits.hpp"
 #include "opentrack/defs.hpp"
+#include "software-update-dialog.hpp"
 
 #include <cstring>
 #include <utility>
@@ -76,6 +77,10 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 #elif defined UI_COMPACT_VIDEO_FEED
     connect(ui.preview_checkbox, &QCheckBox::toggled, this, &main_window::toggle_video_preview);
 #endif
+
+    updater = std::make_unique<update_query>(this);
+    updater->maybe_show_dialog();
+
 }
 
 void main_window::init_shortcuts()
