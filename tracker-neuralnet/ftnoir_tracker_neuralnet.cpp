@@ -448,9 +448,6 @@ NeuralNetTracker::~NeuralNetTracker()
 
 module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
 {
-    if (camera_name_to_index("TrackHat sensor") == -1)
-        return error("Can't open camera 'TrackHat sensor'");
-
     videoframe->show();
     video_widget_ = std::make_unique<cv_video_widget>(videoframe);
     layout_ = std::make_unique<QHBoxLayout>();
@@ -506,15 +503,33 @@ bool NeuralNetTracker::load_and_initialize_model()
 
 bool NeuralNetTracker::open_camera()
 {
-    //int rint = std::clamp(*settings_.resolution, 0, (int)std::size(resolution_choices)-1);
-    int rint = 1;
+    int rint = std::clamp(*settings_.resolution, 0, (int)std::size(resolution_choices)-1);
     resolution_tuple res = resolution_choices[rint];
-    //int fps = enum_to_fps(settings_.force_fps);
-    int fps = 60;
+    int fps = enum_to_fps(settings_.force_fps);
 
     QMutexLocker l(&camera_mtx_);
 
-    camera_ = video::make_camera("TrackHat sensor");
+    camera_ = nullptr;
+    const QString name = settings_.camera_name;
+
+    if (name.isEmpty() || name == "TrackHat sensor")
+    {
+        camera_ = video::make_camera_("TrackHat sensor");
+        if (camera_)
+        {
+            video::impl::camera::info args {};
+            args.width = 640;
+            args.height = 480;
+            args.fps = 60;
+            args.use_mjpeg = true;
+            if (camera_->start(args))
+                return true;
+        }
+        if (!name.isEmpty())
+            return false;
+    }
+
+    camera_ = video::make_camera(name);
 
     if (!camera_)
         return false;
@@ -529,8 +544,7 @@ bool NeuralNetTracker::open_camera()
     if (fps)
         args.fps = fps;
 
-    //args.use_mjpeg = settings_.use_mjpeg;
-    args.use_mjpeg = true;
+    args.use_mjpeg = settings_.use_mjpeg;
 
     if (!camera_->start(args))
     {
@@ -608,6 +622,8 @@ void NeuralNetTracker::run()
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 clk.now() - t).count()*1.e-3);
     }
+
+    camera_ = nullptr;
 }
 
 
@@ -730,11 +746,12 @@ NeuralNetDialog::NeuralNetDialog() :
     make_fps_combobox();
     make_resolution_combobox();
 
-#if 0
+    ui_.cameraName->addItem(QString{});
     for (const auto& str : video::camera_names())
         ui_.cameraName->addItem(str);
 
     tie_setting(settings_.camera_name, ui_.cameraName);
+#if 0
     tie_setting(settings_.fov, ui_.cameraFOV);
 #endif
     tie_setting(settings_.offset_fwd, ui_.tx_spin);
