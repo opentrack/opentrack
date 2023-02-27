@@ -9,5 +9,5 @@ enum class exposure_preset : int {
 
 struct dshow_camera_settings final {
     bundle b = make_bundle("video-camera");
-    value<exposure_preset> exposure_preset{b, "exposure-preset", exposure_preset::near};
+    value<exposure_preset> exposure{b, "exposure-preset", exposure_preset::near};
 };

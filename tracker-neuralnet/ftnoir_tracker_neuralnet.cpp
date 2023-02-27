@@ -780,7 +780,7 @@ NeuralNetDialog::NeuralNetDialog() :
         for (const auto& [label, preset] : presets)
             ui_.exposure_preset->addItem(label, int(preset));
 
-        tie_setting(cs_.exposure_preset, ui_.exposure_preset);
+        tie_setting(cs_.exposure, ui_.exposure_preset);
     }
 
     connect(ui_.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));

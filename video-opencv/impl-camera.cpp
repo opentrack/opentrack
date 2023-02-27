@@ -33,7 +33,7 @@ bool cam::is_open()
 
 void cam::set_exposure(bool write)
 {
-    auto e = *s.exposure_preset;
+    auto e = *s.exposure;
     if (e != exposure)
         switch (e)
         {
@@ -42,7 +42,7 @@ void cam::set_exposure(bool write)
             default: break;
         }
 
-    if (s.exposure_preset != exposure_preset::ignored)
+    if (s.exposure != exposure_preset::ignored)
     {
         constexpr struct {
             int prop, value;
