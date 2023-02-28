@@ -29,8 +29,8 @@ set(CMAKE_CXX_LINKER_PREFERENCE_PROPAGATES ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 include(opentrack-policy NO_POLICY_SCOPE)
 
-project(opentrack)
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
+project(opentrack)
 
 # must be prior to CMakeDetermineCXXCompiler due to rpath
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
