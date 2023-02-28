@@ -26,8 +26,7 @@ else()
     set(__sdk_host_os "")
 endif()
 
-set(__sdk_paths_basename "sdk-paths-${__sdk_username}@${CMAKE_CXX_COMPILER_ID}-${__sdk_host_os}${__sdk_target_os}.cmake")
-set(__sdk_paths_filename "${CMAKE_SOURCE_DIR}/${__sdk_paths_basename}")
+set(__sdk_paths_filename "${CMAKE_CURRENT_SOURCE_DIR}/${__sdk_paths_basename}")
 
 if(EXISTS "${__sdk_paths_filename}")
     message(STATUS "Loading user settings '${__sdk_paths_basename}'")
