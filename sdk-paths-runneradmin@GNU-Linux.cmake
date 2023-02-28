@@ -1,1 +1,2 @@
-set(SDK_WINE /usr)
+set(SDK_WINE ON)
+set(ENV{PATH} "/usr/lib/wine:$ENV{PATH}")
