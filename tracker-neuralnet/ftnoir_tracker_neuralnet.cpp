@@ -759,12 +759,14 @@ NeuralNetDialog::NeuralNetDialog() :
     tie_setting(settings_.offset_fwd, ui_.tx_spin);
     tie_setting(settings_.offset_up, ui_.ty_spin);
     tie_setting(settings_.offset_right, ui_.tz_spin);
-#if 0
     tie_setting(settings_.show_network_input, ui_.showNetworkInput);
     tie_setting(settings_.roi_filter_alpha, ui_.roiFilterAlpha);
+#if 0
     tie_setting(settings_.use_mjpeg, ui_.use_mjpeg);
+#endif
 	tie_setting(settings_.roi_zoom, ui_.roiZoom);
     tie_setting(settings_.num_threads, ui_.threadCount);
+#if 0
     tie_setting(settings_.resolution, ui_.resolution);
     tie_setting(settings_.force_fps, ui_.cameraFPS);
 #endif
