@@ -18,7 +18,7 @@ if(NOT WIN32)
             file(GLOB wine-deps "${CMAKE_CURRENT_SOURCE_DIR}/*.cxx")
             #install(FILES ${wine-deps} DESTINATION "${opentrack-src}/proto-wine")
             set(winegxx-multilib "-m32")
-            if (OPENTRACK_WINE_ARCH NOT STREQUAL "")
+            if (NOT OPENTRACK_WINE_ARCH STREQUAL "")
                 set(winegxx-multilib "${OPENTRACK_WINE_ARCH}")
             endif()
             add_custom_command(
