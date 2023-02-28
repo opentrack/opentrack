@@ -17,14 +17,10 @@ if(NOT WIN32)
             endif()
             file(GLOB wine-deps "${CMAKE_CURRENT_SOURCE_DIR}/*.cxx")
             #install(FILES ${wine-deps} DESTINATION "${opentrack-src}/proto-wine")
-            set(winegxx "${SDK_WINE}/bin/wine")
-            if(EXISTS "${SDK_WINE}/lib/wine/wineg++")
-                set(winegxx "${SDK_WINE}/lib/wine/wineg++")
-            endif()
             add_custom_command(
               OUTPUT opentrack-wrapper-wine.exe.so
               DEPENDS ${wine-deps}
-              COMMAND "${winegxx}" -mconsole -g -DNOMINMAX -O2 -m32 -std=c++17 -fPIC -o
+              COMMAND wineg++ -mconsole -g -DNOMINMAX -O2 -m32 -std=c++17 -fPIC -o
                       opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}" -I "${CMAKE_BINARY_DIR}"
                       ${wine-deps} -Wall -Wextra -Wpedantic
                       ${my-rt})
