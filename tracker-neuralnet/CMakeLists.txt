@@ -1,4 +1,9 @@
 include(opentrack-opencv)
+set(host-spec "${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_SIZEOF_VOID_P}")
+if(host-spec MATCHES "^Linux i[3-6]86 4$")
+    return()
+endif()
+
 find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.
 find_package(ONNXRuntime QUIET)
