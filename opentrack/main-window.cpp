@@ -471,7 +471,7 @@ void main_window::start_tracker_()
             options_widget->register_filter(&*work->libs.pFilter);
     }
 
-    pose_update_timer.start(15);
+    pose_update_timer.start(1000/30);
 
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates
