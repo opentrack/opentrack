@@ -51,7 +51,7 @@ function(otr_qt n)
 endfunction()
 
 function(otr_qt2 n)
-    target_include_directories("${n}" PRIVATE SYSTEM
+    target_include_directories("${n}" SYSTEM PRIVATE
         ${Qt5Core_INCLUDE_DIRS} ${Qt5Gui_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS} ${Qt5Network_INCLUDE_DIRS}
     )
     target_compile_definitions("${n}" PRIVATE
