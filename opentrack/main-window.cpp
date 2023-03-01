@@ -683,7 +683,6 @@ static void show_module_settings(std::shared_ptr<Instance> instance,
                                  void(Dialog::*register_fun)(Instance*),
                                  void(options_dialog::*switch_tab_fun)())
 {
-    using BaseDialog = plugin_api::detail::BaseDialog;
     if (!lib || !lib->Dialog)
         return;
 

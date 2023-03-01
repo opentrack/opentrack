@@ -21,7 +21,7 @@ void BaseDialog::done(int)
 bool BaseDialog::embeddable() noexcept { return false; }
 void BaseDialog::save() {}
 void BaseDialog::reload() {}
-void BaseDialog::set_buttons_visible(bool x) {}
+void BaseDialog::set_buttons_visible(bool) {}
 
 } // ns plugin_api::detail
 
@@ -36,13 +36,13 @@ IFilter::IFilter() = default;
 IFilter::~IFilter() = default;
 IFilterDialog::IFilterDialog() = default;
 IFilterDialog::~IFilterDialog() = default;
-void IFilterDialog::register_filter(IFilter* filter) {}
+void IFilterDialog::register_filter(IFilter*) {}
 void IFilterDialog::unregister_filter() {}
 IProtocol::IProtocol() = default;
 IProtocol::~IProtocol() = default;
 IProtocolDialog::IProtocolDialog() = default;
 IProtocolDialog::~IProtocolDialog() = default;
-void IProtocolDialog::register_protocol(IProtocol* protocol){}
+void IProtocolDialog::register_protocol(IProtocol*){}
 void IProtocolDialog::unregister_protocol() {}
 ITracker::ITracker() = default;
 ITracker::~ITracker() = default;
