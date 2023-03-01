@@ -29,5 +29,5 @@ value_::~value_()
 void value_::maybe_trace(const char* str) const
 {
     if (TRACE_NOTIFY)
-        qDebug().noquote() << str << QThread::currentThreadId() << b->name() << self_name;
+        qDebug().noquote() << str << QThread::currentThreadId() << b->name() << self_name << get_variant();
 }
