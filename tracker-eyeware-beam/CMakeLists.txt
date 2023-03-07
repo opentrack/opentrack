@@ -1,3 +1,5 @@
+# The Eyeware Beam SDK can be found at https://beam.eyeware.tech/developers/
+# The latest version can be downloaded at https://eyewarecistorage.blob.core.windows.net/beam-sdk/BeamSDK-Windows64-1.1.0.zip
 set(SDK_EYEWARE_BEAM "" CACHE PATH "Eyeware Beam SDK path")
 if(WIN32 AND SDK_EYEWARE_BEAM)
     otr_module(tracker-eyeware-beam)
