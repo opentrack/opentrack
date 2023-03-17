@@ -31,6 +31,8 @@ setq(SDK_VJOYSTICK "vjoystick")
 
 setq(SDK_REALSENSE "RSSDK-R2")
 
+setq(SDK_EYEWARE_BEAM "eyeware-beam-sdk")
+
 # WARNING: this is utter experimental nonsense
 set(_cxxflags
     -Weverything

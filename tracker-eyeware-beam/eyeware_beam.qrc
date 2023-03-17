@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/images">
+        <file>eyeware_beam_logo.png</file>
+    </qresource>
+</RCC>

@@ -31,6 +31,8 @@ setq(SDK_VJOYSTICK "vjoystick")
 
 setq(SDK_REALSENSE "RSSDK-R2")
 
+setq(SDK_EYEWARE_BEAM "eyeware-beam-sdk")
+
 set(base-flags "-Wall -Wextra -Wpedantic")
 set(CMAKE_C_FLAGS "-std=c11 ${base-flags} -ggdb ${CMAKE_C_FLAGS}")
 set(CMAKE_CXX_FLAGS "-std=c++17 ${base-flags} -ggdb ${CMAKE_CXX_FLAGS}")
