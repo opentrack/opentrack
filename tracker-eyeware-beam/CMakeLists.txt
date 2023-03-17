@@ -8,9 +8,9 @@ if(WIN32 AND SDK_EYEWARE_BEAM)
     otr_module(tracker-eyeware-beam)
 
     target_include_directories(${self} SYSTEM PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/include")
-    target_link_directories(${self} SYSTEM PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/lib")
+    target_link_directories(${self} PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/lib")
     set(dll "${SDK_EYEWARE_BEAM}/API/cpp/lib/tracker_client.dll" "${SDK_EYEWARE_BEAM}/API/cpp/lib/libsodium.dll")
-    set(lib tracker_client)
+    set(lib tracker_client.lib)
 
     #message(${self})
     #message(${dll})
