@@ -147,7 +147,7 @@
 <context>
     <name>trackhat_module</name>
     <message>
-        <source>TrackHat Point Tracker</source>
+        <source>TrackHat v1 Sensor</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
