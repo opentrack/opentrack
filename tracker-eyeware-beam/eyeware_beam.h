@@ -33,7 +33,7 @@ private:
                              double& translation_z_cm);
     void extract_rotation_angles(const eyeware::Matrix3x3& R, double& pitch_deg, double& roll_deg, double& yaw_deg);
 
-    std::unique_ptr<eyeware::TrackerClient> tracker_client = nullptr;
+    eyeware::TrackerClient* tracker_client = nullptr;
 
     QMutex mtx;
 
@@ -43,10 +43,6 @@ private:
     double last_translation_x_cm = 0.0;
     double last_translation_y_cm = 0.0;
     double last_translation_z_cm = 0.0;
-
-    const double rad_to_deg = 180.0 / M_PI;
-    const double m_to_cm = 100.0;
-    const double epsilon = 0.000001;
 };
 
 class eyeware_beam_dialog : public ITrackerDialog
