@@ -9,6 +9,10 @@
 
 #include <QMutexLocker>
 
+static constexpr double rad_to_deg = 180.0 / M_PI;
+static constexpr double m_to_cm = 100.0;
+static constexpr double epsilon = 0.000001;
+
 eyeware_beam_tracker::eyeware_beam_tracker()
 {
 }
@@ -16,7 +20,8 @@ eyeware_beam_tracker::eyeware_beam_tracker()
 eyeware_beam_tracker::~eyeware_beam_tracker()
 {
     QMutexLocker lck(&mtx);
-    tracker_client.reset(nullptr);
+    release_tracker_instance(tracker_client);
+    tracker_client = nullptr;
 }
 
 module_status eyeware_beam_tracker::start_tracker(QFrame* videoframe)
@@ -24,7 +29,7 @@ module_status eyeware_beam_tracker::start_tracker(QFrame* videoframe)
     QMutexLocker lck(&mtx);
     try
     {
-        tracker_client = std::make_unique<eyeware::TrackerClient>();
+        tracker_client = create_tracker_instance("127.0.0.1", 12010);
     }
     catch (...)
     {
@@ -77,9 +82,9 @@ void eyeware_beam_tracker::data(double *data)
 {
      QMutexLocker lck(&mtx);
 
-     if (tracker_client && tracker_client->connected())
+     if (connected(tracker_client))
      {
-         eyeware::HeadPoseInfo head_pose_info = tracker_client->get_head_pose_info();
+         eyeware::HeadPoseInfo head_pose_info = get_head_pose_info(tracker_client);
          if (!head_pose_info.is_lost)
          {
              extract_translation(head_pose_info.transform.translation, last_translation_x_cm,
