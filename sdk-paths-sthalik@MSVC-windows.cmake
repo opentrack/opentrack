@@ -18,7 +18,6 @@ function(setq name value)
 endfunction()
 
 set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
-set(opentrack_maintainer-mode TRUE CACHE INTERNAL "" FORCE)
 
 setq(EIGEN3_INCLUDE_DIR "eigen")
 setq(OpenCV_DIR "opencv/build/install")
