@@ -106,6 +106,10 @@ if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     set(BUILD_opencv_gapi   OFF)
 endif()
 
+if(CMAKE_PROJECT_NAME STREQUAL "TestOscpack")
+    add_compile_definitions(OSC_HOST_LITTLE_ENDIAN)
+endif()
+
 set(opentrack-simd "SSE2")
 
 if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
