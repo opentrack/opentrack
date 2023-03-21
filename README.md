@@ -1,6 +1,6 @@
 ## Intro
 
-[<img src="https://ci.appveyor.com/api/projects/status/n0j9h38jnif5qbe9/branch/unstable?svg=true"/>](https://ci.appveyor.com/project/sthalik/opentrack/branch/unstable)
+[<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
 
 opentrack project home is located at <<http://github.com/opentrack/opentrack>>.
 
