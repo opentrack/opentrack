@@ -40,6 +40,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - BBC micro:bit, LEGO, sensortag support via Smalltalk<sup>[(1)](https://en.wikipedia.org/wiki/Smalltalk)[(2)](https://en.wikipedia.org/wiki/Alan_Kay)</sup>
   [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
 - Wiimote (Windows)
+- Eyeware Beam<sup>[[1](https://beam.eyeware.tech/)]</sup>
 
 ## Output protocols
 
@@ -69,6 +70,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - Wei Shuai (Wiimote tracker)
 - Stéphane Lenclud (Kinect Face Tracker, Easy Tracker)
 - GO63-samara (Hamilton Filter, Pose-widget improvement)
+- Davide Mameli (Eyeware Beam tracker)
 
 ## Thanks
 
