@@ -7,9 +7,15 @@ if(WIN32 AND SDK_EYEWARE_BEAM)
     endif()
     otr_module(tracker-eyeware-beam)
 
+    if("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
+        set(arch "x86")
+    else()
+        set(arch "x64")
+    endif()
+
     target_include_directories(${self} SYSTEM PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/include")
-    target_link_directories(${self} PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/lib")
-    set(dll "${SDK_EYEWARE_BEAM}/API/cpp/lib/tracker_client.dll" "${SDK_EYEWARE_BEAM}/API/cpp/lib/libsodium.dll")
+    target_link_directories(${self} PRIVATE "${SDK_EYEWARE_BEAM}/API/cpp/lib/${arch}")
+    set(dll "${SDK_EYEWARE_BEAM}/API/cpp/lib/${arch}/tracker_client.dll")
     set(lib tracker_client.lib)
 
     #message(${self})
