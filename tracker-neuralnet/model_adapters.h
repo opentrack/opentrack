@@ -78,6 +78,7 @@ class PoseEstimator
         cv::Mat scaled_frame_{}, input_mat_{};  // Input. One is the original crop, the other is rescaled (?)
         std::vector<Ort::Value> input_val_;    // Tensors to put into the model
         std::vector<std::string> input_names_; // Refers to the names in the onnx model.
+        std::vector<const char *> input_c_names_; // Refers to the C names in the onnx model.
         // Outputs
         cv::Vec<float, 3> output_coord_{};  // 2d Coordinate and head size output.
         cv::Vec<float, 4> output_quat_{};   //  Quaternion output
@@ -87,6 +88,7 @@ class PoseEstimator
         cv::Vec<float, 3> output_coord_scales_{};
         std::vector<Ort::Value> output_val_; // Tensors to put the model outputs in.
         std::vector<std::string> output_names_; // Refers to the names in the onnx model.
+        std::vector<const char *> output_c_names_; // Refers to the C names in the onnx model.
         // More bookkeeping
         size_t num_recurrent_states_ = 0;
         double last_inference_time_ = 0;
