@@ -16,15 +16,17 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
 
     otr_module(tracker-neuralnet)
 
-    target_link_libraries(${self} 
+    target_link_libraries(${self}
         opentrack-cv
         onnxruntime::onnxruntime
         opencv_calib3d
         opencv_imgproc
         opencv_imgcodecs
         opencv_core
-        OpenMP::OpenMP_C
+        OpenMP::OpenMP_CXX
         )
+    # OpenMP::OpenMP_CXX doesn't set up the -fopenmp linking option, so set it up ourselves.
+    target_link_options(${self} PUBLIC ${OpenMP_CXX_FLAGS})
 
     install(
         FILES "models/head-localizer.onnx" 
