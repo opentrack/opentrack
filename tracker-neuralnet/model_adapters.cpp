@@ -7,7 +7,6 @@
 #include <opencv2/imgproc.hpp>
 
 #include <QDebug>
-#include <algorithm>
 
 namespace neuralnet_tracker_ns
 {
