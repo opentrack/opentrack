@@ -25,8 +25,11 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
         opencv_core
         OpenMP::OpenMP_CXX
         )
+
     # OpenMP::OpenMP_CXX doesn't set up the -fopenmp linking option, so set it up ourselves.
-    target_link_options(${self} PUBLIC ${OpenMP_CXX_FLAGS})
+    if(NOT MSVC)
+        target_link_options(${self} PUBLIC ${OpenMP_CXX_FLAGS})
+    endif()
 
     install(
         FILES "models/head-localizer.onnx" 
