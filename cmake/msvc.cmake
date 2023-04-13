@@ -37,7 +37,7 @@ add_definitions(-D_HAS_EXCEPTIONS=0)
 
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
     # ignore cmake warning: Manually-specified variable not used by the project
-    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}}")
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
