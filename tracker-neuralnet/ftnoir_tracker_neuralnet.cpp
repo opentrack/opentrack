@@ -652,7 +652,7 @@ void NeuralNetTracker::data(double *data)
 
     const auto& mx = tmp.R.col(0);
     const auto& my = tmp.R.col(1);
-    const auto& mz = -tmp.R.col(2);
+    const auto& mz = tmp.R.col(2);
 
     const float yaw = std::atan2(mx(2), mx(0));
     const float pitch = -std::atan2(-mx(1), std::sqrt(mx(2)*mx(2)+mx(0)*mx(0)));
