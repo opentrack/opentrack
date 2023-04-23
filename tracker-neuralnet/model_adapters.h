@@ -73,7 +73,7 @@ class PoseEstimator
         std::string get_network_output_name(size_t i) const;
         int64_t model_version_ = 0;  // Queried meta data from the ONNX file
         Ort::Session session_{nullptr};  // ONNX's runtime context for running the model
-        Ort::Allocator allocator_;   // Memory allocator for tensors
+        mutable Ort::Allocator allocator_;   // Memory allocator for tensors
         // Inputs
         cv::Mat scaled_frame_{}, input_mat_{};  // Input. One is the original crop, the other is rescaled (?)
         std::vector<Ort::Value> input_val_;    // Tensors to put into the model
