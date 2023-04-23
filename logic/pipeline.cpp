@@ -390,9 +390,20 @@ Pose pipeline::maybe_apply_filter(const Pose& value) const
 
 Pose pipeline::apply_zero_pos(Pose value) const
 {
-    for (int i = 0; i < 6; i++)
-        value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
 
+    const auto q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+    const auto center = QQuaternion::fromEulerAngles(
+        m(Pitch).opts.zero * (m(Pitch).opts.invert ? -1 : 1),
+        m(Yaw).opts.zero * (m(Yaw).opts.invert ? -1 : 1),
+        m(Roll).opts.zero * (m(Roll).opts.invert ? 1 : -1)
+    );
+    const auto v = (center.conjugated() * q).toEulerAngles();
+    value[Pitch] =  v.x();
+    value[Yaw]   =  v.y();
+    value[Roll]  = -v.z();
+
+    for (int i : {TX, TY, TZ})
+        value[i] -= m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
     return value;
 }
 
@@ -443,6 +454,9 @@ void pipeline::logic()
     nan_check(newpose, raw, value);
 
     {
+        value = apply_zero_pos(value);
+
+
         maybe_enable_center_on_tracking_started();
         maybe_set_center_pose(s.centering_mode, value, own_center_logic);
         value = apply_center(s.centering_mode, value);
@@ -502,7 +516,7 @@ ok:
     if (hold_ordered)
         value = last_value;
     last_value = value;
-    value = apply_zero_pos(value);
+    //value = apply_zero_pos(value);
 
     libs.pProtocol->pose(value, raw);
 
