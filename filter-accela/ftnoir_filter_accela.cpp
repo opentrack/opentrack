@@ -16,6 +16,9 @@
 #include "compat/math-imports.hpp"
 #include "compat/time.hpp"
 
+#include <QQuaternion>
+#include <QVector3D>
+
 accela::accela()
 {
     s.make_splines(spline_rot, spline_pos);
@@ -106,7 +109,7 @@ void accela::filter(const double* input, double *output)
     const double pos_dz{ s.pos_deadzone};
 
     // rot
-
+#ifdef ACCELA_USE_EULER_ANGLES
     for (unsigned i = 3; i < 6; i++)
     {
         double d = input[i] - last_output[i];
@@ -127,8 +130,39 @@ void accela::filter(const double* input, double *output)
         });
 #else
     do_deltas(&deltas[Yaw], &output[Yaw], [this](double x) {
-        return spline_rot.get_value_no_save(x);
+        returnspline_rot.get_value_no_save(x);
     });
+#endif
+    
+    for (unsigned i=3; i<6; ++i)
+    {
+        output[i] = last_output[i] + dt*output[i];
+    }
+
+#else
+    {
+        // Inter/extrapolates along the arc between the old and new orientation.
+        // It's basically a quaternion spherical linear interpolation, where the
+        // accela gain x dt is the blending parameter. Might actually overshoot
+        // the new orientation, but that's fine.
+
+        // Compute rotation angle and axis which brings the previous orientation to the current rotation
+        const auto qcurrent = QQuaternion::fromEulerAngles(input[Pitch], input[Yaw], -input[Roll]);
+        const auto qlast = QQuaternion::fromEulerAngles(last_output[Pitch], last_output[Yaw], -last_output[Roll]);
+        QVector3D axis;
+        float angle;
+        (qlast.conjugated() * qcurrent).getAxisAndAngle(&axis, &angle);
+        // Apply the Accela gain magic. Also need to multiply with dt here.
+        angle = std::max(0.f, angle - std::copysign(static_cast<float>(rot_dz), angle)) / static_cast<float>(rot_thres);
+        const double gain_angle = dt*spline_rot.get_value_no_save(std::abs(angle)) * signum(angle);
+        // Chaining the rotation offset with the axis we just computed, but he angle is now the accela gain.
+        const QQuaternion output_quat = qlast * QQuaternion::fromAxisAndAngle(axis, static_cast<float>(gain_angle));
+        // And back to Euler angles
+        const QVector3D output_euler = output_quat.toEulerAngles();
+        output[Pitch] =  output_euler.x();
+        output[Yaw]   =  output_euler.y();
+        output[Roll]  = -output_euler.z();
+    }
 #endif
 
     // pos
@@ -148,12 +182,15 @@ void accela::filter(const double* input, double *output)
         return spline_pos.get_value_no_save(x);
     });
 
+    for (unsigned i=0; i<3; ++i)
+    {
+        output[i] = last_output[i] + dt*output[i];
+    }
+
     // end
 
     for (unsigned k = 0; k < 6; k++)
     {
-        output[k] *= dt;
-        output[k] += last_output[k];
         if (k >= Yaw && fabs(output[k]) > half_turn)
             output[k] -= copysign(full_turn, output[k]);
 
