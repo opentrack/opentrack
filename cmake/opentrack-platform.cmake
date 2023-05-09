@@ -34,8 +34,6 @@ set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "" FORCE)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
-set(opentrack_maintainer-mode FALSE CACHE INTERNAL "Select if developing core code (not modules)")
-
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
 set(CMAKE_CXX_STANDARD 20)

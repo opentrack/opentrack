@@ -44,6 +44,7 @@ void wine::pose(const double *headpose, const double*)
 #ifndef OTR_WINE_NO_WRAPPER
         if (shm->gameid != gameid)
         {
+            //qDebug() << "proto/wine: looking up gameData";
             QString gamename;
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
@@ -63,6 +64,22 @@ module_status wine::initialize()
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
     QString wine_path = "wine";
+    if (s.wine_select_path().toString() != "WINE") {
+        // if we are not supposed to use system wine then:
+        if (s.wine_select_path().toString() != "CUSTOM") {
+            // if we don't have a custom path then change the wine_path to the path corresponding to the selected version
+            wine_path = s.wine_select_path().toString();
+        }
+        else if (!s.wine_custom_path->isEmpty()) {
+            // if we do have a custom path and it is not empty then
+            wine_path = s.wine_custom_path;
+        }
+    }
+    if (wine_path[0] == '~')
+        wine_path = qgetenv("HOME") + wine_path.mid(1);
+
+    qDebug() << "proto/wine: wine_path:" << wine_path;
+
     auto env = QProcessEnvironment::systemEnvironment();
 
     if (s.variant_proton)
@@ -91,6 +108,8 @@ module_status wine::initialize()
         if (wineprefix[0] != '/')
             return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
 
+        qDebug() << "proto/wine: wineprefix:" << wineprefix;
+
         env.insert("WINEPREFIX", wineprefix);
     }
 
@@ -104,12 +123,24 @@ module_status wine::initialize()
     wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
     wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });
+    wrapper.waitForStarted();
+    if (wrapper.state() == QProcess::ProcessState::NotRunning) {
+        return error(tr("Failed to start Wine! Make sure the binary is set correctly."));
+    }
 #endif
 
     if (lck_shm.success())
     {
         shm = (WineSHM*) lck_shm.ptr();
         memset(shm, 0, sizeof(*shm));
+
+        qDebug() << "proto/wine: shm success";
+
+        // display "waiting for game message" (overwritten once a game is detected)
+        connected_game = "waiting for game...";
+    }
+    else {
+        qDebug() << "proto/wine: shm no success";
     }
 
     if (lck_shm.success())

@@ -28,8 +28,12 @@ void tie_setting(value<QString>& v, QComboBox* cb)
 {
     cb->setCurrentText(v);
     v = cb->currentText();
-    value_::connect(cb, SIGNAL(currentTextChanged(QString)), &v, SLOT(setValue(const QString&)), v.DIRECT_CONNTYPE);
-    value_::connect(&v, SIGNAL(valueChanged(const QString&)), cb, SLOT(setCurrentText(const QString&)), v.SAFE_CONNTYPE);
+    auto set_current_text = [cb, &v](const QString& str) {
+        cb->setCurrentText(str);
+        v = cb->currentText();
+    };
+    value_::connect(cb, &QComboBox::currentTextChanged, &v, v.value_changed<QString>(), v.DIRECT_CONNTYPE);
+    value_::connect(&v, v.value_changed<QString>(), cb, set_current_text, v.SAFE_CONNTYPE);
 }
 
 void tie_setting(value<QVariant>& v, QComboBox* cb)

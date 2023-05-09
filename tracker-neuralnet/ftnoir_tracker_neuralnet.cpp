@@ -13,7 +13,6 @@
 #include "compat/math-imports.hpp"
 #include "compat/timer.hpp"
 #include "compat/check-visible.hpp"
-#include "compat/camera-names.hpp"
 #include "cv/init.hpp"
 
 #include <omp.h>
@@ -84,8 +83,7 @@ struct OnScopeExit
 CamIntrinsics make_intrinsics(const cv::Mat& img, const Settings& settings)
 {
     const int w = img.cols, h = img.rows;
-    //const double diag_fov = settings.fov * M_PI / 180.;
-    const double diag_fov = 60 * M_PI / 180.; (void)settings;
+    const double diag_fov = settings.fov * M_PI / 180.;
     const double fov_w = 2.*atan(tan(diag_fov/2.)/sqrt(1. + h/(double)w * h/(double)w));
     const double fov_h = 2.*atan(tan(diag_fov/2.)/sqrt(1. + w/(double)h * w/(double)h));
     const double focal_length_w = 1. / tan(.5 * fov_w);
@@ -353,7 +351,7 @@ bool NeuralNetTracker::detect()
         last_pose_affine_ = pose_affine;
     }
 
-    draw_gizmos(*face, pose_affine);
+    draw_gizmos(*face, last_pose_affine_);
 
     return true;
 }
@@ -503,38 +501,17 @@ bool NeuralNetTracker::load_and_initialize_model()
 
 bool NeuralNetTracker::open_camera()
 {
-#if 0
     int rint = std::clamp(*settings_.resolution, 0, (int)std::size(resolution_choices)-1);
     resolution_tuple res = resolution_choices[rint];
     int fps = enum_to_fps(settings_.force_fps);
-#endif
-
-    video::impl::camera::info args {};
-    args.width = 640;
-    args.height = 480;
-    args.fps = 60;
-    args.use_mjpeg = true;
 
     QMutexLocker l(&camera_mtx_);
 
-    camera_ = nullptr;
-    const QString name = settings_.camera_name;
-
-    if (name.isEmpty() || name == "TrackHat sensor")
-    {
-        camera_ = video::make_camera_("TrackHat sensor");
-        if (camera_ && camera_->start(args))
-            return true;
-        if (!name.isEmpty())
-            return false;
-    }
-
-    camera_ = video::make_camera(name);
+    camera_ = video::make_camera(settings_.camera_name);
 
     if (!camera_)
         return false;
 
-#if 0
     video::impl::camera::info args {};
 
     if (res.width)
@@ -546,7 +523,6 @@ bool NeuralNetTracker::open_camera()
         args.fps = fps;
 
     args.use_mjpeg = settings_.use_mjpeg;
-#endif
 
     if (!camera_->start(args))
     {
@@ -624,8 +600,6 @@ void NeuralNetTracker::run()
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 clk.now() - t).count()*1.e-3);
     }
-
-    camera_ = nullptr;
 }
 
 
@@ -670,15 +644,11 @@ void NeuralNetTracker::update_fps(double dt)
 
 void NeuralNetTracker::data(double *data)
 {
-    auto tmp2 = [&]()
+    Affine tmp = [&]()
     {
         QMutexLocker lck(&mtx_);
         return last_pose_affine_;
     }();
-
-    if (!tmp2)
-        return;
-    const auto& tmp = *tmp2;
 
     const auto& mx = tmp.R.col(0);
     const auto& my = tmp.R.col(1);
@@ -686,7 +656,7 @@ void NeuralNetTracker::data(double *data)
 
     const float yaw = std::atan2(mx(2), mx(0));
     const float pitch = -std::atan2(-mx(1), std::sqrt(mx(2)*mx(2)+mx(0)*mx(0)));
-    const float roll = -std::atan2(-my(2), mz(2));
+    const float roll = std::atan2(-my(2), mz(2));
     {
         constexpr double rad2deg = 180/M_PI;
         data[Yaw]   = rad2deg * yaw;
@@ -704,7 +674,7 @@ void NeuralNetTracker::data(double *data)
 Affine NeuralNetTracker::pose()
 {
     QMutexLocker lck(&mtx_);
-    return last_pose_affine_ ? *last_pose_affine_ : Affine{};
+    return last_pose_affine_;
 }
 
 std::tuple<cv::Size,double, double> NeuralNetTracker::stats() const
@@ -715,19 +685,16 @@ std::tuple<cv::Size,double, double> NeuralNetTracker::stats() const
 
 void NeuralNetDialog::make_fps_combobox()
 {
-#if 0
     for (int k = 0; k < fps_MAX; k++)
     {
         const int hz = enum_to_fps(k);
         const QString name = (hz == 0) ? tr("Default") : QString::number(hz);
         ui_.cameraFPS->addItem(name, k);
     }
-#endif
 }
 
 void NeuralNetDialog::make_resolution_combobox()
 {
-#if 0
     int k=0;
     for (const auto [w, h] : resolution_choices)
     {
@@ -736,7 +703,6 @@ void NeuralNetDialog::make_resolution_combobox()
             : QString::number(w) + " x " + QString::number(h);
         ui_.resolution->addItem(s, k++);
     }
-#endif
 }
 
 
@@ -748,44 +714,21 @@ NeuralNetDialog::NeuralNetDialog() :
     make_fps_combobox();
     make_resolution_combobox();
 
-    ui_.cameraName->addItem(QString{});
     for (const auto& str : video::camera_names())
         ui_.cameraName->addItem(str);
 
     tie_setting(settings_.camera_name, ui_.cameraName);
-#if 0
     tie_setting(settings_.fov, ui_.cameraFOV);
-#endif
     tie_setting(settings_.offset_fwd, ui_.tx_spin);
     tie_setting(settings_.offset_up, ui_.ty_spin);
     tie_setting(settings_.offset_right, ui_.tz_spin);
     tie_setting(settings_.show_network_input, ui_.showNetworkInput);
     tie_setting(settings_.roi_filter_alpha, ui_.roiFilterAlpha);
-#if 0
     tie_setting(settings_.use_mjpeg, ui_.use_mjpeg);
-#endif
 	tie_setting(settings_.roi_zoom, ui_.roiZoom);
     tie_setting(settings_.num_threads, ui_.threadCount);
-#if 0
     tie_setting(settings_.resolution, ui_.resolution);
     tie_setting(settings_.force_fps, ui_.cameraFPS);
-#endif
-
-    {
-        const struct {
-            QString label;
-            exposure_preset preset;
-        } presets[] = {
-            { QStringLiteral("Near (1-4ft)"), exposure_preset::near     },
-            { QStringLiteral("Far (4-8ft)"),  exposure_preset::far      },
-            { QStringLiteral("Custom"),       exposure_preset::ignored  },
-        };
-
-        for (const auto& [label, preset] : presets)
-            ui_.exposure_preset->addItem(label, int(preset));
-
-        tie_setting(cs_.exposure, ui_.exposure_preset);
-    }
 
     connect(ui_.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
@@ -807,13 +750,11 @@ NeuralNetDialog::NeuralNetDialog() :
 void NeuralNetDialog::save()
 {
     settings_.b->save();
-    cs_.b->save();
 }
 
 void NeuralNetDialog::reload()
 {
     settings_.b->reload();
-    cs_.b->reload();
 }
 
 void NeuralNetDialog::doOK()

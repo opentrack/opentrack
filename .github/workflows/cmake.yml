@@ -36,7 +36,7 @@ jobs:
     - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Install Linux Dependencies
-      run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev
+      run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev wine64-tools
       if: matrix.os == 'ubuntu-latest'
 
     - name: Cache Qt

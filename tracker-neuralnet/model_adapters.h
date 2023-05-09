@@ -3,6 +3,7 @@
 #include <optional>
 #include <array>
 #include <vector>
+#include <string>
 
 #include <onnxruntime_cxx_api.h>
 #include <opencv2/core.hpp>
@@ -21,7 +22,7 @@ class Localizer
     public:
         Localizer(Ort::MemoryInfo &allocator_info,
                     Ort::Session &&session);
-        
+
         // Returns bounding wrt image coordinate of the input image
         // The preceeding float is the score for being a face normalized to [0,1].
         std::pair<float, cv::Rect2f> run(
@@ -68,13 +69,16 @@ class PoseEstimator
         bool has_uncertainty() const { return has_uncertainty_; }
 
     private:
+        std::string get_network_input_name(size_t i) const;
+        std::string get_network_output_name(size_t i) const;
         int64_t model_version_ = 0;  // Queried meta data from the ONNX file
         Ort::Session session_{nullptr};  // ONNX's runtime context for running the model
         Ort::Allocator allocator_;   // Memory allocator for tensors
         // Inputs
         cv::Mat scaled_frame_{}, input_mat_{};  // Input. One is the original crop, the other is rescaled (?)
         std::vector<Ort::Value> input_val_;    // Tensors to put into the model
-        std::vector<const char*> input_names_; // Refers to the names in the onnx model. 
+        std::vector<std::string> input_names_; // Refers to the names in the onnx model.
+        std::vector<const char *> input_c_names_; // Refers to the C names in the onnx model.
         // Outputs
         cv::Vec<float, 3> output_coord_{};  // 2d Coordinate and head size output.
         cv::Vec<float, 4> output_quat_{};   //  Quaternion output
@@ -83,7 +87,8 @@ class PoseEstimator
         cv::Vec<float, 2> output_eyes_{};
         cv::Vec<float, 3> output_coord_scales_{};
         std::vector<Ort::Value> output_val_; // Tensors to put the model outputs in.
-        std::vector<const char*> output_names_; // Refers to the names in the onnx model.
+        std::vector<std::string> output_names_; // Refers to the names in the onnx model.
+        std::vector<const char *> output_c_names_; // Refers to the C names in the onnx model.
         // More bookkeeping
         size_t num_recurrent_states_ = 0;
         double last_inference_time_ = 0;

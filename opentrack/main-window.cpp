@@ -18,7 +18,6 @@
 #include "compat/math.hpp"
 #include "compat/sysexits.hpp"
 #include "opentrack/defs.hpp"
-#include "software-update-dialog.hpp"
 
 #include <cstring>
 #include <utility>
@@ -34,7 +33,6 @@
 #include <QDateTime>
 
 extern "C" const char* const opentrack_version;
-extern "C" OTR_GENERIC_IMPORT bool opentrack_using_dark_theme;
 
 using namespace options::globals;
 using namespace options;
@@ -60,8 +58,6 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     setVisible(!start_in_tray());
     ensure_tray();
 
-    ui.pose_display->set_grid_background(opentrack_using_dark_theme);
-
     connect(&pose_update_timer, &QTimer::timeout,
             this, &main_window::show_pose, Qt::DirectConnection);
     connect(&det_timer, &QTimer::timeout,
@@ -74,13 +70,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 #ifdef UI_NO_VIDEO_FEED
     fake_video_frame.resize(640, 480);
     fake_video_frame_parent.setVisible(false);
-#elif defined UI_COMPACT_VIDEO_FEED
-    connect(ui.preview_checkbox, &QCheckBox::toggled, this, &main_window::toggle_video_preview);
 #endif
-
-    updater = std::make_unique<update_query>(this);
-    updater->maybe_show_dialog();
-
 }
 
 void main_window::init_shortcuts()
@@ -429,12 +419,7 @@ void main_window::update_button_state(bool running, bool inertialp)
     ui.iconcomboTrackerSource->setEnabled(not_running);
 #endif
     ui.profile_button->setEnabled(not_running);
-#ifdef UI_COMPACT_VIDEO_FEED
-    ui.preview_checkbox->setChecked(false);
-    ui.preview_checkbox->raise();
-    ui.preview_checkbox->setVisible(running && !inertialp);
-    toggle_video_preview(false);
-#elif !defined UI_NO_VIDEO_FEED
+#ifndef UI_NO_VIDEO_FEED
     ui.video_frame_label->setVisible(not_running || inertialp);
     if(not_running)
     {
@@ -445,22 +430,6 @@ void main_window::update_button_state(bool running, bool inertialp)
     }
 #endif
 }
-
-#ifdef UI_COMPACT_VIDEO_FEED
-void main_window::toggle_video_preview(bool value)
-{
-    value &= ui.video_frame->layout() != nullptr;
-    ui.video_frame_parent->setVisible(value);
-    ui.video_frame_parent->raise();
-    ui.video_frame->raise();
-    ui.pose_display->setVisible(!value);
-    ui.preview_checkbox->raise();
-    if (value)
-        ui.preview_checkbox->setStyleSheet("QCheckBox { color: #32CD32 }");
-    else
-        ui.preview_checkbox->setStyleSheet("");
-}
-#endif
 
 void main_window::start_tracker_()
 {
@@ -502,7 +471,7 @@ void main_window::start_tracker_()
             options_widget->register_filter(&*work->libs.pFilter);
     }
 
-    pose_update_timer.start((int)(1000./30));
+    pose_update_timer.start(1000/30);
 
     // NB check valid since SelectedLibraries ctor called
     // trackers take care of layout state updates
@@ -714,7 +683,6 @@ static void show_module_settings(std::shared_ptr<Instance> instance,
                                  void(Dialog::*register_fun)(Instance*),
                                  void(options_dialog::*switch_tab_fun)())
 {
-    using BaseDialog = plugin_api::detail::BaseDialog;
     if (!lib || !lib->Dialog)
         return;
 

@@ -172,7 +172,7 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
                 val.label,
                 [=](const QString&) { val.label->setText(kopts_to_string(val.opt)); });
         {
-            connect(val.button, &QPushButton::clicked, this, [=] { bind_key(val.opt, val.label); });
+            connect(val.button, &QPushButton::clicked, this, [=, this] { bind_key(val.opt, val.label); });
         }
     }
 

@@ -37,7 +37,7 @@ add_definitions(-D_HAS_EXCEPTIONS=0)
 
 if(DEFINED CMAKE_TOOLCHAIN_FILE)
     # ignore cmake warning: Manually-specified variable not used by the project
-    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}}")
+    set(CMAKE_TOOLCHAIN_FILE "${CMAKE_TOOLCHAIN_FILE}")
 endif()
 
 include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
@@ -106,29 +106,42 @@ if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     set(BUILD_opencv_gapi   OFF)
 endif()
 
+if(CMAKE_PROJECT_NAME STREQUAL "TestOscpack")
+    add_compile_definitions(OSC_HOST_LITTLE_ENDIAN)
+endif()
+
 set(opentrack-simd "SSE2")
 
 if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
     set(opentrack-simd "AVX")
 
+    if(opentrack-no-static-crt)
+        sets(BOOL
+        ONNX_USE_MSVC_STATIC_RUNTIME            OFF
+        protobuf_MSVC_STATIC_RUNTIME            OFF
+        )
+    else()
+        sets(BOOL
+        ONNX_USE_MSVC_STATIC_RUNTIME            ON
+        protobuf_MSVC_STATIC_RUNTIME            ON
+        )
+    endif()
     sets(BOOL
-         onnxruntime_USE_AVX ON
-         onnxruntime_USE_AVX2 OFF
-         onnxruntime_USE_AVX512 OFF
-         ONNX_USE_MSVC_STATIC_RUNTIME ON
-         protobuf_MSVC_STATIC_RUNTIME ON
-         onnxruntime_BUILD_BENCHMARKS OFF
-         onnxruntime_BUILD_FOR_NATIVE_MACHINE OFF
-         onnxruntime_BUILD_SHARED_LIB ON
-         onnxruntime_BUILD_UNIT_TESTS OFF
-         protobuf_BUILD_EXAMPLES OFF
-         protobuf_BUILD_SHARED_LIBS OFF
-         ONNX_BUILD_BENCHMARKS OFF
-         ONNX_BUILD_TESTS OFF
-         ONNX_DISABLE_EXCEPTIONS OFF # important!
-         ONNX_GEN_PB_TYPE_STUBS OFF
-         onnxruntime_DISABLE_CONTRIB_OPS ON
-         BUILD_TESTING OFF
+         onnxruntime_USE_AVX                    ON
+         onnxruntime_USE_AVX2                   OFF
+         onnxruntime_USE_AVX512                 OFF
+         onnxruntime_BUILD_BENCHMARKS           OFF
+         onnxruntime_BUILD_FOR_NATIVE_MACHINE   OFF
+         onnxruntime_BUILD_SHARED_LIB           ON
+         onnxruntime_BUILD_UNIT_TESTS           OFF
+         protobuf_BUILD_EXAMPLES                OFF
+         protobuf_BUILD_SHARED_LIBS             OFF
+         ONNX_BUILD_BENCHMARKS                  OFF
+         ONNX_BUILD_TESTS                       OFF
+         ONNX_DISABLE_EXCEPTIONS                OFF # important!
+         ONNX_GEN_PB_TYPE_STUBS                 OFF
+         onnxruntime_DISABLE_CONTRIB_OPS        ON
+         BUILD_TESTING                          OFF
     )
 elseif(opentrack-64bit)
     set(opentrack-simd "AVX")

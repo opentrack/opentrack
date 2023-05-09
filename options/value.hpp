@@ -137,6 +137,7 @@ public:
             return *this;
 
         store_variant(traits::qvariant_from_value(traits::pass_value(datum)));
+        maybe_trace("set-value");
         return *this;
     }
 
