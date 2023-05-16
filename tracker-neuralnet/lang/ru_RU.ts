@@ -8,20 +8,8 @@
         <translation>Настройки трекера</translation>
     </message>
     <message>
-        <source>Diagonal FOV</source>
-        <translation>Угол обзора</translation>
-    </message>
-    <message>
         <source>Camera settings</source>
         <translation>Настройки камеры</translation>
-    </message>
-    <message>
-        <source>Frames per second</source>
-        <translation>Кадры в секунду</translation>
-    </message>
-    <message>
-        <source>Camera name</source>
-        <translation>Камера</translation>
     </message>
     <message>
         <source>Camera Configuration</source>
@@ -62,10 +50,6 @@ Don&apos;t roll or change position.</source>
         <translation>Показать входные данные</translation>
     </message>
     <message>
-        <source>MJPEG</source>
-        <translation>Использовать MJPEG</translation>
-    </message>
-    <message>
         <source>Tuning / Debug</source>
         <translation>Тонкая настройка</translation>
     </message>
@@ -82,22 +66,6 @@ Don&apos;t roll or change position.</source>
         <translation>Количество потоков</translation>
     </message>
     <message>
-        <source>Resolution</source>
-        <translation>Разрешение</translation>
-    </message>
-    <message>
-        <source>Field of view. Needed to transform the pose to world coordinates.</source>
-        <translation>Угол обзора камеры. Требуется для преобразования положения головы в глобальные координаты</translation>
-    </message>
-    <message>
-        <source>Requested video frame rate. Actual setting may not be supported by the camera.</source>
-        <translation>Частота кадров. Реальные значения могут не поддерживаться камерой.</translation>
-    </message>
-    <message>
-        <source>The requested resolution for cases where the camera delivers maximum frame rate only for a particular resolution. The image may still be downscaled to the internal resolution.</source>
-        <translation>Разрешение камеры, для тех случаев, когда быстродействие камеры максимально в определенном разрешении. Может быть масштабировано до внутреннего разрешения.</translation>
-    </message>
-    <message>
         <source>Number of threads. Can be used to balance the CPU load between the game and the tracker.</source>
         <translation>Количество потоков. Используется для балансировки нагрузки на процессор между игрой и трекером.</translation>
     </message>
@@ -112,6 +80,14 @@ Don&apos;t roll or change position.</source>
     <message>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
         <translation>Фактор масштабирования области лица. Применяется перед передачей кадра в модель определения позиции. Наилучшие результаты близки к 1</translation>
+    </message>
+    <message>
+        <source>Camera override</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exposure preset</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
