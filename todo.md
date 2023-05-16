@@ -20,3 +20,4 @@
 - 2023-02-27: 1 hour adding back non-trackhat camera support
 - 2023-02-27: .5 hours adding back the updater & git version
 - 2023-02-27: .5 hours expose only a subset of all nn options
+- 2023-05-16: 1 hour adding default camera settings
