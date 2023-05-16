@@ -50,6 +50,15 @@ void cam::set_exposure(bool write)
             { cv::CAP_PROP_AUTO_EXPOSURE,   0 },
             { cv::CAP_PROP_BRIGHTNESS,      0 },
             { cv::CAP_PROP_SHARPNESS,       3 },
+            { cv::CAP_PROP_AUTO_EXPOSURE,   0 },
+            { cv::CAP_PROP_BRIGHTNESS,      0 },
+            { cv::CAP_PROP_SHARPNESS,       3 },
+            { cv::CAP_PROP_CONTRAST,       32 },
+            { cv::CAP_PROP_HUE,             0 },
+            { cv::CAP_PROP_SATURATION,      0 },
+            { cv::CAP_PROP_SHARPNESS,       3 },
+            { cv::CAP_PROP_GAMMA,         100 },
+            { cv::CAP_PROP_BACKLIGHT,       1 },
         };
         for (const auto [prop, value] : props)
             cap->set(prop, value);
