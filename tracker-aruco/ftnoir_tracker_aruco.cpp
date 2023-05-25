@@ -57,6 +57,7 @@ static const resolution_tuple resolution_choices[] =
     { 640, 480 },
     { 320, 240 },
     { 1280, 720 },
+    { 1920, 1080 },
     { 0, 0 }
 };
 
