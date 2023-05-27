@@ -193,51 +193,56 @@ static void apply_dark_windows_theme_if_needed()
 
 static void add_win32_path()
 {
-    // see https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
-    static char env_path[4096] { '\0', };
+    // see https://web.archive.org/web/20180924055536/https://software.intel.com/en-us/articles/limitation-to-the-length-of-the-system-path-variable
     {
         QString lib_path = OPENTRACK_BASE_PATH;
         lib_path.replace("/", "\\");
-        const QByteArray lib_path_ = QFile::encodeName(lib_path);
-
         QString mod_path = OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH;
         mod_path.replace("/", "\\");
-        const QByteArray mod_path_ = QFile::encodeName(mod_path);
 
-        const char* contents[] {
-            "PATH=",
-            lib_path_.constData(),
-            ";",
-            mod_path_.constData(),
-            ";",
-            getenv("PATH"),
-        };
+        const QString orig_path = qgetenv("PATH");
 
-        bool ok = true;
+        QString env_path; env_path.reserve(4096);
 
-        for (const char* ptr : contents)
-        {
-            if (ptr)
-                strcat_s(env_path, sizeof(env_path), ptr);
+#if 0
+        qDebug() << "orig" << orig_path;
+        qDebug() << "libpath" << lib_path;
+        qDebug() << "modpath" << mod_path;
+#endif
 
-            if (!ptr || ptr[0] == '\0' || env_path[0] == '\0')
-            {
-                qDebug() << "bad path element"
-                         << (ptr == nullptr ? "<null>" : ptr);
-                ok = false;
-                break;
-            }
-        }
-
-        if (ok)
-        {
-            const int error = _putenv(env_path);
-
-            if (error)
-                qDebug() << "can't _putenv win32 path";
-        }
+        if (lib_path.isEmpty())
+            qDebug() << "env: empty lib_path!";
         else
-            qDebug() << "can't set win32 path";
+        {
+            if (!QFile(lib_path).exists())
+                qDebug() << "env: lib_path doesn't exist, this shouldn't happen!";
+            env_path += lib_path;
+            env_path += ';';
+        }
+        if (mod_path.isEmpty())
+            qDebug() << "env: can't add mod_path to env PATH";
+        else
+        {
+            if (!QFile(mod_path).exists())
+                qDebug() << "env: mod_path doesn't exist, did you install it correctly?";
+            env_path += mod_path;
+            env_path += ';';
+        }
+
+        if (orig_path.isEmpty())
+            qDebug() << "env: empty PATH";
+        else
+            env_path += orig_path;
+
+#if 0
+        qDebug() << "data" << env_path.constData();
+#endif
+
+        // better length limit than putenv() and SetEnvironmentVariableA
+        bool ret = SetEnvironmentVariableW(L"PATH", (const wchar_t*)env_path.constData());
+
+        if (!ret)
+            qDebug() << "_putenv() failed with" << (void*)GetLastError();
     }
 }
 
@@ -300,11 +305,13 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
     QApplication app(argc, argv);
 
 #ifdef _WIN32
-    apply_dark_windows_theme_if_needed();
-    add_win32_path();
     attach_parent_console();
 #endif
     (void)qInstallMessageHandler(qdebug_to_console);
+#ifdef _WIN32
+    apply_dark_windows_theme_if_needed();
+    add_win32_path();
+#endif
 
     QDir::setCurrent(OPENTRACK_BASE_PATH);
 
@@ -345,4 +352,3 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
 
     return ret;
 }
-
