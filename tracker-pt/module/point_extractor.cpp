@@ -111,11 +111,25 @@ void PointExtractor::extract_single_channel(const cv::Mat& orig_frame, int idx, 
     cv::mixChannels(&orig_frame, 1, &dest, 1, from_to, 1);
 }
 
-void PointExtractor::filter_single_channel(const cv::Mat& orig_frame, float r, float g, float b, cv::Mat1b& dest)
+void PointExtractor::filter_single_channel(const cv::Mat& orig_frame, float r, float g, float b, bool overexp, cv::Mat1b& dest)
 {
     ensure_channel_buffers(orig_frame);
 
     cv::transform(orig_frame, dest, cv::Mat(cv::Matx13f(b, g, r)));
+
+    // decrease color saturation logic in proportion to key color intensity?
+    if (overexp)
+    {
+        // get the intensity of the key color (i.e. +ve coefficients)
+        cv::Mat1b temp1(orig_frame.rows, orig_frame.cols);
+        cv::transform(orig_frame, temp1, cv::Mat(cv::Matx13f(std::max(b, 0.0f), std::max(g, 0.0f), std::max(r, 0.0f))));
+        // get the intensity of the non-key color (i.e. -ve coefficients)
+        cv::Mat1b temp2(orig_frame.rows, orig_frame.cols);
+        cv::transform(orig_frame, temp2, cv::Mat(cv::Matx13f(std::max(-b, 0.0f), std::max(-g, 0.0f), std::max(-r, 0.0f))));
+        // add non-key color back into the result in proportion to key color intensity
+        cv::multiply(temp1, temp2, temp1, 1.0 / 255);
+        cv::add(dest, temp1, dest);
+    }
 }
 
 void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
@@ -146,32 +160,33 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     }
     case pt_color_red_chromakey:
     {
-        filter_single_channel(frame, 1, -0.5, -0.5, output);
+        filter_single_channel(frame, 1, -0.5, -0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_green_chromakey:
     {
-        filter_single_channel(frame, -0.5, 1, -0.5, output);
+        filter_single_channel(frame, -0.5, 1, -0.5, s.chroma_key_overexposed, output);
+
         break;
     }
     case pt_color_blue_chromakey:
     {
-        filter_single_channel(frame, -0.5, -0.5, 1, output);
+        filter_single_channel(frame, -0.5, -0.5, 1, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_cyan_chromakey:
     {
-        filter_single_channel(frame, -1, 0.5, 0.5, output);
+        filter_single_channel(frame, -1, 0.5, 0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_yellow_chromakey:
     {
-        filter_single_channel(frame, 0.5, 0.5, -1, output);
+        filter_single_channel(frame, 0.5, 0.5, -1, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_magenta_chromakey:
     {
-        filter_single_channel(frame, 0.5, -1, 0.5, output);
+        filter_single_channel(frame, 0.5, -1, 0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_hardware:

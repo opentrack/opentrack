@@ -309,6 +309,10 @@ ROLL или X/Y-смещения.</translation>
         <source>Filter</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Chroma key includes overexposed pixels</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>pt_impl::TrackerDialog_PT</name>

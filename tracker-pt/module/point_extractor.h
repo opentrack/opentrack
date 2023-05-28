@@ -51,7 +51,7 @@ private:
     void ensure_buffers(const cv::Mat& frame);
 
     void extract_single_channel(const cv::Mat& orig_frame, int idx, cv::Mat1b& dest);
-    void filter_single_channel(const cv::Mat& orig_frame, float r, float g, float b, cv::Mat1b& dest);
+    void filter_single_channel(const cv::Mat& orig_frame, float r, float g, float b, bool overexp, cv::Mat1b& dest);
 
     void color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output);
     void threshold_image(const cv::Mat& frame_gray, cv::Mat1b& output);
