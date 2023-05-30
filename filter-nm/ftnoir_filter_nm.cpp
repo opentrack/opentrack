@@ -4,7 +4,7 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-#include "filter_tom.h"
+#include "ftnoir_filter_nm.h"
 #include "compat/math-imports.hpp"
 #include "compat/macros.h"
 
@@ -13,11 +13,11 @@
 
 #include <algorithm>
 
-tom::tom()
+filter_nm::filter_nm()
 {
 }
 
-void tom::filter(const double* input, double* output)
+void filter_nm::filter(const double* input, double* output)
 {
     // order of axes: x, y, z, yaw, pitch, roll
     if (unlikely(first_run))
@@ -45,4 +45,4 @@ void tom::filter(const double* input, double* output)
     std::copy(filtered_output, filtered_output + 6, output);
 }
 
-OPENTRACK_DECLARE_FILTER(tom, dialog_tom, tomDll)
+OPENTRACK_DECLARE_FILTER(filter_nm, dialog_nm, nmDll)

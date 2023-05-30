@@ -1,1 +1,1 @@
-otr_module(filter-tom)
+otr_module(filter-nm)

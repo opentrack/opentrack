@@ -2,7 +2,7 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nl_NL">
 <context>
-    <name>UICdialog_tom</name>
+    <name>UICdialog_nm</name>
     <message>
         <source>Dialog</source>
         <translation type="unfinished"></translation>
@@ -69,9 +69,9 @@
     </message>
 </context>
 <context>
-    <name>tomDll</name>
+    <name>nmDll</name>
     <message>
-        <source>Tom</source>
+        <source>NaturalMovement</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

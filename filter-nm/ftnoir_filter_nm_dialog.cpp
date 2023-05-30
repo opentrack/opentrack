@@ -4,11 +4,11 @@
  * purpose with or without fee is hereby granted, provided that the above
  * copyright notice and this permission notice appear in all copies.
  */
-#include "filter_tom.h"
+#include "ftnoir_filter_nm.h"
 
 using namespace options;
 
-dialog_tom::dialog_tom()
+dialog_nm::dialog_nm()
 {
     ui.setupUi(this);
 
@@ -61,28 +61,28 @@ dialog_tom::dialog_tom()
         { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
 }
 
-void dialog_tom::doOK()
+void dialog_nm::doOK()
 {
     save();
     close();
 }
 
-void dialog_tom::doCancel()
+void dialog_nm::doCancel()
 {
     close();
 }
 
-void dialog_tom::save()
+void dialog_nm::save()
 {
     s.b->save();
 }
 
-void dialog_tom::reload()
+void dialog_nm::reload()
 {
     s.b->reload();
 }
 
-void dialog_tom::set_buttons_visible(bool x)
+void dialog_nm::set_buttons_visible(bool x)
 {
     ui.buttonBox->setVisible(x);
 }

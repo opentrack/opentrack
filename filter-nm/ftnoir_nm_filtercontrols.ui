@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>UICdialog_tom</class>
- <widget class="QDialog" name="UICdialog_tom">
+ <class>UICdialog_nm</class>
+ <widget class="QDialog" name="UICdialog_nm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -577,7 +577,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>UICdialog_tom</receiver>
+   <receiver>UICdialog_nm</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -593,7 +593,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>UICdialog_tom</receiver>
+   <receiver>UICdialog_nm</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

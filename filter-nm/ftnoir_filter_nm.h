@@ -6,7 +6,7 @@
  */
 #pragma once
 
-#include "ui_tom_filtercontrols.h"
+#include "ui_ftnoir_nm_filtercontrols.h"
 
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
@@ -14,13 +14,13 @@
 
 using namespace options;
 
-struct settings_tom : opts
+struct settings_nm : opts
 {
     value<slider_value> responsiveness[6];
     value<slider_value> drift_speeds[6];
 
-    settings_tom() :
-        opts("tom-filter"),
+    settings_nm() :
+        opts("nm-filter"),
           responsiveness{ value<slider_value>(b, "x-responsiveness",        { 10.0, .0, 20.0 }),
                           value<slider_value>(b, "y-responsiveness",        { 10.0, .0, 20.0 }),
                           value<slider_value>(b, "z-responsiveness",        { 10.0, .0, 20.0 }),
@@ -47,9 +47,9 @@ struct settings_tom : opts
 */
 };
 
-struct tom : IFilter
+struct filter_nm : IFilter
 {
-    tom();
+    filter_nm();
     void filter(const double* input, double* output) override;
     void center() override { first_run = true; }
     module_status initialize() override { return status_ok(); }
@@ -59,15 +59,15 @@ private:
     double speeds[6]{};
     double filtered_output[6]{};
     Timer t;
-    settings_tom s;
+    settings_nm s;
     bool first_run = true;
 };
 
-class dialog_tom : public IFilterDialog
+class dialog_nm : public IFilterDialog
 {
     Q_OBJECT
 public:
-    dialog_tom();
+    dialog_nm();
     void register_filter(IFilter*) override {}
     void unregister_filter() override {}
     void save() override;
@@ -76,18 +76,18 @@ public:
     void set_buttons_visible(bool x) override;
 
 private:
-    Ui::UICdialog_tom ui;
-    settings_tom s;
+    Ui::UICdialog_nm ui;
+    settings_nm s;
 
 private slots:
     void doOK();
     void doCancel();
 };
 
-class tomDll : public Metadata
+class nmDll : public Metadata
 {
     Q_OBJECT
 
-    QString name() override { return tr("Tom"); }
+    QString name() override { return tr("NaturalMovement"); }
     QIcon icon() override { return QIcon(":/images/filter-16.png"); }
 };
