@@ -11,6 +11,7 @@
 #include "frame.hpp"
 #include "cv/numeric.hpp"
 #include "compat/math.hpp"
+#include "compat/math-imports.hpp"
 
 #include <opencv2/imgproc.hpp>
 
@@ -115,20 +116,26 @@ void PointExtractor::filter_single_channel(const cv::Mat& orig_frame, float r, f
 {
     ensure_channel_buffers(orig_frame);
 
-    cv::transform(orig_frame, dest, cv::Mat(cv::Matx13f(b, g, r)));
-
-    // decrease color saturation logic in proportion to key color intensity?
-    if (overexp)
+    // just filter for colour or also include overexposed regions?
+    if (!overexp)
+        cv::transform(orig_frame, dest, cv::Mat(cv::Matx13f(b, g, r)));
+    else
     {
-        // get the intensity of the key color (i.e. +ve coefficients)
-        cv::Mat1b temp1(orig_frame.rows, orig_frame.cols);
-        cv::transform(orig_frame, temp1, cv::Mat(cv::Matx13f(std::max(b, 0.0f), std::max(g, 0.0f), std::max(r, 0.0f))));
-        // get the intensity of the non-key color (i.e. -ve coefficients)
-        cv::Mat1b temp2(orig_frame.rows, orig_frame.cols);
-        cv::transform(orig_frame, temp2, cv::Mat(cv::Matx13f(std::max(-b, 0.0f), std::max(-g, 0.0f), std::max(-r, 0.0f))));
-        // add non-key color back into the result in proportion to key color intensity
-        cv::multiply(temp1, temp2, temp1, 1.0 / 255);
-        cv::add(dest, temp1, dest);
+        for (int i = 0; i < orig_frame.rows; i++)
+        {
+            cv::Vec3b const* const __restrict orig_ptr = orig_frame.ptr<cv::Vec3b>(i);
+            uint8_t* const __restrict dest_ptr = dest.ptr(i);
+            for (int j = 0; j < orig_frame.cols; j++)
+            {
+                // get the intensity of the key color (i.e. +ve coefficients)
+                uchar blue = orig_ptr[j][0], green = orig_ptr[j][1], red = orig_ptr[j][2];
+                float key = std::max(b, 0.0f) * blue + std::max(g, 0.0f) * green + std::max(r, 0.0f) * red;
+                // get the intensity of the non-key color (i.e. -ve coefficients)
+                float nonkey = std::max(-b, 0.0f) * blue + std::max(-g, 0.0f) * green + std::max(-r, 0.0f) * red;
+                // the result is key color minus non-key color inversely weighted by key colour intensity
+                dest_ptr[j] = std::max(0.0f, std::min(255.0f, key - (255.0f - key) / 255.0f * nonkey));
+            }
+        }
     }
 }
 
@@ -166,7 +173,6 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     case pt_color_green_chromakey:
     {
         filter_single_channel(frame, -0.5, 1, -0.5, s.chroma_key_overexposed, output);
-
         break;
     }
     case pt_color_blue_chromakey:
