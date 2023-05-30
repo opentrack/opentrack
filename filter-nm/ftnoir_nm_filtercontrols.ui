@@ -292,7 +292,7 @@
        <widget class="QLabel" name="y_drift_speed">
         <property name="minimumSize">
          <size>
-          <width>30</width>
+          <width>40</width>
           <height>0</height>
          </size>
         </property>
@@ -342,7 +342,7 @@
        <widget class="QLabel" name="z_drift_speed">
         <property name="minimumSize">
          <size>
-          <width>30</width>
+          <width>40</width>
           <height>0</height>
          </size>
         </property>
@@ -358,7 +358,7 @@
        <widget class="QLabel" name="roll_drift_speed">
         <property name="minimumSize">
          <size>
-          <width>30</width>
+          <width>40</width>
           <height>0</height>
          </size>
         </property>
@@ -381,7 +381,7 @@
        <widget class="QLabel" name="pitch_drift_speed">
         <property name="minimumSize">
          <size>
-          <width>30</width>
+          <width>40</width>
           <height>0</height>
          </size>
         </property>
@@ -424,7 +424,7 @@
        <widget class="QLabel" name="yaw_drift_speed">
         <property name="minimumSize">
          <size>
-          <width>30</width>
+          <width>40</width>
           <height>0</height>
          </size>
         </property>
@@ -519,7 +519,7 @@
         </property>
         <property name="minimumSize">
          <size>
-          <width>30</width>
+          <width>40</width>
           <height>0</height>
          </size>
         </property>
@@ -572,6 +572,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>x_responsiveness_slider</tabstop>
+  <tabstop>y_responsiveness_slider</tabstop>
+  <tabstop>z_responsiveness_slider</tabstop>
+  <tabstop>yaw_responsiveness_slider</tabstop>
+  <tabstop>pitch_responsiveness_slider</tabstop>
+  <tabstop>roll_responsiveness_slider</tabstop>
+  <tabstop>x_drift_speed_slider</tabstop>
+  <tabstop>y_drift_speed_slider</tabstop>
+  <tabstop>z_drift_speed_slider</tabstop>
+  <tabstop>yaw_drift_speed_slider</tabstop>
+  <tabstop>pitch_drift_speed_slider</tabstop>
+  <tabstop>roll_drift_speed_slider</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

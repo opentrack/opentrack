@@ -60,11 +60,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Natural movement filter: cancels higher frequency noise and the natural tendency for our heads to drift even when we think we are sitting still.</source>
+        <source>Instructions: Set all sliders to minimum. Then on an axis by axis basis: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Instructions: Set all sliders to minimum. Then on an axis by axis basis: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</source>
+        <source>Natural movement filter by Tom Brazier: Cancels higher frequency noise and the natural tendency for our heads to drift even when we think we are sitting still.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
