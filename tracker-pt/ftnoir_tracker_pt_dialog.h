@@ -39,7 +39,7 @@ public slots:
     void poll_tracker_info_impl();
     void set_camera_settings_available(const QString& camera_name);
     void show_camera_settings();
-    void chroma_key_overexp_enable(const QString&);
+    void chroma_key_controls_enable(const QString&);
 
 protected:
     QString threshold_display_text(int threshold_value);

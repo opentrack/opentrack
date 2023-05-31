@@ -167,32 +167,38 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     }
     case pt_color_red_chromakey:
     {
-        filter_single_channel(frame, 1, -0.5, -0.5, s.chroma_key_overexposed, output);
+        float non_key_coeff = -0.5 * *s.chroma_key_strength;
+        filter_single_channel(frame, 1, non_key_coeff, non_key_coeff, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_green_chromakey:
     {
-        filter_single_channel(frame, -0.5, 1, -0.5, s.chroma_key_overexposed, output);
+        float non_key_coeff = -0.5 * *s.chroma_key_strength;
+        filter_single_channel(frame, non_key_coeff, 1, non_key_coeff, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_blue_chromakey:
     {
-        filter_single_channel(frame, -0.5, -0.5, 1, s.chroma_key_overexposed, output);
+        float non_key_coeff = -0.5 * *s.chroma_key_strength;
+        filter_single_channel(frame, non_key_coeff, non_key_coeff, 1, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_cyan_chromakey:
     {
-        filter_single_channel(frame, -1, 0.5, 0.5, s.chroma_key_overexposed, output);
+        float non_key_coeff = -1.0 * *s.chroma_key_strength;
+        filter_single_channel(frame, non_key_coeff, 0.5, 0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_yellow_chromakey:
     {
-        filter_single_channel(frame, 0.5, 0.5, -1, s.chroma_key_overexposed, output);
+        float non_key_coeff = -1.0 * *s.chroma_key_strength;
+        filter_single_channel(frame, 0.5, 0.5, non_key_coeff, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_magenta_chromakey:
     {
-        filter_single_channel(frame, 0.5, -1, 0.5, s.chroma_key_overexposed, output);
+        float non_key_coeff = -1.0 * *s.chroma_key_strength;
+        filter_single_channel(frame, 0.5, non_key_coeff, 0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_hardware:
