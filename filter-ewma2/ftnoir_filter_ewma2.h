@@ -28,9 +28,10 @@ public:
     module_status initialize() override { return status_ok(); }
 private:
     // Deltas are smoothed over the last 1/60sec.
-    const double delta_RC = 1./60;
+    static constexpr double delta_RC = 1./60;
     // Noise is smoothed over the last 60sec.
-    const double noise_RC = 60.0;
+    static constexpr double noise_RC_max = 60.0;
+    double noise_RC = 0.0;
     double last_delta[6];
     double last_noise[6];
     double last_output[6];

@@ -33,17 +33,17 @@ void ewma::filter(const double *input, double *output)
     {
         first_run = false;
         timer.start();
-        for (int i=0;i<6;i++)
-        {
-            last_output[i] = input[i];
-            last_delta[i] = 0;
-            last_noise[i] = 0;
-        }
+        noise_RC = 0.0;
+        std::copy(input, input + 6, last_output);
+        std::fill(last_delta, last_delta + 6, 0.0);
+        std::fill(last_noise, last_noise + 6, 0.0);
+        return;
     }
     // Get the time in seconds since last run and restart the timer.
     const double dt = timer.elapsed_seconds();
     timer.start();
     // Calculate delta_alpha and noise_alpha from dt.
+    noise_RC = std::min(noise_RC + dt, noise_RC_max);
     double delta_alpha = dt/(dt + delta_RC);
     double noise_alpha = dt/(dt + noise_RC);
 
@@ -61,12 +61,12 @@ void ewma::filter(const double *input, double *output)
         // Calculate the current and smoothed delta.
         double input_value = input[i];
         double delta = input_value - last_output[i];
-        if (fabs(delta) > half_turn)
+        if (i >= 3 && fabs(delta) > half_turn)
         {
             delta -= copysign(full_turn, delta);
             input_value -= copysign(full_turn, input_value);
         }
-        last_delta[i] = delta_alpha*delta + (1.0-delta_alpha)*last_delta[i];
+        last_delta[i] += delta_alpha * (delta - last_delta[i]);
         // Calculate the current and smoothed noise variance.
         double noise = last_delta[i]*last_delta[i];
         last_noise[i] = noise_alpha*noise + (1.0-noise_alpha)*last_noise[i];
@@ -78,9 +78,8 @@ void ewma::filter(const double *input, double *output)
         // Calculate the dynamic alpha.
         double alpha = dt/(dt + RC);
         // Calculate the new output position.
-        output[i] = alpha*input_value + (1.0-alpha)*last_output[i];
-        if (fabs(output[i]) > half_turn) output[i] -= copysign(full_turn, output[i]);
-        last_output[i] = output[i];
+        last_output[i] += alpha * (input_value - last_output[i]);
+        output[i] = last_output[i];
     }
 }
 
