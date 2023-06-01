@@ -1802,6 +1802,10 @@ Don't roll or change position.</string>
   <tabstop>point_filter_slider</tabstop>
   <tabstop>point_filter_limit_slider</tabstop>
   <tabstop>point_filter_deadzone_slider</tabstop>
+  <tabstop>maxdiam_spin</tabstop>
+  <tabstop>mindiam_spin</tabstop>
+  <tabstop>auto_threshold</tabstop>
+  <tabstop>threshold_slider</tabstop>
  </tabstops>
  <resources>
   <include location="module/tracker_pt.qrc"/>
