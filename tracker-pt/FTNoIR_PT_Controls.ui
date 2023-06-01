@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>413</width>
-    <height>628</height>
+    <height>630</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -486,6 +486,9 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="chroma_key_strength_label">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
               <property name="readOnly">
                <bool>true</bool>
               </property>
@@ -733,7 +736,7 @@
           <enum>QTabWidget::Rounded</enum>
          </property>
          <property name="currentIndex">
-          <number>2</number>
+          <number>0</number>
          </property>
          <property name="usesScrollButtons">
           <bool>false</bool>
@@ -1767,10 +1770,11 @@ Don't roll or change position.</string>
   <tabstop>fps_spin</tabstop>
   <tabstop>use_mjpeg</tabstop>
   <tabstop>fov</tabstop>
-  <tabstop>init_phase_timeout</tabstop>
   <tabstop>dynamic_pose</tabstop>
+  <tabstop>init_phase_timeout</tabstop>
   <tabstop>camera_settings</tabstop>
   <tabstop>blob_color</tabstop>
+  <tabstop>chroma_key_strength_slider</tabstop>
   <tabstop>chroma_key_overexposed</tabstop>
   <tabstop>auto_threshold</tabstop>
   <tabstop>threshold_slider</tabstop>
@@ -1781,19 +1785,19 @@ Don't roll or change position.</string>
   <tabstop>clip_theight_spin</tabstop>
   <tabstop>clip_bheight_spin</tabstop>
   <tabstop>clip_blength_spin</tabstop>
-  <tabstop>tx_spin</tabstop>
-  <tabstop>ty_spin</tabstop>
-  <tabstop>tz_spin</tabstop>
-  <tabstop>tcalib_button</tabstop>
   <tabstop>cap_length_spin</tabstop>
   <tabstop>cap_width_spin</tabstop>
   <tabstop>cap_height_spin</tabstop>
   <tabstop>m1x_spin</tabstop>
-  <tabstop>m2x_spin</tabstop>
   <tabstop>m1y_spin</tabstop>
-  <tabstop>m2y_spin</tabstop>
   <tabstop>m1z_spin</tabstop>
+  <tabstop>m2x_spin</tabstop>
+  <tabstop>m2y_spin</tabstop>
   <tabstop>m2z_spin</tabstop>
+  <tabstop>tx_spin</tabstop>
+  <tabstop>ty_spin</tabstop>
+  <tabstop>tz_spin</tabstop>
+  <tabstop>tcalib_button</tabstop>
   <tabstop>enable_point_filter</tabstop>
   <tabstop>point_filter_slider</tabstop>
   <tabstop>point_filter_limit_slider</tabstop>
