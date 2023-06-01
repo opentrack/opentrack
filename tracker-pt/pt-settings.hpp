@@ -65,6 +65,8 @@ struct pt_settings final : options::opts
     value<bool> auto_threshold { b, "automatic-threshold", true };
     value<pt_color_type> blob_color { b, "blob-color", pt_color_bt709 };
     value<bool> use_mjpeg { b, "use-mjpeg", false };
+    value<slider_value> chroma_key_strength{ b, "chroma-key-strength", { 1.0, 0.5, 4. } };
+    value<bool> chroma_key_overexposed{ b, "chroma-key-overexposed", false };
 
     value<slider_value> threshold_slider { b, "threshold-slider", { 128, 0, 255 } };
 

@@ -110,6 +110,16 @@ TrackerDialog_PT::TrackerDialog_PT(const QString& module_name) :
 
     tie_setting(s.blob_color, ui.blob_color);
 
+    tie_setting(s.chroma_key_strength, ui.chroma_key_strength_slider);
+    connect(&s.chroma_key_strength, value_::value_changed<slider_value>(), ui.chroma_key_strength_label,
+            [this] { ui.chroma_key_strength_label->setValue(*s.chroma_key_strength); });
+    ui.chroma_key_strength_label->setValue(*s.chroma_key_strength);
+
+    tie_setting(s.chroma_key_overexposed, ui.chroma_key_overexposed);
+    connect(ui.blob_color, &QComboBox::currentTextChanged, this, &TrackerDialog_PT::chroma_key_controls_enable);
+
+    chroma_key_controls_enable("");
+
     tie_setting(s.threshold_slider, ui.threshold_value_display, [this](const slider_value& val) {
         return threshold_display_text(int(val));
     });
@@ -246,6 +256,20 @@ void TrackerDialog_PT::show_camera_settings()
         tracker->open_camera_dialog_flag = true;
     else
         (void)video::show_dialog(s.camera_name);
+}
+
+void TrackerDialog_PT::chroma_key_controls_enable(const QString&)
+{
+    bool enabled = false;
+    QVariant data = ui.blob_color->currentData();
+    if (data.isValid())
+    {
+        pt_color_type blob_color = pt_color_type(data.toInt());
+        enabled = blob_color >= pt_color_red_chromakey && blob_color <= pt_color_magenta_chromakey;
+    }
+    ui.chroma_key_strength_slider->setEnabled(enabled);
+    ui.chroma_key_strength_label->setEnabled(enabled);
+    ui.chroma_key_overexposed->setEnabled(enabled);
 }
 
 void TrackerDialog_PT::trans_calib_step()
