@@ -148,6 +148,7 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         return;
     }
 
+    const float half_chr_key_str = *s.chroma_key_strength * 0.5;
     switch (s.blob_color)
     {
     case pt_color_green_only:
@@ -167,38 +168,32 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
     }
     case pt_color_red_chromakey:
     {
-        float non_key_coeff = -0.5 * *s.chroma_key_strength;
-        filter_single_channel(frame, 1, non_key_coeff, non_key_coeff, s.chroma_key_overexposed, output);
+        filter_single_channel(frame, 1, -half_chr_key_str, -half_chr_key_str, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_green_chromakey:
     {
-        float non_key_coeff = -0.5 * *s.chroma_key_strength;
-        filter_single_channel(frame, non_key_coeff, 1, non_key_coeff, s.chroma_key_overexposed, output);
+        filter_single_channel(frame, -half_chr_key_str, 1, -half_chr_key_str, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_blue_chromakey:
     {
-        float non_key_coeff = -0.5 * *s.chroma_key_strength;
-        filter_single_channel(frame, non_key_coeff, non_key_coeff, 1, s.chroma_key_overexposed, output);
+        filter_single_channel(frame, -half_chr_key_str, -half_chr_key_str, 1, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_cyan_chromakey:
     {
-        float non_key_coeff = -1.0 * *s.chroma_key_strength;
-        filter_single_channel(frame, non_key_coeff, 0.5, 0.5, s.chroma_key_overexposed, output);
+        filter_single_channel(frame, -*s.chroma_key_strength, 0.5, 0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_yellow_chromakey:
     {
-        float non_key_coeff = -1.0 * *s.chroma_key_strength;
-        filter_single_channel(frame, 0.5, 0.5, non_key_coeff, s.chroma_key_overexposed, output);
+        filter_single_channel(frame, 0.5, 0.5, -*s.chroma_key_strength, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_magenta_chromakey:
     {
-        float non_key_coeff = -1.0 * *s.chroma_key_strength;
-        filter_single_channel(frame, 0.5, non_key_coeff, 0.5, s.chroma_key_overexposed, output);
+        filter_single_channel(frame, 0.5, -*s.chroma_key_strength, 0.5, s.chroma_key_overexposed, output);
         break;
     }
     case pt_color_hardware:
