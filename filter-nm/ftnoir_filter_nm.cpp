@@ -36,8 +36,10 @@ void filter_nm::filter(const double* input, double* output)
         for (int i = 0; i < 6; i++)
         {
             double speed = (input[i] - last_input[i]) / dt;
-            speeds[i] += dt * (double)s.responsiveness[i] * (speed - speeds[i]);
-            filtered_output[i] += dt * (double)s.responsiveness[i] * min(1.0, abs(speeds[i]) / (double)s.drift_speeds[i]) * (input[i] - filtered_output[i]);
+            double timescale = 1. / *(s.responsiveness[i]);
+            double alpha = dt / (dt + timescale);
+            speeds[i] += alpha * (speed - speeds[i]); // EWA
+            filtered_output[i] += alpha * min(1.0, abs(speeds[i]) / *(s.drift_speeds[i])) * (input[i] - filtered_output[i]);
         }
       }
 
