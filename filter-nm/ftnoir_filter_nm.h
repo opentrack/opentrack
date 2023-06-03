@@ -35,16 +35,6 @@ struct settings_nm : opts
                         value<slider_value>(b, "roll-drift-speed",  { 100.0, 1.0, 400.0 }) }
     {
     }
-
-    /*    value<slider_value> kMinSmoothing, kMaxSmoothing, kSmoothingScaleCurve;
-    settings()
-        : opts("ewma-filter"),
-          kMinSmoothing(b, "min-smoothing", { .02, .01, 1 }),
-          kMaxSmoothing(b, "max-smoothing", { .7, .01, 1 }),
-          kSmoothingScaleCurve(b, "smoothing-scale-curve", { .8, .1, 5 })
-    {
-    }
-*/
 };
 
 struct filter_nm : IFilter
