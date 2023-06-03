@@ -34,11 +34,15 @@ void hamilton::filter(const double *input, double *output)
     double dist	 = VectorDistance( &input[TX], pos_last);
 
     double alpha = (dist - pos_deadzone) / (pos_max + pos_deadzone + EPSILON);
-    alpha = fmin(alpha, 1.0);
-    alpha = fmax(alpha, 0.0);
-    alpha = pow (alpha, pos_pow);
-    alpha = alpha * (dist - pos_deadzone) / (dist + EPSILON);
-		
+    alpha = std::min(1.0, std::max(0.0, alpha));
+    if (alpha > 0.0)
+        alpha = pow(alpha, pos_pow);
+    // Scale alpha so that alpha * dist <= dist - pos_deadzone. This ensures that
+    // the center of the deadzone will never move closer to the input position than
+    // distance dist. And this ensures that the view never jumps ahead of head
+    // movements.
+    alpha *= (dist - pos_deadzone) / (dist + EPSILON);
+
     pos_last = Lerp(pos_last, input, alpha);
 
     output[TX] = pos_last.v[0]; 
@@ -62,10 +66,11 @@ void hamilton::filter(const double *input, double *output)
     double angle = AngleBetween(quat_input, quat_last);
 
     alpha = (angle - rot_deadzone) / (rot_max + rot_deadzone + EPSILON);
-    alpha = fmin(alpha, 1.0);
-    alpha = fmax(alpha, 0.0);
-    alpha = pow (alpha, rot_pow + rot_zoom);
-    alpha = alpha * (angle - rot_deadzone) / (angle + EPSILON);
+    alpha = std::min(1.0, std::max(0.0, alpha));
+    if (alpha > 0.0)
+        alpha = pow(alpha, rot_pow + rot_zoom);
+    // see comment in earlier alpha calculation above
+    alpha *= (angle - rot_deadzone) / (angle + EPSILON);
 
     quat_last = Slerp(quat_last, quat_input, alpha);
 
