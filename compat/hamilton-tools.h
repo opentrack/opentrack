@@ -21,9 +21,9 @@ struct tQuat
         {x = X; y = Y; z = Z; w = W;}
 };
 
-double  OTR_COMPAT_EXPORT VectorDistance(const double v1[], const tVector v2);
-tVector OTR_COMPAT_EXPORT Lerp          (const tVector s, const double d[], const double alpha);
+double  OTR_COMPAT_EXPORT VectorDistance(const double v1[], const tVector& v2);
+tVector OTR_COMPAT_EXPORT Lerp          (const tVector& s, const double d[], const double alpha);
 tQuat   OTR_COMPAT_EXPORT QuatFromYPR   (const double YPR[]);
-double  OTR_COMPAT_EXPORT AngleBetween  (const tQuat S, const tQuat D);
-tQuat   OTR_COMPAT_EXPORT Slerp         (const tQuat S, const tQuat D, const double alpha);
-void    OTR_COMPAT_EXPORT QuatToYPR     (const tQuat Q, double YPR[]);
+double  OTR_COMPAT_EXPORT AngleBetween  (const tQuat& S, const tQuat& D);
+tQuat   OTR_COMPAT_EXPORT Slerp         (const tQuat& S, const tQuat& D, const double alpha);
+void    OTR_COMPAT_EXPORT QuatToYPR     (const tQuat& Q, double YPR[]);
