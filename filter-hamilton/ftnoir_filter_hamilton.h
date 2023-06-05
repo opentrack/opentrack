@@ -13,7 +13,7 @@
 #include <QMutex>
 #include "options/options.hpp"
 //#include "compat/timer.hpp"
-#include "hamilton-tools.h"
+#include "compat/hamilton-tools.h"
 
 using namespace options;
 
