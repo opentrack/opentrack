@@ -52,11 +52,11 @@ void hamilton::filter(const double *input, double *output)
     // zoom smoothing:
     const double pow_zoom {s.kPowZoom};		
     const double max_z    {s.kMaxZ};
-		double rot_zoom = pow_zoom; 
+    double rot_zoom = pow_zoom;
 
     if (output[TZ] > 0) rot_zoom = 0;
-		else rot_zoom *= -output[TZ] / (max_z + EPSILON);
-		rot_zoom = fmin( rot_zoom, pow_zoom ); 
+    else rot_zoom *= -output[TZ] / (max_z + EPSILON);
+    rot_zoom = fmin( rot_zoom, pow_zoom );
 
     // rotations:
     const double rot_max     {s.kMaxRot};
