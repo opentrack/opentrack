@@ -20,15 +20,15 @@
       <string>Responsiveness</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>X</string>
+         <string>Rotation</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="x_responsiveness">
+       <widget class="QLabel" name="pos_responsiveness">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -49,31 +49,8 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QSlider" name="x_responsiveness_slider">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximum">
-         <number>40</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Y</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="1">
-       <widget class="QLabel" name="y_responsiveness">
+       <widget class="QLabel" name="rot_responsiveness">
         <property name="minimumSize">
          <size>
           <width>30</width>
@@ -89,7 +66,7 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QSlider" name="y_responsiveness_slider">
+       <widget class="QSlider" name="rot_responsiveness_slider">
         <property name="maximum">
          <number>40</number>
         </property>
@@ -98,31 +75,14 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Z</string>
+      <item row="0" column="2">
+       <widget class="QSlider" name="pos_responsiveness_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="z_responsiveness">
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>10.0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QSlider" name="z_responsiveness_slider">
         <property name="maximum">
          <number>40</number>
         </property>
@@ -131,102 +91,10 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_7">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>Yaw</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="yaw_responsiveness">
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>10.0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="2">
-       <widget class="QSlider" name="yaw_responsiveness_slider">
-        <property name="maximum">
-         <number>40</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_9">
-        <property name="text">
-         <string>Pitch</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="pitch_responsiveness">
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>10.0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QSlider" name="pitch_responsiveness_slider">
-        <property name="maximum">
-         <number>40</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Roll</string>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QLabel" name="roll_responsiveness">
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>10.0</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="2">
-       <widget class="QSlider" name="roll_responsiveness_slider">
-        <property name="maximum">
-         <number>40</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <string>Position</string>
         </property>
        </widget>
       </item>
@@ -261,181 +129,6 @@
       <string>Drift speeds</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Z</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="3">
-       <widget class="QSlider" name="y_drift_speed_slider">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>200</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="0">
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Roll</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="y_drift_speed">
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>50</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="2">
-       <widget class="QLabel" name="label_24">
-        <property name="text">
-         <string>°/s</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
-       <widget class="QLabel" name="label_23">
-        <property name="text">
-         <string>mm/s</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="2">
-       <widget class="QLabel" name="label_25">
-        <property name="text">
-         <string>°/s</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="3">
-       <widget class="QSlider" name="z_drift_speed_slider">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>200</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="z_drift_speed">
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>50</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="1">
-       <widget class="QLabel" name="roll_drift_speed">
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>100</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_13">
-        <property name="text">
-         <string>Y</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="1">
-       <widget class="QLabel" name="pitch_drift_speed">
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>100</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="0">
-       <widget class="QLabel" name="label_10">
-        <property name="text">
-         <string>Pitch</string>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="3">
-       <widget class="QSlider" name="pitch_drift_speed_slider">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>400</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>X</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="1">
-       <widget class="QLabel" name="yaw_drift_speed">
-        <property name="minimumSize">
-         <size>
-          <width>40</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>100</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label_14">
         <property name="text">
@@ -443,74 +136,15 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QLabel" name="label_22">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>mm/s</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="label_8">
-        <property name="text">
-         <string>Yaw</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="3">
-       <widget class="QSlider" name="x_drift_speed_slider">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>200</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="2">
-       <widget class="QLabel" name="label_26">
-        <property name="text">
-         <string>°/s</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="3">
-       <widget class="QSlider" name="yaw_drift_speed_slider">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>400</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-      </item>
-      <item row="11" column="3">
-       <widget class="QSlider" name="roll_drift_speed_slider">
-        <property name="minimum">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <number>400</number>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <string>Position</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLabel" name="x_drift_speed">
+       <widget class="QLabel" name="pos_drift_speed">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -531,6 +165,68 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="3">
+       <widget class="QSlider" name="rot_drift_speed_slider">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>400</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>Rotation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="rot_drift_speed">
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>100</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QLabel" name="label_24">
+        <property name="text">
+         <string>°/s</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QSlider" name="pos_drift_speed_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -547,7 +243,7 @@
    <item row="4" column="0">
     <widget class="QLabel" name="label_15">
      <property name="text">
-      <string>Instructions: Set all sliders to minimum. Then on an axis by axis basis: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</string>
+      <string>Instructions: Set all sliders to minimum. Then for each of rotation and position: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -573,18 +269,10 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>x_responsiveness_slider</tabstop>
-  <tabstop>y_responsiveness_slider</tabstop>
-  <tabstop>z_responsiveness_slider</tabstop>
-  <tabstop>yaw_responsiveness_slider</tabstop>
-  <tabstop>pitch_responsiveness_slider</tabstop>
-  <tabstop>roll_responsiveness_slider</tabstop>
-  <tabstop>x_drift_speed_slider</tabstop>
-  <tabstop>y_drift_speed_slider</tabstop>
-  <tabstop>z_drift_speed_slider</tabstop>
-  <tabstop>yaw_drift_speed_slider</tabstop>
-  <tabstop>pitch_drift_speed_slider</tabstop>
-  <tabstop>roll_drift_speed_slider</tabstop>
+  <tabstop>pos_responsiveness_slider</tabstop>
+  <tabstop>rot_responsiveness_slider</tabstop>
+  <tabstop>pos_drift_speed_slider</tabstop>
+  <tabstop>rot_drift_speed_slider</tabstop>
  </tabstops>
  <resources/>
  <connections>

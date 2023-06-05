@@ -12,52 +12,20 @@ dialog_nm::dialog_nm()
 {
     ui.setupUi(this);
 
-    tie_setting(s.responsiveness[0], ui.x_responsiveness_slider);
-    tie_setting(s.responsiveness[0], ui.x_responsiveness, [](double x)
+    tie_setting(s.pos_responsiveness, ui.pos_responsiveness_slider);
+    tie_setting(s.pos_responsiveness, ui.pos_responsiveness, [](double x)
         { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
 
-    tie_setting(s.responsiveness[1], ui.y_responsiveness_slider);
-    tie_setting(s.responsiveness[1], ui.y_responsiveness, [](double x)
+    tie_setting(s.rot_responsiveness, ui.rot_responsiveness_slider);
+    tie_setting(s.rot_responsiveness, ui.rot_responsiveness, [](double x)
         { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
 
-    tie_setting(s.responsiveness[2], ui.z_responsiveness_slider);
-    tie_setting(s.responsiveness[2], ui.z_responsiveness, [](double x)
+    tie_setting(s.pos_drift_speed, ui.pos_drift_speed_slider);
+    tie_setting(s.pos_drift_speed, ui.pos_drift_speed, [](double x)
         { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
 
-    tie_setting(s.responsiveness[3], ui.yaw_responsiveness_slider);
-    tie_setting(s.responsiveness[3], ui.yaw_responsiveness, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.responsiveness[4], ui.pitch_responsiveness_slider);
-    tie_setting(s.responsiveness[4], ui.pitch_responsiveness, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.responsiveness[5], ui.roll_responsiveness_slider);
-    tie_setting(s.responsiveness[5], ui.roll_responsiveness, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.drift_speeds[0], ui.x_drift_speed_slider);
-    tie_setting(s.drift_speeds[0], ui.x_drift_speed, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.drift_speeds[1], ui.y_drift_speed_slider);
-    tie_setting(s.drift_speeds[1], ui.y_drift_speed, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.drift_speeds[2], ui.z_drift_speed_slider);
-    tie_setting(s.drift_speeds[2], ui.z_drift_speed, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.drift_speeds[3], ui.yaw_drift_speed_slider);
-    tie_setting(s.drift_speeds[3], ui.yaw_drift_speed, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.drift_speeds[4], ui.pitch_drift_speed_slider);
-    tie_setting(s.drift_speeds[4], ui.pitch_drift_speed, [](double x)
-        { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
-
-    tie_setting(s.drift_speeds[5], ui.roll_drift_speed_slider);
-    tie_setting(s.drift_speeds[5], ui.roll_drift_speed, [](double x)
+    tie_setting(s.rot_drift_speed, ui.rot_drift_speed_slider);
+    tie_setting(s.rot_drift_speed, ui.rot_drift_speed, [](double x)
         { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
 }
 

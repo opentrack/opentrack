@@ -19,32 +19,47 @@ filter_nm::filter_nm()
 
 void filter_nm::filter(const double* input, double* output)
 {
+    tVector position = { input[TX], input[TY], input[TZ] };
+    tQuat rotation = QuatFromYPR(input + Yaw);
+
     // order of axes: x, y, z, yaw, pitch, roll
     if (unlikely(first_run))
     {
         first_run = false;
         t.start();
 
-        std::fill(speeds, speeds + 6, 0.0);
-        std::copy(input, input + 6, filtered_output);
+        last_pos_speed = tVector();
+        last_rot_speed = tQuat();
+        last_pos_out = position;
+        last_rot_out = rotation;
     }
     else
     {
         const double dt = t.elapsed_seconds();
         t.start();
 
-        for (int i = 0; i < 6; i++)
-        {
-            double speed = (input[i] - last_input[i]) / dt;
-            double timescale = 1. / *(s.responsiveness[i]);
-            double alpha = dt / (dt + timescale);
-            speeds[i] += alpha * (speed - speeds[i]); // EWA
-            filtered_output[i] += alpha * min(1.0, abs(speeds[i]) / *(s.drift_speeds[i])) * (input[i] - filtered_output[i]);
-        }
-      }
+        const tVector pos_speed = (position - last_pos_in) / dt;
+        const double pos_tau = 1. / *s.pos_responsiveness;
+        double alpha = dt / (dt + pos_tau);
+        last_pos_speed += (pos_speed - last_pos_speed) * alpha;
+        alpha *= min(1.0, VectorLength(last_pos_speed) / *s.pos_drift_speed);
+        last_pos_out += (position - last_pos_out) * alpha;
 
-    std::copy(input, input + 6, last_input);
-    std::copy(filtered_output, filtered_output + 6, output);
+        const tQuat rot_delta = QuatDivide(rotation, last_rot_in);
+        const double ms_per_s = 1000.0;             // angular speed quaternions need to be small to work so use °/ms
+        const tQuat rot_speed = Slerp(tQuat(), rot_delta, 1.0 / dt / ms_per_s);
+        const double rot_tau = 1. / *s.rot_responsiveness;
+        alpha = dt / (dt + rot_tau);
+        last_rot_speed = Slerp(last_rot_speed, rot_speed, alpha);
+        const double angular_speed = AngleBetween(tQuat(), last_rot_speed) * ms_per_s;
+        alpha *= min(1.0, angular_speed / *s.rot_drift_speed);
+        last_rot_out = Slerp(last_rot_out, rotation, alpha);
+    }
+
+    last_pos_in = position;
+    last_rot_in = rotation;
+    std::copy(last_pos_out.v, last_pos_out.v + 3, output + TX);
+    QuatToYPR(last_rot_out, &output[Yaw]);
 }
 
 OPENTRACK_DECLARE_FILTER(filter_nm, dialog_nm, nmDll)

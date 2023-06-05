@@ -10,29 +10,24 @@
 
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
+#include "compat/hamilton-tools.h"
 #include "options/options.hpp"
 
 using namespace options;
 
 struct settings_nm : opts
 {
-    value<slider_value> responsiveness[6];
-    value<slider_value> drift_speeds[6];
+    value<slider_value> pos_responsiveness;
+    value<slider_value> rot_responsiveness;
+    value<slider_value> pos_drift_speed;
+    value<slider_value> rot_drift_speed;
 
     settings_nm() :
         opts("nm-filter"),
-          responsiveness{ value<slider_value>(b, "x-responsiveness",        { 10.0, .0, 20.0 }),
-                          value<slider_value>(b, "y-responsiveness",        { 10.0, .0, 20.0 }),
-                          value<slider_value>(b, "z-responsiveness",        { 10.0, .0, 20.0 }),
-                          value<slider_value>(b, "yaw-responsiveness",      { 10.0, .0, 20.0 }),
-                          value<slider_value>(b, "pitch-responsiveness",    { 10.0, .0, 20.0 }),
-                          value<slider_value>(b, "roll-responsiveness",     { 10.0, .0, 20.0 }) },
-          drift_speeds{ value<slider_value>(b, "x-drift-speed",     { 50.0, 1.0, 200.0 }),
-                        value<slider_value>(b, "y-drift-speed",     { 50.0, 1.0, 200.0 }),
-                        value<slider_value>(b, "z-drift-speed",     { 50.0, 1.0, 200.0 }),
-                        value<slider_value>(b, "yaw-drift-speed",   { 100.0, 1.0, 400.0 }),
-                        value<slider_value>(b, "pitch-drift-speed", { 100.0, 1.0, 400.0 }),
-                        value<slider_value>(b, "roll-drift-speed",  { 100.0, 1.0, 400.0 }) }
+        pos_responsiveness(value<slider_value>(b, "pos-responsiveness", { 15.0, .0, 20.0 })),
+        rot_responsiveness(value<slider_value>(b, "rot-responsiveness", { 18.0, .0, 20.0 })),
+        pos_drift_speed(value<slider_value>(b, "pos-drift-speed", { 30.0, 1.0, 200.0 })),
+        rot_drift_speed(value<slider_value>(b, "rot-drift-speed", { 45.0, 1.0, 400.0 }))
     {
     }
 };
@@ -45,9 +40,12 @@ struct filter_nm : IFilter
     module_status initialize() override { return status_ok(); }
 
 private:
-    double last_input[6]{};
-    double speeds[6]{};
-    double filtered_output[6]{};
+    tVector last_pos_in;
+    tQuat last_rot_in;
+    tVector last_pos_out;
+    tQuat last_rot_out;
+    tVector last_pos_speed;
+    tQuat last_rot_speed;
     Timer t;
     settings_nm s;
     bool first_run = true;

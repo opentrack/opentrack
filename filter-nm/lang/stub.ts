@@ -8,30 +8,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>X</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Y</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Z</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Yaw</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Pitch</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Roll</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>°/s</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60,11 +36,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Instructions: Set all sliders to minimum. Then on an axis by axis basis: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</source>
+        <source>Natural movement filter by Tom Brazier: Cancels higher frequency noise and the natural tendency for our heads to drift even when we think we are sitting still.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Natural movement filter by Tom Brazier: Cancels higher frequency noise and the natural tendency for our heads to drift even when we think we are sitting still.</source>
+        <source>Rotation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Position</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Instructions: Set all sliders to minimum. Then for each of rotation and position: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
