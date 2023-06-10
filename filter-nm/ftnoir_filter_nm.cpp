@@ -42,17 +42,19 @@ void filter_nm::filter(const double* input, double* output)
         const double pos_tau = 1. / *s.pos_responsiveness;
         double alpha = dt / (dt + pos_tau);
         last_pos_speed += (pos_speed - last_pos_speed) * alpha;
-        alpha *= min(1.0, VectorLength(last_pos_speed) / *s.pos_drift_speed);
+        const double factor_pos = min(1.0, VectorLength(last_pos_speed) / (*s.pos_drift_speed * 3.0));
+        alpha *= factor_pos * factor_pos;
         last_pos_out += (position - last_pos_out) * alpha;
 
         const tQuat rot_delta = QuatDivide(rotation, last_rot_in);
-        const double ms_per_s = 1000.0;             // angular speed quaternions need to be small to work so use °/ms
-        const tQuat rot_speed = Slerp(tQuat(), rot_delta, 1.0 / dt / ms_per_s);
+        constexpr double ms_per_s = 1000.0;             // angular speed quaternions need to be small to work so use °/ms
+        const tQuat rot_speed = Slerp(tQuat(), rot_delta, 1.0 / ms_per_s / dt );
         const double rot_tau = 1. / *s.rot_responsiveness;
         alpha = dt / (dt + rot_tau);
         last_rot_speed = Slerp(last_rot_speed, rot_speed, alpha);
         const double angular_speed = AngleBetween(tQuat(), last_rot_speed) * ms_per_s;
-        alpha *= min(1.0, angular_speed / *s.rot_drift_speed);
+        const double factor_rot = min(1.0, angular_speed / (*s.rot_drift_speed * 3.0));
+        alpha *= factor_rot * factor_rot;
         last_rot_out = Slerp(last_rot_out, rotation, alpha);
     }
 

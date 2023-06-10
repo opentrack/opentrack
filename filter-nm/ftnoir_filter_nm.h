@@ -24,10 +24,10 @@ struct settings_nm : opts
 
     settings_nm() :
         opts("nm-filter"),
-        pos_responsiveness(value<slider_value>(b, "pos-responsiveness", { 15.0, .0, 20.0 })),
-        rot_responsiveness(value<slider_value>(b, "rot-responsiveness", { 18.0, .0, 20.0 })),
-        pos_drift_speed(value<slider_value>(b, "pos-drift-speed", { 30.0, 1.0, 200.0 })),
-        rot_drift_speed(value<slider_value>(b, "rot-drift-speed", { 45.0, 1.0, 400.0 }))
+        pos_responsiveness(value<slider_value>(b, "pos-responsiveness", { 13.0, .0, 20.0 })),
+        rot_responsiveness(value<slider_value>(b, "rot-responsiveness", { 16.0, .0, 20.0 })),
+        pos_drift_speed(value<slider_value>(b, "pos-drift-speed", { 5.0, 0.1, 50.0 })),
+        rot_drift_speed(value<slider_value>(b, "rot-drift-speed", { 7.0, 0.1, 50.0 }))
     {
     }
 };
