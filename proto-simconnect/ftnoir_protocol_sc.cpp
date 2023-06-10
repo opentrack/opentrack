@@ -53,7 +53,7 @@ void simconnect::run()
                 {
                     constexpr int max_idle_seconds = 2;
 
-                    if (WaitForSingleObject(event, 0) == WAIT_OBJECT_0)
+                    if (WaitForSingleObject(event, 1) == WAIT_OBJECT_0)
                         tm.start();
 
                     if ((int)tm.elapsed_seconds() > max_idle_seconds)
