@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include "export.hpp"
 #include "compat/math.hpp"
 
