@@ -43,20 +43,15 @@ void simconnect::run()
             qDebug() << "fsx: connect failed, retry in" << sleep_time << "seconds...";
         else
         {
-            Timer tm;
-
-            if (!SUCCEEDED(hr = simconnect_subscribe(handle, 0, "Frame")))
+            if (!SUCCEEDED(hr = simconnect_subscribe(handle, 0, "1sec")))
                 qDebug() << "fsx: can't subscribe to frame event:" << (void*)hr;
             else
             {
                 while (!isInterruptionRequested())
                 {
-                    constexpr int max_idle_seconds = 2;
+                    constexpr int max_idle_ms = 2000;
 
-                    if (WaitForSingleObject(event, 1) == WAIT_OBJECT_0)
-                        tm.start();
-
-                    if ((int)tm.elapsed_seconds() > max_idle_seconds)
+                    if (WaitForSingleObject(event, max_idle_ms) != WAIT_OBJECT_0)
                     {
                         qDebug() << "fsx: timeout reached, reconnecting";
                         break;
@@ -73,7 +68,9 @@ void simconnect::run()
                  }
             }
 
+            QMutexLocker l(&mtx);
             (void)simconnect_close(handle);
+            handle = nullptr;
         }
 
         for (unsigned k = 0; k < sleep_time * 25; k++)
@@ -91,8 +88,6 @@ void simconnect::run()
 
 void simconnect::pose(const double* pose, const double*)
 {
-    QMutexLocker l(&mtx);
-
     data[Pitch] = (float)-pose[Pitch];
     data[Yaw]   = (float)pose[Yaw];
     data[Roll]  = (float)pose[Roll];
@@ -101,6 +96,12 @@ void simconnect::pose(const double* pose, const double*)
     data[TX] = (float)-pose[TX] * to_meters;
     data[TY] = (float)pose[TY]  * to_meters;
     data[TZ] = (float)-pose[TZ] * to_meters;
+
+    QMutexLocker l(&mtx);
+    if (handle)
+        (void)simconnect_set6DOF(handle,
+            data[TX], data[TY], data[TZ],
+            data[Pitch], data[Roll], data[Yaw]);
 }
 
 module_status simconnect::initialize()
@@ -148,14 +149,6 @@ module_status simconnect::initialize()
     return {};
 }
 
-void simconnect::handler()
-{
-    QMutexLocker l(&mtx);
-    (void)simconnect_set6DOF(handle,
-                             data[TX], data[TY], data[TZ],
-                             data[Pitch], data[Roll], data[Yaw]);
-}
-
 void simconnect::event_handler(SIMCONNECT_RECV* pData, DWORD, void* self_)
 {
     simconnect& self = *reinterpret_cast<simconnect*>(self_);
@@ -171,9 +164,6 @@ void simconnect::event_handler(SIMCONNECT_RECV* pData, DWORD, void* self_)
     case SIMCONNECT_RECV_ID_QUIT:
         qDebug() << "fsx: got quit event";
         self.reconnect = true;
-        break;
-    case SIMCONNECT_RECV_ID_EVENT_FRAME:
-        self.handler();
         break;
     }
 }
