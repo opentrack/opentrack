@@ -47,8 +47,6 @@ public:
     void run() override;
 
 private:
-    void handler();
-
     enum {
         SIMCONNECT_RECV_ID_EXCEPTION = 2,
         SIMCONNECT_RECV_ID_QUIT = 3,
