@@ -131,33 +131,35 @@ static QStringList get_all_executable_names()
 
 #elif defined __linux__
 
-#include <proc/readproc.h>
+#include <libproc2/pids.h>
 #include <cerrno>
 
 template<typename = void>
 QStringList get_all_executable_names()
 {
     QStringList ret;
-    proc_t** procs = readproctab(PROC_FILLCOM);
-    if (procs == nullptr)
-    {
-        qDebug() << "readproctab" << errno;
-        return ret;
-    }
-    for (int i = 0; procs[i]; i++)
-    {
+    enum pids_item items[] = { PIDS_ID_PID, PIDS_CMD, PIDS_CMDLINE_V };
+    enum rel_items { rel_pid, rel_cmd, rel_cmdline };
+    struct pids_info *info = NULL;
+    struct pids_stack *stack;
+
+    procps_pids_new(&info, items, 3);
+
+    while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY))) {
+        char  **p_cmdline = PIDS_VAL(rel_cmdline, strv,  stack, info);
+
         // note, wine sets argv[0] so no parsing like in OSX case
-        auto proc = procs[i];
-        if (proc->cmdline && proc->cmdline[0])
+        if (p_cmdline && p_cmdline[0])
         {
-            QString tmp(proc->cmdline[0]);
+            QString tmp(p_cmdline[0]);
             const int idx = std::max(tmp.lastIndexOf('\\'), tmp.lastIndexOf('/'));
             tmp = tmp.mid(idx == -1 ? 0 : idx+1);
             ret.append(tmp);
         }
-        freeproc(procs[i]);
     }
-    free(procs);
+
+    procps_pids_unref(&info);
+
     return ret;
 }
 

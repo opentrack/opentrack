@@ -11,7 +11,7 @@ target_link_libraries(${self}
 if(APPLE)
     target_link_libraries(${self} proc)
 elseif(LINUX)
-    otr_pkgconfig(${self} libprocps)
+    otr_pkgconfig(${self} libproc2)
 endif()
 
 if(NOT APPLE AND NOT WIN32)
