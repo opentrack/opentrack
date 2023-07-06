@@ -131,9 +131,10 @@ static QStringList get_all_executable_names()
 
 #elif defined __linux__
 
-#include <libproc2/pids.h>
 #include <cerrno>
 
+#ifdef OTR_HAS_LIBPROC2
+#include <libproc2/pids.h>
 template<typename = void>
 QStringList get_all_executable_names()
 {
@@ -153,7 +154,7 @@ QStringList get_all_executable_names()
 
         // note, wine sets argv[0] so no parsing like in OSX case
         if (p_cmdline && p_cmdline[0] && p_cmdline[0][0] &&
-                !(p_cmdline[0][0] == '-' && !p_cmdline[0][1]))
+            !(p_cmdline[0][0] == '-' && !p_cmdline[0][1]))
         {
             tmp = QString{p_cmdline[0]};
             const int idx = std::max(tmp.lastIndexOf('\\'), tmp.lastIndexOf('/'));
@@ -169,6 +170,37 @@ QStringList get_all_executable_names()
 
     return ret;
 }
+#else
+#include <proc/readproc.h>
+#include <cerrno>
+
+template<typename = void>
+QStringList get_all_executable_names()
+{
+    QStringList ret;
+    proc_t** procs = readproctab(PROC_FILLCOM);
+    if (procs == nullptr)
+    {
+        qDebug() << "readproctab" << errno;
+        return ret;
+    }
+    for (int i = 0; procs[i]; i++)
+    {
+        // note, wine sets argv[0] so no parsing like in OSX case
+        auto proc = procs[i];
+        if (proc->cmdline && proc->cmdline[0])
+        {
+            QString tmp(proc->cmdline[0]);
+            const int idx = std::max(tmp.lastIndexOf('\\'), tmp.lastIndexOf('/'));
+            tmp = tmp.mid(idx == -1 ? 0 : idx+1);
+            ret.append(tmp);
+        }
+        freeproc(procs[i]);
+    }
+    free(procs);
+    return ret;
+}
+#endif
 
 #else
 template<typename = void>
