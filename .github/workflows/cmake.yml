@@ -39,7 +39,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libprocps-dev libopencv-dev libopencv-dev wine64-tools
-        sudo apt-get install qttools5-dev qtbase5-dev libqt5serialport5-dev
+        sudo apt-get install qttools5-dev qtbase5-dev libqt5serialport5-dev qtbase5-private-dev
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install Qt
