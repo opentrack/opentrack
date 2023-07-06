@@ -109,6 +109,8 @@ otr_merge_translations()
 
 include(opentrack-install)
 
+message("Install directory:")
+message("   ${CMAKE_INSTALL_PREFIX}")
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 message("Compile flags:")
 #foreach(j C CXX)
