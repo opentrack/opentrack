@@ -50,7 +50,7 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
-        archives: qtbase qtimageformats qtgamepad
+        archives: qtbase qtimageformats qtgamepad qttools qtserialport
 
     - name: Configure
       run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
