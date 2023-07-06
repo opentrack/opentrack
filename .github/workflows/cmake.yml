@@ -36,13 +36,17 @@ jobs:
     - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Install Linux Dependencies
-      run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev wine64-tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install libprocps-dev libopencv-dev libopencv-dev wine64-tools
+        sudo apt-get install qttools5-dev qtbase5-dev libqt5serialport5-dev
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         archives: qtbase qtimageformats qtgamepad qttools qtserialport qtmultimedia
+      if: matrix.os != 'ubuntu-latest'
 
     - name: Configure
       run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
