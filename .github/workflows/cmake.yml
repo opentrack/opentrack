@@ -49,7 +49,6 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
         archives: qtbase qtimageformats qtgamepad qttools qtserialport qtmultimedia
 
     - name: Configure
