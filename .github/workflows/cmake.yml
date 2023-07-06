@@ -39,13 +39,6 @@ jobs:
       run: sudo apt update && sudo apt install libprocps-dev libopencv-dev libopencv-dev wine64-tools
       if: matrix.os == 'ubuntu-latest'
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v3
-      with:
-        path: ../Qt
-        key: ${{ runner.os }}-QtCache
-
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
