@@ -9,7 +9,7 @@
 #include <cmath>
 #include <QMutexLocker>
 #include "api/plugin-api.hpp"
-#include "hamilton-tools.h"
+#include "compat/hamilton-tools.h"
 
 hamilton::hamilton() = default;
 

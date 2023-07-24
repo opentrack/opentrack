@@ -1,28 +1,7 @@
 #include "hamilton-tools.h"
 #include <cmath>
 
-double VectorLength(const tVector v)
-{
-    return(sqrt(v.v[0]*v.v[0] + v.v[1]*v.v[1] + v.v[2]*v.v[2]));
-}
-		
-double sqr(const double v) { return(v*v); }
-
-double VectorDistance(const double v1[], const tVector v2)
-{
-    return(sqrt(sqr(v2.v[0]-v1[0])+sqr(v2.v[1]-v1[1])+sqr(v2.v[2]-v1[2])));
-}
-
-tVector Lerp(const tVector s, const double d[], const double alpha)
-{
-    tVector V;
-    V.v[0] = s.v[0] + (d[0] - s.v[0]) * alpha;
-    V.v[1] = s.v[1] + (d[1] - s.v[1]) * alpha;
-    V.v[2] = s.v[2] + (d[2] - s.v[2]) * alpha;
-    return(V);
-}	
-
-tQuat QuatFromAngleAxe(const double angle, const tVector axe)
+tQuat QuatFromAngleAxe(const double angle, const tVector& axe)
 {
     double a = TO_RAD * 0.5 * angle;
     double d = sin(a) / VectorLength(axe);
@@ -35,7 +14,7 @@ tQuat QuatFromAngleAxe(const double angle, const tVector axe)
             );
 }
 		
-tQuat QuatMultiply(const tQuat qL, const tQuat qR)
+tQuat QuatMultiply(const tQuat& qL, const tQuat& qR)
 {
     tQuat Q;
     Q.x = qL.w*qR.x + qL.x*qR.w + qL.y*qR.z - qL.z*qR.y;
@@ -43,11 +22,6 @@ tQuat QuatMultiply(const tQuat qL, const tQuat qR)
     Q.z = qL.w*qR.z + qL.z*qR.w + qL.x*qR.y - qL.y*qR.x;
     Q.w = qL.w*qR.w - qL.x*qR.x - qL.y*qR.y - qL.z*qR.z;
     return(Q);
-}
-
-double AngleBetween(const tQuat S, const tQuat D)
-{
-    return( TO_DEG * 2*acos(fabs(S.x*D.x + S.y*D.y + S.z*D.z + S.w*D.w)) );
 }
 
 tQuat QuatFromYPR(const double YPR[])
@@ -61,7 +35,7 @@ tQuat QuatFromYPR(const double YPR[])
     return(QuatMultiply(Qy, Q));
 }
 
-void Normalize(tQuat Q)
+void Normalize(tQuat& Q)
 {
     double m = sqrt(Q.x*Q.x + Q.y*Q.y + Q.z*Q.z + Q.w*Q.w);
     if (m > EPSILON)
@@ -75,7 +49,7 @@ void Normalize(tQuat Q)
     else Q = tQuat(0, 0, 0, 1);
 }
 
-tQuat Slerp(const tQuat S, const tQuat D, const double alpha)
+tQuat Slerp(const tQuat& S, const tQuat& D, const double alpha)
 {
     // calc cosine of half angle
     double cosin = S.x*D.x + S.y*D.y + S.z*D.z + S.w*D.w;
@@ -117,7 +91,7 @@ tQuat Slerp(const tQuat S, const tQuat D, const double alpha)
     return( Q );
 }
 
-void QuatToYPR(const tQuat Q, double YPR[])
+void QuatToYPR(const tQuat& Q, double YPR[])
 {
     const double xx = Q.x * Q.x;
     const double xy = Q.x * Q.y;
