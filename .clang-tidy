@@ -91,6 +91,7 @@ readability-make-member-function-const,
 -readability-static-accessed-through-instance,
 -readability-uppercase-literal-suffix,
 -readability-use-anyofallof,
+-*-avoid-unconditional-preprocessor-if,
 '
 
 AnalyzeTemporaryDtors: true
