@@ -21,7 +21,7 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to the &lt;a href=&quot;http://vjoystick.sourceforge.net/site/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;vjoystick&lt;/span&gt;&lt;/a&gt; project site or &lt;a href=&quot;https://sourceforge.net/projects/vjoystick/files/latest/download&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;download directly&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to the &lt;a href=&quot;https://github.com/jshafer817/vJoy&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;vJoy&lt;/span&gt;&lt;/a&gt; project site or &lt;a href=&quot;https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;download directly&lt;/span&gt;&lt;/a&gt; for Windows 10 and 11.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
