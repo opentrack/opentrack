@@ -180,7 +180,7 @@ void QxtGlobalShortcutPrivate::activateShortcut(quint32 nativeKey, quint32 nativ
         shortcut->qxt_d().keystate = false;
 
         if (shortcut->isEnabled())
-            emit shortcut->activated(true);
+            emit shortcut->activated(is_down);
     }
 #endif
 }

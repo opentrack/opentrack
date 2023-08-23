@@ -49,14 +49,13 @@ OSStatus qxt_mac_handle_hot_key(EventHandlerCallRef nextHandler, EventRef event,
 {
     Q_UNUSED(nextHandler);
     Q_UNUSED(data);
-    if (GetEventClass(event) == kEventClassKeyboard && GetEventKind(event) == kEventHotKeyPressed)
+    if (GetEventClass(event) == kEventClassKeyboard && (GetEventKind(event) == kEventHotKeyPressed || GetEventKind(event) == kEventHotKeyReleased))
     {
         EventHotKeyID keyID;
         GetEventParameter(event, kEventParamDirectObject, typeEventHotKeyID, NULL, sizeof(keyID), NULL, &keyID);
         Identifier id = keyIDs.key(keyID.id);
         if(id != Identifier()) {
-            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first, true);
-            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first, false);
+            QxtGlobalShortcutPrivate::activateShortcut(id.second, id.first, GetEventKind(event) == kEventHotKeyPressed);
         }
     }
     return noErr;
@@ -235,10 +234,12 @@ bool QxtGlobalShortcutPrivate::registerShortcut(quint32 nativeKey, quint32 nativ
     if (!qxt_mac_handler_installed)
     {
         qxt_mac_handler_installed = true;
-        EventTypeSpec t;
-        t.eventClass = kEventClassKeyboard;
-        t.eventKind = kEventHotKeyPressed;
-        InstallApplicationEventHandler(&qxt_mac_handle_hot_key, 1, &t, NULL, NULL);
+        EventTypeSpec t[2];
+        t[0].eventClass = kEventClassKeyboard;
+        t[0].eventKind = kEventHotKeyPressed;
+        t[1].eventClass = kEventClassKeyboard;
+        t[1].eventKind = kEventHotKeyReleased;
+        InstallApplicationEventHandler(&qxt_mac_handle_hot_key, 2, t, NULL, NULL);
     }
 
     EventHotKeyID keyID;
