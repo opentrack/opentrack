@@ -32,6 +32,12 @@
 #include <QDir>
 #include <QDateTime>
 
+
+#ifdef __APPLE__
+void disable_appnap_start();
+void disable_appnap_stop();
+#endif
+
 extern "C" const char* const opentrack_version;
 
 using namespace options::globals;
@@ -436,6 +442,11 @@ void main_window::start_tracker_()
     if (work)
         return;
 
+#ifdef __APPLE__
+    disable_appnap_start();
+#endif
+
+
 #ifndef UI_NO_VIDEO_FEED
     auto* frame = ui.video_frame;
 #else
@@ -485,6 +496,10 @@ void main_window::stop_tracker_()
 {
     if (!work)
         return;
+
+#ifdef __APPLE__
+    disable_appnap_stop();
+#endif
 
     force_is_visible(true);
     with_tracker_teardown sentinel;
