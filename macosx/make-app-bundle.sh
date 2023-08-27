@@ -38,9 +38,9 @@ cp "$dir/PkgInfo" "$install/$APPNAME.app/Contents/"
 mkdir -p "$install/$APPNAME.app/Contents/MacOS/Plugins"
 cp -r "$install/Plugins" "$install/$APPNAME.app/Contents/MacOS/"
 
-# Add framework and other libraries and fixup other libraries
+# Use either of these, two of them at the same time will break things!
 macdeployqt "$install/$APPNAME.app" -libpath="$install/Library"
-sh "$dir/install-fail-tool" "$install/$APPNAME.app/Contents/Frameworks"
+#sh "$dir/install-fail-tool" "$install/$APPNAME.app/Contents/Frameworks"
 
 # Create an 512 resolution size for the icon (for retina displays mostly)
 #gm convert -size 512x512 "$dir/../gui/images/opentrack.png" "$tmp/opentrack.png"
