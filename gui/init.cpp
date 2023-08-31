@@ -50,7 +50,9 @@ static void set_fp_mask()
 #endif
 
 #ifdef __APPLE__
+#if defined __i386__ || defined __x86_64__
     fesetenv(FE_DFL_DISABLE_SSE_DENORMS_ENV);
+#endif
 #endif
 
 #ifdef _WIN32

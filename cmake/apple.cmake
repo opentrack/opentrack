@@ -1,12 +1,19 @@
 set(CMAKE_BUILD_TYPE_INIT RELEASE)
 
-set(CMAKE_CXX_FLAGS "-arch x86_64 -stdlib=libc++" CACHE STRING "" FORCE)
-set(CMAKE_C_FLAGS "-arch x86_64" CACHE STRING "" FORCE)
+if("$ENV{OTR_OSX_ARCH}" STREQUAL "arm64")
+ set(CMAKE_OSX_ARCHITECTURES "arm64" CACHE STRING "" FORCE)
+ set(opentrack-intel FALSE)
+else()
+ set(CMAKE_OSX_ARCHITECTURES "x86_64" CACHE STRING "" FORCE)
+ set(opentrack-intel TRUE)
+endif()
+
+set(CMAKE_CXX_FLAGS "-stdlib=libc++" CACHE STRING "" FORCE)
 
 set(CMAKE_C_FLAGS_RELEASE "-ffast-math -O3 -flto -g" CACHE STRING "" FORCE)
 set(CMAKE_CXX_FLAGS_RELEASE " ${CMAKE_C_FLAGS_RELEASE}" CACHE STRING "" FORCE)
 
-set(cmake-link-common "-stdlib=libc++ -arch x86_64")
+set(cmake-link-common "-stdlib=libc++")
 set(CMAKE_EXE_LINKER_FLAGS "${cmake-link-common} -Wl,-stack_size,0x4000000" CACHE STRING "" FORCE)
 set(CMAKE_SHARED_LINKER_FLAGS ${cmake-link-common} CACHE STRING "" FORCE)
 set(CMAKE_MODULE_LINKER_FLAGS ${cmake-link-common} CACHE STRING "" FORCE)
