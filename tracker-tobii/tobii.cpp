@@ -64,7 +64,7 @@ module_status tobii_tracker::start_tracker(QFrame*)
         return error("No stream engine compatible device(s) found.");
     }
 
-    tobii_error = tobii_device_create(api, url, TOBII_FIELD_OF_USE_INTERACTIVE, &device);
+    tobii_error = tobii_device_create(api, url, &device);
     if (tobii_error != TOBII_ERROR_NO_ERROR)
     {
         tobii_api_destroy(api);
