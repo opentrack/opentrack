@@ -24,17 +24,15 @@ public:
     void data(double* data) override;
 
 private:
-    double last[6]{};
-
     tobii_api_t* api = nullptr;
     tobii_device_t* device = nullptr;
 
-    tobii_head_pose_t latest_head_pose {
-        0LL,
-        TOBII_VALIDITY_INVALID,
-        { 0.f, 0.f, 0.f },
-        { TOBII_VALIDITY_INVALID, TOBII_VALIDITY_INVALID, TOBII_VALIDITY_INVALID },
-        { 0.f, 0.f, 0.f },
+    tobii_head_pose_t latest_head_pose{
+        .timestamp_us = 0LL,
+        .position_validity = TOBII_VALIDITY_INVALID,
+        .position_xyz = { 0.f, 0.f, 0.f },
+        .rotation_validity_xyz = { TOBII_VALIDITY_INVALID, TOBII_VALIDITY_INVALID, TOBII_VALIDITY_INVALID },
+        .rotation_xyz = { 0.f, 0.f, 0.f },
     };
 
     QMutex mtx;
@@ -48,8 +46,7 @@ class tobii_dialog : public ITrackerDialog
 
 public:
     tobii_dialog();
-    void register_tracker(ITracker*) override {}
-    void unregister_tracker() override {}
+
 private slots:
     void doOK();
     void doCancel();
