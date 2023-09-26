@@ -2,16 +2,20 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="nl_NL">
 <context>
-    <name>UITobiiControls</name>
+    <name>tobii_metadata</name>
     <message>
-        <source>Tobii settings</source>
+        <source>Tobii Eye Tracker</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>tobiiDll</name>
+    <name>tobii_ui</name>
     <message>
-        <source>Tobii input</source>
+        <source>Tobii Eye Tracker</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please make sure the Tobii Experience application is running and tracking is active.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
