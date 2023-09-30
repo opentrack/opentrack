@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
+
 <TS version="2.1" language="zh_CN">
-<context>
+  <context>
     <name>Form</name>
     <message>
         <source>Tracker settings</source>
@@ -38,7 +39,8 @@
     <message>
         <source>Use only yaw and pitch while calibrating.
 Don&apos;t roll or change position.</source>
-        <translation type="unfinished">在校准时只使用偏航和俯仰, <br/>不要滚转或是改变位置. </translation>
+        <translation >在校准时只使用偏航和俯仰,
+不要滚转或是改变位置. </translation>
     </message>
     <message>
         <source>Start calibration</source>
@@ -112,7 +114,7 @@ Don&apos;t roll or change position.</source>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
+  </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
     <message>

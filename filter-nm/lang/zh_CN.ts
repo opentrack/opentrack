@@ -50,7 +50,6 @@
     <message>
         <source>Instructions: Set all sliders to minimum. Then for each of rotation and position: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</source>
         <translation >先将所有滑块最小化. 然后, 对于每个旋转和位置: 首先提高响应能力，直到过滤器只是刚好消除抖动(以获得更快的头部运动); 其次，增加漂移速度，直到过滤器只是在头部静止时刚好消除漂移. </translation>
-    //
     </message>
 </context>
 <context>

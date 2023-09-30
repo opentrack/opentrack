@@ -351,7 +351,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Centering method</source>
-        <translation type="unfinished">回中方法</translation>
+        <translation >回中方法</translation>
     </message>
     <message>
         <source>Point</source>
@@ -363,7 +363,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Roll compensated</source>
-        <translation type="unfinished">滚转补偿</translation>
+        <translation >滚转补偿</translation>
     </message>
     <message>
         <source>Freeze the position returned by the tracker while this mode is active.</source>
