@@ -36,8 +36,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Natural movement filter by Tom Brazier: 过滤高频噪声与我们头部的自然飘移, 即便我们认为我们保持不动.</source>
-        <translation ></translation>
+        <source>Natural movement filter by Tom Brazier: Cancels higher frequency noise and the natural tendency for our heads to drift even when we think we are sitting still.</source>
+        <translation >Natural movement filter by Tom Brazier: 过滤高频噪声与我们头部的自然飘移, 即便我们认为我们保持不动.</translation>
     </message>
     <message>
         <source>Rotation</source>
