@@ -5,23 +5,23 @@
     <name>KalmanUICdialog_kalman</name>
     <message>
         <source>Kalman settings</source>
-        <translation type="unfinished"></translation>
+        <translation >Kalman 设置</translation>
     </message>
     <message>
         <source>Measurement noise</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">衡量噪声</translation>
     </message>
     <message>
         <source>Rotation</source>
-        <translation type="unfinished"></translation>
+        <translation >旋转</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation type="unfinished"></translation>
+        <translation >方位</translation>
     </message>
     <message>
         <source>°</source>
-        <translation type="unfinished"></translation>
+        <translation ></translation>
     </message>
     <message>
         <source>-</source>
