@@ -183,7 +183,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Center at startup</source>
-        <translation>启动时自动回中</translation>
+        <translation>启动时回中</translation>
     </message>
     <message>
         <source>Disable user interface localization</source>
@@ -255,7 +255,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Alter the centered position sent to games. Useful if the default position is too much downward or upward.</source>
-        <translation>改变游戏中的得到的回中位置.  对于默认位置有明显偏移的很有用.</translation>
+        <translation>改变发送到游戏的回中位置. 对于默认位置有明显偏移的很有用.</translation>
     </message>
     <message>
         <source>°</source>
@@ -263,7 +263,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source> cm</source>
-        <translation> 厘米</translation>
+        <translation></translation>
     </message>
     <message>
         <source>CSV Data Logging</source>
