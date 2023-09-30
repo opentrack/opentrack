@@ -5,31 +5,31 @@
     <name>Form</name>
     <message>
         <source>Tracker settings</source>
-        <translation type="unfinished"></translation>
+        <translation >追踪器设置</translation>
     </message>
     <message>
         <source>Diagonal FOV</source>
-        <translation type="unfinished"></translation>
+        <translation >对角FOV</translation>
     </message>
     <message>
         <source>Camera name</source>
-        <translation type="unfinished"></translation>
+        <translation >相机名</translation>
     </message>
     <message>
         <source>Frames per second</source>
-        <translation type="unfinished"></translation>
+        <translation >FPS</translation>
     </message>
     <message>
         <source>Camera settings</source>
-        <translation type="unfinished"></translation>
+        <translation >相机设置</translation>
     </message>
     <message>
         <source>Camera Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation >相机配置</translation>
     </message>
     <message>
         <source>Head Center Offset</source>
-        <translation type="unfinished"></translation>
+        <translation >头部归中补偿</translation>
     </message>
     <message>
         <source> mm</source>
@@ -38,27 +38,27 @@
     <message>
         <source>Use only yaw and pitch while calibrating.
 Don&apos;t roll or change position.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">在校准时只使用偏航和俯仰, <br/>不要滚转或是改变位置. </translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation type="unfinished"></translation>
+        <translation >开始校准</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation type="unfinished"></translation>
+        <translation >向右</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation type="unfinished"></translation>
+        <translation >向前</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation type="unfinished"></translation>
+        <translation >向上</translation>
     </message>
     <message>
         <source>Show Network Input</source>
-        <translation type="unfinished"></translation>
+        <translation >展示神经网络输入</translation>
     </message>
     <message>
         <source>MJPEG</source>
@@ -117,15 +117,15 @@ Don&apos;t roll or change position.</source>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
     <message>
         <source>Default</source>
-        <translation type="unfinished"></translation>
+        <translation >默认</translation>
     </message>
     <message>
         <source>Tracker Offline</source>
-        <translation type="unfinished"></translation>
+        <translation >追踪器离线</translation>
     </message>
     <message>
         <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
-        <translation type="unfinished"></translation>
+        <translation >%1x%2 @ %3 FPS / 推理: %4 ms</translation>
     </message>
     <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
@@ -141,11 +141,11 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Stop calibration</source>
-        <translation type="unfinished"></translation>
+        <translation >结束校准</translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation type="unfinished"></translation>
+        <translation >开始校准</translation>
     </message>
 </context>
 </TS>
