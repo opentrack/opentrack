@@ -112,6 +112,18 @@ Don&apos;t roll or change position.</source>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select Pose Net ONNX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;the pose net file&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select the pose network. Changes take affect on the next tracker start</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
@@ -145,6 +157,14 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Start calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Pose Net ONNX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ONNX Files (*.onnx)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-
 <TS version="2.1" language="zh_CN">
-  <context>
+<context>
     <name>Form</name>
     <message>
         <source>Tracker settings</source>
-        <translation >追踪器设置</translation>
+        <translation>追踪器设置</translation>
     </message>
     <message>
         <source>Diagonal FOV</source>
-        <translation >对角FOV</translation>
+        <translation>对角FOV</translation>
     </message>
     <message>
         <source>Camera name</source>
-        <translation >相机名</translation>
+        <translation>相机名</translation>
     </message>
     <message>
         <source>Frames per second</source>
-        <translation >FPS</translation>
+        <translation>FPS</translation>
     </message>
     <message>
         <source>Camera settings</source>
-        <translation >相机设置</translation>
+        <translation>相机设置</translation>
     </message>
     <message>
         <source>Camera Configuration</source>
-        <translation >相机配置</translation>
+        <translation>相机配置</translation>
     </message>
     <message>
         <source>Head Center Offset</source>
-        <translation >头部归中补偿</translation>
+        <translation>头部归中补偿</translation>
     </message>
     <message>
         <source> mm</source>
@@ -39,28 +38,28 @@
     <message>
         <source>Use only yaw and pitch while calibrating.
 Don&apos;t roll or change position.</source>
-        <translation >在校准时只使用偏航和俯仰,
+        <translation>在校准时只使用偏航和俯仰,
 不要滚转或是改变位置. </translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation >开始校准</translation>
+        <translation>开始校准</translation>
     </message>
     <message>
         <source>Right</source>
-        <translation >向右</translation>
+        <translation>向右</translation>
     </message>
     <message>
         <source>Forward</source>
-        <translation >向前</translation>
+        <translation>向前</translation>
     </message>
     <message>
         <source>Up</source>
-        <translation >向上</translation>
+        <translation>向上</translation>
     </message>
     <message>
         <source>Show Network Input</source>
-        <translation >展示神经网络输入</translation>
+        <translation>展示神经网络输入</translation>
     </message>
     <message>
         <source>MJPEG</source>
@@ -114,20 +113,32 @@ Don&apos;t roll or change position.</source>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
         <translation type="unfinished"></translation>
     </message>
-  </context>
+    <message>
+        <source>Select the pose network. Changes take affect on the next tracker start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Pose Net ONNX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;the pose net file&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
     <message>
         <source>Default</source>
-        <translation >默认</translation>
+        <translation>默认</translation>
     </message>
     <message>
         <source>Tracker Offline</source>
-        <translation >追踪器离线</translation>
+        <translation>追踪器离线</translation>
     </message>
     <message>
         <source>%1x%2 @ %3 FPS / Inference: %4 ms</source>
-        <translation >%1x%2 @ %3 FPS / 推理: %4 ms</translation>
+        <translation>%1x%2 @ %3 FPS / 推理: %4 ms</translation>
     </message>
     <message>
         <source>%1 yaw samples. Yaw more to %2 samples for stable calibration.</source>
@@ -143,11 +154,19 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Stop calibration</source>
-        <translation >结束校准</translation>
+        <translation>结束校准</translation>
     </message>
     <message>
         <source>Start calibration</source>
-        <translation >开始校准</translation>
+        <translation>开始校准</translation>
+    </message>
+    <message>
+        <source>Select Pose Net ONNX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ONNX Files (*.onnx)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

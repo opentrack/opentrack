@@ -27,6 +27,8 @@
 #include <QMutexLocker>
 #include <QDebug>
 #include <QFile>
+#include <QFileDialog>
+#include <QFileInfo>
 
 #include <cstdio>
 #include <cmath>
@@ -54,6 +56,12 @@ std::wstring convert(const QString &s) { return s.toStdWString(); }
 #else
 std::string convert(const QString &s) { return s.toStdString(); }
 #endif
+
+
+QDir get_default_model_directory()
+{
+    return QDir(OPENTRACK_BASE_PATH+ "/" OPENTRACK_LIBRARY_PATH "models");
+}
 
 
 int enum_to_fps(int value)
@@ -463,8 +471,7 @@ bool NeuralNetTracker::load_and_initialize_model()
 {
     const QString localizer_model_path_enc =
         OPENTRACK_BASE_PATH+"/" OPENTRACK_LIBRARY_PATH "/models/head-localizer.onnx";
-    const QString poseestimator_model_path_enc =
-        OPENTRACK_BASE_PATH+"/" OPENTRACK_LIBRARY_PATH "/models/head-pose.onnx";
+    const QString poseestimator_model_path_enc = get_posenet_filename();
 
     try
     {
@@ -484,6 +491,7 @@ bool NeuralNetTracker::load_and_initialize_model()
             allocator_info_, 
             Ort::Session{env_, convert(localizer_model_path_enc).c_str(), opts});
 
+        qDebug() << "Loading pose net " << poseestimator_model_path_enc;
         poseestimator_.emplace(
             allocator_info_,
             Ort::Session{env_, convert(poseestimator_model_path_enc).c_str(), opts});
@@ -677,11 +685,30 @@ Affine NeuralNetTracker::pose()
     return last_pose_affine_;
 }
 
+
 std::tuple<cv::Size,double, double> NeuralNetTracker::stats() const
 {
     QMutexLocker lck(&stats_mtx_);
     return { resolution_, fps_, inference_time_ };
 }
+
+
+QString NeuralNetTracker::get_posenet_filename() const
+{
+    QString filename = settings_.posenet_file;
+    if (QFileInfo(filename).isRelative())
+        filename = get_default_model_directory().absoluteFilePath(filename);
+    return filename;
+}
+
+
+
+
+
+
+
+
+
 
 void NeuralNetDialog::make_fps_combobox()
 {
@@ -729,11 +756,12 @@ NeuralNetDialog::NeuralNetDialog() :
     tie_setting(settings_.num_threads, ui_.threadCount);
     tie_setting(settings_.resolution, ui_.resolution);
     tie_setting(settings_.force_fps, ui_.cameraFPS);
+    tie_setting(settings_.posenet_file, ui_.posenetFileDisplay);
 
     connect(ui_.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui_.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
-
+    connect(ui_.posenetSelectButton, SIGNAL(clicked()), this, SLOT(onSelectPoseNetFile()));
     connect(&settings_.camera_name, value_::value_changed<QString>(), this, &NeuralNetDialog::update_camera_settings_state);
 
     update_camera_settings_state(settings_.camera_name);
@@ -897,6 +925,31 @@ void NeuralNetDialog::startstop_trans_calib(bool start)
         ui_.tcalib_button->setText(tr("Stop calibration"));
     else
         ui_.tcalib_button->setText(tr("Start calibration"));
+}
+
+
+void NeuralNetDialog::onSelectPoseNetFile()
+{
+    const auto root = get_default_model_directory();
+    // Start with the current setting
+    QString filename = settings_.posenet_file;
+    // If the filename is relative then assume that the file is located under the
+    // model directory. Under regular use this should always be the case.
+    if (QFileInfo(filename).isRelative())
+        filename = root.absoluteFilePath(filename);
+    filename = QFileDialog::getOpenFileName(this,
+        tr("Select Pose Net ONNX"), filename, tr("ONNX Files (*.onnx)"));
+    // In case the user aborted.
+    if (filename.isEmpty())
+        return;
+    // When a file under the model directory was selected we can get rid of the
+    // directory prefix. This is more robust than storing absolute paths, e.g.
+    // in case the user moves the opentrack install folder / reuses old settings.
+    // When the file is not in the model directory, we have to use the absolute path,
+    // which is also fine as developer feature.
+    if (filename.startsWith(root.absolutePath()))
+        filename = root.relativeFilePath(filename);
+    settings_.posenet_file = filename;
 }
 
 
