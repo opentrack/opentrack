@@ -502,6 +502,11 @@ bool NeuralNetTracker::load_and_initialize_model()
             << e.what();
         return false;
     }
+    catch (const std::exception &e)
+    {
+        qDebug() << "Failed to initialize the neural network models. Error message: " << e.what();
+        return false;
+    }
 
     return true;
 }
