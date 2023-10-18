@@ -77,7 +77,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 
 ## Thanks
 
-- uglyDwarf (high CON)
+- uglyDwarf (of [linuxtrack](https://github.com/uglyDwarf/linuxtrack/))
 - Andrzej Czarnowski (FreePIE tracker and
   [Google Cardboard](https://github.com/opentrack/opentrack/wiki/VR-HMD-goggles-setup-----google-cardboard,-colorcross,-opendive)
   assistance, testing)
