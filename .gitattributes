@@ -3,16 +3,22 @@
 *.[ch]xx text eol=lf
 *.cc text eol=lf
 *.rc text eol=lf
+
 *.git?* text eol=lf
+
 *.txt text eol=lf
 *.cmake text eol=lf
+
 *.md text eol=lf
 *.csv text eol=lf
 *.json text eol=lf
+
 *.ui text eol=lf
 *.qrc text eol=lf
 *.ts text eol=lf
 *.in text eol=lf
+
 *.cmd text eol=crlf
 *.bat text eol=crlf
+
 *.onnx filter=lfs diff=lfs merge=lfs -text
