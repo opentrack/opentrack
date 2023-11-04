@@ -106,6 +106,7 @@ struct OTR_SPLINE_EXPORT base_spline : base_spline_, spline_modify_mixin, spline
 class OTR_SPLINE_EXPORT spline : public base_spline
 {
     using f = float;
+    // todo change to double
 
     double bucket_size_coefficient(const QList<QPointF>& points) const;
     void update_interp_data() const;
