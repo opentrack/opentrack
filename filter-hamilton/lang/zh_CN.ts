@@ -17,11 +17,11 @@
     </message>
     <message>
         <source>Hamilton filter settings</source>
-        <translation >Hamilton 过滤器设置</translation>
+        <translation>Hamilton 过滤器设置</translation>
     </message>
     <message>
         <source>Max Z:</source>
-        <translation ></translation>
+        <translation></translation>
     </message>
     <message>
         <source>10,00</source>
@@ -49,11 +49,11 @@
     </message>
     <message>
         <source>Smoothing power:</source>
-        <translation >平滑强度:</translation>
+        <translation>平滑强度:</translation>
     </message>
     <message>
         <source>Dead Zone:</source>
-        <translation >死区:</translation>
+        <translation>死区:</translation>
     </message>
     <message>
         <source>Max distance:</source>
@@ -65,7 +65,7 @@
     </message>
     <message>
         <source>When you lean forward, zoom smoothing increases the smoothing power for rotations. Maximum additonal smoothing power occurs when you lean forward by a distance of  Max Z.</source>
-        <translation type="unfinished">当您向前倾时, "缩放时平滑" 功能会增强旋转的平滑强度. 前倾到 Max Z 距离时, 增加的平滑强度最大.</translation>
+        <translation type="unfinished">当您向前倾时, &quot;缩放时平滑&quot; 功能会增强旋转的平滑强度. 前倾到 Max Z 距离时, 增加的平滑强度最大.</translation>
     </message>
 </context>
 <context>

@@ -36,10 +36,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to the &lt;a href=&quot;http://vjoystick.sourceforge.net/site/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;vjoystick&lt;/span&gt;&lt;/a&gt; project site or &lt;a href=&quot;https://sourceforge.net/projects/vjoystick/files/latest/download&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;download directly&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>BUG: handle leak.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -57,6 +53,10 @@
     </message>
     <message>
         <source>driver/SDK version mismatch (dll 0x%1, driver 0x%2)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Go to the &lt;a href=&quot;https://github.com/jshafer817/vJoy&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;vJoy&lt;/span&gt;&lt;/a&gt; project site or &lt;a href=&quot;https://github.com/jshafer817/vJoy/releases/tag/v2.1.9.1&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;download directly&lt;/span&gt;&lt;/a&gt; for Windows 10 and 11.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -5,11 +5,11 @@
     <name>AccelaUICdialog_accela</name>
     <message>
         <source>Filter settings</source>
-        <translation >过滤器设置</translation>
+        <translation>过滤器设置</translation>
     </message>
     <message>
         <source>Rotation filtering (Yaw, pitch, and roll)</source>
-        <translation >旋转过滤器 (偏航, 俯仰, 滚转)</translation>
+        <translation>旋转过滤器 (偏航, 俯仰, 滚转)</translation>
     </message>
     <message>
         <source>Smoothing</source>
@@ -21,11 +21,11 @@
     </message>
     <message>
         <source>Deadzone</source>
-        <translation >死区</translation>
+        <translation>死区</translation>
     </message>
     <message>
         <source>Position filtering (X, Y, Z - translation)</source>
-        <translation >方位过滤器 (X, Y, Z - 变换)</translation>
+        <translation>方位过滤器 (X, Y, Z - 变换)</translation>
     </message>
     <message>
         <source>0mm</source>
@@ -65,7 +65,7 @@
     <name>accelaDll</name>
     <message>
         <source>Accela</source>
-        <translation ></translation>
+        <translation></translation>
     </message>
 </context>
 <context>

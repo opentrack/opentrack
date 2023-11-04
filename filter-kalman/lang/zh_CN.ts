@@ -5,7 +5,7 @@
     <name>KalmanUICdialog_kalman</name>
     <message>
         <source>Kalman settings</source>
-        <translation >Kalman 设置</translation>
+        <translation>Kalman 设置</translation>
     </message>
     <message>
         <source>Measurement noise</source>
@@ -13,15 +13,15 @@
     </message>
     <message>
         <source>Rotation</source>
-        <translation >旋转</translation>
+        <translation>旋转</translation>
     </message>
     <message>
         <source>Position</source>
-        <translation >方位</translation>
+        <translation>方位</translation>
     </message>
     <message>
         <source>°</source>
-        <translation ></translation>
+        <translation></translation>
     </message>
     <message>
         <source>-</source>
