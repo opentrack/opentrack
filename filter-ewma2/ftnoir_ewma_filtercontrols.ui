@@ -245,10 +245,6 @@
    </item>
    <item>
     <widget class="QLabel" name="label_4">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(34, 34, 46);
-border-color: rgb(0, 0, 0);</string>
-     </property>
      <property name="frameShape">
       <enum>QFrame::Box</enum>
      </property>
