@@ -9,27 +9,27 @@
     </message>
     <message>
         <source>Update frequency (Hz)</source>
-        <translation type="unfinished"></translation>
+        <translation>刷新率(Hz)</translation>
     </message>
     <message>
         <source>Axis order</source>
-        <translation type="unfinished"></translation>
+        <translation>输出重映射</translation>
     </message>
     <message>
         <source>output yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>输出的航向</translation>
     </message>
     <message>
         <source>input yaw</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">输入航向</translation>
     </message>
     <message>
         <source>input pitch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">输入俯仰</translation>
     </message>
     <message>
         <source>input roll</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">输入滚转</translation>
     </message>
     <message>
         <source>input bearing</source>
@@ -37,47 +37,47 @@
     </message>
     <message>
         <source>output pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>输出的俯仰</translation>
     </message>
     <message>
         <source>output roll</source>
-        <translation type="unfinished"></translation>
+        <translation>输出的滚转</translation>
     </message>
     <message>
         <source>Add to axis</source>
-        <translation type="unfinished"></translation>
+        <translation>添加到轴</translation>
     </message>
     <message>
         <source>yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>航向</translation>
     </message>
     <message>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>+90</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>-90</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>+180</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>-180</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>roll</source>
-        <translation type="unfinished"></translation>
+        <translation>滚转</translation>
     </message>
 </context>
 <context>
