@@ -137,7 +137,9 @@ module_status wine::initialize()
         qDebug() << "proto/wine: shm success";
 
         // display "waiting for game message" (overwritten once a game is detected)
+#ifndef OTR_WINE_NO_WRAPPER
         connected_game = "waiting for game...";
+#endif
     }
     else {
         qDebug() << "proto/wine: shm no success";
