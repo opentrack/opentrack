@@ -98,10 +98,10 @@ bool spline::get_last_value(QPointF& point)
 
 double spline::get_value_internal(int x) const
 {
-    const float sign = signum(x);
+    const auto sign = (f)signum(x);
     x = std::abs(x);
-    const float ret_ = data[std::min(unsigned(x), value_count - 1)];
-    return (double)(sign * std::clamp(ret_, 0.f, 1000.f));
+    const auto ret_ = data[std::min(unsigned(x), value_count - 1)];
+    return (double)(sign * std::clamp(ret_, (f)0, (f)1000));
 }
 
 void spline::ensure_in_bounds(const QList<QPointF>& points, int i, f& x, f& y)
@@ -155,7 +155,7 @@ void spline::update_interp_data() const
 
     const double c = bucket_size_coefficient(list);
     const double c_ = c * c_interp;
-    const float cf = (float)c, c_f = (float)c_;
+    const f cf = (f)c, c_f = (f)c_;
 
     for (unsigned i = 0; i < value_count; i++)
         data[i] = magic_fill_value;
@@ -168,7 +168,7 @@ void spline::update_interp_data() const
         const unsigned max = std::clamp((unsigned)iround(x * c), 1u, value_count-1);
 
         for (unsigned k = 0; k <= max; k++)
-            data[k] = float(y * k / max); // no need for bresenham
+            data[k] = f(y * k / max); // no need for bresenham
     }
     else if (sz == 2 && list[0].y() < 1e-6)
     {
@@ -178,7 +178,7 @@ void spline::update_interp_data() const
         for (unsigned x = 0; x < start; x++)
             data[x] = 0;
         for (unsigned x = 0; x < max; x++)
-            data[start + x] = (float)(list[1].y() * x / max);
+            data[start + x] = (f)(list[1].y() * x / max);
     }
     else
     {
@@ -229,21 +229,32 @@ void spline::update_interp_data() const
                 const f t2 = t*t;
                 const f t3 = t*t*t;
 
-                const unsigned x = unsigned(f(.5) * cf * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
-                const float y = (float)(f(.5) * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
+                const auto x = (unsigned)(f(.5) * cf * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
+                const auto y = (f)(f(.5) * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
 
-                int ret = std::fpclassify(y);
-                if (ret == FP_NAN || ret == FP_INFINITE)
+                switch (int ret = std::fpclassify(y))
+                {
+                case FP_INFINITE:
+                case FP_NAN:
+                case FP_SUBNORMAL:
+                    eval_once(qDebug() << "spline: fpclassify" << y
+                                       << "returned" << ret
+                                       << "for bundle" << s->b->name());
                     continue;
-
-                if (x < value_count)
-                    data[x] = y;
+                case FP_ZERO:
+                case FP_NORMAL:
+                    if (x < value_count)
+                        data[x] = y;
+                    break;
+                default:
+                    unreachable();
+                }
             }
         }
     }
 
-    float maxy = (float)max_output();
-    float last = 0;
+    auto maxy = (f)max_output();
+    auto last = (f)0;
 
 #ifdef __clang__
 #   pragma clang diagnostic push
@@ -254,13 +265,13 @@ void spline::update_interp_data() const
     {
         if (data[i] == magic_fill_value)
             data[i] = last;
-        data[i] = std::clamp(data[i], 0.f, maxy);
+        data[i] = std::clamp(data[i], (f)0, (f)maxy);
         last = data[i];
     }
 
     // make sure empty places stay empty (see #1341)
     if (auto it = std::find_if(list.cbegin(), list.cend(),
-                               [](QPointF x) { return x.x() >= 1e-6 && x.y() >= 1e-6; });
+                               [](QPointF x) { return x.x() >= (f)1e-6 && x.y() >= (f)1e-6; });
         it != list.cend() && it != list.cbegin())
     {
         it--;
