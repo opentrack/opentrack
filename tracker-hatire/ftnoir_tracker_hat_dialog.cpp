@@ -36,12 +36,6 @@ dialog_hatire::dialog_hatire() : theTracker(nullptr), timer(this)
     ui.QCB_Serial_baudRate->addItem(QLatin1String("250000"),(QSerialPort::BaudRate)250000);
     ui.QCB_Serial_baudRate->addItem(QLatin1String("500000"),(QSerialPort::BaudRate)500000);
     ui.QCB_Serial_baudRate->addItem(QLatin1String("1000000"),(QSerialPort::BaudRate)1000000);
-#if 0
-            Baud230400 = 230400,
-        Baud250000 = 250000,
-        Baud500000 = 500000,
-        Baud1000000 = 1000000,
-#endif
 
     ui.QCB_Serial_dataBits->clear();
     ui.QCB_Serial_dataBits->addItem(QLatin1String("5"), QSerialPort::Data5);
