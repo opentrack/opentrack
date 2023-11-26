@@ -123,6 +123,7 @@ if(MSVC)
     add_definitions(-D_ENABLE_ATOMIC_ALIGNMENT_FIX)
     add_definitions(-D_SILENCE_CXX17_NEGATORS_DEPRECATION_WARNING)
     add_definitions(-D_SILENCE_CXX17_ADAPTOR_TYPEDEFS_DEPRECATION_WARNING)
+    add_definitions(-D_SILENCE_STDEXT_ARR_ITERS_DEPRECATION_WARNING)
 
     add_compile_options(-permissive-)
 

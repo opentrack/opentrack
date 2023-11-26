@@ -18,9 +18,9 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 endif()
 
-set(CMAKE_C_COMPILER_INIT cl.exe)
-set(CMAKE_CXX_COMPILER_INIT cl.exe)
-set(CMAKE_ASM_NASM_COMPILER_INIT nasm.exe)
+#set(CMAKE_GENERATOR Ninja)
+#set(CMAKE_MAKE_PROGRAM ninja.exe)
+set(CMAKE_ASM_NASM_COMPILER nasm.exe)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -28,8 +28,6 @@ SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-set(CMAKE_MAKE_PROGRAM ninja)
-set(CMAKE_GENERATOR "Ninja")
 
 #add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
 #add_compile_options(-Qvec-report:2)
