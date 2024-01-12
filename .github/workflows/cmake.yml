@@ -1,12 +1,8 @@
 name: CMake
 
 on:
-  push:
-    branches: [ master ]
-    tags:
-    - '*'
-  pull_request:
-    branches: [ master ]
+  - push
+  - pull_request
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -32,7 +28,16 @@ jobs:
           cmake: .\.github\workflows\build-windows.bat cmake
 
     steps:
-    - uses: actions/checkout@v2
+    - name: clone opentrack/opentrack
+      uses: actions/checkout@v2
+
+    - name: clone opentrack/depends
+      uses: actions/checkout@v2
+      with:
+        repository: opentrack/opentrack-depends
+        submodules: true
+        path: opentrack-depends
+
     - uses: seanmiddleditch/gha-setup-ninja@master
 
     - name: Install Linux Dependencies
