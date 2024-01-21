@@ -47,7 +47,7 @@ setq(ONNXRuntime_DIR "onnxruntime-1.16.3")
 setq(SDK_TRACKHAT_SENSOR "trackhat-c-library-driver/build/install")
 setq(SDK_OSCPACK "oscpack/build")
 else()
-    message(FATAL_ERROR "unknown word size ${CMAKE_SIZEOF_VOID_P}b")
+    message(FATAL_ERROR "unknown word size ${CMAKE_SIZEOF_VOID_P}")
 endif()
 
 set(CMAKE_ASM_NASM_COMPILER nasm.exe CACHE FILEPATH "" FORCE)
