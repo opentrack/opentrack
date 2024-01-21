@@ -42,8 +42,10 @@ void spline::set_tracking_active(bool value) const
     std::shared_ptr<settings> S;
     {
         QMutexLocker l(&mtx);
-        S = s;
+        if (value == activep)
+            return;
         activep = value;
+        S = s;
     }
     emit S->recomputed();
 }
