@@ -74,6 +74,7 @@ find_path(ONNXRuntime_INCLUDE_DIR onnxruntime_cxx_api.h
 		"build/native/include"
 		# For when the directory structure of the onnx source repo is preserved
 		"include/onnxruntime/core/session" 
+		"include/onnxruntime"
 		# For when we copy the files somewhere
 		"include"
 		)
