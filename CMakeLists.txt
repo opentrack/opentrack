@@ -87,7 +87,7 @@ add_custom_target(mrproper
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
 function(otr_add_subdirs)
-    otr_dist_select_variant()
+    otr_init_variant()
     get_property(_globs GLOBAL PROPERTY opentrack-subprojects)
     otr_add_target_dirs(_globbed ${_globs})
 
