@@ -2,7 +2,7 @@
 
 #include "export.hpp"
 
-#include "gui/ui_settings-dialog.h"
+#include "gui/ui_options-dialog.h"
 #include "logic/shortcuts.h"
 
 #include <functional>
