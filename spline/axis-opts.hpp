@@ -55,7 +55,7 @@ public:
     bundle b_mapping_window{ make_bundle(axis_ == Axis(-1) ? QString() : "opentrack-mappings") };
     value<double> zero;
     value<int> src;
-    value<bool> invert, altp;
+    value<bool> invert_pre, invert_post, altp;
     value<max_clamp> clamp_x_, clamp_y_;
     double max_clamp_x() const { return std::fabs(clamp_x_.to<double>()); }
     double max_clamp_y() const { return std::fabs(clamp_y_.to<double>()); }

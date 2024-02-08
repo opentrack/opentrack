@@ -103,12 +103,19 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     tie_setting(main.a_pitch.zero, ui.pos_ry);
     tie_setting(main.a_roll.zero, ui.pos_rz);
 
-    tie_setting(main.a_yaw.invert, ui.invert_yaw);
-    tie_setting(main.a_pitch.invert, ui.invert_pitch);
-    tie_setting(main.a_roll.invert, ui.invert_roll);
-    tie_setting(main.a_x.invert, ui.invert_x);
-    tie_setting(main.a_y.invert, ui.invert_y);
-    tie_setting(main.a_z.invert, ui.invert_z);
+    tie_setting(main.a_yaw.invert_pre, ui.invert_yaw_pre);
+    tie_setting(main.a_pitch.invert_pre, ui.invert_pitch_pre);
+    tie_setting(main.a_roll.invert_pre, ui.invert_roll_pre);
+    tie_setting(main.a_x.invert_pre, ui.invert_x_pre);
+    tie_setting(main.a_y.invert_pre, ui.invert_y_pre);
+    tie_setting(main.a_z.invert_pre, ui.invert_z_pre);
+
+    tie_setting(main.a_yaw.invert_post, ui.invert_yaw_post);
+    tie_setting(main.a_pitch.invert_post, ui.invert_pitch_post);
+    tie_setting(main.a_roll.invert_post, ui.invert_roll_post);
+    tie_setting(main.a_x.invert_post, ui.invert_x_post);
+    tie_setting(main.a_y.invert_post, ui.invert_y_post);
+    tie_setting(main.a_z.invert_post, ui.invert_z_post);
 
     tie_setting(main.a_yaw.src, ui.src_yaw);
     tie_setting(main.a_pitch.src, ui.src_pitch);

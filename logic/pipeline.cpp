@@ -349,7 +349,7 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
     for (int i = 0; i < 6; i++)
         // don't invert after reltrans
         // inverting here doesn't break centering
-        if (m(i).opts.invert)
+        if (m(i).opts.invert_pre)
             value(i) = -value(i);
 
     return value;
@@ -391,7 +391,7 @@ Pose pipeline::maybe_apply_filter(const Pose& value) const
 Pose pipeline::apply_zero_pos(Pose value) const
 {
     for (int i = 0; i < 6; i++)
-        value(i) += m(i).opts.zero * (m(i).opts.invert ? -1 : 1);
+        value(i) += m(i).opts.zero * (m(i).opts.invert_pre ? -1 : 1);
 
     return value;
 }
@@ -503,6 +503,10 @@ ok:
         value = last_value;
     last_value = value;
     value = apply_zero_pos(value);
+
+    for (int i = 0; i < 6; i++)
+        if (m(i).opts.invert_post)
+            value(i) = -value(i);
 
     libs.pProtocol->pose(value, raw);
 

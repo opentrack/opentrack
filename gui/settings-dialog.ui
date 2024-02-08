@@ -984,6 +984,19 @@
           <property name="verticalSpacing">
            <number>9</number>
           </property>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Pitch</string>
+            </property>
+           </widget>
+          </item>
           <item row="7" column="1">
            <widget class="QComboBox" name="src_y">
             <property name="sizePolicy">
@@ -1034,84 +1047,6 @@
             </item>
            </widget>
           </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>X</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_9">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Roll</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="2">
-           <widget class="QCheckBox" name="invert_y">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>255</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QCheckBox" name="invert_pitch">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>255</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string>Yaw</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QCheckBox" name="invert_x">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>255</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
            <widget class="QLabel" name="label_13">
             <property name="sizePolicy">
@@ -1125,8 +1060,60 @@
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
-           <widget class="QComboBox" name="src_roll">
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_14">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Pre-invert</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>X</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2">
+           <widget class="QCheckBox" name="invert_yaw_pre">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>255</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="2">
+           <widget class="QCheckBox" name="invert_roll_pre">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>255</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="QComboBox" name="src_yaw">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
               <horstretch>0</horstretch>
@@ -1170,8 +1157,21 @@
             </item>
            </widget>
           </item>
-          <item row="3" column="2">
-           <widget class="QCheckBox" name="invert_yaw">
+          <item row="6" column="2">
+           <widget class="QCheckBox" name="invert_x_pre">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>255</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QCheckBox" name="invert_yaw_post">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
               <horstretch>255</horstretch>
@@ -1228,6 +1228,179 @@
             </item>
            </widget>
           </item>
+          <item row="5" column="0">
+           <widget class="QLabel" name="label_9">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Roll</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_15">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Destination</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QCheckBox" name="invert_pitch_pre">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>255</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QComboBox" name="src_x">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Disabled</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Relative translation only</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="7" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Y</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1">
+           <widget class="QComboBox" name="src_roll">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <item>
+             <property name="text">
+              <string>X</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Y</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Yaw</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Pitch</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Roll</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Disabled</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Yaw</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLabel" name="label_19">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>254</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>Post-invert</string>
+            </property>
+           </widget>
+          </item>
           <item row="8" column="0">
            <widget class="QLabel" name="label_12">
             <property name="sizePolicy">
@@ -1242,7 +1415,7 @@
            </widget>
           </item>
           <item row="8" column="2">
-           <widget class="QCheckBox" name="invert_z">
+           <widget class="QCheckBox" name="invert_z_pre">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
               <horstretch>255</horstretch>
@@ -1304,53 +1477,8 @@
             </item>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="src_yaw">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QCheckBox" name="invert_roll">
+          <item row="7" column="2">
+           <widget class="QCheckBox" name="invert_y_pre">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
               <horstretch>255</horstretch>
@@ -1362,105 +1490,68 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2">
-           <widget class="QLabel" name="label_14">
+          <item row="4" column="3">
+           <widget class="QCheckBox" name="invert_pitch_post">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
+              <horstretch>255</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Invert</string>
+             <string/>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
-           <widget class="QComboBox" name="src_x">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <item>
-             <property name="text">
-              <string>X</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Y</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Yaw</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Pitch</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Roll</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Disabled</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Relative translation only</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_15">
+          <item row="5" column="3">
+           <widget class="QCheckBox" name="invert_roll_post">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
+              <horstretch>255</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Destination</string>
+             <string/>
             </property>
            </widget>
           </item>
-          <item row="7" column="0">
-           <widget class="QLabel" name="label_11">
+          <item row="6" column="3">
+           <widget class="QCheckBox" name="invert_x_post">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
+              <horstretch>255</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Y</string>
+             <string/>
             </property>
            </widget>
           </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_8">
+          <item row="7" column="3">
+           <widget class="QCheckBox" name="invert_y_post">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
-              <horstretch>254</horstretch>
+              <horstretch>255</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Pitch</string>
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="3">
+           <widget class="QCheckBox" name="invert_z_post">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+              <horstretch>255</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -1469,23 +1560,30 @@
          <zorder>label_13</zorder>
          <zorder>label_14</zorder>
          <zorder>src_yaw</zorder>
-         <zorder>invert_yaw</zorder>
+         <zorder>invert_yaw_pre</zorder>
          <zorder>label_7</zorder>
          <zorder>src_pitch</zorder>
          <zorder>label_8</zorder>
-         <zorder>invert_pitch</zorder>
+         <zorder>invert_pitch_pre</zorder>
          <zorder>label_9</zorder>
          <zorder>src_roll</zorder>
-         <zorder>invert_roll</zorder>
+         <zorder>invert_roll_pre</zorder>
          <zorder>label_10</zorder>
          <zorder>src_x</zorder>
-         <zorder>invert_x</zorder>
+         <zorder>invert_x_pre</zorder>
          <zorder>label_11</zorder>
          <zorder>src_y</zorder>
-         <zorder>invert_y</zorder>
+         <zorder>invert_y_pre</zorder>
          <zorder>label_12</zorder>
          <zorder>src_z</zorder>
-         <zorder>invert_z</zorder>
+         <zorder>invert_z_pre</zorder>
+         <zorder>label_19</zorder>
+         <zorder>invert_yaw_post</zorder>
+         <zorder>invert_pitch_post</zorder>
+         <zorder>invert_roll_post</zorder>
+         <zorder>invert_x_post</zorder>
+         <zorder>invert_y_post</zorder>
+         <zorder>invert_z_post</zorder>
         </widget>
        </item>
        <item>
@@ -2220,17 +2318,23 @@
   <tabstop>trayp</tabstop>
   <tabstop>tray_start</tabstop>
   <tabstop>src_yaw</tabstop>
-  <tabstop>invert_yaw</tabstop>
+  <tabstop>invert_yaw_pre</tabstop>
+  <tabstop>invert_yaw_post</tabstop>
   <tabstop>src_pitch</tabstop>
-  <tabstop>invert_pitch</tabstop>
+  <tabstop>invert_pitch_pre</tabstop>
+  <tabstop>invert_pitch_post</tabstop>
   <tabstop>src_roll</tabstop>
-  <tabstop>invert_roll</tabstop>
+  <tabstop>invert_roll_pre</tabstop>
+  <tabstop>invert_roll_post</tabstop>
   <tabstop>src_x</tabstop>
-  <tabstop>invert_x</tabstop>
+  <tabstop>invert_x_pre</tabstop>
+  <tabstop>invert_x_post</tabstop>
   <tabstop>src_y</tabstop>
-  <tabstop>invert_y</tabstop>
+  <tabstop>invert_y_pre</tabstop>
+  <tabstop>invert_y_post</tabstop>
   <tabstop>src_z</tabstop>
-  <tabstop>invert_z</tabstop>
+  <tabstop>invert_z_pre</tabstop>
+  <tabstop>invert_z_post</tabstop>
   <tabstop>pos_rx</tabstop>
   <tabstop>pos_ry</tabstop>
   <tabstop>pos_rz</tabstop>
