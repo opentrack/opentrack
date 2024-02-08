@@ -36,8 +36,6 @@ axis_opts::axis_opts(QString pfx, Axis idx) :
     altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
     clamp_x_(b_mapping_window, n(pfx, "max-value"), get_max_x(idx)),
     clamp_y_(b_mapping_window, n(pfx, "max-output-value"), get_max_y(idx))
-
-    // todo add "pre-invert-sign-*"
 {}
 
 QString const& axis_opts::prefix() const { return prefix_; }

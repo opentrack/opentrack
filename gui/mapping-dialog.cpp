@@ -14,7 +14,6 @@
 
 using namespace options;
 
-// todo speed up redraw for red dot indicator
 mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);
