@@ -91,10 +91,14 @@ readability-make-member-function-const,
 -readability-static-accessed-through-instance,
 -readability-uppercase-literal-suffix,
 -readability-use-anyofallof,
-
 -*-avoid-unconditional-preprocessor-if,
--*-use-emplace,
+-*-braces-around-statements,
 -*-incorrect-roundings,
+-*-uppercase-literal-suffix,
+-*-use-emplace,
+-*-use-std-print,
+-*-use-trailing-return-type,
+-*-vararg,
 '
 
 AnalyzeTemporaryDtors: true
