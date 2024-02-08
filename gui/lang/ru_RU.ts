@@ -271,10 +271,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>X</translation>
     </message>
     <message>
-        <source>Invert</source>
-        <translation>Инвертировать</translation>
-    </message>
-    <message>
         <source>Y</source>
         <translation>Y</translation>
     </message>
@@ -393,6 +389,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     <message>
         <source>Axis assignment</source>
         <translation>Переназначение осей</translation>
+    </message>
+    <message>
+        <source>Pre-invert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-invert</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

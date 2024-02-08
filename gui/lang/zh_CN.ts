@@ -242,10 +242,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>源头</translation>
     </message>
     <message>
-        <source>Invert</source>
-        <translation>反向</translation>
-    </message>
-    <message>
         <source>Destination</source>
         <translation>目标</translation>
     </message>
@@ -392,6 +388,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     <message>
         <source>Axis assignment</source>
         <translation>输出重新映射</translation>
+    </message>
+    <message>
+        <source>Pre-invert</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Post-invert</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
