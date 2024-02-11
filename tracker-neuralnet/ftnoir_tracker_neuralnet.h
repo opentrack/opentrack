@@ -86,6 +86,7 @@ struct Settings : opts {
     value<int> resolution { b, "force-resolution", 0 };
     value<double> deadzone_size { b, "deadzone-size", 1. };
     value<double> deadzone_hardness { b, "deadzone-hardness", 1.5 };
+    value<QString> posenet_file { b, "posenet-file", "head-pose-0.2-small.onnx" };
     Settings();
 };
 
@@ -128,6 +129,7 @@ private:
     QuatPose compute_filtered_pose(const PoseEstimator::Face &face);
     // Compute the pose in 3d space taking the network outputs
     QuatPose transform_to_world_pose(const cv::Quatf &face_rotation, const cv::Point2f& face_xy, const float face_size) const;
+    QString get_posenet_filename() const;
 
     Settings settings_;
     std::optional<Localizer> localizer_;
@@ -146,7 +148,7 @@ private:
     double fps_ = 0;
     double inference_time_ = 0;
     cv::Size resolution_ = {};
-    
+
     static constexpr double RC = .25;
     int num_threads_ = 1;
     bool is_visible_ = true;
@@ -196,6 +198,7 @@ private Q_SLOTS:
     void startstop_trans_calib(bool start);
     void trans_calib_step();
     void status_poll();
+    void onSelectPoseNetFile();
 };
 
 

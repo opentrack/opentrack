@@ -126,5 +126,13 @@ Don&apos;t roll or change position.</source>
         <source>Start calibration</source>
         <translation>Начать калибровку</translation>
     </message>
+    <message>
+        <source>Select Pose Net ONNX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ONNX Files (*.onnx)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

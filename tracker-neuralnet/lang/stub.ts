@@ -12,6 +12,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Camera Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Head Center Offset</source>
         <translation type="unfinished"></translation>
     </message>
@@ -41,19 +45,11 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Exposure preset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Camera Configuration</source>
+        <source>Show Network Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Tuning / Debug</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Number of threads. Can be used to balance the CPU load between the game and the tracker.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -65,19 +61,19 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Thread Count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Number of threads. Can be used to balance the CPU load between the game and the tracker.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Show the image patch that the pose estimation model sees.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show Network Input</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Amount of smoothing of the face region coordinates. Can help stabilize the pose.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Thread Count</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -86,6 +82,10 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Camera override</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exposure preset</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -121,6 +121,14 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Start calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select Pose Net ONNX</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ONNX Files (*.onnx)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

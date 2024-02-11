@@ -32,8 +32,8 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
     endif()
 
     install(
-        FILES "models/head-localizer.onnx" 
-              "models/head-pose.onnx"
+        FILES "models/head-localizer.onnx"
+              "models/head-pose-0.2-small.onnx"
         DESTINATION "${opentrack-libexec}/models"
         PERMISSIONS ${opentrack-perms-file}
         )
