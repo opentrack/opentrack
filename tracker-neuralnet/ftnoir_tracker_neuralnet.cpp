@@ -166,7 +166,7 @@ cv::Vec3f image_to_world(float x, float y, float size, float reference_size_in_m
 {
     /*
     Compute the location the network outputs in 3d space.
-    
+
        hhhhhh  <- head size (meters)
       \      | -----------------------
        \     |                         \
@@ -271,7 +271,7 @@ class GuardedThreadCountSwitch
             omp_set_num_threads(num_threads);
             cv::setNumThreads(num_threads);
         }
-            
+
         ~GuardedThreadCountSwitch()
         {
             omp_set_num_threads(old_num_threads_omp_);
@@ -302,7 +302,7 @@ bool NeuralNetTracker::detect()
     {
         auto [p, rect] = localizer_->run(grayscale_);
         inference_time += localizer_->last_inference_time_millis();
-        
+
         if (last_roi_ && iou(rect,*last_roi_)>=0.25 && p > 0.5)
         {
             // The new ROI matches the result from tracking, so the user is
@@ -327,7 +327,7 @@ bool NeuralNetTracker::detect()
 
     if (!last_roi_)
     {
-        // Last iteration the tracker failed to generate a trustworthy 
+        // Last iteration the tracker failed to generate a trustworthy
         // roi and the localizer also cannot find a face.
         draw_gizmos({}, {});
         return false;
@@ -349,11 +349,11 @@ bool NeuralNetTracker::detect()
 
     QuatPose pose = compute_filtered_pose(*face);
     last_pose_ = pose;
-    
-    Affine pose_affine = { 
-        pose.rot.toRotMat3x3(cv::QUAT_ASSUME_UNIT), 
+
+    Affine pose_affine = {
+        pose.rot.toRotMat3x3(cv::QUAT_ASSUME_UNIT),
         pose.pos };
-    
+
     {
         QMutexLocker lck(&mtx_);
         last_pose_affine_ = pose_affine;
@@ -373,9 +373,9 @@ void NeuralNetTracker::draw_gizmos(
         return;
 
     preview_.draw_gizmos(
-        face, 
-        last_roi_, 
-        last_localizer_roi_, 
+        face,
+        last_roi_,
+        last_localizer_roi_,
         world_to_image(pose.t, grayscale_.size(), intrinsics_));
 
     if (settings_.show_network_input)
@@ -395,7 +395,7 @@ QuatPose NeuralNetTracker::transform_to_world_pose(const cv::Quatf &face_rotatio
 
     const cv::Quatf rot_correction = compute_rotation_correction(
         face_world_pos);
-    
+
     cv::Quatf rot = rot_correction * image_to_world(face_rotation);
 
     // But this is in general not the location of the rotation joint in the neck.
@@ -418,11 +418,11 @@ QuatPose NeuralNetTracker::compute_filtered_pose(const PoseEstimator::Face &face
     {
         auto image2world = [this](const cv::Quatf &face_rotation, const cv::Point2f& face_xy, const float face_size) {
                 return this->transform_to_world_pose(face_rotation, face_xy, face_size); };
-        
+
         return apply_filter(
-            face, 
-            *last_pose_, 
-            1./fps_, 
+            face,
+            *last_pose_,
+            1./fps_,
             std::move(image2world),
             FiltParams{
                 float(settings_.deadzone_hardness),
@@ -488,7 +488,7 @@ bool NeuralNetTracker::load_and_initialize_model()
         allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
         localizer_.emplace(
-            allocator_info_, 
+            allocator_info_,
             Ort::Session{env_, convert(localizer_model_path_enc).c_str(), opts});
 
         qDebug() << "Loading pose net " << poseestimator_model_path_enc;
@@ -498,7 +498,7 @@ bool NeuralNetTracker::load_and_initialize_model()
     }
     catch (const Ort::Exception &e)
     {
-        qDebug() << "Failed to initialize the neural network models. ONNX error message: " 
+        qDebug() << "Failed to initialize the neural network models. ONNX error message: "
             << e.what();
         return false;
     }
@@ -608,7 +608,7 @@ void NeuralNetTracker::run()
 
         if (is_visible_)
             preview_.copy_to_widget(*video_widget_);
-        
+
         update_fps(
             std::chrono::duration_cast<std::chrono::milliseconds>(
                 clk.now() - t).count()*1.e-3);
@@ -730,8 +730,8 @@ void NeuralNetDialog::make_resolution_combobox()
     int k=0;
     for (const auto [w, h] : resolution_choices)
     {
-        const QString s = (w == 0) 
-            ? tr("Default") 
+        const QString s = (w == 0)
+            ? tr("Default")
             : QString::number(w) + " x " + QString::number(h);
         ui_.resolution->addItem(s, k++);
     }
@@ -865,7 +865,7 @@ void NeuralNetDialog::trans_calib_step()
 {
     if (tracker_)
     {
-        const Affine X_CM = [&]() { 
+        const Affine X_CM = [&]() {
             QMutexLocker l(&calibrator_mutex_);
             return tracker_->pose();
         }();
@@ -899,7 +899,7 @@ void NeuralNetDialog::trans_calib_step()
 void NeuralNetDialog::startstop_trans_calib(bool start)
 {
     QMutexLocker l(&calibrator_mutex_);
-    // FIXME: does not work ...  
+    // FIXME: does not work ...
     if (start)
     {
         qDebug() << "pt: starting translation calibration";
