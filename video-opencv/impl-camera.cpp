@@ -37,7 +37,8 @@ void cam::set_exposure(bool write)
     if (e != exposure)
         switch (e)
         {
-            case exposure_preset::near: cap->set(cv::CAP_PROP_EXPOSURE, -5); qDebug() << "near"; break;
+            case exposure_preset::near: cap->set(cv::CAP_PROP_EXPOSURE, -6); qDebug() << "near"; break;
+            case exposure_preset::medium: cap->set(cv::CAP_PROP_EXPOSURE, -5); qDebug() << "medium"; break;
             case exposure_preset::far: cap->set(cv::CAP_PROP_EXPOSURE, -4); qDebug() << "far"; break;
             default: break;
         }

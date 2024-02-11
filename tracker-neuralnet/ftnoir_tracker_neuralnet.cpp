@@ -774,9 +774,10 @@ NeuralNetDialog::NeuralNetDialog() :
             QString label;
             exposure_preset preset;
         } presets[] = {
-            { QStringLiteral("Near (1-4ft)"), exposure_preset::near     },
-            { QStringLiteral("Far (4-8ft)"),  exposure_preset::far      },
-            { QStringLiteral("Custom"),       exposure_preset::ignored  },
+            { QStringLiteral("Near (1-3ft)"),    exposure_preset::near     },
+            { QStringLiteral("Medium (3-6ft)"),  exposure_preset::medium   },
+            { QStringLiteral("Far (6+ft)"),      exposure_preset::far      },
+            { QStringLiteral("Custom"),          exposure_preset::ignored  },
         };
 
         for (const auto& [label, preset] : presets)
