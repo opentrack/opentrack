@@ -31,27 +31,31 @@ bool cam::is_open()
     return !!cap;
 }
 
-void cam::set_exposure(bool write)
+void cam::set_exposure(exposure_preset e)
 {
-    auto e = *s.exposure;
-    if (e != exposure)
-        switch (e)
-        {
-            case exposure_preset::near: cap->set(cv::CAP_PROP_EXPOSURE, -6); qDebug() << "near"; break;
-            case exposure_preset::medium: cap->set(cv::CAP_PROP_EXPOSURE, -5); qDebug() << "medium"; break;
-            case exposure_preset::far: cap->set(cv::CAP_PROP_EXPOSURE, -4); qDebug() << "far"; break;
-            default: break;
-        }
-
-    if (s.exposure != exposure_preset::ignored)
+    switch (e)
     {
+        using enum exposure_preset;
+        case near: cap->set(cv::CAP_PROP_EXPOSURE, -6); qDebug() << "near"; break;
+        case medium: cap->set(cv::CAP_PROP_EXPOSURE, -5); qDebug() << "medium"; break;
+        case far: cap->set(cv::CAP_PROP_EXPOSURE, -4); qDebug() << "far"; break;
+        default: break;
+    }
+
+    switch (e)
+    {
+    using enum exposure_preset;
+    default:
+        break;
+    case near:
+    case medium:
+    case far: {
         constexpr struct {
             int prop, value;
         } props[] = {
             { cv::CAP_PROP_AUTO_EXPOSURE,   0 },
             { cv::CAP_PROP_BRIGHTNESS,      0 },
             { cv::CAP_PROP_SHARPNESS,       3 },
-            { cv::CAP_PROP_AUTO_EXPOSURE,   0 },
             { cv::CAP_PROP_BRIGHTNESS,      0 },
             { cv::CAP_PROP_SHARPNESS,       3 },
             { cv::CAP_PROP_CONTRAST,       32 },
@@ -65,9 +69,7 @@ void cam::set_exposure(bool write)
         for (const auto [prop, value] : props)
             cap->set(prop, value);
     }
-
-    if (write)
-        exposure = e;
+    }
 }
 
 bool cam::start(info& args)
@@ -86,7 +88,7 @@ bool cam::start(info& args)
     if (args.use_mjpeg)
         cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
-    set_exposure(false);
+    set_exposure(*s.exposure);
 
     if (!cap->isOpened())
         goto fail;
@@ -106,6 +108,19 @@ bool cam::get_frame_()
     if (!is_open())
         return false;
 
+    auto e = *s.exposure;
+    if (e != exposure)
+    {
+        writes = 2;
+        exposure = e;
+        set_exposure(e);
+    }
+    else if (writes > 0)
+    {
+        writes--;
+        set_exposure(e);
+    }
+
     for (unsigned i = 0; i < 10; i++)
     {
         if (cap->read(mat))
@@ -123,8 +138,6 @@ bool cam::get_frame_()
         }
         portable::sleep(50);
     }
-
-    set_exposure(true);
 
     return false;
 }
