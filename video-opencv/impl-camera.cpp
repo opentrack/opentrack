@@ -89,6 +89,7 @@ bool cam::start(info& args)
         cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 
     set_exposure(*s.exposure);
+    writes = 3;
 
     if (!cap->isOpened())
         goto fail;
