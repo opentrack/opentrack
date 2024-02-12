@@ -146,7 +146,7 @@ elseif(opentrack-64bit)
     set(opentrack-simd "AVX")
 endif()
 
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>Dll")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 add_link_options(-cgthreads:1)
 
