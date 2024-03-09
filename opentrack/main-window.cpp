@@ -42,7 +42,11 @@ extern "C" const char* const opentrack_version;
 using namespace options::globals;
 using namespace options;
 
-main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
+main_window::main_window()
+    : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
+#if defined OTR_DBUS_CONTROL
+    , dbus(&dbus_obj, this)
+#endif
 {
     ui.setupUi(this);
 
@@ -58,6 +62,7 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
     init_buttons();
     init_dylibs();
     init_shortcuts();
+    init_dbus();
 
     init_tray_menu();
     setVisible(!start_in_tray());
@@ -266,6 +271,18 @@ void main_window::init_buttons()
 #endif
     connect(ui.btnStartTracker, &QPushButton::clicked, this, &main_window::start_tracker_);
     connect(ui.btnStopTracker, &QPushButton::clicked, this, &main_window::stop_tracker_);
+}
+
+void main_window::init_dbus()
+{
+#if defined OTR_DBUS_CONTROL
+    qDebug() << "dbus: attaching main service";
+    QDBusConnection::sessionBus().registerObject(MainDBus::SERVICE_PATH, &dbus_obj);
+    if (!QDBusConnection::sessionBus().registerService(MainDBus::SERVICE_NAME))
+    {
+        qDebug() << "dbus: " << QDBusConnection::sessionBus().lastError().message();
+    }
+#endif
 }
 
 void main_window::register_shortcuts()
@@ -531,6 +548,11 @@ void main_window::stop_tracker_()
     update_button_state(false, false);
     set_title();
     ui.btnStartTracker->setFocus();
+}
+
+bool main_window::tracker_running() const
+{
+    return !!work;
 }
 
 void main_window::show_pose_(const double* mapped, const double* raw)
