@@ -1,6 +1,7 @@
 #include "work.hpp"
 #include "compat/library-path.hpp"
 
+#include <qglobal.h>
 #include <utility>
 
 #include <QObject>
@@ -58,19 +59,35 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
 
 
 Work::Work(const Mappings& m, QFrame* frame,
-           const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto) :
-    libs(frame, tracker, filter, proto),
-    pipeline_{ m, libs, *logger }
+           const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto)
+    : libs(frame, tracker, filter, proto)
+    , pipeline_{ m, libs, *logger }
+#if defined OTR_DBUS_CONTROL
+    , dbus_(&dbus_obj, &pipeline_)
+#endif
 {
     if (!is_ok())
         return;
     reload_shortcuts();
+    connect_dbus();
     pipeline_.start();
 }
 
 void Work::reload_shortcuts()
 {
     sc.reload(keys);
+}
+
+void Work::connect_dbus()
+{
+#if defined OTR_DBUS_CONTROL
+    qDebug() << "dbus: attaching work service";
+    QDBusConnection::sessionBus().registerObject(DBus::SERVICE_PATH, &dbus_obj);
+    if (!QDBusConnection::sessionBus().registerService(DBus::SERVICE_NAME))
+    {
+        qDebug() << "dbus: " << QDBusConnection::sessionBus().lastError().message();
+    }
+#endif
 }
 
 bool Work::is_ok() const
