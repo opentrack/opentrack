@@ -9,7 +9,7 @@
 #if defined _MSC_VER
 #   define force_inline __forceinline
 #else
-#   define force_inline __attribute__((always_inline))
+#   define force_inline __attribute__((always_inline)) inline
 #endif
 
 #if !defined likely
