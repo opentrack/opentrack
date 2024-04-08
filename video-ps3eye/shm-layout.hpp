@@ -30,7 +30,7 @@ struct shm_out
     };
 };
 
-struct shm {
+alignas(64) struct shm {
     shm_out out;
     [[maybe_unused]] const char _padding[128 - sizeof(shm_out) % 128]; // NOLINT
     shm_in in;
