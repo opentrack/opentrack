@@ -1,5 +1,7 @@
-# https://www.nuget.org/packages/Tobii.StreamEngine.Native/
-set(SDK_TOBII "" CACHE PATH "Tobii Stream Engine path")
+if(WIN32)
+    # https://www.nuget.org/packages/Tobii.StreamEngine.Native/
+    set(SDK_TOBII "" CACHE PATH "Tobii Stream Engine path")
+endif()
 if(WIN32 AND SDK_TOBII)
     otr_module(tracker-tobii)
 
