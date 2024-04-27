@@ -192,11 +192,15 @@ PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&ses
     if (session_.GetOutputCount() < 2)
         throw std::runtime_error("Invalid Model: must have at least two outputs");
 
-    // WARNING UB .. but still ...
-    // If the model was saved without meta data, it seems the version field is uninitialized.
-    // In that case reading from it is UB. However, in practice we will just get some arbitrary number
-    // which is hopefully different from the numbers used by models where the version is set.
-    if (model_version_ != 2 && model_version_ != 3)
+    // WARNING: Messy model compatibility issues!
+    // When reading the initial model release, it did not have the version field set.
+    // Reading it here will result in some unspecified value. It's probably UB due to
+    // reading uninitialized memory. But there is little choice.
+    // Now, detection of this old version is messy ... we have to guess based on the 
+    // number we get. Getting an uninitialized value matching a valid version is unlikely.
+    // But the real problem is that this line must be updated whenever we want to bump the
+    // version number!!
+    if (model_version_ <= 0 || model_version_ > 4)
         model_version_ = 1;
 
     const cv::Size input_image_shape = get_input_image_shape(session_);
@@ -224,10 +228,9 @@ PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&ses
         { "box", TensorSpec{ { 1, 4}, &output_box_[0], output_box_.rows } },
         { "rotaxis_scales_tril", TensorSpec{ {1, 3, 3}, output_rotaxis_scales_tril_.val, 9 }},
         { "rotaxis_std", TensorSpec{ {1, 3, 3}, output_rotaxis_scales_tril_.val, 9 }}, // TODO: Delete when old models aren't used any more
-        { "eyes", TensorSpec{ { 1, 2}, output_eyes_.val, output_eyes_.rows }},
-        { "pos_size_std", TensorSpec{ {1, 3}, output_coord_scales_.val, output_coord_scales_.rows}},
-        { "pos_size_scales", TensorSpec{ {1, 3}, output_coord_scales_.val, output_coord_scales_.rows}},
-        //{ "box_std", TensorSpec{ {1, 4}, output_box_scales_.val, output_box_scales_ .rows}}
+        { "pos_size_std", TensorSpec{ {1, 3}, output_coord_scales_std_.val, output_coord_scales_std_.rows}},
+        { "pos_size_scales", TensorSpec{ {1, 3}, output_coord_scales_std_.val, output_coord_scales_std_.rows}},
+        { "pos_size_scales_tril", TensorSpec{ {1, 3, 3}, output_coord_scales_tril_.val, 9}}
     };
 
     qDebug() << "Pose model inputs (" << session_.GetInputCount() << ")";
@@ -236,17 +239,17 @@ PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&ses
     output_c_names_.resize(session_.GetOutputCount());
     for (size_t i=0; i<session_.GetOutputCount(); ++i)
     {
-        std::string name = get_network_output_name(i);
+        const std::string name = get_network_output_name(i);
         const auto& output_info = session_.GetOutputTypeInfo(i);
         const auto& onnx_tensor_spec = output_info.GetTensorTypeAndShapeInfo();
-        auto my_tensor_spec = understood_outputs.find(name);
+        auto my_tensor_spec_it = understood_outputs.find(name);
 
         qDebug() << "\t" << name.c_str() << " (" << onnx_tensor_spec.GetShape() << ") dtype: " <<  onnx_tensor_spec.GetElementType() << " " <<
-            (my_tensor_spec != understood_outputs.end() ? "ok" : "unknown");
+            (my_tensor_spec_it != understood_outputs.end() ? "ok" : "unknown");
 
-        if (my_tensor_spec != understood_outputs.end())
+        if (my_tensor_spec_it != understood_outputs.end())
         {
-            TensorSpec& t = my_tensor_spec->second;
+            TensorSpec& t = my_tensor_spec_it->second;
             if (onnx_tensor_spec.GetShape() != t.shape || 
                 onnx_tensor_spec.GetElementType() != Ort::TypeToTensorType<float>::type)
                 throw std::runtime_error("Invalid output tensor spec for "s + name);
@@ -266,29 +269,9 @@ PoseEstimator::PoseEstimator(Ort::MemoryInfo &allocator_info, Ort::Session &&ses
     has_uncertainty_ = understood_outputs.at("rotaxis_scales_tril").available ||
                        understood_outputs.at("rotaxis_std").available;
     has_uncertainty_ &= understood_outputs.at("pos_size_std").available ||
-                        understood_outputs.at("pos_size_scales").available;
-    //has_uncertainty_ &= understood_outputs.at("box_std").available;
-    has_eye_closed_detection_ = understood_outputs.at("eyes").available;
-
-    // FIXME: Recurrent states
-
-    // size_t num_regular_outputs = 2;
-
-    // num_recurrent_states_ = session_.GetInputCount()-1;
-    // if (session_.GetOutputCount()-num_regular_outputs != num_recurrent_states_)
-    //     throw std::runtime_error("Invalid Model: After regular inputs and outputs the model must have equal number of inputs and outputs for tensors holding hidden states of recurrent layers.");
-
-    // // Create tensors for recurrent state
-    // for (size_t i = 0; i < num_recurrent_states_; ++i)
-    // {
-    //     const auto& input_info = session_.GetInputTypeInfo(1+i);
-    //     const auto& output_info = session_.GetOutputTypeInfo(num_regular_outputs+i);
-    //     if (input_info.GetTensorTypeAndShapeInfo().GetShape() != 
-    //         output_info.GetTensorTypeAndShapeInfo().GetShape())
-    //         throw std::runtime_error("Invalid Model: Tensors for recurrent hidden states should have same shape on intput and output");
-    //     input_val_.push_back(create_tensor(input_info, allocator_));
-    //     output_val_.push_back(create_tensor(output_info, allocator_));
-    // }
+                        understood_outputs.at("pos_size_scales").available ||
+                        understood_outputs.at("pos_size_scales_tril").available;
+    pos_scale_uncertainty_is_matrix_ = understood_outputs.at("pos_size_scales_tril").available;
 
     input_names_.resize(session_.GetInputCount());
     input_c_names_.resize(session_.GetInputCount());
@@ -348,37 +331,31 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
         return {};
     }
 
-    for (size_t i = 0; i<num_recurrent_states_; ++i)
-    {
-        // Next step, the current output becomes the input.
-        // Thus we realize the recurrent connection.
-        // Only swaps the internal pointers. There is no copy of data.
-        std::swap(
-            output_val_[output_val_.size()-num_recurrent_states_+i],
-            input_val_[input_val_.size()-num_recurrent_states_+i]);
-    }
-
-    // FIXME: Execution time fluctuates wildly. 19 to 26 msec. Why?
-    //        The instructions are always the same. Maybe a memory allocation
-    //        issue. The ONNX api suggests that tensor are allocated in an
-    //        arena. Does that matter? Maybe the issue is something else?
-
     last_inference_time_ = t.elapsed_ms();
 
     // Perform coordinate transformation.
     // From patch-local normalized in [-1,1] to
-    // frame unnormalized pixel coordinatesettings.
+    // frame unnormalized pixel.
+
+    cv::Matx33f center_size_cov_tril = {};
+    if (has_uncertainty_)
+    {
+        if (pos_scale_uncertainty_is_matrix_)
+        {
+            center_size_cov_tril = output_coord_scales_tril_;
+        }
+        else
+        {
+            center_size_cov_tril(0,0) = output_coord_scales_std_[0];
+            center_size_cov_tril(1,1) = output_coord_scales_std_[1];
+            center_size_cov_tril(2,2) = output_coord_scales_std_[2];
+        }
+        center_size_cov_tril *= patch_size*0.5f;
+    }
 
     const cv::Point2f center = patch_center + 
         (0.5f*patch_size)*cv::Point2f{output_coord_[0], output_coord_[1]};
-
-    cv::Point2f center_stddev = {
-        (0.5f*patch_size)*output_coord_scales_[0],
-        (0.5f*patch_size)*output_coord_scales_[1] };
-
     const float size = patch_size*0.5f*output_coord_[2];
-
-    float size_stddev = patch_size*0.5f*output_coord_scales_[2];
 
     // Following Eigen which uses quat components in the order w, x, y, z.
     // As does OpenCV
@@ -392,6 +369,9 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
     assert(output_rotaxis_scales_tril_(0, 1) == 0);
     assert(output_rotaxis_scales_tril_(0, 2) == 0);
     assert(output_rotaxis_scales_tril_(1, 2) == 0);
+    assert(center_size_cov_tril(0, 1) == 0);
+    assert(center_size_cov_tril(0, 2) == 0);
+    assert(center_size_cov_tril(1, 2) == 0);
 
     cv::Matx33f rotaxis_scales_tril = output_rotaxis_scales_tril_;
     
@@ -407,29 +387,9 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(
         0.5f*patch_size*(output_box_[2]-output_box_[0]),
         0.5f*patch_size*(output_box_[3]-output_box_[1])
     };
-    // const RoiCorners outbox = {
-    //     patch_center + 0.5f*patch_size*cv::Point2f{output_box_[0], output_box_[1]},
-    //     patch_center + 0.5f*patch_size*cv::Point2f{output_box_[2], output_box_[3]}
-    // };
-    // RoiCorners outbox_stddev = {
-    //     0.5f*patch_size*cv::Point2f{output_box_scales_[0], output_box_scales_[1]},
-    //     0.5f*patch_size*cv::Point2f{output_box_scales_[2], output_box_scales_[3]}
-    // };
-
-    // Because the model is sensitive to closing eyes we increase the uncertainty 
-    // a lot to make the subsequent filtering smooth the output more. This should suppress
-    // "twitching" when the user blinks.
-    if (has_eye_closed_detection_)
-    {
-        const float eye_open = std::min(output_eyes_[0], output_eyes_[1]);
-        const float increase_factor = 1.f + 10.f * std::pow(1. - eye_open,4.f);
-        rotaxis_scales_tril *= increase_factor;
-        size_stddev *= increase_factor;
-        center_stddev *= increase_factor;
-    }
 
     return std::optional<Face>({
-        rotation, rotaxis_scales_tril, outbox, center, center_stddev, size, size_stddev
+        rotation, rotaxis_scales_tril, outbox, center, size, center_size_cov_tril
     });
 }
 
