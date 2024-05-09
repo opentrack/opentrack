@@ -64,10 +64,15 @@ void accela_hamilton::filter(const double* input, double *output)
     }
 
     // Zoom smoothing:
-    const double max_zoomed_smoothing {s.max_zoomed_smoothing};		
-    const double max_z {s.max_z};
-
-    const double zoomed_smoothing = output[TZ]>0. ? 0. : std::min(1., -output[TZ] / (max_z + EPSILON))*max_zoomed_smoothing;
+    const double zoomed_smoothing = [this](double output_z) {
+        // Local copies because accessing settings involves thread synchronization
+        // and I don't like this in the middle of math.
+        const double max_zoomed_smoothing {s.max_zoomed_smoothing};		
+        const double max_z {s.max_z};
+        // Movement toward the monitor is negative. Negate and clamp it to get a positive value
+        const double z = std::clamp(-output_z, 0., max_z);
+        return max_zoomed_smoothing * z / (max_z + EPSILON);
+    }(output[TZ]);
 
     const double rot_dz{ s.rot_deadzone};
     const double rot_thres = double{s.rot_smoothing} + zoomed_smoothing;
