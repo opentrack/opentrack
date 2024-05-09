@@ -19,7 +19,6 @@ endfunction()
 
 set(opentrack_install-debug-info FALSE CACHE INTERNAL "" FORCE)
 
-#setq(EIGEN3_INCLUDE_DIR "eigen")
 #setq(OpenCV_DIR "../opencv")
 #setq(SDK_ARUCO_LIBPATH "../aruco")
 #setq(SDK_FSUIPC "fsuipc")

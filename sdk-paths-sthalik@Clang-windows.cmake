@@ -18,8 +18,6 @@ set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 #setq(OpenCV_DIR "opencv/build-mingw-64")
 setq(SDK_ARUCO_LIBPATH "aruco/build-mingw-w64/src/libaruco.a")
 
-setq(EIGEN3_INCLUDE_DIR "eigen")
-
 setq(SDK_FSUIPC "fsuipc")
 setq(SDK_HYDRA "SixenseSDK")
 
