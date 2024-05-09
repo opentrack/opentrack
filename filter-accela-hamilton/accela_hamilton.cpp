@@ -26,7 +26,7 @@ accela_hamilton::accela_hamilton()
 
 void accela_hamilton::filter(const double* input, double *output)
 {
-    constexpr double EPSILON = 1e-30;
+    constexpr float EPSILON = 1e-15F;
 
     const QQuaternion current_rot = QQuaternion::fromEulerAngles(input[Pitch], input[Yaw], input[Roll]);
     const QVector3D current_pos(input[TX], input[TY], input[TZ]);
@@ -44,10 +44,10 @@ void accela_hamilton::filter(const double* input, double *output)
         return;
     }
 
-    const double pos_thres{s.pos_smoothing};
-    const double pos_dz{ s.pos_deadzone};
+    const float pos_thres{s.pos_smoothing};
+    const float pos_dz{ s.pos_deadzone};
 
-    const double dt = t.elapsed_seconds();
+    const float dt = t.elapsed_seconds();
     t.start();
 
     // Position
@@ -55,7 +55,7 @@ void accela_hamilton::filter(const double* input, double *output)
         const QVector3D delta = current_pos - last_position;
         const float delta_len = delta.length();
         QVector3D delta_normed = delta_len>0.F ? delta/delta_len : QVector3D(); // Zero vector when length was zero.
-        const double gain = dt*spline_pos.get_value_no_save(std::max(0., delta_len-pos_dz) / pos_thres);
+        const float gain = dt*spline_pos.get_value_no_save(std::max(0.F, delta_len-pos_dz) / pos_thres);
         const QVector3D output_pos = last_position + gain * delta_normed;
         output[TX] = output_pos.x();
         output[TY] = output_pos.y();
@@ -64,18 +64,18 @@ void accela_hamilton::filter(const double* input, double *output)
     }
 
     // Zoom smoothing:
-    const double zoomed_smoothing = [this](double output_z) {
+    const float zoomed_smoothing = [this](float output_z) {
         // Local copies because accessing settings involves thread synchronization
         // and I don't like this in the middle of math.
-        const double max_zoomed_smoothing {s.max_zoomed_smoothing};		
-        const double max_z {s.max_z};
+        const float max_zoomed_smoothing {s.max_zoomed_smoothing};		
+        const float max_z {s.max_z};
         // Movement toward the monitor is negative. Negate and clamp it to get a positive value
-        const double z = std::clamp(-output_z, 0., max_z);
+        const float z = std::clamp(-output_z, 0.F, max_z);
         return max_zoomed_smoothing * z / (max_z + EPSILON);
     }(output[TZ]);
 
-    const double rot_dz{ s.rot_deadzone};
-    const double rot_thres = double{s.rot_smoothing} + zoomed_smoothing;
+    const float rot_dz{ s.rot_deadzone};
+    const float rot_thres = float{s.rot_smoothing} + zoomed_smoothing;
 
     // Rotation
     {
@@ -89,10 +89,10 @@ void accela_hamilton::filter(const double* input, double *output)
         float angle;
         (last_rotation.conjugated() * current_rot).getAxisAndAngle(&axis, &angle);
         // Apply the Accela gain magic. Also need to multiply with dt here.
-        angle = std::max(0.f, angle - std::copysign(static_cast<float>(rot_dz), angle)) / static_cast<float>(rot_thres);
-        const double gain_angle = dt*spline_rot.get_value_no_save(std::abs(angle)) * signum(angle);
+        angle = std::max(0.f, angle - std::copysign(rot_dz, angle)) / rot_thres;
+        const float gain_angle = dt*spline_rot.get_value_no_save(std::abs(angle)) * signum(angle);
         // Rotate toward the measured orientation. We take the already computed axis. But the angle is now the accela gain.
-        const QQuaternion output_rot = last_rotation * QQuaternion::fromAxisAndAngle(axis, static_cast<float>(gain_angle));
+        const QQuaternion output_rot = last_rotation * QQuaternion::fromAxisAndAngle(axis, gain_angle);
         // And back to Euler angles
         const QVector3D output_euler = output_rot.toEulerAngles();
         output[Pitch] =  output_euler.x();
