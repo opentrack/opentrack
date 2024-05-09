@@ -50,9 +50,8 @@ class PoseEstimator
             cv::Matx33f rotaxis_cov_tril; // Lower triangular factor of Cholesky decomposition
             cv::Rect2f box;
             cv::Point2f center;
-            cv::Point2f center_stddev;
             float size;
-            float size_stddev;
+            cv::Matx33f center_size_cov_tril; // Lower triangular factor of Cholesky decomposition
         };
 
         PoseEstimator(Ort::MemoryInfo &allocator_info,
@@ -84,16 +83,15 @@ class PoseEstimator
         cv::Vec<float, 4> output_quat_{};   //  Quaternion output
         cv::Vec<float, 4> output_box_{};    // Bounding box output
         cv::Matx33f output_rotaxis_scales_tril_{}; // Lower triangular matrix of LLT factorization of covariance of rotation vector as offset from output quaternion
-        cv::Vec<float, 2> output_eyes_{};
-        cv::Vec<float, 3> output_coord_scales_{};
+        cv::Matx33f output_coord_scales_tril_{}; // Lower triangular factor
+        cv::Vec3f output_coord_scales_std_{}; // Depending on the model, alternatively a 3d vector with standard deviations.
         std::vector<Ort::Value> output_val_; // Tensors to put the model outputs in.
         std::vector<std::string> output_names_; // Refers to the names in the onnx model.
         std::vector<const char *> output_c_names_; // Refers to the C names in the onnx model.
         // More bookkeeping
-        size_t num_recurrent_states_ = 0;
         double last_inference_time_ = 0;
         bool has_uncertainty_ = false;
-        bool has_eye_closed_detection_ = false;
+        bool pos_scale_uncertainty_is_matrix_ = false;
 };
 
 

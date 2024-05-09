@@ -3,6 +3,7 @@
 #include "opencv_contrib.h"
 #include "unscented_trafo.h"
 
+#include <tuple>
 #include <opencv2/core/base.hpp>
 #include <opencv2/core/matx.hpp>
 #include <opencv2/core/quaternion.hpp>
@@ -12,19 +13,25 @@ namespace neuralnet_tracker_ns
 
 using namespace cvcontrib;
 
-using StateVec = cv::Vec<float,6>;
-using StateCov = cv::Matx<float,6,6>;
+// Number of degrees of freedom of position and rotation
+static constexpr int dofs = 6;
 
-static constexpr int num_sigmas = ukf_cv::MerweScaledSigmaPoints<6>::num_sigmas;
+using StateVec = cv::Vec<float,dofs>;
+using StateCov = cv::Matx<float,dofs,dofs>;
+
+static constexpr int num_sigmas = ukf_cv::MerweScaledSigmaPoints<dofs>::num_sigmas;
+// Rescaling factor for position/size living in the space of the face crop.
+// Applied prior to application of UKF to prevent numerical problems.
 static constexpr float img_scale = 200.f;
+// Similar rescaling factor for position/size that live in world space.
 static constexpr float world_scale = 1000.f; // mm
 
+// Fills the 6 DoF covariance factor, as in L L^T factorization.
+// Covariance is given wrt the tangent space of current predictions
 StateCov make_tangent_space_uncertainty_tril(const PoseEstimator::Face &face)
 {
     StateCov tril = StateCov::eye();
-    tril(0,0) = face.center_stddev.x/img_scale;
-    tril(1,1) = face.center_stddev.y/img_scale;
-    tril(2,2) = face.size_stddev/img_scale;
+    set_minor<3,3>(tril, 0, 0, face.center_size_cov_tril / img_scale);
     set_minor<3,3>(tril, 3, 3, face.rotaxis_cov_tril);
     return tril;
 }
@@ -41,7 +48,7 @@ QuatPose apply_offset(const QuatPose& pose, const StateVec& offset)
 }
 
 
-PoseEstimator::Face apply_offset(const PoseEstimator::Face& face, const StateVec& offset)
+std::tuple<cv::Quatf, cv::Point2f, float> apply_offset(const PoseEstimator::Face& face, const StateVec& offset)
 {
     const cv::Quatf dr = cv::Quatf::createFromRvec(cv::Vec3f{ offset[3], offset[4], offset[5] });
     const auto r = face.rotation * dr;
@@ -57,14 +64,10 @@ PoseEstimator::Face apply_offset(const PoseEstimator::Face& face, const StateVec
     // is designed to handle non-linearities like this.
     const float sz = std::max(0.1f*face.size, face.size + offset[2]*img_scale);
 
-    return PoseEstimator::Face{
+    return {
         r,
-        {},
-        {},
         p,
-        {},
         sz,
-        {}
     };
 }
 
@@ -77,9 +80,9 @@ StateVec relative_to(const QuatPose& reference, const QuatPose& pose)
 }
 
 
-ukf_cv::SigmaPoints<6> relative_to(const QuatPose& pose, const std::array<QuatPose,num_sigmas>& sigmas)
+ukf_cv::SigmaPoints<dofs> relative_to(const QuatPose& pose, const std::array<QuatPose,num_sigmas>& sigmas)
 {
-    ukf_cv::SigmaPoints<6> out;
+    ukf_cv::SigmaPoints<dofs> out; // Beware, the number of points is != the number of DoFs.
     std::transform(sigmas.begin(), sigmas.end(), out.begin(), [&pose](const QuatPose& s) {
         return relative_to(pose, s);
     });
@@ -87,14 +90,14 @@ ukf_cv::SigmaPoints<6> relative_to(const QuatPose& pose, const std::array<QuatPo
 }
 
 
-std::array<QuatPose,num_sigmas> compute_world_pose_from_sigma_point(const PoseEstimator::Face& face, const ukf_cv::SigmaPoints<6>& sigmas, Face2WorldFunction face2world)
+std::array<QuatPose,num_sigmas> compute_world_pose_from_sigma_point(const PoseEstimator::Face& face, const ukf_cv::SigmaPoints<dofs>& sigmas, Face2WorldFunction face2world)
 {
     std::array<QuatPose,num_sigmas> out;
     std::transform(sigmas.begin(), sigmas.end(), out.begin(), [face2world=std::move(face2world), &face](const StateVec& sigma_point) {
         // First unpack the state vector and generate quaternion rotation w.r.t image space.
-        const auto sigma_face = apply_offset(face, sigma_point);
+        const auto [rotation, center, size] = apply_offset(face, sigma_point);
         // Then transform ...
-        QuatPose pose = face2world(sigma_face.rotation, sigma_face.center, sigma_face.size);
+        QuatPose pose = face2world(rotation, center, size);
         pose.pos /= world_scale;
         return pose;
     });
@@ -131,24 +134,32 @@ StateVec apply_filter_to_offset(const StateVec& offset, const StateCov& offset_c
 
 QuatPose apply_filter(const PoseEstimator::Face &face, const QuatPose& previous_pose_, float dt, Face2WorldFunction face2world, const FiltParams& params)
 {
-    ukf_cv::MerweScaledSigmaPoints<6> unscentedtrafo;
+    ukf_cv::MerweScaledSigmaPoints<dofs> unscentedtrafo;
     auto previous_pose = previous_pose_;
     previous_pose.pos /= world_scale;
 
-    // Here we have the covariance matrix for the offset from the observed values in `face`.
+    // Get 6 DoF covariance factor for the predictions in the face crop space.
     const auto cov_tril = make_tangent_space_uncertainty_tril(face);
 
-    // The filter uses an unscented transform to translate that into a distribution for the offset from the previous pose.
-    const ukf_cv::SigmaPoints<6> sigmas = unscentedtrafo.compute_sigmas(to_vec(StateVec::zeros()), cov_tril, true);
+    // Compute so called sigma points. These represent the distribution from the covariance matrix in terms of 
+    // sampling points.
+    const ukf_cv::SigmaPoints<dofs> sigmas = unscentedtrafo.compute_sigmas(to_vec(StateVec::zeros()), cov_tril, true);
 
+    // The filter uses an unscented transform to translate that into a distribution for the offset from the previous pose.
+    // The trick is to transform the sampling points and compute a covariance from them in the output space.
     // We have many of these sigma points. This is why that callback comes into play here.
+    // The transform to 3d world space is more than Face2WorldFunction because we also need to apply the sigma point (as
+    // a relative offset) to the pose in face crop space.
     const std::array<QuatPose,num_sigmas> pose_sigmas = compute_world_pose_from_sigma_point(face, sigmas, std::move(face2world));
 
-    const ukf_cv::SigmaPoints<6> deltas_sigmas = relative_to(previous_pose, pose_sigmas);
+    // Compute sigma points relative to the previous pose
+    const ukf_cv::SigmaPoints<dofs> deltas_sigmas = relative_to(previous_pose, pose_sigmas);
 
+    // Compute the mean offset from the last pose and the spread due to the networks uncertainty output.
     const auto [offset, offset_cov] = unscentedtrafo.compute_statistics(deltas_sigmas);
 
-    // Then the deadzone is applied to the offset and finally the previous pose is transformed by the offset to arrive at the final output.
+    // Then the deadzone is applied to the offset and finally the previous pose is transformed by the offset to arrive 
+    // at the final output.
     const StateVec scaled_offset = apply_filter_to_offset(offset, offset_cov, dt, params);
 
     QuatPose new_pose = apply_offset(previous_pose, scaled_offset);
