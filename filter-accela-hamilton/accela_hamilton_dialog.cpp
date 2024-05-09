@@ -35,11 +35,11 @@ dialog_accela_hamilton::dialog_accela_hamilton()
 
     tie_setting(s.max_zoomed_smoothing, ui.max_zoomed_smoothing);
     tie_setting(s.max_zoomed_smoothing, ui.lb_max_zoomed_smoothing, [](double x)
-      { return QStringLiteral("%1°").arg(x, 0, 'g', 3);});
+      { return tr("%1°").arg(x, 0, 'g', 3);});
 
     tie_setting(s.max_z, ui.max_z);
     tie_setting(s.max_z, ui.lb_max_z, [](double x)
-      { return QStringLiteral("%1mm").arg(x, 0, 'g', 3);});
+      { return tr("%1mm").arg(x, 0, 'g', 3);});
 
 //#define SPLINE_ROT_DEBUG
 //#define SPLINE_TRANS_DEBUG
