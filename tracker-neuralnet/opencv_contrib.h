@@ -81,7 +81,7 @@ inline cv::Vec3f toRotVec(const cv::Quatf& q)
 #if 1
     // w = cos(alpha/2)
     // xyz = sin(alpha/2)*axis
-    static constexpr float eps = 1.e-12;
+    static constexpr float eps = 1.e-12f;
     const cv::Vec3f xyz{q.x, q.y, q.z};
     const float len = cv::norm(xyz);
     const float angle = std::atan2(len, q.w)*2.f;
