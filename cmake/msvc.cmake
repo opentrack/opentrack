@@ -113,19 +113,9 @@ set(opentrack-simd "SSE2")
 
 if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
     set(opentrack-simd "AVX")
-
-    if(opentrack-no-static-crt)
-        sets(BOOL
-        ONNX_USE_MSVC_STATIC_RUNTIME            OFF
-        protobuf_MSVC_STATIC_RUNTIME            OFF
-        )
-    else()
-        sets(BOOL
-        ONNX_USE_MSVC_STATIC_RUNTIME            ON
-        protobuf_MSVC_STATIC_RUNTIME            ON
-        )
-    endif()
     sets(BOOL
+         ONNX_USE_MSVC_STATIC_RUNTIME           OFF
+         protobuf_MSVC_STATIC_RUNTIME           OFF
          onnxruntime_USE_AVX                    ON
          onnxruntime_USE_AVX2                   OFF
          onnxruntime_USE_AVX512                 OFF
@@ -147,6 +137,7 @@ elseif(opentrack-64bit)
 endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+add_compile_options(-MD)
 
 add_link_options(-cgthreads:1)
 
