@@ -113,10 +113,12 @@ bool TranslationCalibrator::check_bucket(const cv::Matx33d& R_CM_k)
     }
     else
     {
+#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "calibrator: index out of range"
                            << "yaw" << yaw_k
                            << "pitch" << pitch_k);
 
+#endif
         return false;
     }
 }

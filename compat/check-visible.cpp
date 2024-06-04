@@ -70,7 +70,9 @@ void set_is_visible(const QWidget& w, bool force)
     }
     else
     {
+#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "check-visible: GetWindowRect failed");
+#endif
         visible = true;
     }
 }

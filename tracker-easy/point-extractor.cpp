@@ -84,7 +84,9 @@ namespace EasyTracker
         }
         else
         {
+#if !defined(QT_NO_DEBUG_OUTPUT)
             eval_once(qDebug() << "tracker/easy: camera frame depth not supported" << aFrame.channels());
+#endif
             return;
         }
 

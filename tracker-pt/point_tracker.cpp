@@ -51,7 +51,9 @@ void PointModel::set_model(const pt_settings& s)
     switch (s.active_model_panel)
     {
     default:
+#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "pt: wrong model type selected");
+#endif
         [[fallthrough]];
     case Clip:
         M01 = vec3(0, s.clip_ty, -s.clip_tz);
