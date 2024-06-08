@@ -59,7 +59,6 @@ std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString&
 
     QString path = expand(
         ":PROTON_DIST_PATH/bin"
-        ":PROTON_DIST_PATH/bin"
     );
     path += ':'; path += qgetenv("PATH");
     env.insert("PATH", path);
