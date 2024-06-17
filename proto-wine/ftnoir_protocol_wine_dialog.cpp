@@ -2,6 +2,9 @@
 #include <QDebug>
 #include <QFileDialog>
 #include <QDir>
+#include <QDirIterator>
+#include <qdebug.h>
+#include <qdir.h>
 
 #include "api/plugin-api.hpp"
 
@@ -46,12 +49,26 @@ FTControls::FTControls()
         QDir dir(QDir::homePath() + path);
         dir.setFilter(QDir::Dirs);
         dir.setNameFilters({ "Proton*" });
-        QFileInfoList list = dir.entryInfoList();
-        for (int i = 0; i < list.size(); ++i) {
-            QFileInfo fileInfo = list.at(i);
-            ui.proton_version->addItem(fileInfo.fileName(), QVariant{fileInfo.filePath()});
+
+        QFileInfoList proton_dir_list = dir.entryInfoList();
+        for (int i = 0; i < proton_dir_list.size(); ++i) {
+            const QFileInfo &proton_dir = proton_dir_list.at(i);
+            qDebug() << proton_dir.canonicalFilePath();
+
+            QDirIterator proton_executable_it(proton_dir.canonicalFilePath(), QStringList() << "wine", QDir::Files, QDirIterator::Subdirectories);
+
+            if (proton_executable_it.hasNext()) {
+                QString proton_executable_path = proton_executable_it.next();
+                QDir proton_dist_dir(proton_executable_path);
+                proton_dist_dir.cd("../../");
+
+                qDebug() << proton_dist_dir.canonicalPath();
+
+                ui.proton_version->addItem(proton_dir.fileName(), QVariant{proton_dist_dir.canonicalPath()});
+            }
         }
     }
+
 
     tie_setting(s.proton_path, ui.proton_version);
     tie_setting(s.variant_wine, ui.variant_wine);
