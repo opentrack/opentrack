@@ -38,7 +38,11 @@
 #   define progn(...) ([&]() -> decltype(auto) { __VA_ARGS__ }())
 #   define eval_once2(expr, ctr) eval_once3(expr, ctr)
 #   define eval_once3(expr, ctr) ([&] { [[maybe_unused]] static const char init_ ## ctr = ((void)(expr), 0); }())
-#   define eval_once(expr) eval_once2(expr, __COUNTER__)
+#   ifdef QT_NO_DEBUG_OUTPUT
+#       define eval_once(expr) void()
+#   else
+#       define eval_once(expr) eval_once2(expr, __COUNTER__)
+#   endif
 
 #define OTR_DISABLE_MOVE_COPY(type)         \
     type(const type&) = delete;             \
