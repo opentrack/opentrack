@@ -249,30 +249,24 @@ void options_dialog::switch_to_tracker_tab()
 {
     if (tracker_dialog)
         ui.tabWidget->setCurrentWidget(tracker_dialog);
-#if !defined(QT_NO_DEBUG_OUTPUT)
     else
         eval_once(qDebug() << "options: asked for tracker tab widget with old-style widget dialog!");
-#endif
 }
 
 void options_dialog::switch_to_proto_tab()
 {
     if (proto_dialog)
         ui.tabWidget->setCurrentWidget(proto_dialog);
-#if !defined(QT_NO_DEBUG_OUTPUT)
     else
         eval_once(qDebug() << "options: asked for proto tab widget with old-style widget dialog!");
-#endif
 }
 
 void options_dialog::switch_to_filter_tab()
 {
     if (filter_dialog)
         ui.tabWidget->setCurrentWidget(filter_dialog);
-#if !defined(QT_NO_DEBUG_OUTPUT)
     else
         eval_once(qDebug() << "options: asked for filter tab widget with old-style widget dialog!");
-#endif
 }
 
 void options_dialog::tracker_module_changed()

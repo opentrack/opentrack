@@ -221,18 +221,12 @@ static inline bool is_nan(const dmat<u,w>& r)
 static never_inline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
-#if !defined(QT_NO_DEBUG_OUTPUT)
     eval_once(
         qDebug()  << "nan check failed"
                   << "for:" << text
                   << "function:" << fun
                   << "line:" << line
     );
-#else
-  (void) text;
-  (void) fun;
-  (void) line;
-#endif
 }
 
 template<typename... xs>

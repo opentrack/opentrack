@@ -55,11 +55,10 @@ bool correlation_calibrator::check_buckets(const vec6& data)
 
         if (pos[k] >= nbuckets[k])
         {
-#if !defined(QT_NO_DEBUG_OUTPUT)
             eval_once(qDebug() << "idx" << k
                                << "bucket" << (int)pos[k]
                                << "outside bounds" << nbuckets[k]);
-#endif
+
             return false;
         }
 

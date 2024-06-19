@@ -55,9 +55,7 @@ namespace EasyTracker
         }
         else
         {
-#if !defined(QT_NO_DEBUG_OUTPUT)
             eval_once(qDebug() << "tracker/easy: camera frame depth not supported" << aFrame.channels());
-#endif
             return *this;
         }
 
@@ -79,10 +77,8 @@ namespace EasyTracker
 
         if (stride < 64 || stride < iFrameWidget.cols * 4)
         {
-#if !defined(QT_NO_DEBUG_OUTPUT)
             eval_once(qDebug() << "bad stride" << stride
                 << "for bitmap size" << iFrameResized.cols << iFrameResized.rows);
-#endif
             return QImage();
         }
 

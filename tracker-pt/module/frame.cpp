@@ -29,9 +29,7 @@ void Preview::set_last_frame(const pt_frame& frame_)
     }
     else
     {
-#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "tracker/pt: camera frame depth" << frame.channels() << "!= 3");
-#endif
         frame_copy.create(frame_copy.size(), CV_8UC3);
         frame_copy.setTo({0});
     }
@@ -50,10 +48,8 @@ QImage Preview::get_bitmap()
 
     if (stride < frame_out.cols * 4)
     {
-#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "bad stride" << stride
                            << "for bitmap size" << frame_copy.cols << frame_copy.rows);
-#endif
         return QImage();
     }
 

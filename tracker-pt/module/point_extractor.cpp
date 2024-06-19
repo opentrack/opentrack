@@ -197,14 +197,10 @@ void PointExtractor::color_to_grayscale(const cv::Mat& frame, cv::Mat1b& output)
         break;
     }
     case pt_color_hardware:
-#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "camera driver doesn't support grayscale");
-#endif
         goto do_grayscale;
     default:
-#if !defined(QT_NO_DEBUG_OUTPUT)
         eval_once(qDebug() << "wrong pt_color_type enum value" << int(s.blob_color));
-#endif
     [[fallthrough]];
     case pt_color_bt709:
 do_grayscale:
