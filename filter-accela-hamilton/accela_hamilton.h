@@ -13,11 +13,11 @@
 #include "api/plugin-api.hpp"
 #include "compat/timer.hpp"
 #include "compat/variance.hpp"
+#include "compat/hamilton-tools.h"
 
 #include <QMutex>
 #include <QTimer>
-#include <QQuaternion>
-#include <QVector3D>
+
 
 //#define DEBUG_ACCELA
 
@@ -30,8 +30,8 @@ struct accela_hamilton : IFilter
     module_status initialize() override { return status_ok(); }
 private:
     settings_accela_hamilton s;
-    QVector3D last_position = {};
-    QQuaternion last_rotation = {};
+    tVector last_position = {};
+    tQuat last_rotation = {};
     Timer t;
 #if defined DEBUG_ACCELA
     Timer debug_timer;

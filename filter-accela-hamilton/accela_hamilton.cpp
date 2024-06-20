@@ -6,14 +6,13 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "accela_hamilton.h"
-#include "compat/math.hpp"
 #include "api/plugin-api.hpp"
 #include "opentrack/defs.hpp"
 
 #include <algorithm>
-#include <QDebug>
-#include <QMutexLocker>
 
+#include "compat/math.hpp"
+#include "compat/hamilton-tools.h"
 #include "compat/math-imports.hpp"
 #include "compat/time.hpp"
 
@@ -26,10 +25,10 @@ accela_hamilton::accela_hamilton()
 
 void accela_hamilton::filter(const double* input, double *output)
 {
-    constexpr float EPSILON = 1e-15F;
+    constexpr double EPSILON = 1e-15F;
 
-    const QQuaternion current_rot = QQuaternion::fromEulerAngles(input[Pitch], input[Yaw], input[Roll]);
-    const QVector3D current_pos(input[TX], input[TY], input[TZ]);
+    const tQuat current_rot = QuatFromYPR(input + Yaw);
+    const tVector current_pos(input[TX], input[TY], input[TZ]);
 
     if (unlikely(first_run))
     {
@@ -44,38 +43,38 @@ void accela_hamilton::filter(const double* input, double *output)
         return;
     }
 
-    const float pos_thres{s.pos_smoothing};
-    const float pos_dz{ s.pos_deadzone};
+    const double pos_thres{s.pos_smoothing};
+    const double pos_dz{ s.pos_deadzone};
 
-    const float dt = t.elapsed_seconds();
+    const double dt = t.elapsed_seconds();
     t.start();
 
     // Position
     {
-        const QVector3D delta = current_pos - last_position;
-        const float delta_len = delta.length();
-        QVector3D delta_normed = delta_len>0.F ? delta/delta_len : QVector3D(); // Zero vector when length was zero.
-        const float gain = dt*spline_pos.get_value_no_save(std::max(0.F, delta_len-pos_dz) / pos_thres);
-        const QVector3D output_pos = last_position + gain * delta_normed;
-        output[TX] = output_pos.x();
-        output[TY] = output_pos.y();
-        output[TZ] = output_pos.z();
+        const tVector delta = current_pos - last_position;
+        const double delta_len = VectorLength(delta);
+        const tVector delta_normed = delta_len>0. ? delta/delta_len : tVector(); // Zero vector when length was zero.
+        const double gain = dt*spline_pos.get_value_no_save(std::max(0., delta_len-pos_dz) / pos_thres);
+        const tVector output_pos = last_position + (delta_normed * gain);
+        output[TX] = output_pos.v[0];
+        output[TY] = output_pos.v[1];
+        output[TZ] = output_pos.v[2];
         last_position = output_pos;
     }
 
     // Zoom smoothing:
-    const float zoomed_smoothing = [this](float output_z) {
+    const double zoomed_smoothing = [this](double output_z) {
         // Local copies because accessing settings involves thread synchronization
         // and I don't like this in the middle of math.
-        const float max_zoomed_smoothing {s.max_zoomed_smoothing};		
-        const float max_z {s.max_z};
+        const double max_zoomed_smoothing {s.max_zoomed_smoothing};		
+        const double max_z {s.max_z};
         // Movement toward the monitor is negative. Negate and clamp it to get a positive value
-        const float z = std::clamp(-output_z, 0.F, max_z);
+        const double z = std::clamp(-output_z, 0., max_z);
         return max_zoomed_smoothing * z / (max_z + EPSILON);
     }(output[TZ]);
 
-    const float rot_dz{ s.rot_deadzone};
-    const float rot_thres = float{s.rot_smoothing} + zoomed_smoothing;
+    const double rot_dz{ s.rot_deadzone};
+    const double rot_thres = double{s.rot_smoothing} + zoomed_smoothing;
 
     // Rotation
     {
@@ -85,19 +84,21 @@ void accela_hamilton::filter(const double* input, double *output)
         // the new orientation, but that's fine.
 
         // Compute rotation angle and axis which brings the previous orientation to the current rotation
-        QVector3D axis;
-        float angle;
-        (last_rotation.conjugated() * current_rot).getAxisAndAngle(&axis, &angle);
-        // Apply the Accela gain magic. Also need to multiply with dt here.
-        angle = std::max(0.f, angle - std::copysign(rot_dz, angle)) / rot_thres;
-        const float gain_angle = dt*spline_rot.get_value_no_save(std::abs(angle)) * signum(angle);
-        // Rotate toward the measured orientation. We take the already computed axis. But the angle is now the accela gain.
-        const QQuaternion output_rot = last_rotation * QQuaternion::fromAxisAndAngle(axis, gain_angle);
+        const double angle = AngleBetween(last_rotation, current_rot);
+        // Apply the Accela gain magic. The "gain_angle" is the desired rotation from the old orientation
+        // towards the current. Then alpha is the blending factor for the SLerp operation. It is normalized
+        // to the range [0,1] where 1 corresponds to the current orientation, i.e. it is the fractional
+        // rotation relative to the "gain_angle". EPSILON is added to prevent division by zero.
+        // Additionally we use std::min(1., ...) to clamp the blending. alpha>1 would probably not make much
+        // sense since it would mean extrapolation beyond the current orientation. And it would be a rare
+        // edge case. Secondly idk if Slerp supports alpha>1.
+        const double normalized_angle = std::max(0., angle - rot_dz) / rot_thres;
+        const double gain_angle = dt*spline_rot.get_value_no_save(std::abs(normalized_angle));
+        const double alpha = std::min(1., gain_angle / (angle + EPSILON));
+        // Rotate toward the measured orientation. 
+        const tQuat output_rot = Slerp(last_rotation, current_rot, alpha);
         // And back to Euler angles
-        const QVector3D output_euler = output_rot.toEulerAngles();
-        output[Pitch] =  output_euler.x();
-        output[Yaw]   =  output_euler.y();
-        output[Roll]  =  output_euler.z();
+        QuatToYPR(output_rot, output + Yaw);
         last_rotation = output_rot;
     }
 }
