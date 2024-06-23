@@ -137,6 +137,7 @@ if(MSVC)
     add_link_options(-ignore:4020)
     add_link_options(-ignore:4217) # debug build
 
+
     if(MSVC_VERSION GREATER_EQUAL 1913)
         if(NOT MSVC_VERSION GREATER_EQUAL 1929)
             add_compile_options(-experimental:external)

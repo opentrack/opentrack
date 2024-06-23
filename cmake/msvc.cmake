@@ -112,11 +112,10 @@ endif()
 set(opentrack-simd "SSE2")
 
 if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
-    set(opentrack-simd "AVX")
     sets(BOOL
          ONNX_USE_MSVC_STATIC_RUNTIME           OFF
          protobuf_MSVC_STATIC_RUNTIME           OFF
-         onnxruntime_USE_AVX                    ON
+         onnxruntime_USE_AVX                    OFF
          onnxruntime_USE_AVX2                   OFF
          onnxruntime_USE_AVX512                 OFF
          onnxruntime_BUILD_BENCHMARKS           OFF
@@ -132,7 +131,14 @@ if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
          onnxruntime_DISABLE_CONTRIB_OPS        ON
          BUILD_TESTING                          OFF
     )
-elseif(opentrack-64bit)
+    if(opentrack-64bit)
+        sets(BOOL
+             onnxruntime_USE_AVX                ON
+        )
+    endif()
+endif()
+
+if(opentrack-64bit)
     set(opentrack-simd "AVX")
 endif()
 
