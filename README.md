@@ -26,17 +26,17 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 
 ## Tracking input
 
-- PointTracker by Patrick Ruoff, freetrack-like light sources
-- Oculus Rift DK1, DK2, CV, and legacy/knockoff versions (Windows only)
-- Paper [marker support](https://github.com/opentrack/opentrack/wiki/Aruco-tracker)
-  via the ArUco library <<https://github.com/opentrack/aruco>>
+- PointTracker by Patrick Ruoff, FreeTrack-like light points
+- Oculus Rift (Windows only)
+- Paper [marker](https://github.com/opentrack/opentrack/wiki/Aruco-tracker)
+  via the Aruco library <<https://github.com/opentrack/aruco>>
 - Razer Hydra
 - Relaying via UDP from a different computer
-- Relaying UDP via FreePIE-specific Android app
+- Relaying UDP via the [FreePIE](https://andersmalmgren.github.io/FreePIE/) Android app
 - Joystick analog axes (Windows)
 - Windows Phone [tracker](https://github.com/ZanderAdam/OpenTrack.WindowsPhone/wiki) over opentrack UDP protocol
-- Arduino with custom firmware
-- Intel RealSense 3D cameras (Windows)
+- Arduino with custom Hatire firmware
+- Intel RealSense 3D camera (Windows)
 - BBC micro:bit, LEGO, sensortag support via Smalltalk<sup>[(1)](https://en.wikipedia.org/wiki/Smalltalk)[(2)](https://en.wikipedia.org/wiki/Alan_Kay)</sup>
   [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
 - Wiimote (Windows)
