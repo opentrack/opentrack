@@ -28,11 +28,10 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 
 - PointTracker by Patrick Ruoff, FreeTrack-like light points
 - Oculus Rift (Windows only)
-- Paper [marker](https://github.com/opentrack/opentrack/wiki/Aruco-tracker)
-  via the Aruco<sup>[[1](https://github.com/opentrack/aruco)</sup> library
+- Paper [marker](https://github.com/opentrack/opentrack/wiki/Aruco-tracker) via the Aruco<sup>[[1](https://github.com/opentrack/aruco)]</sup> library
 - Razer Hydra
 - Relaying via UDP from a different computer
-- Relaying UDP via the FreePIE<sup>[[1](https://andersmalmgren.github.io/FreePIE/)</sup> Android [apps](https://github.com/opentrack/opentrack/tree/master/contrib/freepie-udp)
+- Relaying UDP via the FreePIE<sup>[[1](https://andersmalmgren.github.io/FreePIE/)]</sup> Android [apps](https://github.com/opentrack/opentrack/tree/master/contrib/freepie-udp)
 - Joystick analog axes (Windows)
 - Windows Phone [tracker](https://github.com/ZanderAdam/OpenTrack.WindowsPhone/wiki) over opentrack UDP protocol
 - Arduino with custom Hatire firmware
