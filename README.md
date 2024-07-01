@@ -42,6 +42,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - NeuralNet face tracker
 - Eyeware Beam<sup>[[1](https://beam.eyeware.tech/)]</sup>
 - Tobii eye tracker
+- SmoothTrack Head Tracker (iOS/Android)<sup>[[1](https://smoothtrack.app/)]</sup>
 
 ## Output protocols
 
