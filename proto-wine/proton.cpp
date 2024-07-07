@@ -17,11 +17,13 @@
 static const char* steam_paths[] = {
     "/.steam/steam/steamapps/compatdata",
     "/.local/share/Steam/steamapps/compatdata",
+    "/.steam/debian-installation/steamapps/compatdata",
 };
 
 static const char* runtime_paths[] = {
     "/.local/share/Steam/ubuntu12_32/steam-runtime",
     "/.steam/ubuntu12_32/steam-runtime",
+    "/.steam/debian-installation/ubuntu12_32/steam-runtime",
 };
 
 
