@@ -103,3 +103,106 @@ The code is held to a high-quality standard and written with utmost care; consid
 ## Building opentrack from source
 
 On Windows, use either mingw-w64 or MS Visual Studio 2015 Update 3/newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C---2017-and-later).
+
+### Linux (Ubuntu)
+
+1. Install dependencies
+
+```
+sudo apt-get update
+sudo apt-get install -y libprocps-dev libopencv-dev libopencv-dev wine64-tools
+sudo apt-get install -y qttools5-dev qtbase5-dev libqt5serialport5-dev qtbase5-private-dev
+```
+
+2. Build and install
+
+```
+git clone https://github.com/opentrack/opentrack.git
+cd opentrack
+mkdir build
+cd build
+cmake .. -GNinja -DCMAKE_BUILD_TYPE=RELEASE -DCMAKE_INSTALL_PREFIX="$HOME/.local/" -DSDK_WINE=ON
+ninja install
+```
+
+#### Optional dependencies
+
+opentrack supports optional dependencies, several of which can be enabled on Linux.
+
+##### Aruco paper marker tracker
+
+CMake options: `-DSDK_ARUCO_LIBPATH=<libaruco-path>`
+
+Dependencies: `libopencv-dev`, [libaruco](#How-to-build-libaruco)
+
+###### How to build libaruco
+```
+git clone https://github.com/opentrack/aruco.git
+cd aruco
+mkdir build && cmake .. -GNinja -DCMAKE_BUILD_TYPE=RELEASE
+ninja
+# Save path of aruco/build/src/
+```
+
+##### Easy Tracker
+
+CMake options: None required
+
+Dependencies: `libopencv-dev`
+
+##### FTNoIR PointTracker
+
+CMake options: None required
+
+Dependencies: `libopencv-dev`
+
+##### Hatire head tracker
+
+CMake options: None required
+
+Dependencies: `libqt5serialport5-dev`
+
+##### Intel RealSense support
+
+CMake options: `-DSDK_REALSENSE=<path>` (optional if `$RSSDK_DIR` is set)
+
+Dependencies: `librealsense2-dev` [Intel RealSense docs](https://github.com/IntelRealSense/librealsense/blob/master/doc/distribution_linux.md)
+
+##### libevdev
+
+CMake options: None required
+
+Dependencies: `libevdev-dev`
+
+##### NeuralNet tracker with ONXX
+
+CMake options: `-DONNXRuntime_DIR=<path>`
+
+Dependencies: `libopencv-dev`, [onxxruntime tarball](https://github.com/microsoft/onnxruntime/releases)
+
+Note: Set `ONXXRuntime_ROOT` environment variable to path of downloaded and extracted onxxruntime tarball.
+Set `ONXXRuntime_DIR` to same value.
+
+##### Oscpack
+
+CMake options: `-DSDK_OSCPACK=/usr`
+
+Dependencies: `liboscpack-dev`
+
+##### Valve SteamVR support
+
+CMake options: `-DSDK_VALVE_STEAMVR=<path>`
+
+Dependencies: [Valve SteamVR SDK](https://github.com/ValveSoftware/openvr)
+
+##### Wine/Proton support
+
+CMake options: `-DSDK_WINE=ON`
+
+Dependencies: `wine64-tools`
+
+##### X-Plane plugin support
+
+CMane options: `-DSDK_XPLANE=<path>`
+
+Dependencies: [X-Plane Plugin SDK](https://developer.x-plane.com/sdk/plugin-sdk-downloads/)
