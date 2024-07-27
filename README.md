@@ -92,6 +92,8 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 
 See guides for writing new modules\[[1](https://github.com/opentrack/opentrack/blob/master/api/plugin-api.hpp)\]\[[2](https://github.com/opentrack/opentrack/blob/master/tracker-test/test.h)\], and for [working with core code](https://github.com/opentrack/opentrack/wiki/Hacking-opentrack).
 
+To edit the wiki, send pull requests to the https://github.com/opentrack/wiki repository. The [user-facing wiki](https://github.com/opentrack/opentrack/wiki) will automatically update itself after the commit is merged.
+
 ## License and warranty
 
 Almost all code is licensed under the [ISC license](https://en.wikipedia.org/wiki/ISC_license). There are very few proprietary dependencies. There is no copyleft code. See individual files for licensing and authorship information.
