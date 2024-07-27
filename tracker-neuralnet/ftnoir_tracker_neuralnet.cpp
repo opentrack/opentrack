@@ -855,7 +855,7 @@ void NeuralNetDialog::status_poll()
     else
     {
         auto [ res, fps, inference_time ] = tracker_->stats();
-        status = tr("%1x%2 @ %3 FPS / Inference: %4 ms").arg(res.width).arg(res.height).arg(int(fps)).arg(int(inference_time));
+        status = tr("%1x%2 @ %3 FPS / Inference: %4 ms").arg(res.width).arg(res.height).arg(int(fps)).arg(inference_time, 0, 'f', 1);
     }
     ui_.resolution_display->setText(status);
 }
