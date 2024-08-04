@@ -66,7 +66,7 @@ include(opentrack-mrproper)
 set_property(GLOBAL PROPERTY opentrack-all-modules "")
 set_property(GLOBAL PROPERTY opentrack-all-source-dirs "")
 
-set(opentrack_all-translations "nl_NL;ru_RU;stub;zh_CN")
+set(opentrack_all-translations "de_DE;nl_NL;ru_RU;stub;zh_CN")
 
 include(opentrack-hier)
 include(opentrack-platform)
