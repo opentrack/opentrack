@@ -89,6 +89,9 @@ struct OTR_LOGIC_EXPORT main_settings final
     key_opts key_restart_tracking1 { b, "restart-tracking" };
     key_opts key_restart_tracking2 { b, "restart-tracking-alt" };
 
+    key_opts key_max_y_axis1 { b, "max-y-axis" };
+    key_opts key_max_y_axis2 { b, "max-y-axis-alt" };
+
     key_opts key_center1 { b, "center" };
     key_opts key_center2 { b, "center-alt" };
 

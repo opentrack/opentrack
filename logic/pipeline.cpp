@@ -430,6 +430,7 @@ void pipeline::logic()
     const bool center_ordered = b.get(f_center | f_held_center) && tracking_started;
     const bool own_center_logic = center_ordered && libs.pTracker->center();
     const bool hold_ordered = b.get(f_enabled_p) ^ b.get(f_enabled_h);
+    const bool max_y = b.get(f_max_y);
 
     {
         Pose tmp;
@@ -504,9 +505,14 @@ ok:
     last_value = value;
     value = apply_zero_pos(value);
 
-    for (int i = 0; i < 6; i++)
-        if (m(i).opts.invert_post)
+    for (int i = 0; i < 6; i++) {
+        if (m(i).opts.invert_post) {
             value(i) = -value(i);
+        }
+        if (max_y && i==1) {
+            value(i) = 360;
+        }
+    }
 
     libs.pProtocol->pose(value, raw);
 
@@ -655,6 +661,8 @@ void pipeline::set_zero(bool value) { b.set(f_zero, value); }
 void pipeline::toggle_zero() { b.negate(f_zero); }
 void pipeline::toggle_enabled() { b.negate(f_enabled_p); }
 
+void pipeline::set_max_y(bool value) { b.set(f_max_y, value); }
+
 void bits::set(bit_flags flag, bool val)
 {
     QMutexLocker l(&lock);
@@ -685,6 +693,7 @@ bits::bits()
     set(f_enabled_p, true);
     set(f_enabled_h, true);
     set(f_zero, false);
+    set(f_max_y, false);
 }
 
 } // ns pipeline_impl

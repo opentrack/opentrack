@@ -396,6 +396,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Post-invert</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Max Y Axis</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

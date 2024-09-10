@@ -168,6 +168,9 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
 
         { main.key_restart_tracking1, ui.restart_tracking_text, ui.bind_restart_tracking },
         { main.key_restart_tracking2, ui.restart_tracking_text_2, ui.bind_restart_tracking_2 },
+
+        { main.key_max_y_axis1, ui.max_y_axis_text, ui.bind_max_y_axis },
+        { main.key_max_y_axis2, ui.max_y_axis_text_2, ui.bind_max_y_axis_2 },
     };
 
     for (const tmp& val_ : tuples)

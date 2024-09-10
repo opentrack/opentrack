@@ -62,6 +62,7 @@ enum bit_flags : unsigned {
     f_enabled_h      = 1 << 2,
     f_enabled_p      = 1 << 3,
     f_zero           = 1 << 4,
+    f_max_y          = 1 << 5,
 };
 
 struct OTR_LOGIC_EXPORT bits
@@ -135,6 +136,7 @@ public:
     void set_held_center(bool value);
     void set_enabled(bool value);
     void set_zero(bool value);
+    void set_max_y(bool value);
 };
 
 } // ns pipeline_impl

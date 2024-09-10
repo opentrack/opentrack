@@ -48,6 +48,9 @@ public:
         key_tuple(s.key_center1, [this](bool x) { pipeline_.set_held_center(x); }, false),
         key_tuple(s.key_center2, [this](bool x) { pipeline_.set_held_center(x); }, false),
 
+        key_tuple(s.key_max_y_axis1, [this](bool x) { pipeline_.set_max_y(x); }, false),
+        key_tuple(s.key_max_y_axis2, [this](bool x) { pipeline_.set_max_y(x); }, false),
+
         key_tuple(s.key_toggle1, [this](bool) { pipeline_.toggle_enabled(); }, true),
         key_tuple(s.key_toggle2, [this](bool) { pipeline_.toggle_enabled(); }, true),
         key_tuple(s.key_toggle_press1, [this](bool x) { pipeline_.set_enabled(!x); }, false),
