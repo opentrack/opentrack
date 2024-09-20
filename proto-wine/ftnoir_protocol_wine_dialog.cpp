@@ -5,8 +5,10 @@
 #include <QDirIterator>
 #include <qdebug.h>
 #include <qdir.h>
+#include <qradiobutton.h>
 
 #include "api/plugin-api.hpp"
+#include "options/tie.hpp"
 
 /*
  * 0: path to the directory with wine versions
@@ -28,7 +30,7 @@ FTControls::FTControls()
 {
     ui.setupUi(this);
 
-    //populate wine select
+    // populate wine select
     ui.wine_path_combo->addItem("System Wine", QVariant{"WINE"});
     for (const char** path : wine_paths) {
         QDir dir(QDir::homePath() + path[0]);
@@ -44,7 +46,7 @@ FTControls::FTControls()
     }
     ui.wine_path_combo->addItem("Custom path to Wine executable", QVariant{"CUSTOM"});
 
-    //populate proton select
+    // populate proton select
     for (const char* path : proton_paths) {
         QDir dir(QDir::homePath() + path);
         dir.setFilter(QDir::Dirs);
@@ -69,23 +71,38 @@ FTControls::FTControls()
         }
     }
 
+    // settings - wine
+    // wine
+    tie_setting(s.variant_wine, ui.variant_wine); // radio button
+    tie_setting(s.wine_select_path, ui.wine_path_combo); // combo box (dropdown)
+    tie_setting(s.wine_custom_path, ui.wine_path); // line edit (enabled via dropdown)
+    tie_setting(s.wineprefix, ui.wineprefix); // line edit
 
-    tie_setting(s.proton_path, ui.proton_version);
-    tie_setting(s.variant_wine, ui.variant_wine);
-    tie_setting(s.variant_proton, ui.variant_proton);
+    // settings - proton
+    tie_setting(s.variant_proton, ui.variant_proton); // radio button
+    tie_setting(s.proton_path, ui.proton_version); // combo box (dropdown)
+    tie_setting(s.variant_proton_steamplay, ui.subvariant_steamplay); // radio button
+    tie_setting(s.proton_appid, ui.proton_appid); // number select
+    tie_setting(s.variant_proton_external, ui.subvariant_external); // radio button
+    tie_setting(s.protonprefix, ui.protonprefix); // line edit
+
+    // settings - advanced
     tie_setting(s.esync, ui.esync);
     tie_setting(s.fsync, ui.fsync);
-    tie_setting(s.proton_appid, ui.proton_appid);
-    tie_setting(s.wine_select_path, ui.wine_path_combo);
-    tie_setting(s.wine_custom_path, ui.wine_path);
-    tie_setting(s.wineprefix, ui.wineprefix);
     tie_setting(s.protocol, ui.protocol_selection);
 
+    // setup signals and slots for UI
     connect(ui.wine_path_combo, &QComboBox::currentTextChanged, this, &FTControls::onWinePathComboUpdated);
     connect(ui.browse_wine_path_button, &QPushButton::clicked, this, &FTControls::doBrowseWine);
     connect(ui.browse_wine_prefix_button, &QPushButton::clicked, this, &FTControls::doBrowsePrefix);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &FTControls::doOK);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &FTControls::doCancel);
+
+    // setup signals and slots for UI radio buttons
+    connect(ui.variant_wine, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
+    connect(ui.variant_proton, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
+    connect(ui.subvariant_steamplay, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
+    connect(ui.subvariant_external, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
 
     // update state of the combo box and associated ui elements
     onWinePathComboUpdated(ui.wine_path_combo->currentText());
@@ -100,6 +117,43 @@ void FTControls::onWinePathComboUpdated(QString selection) {
     else {
         ui.wine_path->setEnabled(false);
         ui.browse_wine_path_button->setEnabled(false);
+    }
+}
+
+void FTControls::onRadioButtonsChanged() {
+    if (ui.variant_wine->isChecked()) {
+        ui.wine_path_combo->setEnabled(true);
+        ui.wineprefix->setEnabled(true);
+        ui.browse_wine_prefix_button->setEnabled(true);
+        if (ui.wine_path_combo->currentText() == "Custom path to Wine executable") {
+            ui.wine_path->setEnabled(true);
+            ui.browse_wine_path_button->setEnabled(true);
+        }
+
+        ui.proton_version->setEnabled(false);
+        ui.proton_subgroup->setEnabled(false);
+    }
+    else if (ui.variant_proton->isChecked()) {
+        ui.wine_path_combo->setEnabled(false);
+        ui.wine_path->setEnabled(false);
+        ui.wineprefix->setEnabled(false);
+        ui.browse_wine_prefix_button->setEnabled(false);
+
+        ui.proton_version->setEnabled(true);
+        ui.proton_subgroup->setEnabled(true);
+
+        if (ui.subvariant_steamplay->isChecked()) {
+            ui.proton_appid->setEnabled(true);
+
+            ui.protonprefix->setEnabled(false);
+            ui.browse_proton_prefix_button->setEnabled(false);
+        }
+        else if (ui.subvariant_external->isChecked()) {
+            ui.proton_appid->setEnabled(false);
+
+            ui.protonprefix->setEnabled(true);
+            ui.browse_proton_prefix_button->setEnabled(true);
+        }
     }
 }
 
