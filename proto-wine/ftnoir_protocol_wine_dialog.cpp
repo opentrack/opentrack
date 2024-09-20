@@ -24,6 +24,7 @@ static const char* proton_paths[][2] = {
     {"/.steam/steam/steamapps/common", "Proton*"},
     {"/.steam/root/compatibilitytools.d", "*"},
     {"/.local/share/Steam/steamapps/common", "Proton*"},
+    {"/.local/share/Steam/compatibilitytools.d", "*"},
 };
 
 FTControls::FTControls()
@@ -55,7 +56,6 @@ FTControls::FTControls()
         QFileInfoList proton_dir_list = dir.entryInfoList();
         for (int i = 0; i < proton_dir_list.size(); ++i) {
             const QFileInfo &proton_dir = proton_dir_list.at(i);
-            qDebug() << proton_dir.canonicalFilePath();
 
             QDirIterator proton_executable_it(proton_dir.canonicalFilePath(), QStringList() << "wine", QDir::Files, QDirIterator::Subdirectories);
 
@@ -64,9 +64,8 @@ FTControls::FTControls()
                 QDir proton_dist_dir(proton_executable_path);
                 proton_dist_dir.cd("../../");
 
-                qDebug() << proton_dist_dir.canonicalPath();
-
-                ui.proton_version->addItem(proton_dir.fileName(), QVariant{proton_dist_dir.canonicalPath()});
+                if (ui.proton_version->findData(QVariant{proton_dist_dir.canonicalPath()}) == -1)
+                    ui.proton_version->addItem(proton_dir.fileName(), QVariant{proton_dist_dir.canonicalPath()});
             }
         }
     }
