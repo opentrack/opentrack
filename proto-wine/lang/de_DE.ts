@@ -90,6 +90,14 @@
         <source>Wine (select version and prefix)</source>
         <translation>Wine (wähle Version und Prefix)</translation>
     </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Steam Play is Steams System to run Windows titles on Linux via Proton.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Steam Play ist Steams System, um Windows Titel auf Linux, via Proton, auszuführen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UMU is a launcher that allows the use of Proton outside of Steam. Some game launchers like Lutris may use this to enable Proton support.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UMU ist ein Launcher, der es erlaubt Proton außerhalb von Steam zu nutzen. Manche Spiel Launcher, wie Lutris, können dies für Proton Support nutzen.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
 </context>
 <context>
     <name>wine</name>

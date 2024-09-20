@@ -197,6 +197,9 @@
          </item>
          <item row="0" column="0">
           <widget class="QRadioButton" name="subvariant_steamplay">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Steam Play is Steams System to run Windows titles on Linux via Proton.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>Steam Play (select Steam Application ID)</string>
            </property>
@@ -204,6 +207,9 @@
          </item>
          <item row="1" column="0">
           <widget class="QRadioButton" name="subvariant_external">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UMU is a launcher that allows the use of Proton outside of Steam. Some game launchers like Lutris may use this to enable Proton support.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
            <property name="text">
             <string>UMU enabled Launchers (select prefix)</string>
            </property>
