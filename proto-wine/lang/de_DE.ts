@@ -121,6 +121,10 @@
         <source>Can&apos;t open shared memory mapping</source>
         <translation>Shared-Memory-Mapping kann nicht geöffnet werden</translation>
     </message>
+    <message>
+        <source>Prefix has not been defined!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>wine_metadata</name>

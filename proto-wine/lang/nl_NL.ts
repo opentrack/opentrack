@@ -121,6 +121,10 @@
         <source>Failed to start Wine! Make sure the binary is set correctly.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Prefix has not been defined!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>wine_metadata</name>
