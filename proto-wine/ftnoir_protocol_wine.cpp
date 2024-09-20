@@ -123,6 +123,7 @@ module_status wine::initialize()
         // wine prefix is dependend on steam
 
         auto [prefix, error_string, success] = make_wineprefix(s.proton_appid);
+        qDebug() << "proto/wine: wineprefix:" << prefix;
         env.insert("WINEPREFIX", prefix);
 
         if (!success)
@@ -171,7 +172,7 @@ module_status wine::initialize()
     ////////////////////////////////
     // launch the wrapper program //
     ////////////////////////////////
-    
+
     wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);
     wrapper.start(wine_path, { library_path + "opentrack-wrapper-wine.exe.so" });
