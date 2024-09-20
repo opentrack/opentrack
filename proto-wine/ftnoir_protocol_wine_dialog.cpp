@@ -20,10 +20,10 @@ static const char* wine_paths[][3] = {
     {"/.var/app/net.lutris.Lutris/data/lutris/runners/wine/", "/bin/wine", "Flatpak Lutris"}
 };
 
-static const char* proton_paths[] = {
-    "/.steam/steam/steamapps/common",
-    "/.steam/root/compatibilitytools.d",
-    "/.local/share/Steam/steamapps/common",
+static const char* proton_paths[][2] = {
+    {"/.steam/steam/steamapps/common", "Proton*"},
+    {"/.steam/root/compatibilitytools.d", "*"},
+    {"/.local/share/Steam/steamapps/common", "Proton*"},
 };
 
 FTControls::FTControls()
@@ -47,10 +47,10 @@ FTControls::FTControls()
     ui.wine_path_combo->addItem("Custom path to Wine executable", QVariant{"CUSTOM"});
 
     // populate proton select
-    for (const char* path : proton_paths) {
-        QDir dir(QDir::homePath() + path);
-        dir.setFilter(QDir::Dirs);
-        dir.setNameFilters({ "Proton*" });
+    for (const char** path : proton_paths) {
+        QDir dir(QDir::homePath() + path[0]);
+        dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+        dir.setNameFilters({ path[1] });
 
         QFileInfoList proton_dir_list = dir.entryInfoList();
         for (int i = 0; i < proton_dir_list.size(); ++i) {
