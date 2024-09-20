@@ -23,14 +23,6 @@
         <translation>Wine-Variante</translation>
     </message>
     <message>
-        <source>Proton (Steam Play)</source>
-        <translation>Proton (Steam Play)</translation>
-    </message>
-    <message>
-        <source>Wine (select path and prefix)</source>
-        <translation>Wine (Pfad und Prefix auswählen)</translation>
-    </message>
-    <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;prefix&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Prefix&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -83,8 +75,20 @@
         <translation>Beides</translation>
     </message>
     <message>
-        <source>Steam application id</source>
-        <translation>Steam-Application-ID</translation>
+        <source>Proton (select version and mode)</source>
+        <translation>Proton (wähle Version und Modus)</translation>
+    </message>
+    <message>
+        <source>Steam Play (select Steam Application ID)</source>
+        <translation>Steam Play (wähle Steam Applikation ID)</translation>
+    </message>
+    <message>
+        <source>UMU enabled Launchers (select prefix)</source>
+        <translation>UMU unterstützte Launcher (wähle Prefix)</translation>
+    </message>
+    <message>
+        <source>Wine (select version and prefix)</source>
+        <translation>Wine (wähle Version und Prefix)</translation>
     </message>
 </context>
 <context>

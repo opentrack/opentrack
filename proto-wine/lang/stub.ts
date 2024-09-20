@@ -39,14 +39,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Steam application id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Proton (Steam Play)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Protocol</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60,10 +52,6 @@
     </message>
     <message>
         <source>Both</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wine (select path and prefix)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -84,6 +72,22 @@
     </message>
     <message>
         <source>Browse Wine Path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proton (select version and mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam Play (select Steam Application ID)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UMU enabled Launchers (select prefix)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine (select version and prefix)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
