@@ -72,7 +72,6 @@ FTControls::FTControls()
     }
 
     // settings - wine
-    // wine
     tie_setting(s.variant_wine, ui.variant_wine); // radio button
     tie_setting(s.wine_select_path, ui.wine_path_combo); // combo box (dropdown)
     tie_setting(s.wine_custom_path, ui.wine_path); // line edit (enabled via dropdown)
@@ -122,6 +121,9 @@ void FTControls::onWinePathComboUpdated(QString selection) {
 
 void FTControls::onRadioButtonsChanged() {
     if (ui.variant_wine->isChecked()) {
+        // wine settings selected
+
+        // enable wine settings
         ui.wine_path_combo->setEnabled(true);
         ui.wineprefix->setEnabled(true);
         ui.browse_wine_prefix_button->setEnabled(true);
@@ -130,27 +132,38 @@ void FTControls::onRadioButtonsChanged() {
             ui.browse_wine_path_button->setEnabled(true);
         }
 
+        // disable proton settings
         ui.proton_version->setEnabled(false);
         ui.proton_subgroup->setEnabled(false);
     }
     else if (ui.variant_proton->isChecked()) {
+        // proton settings selected
+
+        // disable wine settings
         ui.wine_path_combo->setEnabled(false);
         ui.wine_path->setEnabled(false);
+        ui.browse_wine_path_button->setEnabled(false);
         ui.wineprefix->setEnabled(false);
         ui.browse_wine_prefix_button->setEnabled(false);
 
+        // enable proton settings
         ui.proton_version->setEnabled(true);
         ui.proton_subgroup->setEnabled(true);
 
+        // run proton radio buttons logic
         if (ui.subvariant_steamplay->isChecked()) {
+            // enable steamplay settings
             ui.proton_appid->setEnabled(true);
 
+            // disable external settings
             ui.protonprefix->setEnabled(false);
             ui.browse_proton_prefix_button->setEnabled(false);
         }
         else if (ui.subvariant_external->isChecked()) {
+            // disable steamplay settings
             ui.proton_appid->setEnabled(false);
 
+            // enable external settinsg
             ui.protonprefix->setEnabled(true);
             ui.browse_proton_prefix_button->setEnabled(true);
         }
