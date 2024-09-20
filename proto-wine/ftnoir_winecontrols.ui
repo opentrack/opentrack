@@ -120,9 +120,6 @@
       </item>
       <item row="3" column="1">
        <widget class="QComboBox" name="proton_version">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -178,9 +175,6 @@
       </item>
       <item row="4" column="0" colspan="2">
        <widget class="QGroupBox" name="proton_subgroup">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
           <widget class="QSpinBox" name="proton_appid">

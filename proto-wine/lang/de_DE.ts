@@ -11,6 +11,10 @@
         <source>Select Wine Prefix</source>
         <translation>wine-Prefix auswählen</translation>
     </message>
+    <message>
+        <source>Select Proton Prefix</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UICFTControls</name>

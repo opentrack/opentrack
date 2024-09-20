@@ -92,7 +92,8 @@ FTControls::FTControls()
     // setup signals and slots for UI
     connect(ui.wine_path_combo, &QComboBox::currentTextChanged, this, &FTControls::onWinePathComboUpdated);
     connect(ui.browse_wine_path_button, &QPushButton::clicked, this, &FTControls::doBrowseWine);
-    connect(ui.browse_wine_prefix_button, &QPushButton::clicked, this, &FTControls::doBrowsePrefix);
+    connect(ui.browse_wine_prefix_button, &QPushButton::clicked, this, &FTControls::doBrowseWinePrefix);
+    connect(ui.browse_proton_prefix_button, &QPushButton::clicked, this, &FTControls::doBrowseProtonPrefix);
     connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &FTControls::doOK);
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &FTControls::doCancel);
 
@@ -104,6 +105,8 @@ FTControls::FTControls()
 
     // update state of the combo box and associated ui elements
     onWinePathComboUpdated(ui.wine_path_combo->currentText());
+    // hide the correct items
+    onRadioButtonsChanged();
 }
 
 void FTControls::onWinePathComboUpdated(QString selection) {
@@ -180,7 +183,7 @@ void FTControls::doBrowseWine() {
         s.wine_custom_path = d.selectedFiles()[0];
     }
 }
-void FTControls::doBrowsePrefix() {
+void FTControls::doBrowseWinePrefix() {
     QFileDialog d(this);
     d.setFileMode(QFileDialog::FileMode::Directory);
     d.setOption(QFileDialog::Option::ShowDirsOnly, true);
@@ -190,6 +193,19 @@ void FTControls::doBrowsePrefix() {
     }
     if (d.exec()) {
         s.wineprefix = d.selectedFiles()[0];
+    }
+}
+
+void FTControls::doBrowseProtonPrefix() {
+    QFileDialog d(this);
+    d.setFileMode(QFileDialog::FileMode::Directory);
+    d.setOption(QFileDialog::Option::ShowDirsOnly, true);
+    d.setWindowTitle(tr("Select Proton Prefix"));
+    if (s.protonprefix->startsWith("/") || s.protonprefix->startsWith("~")) {
+        d.selectFile(s.protonprefix);
+    }
+    if (d.exec()) {
+        s.protonprefix = d.selectedFiles()[0];
     }
 }
 

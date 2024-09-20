@@ -86,7 +86,9 @@ private slots:
     void onRadioButtonsChanged();
 
     void doBrowseWine();
-    void doBrowsePrefix();
+    void doBrowseWinePrefix();
+
+    void doBrowseProtonPrefix();
 
     void doOK();
     void doCancel();
