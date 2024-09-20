@@ -3,7 +3,6 @@
 #ifndef OTR_WINE_NO_WRAPPER
 #   include "csv/csv.h"
 #endif
-#include "compat/library-path.hpp"
 
 #include <cstring>
 #include <cmath>
@@ -121,7 +120,7 @@ module_status wine::initialize()
 
         if (s.proton_appid == 0)
             return error(tr("Must specify application id for Proton (Steam Play)"));
-        
+
         auto [prefix, error_string, success] = make_wineprefix(s.proton_appid);
         qDebug() << "proto/wine: wineprefix:" << prefix;
         env.insert("WINEPREFIX", prefix);
