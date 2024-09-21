@@ -57,6 +57,11 @@ FTControls::FTControls()
         for (int i = 0; i < proton_dir_list.size(); ++i) {
             const QFileInfo &proton_dir = proton_dir_list.at(i);
 
+            // check if this Proton Version is already present in any way
+            // NOTE: placed here instead of in front of the addItem call to improve performance
+            if (ui.proton_version->findData(QVariant{proton_dir.canonicalPath()}) != -1)
+                continue;
+
             QDirIterator proton_executable_it(proton_dir.canonicalFilePath(), QStringList() << "wine", QDir::Files, QDirIterator::Subdirectories);
 
             if (proton_executable_it.hasNext()) {
@@ -64,8 +69,7 @@ FTControls::FTControls()
                 QDir proton_dist_dir(proton_executable_path);
                 proton_dist_dir.cd("../../");
 
-                if (ui.proton_version->findData(QVariant{proton_dist_dir.canonicalPath()}) == -1)
-                    ui.proton_version->addItem(proton_dir.fileName(), QVariant{proton_dist_dir.canonicalPath()});
+                ui.proton_version->addItem(proton_dir.fileName(), QVariant{proton_dist_dir.canonicalPath()});
             }
         }
     }
