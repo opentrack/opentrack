@@ -58,8 +58,7 @@ FTControls::FTControls()
             const QFileInfo &proton_dir = proton_dir_list.at(i);
 
             // check if this Proton Version is already present in any way
-            // NOTE: placed here instead of in front of the addItem call to improve performance
-            if (ui.proton_version->findData(QVariant{proton_dir.canonicalPath()}) != -1)
+            if (ui.proton_version->findText(proton_dir.fileName()) != -1)
                 continue;
 
             QDirIterator proton_executable_it(proton_dir.canonicalFilePath(), QStringList() << "wine", QDir::Files, QDirIterator::Subdirectories);
