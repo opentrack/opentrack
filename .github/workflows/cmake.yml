@@ -71,7 +71,7 @@ jobs:
       if: matrix.os != 'windows-latest'
 
     - name: Configure Windows
-      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui -DSDK_TOBII=${{github.workspace}}\Tobii.StreamEngine.Native.2.2.2.363\build
+      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui -DSDK_TOBII=${{github.workspace}}\opentrack-depends\Tobii.StreamEngine.Native.2.2.2.363\build
       if: matrix.os == 'windows-latest'
 
     - name: Build
