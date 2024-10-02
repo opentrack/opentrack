@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QDirIterator>
+#include <qcombobox.h>
 #include <qdebug.h>
 #include <qdir.h>
 #include <qradiobutton.h>
@@ -107,14 +108,14 @@ FTControls::FTControls()
     connect(ui.subvariant_external, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
 
     // update state of the combo box and associated ui elements
-    onWinePathComboUpdated(ui.wine_path_combo->currentText());
+    onWinePathComboUpdated();
     // hide the correct items
     onRadioButtonsChanged();
 }
 
-void FTControls::onWinePathComboUpdated(QString selection) {
+void FTControls::onWinePathComboUpdated() {
     // enable the custom text field if required
-    if (selection == "Custom path to Wine executable") {
+    if (ui.wine_path_combo->currentData() == "CUSTOM") {
         ui.wine_path->setEnabled(true);
         ui.browse_wine_path_button->setEnabled(true);
     }
@@ -132,7 +133,7 @@ void FTControls::onRadioButtonsChanged() {
         ui.wine_path_combo->setEnabled(true);
         ui.wineprefix->setEnabled(true);
         ui.browse_wine_prefix_button->setEnabled(true);
-        if (ui.wine_path_combo->currentText() == "Custom path to Wine executable") {
+        if (ui.wine_path_combo->currentData() == "CUSTOM") {
             ui.wine_path->setEnabled(true);
             ui.browse_wine_path_button->setEnabled(true);
         }

@@ -82,7 +82,7 @@ private:
     settings s;
 
 private slots:
-    void onWinePathComboUpdated(QString selection);
+    void onWinePathComboUpdated();
     void onRadioButtonsChanged();
 
     void doBrowseWine();
