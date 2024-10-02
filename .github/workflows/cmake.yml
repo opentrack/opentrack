@@ -3,6 +3,7 @@ name: CMake
 on:
   - push
   - pull_request
+  - workflow_dispatch
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -72,7 +73,7 @@ jobs:
     - name: Configure Windows
       run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui -DSDK_TOBII=$_TOBII_SDK_PATH
       if: matrix.os == 'windows-latest'
-      
+
     - name: Build
       run: ${{matrix.cmake}} --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
