@@ -63,7 +63,7 @@ jobs:
       if: matrix.os != 'ubuntu-latest'
 
     - name: set envvar for windows for Tobii Location, and store it as a variable for use in other steps
-      run: echo "_TOBII_SDK_PATH=${{github.workspace}}/Tobii.StreamEngine.Native.2.2.2.363/build" >> "$GITHUB_ENV"
+      run: echo "_TOBII_SDK_PATH=${{github.workspace}}\Tobii.StreamEngine.Native.2.2.2.363/build" >> "$GITHUB_ENV"
       if: matrix.os == 'windows-latest'
 
     - name: Configure
@@ -71,7 +71,7 @@ jobs:
       if: matrix.os != 'windows-latest'
 
     - name: Configure Windows
-      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui -DSDK_TOBII=$_TOBII_SDK_PATH
+      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui -DSDK_TOBII=${{github.workspace}}\Tobii.StreamEngine.Native.2.2.2.363\build
       if: matrix.os == 'windows-latest'
 
     - name: Build
