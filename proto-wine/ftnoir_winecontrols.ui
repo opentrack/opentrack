@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>955</width>
-    <height>468</height>
+    <width>934</width>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -387,6 +387,24 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>variant_wine</tabstop>
+  <tabstop>wine_path_combo</tabstop>
+  <tabstop>wine_path</tabstop>
+  <tabstop>browse_wine_path_button</tabstop>
+  <tabstop>wineprefix</tabstop>
+  <tabstop>browse_wine_prefix_button</tabstop>
+  <tabstop>variant_proton</tabstop>
+  <tabstop>proton_version</tabstop>
+  <tabstop>subvariant_steamplay</tabstop>
+  <tabstop>proton_appid</tabstop>
+  <tabstop>subvariant_external</tabstop>
+  <tabstop>protonprefix</tabstop>
+  <tabstop>browse_proton_prefix_button</tabstop>
+  <tabstop>esync</tabstop>
+  <tabstop>fsync</tabstop>
+  <tabstop>protocol_selection</tabstop>
+ </tabstops>
  <resources>
   <include location="wine-protocol.qrc"/>
  </resources>
