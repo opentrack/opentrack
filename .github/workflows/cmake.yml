@@ -76,8 +76,8 @@ jobs:
 
     - name: Check Tobii SDK
       run: |
-        ls -la ${{github.workspace}}\..\opentrack-depends\Tobii.StreamEngine.Native.2.2.2.363\build
-        ls -la ${{github.workspace}}\nuget\
+        ls ${{github.workspace}}\..\opentrack-depends\Tobii.StreamEngine.Native.2.2.2.363\build
+        ls ${{github.workspace}}\nuget\
       if: matrix.os == 'windows-latest'
 
     - name: Build
