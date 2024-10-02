@@ -38,7 +38,15 @@ jobs:
         submodules: true
         path: opentrack-depends
 
-    - uses: seanmiddleditch/gha-setup-ninja@master
+    - name: setup nuget 
+      uses: nuget/setup-nuget@v2
+      with:
+        nuget-version: 'latest'
+      if: matrix.os == 'windows-latest'
+
+    - name: install Tobii.StreamEngine.Native
+      run: cd opentrack-depends && nuget install Tobii.StreamEngine.Native -Version 2.2.2.363
+      if: matrix.os == 'windows-latest'
 
     - name: Install Linux Dependencies
       run: |
@@ -53,9 +61,18 @@ jobs:
         archives: qtbase qtimageformats qtgamepad qttools qtserialport qtmultimedia
       if: matrix.os != 'ubuntu-latest'
 
+    - name: set envvar for windows for Tobii Location, and store it as a variable for use in other steps
+      run: echo "_TOBII_SDK_PATH=${{github.workspace}}/Tobii.StreamEngine.Native.2.2.2.363/build"
+      if: matrix.os == 'windows-latest'
+
     - name: Configure
       run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
+      if: matrix.os != 'windows-latest'
 
+    - name: Configure Windows
+      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui -DSDK_TOBII=$_TOBII_SDK_PATH
+      if: matrix.os == 'windows-latest'
+      
     - name: Build
       run: ${{matrix.cmake}} --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
 
