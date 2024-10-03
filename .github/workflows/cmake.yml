@@ -54,7 +54,13 @@ jobs:
         sudo apt-get update
         sudo apt-get install libprocps-dev libopencv-dev libopencv-dev wine64-tools
         sudo apt-get install qttools5-dev qtbase5-dev libqt5serialport5-dev qtbase5-private-dev
+        sudo apt-get install ninja-build
       if: matrix.os == 'ubuntu-latest'
+
+    - name: Install Mac Dependencies
+      run: |
+        brew install ninja
+      if: matrix.os == 'macos-latest'
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
@@ -85,5 +91,5 @@ jobs:
     - name: Upload build
       uses: actions/upload-artifact@v4
       with:
-        name: buildoutput
-        path: ${{github.workspace}}/build/
+        name: buildoutput-${{matrix.os}}-${{env.BUILD_TYPE}}
+        path: ${{github.workspace}}/build/install/
