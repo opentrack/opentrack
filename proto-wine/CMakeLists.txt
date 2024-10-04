@@ -22,17 +22,21 @@ if(NOT WIN32)
             if (NOT OPENTRACK_WINE_ARCH STREQUAL "")
                 set(winegxx-multilib "${OPENTRACK_WINE_ARCH}")
             endif()
-            add_custom_command(
-              OUTPUT opentrack-wrapper-wine.exe.so
-              DEPENDS ${wine-deps}
-              COMMAND wineg++ -mconsole -g -DNOMINMAX -O2 ${winegxx-multilib} -std=c++17 -fPIC -o
-                      opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}" -I "${CMAKE_BINARY_DIR}"
-                      ${wine-deps} -Wall -Wextra -Wpedantic
-                      ${my-rt} ${my-opts})
-            add_custom_target(wine-wrapper DEPENDS opentrack-wrapper-wine.exe.so)
-            add_dependencies(opentrack-proto-wine wine-wrapper)
-            add_dependencies(wine-wrapper opentrack-compat)
-            install(FILES "${CMAKE_CURRENT_BINARY_DIR}/opentrack-wrapper-wine.exe.so" DESTINATION ${opentrack-libexec})
+            if(PREBUILT_WINE_WRAPPER_LOCATION)
+                install(FILES "${PREBUILT_WINE_WRAPPER_LOCATION}/opentrack-wrapper-wine.exe.so" DESTINATION ${opentrack-libexec})
+            else()
+                add_custom_command(
+                OUTPUT opentrack-wrapper-wine.exe.so
+                DEPENDS ${wine-deps}
+                COMMAND wineg++ -mconsole -g -DNOMINMAX -O2 ${winegxx-multilib} -std=c++17 -fPIC -o
+                        opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}" -I "${CMAKE_BINARY_DIR}"
+                        ${wine-deps} -Wall -Wextra -Wpedantic
+                        ${my-rt} ${my-opts})
+                add_custom_target(wine-wrapper DEPENDS opentrack-wrapper-wine.exe.so)
+                add_dependencies(opentrack-proto-wine wine-wrapper)
+                add_dependencies(wine-wrapper opentrack-compat)
+                install(FILES "${CMAKE_CURRENT_BINARY_DIR}/opentrack-wrapper-wine.exe.so" DESTINATION ${opentrack-libexec})
+            endif()
         endif()
     endif()
 endif()
