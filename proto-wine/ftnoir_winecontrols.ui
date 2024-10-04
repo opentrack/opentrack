@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>934</width>
-    <height>466</height>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -263,11 +263,27 @@
         </layout>
        </widget>
       </item>
+      <item row="5" column="0" colspan="2">
+       <widget class="QRadioButton" name="variant_disabled">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Disabled (X-Plane)</string>
+        </property>
+        <attribute name="buttonGroup">
+         <string notr="true">variantGroup</string>
+        </attribute>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="groupBoxAdvanced">
      <property name="title">
       <string>Advanced</string>
      </property>

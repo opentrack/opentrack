@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>images/wine.png</file>
+        <file>images/xplane.png</file>
+        <file>images/xplanewine.png</file>
     </qresource>
 </RCC>

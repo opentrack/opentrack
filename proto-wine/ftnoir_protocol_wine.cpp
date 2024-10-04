@@ -63,6 +63,8 @@ void wine::pose(const double *headpose, const double*)
 module_status wine::initialize()
 {
 #ifndef OTR_WINE_NO_WRAPPER
+module_status wine::initWrapper()
+{
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
     /////////////////////////
@@ -178,6 +180,18 @@ module_status wine::initialize()
     wrapper.waitForStarted();
     if (wrapper.state() == QProcess::ProcessState::NotRunning) {
         return error(tr("Failed to start Wine! Make sure the binary is set correctly."));
+    }
+    return status_ok();
+}
+#endif
+
+module_status wine::initialize()
+{
+#ifndef OTR_WINE_NO_WRAPPER
+    if(!s.variant_disabled) {
+        module_status wrapper_status = initWrapper();
+        if(!wrapper_status.is_ok())
+            return wrapper_status;
     }
 #endif
 

@@ -19,7 +19,8 @@ using namespace options;
 struct settings : opts
 {
     settings() : opts{"proto-wine"} {}
-    value<bool> variant_wine{b, "variant-wine", true },
+    value<bool> variant_disabled{b, "variant_disabled", false },
+                variant_wine{b, "variant-wine", true },
                 variant_proton{b, "variant-proton", false },
                 variant_proton_steamplay{b, "variant-proton-steamplay", true },
                 variant_proton_external{b, "variant-proton-external", false },
@@ -65,6 +66,8 @@ private:
     int gameid = 0;
     QString connected_game;
     QMutex game_name_mutex;
+
+    module_status initWrapper();
 #endif
 };
 
@@ -81,6 +84,8 @@ private:
     Ui::UICFTControls ui;
     settings s;
 
+    void disableProtonSettings();
+    void disableWineSettings();
 private slots:
     void onWinePathComboUpdated();
     void onRadioButtonsChanged();
@@ -100,10 +105,10 @@ class wine_metadata : public Metadata
 
 public:
 #ifndef OTR_WINE_NO_WRAPPER
-    QString name() override { return tr("Wine -- Windows layer for Unix"); }
-    QIcon icon() override { return QIcon(":/images/wine.png"); }
+    QString name() override { return tr("Wine/X-Plane"); }
+    QIcon icon() override { return QIcon(":/images/xplanewine.png"); }
 #else
     QString name() override { return tr("X-Plane"); }
-    QIcon icon() override { return {}; }
+    QIcon icon() override { return QIcon(":/images/xplane.png"); }
 #endif
 };
