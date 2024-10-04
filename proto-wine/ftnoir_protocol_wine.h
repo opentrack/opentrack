@@ -68,6 +68,10 @@ private:
     QMutex game_name_mutex;
 
     module_status initWrapper();
+
+    #ifdef __APPLE__
+    QString findMacOsSystemWine();
+    #endif
 #endif
 };
 

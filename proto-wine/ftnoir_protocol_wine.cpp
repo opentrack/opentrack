@@ -9,6 +9,7 @@
 
 #include <QString>
 #include <QDebug>
+#include <QFileInfo>
 
 #include "proton.h"
 
@@ -60,8 +61,6 @@ void wine::pose(const double *headpose, const double*)
     }
 }
 
-module_status wine::initialize()
-{
 #ifndef OTR_WINE_NO_WRAPPER
 module_status wine::initWrapper()
 {
@@ -87,6 +86,12 @@ module_status wine::initWrapper()
                 wine_path = s.wine_custom_path;
             }
         }
+        else { // System Wine
+            #ifdef __APPLE__
+            wine_path = findMacOsSystemWine();
+            #endif   
+        }
+        
 
         // parse tilde if present
         if (wine_path[0] == '~')
@@ -217,4 +222,29 @@ module_status wine::initialize()
         return error(tr("Can't open shared memory mapping"));
 }
 
+#ifndef OTR_WINE_NO_WRAPPER
+#ifdef __APPLE__
+QString wine::findMacOsSystemWine(){
+    // on macOS looking for "wine" doesn't work,
+    // so look at the common places:
+    const QStringList commonWineInstallations = {
+        "/opt/local/bin/wine", // macports default
+        "/usr/local/bin/wine", // homebrew x86_64
+        "/usr/local/Homebrew/bin/wine" // homebrew arm64
+    };
+    
+    for ( const auto& file : commonWineInstallations )
+    {
+        qDebug() << "check macOS wine: " << file;
+        QFileInfo check_file(file);
+        if (check_file.exists() && check_file.isFile()) {
+            qDebug() << "Found macOS wine: " << file;
+            return check_file.filePath();
+        }
+    }
+
+    return "wine";
+}
+#endif
+#endif
 OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wine_metadata)
