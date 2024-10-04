@@ -11,7 +11,7 @@ include_guard(GLOBAL)
 
 if(APPLE)
     set(opentrack-libexec "Plugins")
-    set(opentrack-runtime-libexec "/Plugins/")                        # MUST HAVE A TRAILING BACKSLASH, Used in APP
+    set(opentrack-runtime-libexec "/../PlugIns/opentrack/")                        # MUST HAVE A TRAILING BACKSLASH, Used in APP
     set(opentrack-runtime-doc "/")                         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-bin "${CMAKE_INSTALL_PREFIX}")
     set(opentrack-doc "doc")

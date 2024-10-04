@@ -26,3 +26,7 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET "10.8" CACHE STRING "" FORCE)
 
 set(OpenCV_DIR ~/dev/opentrack-depends/opencv/build)
 set(Qt5_DIR ~/Qt5.6.0/5.6/clang_64/lib/cmake/Qt5)
+
+set(CMAKE_XCODE_ATTRIBUTE_DEVELOPMENT_TEAM "TEAM_ID")
+#set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY "Developer ID Application")
+set(CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_STYLE "Manual")

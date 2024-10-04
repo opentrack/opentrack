@@ -6,6 +6,8 @@ if(APPLE)
        execute_process(COMMAND /bin/sh \"${srcdir}/macosx/make-app-bundle.sh\"
                                         \"${srcdir}/macosx\"
                                         \"${instdir}\"
-                                       \"${commit}\")
+                                       \"${commit}\"
+                                       \"${CMAKE_XCODE_ATTRIBUTE_CODE_SIGN_IDENTITY}\"
+                                       \"${CMAKE_OSX_ARCHITECTURES}\")
     ")
 endif()
