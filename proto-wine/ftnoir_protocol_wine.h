@@ -65,6 +65,10 @@ private:
     int gameid = 0;
     QString connected_game;
     QMutex game_name_mutex;
+
+    #ifdef __APPLE__
+    QString findMacOsSystemWine();
+    #endif
 #endif
 };
 
