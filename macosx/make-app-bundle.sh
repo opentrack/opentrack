@@ -37,6 +37,8 @@ cp "$dir/PkgInfo" "$install/$APPNAME.app/Contents/"
 # Copy plugins
 mkdir -p "$install/$APPNAME.app/Contents/MacOS/Plugins"
 cp -r "$install/Plugins" "$install/$APPNAME.app/Contents/MacOS/"
+# Copy thirdparty dlls amd libs for usage of WINE
+cp -r "$install/thirdparty/" "$install/$APPNAME.app/Contents/MacOS/Plugins/"
 
 # Use either of these, two of them at the same time will break things!
 macdeployqt "$install/$APPNAME.app" -libpath="$install/Library"

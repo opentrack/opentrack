@@ -14,6 +14,7 @@ if(NOT WIN32)
             set(my-rt -lrt)
             if(APPLE)
                 set(my-rt)
+                set(my-opts "-DUSE_WS_PREFIX")
             endif()
             file(GLOB wine-deps "${CMAKE_CURRENT_SOURCE_DIR}/*.cxx")
             #install(FILES ${wine-deps} DESTINATION "${opentrack-src}/proto-wine")
@@ -27,7 +28,7 @@ if(NOT WIN32)
               COMMAND wineg++ -mconsole -g -DNOMINMAX -O2 ${winegxx-multilib} -std=c++17 -fPIC -o
                       opentrack-wrapper-wine.exe -I "${CMAKE_SOURCE_DIR}" -I "${CMAKE_BINARY_DIR}"
                       ${wine-deps} -Wall -Wextra -Wpedantic
-                      ${my-rt})
+                      ${my-rt} ${my-opts})
             add_custom_target(wine-wrapper DEPENDS opentrack-wrapper-wine.exe.so)
             add_dependencies(opentrack-proto-wine wine-wrapper)
             add_dependencies(wine-wrapper opentrack-compat)
