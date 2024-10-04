@@ -174,12 +174,6 @@ void FTControls::onRadioButtonsChanged() {
             ui.browse_proton_prefix_button->setEnabled(true);
         }
     }
-    else {
-        // for some reason QTs auto exclusive feature is not always correctly working
-        // this is a somewhat hacky solution
-        ui.variant_wine->setChecked(ui.wine_path_combo->isEnabled());
-        ui.variant_proton->setChecked(ui.proton_version->isEnabled());
-    }
 }
 
 void FTControls::doBrowseWine() {
