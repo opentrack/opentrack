@@ -143,9 +143,8 @@ std::vector<std::tuple<QString, int>> get_camera_names()
     }
 #endif
 #ifdef __APPLE__
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cameras)
-        ret.push_back({ cameraInfo.description(), ret.size() });
+    for (const QString& camName : apple_get_camera_names())
+        ret.push_back({ camName, ret.size() });
 #endif
 
     return ret;
