@@ -24,5 +24,5 @@ set(CMAKE_MODULE_LINKER_FLAGS_RELEASE ${CMAKE_EXE_LINKER_FLAGS_RELEASE} CACHE ST
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.8" CACHE STRING "" FORCE)
 
-set(OpenCV_DIR ~/dev/opentrack-depends/opencv/build)
-set(Qt5_DIR ~/Qt5.6.0/5.6/clang_64/lib/cmake/Qt5)
+#set(OpenCV_DIR ~/dev/opentrack-depends/opencv/build)
+#set(Qt5_DIR ~/Qt5.6.0/5.6/clang_64/lib/cmake/Qt5)

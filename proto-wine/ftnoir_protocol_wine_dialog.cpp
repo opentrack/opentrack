@@ -74,6 +74,9 @@ FTControls::FTControls()
         }
     }
 
+    // settings - wine disabled (X-Plane)
+    tie_setting(s.variant_disabled, ui.variant_disabled); // radio button
+
     // settings - wine
     tie_setting(s.variant_wine, ui.variant_wine); // radio button
     tie_setting(s.wine_select_path, ui.wine_path_combo); // combo box (dropdown)
@@ -102,10 +105,19 @@ FTControls::FTControls()
     connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &FTControls::doCancel);
 
     // setup signals and slots for UI radio buttons
+    connect(ui.variant_disabled, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
     connect(ui.variant_wine, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
     connect(ui.variant_proton, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
     connect(ui.subvariant_steamplay, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
     connect(ui.subvariant_external, &QRadioButton::clicked, this, &FTControls::onRadioButtonsChanged);
+
+
+#ifdef OTR_WINE_NO_WRAPPER
+    ui.variant_disabled->setChecked(true);
+    ui.variant_disabled->setEnabled(false);
+    ui.variant_proton->setEnabled(false);
+    ui.variant_wine->setEnabled(false);
+#endif
 
     // update state of the combo box and associated ui elements
     onWinePathComboUpdated();
@@ -125,8 +137,29 @@ void FTControls::onWinePathComboUpdated() {
     }
 }
 
+void FTControls::disableWineSettings() {
+    // disable wine settings
+    ui.wine_path_combo->setEnabled(false);
+    ui.wine_path->setEnabled(false);
+    ui.browse_wine_path_button->setEnabled(false);
+    ui.wineprefix->setEnabled(false);
+    ui.browse_wine_prefix_button->setEnabled(false);
+}
+
+void FTControls::disableProtonSettings() {
+    // disable proton settings
+    ui.proton_version->setEnabled(false);
+    ui.proton_subgroup->setEnabled(false);
+}
+
 void FTControls::onRadioButtonsChanged() {
-    if (ui.variant_wine->isChecked()) {
+    if(ui.variant_disabled->isChecked()){
+        disableWineSettings();
+        disableProtonSettings();
+        // disable advanced group
+        ui.groupBoxAdvanced->setEnabled(false);
+    }
+    else if (ui.variant_wine->isChecked()) {
         // wine settings selected
 
         // enable wine settings
@@ -137,24 +170,22 @@ void FTControls::onRadioButtonsChanged() {
             ui.wine_path->setEnabled(true);
             ui.browse_wine_path_button->setEnabled(true);
         }
+        // enable advanced group
+        ui.groupBoxAdvanced->setEnabled(true);
 
-        // disable proton settings
-        ui.proton_version->setEnabled(false);
-        ui.proton_subgroup->setEnabled(false);
+        disableProtonSettings();
     }
     else if (ui.variant_proton->isChecked()) {
         // proton settings selected
 
         // disable wine settings
-        ui.wine_path_combo->setEnabled(false);
-        ui.wine_path->setEnabled(false);
-        ui.browse_wine_path_button->setEnabled(false);
-        ui.wineprefix->setEnabled(false);
-        ui.browse_wine_prefix_button->setEnabled(false);
+        disableWineSettings();
 
         // enable proton settings
         ui.proton_version->setEnabled(true);
         ui.proton_subgroup->setEnabled(true);
+        // enable advanced group
+        ui.groupBoxAdvanced->setEnabled(true);
 
         // run proton radio buttons logic
         if (ui.subvariant_steamplay->isChecked()) {
@@ -173,12 +204,6 @@ void FTControls::onRadioButtonsChanged() {
             ui.protonprefix->setEnabled(true);
             ui.browse_proton_prefix_button->setEnabled(true);
         }
-    }
-    else {
-        // for some reason QTs auto exclusive feature is not always correctly working
-        // this is a somewhat hacky solution
-        ui.variant_wine->setChecked(ui.wine_path_combo->isEnabled());
-        ui.variant_proton->setChecked(ui.proton_version->isEnabled());
     }
 }
 
