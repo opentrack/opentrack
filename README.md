@@ -1,6 +1,10 @@
+[<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
+
 ## Intro
 
-[<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
+opentrack is a program for tracking user's head rotation and tranmitting it to flight simulation software and military-themed video games.
+
+Looking forr **railway planning software**? <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
 opentrack project home is located at <<http://github.com/opentrack/opentrack>>.
 
@@ -9,10 +13,6 @@ For the latest **downloads** visit <<https://github.com/opentrack/opentrack/rele
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for [new user guide](https://github.com/opentrack/opentrack/wiki/Quick-Start-Guide-(WIP)), [frequent answers](https://github.com/opentrack/opentrack/wiki/common-issues), specific tracker/filter
 documentation. See also the [gameplay video](https://www.youtube.com/watch?v=XI73ul_FnBI) with opentrack set up.
-
-## Looking for railway planning software?
-
-**Railway planning software** <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
 ## Usage
 
