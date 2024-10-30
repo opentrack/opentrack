@@ -2,9 +2,9 @@
 
 ## Intro
 
-opentrack is a program for tracking user's head rotation and transmitting it to flight simulation software and military-themed video games. Project home is located at <<http://github.com/opentrack/opentrack>>.
+opentrack is a program for tracking user's head rotation and transmitting it to flight simulation software and military-themed video games. Project home is located at <<https://github.com/opentrack/opentrack>>.
 
-Looking for **railway planning software**? <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
+Looking for **railway planning software**? <<https://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
 For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>> Download an `.exe` installer or a `.7z` archive. Currently installers and portable versions for Windows are available for each release. It supports [USB stick truly "portable" installations](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
 
@@ -35,7 +35,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - Arduino with custom Hatire firmware
 - Intel RealSense 3D camera (Windows)
 - BBC micro:bit, LEGO, sensortag support via Smalltalk<sup>[(1)](https://en.wikipedia.org/wiki/Smalltalk)[(2)](https://en.wikipedia.org/wiki/Alan_Kay)</sup>
-  [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
+  [S2Bot](https://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
 - Wiimote (Windows)
 - NeuralNet face tracker
 - Eyeware Beam<sup>[[1](https://beam.eyeware.tech/)]</sup>
@@ -57,7 +57,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 ## Credits, in chronological order
 
 - Stanisław Halik (maintainer)
-- Wim Vriend -- author of [FaceTrackNoIR](http://facetracknoir.sourceforge.net/) that served as the initial codebase for `opentrack`. While the  code was almost entirely rewritten, we still hold on to many of `FaceTrackNoIR`'s ideas.
+- Wim Vriend -- author of [FaceTrackNoIR](https://facetracknoir.sourceforge.net/) that served as the initial codebase for `opentrack`. While the  code was almost entirely rewritten, we still hold on to many of `FaceTrackNoIR`'s ideas.
 - Chris Thompson (aka mm0zct, Rift and Razer Hydra author and maintainer)
 - Patrick Ruoff (PT tracker author)
 - Xavier Hallade (Intel RealSense tracker author and maintainer)
