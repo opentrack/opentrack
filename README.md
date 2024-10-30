@@ -2,7 +2,7 @@
 
 ## Intro
 
-opentrack is a program for tracking user's head rotation and tranmitting it to flight simulation software and military-themed video games. Project home is located at <<http://github.com/opentrack/opentrack>>.
+opentrack is a program for tracking user's head rotation and transmitting it to flight simulation software and military-themed video games. Project home is located at <<http://github.com/opentrack/opentrack>>.
 
 Looking for **railway planning software**? <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
