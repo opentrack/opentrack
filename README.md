@@ -4,7 +4,7 @@
 
 opentrack is a program for tracking user's head rotation and tranmitting it to flight simulation software and military-themed video games.
 
-Looking forr **railway planning software**? <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
+Looking for **railway planning software**? <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
 opentrack project home is located at <<http://github.com/opentrack/opentrack>>.
 
