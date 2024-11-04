@@ -37,6 +37,8 @@ cp "$dir/PkgInfo" "$install/$APPNAME.app/Contents/"
 # Copy plugins
 mkdir -p "$install/$APPNAME.app/Contents/MacOS/Plugins"
 cp -r "$install/Plugins" "$install/$APPNAME.app/Contents/MacOS/"
+# Copy thirdparty dlls amd libs for usage of WINE
+cp -r "$install/thirdparty/" "$install/$APPNAME.app/Contents/MacOS/Plugins/"
 
 # Use either of these, two of them at the same time will break things!
 macdeployqt "$install/$APPNAME.app" -libpath="$install/Library"
@@ -58,6 +60,17 @@ sips -z 512 512   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_256x256
 sips -z 512 512   "$tmp/opentrack.png" --out "$tmp/$APPNAME.iconset/icon_512x512.png" 
 iconutil -c icns -o "$install/$APPNAME.app/Contents/Resources/$APPNAME.icns" "$tmp/$APPNAME.iconset"
 rm -rf "$tmp"
+
+
+if [ ! -d "$install/xplane" ]
+then
+ mkdir -p "$install/xplane"
+fi
+
+
+# Sign it to run it locally otherwise you'll get errors. Also I've noticed that
+# this makes the binaries also usable for other users. Otherwise macOS will complain very much.
+codesign --force --deep --sign - "$install/$APPNAME.app"
 
 #Build DMG
 #https://github.com/andreyvit/create-dmg

@@ -17,3 +17,6 @@
 OTR_COMPAT_EXPORT std::vector<std::tuple<QString, int>> get_camera_names();
 OTR_COMPAT_EXPORT int camera_name_to_index(const QString &name);
 
+#ifdef __APPLE__
+std::vector<QString> apple_get_camera_names();
+#endif
