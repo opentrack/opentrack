@@ -52,7 +52,7 @@ static QStringList get_all_executable_names()
 template<typename = void>
 static QStringList get_all_executable_names()
 {
-    QStringList ret;
+    QStringList ret; ret.reserve(2048);
     std::vector<int> vec;
 
     while (true)
@@ -138,13 +138,13 @@ static QStringList get_all_executable_names()
 template<typename = void>
 QStringList get_all_executable_names()
 {
-    QStringList ret;
+    QStringList ret; ret.reserve(2048);
     enum pids_item items[] = { PIDS_ID_PID, PIDS_CMD, PIDS_CMDLINE_V };
 
     enum rel_items { rel_pid, rel_cmd, rel_cmdline };
     struct pids_info *info = NULL;
     struct pids_stack *stack;
-    QString tmp; tmp.reserve(64);
+    QString tmp; tmp.reserve(255);
 
     procps_pids_new(&info, items, 3);
 
@@ -190,7 +190,7 @@ QStringList get_all_executable_names()
 template<typename = void>
 QStringList get_all_executable_names()
 {
-    QStringList ret;
+    QStringList ret; ret.reserve(2048);
     proc_t** procs = readproctab(PROC_FILLCOM);
     if (procs == nullptr)
     {
