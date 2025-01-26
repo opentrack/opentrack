@@ -48,19 +48,14 @@ public:
 
     QString game_name() override
     {
-#ifndef OTR_WINE_NO_WRAPPER
         QMutexLocker foo(&game_name_mutex);
         return connected_game;
-#else
-        return QStringLiteral("X-Plane");
-#endif
     }
 private:
     shm_wrapper lck_shm { WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM) };
     WineSHM* shm = nullptr;
     settings s;
 
-#ifndef OTR_WINE_NO_WRAPPER
     QProcess wrapper;
     int gameid = 0;
     QString connected_game;
@@ -69,7 +64,6 @@ private:
     #ifdef __APPLE__
     QString findMacOsSystemWine();
     #endif
-#endif
 };
 
 class FTControls: public IProtocolDialog
@@ -103,11 +97,6 @@ class wine_metadata : public Metadata
     Q_OBJECT
 
 public:
-#ifndef OTR_WINE_NO_WRAPPER
     QString name() override { return tr("Wine -- Windows layer for Unix"); }
     QIcon icon() override { return QIcon(":/images/wine.png"); }
-#else
-    QString name() override { return tr("X-Plane"); }
-    QIcon icon() override { return {}; }
-#endif
 };

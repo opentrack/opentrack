@@ -1,8 +1,8 @@
 #include "ftnoir_protocol_wine.h"
 #include <qprocess.h>
-#ifndef OTR_WINE_NO_WRAPPER
-#   include "csv/csv.h"
-#endif
+
+#include "csv/csv.h"
+
 
 #include <cstring>
 #include <cmath>
@@ -17,7 +17,6 @@ wine::wine() = default;
 
 wine::~wine()
 {
-#ifndef OTR_WINE_NO_WRAPPER
     bool exit = false;
     if (shm) {
         shm->stop = true;
@@ -31,7 +30,6 @@ wine::~wine()
             wrapper.kill();
         wrapper.waitForFinished(1000);
     }
-#endif
     //shm_unlink("/" WINE_SHM_NAME);
 }
 
@@ -44,7 +42,7 @@ void wine::pose(const double *headpose, const double*)
             shm->data[i] = (headpose[i] * M_PI) / 180;
         for (int i = 0; i < 3; i++)
             shm->data[i] = headpose[i] * 10;
-#ifndef OTR_WINE_NO_WRAPPER
+
         if (shm->gameid != gameid)
         {
             //qDebug() << "proto/wine: looking up gameData";
@@ -56,14 +54,14 @@ void wine::pose(const double *headpose, const double*)
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
         }
-#endif
+
         lck_shm.unlock();
     }
 }
 
 module_status wine::initialize()
 {
-#ifndef OTR_WINE_NO_WRAPPER
+
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
     /////////////////////////
@@ -186,7 +184,6 @@ module_status wine::initialize()
     if (wrapper.state() == QProcess::ProcessState::NotRunning) {
         return error(tr("Failed to start Wine! Make sure the binary is set correctly."));
     }
-#endif
 
     if (lck_shm.success())
     {
@@ -196,9 +193,8 @@ module_status wine::initialize()
         qDebug() << "proto/wine: shm success";
 
         // display "waiting for game message" (overwritten once a game is detected)
-#ifndef OTR_WINE_NO_WRAPPER
+
         connected_game = "waiting for game...";
-#endif
     }
     else {
         qDebug() << "proto/wine: shm no success";
@@ -210,7 +206,6 @@ module_status wine::initialize()
         return error(tr("Can't open shared memory mapping"));
 }
 
-#ifndef OTR_WINE_NO_WRAPPER
 #ifdef __APPLE__
 QString wine::findMacOsSystemWine(){
     // on macOS looking for "wine" doesn't work,
@@ -233,6 +228,5 @@ QString wine::findMacOsSystemWine(){
 
     return "wine";
 }
-#endif
 #endif
 OPENTRACK_DECLARE_PROTOCOL(wine, FTControls, wine_metadata)
