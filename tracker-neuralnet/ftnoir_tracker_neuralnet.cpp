@@ -667,14 +667,20 @@ void NeuralNetTracker::data(double *data)
     const auto& my = tmp.R.col(1);
     const auto& mz = tmp.R.col(2);
 
+    // For reference: https://en.wikipedia.org/wiki/Euler_angles. Section "Rotation matrix". The relevant matrix is 
+    // under "Tait-Bryan angles", row with "Y_alpha Z_beta X_gamma = ...". 
+    // Because for the NN tracker x is forward, and y is up. We can see that the x axis is independent of roll. Thus it
+    // is relatively easy to figure out the yaw and pitch angles (alpha and beta).
     const float yaw = std::atan2(mx(2), mx(0));
     const float pitch = -std::atan2(-mx(1), std::sqrt(mx(2)*mx(2)+mx(0)*mx(0)));
-    const float roll = std::atan2(-my(2), mz(2));
+    // For the roll angle we recognize that the matrix entries in the second row contain cos(pitch)*cos(roll), and
+    // cos(pitch)*sin(roll). Using atan2 eliminates the common pitch factor and we obtain the roll angle.
+    const float roll = std::atan2(-mz(1), my(1));
     {
         constexpr double rad2deg = 180/M_PI;
         data[Yaw]   = rad2deg * yaw;
         data[Pitch] = rad2deg * pitch;
-        data[Roll]  = rad2deg * roll;
+        data[Roll]  = -rad2deg * roll;
 
         // convert to cm
         data[TX] = -tmp.t[2] * 0.1;
