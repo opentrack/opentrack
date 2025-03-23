@@ -48,7 +48,15 @@ enum fps_choices
     fps_default = 0,
     fps_30      = 1,
     fps_60      = 2,
-    fps_MAX     = 3
+    fps_75      = 3,
+    fps_125     = 4,
+    fps_200     = 5,
+    fps_50      = 6,
+    fps_100     = 7,
+    fps_120     = 8,
+    fps_300     = 9,
+    fps_250     = 10,
+    fps_MAX     = 11,
 };
 
 struct resolution_tuple

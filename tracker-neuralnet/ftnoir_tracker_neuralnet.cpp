@@ -66,13 +66,26 @@ QDir get_default_model_directory()
 
 int enum_to_fps(int value)
 {
+    int fps = 0;
+
     switch (value)
     {
-        case fps_30:        return 30;
-        case fps_60:        return 60;
-        default: [[fallthrough]];
-        case fps_default:   return 0;
+    default: eval_once(qDebug() << "neuralnet tracker: invalid fps enum value");
+    [[fallthrough]];
+    case fps_default:   fps = 0; break;
+    case fps_30:        fps = 30; break;
+    case fps_60:        fps = 60; break;
+    case fps_75:        fps = 75; break;
+    case fps_125:       fps = 125; break;
+    case fps_200:       fps = 200; break;
+    case fps_50:        fps = 50; break;
+    case fps_100:       fps = 100; break;
+    case fps_120:       fps = 120; break;
+    case fps_300:       fps = 300; break;
+    case fps_250:       fps = 250; break;
     }
+
+    return fps;
 }
 
 
@@ -414,7 +427,7 @@ QuatPose NeuralNetTracker::transform_to_world_pose(const cv::Quatf &face_rotatio
 
 QuatPose NeuralNetTracker::compute_filtered_pose(const PoseEstimator::Face &face)
 {
-    if (fps_ > 0.01 && last_pose_ && poseestimator_->has_uncertainty())
+    if (fps_ > 0.001 && last_pose_ && poseestimator_->has_uncertainty())
     {
         auto image2world = [this](const cv::Quatf &face_rotation, const cv::Point2f& face_xy, const float face_size) {
                 return this->transform_to_world_pose(face_rotation, face_xy, face_size); };
@@ -711,14 +724,6 @@ QString NeuralNetTracker::get_posenet_filename() const
         filename = get_default_model_directory().absoluteFilePath(filename);
     return filename;
 }
-
-
-
-
-
-
-
-
 
 
 void NeuralNetDialog::make_fps_combobox()
