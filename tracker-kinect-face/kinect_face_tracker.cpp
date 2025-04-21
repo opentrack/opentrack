@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Stéphane Lenclud <github@lenclud.com>
+/* Copyright (c) 2019, StÃ©phane Lenclud <github@lenclud.com>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -426,14 +426,19 @@ HRESULT KinectFaceTracker::UpdateBodyData(IBody** ppBodies)
 
 float VectorLengthSquared(CameraSpacePoint point)
 {
-	float lenghtSquared = pow(point.X, 2) + pow(point.Y, 2) + pow(point.Z, 2);
-
+#define VectorLengthSquared__fromCenterOfViewport 1
+#ifdef VectorLengthSquared__fromCenterOfViewport
+    float lenghtSquared = pow(point.X, 2) + pow(point.Y, 2); // 2D distance from center of sensor viewport
+#else    
+    float lenghtSquared = pow(point.X, 2) + pow(point.Y, 2) + pow(point.Z, 2); // 3D distance squared from sensor
+#endif
+    
 	//result = Math.Sqrt(result);
 	return lenghtSquared;
 }
 
 //
-// Finds the closest body from the sensor if any
+// Finds the closest body from the center of sensor viewport if any
 //
 IBody* KinectFaceTracker::FindClosestBody(IBody** aBodies)
 {
