@@ -16,7 +16,6 @@
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
 #include "cv/translation-calibrator.hpp"
-#include "cv/numeric.hpp"
 #include "compat/timer.hpp"
 #include "video/camera.hpp"
 #include "cv/affine.hpp"
