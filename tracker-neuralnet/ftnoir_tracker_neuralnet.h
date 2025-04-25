@@ -109,7 +109,7 @@ struct CamIntrinsics
 
 class NeuralNetTracker : protected virtual QThread, public ITracker
 {
-    Q_OBJECT
+    //Q_OBJECT
 public:
     NeuralNetTracker();
     ~NeuralNetTracker() override;
