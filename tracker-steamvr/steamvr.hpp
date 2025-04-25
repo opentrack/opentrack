@@ -8,7 +8,7 @@
 #include <climits>
 
 #include <QString>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QList>
 
 #include <openvr.h>
@@ -57,7 +57,7 @@ struct device_list final
 
 private:
     QList<device_spec> device_specs;
-    static QMutex mtx;
+    static QRecursiveMutex mtx;
     static tt vr_init_();
     static void fill_device_specs(QList<device_spec>& list);
     static tt vr_init();

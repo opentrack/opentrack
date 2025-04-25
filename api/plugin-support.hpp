@@ -17,6 +17,7 @@
 
 #include <QDebug>
 #include <QString>
+#include <QtCore5Compat/QStringRef>
 #include <QLibrary>
 #include <QDir>
 #include <QIcon>
@@ -159,7 +160,7 @@ private:
                 for (auto name : names)
                 {
                     if (in.startsWith(name))
-                        return in.mid(std::strlen(name)).toString();
+                        return in.mid((int)std::strlen(name)).toString();
                 }
             }
         }

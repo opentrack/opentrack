@@ -1,5 +1,9 @@
 include_guard(GLOBAL)
 
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
+
 set(opentrack-perms-file WORLD_READ OWNER_WRITE OWNER_READ GROUP_READ)
 set(opentrack-perms-dir WORLD_READ WORLD_EXECUTE OWNER_WRITE OWNER_READ OWNER_EXECUTE GROUP_READ GROUP_EXECUTE)
 set(opentrack-perms-exec "${opentrack-perms-dir}")
@@ -145,7 +149,7 @@ function(otr_module n_)
 
     if(arg_EXECUTABLE)
         if (APPLE)
-            set(subsys "MACOSX_BUNDLE") 
+            set(subsys "MACOSX_BUNDLE")
         elseif(NOT WIN32)
             set(subsys "")
         elseif(arg_WIN32-CONSOLE)
