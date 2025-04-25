@@ -65,6 +65,8 @@ function(sets type)
     endwhile()
 endfunction()
 
+set(OpenCV_STATIC 1)
+
 if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     #include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 
@@ -104,6 +106,9 @@ if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     set(BUILD_PERF_TESTS    OFF)
     set(BUILD_opencv_apps   OFF)
     set(BUILD_opencv_gapi   OFF)
+
+    set(OPENCV_SKIP_MSVC_PARALLEL 1)
+    set(OPENCV_DISABLE_THREAD_SUPPORT 1)
 endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL "TestOscpack")
@@ -114,9 +119,10 @@ set(opentrack-simd "SSE2")
 
 if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
     sets(BOOL
-         ONNX_USE_MSVC_STATIC_RUNTIME           OFF
-         protobuf_MSVC_STATIC_RUNTIME           OFF
-         onnxruntime_USE_AVX                    OFF
+         ONNX_USE_MSVC_STATIC_RUNTIME           ON
+         protobuf_MSVC_STATIC_RUNTIME           ON
+         ABSL_MSVC_STATIC_RUNTIME               ON
+         onnxruntime_USE_AVX                    ON
          onnxruntime_USE_AVX2                   OFF
          onnxruntime_USE_AVX512                 OFF
          onnxruntime_BUILD_BENCHMARKS           OFF
@@ -131,6 +137,7 @@ if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
          ONNX_GEN_PB_TYPE_STUBS                 OFF
          onnxruntime_DISABLE_CONTRIB_OPS        ON
          BUILD_TESTING                          OFF
+         BUILD_SHARED_LIBS                      OFF
     )
     if(opentrack-64bit)
         sets(BOOL
@@ -144,7 +151,7 @@ if(opentrack-64bit)
 endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-add_compile_options(-MD)
+add_compile_options(-MT)
 
 add_link_options(-cgthreads:1)
 
@@ -163,11 +170,11 @@ set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
-set(_LDFLAGS "-WX")
+set(_LDFLAGS "")
 set(_LDFLAGS_RELEASE "-OPT:REF,ICF=10 -LTCG -DEBUG:FULL")
 set(_LDFLAGS_DEBUG "-DEBUG:FULL")
 
-set(_LDFLAGS_STATIC "-WX")
+set(_LDFLAGS_STATIC "")
 set(_LDFLAGS_STATIC_RELEASE "-LTCG")
 set(_LDFLAGS_STATIC_DEBUG "")
 

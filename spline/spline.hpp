@@ -118,7 +118,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     void disconnect_signals();
     void invalidate_settings_();
 
-    mutex mtx { mutex::Recursive };
+    mutex<QRecursiveMutex> mtx;
     std::shared_ptr<settings> s;
     QMetaObject::Connection conn_points, conn_maxx, conn_maxy;
 

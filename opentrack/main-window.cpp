@@ -24,7 +24,6 @@
 
 #include <QMessageBox>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QApplication>
 
 #include <QFile>

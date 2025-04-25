@@ -26,7 +26,7 @@
 #include <QMessageBox>
 #include <QDebug>
 
-QMutex device_list::mtx(QMutex::Recursive);
+QRecursiveMutex device_list::mtx;
 
 template<typename F>
 auto with_vr_lock(F&& fun) -> decltype(fun(vr_t(), vr_error_t()))

@@ -69,7 +69,7 @@ struct settings : opts {
 
 class aruco_tracker : protected virtual QThread, public ITracker
 {
-    Q_OBJECT
+    //Q_OBJECT
     static constexpr float c_search_window = 1.3f;
 public:
     aruco_tracker();

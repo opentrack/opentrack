@@ -1,4 +1,4 @@
-/* Copyright (c) 2019, Stéphane Lenclud <github@lenclud.com>
+/* Copyright (c) 2019, StÃ©phane Lenclud <github@lenclud.com>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -187,7 +187,7 @@ void KinectFaceTracker::data(double *data)
 	{
 		//OutputDebugStringA("Skipping frame!\n");
 	}
-		
+
 	// Feed our framework our last valid position and rotation
 	data[0] = (iLastFacePosition.X - iFacePositionCenter.X) * 100; // Convert to centimer to be in a range that suites OpenTrack.
 	data[1] = (iLastFacePosition.Y - iFacePositionCenter.Y) * 100;
@@ -201,7 +201,7 @@ void KinectFaceTracker::data(double *data)
 
 
 /// <summary>
-/// Converts rotation quaternion to Euler angles 
+/// Converts rotation quaternion to Euler angles
 /// And then maps them to a specified range of values to control the refresh rate
 /// </summary>
 /// <param name="pQuaternion">face rotation quaternion</param>
@@ -215,7 +215,7 @@ void KinectFaceTracker::ExtractFaceRotationInDegrees(const Vector4* pQuaternion,
 	double z = pQuaternion->z;
 	double w = pQuaternion->w;
 
-	// convert face rotation quaternion to Euler angles in degrees		
+	// convert face rotation quaternion to Euler angles in degrees
 	double dPitch, dYaw, dRoll;
 	dPitch = atan2(2 * (y * z + w * x), w * w - x * x - y * y + z * z) / M_PI * 180.0;
 	dYaw = asin(2 * (w * y - x * z)) / M_PI * 180.0;
@@ -251,7 +251,7 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 		hr = iKinectSensor->Open();
 	}
 
-	// Create color frame reader	
+	// Create color frame reader
 	if (SUCCEEDED(hr))
 	{
 		UniqueInterface<IColorFrameSource> colorFrameSource;
@@ -263,8 +263,8 @@ HRESULT KinectFaceTracker::InitializeDefaultSensor()
 			hr = colorFrameSource->OpenReader(&iColorFrameReader);
 		}
 	}
-		
-	// Create body frame reader	
+
+	// Create body frame reader
 	if (SUCCEEDED(hr))
 	{
 		UniqueInterface<IBodyFrameSource> bodyFrameSource;
@@ -339,7 +339,7 @@ void KinectFaceTracker::Update()
 		if (SUCCEEDED(hr))
 		{
 			hr = pColorFrame->get_RawColorImageFormat(&imageFormat);
-		}		
+		}
 
 		if (SUCCEEDED(hr))
 		{
@@ -373,7 +373,7 @@ void KinectFaceTracker::Update()
 
 			if (SUCCEEDED(hr))
 			{
-				// Setup our image 
+				// Setup our image
 				QImage image((const unsigned char*)pBuffer, KColorWidth, KColorHeight, sizeof(RGBQUAD)*KColorWidth, QImage::Format_RGBA8888);
 				if (IsValidRect(iFaceBox))
 				{
@@ -555,7 +555,7 @@ void KinectFaceTracker::ProcessFaces()
 			//IFaceFrameResult* pFaceFrameResult = nullptr;
 			IFaceAlignment* pFaceAlignment = nullptr;
 			CreateFaceAlignment(&pFaceAlignment); // TODO: check return?
-			//D2D1_POINT_2F faceTextLayout;				
+			//D2D1_POINT_2F faceTextLayout;
 
 			//hr = pFaceFrame->get_FaceFrameResult(&pFaceFrameResult);
 
@@ -610,5 +610,3 @@ void KinectFaceTracker::ProcessFaces()
 		}
 	}
 }
-
-
