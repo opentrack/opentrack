@@ -26,13 +26,13 @@ void flightgear::pose(const double* headpose, const double*) {
 }
 
 module_status flightgear::initialize()
-{   
+{
     if (outSocket.bind(QHostAddress::Any, 0, QUdpSocket::ShareAddress | QUdpSocket::ReuseAddressHint))
         return status_ok();
     else
         return error(tr("Can't bind to [%1.%2.%3.%4]:%5")
-                    .arg(s.ip1).arg(s.ip2).arg(s.ip3).arg(s.ip4)
-                    .arg(s.port));
+                    .arg(*s.ip1).arg(*s.ip2).arg(*s.ip3).arg(*s.ip4)
+                    .arg(*s.port));
 }
 
 OPENTRACK_DECLARE_PROTOCOL(flightgear, FGControls, flightgearDll)

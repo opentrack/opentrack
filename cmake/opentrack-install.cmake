@@ -1,4 +1,9 @@
 include_guard(GLOBAL)
+
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
+
 macro(otr_install_misc path)
     install(${ARGN} DESTINATION "${path}" PERMISSIONS ${opentrack-perms-file})
 endmacro()

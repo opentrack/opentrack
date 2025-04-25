@@ -1,24 +1,18 @@
 #pragma once
 
-#include <QMutex>
-
 #include "export.hpp"
 
+template<typename MutexType>
 class OTR_COMPAT_EXPORT mutex
 {
-    mutable QMutex inner;
+    mutable MutexType inner{};
 
 public:
-    using RecursionMode = QMutex::RecursionMode;
-    static constexpr RecursionMode Recursive = RecursionMode::Recursive;
-    static constexpr RecursionMode NonRecursive = RecursionMode::NonRecursive;
-
     mutex& operator=(const mutex& datum);
+    MutexType* operator&() const;
     mutex(const mutex& datum);
-    explicit mutex(RecursionMode m);
-    mutex() : mutex{NonRecursive} {}
+    explicit mutex();
 
-    QMutex* operator&() const noexcept;
-    explicit operator QMutex*() const noexcept;
-    QMutex* operator->() const noexcept;
+    explicit operator MutexType*() const noexcept;
+    MutexType* operator->() const noexcept;
 };

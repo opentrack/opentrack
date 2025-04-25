@@ -260,7 +260,7 @@ void win32_joy_ctx::enum_state::refresh()
 
 const win32_joy_ctx::joys_t& win32_joy_ctx::enum_state::get_joys() const { return joys; }
 
-BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCE *pdidInstance, void *pContext)
+BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINSTANCEA *pdidInstance, void *pContext)
 {
     enum_state& state = *reinterpret_cast<enum_state*>(pContext);
     const QString guid = guid_to_string(pdidInstance->guidInstance);
@@ -327,7 +327,7 @@ end:
     return DIENUM_CONTINUE;
 }
 
-BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCE *pdidoi, void *ctx)
+BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJECTINSTANCEA* pdidoi, void *ctx)
 {
     if (pdidoi->dwType & DIDFT_AXIS)
     {
