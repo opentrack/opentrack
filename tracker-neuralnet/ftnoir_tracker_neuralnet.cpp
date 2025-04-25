@@ -47,9 +47,12 @@ namespace neuralnet_tracker_ns
 
 using namespace cvcontrib;
 
-using numeric_types::vec3;
-using numeric_types::vec2;
-using numeric_types::mat33;
+using f = float;
+template<int n> using vec = cv::Vec<f, n>;
+template<int y, int x> using mat = cv::Matx<f, y, x>;
+using vec2 = vec<2>;
+using vec3 = vec<3>;
+using mat33 = mat<3, 3>;
 
 #if _MSC_VER
 std::wstring convert(const QString &s) { return s.toStdWString(); }
