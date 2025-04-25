@@ -3,8 +3,8 @@
 #include <QObject>
 #include <QStringList>
 #include <QIODevice>
-#include <QTextCodec>
-#include <QRegExp>
+#include <QtCore5Compat/QTextCodec>
+#include <QtCore5Compat/QRegExp>
 #include <QtGlobal>
 
 class CSV

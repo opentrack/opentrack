@@ -18,7 +18,7 @@
 #include <QImage>
 #include <QTimer>
 
-#include <QMutex>
+#include <QRecursiveMutex>
 
 struct OTR_VIDEO_EXPORT video_widget : QWidget
 {
@@ -32,7 +32,7 @@ struct OTR_VIDEO_EXPORT video_widget : QWidget
     bool fresh() const;
 
 protected:
-    mutable QMutex mtx { QMutex::NonRecursive };
+    mutable QRecursiveMutex mtx;
     QImage texture;
     std::vector<unsigned char> vec;
     void set_fresh(bool x);

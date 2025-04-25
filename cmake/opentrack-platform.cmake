@@ -133,7 +133,7 @@ if(MSVC)
     endif()
 
     add_link_options(-DYNAMICBASE -NXCOMPAT)
-    add_link_options(-WX)
+    #add_link_options(-WX)
     add_link_options(-ignore:4020)
     add_link_options(-ignore:4217) # debug build
 

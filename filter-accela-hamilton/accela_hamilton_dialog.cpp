@@ -28,10 +28,10 @@ dialog_accela_hamilton::dialog_accela_hamilton()
     tie_setting(s.rot_deadzone, ui.rot_dz_slider);
     tie_setting(s.pos_deadzone, ui.trans_dz_slider);
 
-    tie_setting(s.rot_smoothing, ui.rot_gain, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
-    tie_setting(s.pos_smoothing, ui.trans_gain, [](const slider_value& s) { return tr("%1mm").arg(s, 0, 'g', 4); });
-    tie_setting(s.rot_deadzone, ui.rot_dz, [](const slider_value& s) { return tr("%1°").arg(s, 0, 'g', 4); });
-    tie_setting(s.pos_deadzone, ui.trans_dz, [](const slider_value& s) { return tr("%1mm").arg(s); });
+    tie_setting(s.rot_smoothing, ui.rot_gain, [](const slider_value& s) { return tr("%1°").arg(s.cur(), 0, 'g', 4); });
+    tie_setting(s.pos_smoothing, ui.trans_gain, [](const slider_value& s) { return tr("%1mm").arg(s.cur(), 0, 'g', 4); });
+    tie_setting(s.rot_deadzone, ui.rot_dz, [](const slider_value& s) { return tr("%1°").arg(s.cur(), 0, 'g', 4); });
+    tie_setting(s.pos_deadzone, ui.trans_dz, [](const slider_value& s) { return tr("%1mm").arg(s.cur()); });
 
     tie_setting(s.max_zoomed_smoothing, ui.max_zoomed_smoothing);
     tie_setting(s.max_zoomed_smoothing, ui.lb_max_zoomed_smoothing, [](double x)
