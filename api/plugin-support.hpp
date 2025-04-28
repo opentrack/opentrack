@@ -17,7 +17,8 @@
 
 #include <QDebug>
 #include <QString>
-#include <QtCore5Compat/QStringRef>
+#include <QStringView>
+#include <QLatin1StringView>
 #include <QLibrary>
 #include <QDir>
 #include <QIcon>
@@ -132,16 +133,16 @@ private:
 
     static QString trim_filename(const QString& in_)
     {
-        QStringRef in(&in_);
+        auto in = QStringView{in_};
 
-        const int idx = in.lastIndexOf("/");
+        const int idx = in.lastIndexOf(QLatin1StringView{"/"});
 
         if (idx != -1)
         {
             in = in.mid(idx + 1);
 
-            if (in.startsWith(OPENTRACK_LIBRARY_PREFIX) &&
-                in.endsWith("." OPENTRACK_LIBRARY_EXTENSION))
+            if (in.startsWith(QLatin1StringView{OPENTRACK_LIBRARY_PREFIX}) &&
+                in.endsWith(QLatin1StringView{"." OPENTRACK_LIBRARY_EXTENSION}))
             {
                 constexpr unsigned pfx_len = sizeof(OPENTRACK_LIBRARY_PREFIX) - 1;
                 constexpr unsigned rst_len = sizeof("." OPENTRACK_LIBRARY_EXTENSION) - 1;
@@ -159,7 +160,7 @@ private:
 
                 for (auto name : names)
                 {
-                    if (in.startsWith(name))
+                    if (in.startsWith(QLatin1StringView{name}))
                         return in.mid((int)std::strlen(name)).toString();
                 }
             }
