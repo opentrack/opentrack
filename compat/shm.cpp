@@ -17,7 +17,7 @@
 
 #ifdef QT_CORE_LIB
 #   include <QDebug>
-#   define warn(str, ...) (qDebug() << "shm:" str ": " << __VA_ARGS__)
+#   define warn(str, ...) (qDebug() << "shm " str ": " << __VA_ARGS__)
 #else
 #   define warn(str, ...) (void)0
 #endif
@@ -134,4 +134,3 @@ bool shm_wrapper::success()
     return mem != nullptr;
 #endif
 }
-
