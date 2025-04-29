@@ -51,7 +51,7 @@ void wine::pose(const double *headpose, const double*)
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
             /* memory-hacks DLL can't be loaded into a Linux process, either */
-            CSV::getGameData(shm->gameid, shm->table, gamename);
+            getGameData(shm->gameid, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
         }
