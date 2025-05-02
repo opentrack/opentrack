@@ -14,7 +14,7 @@ if(LINUX OR APPLE)
         if(APPLE)
             target_compile_options(${self} PRIVATE
                                    -iframework "${SDK_XPLANE}/Libraries/Mac/"
-                                   -DAPL -DXPLM200 -DXPLM210 
+                                   -DAPL -DXPLM200 -DXPLM210 -DXPLM300 -DXPLM303
                                    -framework XPLM)
             target_link_options(${self} PRIVATE
                                 "-F${SDK_XPLANE}/Libraries/Mac/"
@@ -27,7 +27,7 @@ if(LINUX OR APPLE)
                 PERMISSIONS ${opentrack-perms-exec})
 
         elseif(CMAKE_COMPILER_IS_GNUCXX)
-            target_compile_options(${self} PRIVATE -DLIN -DXPLM200 -DXPLM210)
+            target_compile_options(${self} PRIVATE -DLIN -DXPLM200 -DXPLM210 -DXPLM300 -DXPLM303 )
             target_link_options(${self} PRIVATE -rdynamic -nodefaultlibs)
         endif()
 
@@ -35,8 +35,14 @@ if(LINUX OR APPLE)
             target_link_options(${self} PRIVATE -undefined_warning)
         endif()
 
+        if(CMAKE_OSX_ARCHITECTURES)
+            set(PLUGIN_FILE_NAME "opentrack_${CMAKE_OSX_ARCHITECTURES}")
+        else()
+            set(PLUGIN_FILE_NAME "opentrack")
+        endif()
+        
         set_target_properties(${self} PROPERTIES
-            LIBRARY_OUTPUT_NAME "opentrack.xpl"
+            LIBRARY_OUTPUT_NAME "${PLUGIN_FILE_NAME}.xpl"
             PREFIX "" SUFFIX "")
 
         if(UNIX AND NOT APPLE)

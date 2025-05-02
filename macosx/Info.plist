@@ -14,6 +14,8 @@
   <string>opentrack.icns</string>
   <key>CFBundleVersion</key>
   <string>@OPENTRACK-VERSION@</string>
+  <key>CFBundleShortVersionString</key>
+  <string>@OPENTRACK-VERSION@</string>
   <key>CFBundleInfoDictionaryVersion</key>
   <string>6.0</string>
   <key>CFBundlePackageType</key>
