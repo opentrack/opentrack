@@ -7,6 +7,8 @@ if(WIN32)
         else()
             link_directories("${SDK_RIFT_140}/Lib/Windows/Win32/Release/VS2017")
         endif()
+        include_directories("${SDK_RIFT_140}/build/Include") # for CI automation
+        link_directories("${SDK_RIFT_140}/build/Release") # for CI automation
         link_libraries(LibOVR winmm setupapi ws2_32 imagehlp wbemuuid)
 
         otr_module(tracker-rift)
