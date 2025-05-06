@@ -2,7 +2,7 @@ name: Linuax Package
 on:
   push:
     tags:
-      - 'opentrack-\d+\.\d+\.\d+'
+      - 'opentrack-[0-9]+.[0-9]+.[0-9]+'
   workflow_dispatch:
 env:
   build_type: Release
