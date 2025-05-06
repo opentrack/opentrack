@@ -3,6 +3,7 @@ on:
   push:
     tags:
       - 'opentrack-[0-9]+.[0-9]+.[0-9]+'
+      - 'opentrack-[0-9]+.[0-9]+.[0-9]+-[a-zA-z0-9]+'
   workflow_dispatch:
 env:
   build_type: Release
