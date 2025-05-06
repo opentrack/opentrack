@@ -2,8 +2,7 @@ name: Linuax Package
 on:
   push:
     tags:
-      - 'opentrack-[0-9]+.[0-9]+.[0-9]+'
-      - 'opentrack-[0-9]+.[0-9]+.[0-9]+-[a-zA-z0-9]+'
+      - 'opentrack-*'
   workflow_dispatch:
 env:
   build_type: Release
@@ -63,7 +62,7 @@ jobs:
         echo '"$CURRENT_PATH/bin/opentrack" "$@"' >> opentrack
         chmod +x opentrack
 
-        if [[ ${{github.ref_name}} =~ ^opentrack-\d+\.\d+\.\d+$ ]]; then
+        if [[ ${{github.ref_name}} =~ ^opentrack.*$ ]]; then
           file_name=${{github.ref_name}}-linux.tar.gz
         else
           file_name=opentrack-dev-linux.tar.gz
