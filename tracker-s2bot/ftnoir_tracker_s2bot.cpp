@@ -7,7 +7,6 @@
 #include <cmath>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <QtCore5Compat/QRegExp>
 
 tracker_s2bot::tracker_s2bot() : pose { 0,0,0, 0,0,0 }, m_nam (std::make_unique<QNetworkAccessManager>())
 {
