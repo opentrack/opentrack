@@ -6,6 +6,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#ifdef __CLION_IDE__
+#define _CRT_USE_BUILTIN_OFFSETOF
+#endif
+
 #include "compat/library-path.hpp"
 
 #include "ftnoir_protocol_ft.h"
