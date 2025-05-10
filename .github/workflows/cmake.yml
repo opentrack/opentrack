@@ -44,7 +44,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libproc2-dev libopencv-dev libopencv-dev wine64-tools
-        sudo apt-get install qttools5-dev qtbase5-dev libqt5serialport5-dev qtbase5-private-dev
+        sudo apt-get install qt6-base-dev-tools qt6-l10n-tools libqt6serialport6-dev libqt6serialport-dev qt6-base-private-dev qt6-base-dev
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install Qt
