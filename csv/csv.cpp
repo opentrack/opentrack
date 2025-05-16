@@ -73,8 +73,10 @@ bool getGameData(int id, unsigned char* table, QString& gamename)
     while (auto sz = file.readLine(buf, sizeof(buf)))
     {
         QString line = decoder.decode(QByteArrayView{buf, sz});
-        chomp(line);
 
+        if (line.isEmpty())
+            break;
+        chomp(line);
         if (line.isEmpty())
             continue;
 
