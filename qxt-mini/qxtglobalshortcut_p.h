@@ -34,7 +34,7 @@
 #include "qxtglobalshortcut.h"
 #include <QAbstractEventDispatcher>
 #include <QKeySequence>
-#include <QHash>
+#include <QMultiMap>
 
 #include <QAbstractNativeEventFilter>
 
@@ -54,7 +54,7 @@ public:
     bool unsetShortcut();
 
     static bool error;
-    bool nativeEventFilter(const QByteArray & eventType, void * message, long * result) override;
+    bool nativeEventFilter(const QByteArray & eventType, void * message, qintptr * result) override;
 
     static void activateShortcut(quint32 nativeKey, quint32 nativeMods, bool is_down);
 
@@ -70,7 +70,7 @@ private:
     static bool registerShortcut(quint32 nativeKey, quint32 nativeMods);
     static bool unregisterShortcut(quint32 nativeKey, quint32 nativeMods);
 
-    static QHash<QPair<quint32, quint32>, QxtGlobalShortcut*> shortcuts;
+    static QMultiMap<QPair<quint32, quint32>, QxtGlobalShortcut*> shortcuts;
 };
 
 #endif // QXTGLOBALSHORTCUT_P_H

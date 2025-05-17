@@ -17,6 +17,7 @@
 #include <QString>
 #include <QStringDecoder>
 #include <QFile>
+#include <QByteArrayView>
 #include <QDebug>
 
 namespace {
@@ -64,14 +65,18 @@ bool getGameData(int id, unsigned char* table, QString& gamename)
         return false;
     }
     QStringDecoder decoder{QStringConverter::Encoding::Utf8};
-    QByteArray lineʹ; lineʹ.reserve(255);
     QStringList gameLine; gameLine.reserve(8);
     unsigned lineno = 0;
+    // TODO QIODevice::readLineInto() is Qt 6.9 - sh 20250515
+    char buf[256];
 
-    while (file.readLineInto(&lineʹ))
+    while (auto sz = file.readLine(buf, sizeof(buf)))
     {
-        QString line = decoder.decode(lineʹ);
+        QString line = decoder.decode(QByteArrayView{buf, sz});
         chomp(line);
+
+        if (line.isEmpty())
+            continue;
 
         gameLine = line.split(';', Qt::SplitBehaviorFlags::KeepEmptyParts);
 
