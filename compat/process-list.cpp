@@ -1,5 +1,9 @@
 #include "process-list.hpp"
 
+#include <vector>
+#include <QStringList>
+#include <QDebug>
+
 #ifdef _WIN32
 
 #include <windows.h>
@@ -32,10 +36,13 @@ QStringList get_all_executable_names()
 
 #elif defined __APPLE__
 
+#include <sys/sysctl.h>
+#include <libproc.h>
+
 QStringList get_all_executable_names()
 {
-    std::vector<QString> ret; ret.reserve(512);
-    std::vector<int> vec; vec.reserve(512);
+    QStringList ret; ret.reserve(512);
+    QList<int> vec; vec.reserve(512);
 
     while (true)
     {

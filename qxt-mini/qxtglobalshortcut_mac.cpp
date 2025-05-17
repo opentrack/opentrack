@@ -266,7 +266,7 @@ bool QxtGlobalShortcutPrivate::unregisterShortcut(quint32 nativeKey, quint32 nat
     return !UnregisterEventHotKey(ref);
 }
 bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
-    void *message, long *result)
+    void *message, qintptr *result)
 {
     return false;
 }

@@ -8,8 +8,6 @@
 #pragma once
 
 #include "export.hpp"
-#include <vector>
-#include <QString>
-#include <QList>
+#include <QStringList>
 
 OTR_COMPAT_EXPORT QStringList get_all_executable_names();

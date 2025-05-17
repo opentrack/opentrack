@@ -12,7 +12,8 @@
 #endif
 
 #ifdef __APPLE__
-#   include <QCameraInfo>
+#   include <QCameraDevice>
+#   include <QMediaDevices>
 #endif
 
 #ifdef __linux__
@@ -143,9 +144,8 @@ std::vector<std::tuple<QString, int>> get_camera_names()
     }
 #endif
 #ifdef __APPLE__
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cameras)
-        ret.push_back({ cameraInfo.description(), ret.size() });
+    for (const QCameraDevice& camera_info : QMediaDevices::videoInputs())
+        ret.push_back({ camera_info.description(), ret.size() });
 #endif
 
     return ret;
