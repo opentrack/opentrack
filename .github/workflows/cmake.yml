@@ -44,17 +44,21 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libproc2-dev libopencv-dev libopencv-dev wine64-tools
-        sudo apt-get install qttools5-dev qtbase5-dev libqt5serialport5-dev qtbase5-private-dev
+        sudo apt-get install qt6-tools-dev qt6-serialport-dev qt6-base-private-dev
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install Qt
-      uses: jurplel/install-qt-action@v3
+      uses: jurplel/install-qt-action@v4
       with:
-        archives: qtbase qtimageformats qtgamepad qttools qtserialport qtmultimedia
+        dir: "${{ github.workspace }}/qt"
+        version: '6.8.3'
+        modules: qtserialport qtmultimedia qtimageformats
+        target: 'desktop'
+        use-official: true
       if: matrix.os != 'ubuntu-latest'
 
     - name: Configure
-      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt5_DIR=${{env.Qt5_DIR}} -DQt5Gui_DIR=${{env.Qt5_DIR}}/lib/cmake/Qt5Gui
+      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt6_DIR="${{env.QT_ROOT_DIR}}/lib/cmake/Qt6"
 
     - name: Build
       run: ${{matrix.cmake}} --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install

@@ -339,7 +339,7 @@ QMutex keybinding::lock;
 bool QxtX11ErrorHandler::error = false;
 
 bool QxtGlobalShortcutPrivate::nativeEventFilter(const QByteArray & eventType,
-    void *message, long *)
+    void *message, qintptr *)
 {
     QxtX11Data x11;
 
