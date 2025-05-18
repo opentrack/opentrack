@@ -4,7 +4,7 @@
 #include <opencv2/core/matx.hpp>
 
 namespace numeric_types {
-    using f = float;
+    using f = double;
 
     static_assert(std::is_floating_point_v<f>);
 
