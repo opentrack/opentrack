@@ -112,7 +112,7 @@ void freetrack::pose(const double* headpose, const double* raw)
 
         t.ints[0] = 0; t.ints[1] = 0;
 
-        (void)CSV::getGameData(id, t.table, gamename);
+        (void)getGameData(id, t.table, gamename);
 
         {
             // FTHeap pMemData happens to be aligned on a page boundary by virtue of
