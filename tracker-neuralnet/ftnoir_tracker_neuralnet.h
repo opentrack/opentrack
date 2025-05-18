@@ -56,7 +56,8 @@ enum fps_choices
     fps_120     = 8,
     fps_300     = 9,
     fps_250     = 10,
-    fps_MAX     = 11,
+    fps_90      = 11,
+    fps_MAX,
 };
 
 struct resolution_tuple
@@ -65,7 +66,7 @@ struct resolution_tuple
     int height;
 };
 
-static const std::array<resolution_tuple, 7> resolution_choices =
+static const std::array<resolution_tuple, 9> resolution_choices =
 {{
     { 320, 240 },
     { 640, 480 },
@@ -73,9 +74,10 @@ static const std::array<resolution_tuple, 7> resolution_choices =
     { 1024, 768 },
     { 1280, 720 },
     { 1920, 1080},
-    { 0, 0 }
+    { 2560, 1440 },
+    { 3840, 2160 },
+    { 0, 0 },
 }};
-
 
 struct Settings : opts {
     value<int> offset_fwd { b, "offset-fwd", 200 }, // Millimeters
