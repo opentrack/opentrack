@@ -59,8 +59,15 @@ bool getGameData(int id, unsigned char* table, QString& gamename)
     // TODO QIODevice::readLineInto() is Qt 6.9 - sh 20250515
     char buf[256];
 
-    while (auto sz = file.readLine(buf, sizeof(buf)))
+    while (!file.atEnd())
     {
+        const auto sz = file.readLine(buf, sizeof(buf));
+        if (sz < 0)
+        {
+            qDebug() << "csv: failed to read line " << lineno;
+            break;
+        }
+
         QString line = decoder.decode(QByteArrayView{buf, sz});
 
         if (line.isEmpty())
