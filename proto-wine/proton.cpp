@@ -5,7 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
-#ifndef OTR_WINE_NO_WRAPPER
+
 
 #include <QDebug>
 #include <QDir>
@@ -93,5 +93,3 @@ std::tuple<QString, QString, bool> make_wineprefix(int appid)
 
     return ret(app_wineprefix, error, error.isEmpty());
 }
-
-#endif
