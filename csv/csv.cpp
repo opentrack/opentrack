@@ -58,8 +58,9 @@ bool getGameData(int id, unsigned char* table, QString& gamename)
     unsigned lineno = 1;
     // TODO QIODevice::readLineInto() is Qt 6.9 - sh 20250515
     char buf[256];
+    qint64 sz;
 
-    while (auto sz = file.readLine(buf, sizeof(buf)))
+    while ((sz = file.readLine(buf, sizeof buf)) > 0)
     {
         QString line = decoder.decode(QByteArrayView{buf, sz});
 
