@@ -16,9 +16,11 @@
 #include "cv/init.hpp"
 
 #include <omp.h>
-#include <onnxruntime_cxx_api.h>
 #include <opencv2/core.hpp>
 #include <opencv2/core/quaternion.hpp>
+
+#include <onnxruntime_cxx_api.h>
+#include <dml_provider_factory.h>
 
 #ifdef _MSC_VER
 #   pragma warning(disable : 4702)
@@ -29,6 +31,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QTextStream>
 
 #include <cstdio>
 #include <cmath>
@@ -483,6 +486,45 @@ module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
     return status_ok();
 }
 
+namespace {
+OrtStatus* ExecutionProviderSelector(const OrtEpDevice** ep_devices,
+                                          size_t num_devices,
+                                          const OrtKeyValuePairs* model_metadata,
+                                          const OrtKeyValuePairs* runtime_metadata,
+                                          const OrtEpDevice** selected,
+                                          size_t max_selected,
+                                          size_t* num_selected,
+                                          void* state)
+{
+    std::uint32_t device_id = *static_cast<std::uint32_t const*>(state);
+    if (max_selected <= 0)
+    {
+        qDebug() << "There is no room to place the device selection.";
+        return nullptr;
+    }
+    if (num_devices <= 0)
+    {
+        qDebug() << "There are no execution devices to chose from. Id of desired device is " << device_id;
+        return nullptr;
+    }
+    for (int i=0; i<num_devices; ++i)
+    {
+        const Ort::ConstEpDevice listed_dev{ep_devices[i]};
+        if (listed_dev.Device().DeviceId() == device_id)
+        {
+            selected[0] = ep_devices[i];
+            *num_selected = 1;
+            qDebug() << "selected dev: " << listed_dev.Device().DeviceId();
+        }
+        else
+        {
+            qDebug() << "listed dev: " << listed_dev.Device().DeviceId() << " vs desired id: " << device_id;
+        }
+    }
+    return nullptr;
+}
+}
+
 
 bool NeuralNetTracker::load_and_initialize_model()
 {
@@ -490,13 +532,39 @@ bool NeuralNetTracker::load_and_initialize_model()
         OPENTRACK_BASE_PATH+"/" OPENTRACK_LIBRARY_PATH "/models/head-localizer.onnx";
     const QString poseestimator_model_path_enc = get_posenet_filename();
 
+    const std::uint32_t device_id = settings_.device;
+
     try
     {
         env_ = Ort::Env{
-            OrtLoggingLevel::ORT_LOGGING_LEVEL_ERROR,
+            OrtLoggingLevel::ORT_LOGGING_LEVEL_VERBOSE,
             "tracker-neuralnet"
         };
         auto opts = Ort::SessionOptions{};
+        opts.SetLogSeverityLevel(0);
+
+        std::vector<Ort::ConstEpDevice> selected_dev{};
+        for (const Ort::ConstEpDevice& dev : env_.GetEpDevices())
+        {
+            if (dev.Device().DeviceId() != device_id)
+                continue;
+            selected_dev.push_back(dev);
+            qDebug() << "Device for which to load the execution provider: " << dev.EpName() << " (" << dev.Device().Vendor() << ") ", dev.Device().Type();
+            if (strcmp(dev.EpName(), "DmlExecutionProvider") == 0)
+            {
+                OrtApi const& ortApi = Ort::GetApi(); // Uses ORT_API_VERSION
+                const OrtDmlApi* ortDmlApi = nullptr;
+                ortApi.GetExecutionProviderApi("DML", ORT_API_VERSION, reinterpret_cast<const void**>(&ortDmlApi));
+                ortDmlApi->SessionOptionsAppendExecutionProvider_DML(opts, 0);
+                opts.DisableMemPattern();
+                opts.SetExecutionMode(ORT_SEQUENTIAL);
+            }
+        }
+        
+        //opts.AppendExecutionProvider_V2(env_, selected_dev, {});
+        //opts.SetEpSelectionPolicy(ExecutionProviderSelector,const_cast<std::uint32_t*>(&device_id));
+        opts.SetEpSelectionPolicy(OrtExecutionProviderDevicePolicy_PREFER_GPU);
+        
         // Do thread settings here do anything?
         // There is a warning which says to control number of threads via
         // openmp settings. Which is what we do.
@@ -515,13 +583,14 @@ bool NeuralNetTracker::load_and_initialize_model()
     }
     catch (const Ort::Exception &e)
     {
-        qDebug() << "Failed to initialize the neural network models. ONNX error message: "
-            << e.what();
+        qDebug() << "Failed to initialize the neural network models. ONNX error message: ";
+        qDebug() << e.what();
         return false;
     }
     catch (const std::exception &e)
     {
-        qDebug() << "Failed to initialize the neural network models. Error message: " << e.what();
+        qDebug() << "Failed to initialize the neural network models. Error message: ";
+        qDebug() << e.what();
         return false;
     }
 
@@ -753,6 +822,35 @@ void NeuralNetDialog::make_resolution_combobox()
 }
 
 
+void NeuralNetDialog::make_devices_combobox()
+{
+    Ort::Env env{
+        OrtLoggingLevel::ORT_LOGGING_LEVEL_ERROR,
+        "tracker-neuralnet"
+    };
+
+    for (const Ort::ConstEpDevice& ep_dev : env.GetEpDevices())
+    {
+        const auto& dev = ep_dev.Device();
+
+        QString device_type_str = "???";
+        switch(dev.Type())
+        {
+            case OrtHardwareDeviceType_CPU: device_type_str = "CPU"; break;
+            case OrtHardwareDeviceType_GPU: device_type_str = "GPU"; break;
+            case OrtHardwareDeviceType_NPU: device_type_str = "NPU"; break;
+        }
+
+        QString item_str;
+        QTextStream(&item_str) << dev.DeviceId() << ": " << dev.Vendor() << ", " << device_type_str << ", " << ep_dev.EpName();
+
+        qDebug() << item_str;
+
+        ui_.deviceBox->addItem(item_str, int(dev.DeviceId()));
+    }
+}
+
+
 NeuralNetDialog::NeuralNetDialog() :
     trans_calib_(1, 2)
 {
@@ -760,6 +858,7 @@ NeuralNetDialog::NeuralNetDialog() :
 
     make_fps_combobox();
     make_resolution_combobox();
+    make_devices_combobox();
 
     for (const auto& str : video::camera_names())
         ui_.cameraName->addItem(str);
@@ -782,6 +881,7 @@ NeuralNetDialog::NeuralNetDialog() :
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
     connect(ui_.camera_settings, SIGNAL(clicked()), this, SLOT(camera_settings()));
     connect(ui_.posenetSelectButton, SIGNAL(clicked()), this, SLOT(onSelectPoseNetFile()));
+    connect(ui_.deviceBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onDeviceChange()));
     connect(&settings_.camera_name, value_::value_changed<QString>(), this, &NeuralNetDialog::update_camera_settings_state);
 
     update_camera_settings_state(settings_.camera_name);
@@ -970,6 +1070,13 @@ void NeuralNetDialog::onSelectPoseNetFile()
     if (filename.startsWith(root.absolutePath()))
         filename = root.relativeFilePath(filename);
     settings_.posenet_file = filename;
+}
+
+
+void NeuralNetDialog::onDeviceChange()
+{
+    const int current_device = ui_.deviceBox->currentData().toInt();
+    settings_.device = current_device;
 }
 
 

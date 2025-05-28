@@ -94,6 +94,7 @@ struct Settings : opts {
     value<double> deadzone_size { b, "deadzone-size", 1. };
     value<double> deadzone_hardness { b, "deadzone-hardness", 1.5 };
     value<QString> posenet_file { b, "posenet-file", "head-pose-0.3-big-quantized.onnx" };
+    value<int> device { b, "device", 0 };
     Settings();
 };
 
@@ -187,6 +188,7 @@ public:
 private:
     void make_fps_combobox();
     void make_resolution_combobox();
+    void make_devices_combobox();
 
     Ui::Form ui_;
     Settings settings_;
@@ -208,6 +210,7 @@ private Q_SLOTS:
     void trans_calib_step();
     void status_poll();
     void onSelectPoseNetFile();
+    void onDeviceChange();
 };
 
 

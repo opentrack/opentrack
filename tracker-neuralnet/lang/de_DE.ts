@@ -125,6 +125,10 @@ Bitte nicht rollen oder die Position ändern.</translation>
         <source>&lt;the pose net file&gt;</source>
         <translation>&lt;die pose netzwerk datei&gt;</translation>
     </message>
+    <message>
+        <source>Device</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
