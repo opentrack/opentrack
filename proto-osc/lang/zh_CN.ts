@@ -5,15 +5,15 @@
     <name>OSC_Dialog</name>
     <message>
         <source>OSC protocol settings</source>
-        <translation type="unfinished"></translation>
+        <translation>OSC协议设置</translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>端口</translation>
     </message>
     <message>
         <source>Destination address</source>
-        <translation type="unfinished"></translation>
+        <translation>目标地址</translation>
     </message>
 </context>
 <context>
@@ -31,7 +31,7 @@
     </message>
     <message>
         <source>Error binding socket to INADDR_ANY</source>
-        <translation type="unfinished"></translation>
+        <translation>套接字绑定至 INADDR_ANY 地址失败</translation>
     </message>
     <message>
         <source>%1: %2</source>
@@ -39,7 +39,7 @@
     </message>
     <message>
         <source>Invalid destination address &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>目标地址&apos;%1&apos;无效</translation>
     </message>
 </context>
 </TS>

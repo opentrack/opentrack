@@ -5,87 +5,87 @@
     <name>trackhat_dialog</name>
     <message>
         <source>Cap</source>
-        <translation type="unfinished"></translation>
+        <translation>帽子</translation>
     </message>
     <message>
         <source>Clip (left)</source>
-        <translation type="unfinished"></translation>
+        <translation>夹子(左)</translation>
     </message>
     <message>
         <source>Clip (right)</source>
-        <translation type="unfinished"></translation>
+        <translation>夹子(右)</translation>
     </message>
     <message>
         <source>Mini Clip (left)</source>
-        <translation type="unfinished"></translation>
+        <translation>迷你夹子(左)</translation>
     </message>
     <message>
         <source>Mini Clip (right)</source>
-        <translation type="unfinished"></translation>
+        <translation>迷你夹子(右)</translation>
     </message>
     <message>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>自定义</translation>
     </message>
     <message>
         <source>Status: Tracking stopped.</source>
-        <translation type="unfinished"></translation>
+        <translation>状态：跟踪停止。</translation>
     </message>
     <message>
         <source>Status: %1 points detected. Good!</source>
-        <translation type="unfinished"></translation>
+        <translation>状态：检测到 %1 个点，正常！</translation>
     </message>
     <message>
         <source>Status: %1 points detected. BAD!</source>
-        <translation type="unfinished"></translation>
+        <translation>状态：检测到 %1 个点，错误！</translation>
     </message>
     <message>
         <source>TrackHat</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪帽</translation>
     </message>
     <message>
         <source>Camera</source>
-        <translation type="unfinished"></translation>
+        <translation>摄像头</translation>
     </message>
     <message>
         <source>Exposure</source>
-        <translation type="unfinished"></translation>
+        <translation>曝光</translation>
     </message>
     <message>
         <source>Model</source>
-        <translation type="unfinished"></translation>
+        <translation>模式</translation>
     </message>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <source>Min point size</source>
-        <translation type="unfinished"></translation>
+        <translation>最小点尺寸</translation>
     </message>
     <message>
         <source>Max point size</source>
-        <translation type="unfinished"></translation>
+        <translation>最大点尺寸</translation>
     </message>
     <message>
         <source> px</source>
-        <translation type="unfinished"></translation>
+        <translation> 像素</translation>
     </message>
     <message>
         <source>Tracking</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪</translation>
     </message>
     <message>
         <source>Point filter</source>
-        <translation type="unfinished"></translation>
+        <translation>点过滤器</translation>
     </message>
     <message>
         <source>Limit</source>
-        <translation type="unfinished"></translation>
+        <translation>阈值限制</translation>
     </message>
     <message>
         <source>Status</source>
-        <translation type="unfinished"></translation>
+        <translation>状态</translation>
     </message>
     <message>
         <source>Raw data</source>
@@ -93,11 +93,11 @@
     </message>
     <message>
         <source>X</source>
-        <translation type="unfinished"></translation>
+        <translation>X轴</translation>
     </message>
     <message>
         <source>TextLabel</source>
-        <translation type="unfinished"></translation>
+        <translation>文本标签</translation>
     </message>
     <message>
         <source>Yaw</source>
@@ -105,27 +105,27 @@
     </message>
     <message>
         <source>Roll</source>
-        <translation>横滚</translation>
+        <translation>滚转</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Y轴</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation type="unfinished"></translation>
+        <translation>Z轴</translation>
     </message>
     <message>
         <source>Pitch</source>
-        <translation>仰俯</translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>Deadzone</source>
-        <translation type="unfinished"></translation>
+        <translation>死区</translation>
     </message>
     <message>
         <source>Gain</source>
-        <translation type="unfinished"></translation>
+        <translation>增益</translation>
     </message>
     <message>
         <source>LED</source>
@@ -133,15 +133,15 @@
     </message>
     <message>
         <source>Off</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <source>Constant</source>
-        <translation type="unfinished"></translation>
+        <translation>恒定</translation>
     </message>
     <message>
         <source>Dynamic</source>
-        <translation type="unfinished"></translation>
+        <translation>动态</translation>
     </message>
 </context>
 <context>

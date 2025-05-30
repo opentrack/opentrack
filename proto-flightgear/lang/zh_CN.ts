@@ -5,22 +5,22 @@
     <name>UICFGControls</name>
     <message>
         <source>FlightGear protocol settings</source>
-        <translation type="unfinished"></translation>
+        <translation>FlightGear 协议设置</translation>
     </message>
     <message>
         <source>IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>IP 地址</translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>端口</translation>
     </message>
 </context>
 <context>
     <name>flightgear</name>
     <message>
         <source>Can&apos;t bind to [%1.%2.%3.%4]:%5</source>
-        <translation type="unfinished"></translation>
+        <translation>无法绑定到 [%1.%2.%3.%4]:%5</translation>
     </message>
     <message>
         <source>FlightGear</source>

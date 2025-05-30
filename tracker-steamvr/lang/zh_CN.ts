@@ -9,18 +9,18 @@
     </message>
     <message>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>设备</translation>
     </message>
 </context>
 <context>
     <name>steamvr</name>
     <message>
         <source>No HMD connected</source>
-        <translation type="unfinished"></translation>
+        <translation>未连接HMD</translation>
     </message>
     <message>
         <source>Can&apos;t find device with that serial</source>
-        <translation type="unfinished"></translation>
+        <translation>无法找到该序列的设备</translation>
     </message>
 </context>
 <context>

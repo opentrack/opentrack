@@ -5,33 +5,33 @@
     <name>UICLibevdevControls</name>
     <message>
         <source>Make sure rw for /dev/input/uinput!</source>
-        <translation type="unfinished"></translation>
+        <translation>请确保 /dev/input/uinput 具有读写权限(rw)！</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>确定</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
     <message>
         <source>libevdev options</source>
-        <translation type="unfinished"></translation>
+        <translation>libevdev 选项</translation>
     </message>
 </context>
 <context>
     <name>evdev</name>
     <message>
         <source>Virtual joystick for Linux</source>
-        <translation type="unfinished"></translation>
+        <translation>Linux 虚拟摇杆</translation>
     </message>
 </context>
 <context>
     <name>evdevDll</name>
     <message>
         <source>libevdev joystick receiver</source>
-        <translation type="unfinished"></translation>
+        <translation>libevdev 摇杆接收器</translation>
     </message>
 </context>
 </TS>

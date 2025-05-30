@@ -5,38 +5,38 @@
     <name>UI_new_config</name>
     <message>
         <source>Config filename</source>
-        <translation>配置文件名字：</translation>
+        <translation>配置文件名</translation>
     </message>
     <message>
         <source>New file name:</source>
-        <translation>新文件名字：</translation>
+        <translation>新文件名：</translation>
     </message>
 </context>
 <context>
     <name>main_window</name>
     <message>
         <source>Raw tracker data</source>
-        <translation>跟踪器原始数据</translation>
+        <translation>跟踪原始数据</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation></translation>
+        <translation>Z轴</translation>
     </message>
     <message>
         <source>Pitch</source>
-        <translation>仰俯</translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation></translation>
+        <translation>Y轴</translation>
     </message>
     <message>
         <source>X</source>
-        <translation></translation>
+        <translation>X轴</translation>
     </message>
     <message>
         <source>Roll</source>
-        <translation>横滚</translation>
+        <translation>滚转</translation>
     </message>
     <message>
         <source>Yaw</source>
@@ -44,7 +44,7 @@
     </message>
     <message>
         <source>Game data</source>
-        <translation>游戏得到的数据</translation>
+        <translation>游戏接收数据</translation>
     </message>
     <message>
         <source>Profile</source>
@@ -72,15 +72,15 @@
     </message>
     <message>
         <source>Input</source>
-        <translation>输入</translation>
+        <translation>输入设备</translation>
     </message>
     <message>
         <source>🔨</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Output</source>
-        <translation>输出</translation>
+        <translation>输出协议</translation>
     </message>
     <message>
         <source>Filter</source>
@@ -88,35 +88,35 @@
     </message>
     <message>
         <source>Running as root is bad</source>
-        <translation>以管理员运行不是什么好主意</translation>
+        <translation>以管理员权限运行存在风险</translation>
     </message>
     <message>
         <source>Do not run as root. Set correct device node permissions.</source>
-        <translation>请不要以管理员运行。可以设置何时的设备访问权限来解决。</translation>
+        <translation>请勿以管理员权限运行。请正确设置设备节点权限。</translation>
     </message>
     <message>
         <source>Running as root is bad, seriously</source>
-        <translation>再说一遍，以管理员运行不是什么好主意</translation>
+        <translation>次警告：以管理员权限运行极其危险</translation>
     </message>
     <message>
         <source>Do not run as root. I&apos;ll keep whining at every startup.</source>
-        <translation>请不要以管理员运行。这话每次启动我都会强调一遍。</translation>
+        <translation>请勿以管理员权限运行。我将在每次启动时持续提醒。</translation>
     </message>
     <message>
         <source>Don&apos;t run as root to remove these annoying messages.</source>
-        <translation>以管理员运行真的非常不好</translation>
+        <translation>请勿使用管理员权限运行，以消除这些烦人提示。</translation>
     </message>
     <message>
         <source>Be annoyed, comprehensively.</source>
-        <translation>请不要以管理员运行。烦了吧？赶紧动作起来</translation>
+        <translation>全方位感受烦恼 (的洗礼)。</translation>
     </message>
     <message>
         <source>Create new empty config</source>
-        <translation>新建一个空的配置</translation>
+        <translation>新建空白配置</translation>
     </message>
     <message>
         <source>Create new copied config</source>
-        <translation>新建一个复制配置</translation>
+        <translation>复制当前配置</translation>
     </message>
     <message>
         <source>Open configuration directory</source>
@@ -124,7 +124,7 @@
     </message>
     <message>
         <source>opentrack</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source> (debug)</source>
@@ -152,7 +152,7 @@
     </message>
     <message>
         <source>Mappings</source>
-        <translation>影射</translation>
+        <translation>映射</translation>
     </message>
     <message>
         <source>Exit</source>
@@ -160,7 +160,7 @@
     </message>
     <message>
         <source>The Octopus is sad</source>
-        <translation>八爪鱼不开心了</translation>
+        <translation>八爪鱼很伤心</translation>
     </message>
     <message>
         <source>Check permissions for your .ini directory:
@@ -172,11 +172,11 @@ Exiting now.</source>
 
 &quot;%1&quot;%2
 
-退出先.</translation>
+现在退出。</translation>
     </message>
     <message>
         <source> :: </source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -187,7 +187,7 @@ Exiting now.</source>
     </message>
     <message>
         <source>This file already exists. Pick another name.</source>
-        <translation>文件重名了，换个其他名字</translation>
+        <translation>此文件已存在。请更换其他名称。</translation>
     </message>
 </context>
 </TS>

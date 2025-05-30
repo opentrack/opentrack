@@ -5,11 +5,11 @@
     <name>FSUIPCControls</name>
     <message>
         <source>Locate file</source>
-        <translation type="unfinished"></translation>
+        <translation>查找文件</translation>
     </message>
     <message>
         <source>FSUIPC DLL file (FSUIPC*.dll);;All Files (*)</source>
-        <translation type="unfinished"></translation>
+        <translation>FSUIPC DLL 文件 (FSUIPC*.dll);;所有文件 (*)</translation>
     </message>
 </context>
 <context>
@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Can&apos;t load fsuipc at &apos;%1&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>无法在 &apos;%1&apos; 加载 FSUIPC</translation>
     </message>
 </context>
 <context>

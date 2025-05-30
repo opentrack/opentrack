@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Camera settings</source>
-        <translation>相机设置</translation>
+        <translation>摄像头设置</translation>
     </message>
     <message>
         <source>Exposure</source>
@@ -24,15 +24,15 @@
     <name>dialog</name>
     <message>
         <source>Can&apos;t open camera</source>
-        <translation>无法打开相机</translation>
+        <translation>摄像头启动失败</translation>
     </message>
     <message>
         <source>PS3 Eye driver error: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>PS3 Eye 驱动异常：%1</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误</translation>
     </message>
 </context>
 </TS>
