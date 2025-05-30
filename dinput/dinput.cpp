@@ -5,9 +5,12 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <cstdint>
 #include <dinput.h>
 
 #include <QDebug>
+
+using std::intptr_t;
 
 diptr di_t::handle;
 QMutex di_t::lock;
@@ -92,7 +95,7 @@ bool di_t::poll_device(IDirectInputDevice8A* dev)
         break;
     }
 
-    eval_once(qDebug() << "dinput: device poll failed:" << (void*)hr);
+    eval_once(qDebug() << "dinput: device poll failed:" << (void*)(intptr_t)hr);
 
     return false;
 }

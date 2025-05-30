@@ -1,9 +1,14 @@
 #ifdef _WIN32
 
+#ifdef __CLION_IDE__
+#define _CRT_USE_BUILTIN_OFFSETOF
+#endif
+
 #include "win32-joystick.hpp"
 #include "compat/macros.h"
 
 #include <cstddef>
+#include <cstdint>
 #include <algorithm>
 #include <cmath>
 #include <iterator>
@@ -15,6 +20,8 @@
 #include <objbase.h>
 
 namespace win32_joy_impl {
+
+using std::intptr_t;
 
 QMutex win32_joy_ctx::enum_state::mtx;
 win32_joy_ctx::enum_state win32_joy_ctx::enumerator;
@@ -136,7 +143,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
 
     if (!di_t::poll_device(joy_handle))
     {
-        eval_once(qDebug() << "joy poll failed" << guid << (void*)hr);
+        eval_once(qDebug() << "joy poll failed" << guid << (void*)(intptr_t)hr);
         //(void)joy_handle->Unacquire();
         //Sleep(0);
         return false;
@@ -147,7 +154,7 @@ bool win32_joy_ctx::joy::poll(fn const& f)
     DWORD sz = num_buffers;
     if (FAILED(hr = joy_handle->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), keystate_buffers, &sz, 0)))
     {
-        eval_once(qDebug() << "joy GetDeviceData failed" << guid << (void*)hr);
+        eval_once(qDebug() << "joy GetDeviceData failed" << guid << (void*)(intptr_t)hr);
         return false;
     }
 
@@ -245,7 +252,7 @@ void win32_joy_ctx::enum_state::refresh()
                                    this,
                                    DIEDFL_ATTACHEDONLY)))
     {
-        eval_once(qDebug() << "dinput: failed enum joysticks" << (void*)hr);
+        eval_once(qDebug() << "dinput: failed enum joysticks" << (void*)(intptr_t)hr);
         return;
     }
 
@@ -278,12 +285,12 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumJoysticksCallback(const DIDEVICEINS
         IDirectInputDevice8A* h;
         if (FAILED(hr = state.di->CreateDevice(pdidInstance->guidInstance, &h, nullptr)))
         {
-            qDebug() << "dinput: failed joystick CreateDevice" << guid << (void*)hr;
+            qDebug() << "dinput: failed joystick CreateDevice" << guid << (void*)(intptr_t)hr;
             goto end;
         }
         if (FAILED(hr = h->SetDataFormat(&c_dfDIJoystick2)))
         {
-            qDebug() << "dinput: failed joystick SetDataFormat" << (void*)hr;
+            qDebug() << "dinput: failed joystick SetDataFormat" << (void*)(intptr_t)hr;
             h->Release();
             goto end;
         }
@@ -343,7 +350,7 @@ BOOL CALLBACK win32_joy_ctx::enum_state::EnumObjectsCallback(const DIDEVICEOBJEC
 
         if (FAILED(hr = reinterpret_cast<IDirectInputDevice8A*>(ctx)->SetProperty(DIPROP_RANGE, &diprg.diph)))
         {
-            qDebug() << "dinput: failed joystick DIPROP_RANGE" << (void*)hr;
+            qDebug() << "dinput: failed joystick DIPROP_RANGE" << (void*)(intptr_t)hr;
             return DIENUM_STOP;
         }
     }

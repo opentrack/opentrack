@@ -12,10 +12,13 @@
 #include "compat/macros.h"
 #include "compat/thread-name.hpp"
 
+#include <cstdint>
 #include <QDebug>
 #include <QMutexLocker>
 
 #include <dinput.h>
+
+using std::intptr_t;
 
 static void destroy(IDirectInputDevice8A*& dev)
 {
@@ -59,20 +62,20 @@ bool KeybindingWorker::init_(IDirectInputDevice8A*& dev, const char* name, const
 
     if (auto hr = din->CreateDevice(guid, &dev, nullptr); hr != DI_OK)
     {
-        qDebug() << "dinput: create" << name << "failed" << (void*)hr;
+        qDebug() << "dinput: create" << name << "failed" << (void*)(intptr_t)hr;
         goto fail;
     }
 
     if (auto hr = dev->SetDataFormat(&fmt); hr != DI_OK)
     {
-        qDebug() << "dinput:" << name << "SetDataFormat" << (void*)hr;
+        qDebug() << "dinput:" << name << "SetDataFormat" << (void*)(intptr_t)hr;
         goto fail;
     }
 
     if (auto hr = dev->SetCooperativeLevel((HWND) fake_main_window.winId(), DISCL_NONEXCLUSIVE | DISCL_BACKGROUND);
         hr != DI_OK)
     {
-        qDebug() << "dinput:" << name << "SetCooperativeLevel" << (void*)hr;
+        qDebug() << "dinput:" << name << "SetCooperativeLevel" << (void*)(intptr_t)hr;
         goto fail;
     }
 
@@ -100,7 +103,7 @@ bool KeybindingWorker::init()
 
         if (auto hr = dinkeyboard->SetProperty(DIPROP_BUFFERSIZE, &dipdw.diph); hr != DI_OK)
         {
-            qDebug() << "dinput: keyboard DIPROP_BUFFERSIZE" << (void*)hr;
+            qDebug() << "dinput: keyboard DIPROP_BUFFERSIZE" << (void*)(intptr_t)hr;
             goto fail;
         }
     }
@@ -162,7 +165,7 @@ bool KeybindingWorker::run_mouse_nolock()
 
     if (auto hr = dinmouse->GetDeviceState(sizeof(state), &state); hr != DI_OK)
     {
-        eval_once(qDebug() << "dinput: mouse GetDeviceState failed" << (void*) hr << GetLastError);
+        eval_once(qDebug() << "dinput: mouse GetDeviceState failed" << (void*)(intptr_t)hr << GetLastError());
         return false;
     }
 
@@ -209,7 +212,7 @@ bool KeybindingWorker::run_keyboard_nolock()
 
     if (FAILED(hr))
     {
-        eval_once(qDebug() << "dinput: keyboard GetDeviceData failed" << (void*)hr);
+        eval_once(qDebug() << "dinput: keyboard GetDeviceData failed" << (void*)(intptr_t)hr);
         return false;
     }
 

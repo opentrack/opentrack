@@ -52,7 +52,7 @@ QImage WIIPreview::get_bitmap()
 	case wii_cam_wait_for_connect:
 		return QImage(":/Resources/on.png");
 	}
-    int stride = frame_out.step.p[0];
+    int stride = (int)frame_out.step.p[0];
 
     if (stride < 64 || stride < frame_out.cols * 4)
     {

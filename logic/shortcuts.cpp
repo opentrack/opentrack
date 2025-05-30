@@ -91,7 +91,7 @@ void Shortcuts::bind_shortcut(K& key, const key_opts& k, bool held)
 
 void Shortcuts::receiver(const Key& key)
 {
-    const unsigned sz = keys.size();
+    const unsigned sz = (unsigned)keys.size();
     for (unsigned i = 0; i < sz; i++)
     {
         auto& [k, f, held] = keys[i];
@@ -122,7 +122,7 @@ Shortcuts::~Shortcuts()
 
 void Shortcuts::reload(const t_keys& keys_)
 {
-    const unsigned sz = keys_.size();
+    const unsigned sz = (unsigned)keys_.size();
 #ifndef _WIN32
     for (tt& tuple : keys)
     {
