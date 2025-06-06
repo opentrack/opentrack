@@ -173,9 +173,25 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
 
 Pose_ reltrans::apply_neck(const rmat& R, int nz, bool disable_tz) const
 {
+    constexpr double deg_90 = 0.5 * M_PI;  // 90° in radians
+
+    Pose_ ypr = rmat_to_euler(R);  // <yaw, pitch, roll> in radians
+    double& yaw = ypr(0);
+    // deferred neck transformation:
+    // 1. defer transformation until after 90°, so we get no neck displacement
+    //    in the beginning
+    // 2. once we begin to use the yaw angle, offset it by 90° back towards 0°,
+    //    so displacement starts at 90° and maxes out at 180° of yaw.
+    if (std::abs(yaw) < deg_90) {
+        yaw = 0;
+    } else {
+        yaw -= std::copysign(deg_90, yaw);
+    }
+    const rmat rot = euler_to_rmat(ypr);
+    
     Pose_ neck;
 
-    neck = rotate(R, { 0, 0, nz }, {});
+    neck = rotate(rot, { 0, 0, nz }, {});
     neck(TZ) = neck(TZ) - nz;
 
     if (disable_tz)
