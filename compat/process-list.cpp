@@ -136,9 +136,22 @@ QStringList get_all_executable_names()
 
     procps_pids_new(&info, items, 3);
 
+    // procps-ng version 4.0.5 removed an unused argument in PIDS_VAL() macro.
+    // cf. https://gitlab.com/procps-ng/procps/-/commit/967fdcfb06e20aad0f3
+
+    // Although the emitted machine code is identical, backward API
+    // compatibility was silently broken in the patch with no upgrade path
+    // (e.g. deprecating PIDS_VAL() while introducing PIDS_VAL2()).
+
+    // Unfortunately, procps-ng doesn't include a #define for identifying its
+    // version.  For these reasons the code below depends on undocumented ABI
+    // compatibility between procps-ng versions.. -sh 20241226
+
+#define OPENTRACK_PIDS_VAL(i, type, stack) stack->head[i].result.type
+
     while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY)))
     {
-        char  **p_cmdline = PIDS_VAL(rel_cmdline, strv,  stack, info);
+        char  **p_cmdline = OPENTRACK_PIDS_VAL(rel_cmdline, strv, stack);
 
         // note, wine sets argv[0] so no parsing like in OSX case
         if (p_cmdline && p_cmdline[0] && p_cmdline[0][0] &&
