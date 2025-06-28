@@ -10,6 +10,7 @@
 
 #include "export.hpp"
 
+#include "key.hpp"
 #include "compat/timer.hpp"
 #include "win32-joystick.hpp"
 #include "dinput.hpp"
@@ -20,22 +21,6 @@
 #include <QDebug>
 #include <functional>
 #include <vector>
-
-struct OTR_DINPUT_EXPORT Key
-{
-    QString guid;
-    Timer timer;
-    int keycode = 0;
-    bool shift = false;
-    bool ctrl = false;
-    bool alt = false;
-    bool held = true;
-    bool enabled = true;
-public:
-    Key();
-
-    bool should_process();
-};
 
 struct OTR_DINPUT_EXPORT KeybindingWorker : private QThread
 {
