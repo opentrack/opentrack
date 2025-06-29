@@ -32,10 +32,8 @@ namespace shortcuts_impl {
 
 using namespace options;
 
-class OTR_LOGIC_EXPORT Shortcuts final : public QObject
+class OTR_LOGIC_EXPORT Shortcuts final
 {
-    Q_OBJECT
-
 #ifdef _WIN32
     void receiver(const Key& k);
 #endif
@@ -59,7 +57,7 @@ public:
 #endif
 
     Shortcuts() = default;
-    ~Shortcuts() override;
+    ~Shortcuts() noexcept;
 
     void reload(const t_keys& keys_);
 private:

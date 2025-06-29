@@ -115,7 +115,7 @@ void Shortcuts::receiver(const Key& key)
 
 #endif
 
-Shortcuts::~Shortcuts()
+Shortcuts::~Shortcuts() noexcept
 {
     reload({});
 }
