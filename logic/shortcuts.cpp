@@ -29,7 +29,7 @@ void Shortcuts::free_binding(K& key)
 #endif
 }
 
-void Shortcuts::bind_shortcut(K& key, const key_opts& k, bool held)
+void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
 {
 #if !defined _WIN32
     (void)held;
@@ -141,7 +141,7 @@ void Shortcuts::reload(const t_keys& keys_)
 #else
         K k(nullptr);
 #endif
-        bind_shortcut(k, opts, held);
+        make_shortcut(k, opts, held);
         keys.emplace_back(k, fun, held);
 
 #ifndef _WIN32
