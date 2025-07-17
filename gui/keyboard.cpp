@@ -25,7 +25,7 @@ void keyboard_listener::receive_key(const Key& k)
 
         if (win_key::to_qt(k, k_, m))
             for (unsigned i = 0; i < (unsigned)k_.count(); i++)
-                emit key_pressed(QKeySequence(int(m) | k_[i]));
+                emit key_pressed(QKeySequence(int(m) | k_[i].toCombined()));
     }
 }
 
