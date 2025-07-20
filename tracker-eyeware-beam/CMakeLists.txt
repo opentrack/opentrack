@@ -22,6 +22,6 @@ if(WIN32 AND SDK_EYEWARE_BEAM)
     #message(${dll})
     #message(${lib})
 
-    target_link_libraries(${self} ${lib})
+    target_link_libraries(${self} PRIVATE ${lib})
     install(FILES ${dll} DESTINATION ${opentrack-libexec})
 endif()

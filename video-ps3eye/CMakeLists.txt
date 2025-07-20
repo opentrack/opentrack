@@ -51,7 +51,7 @@ endif()
 
 if(TARGET ps3eye-subprocess)
     otr_module(video-ps3eye)
-    target_link_libraries(${self} ps3eye-driver opentrack-video)
+    target_link_libraries(${self} PRIVATE ps3eye-driver opentrack-video)
     if(WIN32)
         set(path "${SDK_LIBUSB}/libusb-1.0.dll")
         if(EXISTS "${path}")

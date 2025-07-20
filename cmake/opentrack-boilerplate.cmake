@@ -88,7 +88,7 @@ function(otr_compat target)
     endif()
 
     if(UNIX) # no-op on OSX
-        target_link_libraries(${target} m)
+        target_link_libraries(${target} PRIVATE m)
     endif()
 
     get_property(type TARGET "${n}" PROPERTY TYPE)
@@ -192,11 +192,11 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-QT)
-        target_link_libraries(${n} ${MY_QT_LIBS})
+        target_link_libraries(${n} PRIVATE ${MY_QT_LIBS})
     endif()
 
     if(NOT arg_NO-COMPAT)
-        target_link_libraries(${n} opentrack-api opentrack-options opentrack-compat)
+        target_link_libraries(${n} PRIVATE opentrack-api opentrack-options opentrack-compat)
     endif()
 
     string(REPLACE "-" "_" build-n ${n_})

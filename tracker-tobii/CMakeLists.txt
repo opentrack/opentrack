@@ -17,6 +17,6 @@ if(WIN32 AND SDK_TOBII)
     set(dll "${SDK_TOBII}/lib/${arch}/tobii_stream_engine.dll")
     set(lib tobii_stream_engine.lib)
 
-    target_link_libraries(${self} ${lib})
+    target_link_libraries(${self} PRIVATE ${lib})
     install(FILES ${dll} DESTINATION ${opentrack-libexec})
 endif()

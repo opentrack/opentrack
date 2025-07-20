@@ -1,16 +1,16 @@
 otr_module(compat NO-COMPAT BIN)
 
 if(NOT WIN32 AND NOT APPLE)
-    target_link_libraries(${self} rt)
+    target_link_libraries(${self} PRIVATE rt)
 endif()
 
 if(WIN32)
-    target_link_libraries(${self} strmiids)
+    target_link_libraries(${self} PRIVATE strmiids)
 endif()
 
 
 if(APPLE)
-    target_link_libraries(${self} proc)
+    target_link_libraries(${self} PRIVATE proc)
 elseif(LINUX)
     otr_pkgconfig_(has-libproc2 ${self} libproc2)
     if(has-libproc2)

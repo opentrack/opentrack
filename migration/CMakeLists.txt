@@ -1,5 +1,5 @@
 otr_module(migration BIN)
-target_link_libraries(${self} opentrack-logic opentrack-spline)
+target_link_libraries(${self} PRIVATE opentrack-logic opentrack-spline)
 if(CMAKE_COMPILER_IS_CLANGXX)
     target_compile_options(${self} PRIVATE -Wno-weak-vtables)
 endif()
