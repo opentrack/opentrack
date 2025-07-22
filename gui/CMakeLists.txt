@@ -3,7 +3,7 @@ otr_module(user-interface BIN)
 target_link_libraries(${self} PRIVATE
     opentrack-migration
     opentrack-logic
-    opentrack-dinput
+    opentrack-input
     opentrack-spline
     opentrack-pose-widget
 )

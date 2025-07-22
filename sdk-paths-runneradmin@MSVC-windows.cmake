@@ -30,6 +30,7 @@ setq(SDK_VJOYSTICK "vjoystick")
 setq(SDK_FSUIPC "fsuipc")
 setq(SDK_HYDRA "SixenseSDK")
 setq(SDK_EYEWARE_BEAM "eyeware-beam-sdk")
+setq(SDK_GAMEINPUT "gameinput")
 #setq(ONNXRuntime_DIR "../onnxruntime-1.12.1")
 #setq(SDK_TRACKHAT_SENSOR "../trackhat-c-library-driver")
 

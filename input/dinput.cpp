@@ -1,4 +1,6 @@
+#ifdef _WIN32
 #undef NDEBUG
+#include <cassert>
 
 #include "dinput.hpp"
 #include "compat/macros.h"
@@ -99,3 +101,4 @@ bool di_t::poll_device(IDirectInputDevice8A* dev)
 
     return false;
 }
+#endif

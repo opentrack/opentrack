@@ -8,7 +8,6 @@
 
 #include "options-dialog.hpp"
 #include "keyboard.h"
-#include "compat/library-path.hpp"
 
 #include <utility>
 
@@ -210,36 +209,42 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.button = -1;
     kopts.guid = {};
     kopts.keycode = {};
-    auto k = new keyboard_listener;
-    k->setWindowModality(Qt::ApplicationModal);
-    k->deleteLater();
 
-    connect(k,
-            &keyboard_listener::key_pressed,
-            this,
-            [&](const QKeySequence& s)
-            {
-                kopts.keycode = s.toString(QKeySequence::PortableText);
-                kopts.guid = {};
-                kopts.button = -1;
-                k->close();
-            });
-    connect(k, &keyboard_listener::joystick_button_pressed,
-            this,
-            [&](const QString& guid, int idx, bool held)
-            {
-                if (!held)
+    auto* k = new keyboard_listener;
+    k->deleteLater();
+    k->setWindowModality(Qt::ApplicationModal);
+
+    {
+        QObject obj;
+        connect(&*k, &keyboard_listener::key_pressed,
+                &obj,
+                [&](const QKeySequence& s)
                 {
-                    kopts.guid = guid;
-                    kopts.keycode = {};
-                    kopts.button = idx;
+                    kopts.keycode = s.toString(QKeySequence::PortableText);
+                    kopts.guid = {};
+                    kopts.button = -1;
                     k->close();
-                }
-            });
-    connect(&*main.b, &options::detail::bundle::reloading, k, &QDialog::close);
-    pause_keybindings(true);
-    k->exec();
-    pause_keybindings(false);
+                });
+        connect(&*k, &keyboard_listener::joystick_button_pressed,
+                &obj,
+                [&](const QString& guid, int idx, bool held)
+                {
+                    if (!k)
+                        std::abort();
+                    if (!held)
+                    {
+                        kopts.guid = guid;
+                        kopts.keycode = {};
+                        kopts.button = idx;
+                        k->close();
+                    }
+                });
+        connect(&*main.b, &options::detail::bundle::reloading, &*k, &QDialog::close);
+        pause_keybindings(false);
+        k->exec();
+        k = nullptr;
+        pause_keybindings(true);
+    }
     const bool is_crap = progn(
         for (const QChar& c : kopts.keycode())
             if (!c.isPrint())
@@ -255,6 +260,7 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
     }
     else
         label->setText(kopts_to_string(kopts));
+    //qDebug() << "bind_key done" << kopts.guid << kopts.button << kopts.keycode;
 }
 
 void options_dialog::switch_to_tracker_tab()
@@ -354,6 +360,7 @@ using module_list = std::initializer_list<plugin_api::detail::BaseDialog*>;
 
 void options_dialog::save()
 {
+    qDebug() << "options_dialog: save";
     main.b->save();
     ui.game_detector->save();
     set_disable_translation_state(ui.disable_translation->isChecked());
@@ -365,6 +372,7 @@ void options_dialog::save()
 
 void options_dialog::reload()
 {
+    qDebug() << "options_dialog: reload";
     ui.game_detector->revert();
 
     main.b->reload();

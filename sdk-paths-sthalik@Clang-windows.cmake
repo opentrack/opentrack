@@ -17,45 +17,15 @@ set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 
 #setq(OpenCV_DIR "opencv/build-mingw-64")
 setq(SDK_ARUCO_LIBPATH "aruco/build-mingw-w64/src/libaruco.a")
-
 setq(SDK_FSUIPC "fsuipc")
 setq(SDK_HYDRA "SixenseSDK")
-
-setq(SDK_RIFT_140 "LibOVR-140/build-mingw-w64")
-
 setq(SDK_VALVE_STEAMVR "steamvr")
-setq(SDK_TOBII_EYEX "Tobii-EyeX")
 setq(SDK_VJOYSTICK "vjoystick")
 
-setq(SDK_REALSENSE "RSSDK-R2")
+setq(SDK_REALSENSE "nonfree/RSSDK-R2")
+setq(SDK_GAMEINPUT "gameinput")
+setq(Qt6_DIR "../qt6/build/clang-asan/install/lib/cmake/Qt6")
 
-# WARNING: this is utter experimental nonsense
-set(_cxxflags
-    -Weverything
-
-    -Wno-global-constructors
-    -Wno-exit-time-destructors
-    -Wno-deprecated
-    -Wno-self-assign-overloaded
-    -Wno-double-promotion
-    -Wno-c++98-compat-pedantic
-    -Wno-old-style-cast
-    -Wno-shadow
-    -Wno-sign-conversion
-    -Wno-used-but-marked-unused
-    -Wno-covered-switch-default
-    -Wno-missing-prototypes
-    -Wno-padded
-    -Wno-switch-enum
-
-    -Werror
-    -Werror=inconsistent-missing-destructor-override
-    #-Wno-error=padded
-    -fdiagnostics-color=always
-
-    -fno-exceptions -fno-rtti # get rid of evil
-)
-set(base-cxxflags "")
 foreach(k ${_cxxflags})
     set(base-cxxflags "${base-cxxflags} ${k}")
 endforeach()
