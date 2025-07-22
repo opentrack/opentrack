@@ -35,7 +35,7 @@ typedef struct DIDEVICEOBJECTINSTANCEA DIDEVICEOBJECTINSTANCEA;
 
 using diptr = IDirectInput8A*;
 
-class OTR_DINPUT_EXPORT di_t final
+class OTR_INPUT_EXPORT di_t final
 {
     static diptr handle;
     static QMutex lock;
@@ -45,7 +45,7 @@ class OTR_DINPUT_EXPORT di_t final
 public:
     di_t();
     di_t(const di_t&) : di_t() {}
-    di_t& operator=(const di_t&) = default;
+    di_t& operator=(const di_t&) = delete;
 
     diptr operator->() const;
     operator bool() const;

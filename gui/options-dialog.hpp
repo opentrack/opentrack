@@ -3,7 +3,8 @@
 #include "export.hpp"
 
 #include "gui/ui_options-dialog.h"
-#include "logic/shortcuts.h"
+#include "input/shortcuts.h"
+#include "logic/main-settings.hpp"
 
 #include <functional>
 

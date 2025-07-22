@@ -6,6 +6,7 @@
 #include <QDebug>
 
 #ifdef _WIN32
+#include "input/win32-shortcuts.h"
 
 void keyboard_listener::receive_key(const Key& k)
 {
@@ -23,7 +24,7 @@ void keyboard_listener::receive_key(const Key& k)
         Qt::KeyboardModifiers m;
         QKeySequence k_;
 
-        if (win_key::to_qt(k, k_, m))
+        if (win_key::dik_to_qt(k, k_, m))
             for (unsigned i = 0; i < (unsigned)k_.count(); i++)
                 emit key_pressed(QKeySequence(int(m) | k_[i].toCombined()));
     }

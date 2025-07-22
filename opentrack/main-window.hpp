@@ -15,7 +15,7 @@
 #include "gui/process_detector.h"
 #include "logic/main-settings.hpp"
 #include "logic/pipeline.hpp"
-#include "logic/shortcuts.h"
+#include "input/shortcuts.h"
 #include "logic/work.hpp"
 #include "logic/state.hpp"
 #include "options/options.hpp"
