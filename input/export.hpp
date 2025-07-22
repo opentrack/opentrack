@@ -4,8 +4,8 @@
 
 #include "compat/linkage-macros.hpp"
 
-#ifdef BUILD_DINPUT
-#   define OTR_DINPUT_EXPORT OTR_GENERIC_EXPORT
+#ifdef BUILD_INPUT
+#   define OTR_INPUT_EXPORT OTR_GENERIC_EXPORT
 #else
-#   define OTR_DINPUT_EXPORT OTR_GENERIC_IMPORT
+#   define OTR_INPUT_EXPORT OTR_GENERIC_IMPORT
 #endif

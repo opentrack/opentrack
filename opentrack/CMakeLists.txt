@@ -20,7 +20,7 @@ endif()
 
 target_link_libraries(${self} PRIVATE
     opentrack-user-interface
-    opentrack-dinput
+    opentrack-input
     opentrack-logic
     opentrack-migration
     opentrack-spline

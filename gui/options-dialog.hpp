@@ -3,7 +3,8 @@
 #include "export.hpp"
 
 #include "gui/ui_options-dialog.h"
-#include "logic/shortcuts.h"
+#include "input/shortcuts.h"
+#include "logic/main-settings.hpp"
 
 #include <functional>
 
@@ -52,6 +53,9 @@ private:
 private slots:
     void doOK();
     void doCancel();
+    void doAccept();
+    void doReject();
+
     void bind_key(key_opts &kopts, QLabel* label);
     void set_disable_translation_state(bool value);
 };

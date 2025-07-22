@@ -7,11 +7,17 @@
  */
 
 #include "shortcuts.h"
-#include "win32-shortcuts.h"
+#include "key-opts.hpp"
+
+#ifdef _WIN32
+#include "input/win32-shortcuts.h"
+#if OPENTRACK_HAS_GAMEINPUT
+#include "input/gameinput.hpp"
+#endif
+#endif
 
 #include <QString>
-
-#include <tuple>
+#include <QLibrary>
 
 void Shortcuts::free_binding(K& key)
 {
@@ -25,7 +31,7 @@ void Shortcuts::free_binding(K& key)
     }
 #else
     key.keycode = 0;
-    key.guid = "";
+    key.guid = {};
 #endif
 }
 
@@ -74,7 +80,7 @@ void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
         Qt::KeyboardModifiers mods = Qt::NoModifier;
         if (!code.isEmpty() &&
             code != QKeySequence{ QKeySequence::UnknownKey } &&
-            win_key::from_qt(code, idx, mods))
+            win_key::qt_to_dik(code, idx, mods))
         {
             key.guid = QString{};
             key.keycode = idx;
@@ -91,7 +97,7 @@ void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
 
 void Shortcuts::receiver(const Key& key)
 {
-    const unsigned sz = (unsigned)keys.size();
+    const auto sz = (unsigned)keys.size();
     for (unsigned i = 0; i < sz; i++)
     {
         auto& [k, f, held] = keys[i];
@@ -106,8 +112,10 @@ void Shortcuts::receiver(const Key& key)
             if (k.alt != key.alt) continue;
             if (k.ctrl != key.ctrl) continue;
             if (k.shift != key.shift) continue;
+#if 0
             if (!k.should_process())
                 continue;
+#endif
         }
         f(key.held);
     }
@@ -115,14 +123,19 @@ void Shortcuts::receiver(const Key& key)
 
 #endif
 
-Shortcuts::~Shortcuts() noexcept
+Shortcuts::~Shortcuts() noexcept { reload({}); }
+
+Shortcuts::Shortcuts()
 {
-    reload({});
+#if defined _WIN32 && OPENTRACK_HAS_GAMEINPUT
+    { using namespace opentrack::gameinput;
+      gi = std::unique_ptr<Worker>(make_gameinput_worker()); }
+#endif
 }
 
 void Shortcuts::reload(const t_keys& keys_)
 {
-    const unsigned sz = (unsigned)keys_.size();
+    const auto sz = (unsigned)keys_.size();
 #ifndef _WIN32
     for (tt& tuple : keys)
     {
@@ -135,7 +148,7 @@ void Shortcuts::reload(const t_keys& keys_)
 
     for (unsigned i = 0; i < sz; i++)
     {
-        auto const&[opts, fun, held] = keys_[i];
+        const auto& [opts, fun, held] = keys_[i];
 #ifdef _WIN32
         K k;
 #else
@@ -149,7 +162,7 @@ void Shortcuts::reload(const t_keys& keys_)
         tt& kk_ = keys[idx];
         auto fn = std::get<1>(kk_);
         bool held_ = held;
-        connect(k, &QxtGlobalShortcut::activated, [fn, held_](bool keydown) {
+        QObject::connect(k, &QxtGlobalShortcut::activated, [fn, held_](bool keydown) {
             if (keydown || !held_)
                 fn(keydown);
         });

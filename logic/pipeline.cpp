@@ -19,7 +19,7 @@
 #include "compat/thread-name.hpp"
 
 #include "pipeline.hpp"
-#include "logic/shortcuts.h"
+#include "input/shortcuts.h"
 
 #include <cmath>
 #include <algorithm>

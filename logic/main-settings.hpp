@@ -12,7 +12,7 @@
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
 #include "spline/axis-opts.hpp"
-#include "key-opts.hpp"
+#include "input/key-opts.hpp"
 
 #include "export.hpp"
 

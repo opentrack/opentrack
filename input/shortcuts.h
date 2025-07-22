@@ -8,31 +8,27 @@
 
 #pragma once
 #include "export.hpp"
-
 #include "options/options.hpp"
-#include "main-settings.hpp"
 
 #ifdef _WIN32
-#   include "dinput/keybinding-worker.hpp"
+#   include "input/keybinding-worker.hpp"
 #else
 #   include "qxt-mini/QxtGlobalShortcut"
 #endif
 
-#include <QObject>
-
 #include <tuple>
 #include <vector>
 #include <functional>
+#include <memory>
 
-#if !defined __APPLE__
-#   define OTR_HAS_KEY_UP_SUPPORT
-#endif
+struct key_opts;
+namespace opentrack::gameinput { class Worker; }
 
 namespace shortcuts_impl {
 
 using namespace options;
 
-class OTR_LOGIC_EXPORT Shortcuts final
+class OTR_INPUT_EXPORT Shortcuts final
 {
 #ifdef _WIN32
     void receiver(const Key& k);
@@ -54,14 +50,17 @@ public:
     std::vector<tt> keys;
 #ifdef _WIN32
     KeybindingWorker::Token key_token {[this](const Key& k) { receiver(k); }};
+#if OPENTRACK_HAS_GAMEINPUT
+    std::unique_ptr<opentrack::gameinput::Worker> gi;
+#endif
 #endif
 
-    Shortcuts() = default;
+    Shortcuts();
     ~Shortcuts() noexcept;
 
     void reload(const t_keys& keys_);
 private:
-    void free_binding(K& key);
+    static void free_binding(K& key);
     static void make_shortcut(K &key, const key_opts& k, bool held);
 };
 
