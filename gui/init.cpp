@@ -304,9 +304,6 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
     enable_x11_threads();
 #endif
 
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-
     QApplication app(argc, argv);
 
 #ifdef _WIN32
