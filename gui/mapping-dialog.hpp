@@ -34,4 +34,6 @@ private:
 private slots:
     void doOK();
     void doCancel();
+    void doAccept();
+    void doReject();
 };

@@ -57,9 +57,6 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
 {
     ui.setupUi(this);
 
-    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &options_dialog::doOK);
-    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &options_dialog::close);
-
     tie_setting(main.tray_enabled, ui.trayp);
     tie_setting(main.tray_start, ui.tray_start);
 
@@ -198,6 +195,11 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     add_module_tab(tracker_dialog, tracker_dialog_, tr("Tracker"));
     add_module_tab(proto_dialog, proto_dialog_, tr("Output"));
     add_module_tab(filter_dialog, filter_dialog_, tr("Filter"));
+
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &options_dialog::accept);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &options_dialog::reject);
+    connect(this, &options_dialog::accepted, this, &options_dialog::doAccept);
+    connect(this, &options_dialog::rejected, this, &options_dialog::doReject);
 }
 
 void options_dialog::bind_key(key_opts& kopts, QLabel* label)
@@ -368,28 +370,34 @@ void options_dialog::reload()
             dlg->reload();
 }
 
-void options_dialog::doOK()
-{
-    if (isVisible())
-    {
-        save();
-        close();
-    }
-}
-
-void options_dialog::doCancel()
-{
-    if (isVisible())
-    {
-        reload();
-        close();
-    }
-}
-
 void options_dialog::closeEvent(QCloseEvent *)
 {
-    reload();
+    qDebug() << "options_dialog: closeEvent";
+    reject();
     emit closing();
+}
+
+void options_dialog::doOK()
+{
+    qDebug() << "options_dialog: doOK";
+    accept();
+}
+void options_dialog::doCancel()
+{
+    qDebug() << "options_dialog: doCancel";
+    reject();
+}
+
+void options_dialog::doAccept()
+{
+    qDebug() << "options_dialog: doAccept";
+    save();
+}
+
+void options_dialog::doReject()
+{
+    qDebug() << "options_dialog: doReject";
+    reload();
 }
 
 options_dialog::~options_dialog()
