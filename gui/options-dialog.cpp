@@ -22,6 +22,7 @@ using namespace options::globals;
 
 QString options_dialog::kopts_to_string(const key_opts& kopts)
 {
+    using namespace Qt::Literals::StringLiterals;
     if (!kopts.guid->isEmpty())
     {
         const int btn = kopts.button & ~Qt::KeyboardModifierMask;
@@ -30,8 +31,10 @@ QString options_dialog::kopts_to_string(const key_opts& kopts)
         if (mods & Qt::ControlModifier) mm += "Control+";
         if (mods & Qt::AltModifier) mm += "Alt+";
         if (mods & Qt::ShiftModifier) mm += "Shift+";
-        const auto& str = kopts.guid == QStringLiteral("mouse")
+        const auto& str = kopts.guid == "mouse"_L1
                           ? tr("Mouse %1")
+                          : kopts.guid->startsWith("GI!"_L1)
+                          ? tr("Gamepad button %1")
                           : tr("Joy button %1");
         return mm + str.arg(QString::number(btn));
     }

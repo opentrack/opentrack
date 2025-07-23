@@ -397,6 +397,10 @@ Klicke „Kalibrierung löschen“, um jegliche Kalibrierungsdaten der zugehöri
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
+    <message>
+        <source>Gamepad button %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>
