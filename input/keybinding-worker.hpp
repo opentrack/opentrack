@@ -53,7 +53,7 @@ private:
 
     static constexpr int num_keyboard_states = 128;
     static constexpr int num_mouse_buttons = 8;
-    static constexpr int first_mouse_button = 3;
+    static constexpr int first_mouse_button = 1;
 
     IDirectInputDevice8A* dinkeyboard = nullptr, *dinmouse = nullptr;
     win32_joy_ctx joy_ctx;
