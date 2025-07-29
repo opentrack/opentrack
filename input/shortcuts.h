@@ -61,7 +61,7 @@ public:
     void reload(const t_keys& keys_);
 private:
     static void free_binding(K& key);
-    static void make_shortcut(K &key, const key_opts& k, bool held);
+    static bool make_shortcut(K &key, const key_opts& k, bool held);
 };
 
 } // ns shortcuts_impl

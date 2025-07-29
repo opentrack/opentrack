@@ -35,7 +35,7 @@ void Shortcuts::free_binding(K& key)
 #endif
 }
 
-void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
+bool Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
 {
 #if !defined _WIN32
     (void)held;
@@ -62,6 +62,7 @@ void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
         key.guid = k.guid;
         key.keycode = k.button;
         key.held = held;
+        return true;
     }
     if (!k.guid->isEmpty())
     {
@@ -71,9 +72,12 @@ void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
         key.ctrl = !!(k.button & Qt::ControlModifier);
         key.alt = !!(k.button & Qt::AltModifier);
         key.shift = !!(k.button & Qt::ShiftModifier);
+        return true;
     }
     else
     {
+        qDebug() << "Shortcuts: key qt" << k.keycode << "dik" << key.keycode;
+
         if (!k.keycode->isEmpty())
             code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
 
@@ -88,8 +92,11 @@ void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
             key.ctrl = !!(mods & Qt::ControlModifier);
             key.alt = !!(mods & Qt::AltModifier);
             key.shift = !!(mods & Qt::ShiftModifier);
+            return true;
         }
     }
+
+    return false;
 #endif
 }
 
@@ -98,6 +105,7 @@ void Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
 void Shortcuts::receiver(const Key& key)
 {
     const auto sz = (unsigned)keys.size();
+    //qDebug() << "Shortcuts: received key" << (key.held ? "+" : "-") << key.keycode;
     for (unsigned i = 0; i < sz; i++)
     {
         auto& [k, f, held] = keys[i];
@@ -117,6 +125,7 @@ void Shortcuts::receiver(const Key& key)
                 continue;
 #endif
         }
+
         f(key.held);
     }
 }
@@ -154,8 +163,8 @@ void Shortcuts::reload(const t_keys& keys_)
 #else
         K k(nullptr);
 #endif
-        make_shortcut(k, opts, held);
-        keys.emplace_back(k, fun, held);
+        if (make_shortcut(k, opts, held))
+            keys.emplace_back(k, fun, held);
 
 #ifndef _WIN32
         const int idx = keys.size() - 1;
