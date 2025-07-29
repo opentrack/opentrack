@@ -37,7 +37,7 @@ static constexpr unsigned max_buttons_and_pov_hats = max_buttons + max_pov_hats 
 //static_assert(pov_hat_directions == 4 || pov_hat_directions == 8);
 
 // XXX how many axis update events can we reasonably get in a short time frame?
-static constexpr unsigned num_buffers = 16;
+static constexpr unsigned num_buffers = 128;
 
 //#define WIN32_JOY_DEBUG
 
