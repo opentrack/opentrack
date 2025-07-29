@@ -7,7 +7,7 @@
  */
 
 #include "options-dialog.hpp"
-#include "keyboard.h"
+#include "listener.h"
 
 #include <utility>
 

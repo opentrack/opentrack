@@ -13,7 +13,7 @@
 #   include "input/keybinding-worker.hpp"
 #endif
 
-#include "ui_keyboard_listener.h"
+#include "ui_listener.h"
 
 #include <QDialog>
 #include <QtEvents>
