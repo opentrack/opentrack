@@ -18,6 +18,8 @@
 
 namespace {
 
+constexpr auto MODS = (unsigned)(Qt::KeyboardModifierMask & ~Qt::KeypadModifier);
+
 #if 0
 win_key const windows_key_mods[] {
         {DIK_LCONTROL, Qt::Key_Control},
@@ -158,7 +160,7 @@ bool win_key::qt_to_dik(const QKeySequence& qtʹ, int& dik, Qt::KeyboardModifier
 {
     // CAVEAT don't use QVariant::toUInt() or conversion fails
     const unsigned qt = (unsigned)QVariant(qtʹ).toInt();
-    const unsigned our_mods = qt & (unsigned)Qt::KeyboardModifierMask;
+    const unsigned our_mods = qt & MODS;
 
     if (qt == 0)
         return false;
@@ -174,7 +176,7 @@ bool win_key::qt_to_dik(const QKeySequence& qtʹ, int& dik, Qt::KeyboardModifier
     }
 
     {
-        const unsigned key = qt & ~Qt::KeyboardModifierMask;
+        const unsigned key = qt & ~MODS;
         for (const win_key& wk : windows_key_sequences)
         {
             if (unsigned(wk.qt) == key)
@@ -209,7 +211,7 @@ bool win_key::qt_to_vk(const QKeySequence& qtʹ, int& vk, Qt::KeyboardModifiers&
 {
     // CAVEAT don't use QVariant::toUInt() or conversion fails
     const unsigned qt = (unsigned)QVariant(qtʹ).toInt();
-    const unsigned our_mods = qt & (unsigned)Qt::KeyboardModifierMask;
+    const unsigned our_mods = qt & MODS;
 
     if (qt == 0)
         return false;
@@ -225,7 +227,7 @@ bool win_key::qt_to_vk(const QKeySequence& qtʹ, int& vk, Qt::KeyboardModifiers&
     }
 
     {
-        const unsigned key = qt & ~Qt::KeyboardModifierMask;
+        const unsigned key = qt & ~MODS;
         for (const win_key& wk : windows_key_sequences)
         {
             if (unsigned(wk.qt) == key)
