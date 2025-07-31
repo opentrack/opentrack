@@ -143,9 +143,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
-            </property>
             <property name="text">
              <string>Start tracking</string>
             </property>
@@ -212,9 +209,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
             </property>
             <property name="text">
              <string>Stop tracking</string>
@@ -297,6 +291,9 @@
             </property>
             <property name="cursor">
              <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>Keep looking forward while the key is pressed.</string>
             </property>
             <property name="text">
              <string>Zero while held</string>
@@ -388,9 +385,6 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
-            </property>
             <property name="text">
              <string>Restart tracking</string>
             </property>
@@ -428,6 +422,9 @@
             </property>
             <property name="cursor">
              <cursorShape>WhatsThisCursor</cursorShape>
+            </property>
+            <property name="toolTip">
+             <string>Freeze the pose like Toggle, except only while they key is still pressed.</string>
             </property>
             <property name="text">
              <string>Toggle while held</string>
@@ -467,9 +464,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="cursor">
-             <cursorShape>WhatsThisCursor</cursorShape>
             </property>
             <property name="text">
              <string>Toggle tracking</string>
