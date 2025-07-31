@@ -76,8 +76,6 @@ bool Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
     }
     else
     {
-        qDebug() << "Shortcuts: key qt" << k.keycode << "dik" << key.keycode;
-
         if (!k.keycode->isEmpty())
             code = QKeySequence::fromString(k.keycode, QKeySequence::PortableText);
 
@@ -86,6 +84,8 @@ bool Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
             code != QKeySequence{ QKeySequence::UnknownKey } &&
             win_key::qt_to_dik(code, idx, mods))
         {
+            //qDebug() << "Shortcuts: key qt" << k.keycode << "dik" << key.keycode;
+
             key.guid = QString{};
             key.keycode = idx;
             key.held = held;

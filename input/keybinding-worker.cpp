@@ -255,6 +255,7 @@ bool KeybindingWorker::run_keyboard_nolock()
             key.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
             key.keycode = idx;
             emit_key(key);
+            //qDebug() << "KeybindingWorker: key from dinput" << (held ? "+" : "-") << key.keycode;
             break;
         }
         }
