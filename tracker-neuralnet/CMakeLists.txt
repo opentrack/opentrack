@@ -16,7 +16,7 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
 
     otr_module(tracker-neuralnet)
 
-    target_link_libraries(${self}
+    target_link_libraries(${self} PRIVATE
         opentrack-cv
         onnxruntime::onnxruntime
         opencv_calib3d

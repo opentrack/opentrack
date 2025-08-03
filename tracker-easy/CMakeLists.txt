@@ -20,6 +20,6 @@ if(OpenCV_FOUND)
 
         otr_module(tracker-easy)
         target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-        target_link_libraries(${self} opencv_core opencv_imgproc opencv_calib3d opencv_video opencv_highgui opentrack-cv opentrack-video)
+        target_link_libraries(${self} PRIVATE opencv_core opencv_imgproc opencv_calib3d opencv_video opencv_highgui opentrack-cv opentrack-video)
     endif()
 endif()

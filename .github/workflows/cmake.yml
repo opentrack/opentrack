@@ -47,6 +47,19 @@ jobs:
         sudo apt-get install qt6-tools-dev qt6-serialport-dev qt6-base-private-dev
       if: matrix.os == 'ubuntu-latest'
 
+    - name: Install opencv (Windows)
+      uses: cvpkg/opencv-action@main
+      with:
+        opencv_tag: '4.x'
+        BUILD_LIST: 'core,imgcodecs,imgproc,video,videoio,calib3d,highgui'
+        BUILD_SHARED_LIBS: 'OFF'
+        BUILD_WITH_STATIC_CRT: 'OFF'
+      if: matrix.os == 'windows-latest'
+
+    - name: Install opencv (macOS)
+      run: brew install opencv
+      if: matrix.os == 'macos-latest'
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:

@@ -37,11 +37,11 @@ static constexpr unsigned max_buttons_and_pov_hats = max_buttons + max_pov_hats 
 //static_assert(pov_hat_directions == 4 || pov_hat_directions == 8);
 
 // XXX how many axis update events can we reasonably get in a short time frame?
-static constexpr unsigned num_buffers = 16;
+static constexpr unsigned num_buffers = 128;
 
 //#define WIN32_JOY_DEBUG
 
-struct OTR_DINPUT_EXPORT win32_joy_ctx final
+struct OTR_INPUT_EXPORT win32_joy_ctx final
 {
     using fn = std::function<void(const QString& guid, int btn, bool held)>;
 
@@ -80,7 +80,7 @@ struct OTR_DINPUT_EXPORT win32_joy_ctx final
 private:
     static QString guid_to_string(const GUID& guid);
 
-    class OTR_DINPUT_EXPORT enum_state final
+    class OTR_INPUT_EXPORT enum_state final
     {
         std::vector<QString> all;
         joys_t joys;

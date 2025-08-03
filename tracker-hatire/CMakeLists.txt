@@ -1,6 +1,6 @@
 if(Qt6SerialPort_FOUND)
     otr_module(tracker-hatire)
-    target_link_libraries(${self} ${Qt6SerialPort_LIBRARIES})
+    target_link_libraries(${self} PRIVATE ${Qt6SerialPort_LIBRARIES})
     target_include_directories(${self} SYSTEM PUBLIC ${Qt6SerialPort_INCLUDE_DIRS})
     if (WIN32 OR APPLE)
         otr_install_lib(Qt6::SerialPort .)

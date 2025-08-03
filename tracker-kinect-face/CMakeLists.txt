@@ -25,9 +25,9 @@ if (WIN32 AND opentrack-intel)
 		endif()
 
 		# Link against Kinect SDK libraries
-		target_link_libraries(${self} "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.lib" "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.Face.lib")
+		target_link_libraries(${self} PRIVATE "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.lib" "${SDK_KINECT20}/lib/${kinect-arch-dir}/Kinect20.Face.lib")
 		# Link against video utilities, needed for video preview
-		target_link_libraries(${self} opentrack-video)
+		target_link_libraries(${self} PRIVATE opentrack-video)
 
 		# Install Kinect Face DLL
 		install(FILES "${SDK_KINECT20}/Redist/Face/${kinect-arch-dir}/Kinect20.Face.dll" DESTINATION "${opentrack-libexec}" PERMISSIONS ${opentrack-perms-exec})
@@ -49,7 +49,7 @@ if (WIN32 AND opentrack-intel)
         if(OpenCV_FOUND)
             add_definitions(-DOTR_HAVE_OPENCV)
             target_include_directories(${self} SYSTEM PUBLIC ${OpenCV_INCLUDE_DIRS})
-            target_link_libraries(${self} opencv_imgproc opentrack-cv opencv_core opentrack-video)
+            target_link_libraries(${self} PRIVATE opencv_imgproc opentrack-cv opencv_core opentrack-video)
         endif()
 	endif()
 endif()

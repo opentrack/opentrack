@@ -27,21 +27,8 @@ static void destroy(IDirectInputDevice8A*& dev)
     dev = nullptr;
 }
 
-Key::Key() = default;
-
-bool Key::should_process()
-{
-    if (!enabled || (keycode == 0 && guid == ""))
-        return false;
-    bool ret = !held || timer.elapsed_ms() > 100;
-    timer.start();
-    return ret;
-}
-
 KeybindingWorker::~KeybindingWorker()
 {
-    qDebug() << "exit: keybinding worker";
-
     requestInterruption();
     wait();
 
@@ -56,7 +43,7 @@ bool KeybindingWorker::init_(IDirectInputDevice8A*& dev, const char* name, const
 
     if (!din)
     {
-        qDebug() << "can't create dinput handle";
+        qDebug() << "dinput: can't create dinput handle";
         goto fail;
     }
 
@@ -146,14 +133,31 @@ void KeybindingWorker::run()
                 ok &= run_keyboard_nolock();
                 ok &= run_mouse_nolock();
                 ok &= run_joystick_nolock();
+                ok &= run_gamepad_nolock();
 
                 if (!ok)
                     Sleep(500);
             }
         }
 
-        Sleep(25);
+        Sleep(20);
     }
+}
+
+void KeybindingWorker::emit_key(const Key& k)
+{
+    for (auto& r : receivers)
+        (*r)(k);
+}
+
+bool KeybindingWorker::run_gamepad_nolock()
+{
+#if OPENTRACK_HAS_GAMEINPUT
+    if (gi)
+        gi->poll(gamepad_fn, mods);
+#endif
+
+    return true;
 }
 
 bool KeybindingWorker::run_mouse_nolock()
@@ -180,8 +184,7 @@ bool KeybindingWorker::run_mouse_nolock()
         bool& old_state = mouse_state[i - first_mouse_button];
         if (old_state != new_state)
         {
-            for (auto& r : receivers)
-                (*r)(k);
+            emit_key(k);
         }
         old_state = new_state;
     }
@@ -216,6 +219,14 @@ bool KeybindingWorker::run_keyboard_nolock()
         return false;
     }
 
+#if OPENTRACK_HAS_GAMEINPUT
+    mods = {
+        .ctrl  = (keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL]) != 0,
+        .alt   = (keystate[DIK_LALT] | keystate[DIK_RALT]) != 0,
+        .shift = (keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT]) != 0,
+    };
+#endif
+
     for (unsigned k = 0; k < sz; k++)
     {
         const int idx = keyboard_states[k].dwOfs & 0xff; // defensive programming
@@ -228,27 +239,25 @@ bool KeybindingWorker::run_keyboard_nolock()
         switch (idx)
         {
         case DIK_LCONTROL:
-        case DIK_LSHIFT:
-        case DIK_LALT:
         case DIK_RCONTROL:
+        case DIK_LSHIFT:
         case DIK_RSHIFT:
+        case DIK_LALT:
         case DIK_RALT:
         case DIK_LWIN:
         case DIK_RWIN:
             break;
-        default:
-        {
-            Key k;
-            k.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
-            k.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
-            k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
-            k.keycode = idx;
-            k.held = held;
-
-            for (auto& r : receivers)
-                (*r)(k);
-        }
+        default: {
+            Key key;
+            key.held = held;
+            key.shift = keystate[DIK_LSHIFT] | keystate[DIK_RSHIFT];
+            key.alt = keystate[DIK_LALT] | keystate[DIK_RALT];
+            key.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
+            key.keycode = idx;
+            emit_key(key);
+            //qDebug() << "KeybindingWorker: key from dinput" << (held ? "+" : "-") << key.keycode;
             break;
+        }
         }
     }
 
@@ -267,9 +276,7 @@ bool KeybindingWorker::run_joystick_nolock()
         k.ctrl = keystate[DIK_LCONTROL] | keystate[DIK_RCONTROL];
         k.guid = guid;
         k.held = held;
-
-        for (auto& r : receivers)
-            (*r)(k);
+        emit_key(k);
     };
 
     joy_ctx.poll(f);

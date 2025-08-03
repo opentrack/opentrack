@@ -12,7 +12,7 @@ function(otr_init_variant)
         "api"
         "compat"
         "logic"
-        "dinput"
+        "input"
         "gui"
         "main"
         "x-plane-plugin"

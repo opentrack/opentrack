@@ -12,6 +12,7 @@
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
 #include "spline/axis-opts.hpp"
+#include "input/key-opts.hpp"
 
 #include "export.hpp"
 
@@ -33,15 +34,6 @@ enum centering_state : int
 namespace main_settings_impl {
 
 using namespace options;
-
-struct OTR_LOGIC_EXPORT key_opts
-{
-    value<QString> keycode, guid;
-    value<int> button;
-
-    key_opts(bundle b, const QString& name);
-    key_opts& operator=(const key_opts& x);
-};
 
 struct OTR_LOGIC_EXPORT module_settings
 {
@@ -112,6 +104,5 @@ struct OTR_LOGIC_EXPORT main_settings final
 
 } // ns main_settings_impl
 
-using key_opts = main_settings_impl::key_opts;
 using module_settings = main_settings_impl::module_settings;
 using main_settings = main_settings_impl::main_settings;

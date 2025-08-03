@@ -12,7 +12,7 @@
 #include "api/plugin-support.hpp"
 #include "pipeline.hpp"
 #include "dbus.hpp"
-#include "shortcuts.h"
+#include "input/shortcuts.h"
 #include "export.hpp"
 #include "tracklogger.hpp"
 #include "logic/runtime-libraries.hpp"

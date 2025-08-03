@@ -396,6 +396,10 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Post-invert</source>
         <translation>输出-反转</translation>
     </message>
+    <message>
+        <source>Gamepad button %1</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

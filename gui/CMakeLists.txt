@@ -1,8 +1,9 @@
 otr_module(user-interface BIN)
 
-target_link_libraries(${self}
+target_link_libraries(${self} PRIVATE
     opentrack-migration
     opentrack-logic
+    opentrack-input
     opentrack-spline
     opentrack-pose-widget
 )

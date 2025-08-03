@@ -10,11 +10,10 @@
 #include "export.hpp"
 
 #ifdef _WIN32
-#   include "logic/win32-shortcuts.h"
-#   include "dinput/keybinding-worker.hpp"
+#   include "input/keybinding-worker.hpp"
 #endif
 
-#include "ui_keyboard_listener.h"
+#include "ui_listener.h"
 
 #include <QDialog>
 #include <QtEvents>
