@@ -487,14 +487,15 @@ module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
 }
 
 namespace {
-OrtStatus* ExecutionProviderSelector(const OrtEpDevice** ep_devices,
-                                          size_t num_devices,
-                                          const OrtKeyValuePairs* model_metadata,
-                                          const OrtKeyValuePairs* runtime_metadata,
-                                          const OrtEpDevice** selected,
-                                          size_t max_selected,
-                                          size_t* num_selected,
-                                          void* state)
+OrtStatus* select_device_callback(
+    const OrtEpDevice** ep_devices,
+    size_t num_devices,
+    const OrtKeyValuePairs* model_metadata,
+    const OrtKeyValuePairs* runtime_metadata,
+    const OrtEpDevice** selected,
+    size_t max_selected,
+    size_t* num_selected,
+    void* state)
 {
     std::uint32_t device_id = *static_cast<std::uint32_t const*>(state);
     if (max_selected <= 0)
@@ -526,6 +527,22 @@ OrtStatus* ExecutionProviderSelector(const OrtEpDevice** ep_devices,
 }
 
 
+static constexpr const char* DML_EXECUTION_PROVIDER_NAME = "DmlExecutionProvider";
+
+
+void append_dml_execution_provider(Ort::SessionOptions& opts, int device_id)
+{
+    OrtApi const& ortApi = Ort::GetApi(); // Uses ORT_API_VERSION
+    const OrtDmlApi* ortDmlApi = nullptr;
+    ortApi.GetExecutionProviderApi("DML", ORT_API_VERSION, reinterpret_cast<const void**>(&ortDmlApi));
+    ortDmlApi->SessionOptionsAppendExecutionProvider_DML(opts, device_id);
+    opts.DisableMemPattern();
+    opts.SetExecutionMode(ORT_SEQUENTIAL);
+    opts.SetGraphOptimizationLevel(ORT_ENABLE_ALL);
+}
+
+
+
 bool NeuralNetTracker::load_and_initialize_model()
 {
     const QString localizer_model_path_enc =
@@ -543,33 +560,33 @@ bool NeuralNetTracker::load_and_initialize_model()
         auto opts = Ort::SessionOptions{};
         opts.SetLogSeverityLevel(0);
 
-        std::vector<Ort::ConstEpDevice> selected_dev{};
+        //std::vector<Ort::ConstEpDevice> selected_dev{};
+
         for (const Ort::ConstEpDevice& dev : env_.GetEpDevices())
         {
             if (dev.Device().DeviceId() != device_id)
                 continue;
-            selected_dev.push_back(dev);
+            //selected_dev.push_back(dev);
             qDebug() << "Device for which to load the execution provider: " << dev.EpName() << " (" << dev.Device().Vendor() << ") ", dev.Device().Type();
-            if (strcmp(dev.EpName(), "DmlExecutionProvider") == 0)
+            if (strcmp(dev.EpName(), DML_EXECUTION_PROVIDER_NAME) == 0)
             {
-                OrtApi const& ortApi = Ort::GetApi(); // Uses ORT_API_VERSION
-                const OrtDmlApi* ortDmlApi = nullptr;
-                ortApi.GetExecutionProviderApi("DML", ORT_API_VERSION, reinterpret_cast<const void**>(&ortDmlApi));
-                ortDmlApi->SessionOptionsAppendExecutionProvider_DML(opts, 0);
-                opts.DisableMemPattern();
-                opts.SetExecutionMode(ORT_SEQUENTIAL);
+                append_dml_execution_provider(opts, device_id);
             }
         }
         
         //opts.AppendExecutionProvider_V2(env_, selected_dev, {});
-        //opts.SetEpSelectionPolicy(ExecutionProviderSelector,const_cast<std::uint32_t*>(&device_id));
-        opts.SetEpSelectionPolicy(OrtExecutionProviderDevicePolicy_PREFER_GPU);
+        opts.SetEpSelectionPolicy(select_device_callback,const_cast<std::uint32_t*>(&device_id));
+        //opts.SetEpSelectionPolicy(OrtExecutionProviderDevicePolicy_PREFER_GPU);
+        
         
         // Do thread settings here do anything?
         // There is a warning which says to control number of threads via
         // openmp settings. Which is what we do.
+        # if 0
         opts.SetIntraOpNumThreads(num_threads_);
         opts.SetInterOpNumThreads(1);
+        #endif
+        
         allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
         localizer_.emplace(
@@ -637,7 +654,7 @@ void NeuralNetTracker::run()
 {
     preview_.init(*video_widget_);
 
-    GuardedThreadCountSwitch switch_num_threads_to(num_threads_);
+    //GuardedThreadCountSwitch switch_num_threads_to(num_threads_);
 
     if (!open_camera())
         return;
