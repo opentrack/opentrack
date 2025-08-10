@@ -402,6 +402,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Gamepad button %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Keep looking forward while the key is pressed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Freeze the pose like Toggle, except only while they key is still pressed.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>
