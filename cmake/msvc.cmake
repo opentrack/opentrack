@@ -146,9 +146,9 @@ if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
     endif()
 endif()
 
-if(opentrack-64bit)
-    set(opentrack-simd "AVX")
-endif()
+#if(opentrack-64bit)
+#    set(opentrack-simd "AVX")
+#endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_compile_options(-MT)
