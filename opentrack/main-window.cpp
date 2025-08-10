@@ -42,6 +42,8 @@ extern "C" const char* const opentrack_version;
 using namespace options::globals;
 using namespace options;
 
+using namespace Qt::StringLiterals;
+
 main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 {
     ui.setupUi(this);
@@ -185,8 +187,10 @@ void main_window::init_profiles()
     profile_menu.addAction(tr("Open configuration directory"), this, &main_window::open_profile_directory);
     ui.profile_button->setMenu(&profile_menu);
 
+#if 0
     connect(&profile_list_timer, &QTimer::timeout, this, &main_window::refresh_profile_list);
     profile_list_timer.start(1000 * 5);
+#endif
 
     connect(ui.iconcomboProfile, &QComboBox::currentTextChanged,
             this, [this](const QString& x) { main_window::set_profile(x); });
@@ -387,7 +391,12 @@ void main_window::refresh_profile_list()
     QStringList list = ini_list();
     QString current = ini_filename();
 
-    if (list == profile_list)
+    bool is_same = list == profile_list;
+
+    if (!is_same || ui.iconcomboProfile->currentText() != current)
+        reinit_fs_watcher(current);
+
+    if (is_same)
         return;
 
     if (!list.contains(current))
@@ -408,7 +417,17 @@ void main_window::refresh_profile_list()
     ui.iconcomboProfile->setCurrentText(current);
 }
 
-
+void main_window::reinit_fs_watcher(const QString& profile_name)
+{
+    if (fs_watcher)
+        fs_watcher = {};
+    const auto dir = ini_directory();
+    fs_watcher = std::make_unique<QFileSystemWatcher>();
+    fs_watcher->addPath(dir);
+    fs_watcher->addPath("%1/%2"_L1.arg(dir, profile_name));
+    connect(&*fs_watcher, &QFileSystemWatcher::fileChanged, this, [this](const QString& _) { refresh_profile_list(); });
+    connect(&*fs_watcher, &QFileSystemWatcher::directoryChanged, this, [this](const QString& _) { refresh_profile_list(); });
+}
 
 void main_window::update_button_state(bool running, bool inertialp)
 {
@@ -860,6 +879,8 @@ void main_window::set_profile(const QString& new_name_, bool migrate)
 
     if (status)
         ui.iconcomboProfile->setCurrentText(new_name);
+
+    reinit_fs_watcher(new_name);
 }
 
 void main_window::ensure_tray()

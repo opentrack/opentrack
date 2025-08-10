@@ -26,6 +26,7 @@
 #include <QShortcut>
 #include <QTimer>
 #include <QSystemTrayIcon>
+#include <QFileSystemWatcher>
 #include <QString>
 #include <QMenu>
 #include <QAction>
@@ -49,6 +50,8 @@ class main_window final : public QMainWindow, private State
     QTimer profile_list_timer;
 
     Shortcuts global_shortcuts;
+    std::unique_ptr<QFileSystemWatcher> fs_watcher;
+
     QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
 
 #ifdef UI_NO_VIDEO_FEED
@@ -89,6 +92,7 @@ public:
     void init_tray_menu();
     void init_profiles();
     void init_buttons();
+    void reinit_fs_watcher(const QString& profile_name);
 
     void init_shortcuts();
     void register_shortcuts();
