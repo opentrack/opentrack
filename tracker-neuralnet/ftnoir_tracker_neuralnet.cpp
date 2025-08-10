@@ -492,10 +492,7 @@ bool NeuralNetTracker::load_and_initialize_model()
 
     try
     {
-        env_ = Ort::Env{
-            OrtLoggingLevel::ORT_LOGGING_LEVEL_ERROR,
-            "tracker-neuralnet"
-        };
+        env_ = make_ort_env();
         auto opts = Ort::SessionOptions{};
         // Do thread settings here do anything?
         // There is a warning which says to control number of threads via

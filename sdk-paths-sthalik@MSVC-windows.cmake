@@ -35,7 +35,12 @@ setq(OpenCV_DIR "opencv/build/amd64/install")
 setq(SDK_ARUCO_LIBPATH "aruco/build/amd64/src/aruco.lib")
 setq(SDK_LIBUSB "libusb-msvc-amd64")
 setq(SDK_GAMEINPUT "gameinput")
-setq(ONNXRuntime_DIR "onnxruntime-1.22.1-nolto")
+
+setq(ONNXRuntime_DIR "onnxruntime-1.22.1-noavx")
+install(FILES "${__depdir}/onnxruntime-1.22.1-noavx/bin/onnxruntime.dll" RENAME "onnxruntime-noavx.dll" DESTINATION "modules")
+install(FILES "${__depdir}/onnxruntime-1.22.1-avx/bin/onnxruntime.dll" RENAME "onnxruntime-avx.dll" DESTINATION "modules")
+set(opentrack-use-onnxruntime-avx-dispatch 1)
+
 #setq(SDK_TRACKHAT_SENSOR "trackhat-c-library-driver/build/amd64/install")
 set(SDK_TRACKHAT_SENSOR "FALSE" CACHE INTERNAL "" FORCE)
 setq(SDK_OSCPACK "oscpack/build/amd64")
