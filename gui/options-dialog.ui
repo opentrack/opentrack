@@ -293,7 +293,7 @@
              <cursorShape>WhatsThisCursor</cursorShape>
             </property>
             <property name="toolTip">
-             <string>Keep looking perfectly forward while the key is pressed.</string>
+             <string>Keep looking forward while the key is pressed.</string>
             </property>
             <property name="text">
              <string>Zero while held</string>
