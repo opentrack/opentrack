@@ -64,7 +64,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Press a key or close this window to remove the keybinding.</source>
-        <translation>按下任意键绑定按键，关闭窗口将清除绑定。</translation>
+        <translation>按下任意键绑定按键，关闭窗口可清除绑定。</translation>
     </message>
 </context>
 <context>
@@ -190,7 +190,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Minimize to tray</source>
-        <translation>最小化到任务栏</translation>
+        <translation>最小化到托盘</translation>
     </message>
     <message>
         <source>Enable tray</source>
@@ -250,7 +250,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Alter the centered position sent to games. Useful if the default position is too much downward or upward.</source>
-        <translation>调整发送到游戏的回中位置，当默认位置明显偏高或偏低时使用。</translation>
+        <translation>更改发送到游戏的居中位置。如果默认位置过于向下或向上，则很有用。</translation>
     </message>
     <message>
         <source>°</source>
@@ -274,7 +274,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>With relative mode on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</source>
-        <translation>开启相对位移后，系统会先计算转动方向，再根据转动后的坐标处理位移。例如：当您向右转动180度后，此时向后移动会变成向前移动（因方向坐标已经发生翻转）。</translation>
+        <translation>开启相对位移后，位移的方向会跟随旋转的角度而发生改变，例如：当您向右转动180度后，此时向后移动会变成向前移动（因方向坐标已经发生反转）。</translation>
     </message>
     <message>
         <source>Mode</source>
@@ -318,7 +318,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Eyes will be offset from the pivot of rotation, assumed to be the neck. It also works with relative translation disabled.</source>
-        <translation>整眼睛相对于脖子旋转中心的位置偏移。即使关闭&quot;相对位移&quot;功能，此设置依然生效。</translation>
+        <translation>调整眼睛相对于脖子旋转中心的位置偏移。即使关闭&quot;相对位移&quot;功能，此设置依然生效。</translation>
     </message>
     <message>
         <source>Enable</source>
@@ -342,7 +342,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>None</source>
-        <translation>未设置</translation>
+        <translation>无</translation>
     </message>
     <message>
         <source>Centering method</source>
@@ -378,7 +378,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Use current tracker pose as looking perfectly forward.</source>
-        <translation>将当前头部姿态设为居中视角。</translation>
+        <translation>将当前头部位置设为正前方视角。</translation>
     </message>
     <message>
         <source>Keep looking forward until next zero keypress.</source>
@@ -395,10 +395,6 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     <message>
         <source>Post-invert</source>
         <translation>输出-反转</translation>
-    </message>
-    <message>
-        <source>Gamepad button %1</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
