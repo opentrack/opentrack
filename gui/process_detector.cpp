@@ -221,6 +221,9 @@ bool process_detector_worker::profile_to_start(QString& str)
     }
 
     auto filenames = s.split_process_names();
+    if (filenames.isEmpty())
+        return false;
+
     QStringList exe_list = get_all_executable_names();
 
     // assuming manual stop by user button click.
