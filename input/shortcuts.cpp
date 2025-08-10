@@ -51,7 +51,11 @@ bool Shortcuts::make_shortcut(K& key, const key_opts& k, bool held)
     {
         key->setShortcut(QKeySequence::fromString(k.keycode, QKeySequence::PortableText));
         key->setEnabled();
+        return true;
     }
+    delete key;
+    key = nullptr;
+    return false;
 #else
     key = {};
     int idx = 0;
@@ -163,18 +167,22 @@ void Shortcuts::reload(const t_keys& keys_)
 #else
         K k(nullptr);
 #endif
-        if (make_shortcut(k, opts, held))
+        bool got_shortcut = make_shortcut(k, opts, held);
+
+        if (got_shortcut)
             keys.emplace_back(k, fun, held);
 
 #ifndef _WIN32
-        const int idx = keys.size() - 1;
-        tt& kk_ = keys[idx];
-        auto fn = std::get<1>(kk_);
-        bool held_ = held;
-        QObject::connect(k, &QxtGlobalShortcut::activated, [fn, held_](bool keydown) {
-            if (keydown || !held_)
-                fn(keydown);
-        });
+        if (got_shortcut)
+        {
+            tt& kk_ = keys.back();
+            auto fn = std::get<1>(kk_);
+            bool held_ = held;
+            QObject::connect(k, &QxtGlobalShortcut::activated, [fn, held_](bool keydown) {
+                if (keydown || !held_)
+                    fn(keydown);
+            });
+        }
 #endif
     }
 }
