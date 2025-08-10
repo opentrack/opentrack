@@ -57,11 +57,11 @@
     </message>
     <message>
         <source>Max distance:</source>
-        <translation>最大半径：</translation>
+        <translation>最大距离：</translation>
     </message>
     <message>
         <source>For both rotations and positions: No movement occurs within the dead zone. Smoothing scales down to minimum at max distance + 2 x dead zone.</source>
-        <translation>对于旋转和位置：在死区内不发生任何移动。在最大半径+2倍死区时平滑强度降至最低。&lt;a href=&quot;https://github.com/opentrack/opentrack/pull/1667&quot;&gt;阅读此处Pull#1167&lt;/a&gt;</translation>
+        <translation>对于旋转和位置：在死区内不发生任何移动。在最大距离+2倍死区时平滑强度降至最低。</translation>
     </message>
     <message>
         <source>When you lean forward, zoom smoothing increases the smoothing power for rotations. Maximum additonal smoothing power occurs when you lean forward by a distance of  Max Z.</source>
