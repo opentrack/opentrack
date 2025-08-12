@@ -3,9 +3,8 @@ set(host-spec "${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_SIZEOF_VOI
 if(host-spec MATCHES "^Linux i[3-6]86 4$")
     return()
 endif()
-if(NOT DEFINED opentrack-use-onnxruntime-avx-dispatch)
-    set(opentrack-use-onnxruntime-avx-dispatch 0)
-endif()
+
+set(opentrack-use-onnxruntime-avx-dispatch False CACHE BOOL "Enable dynamic loading and dispatching to avx-enabled onnxruntime")
 
 find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.

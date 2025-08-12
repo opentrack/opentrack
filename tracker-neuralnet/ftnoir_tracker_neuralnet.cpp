@@ -490,9 +490,15 @@ bool NeuralNetTracker::load_and_initialize_model()
         OPENTRACK_BASE_PATH+"/" OPENTRACK_LIBRARY_PATH "/models/head-localizer.onnx";
     const QString poseestimator_model_path_enc = get_posenet_filename();
 
+    maybe_load_onnxruntime_dynamically();
+
     try
     {
-        env_ = make_ort_env();
+        env_ = Ort::Env {
+            OrtLoggingLevel::ORT_LOGGING_LEVEL_ERROR,
+            "tracker-neuralnet"
+        };
+
         auto opts = Ort::SessionOptions{};
         // Do thread settings here do anything?
         // There is a warning which says to control number of threads via
