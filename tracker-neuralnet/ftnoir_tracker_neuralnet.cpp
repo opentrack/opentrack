@@ -532,13 +532,17 @@ static constexpr const char* DML_EXECUTION_PROVIDER_NAME = "DmlExecutionProvider
 
 void append_dml_execution_provider(Ort::SessionOptions& opts, int device_id)
 {
+    // Example code: https://github.com/fdwr/OnnxRuntimeDirectMLEPSample/blob/master/MainFullExample.cpp
+    // IoBinding doesn't work for me though. Network doesn't seem to get valid input.
     OrtApi const& ortApi = Ort::GetApi(); // Uses ORT_API_VERSION
     const OrtDmlApi* ortDmlApi = nullptr;
     ortApi.GetExecutionProviderApi("DML", ORT_API_VERSION, reinterpret_cast<const void**>(&ortDmlApi));
     ortDmlApi->SessionOptionsAppendExecutionProvider_DML(opts, device_id);
     opts.DisableMemPattern();
     opts.SetExecutionMode(ORT_SEQUENTIAL);
+    //opts.SetGraphOptimizationLevel(ORT_ENABLE_EXTENDED);
     opts.SetGraphOptimizationLevel(ORT_ENABLE_ALL);
+    opts.AddConfigEntry("session.dynamic_block_base", "4");
 }
 
 
@@ -558,9 +562,22 @@ bool NeuralNetTracker::load_and_initialize_model()
             "tracker-neuralnet"
         };
         auto opts = Ort::SessionOptions{};
-        opts.SetLogSeverityLevel(0);
 
-        //std::vector<Ort::ConstEpDevice> selected_dev{};
+        // Do thread settings here do anything?
+        // There is a warning which says to control number of threads via
+        // openmp settings. Which is what we do.
+        # if 1
+        opts.SetIntraOpNumThreads(num_threads_);
+        opts.SetInterOpNumThreads(1);
+        #endif
+        
+        allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
+
+        // Localizer runs on the cpu for now.
+        localizer_.emplace(
+            allocator_info_,
+            Ort::Session{env_, convert(localizer_model_path_enc).c_str(), opts});
+
 
         for (const Ort::ConstEpDevice& dev : env_.GetEpDevices())
         {
@@ -577,21 +594,7 @@ bool NeuralNetTracker::load_and_initialize_model()
         //opts.AppendExecutionProvider_V2(env_, selected_dev, {});
         opts.SetEpSelectionPolicy(select_device_callback,const_cast<std::uint32_t*>(&device_id));
         //opts.SetEpSelectionPolicy(OrtExecutionProviderDevicePolicy_PREFER_GPU);
-        
-        
-        // Do thread settings here do anything?
-        // There is a warning which says to control number of threads via
-        // openmp settings. Which is what we do.
-        # if 0
-        opts.SetIntraOpNumThreads(num_threads_);
-        opts.SetInterOpNumThreads(1);
-        #endif
-        
-        allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
-        localizer_.emplace(
-            allocator_info_,
-            Ort::Session{env_, convert(localizer_model_path_enc).c_str(), opts});
 
         qDebug() << "Loading pose net " << poseestimator_model_path_enc;
         poseestimator_.emplace(
