@@ -105,9 +105,9 @@ Pose reltrans::apply_pipeline(reltrans_state state, const Pose& value,
             constexpr double d2r = M_PI / 180;
 
             const rmat R = euler_to_rmat(
-                               Pose_(value(Yaw)   * d2r * !disable(Yaw),
-                                       value(Pitch) * d2r * !disable(Pitch),
-                                       value(Roll)  * d2r * !disable(Roll)));
+                Pose_(value(Yaw)   * d2r * !disable(Yaw),
+                      value(Pitch) * d2r * !disable(Pitch),
+                      value(Roll)  * d2r * !disable(Roll)));
 
             rel = rotate(R, rel, &disable[TX]);
 
@@ -310,7 +310,7 @@ void pipeline::maybe_set_center_pose(const centering_state mode, const Pose& val
 Pose pipeline::apply_center(const centering_state mode, Pose value) const
 {
     if (mode != center_disabled)
-        {
+    {
         for (unsigned k = TX; k <= TZ; k++)
             value(k) -= center.P(k);
 
