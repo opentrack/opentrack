@@ -45,7 +45,7 @@ bool is_avx_supported()
 }
 #endif
 
-Ort::Env NeuralNetTracker::make_ort_env()
+void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
 {
 #ifdef OPENTRACK_USE_ONNXRUNTIME_CPU_DISPATCH
     QLibrary lib;
@@ -54,48 +54,30 @@ Ort::Env NeuralNetTracker::make_ort_env()
         lib.setFileName(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "onnxruntime-avx" "." OPENTRACK_LIBRARY_EXTENSION);
     else
         lib.setFileName(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "onnxruntime-noavx" "." OPENTRACK_LIBRARY_EXTENSION);
+    qDebug().nospace() << "tracker/nn: loading onnxruntime library" << lib.fileName();
     if (!lib.load())
     {
         qDebug().nospace() << "tracker/nn: can't load onnxruntime library "
-                           << lib.fileName() << ": " << lib.errorString()
-                           << ". now crashing.";
+                           << ": " << lib.errorString() << ". now crashing." ;
         std::abort();
     }
 
     void* fn_OrtGetApiBase = lib.resolve("OrtGetApiBase");
     if (!fn_OrtGetApiBase) {
-        qDebug().nospace() << "tracker/nn: can't find OrtGetApiBase in "
-                           << lib.fileName() << ": " << lib.errorString()
-                           << ". now crashing.";
+        qDebug().nospace() << "tracker/nn: can't find OrtGetApiBase in onnxruntime: "
+                           << lib.errorString() << ". now crashing.";
         std::abort();
     }
     using OrtGetApiBase_t = const OrtApiBase* (ORT_API_CALL*)(void);
     const auto* ort_base = reinterpret_cast<OrtGetApiBase_t>(fn_OrtGetApiBase)();
     const auto* ort_api = ort_base->GetApi(ORT_API_VERSION);
     if (!ort_api) {
-        qDebug().nospace() << "tracker/nn: can't find ort API in "
-                           << lib.fileName() << ": " << lib.errorString()
-                           << ". now crashing.";
+        qDebug().nospace() << "tracker/nn: can't find ort API in onnxruntime: "
+                           << lib.errorString() << ". now crashing.";
         std::abort();
     }
 
-    Ort::Global<void>::api_ = ort_api; // see ORT_API_MANUAL_INIT
-
-    OrtEnv* env{};
-    OrtStatus* status = ort_api->CreateEnv(ORT_LOGGING_LEVEL_WARNING, "tracker-neuralnet", &env);
-    if (status != nullptr || !env)
-    {
-        qDebug().nospace() << "tracker/nn: can't ort CreateEnv in "
-                           << lib.fileName() << ": " << lib.errorString()
-                           << ". now crashing.";
-        std::abort();
-    }
-    return Ort::Env{env};
-#else
-    return Ort::Env {
-        OrtLoggingLevel::ORT_LOGGING_LEVEL_ERROR,
-        "tracker-neuralnet"
-    };
+    Ort::Global<void>::api_ = ort_api; // see ORT_API_MANUAL_INIT in the onnx c++ header.
 #endif
 }
 

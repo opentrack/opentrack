@@ -127,7 +127,7 @@ private:
     bool open_camera();
     void set_intrinsics();
     cv::Mat prepare_input_image(const video::frame& frame);
-    static Ort::Env make_ort_env();
+    static void maybe_load_onnxruntime_dynamically();
     bool load_and_initialize_model();
     void draw_gizmos(
         const std::optional<PoseEstimator::Face> &face,
