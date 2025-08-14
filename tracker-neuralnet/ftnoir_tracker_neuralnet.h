@@ -139,10 +139,14 @@ private:
     QString get_posenet_filename() const;
 
     Settings settings_;
+
+    // CAUTION: destruction order matters here. The env and allocator must
+    // live longer than the ORT sessions. It looked like they were reference 
+    // counted but apparently they are not.
+    Ort::MemoryInfo allocator_info_{nullptr};
+    Ort::Env env_{nullptr};
     std::optional<Localizer> localizer_;
     std::optional<PoseEstimator> poseestimator_;
-    Ort::Env env_{nullptr};
-    Ort::MemoryInfo allocator_info_{nullptr};
 
     CamIntrinsics intrinsics_{};
     cv::Mat grayscale_;
