@@ -11,6 +11,7 @@
 #include "model_adapters.h"
 #include "deadzone_filter.h"
 #include "preview.h"
+#include "config.h"
 
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
@@ -94,8 +95,18 @@ struct Settings : opts {
     value<double> deadzone_size { b, "deadzone-size", 1. };
     value<double> deadzone_hardness { b, "deadzone-hardness", 1.5 };
     value<QString> posenet_file { b, "posenet-file", "head-pose-0.3-big-quantized.onnx" };
-    value<int> device { b, "device", 0 };
+    value<QVariant> device { b, "execution_provider", QVariant() };
     Settings();
+};
+
+
+struct ExecutionProviderOption
+{
+    std::string provider_name;
+    std::int64_t device_id = -1;
+
+    QVariant as_qvariant() const;
+    static ExecutionProviderOption from_qvariant(const QVariant& v);
 };
 
 
@@ -210,7 +221,6 @@ private Q_SLOTS:
     void trans_calib_step();
     void status_poll();
     void onSelectPoseNetFile();
-    void onDeviceChange();
 };
 
 

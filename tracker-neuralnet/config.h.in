@@ -1,0 +1,4 @@
+#pragma once
+
+#cmakedefine HAVE_ONNXRUNTIME_DML_EP
+#cmakedefine HAVE_ONNXRUNTIME_OPENVINO_EP
