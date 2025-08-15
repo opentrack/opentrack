@@ -500,17 +500,8 @@ OrtStatus* select_device_callback(
     size_t* num_selected,
     void* state)
 {
-    std::uint32_t device_id = *static_cast<std::uint32_t const*>(state);
-    if (max_selected <= 0)
-    {
-        qDebug() << "There is no room to place the device selection.";
-        return nullptr;
-    }
-    if (num_devices <= 0)
-    {
-        qDebug() << "There are no execution devices to chose from. Id of desired device is " << device_id;
-        return nullptr;
-    }
+    const std::uint32_t device_id = *static_cast<std::uint32_t const*>(state);
+    assert (max_selected >= 1); // Output buffer size is large enough. It would be a bug in ORT if it wasn't.
     for (std::size_t i=0; i<num_devices; ++i)
     {
         const Ort::ConstEpDevice listed_dev{ep_devices[i]};
@@ -518,14 +509,11 @@ OrtStatus* select_device_callback(
         {
             selected[0] = ep_devices[i];
             *num_selected = 1;
-            qDebug() << "selected dev: " << listed_dev.Device().DeviceId();
-        }
-        else
-        {
-            qDebug() << "listed dev: " << listed_dev.Device().DeviceId() << " vs desired id: " << device_id;
+            return nullptr;
         }
     }
-    return nullptr;
+    // Should not get here.
+    return Ort::GetApi().CreateStatus(ORT_FAIL, "Cannot find selected device id among OrtEpDevice's");;
 }
 }
 
@@ -592,21 +580,10 @@ bool NeuralNetTracker::load_and_initialize_model()
         }
         else if (ep_selection.provider_name == DML_EXECUTION_PROVIDER_NAME && ep_selection.device_id>=0 && ep_selection.device_id<std::numeric_limits<std::uint32_t>::max())
         {
+            const auto device_id = static_cast<std::uint32_t>(ep_selection.device_id);
             // The EP device list seems to be only used on Windows for DirectML.
-            const std::uint32_t device_id = static_cast<std::uint32_t>(ep_selection.device_id);
-            append_dml_execution_provider(opts, device_id);
-            // for (const Ort::ConstEpDevice& dev : env_.GetEpDevices())
-            // {
-            //     if (dev.Device().DeviceId() != device_id)
-            //         continue;
-            //     //selected_dev.push_back(dev);
-            //     qDebug() << "Device for which to load the execution provider: " << dev.EpName() << " (" << dev.Device().Vendor() << ") ", dev.Device().Type();
-            //     if (strcmp(dev.EpName(), DML_EXECUTION_PROVIDER_NAME) == 0)
-            //     {
-            //         append_dml_execution_provider(opts, device_id);
-            //     }
-            // }
-            //opts.SetEpSelectionPolicy(select_device_callback,const_cast<std::uint32_t*>(&device_id));
+            append_dml_execution_provider(opts, 0); // Device selection doesn't work here.
+            opts.SetEpSelectionPolicy(select_device_callback,const_cast<std::uint32_t*>(&device_id));
         }
 
         qDebug() << "Loading pose net " << poseestimator_model_path_enc;
