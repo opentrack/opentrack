@@ -24,6 +24,12 @@
 #ifdef HAVE_ONNXRUNTIME_DML_EP
 #  include <dml_provider_factory.h>
 #endif
+#ifdef HAVE_ONNXRUNTIME_DNNL_EP
+#  include <dnnl_provider_options.h>
+#endif
+#ifdef HAVE_ONNXRUNTIME_OPENVINO_EP
+#include <openvino/openvino.hpp>
+#endif
 
 #ifdef _MSC_VER
 #   pragma warning(disable : 4702)
@@ -519,6 +525,7 @@ OrtStatus* select_device_callback(
 
 
 static constexpr const char* DML_EXECUTION_PROVIDER_NAME = "DmlExecutionProvider";
+static constexpr const char* DNNL_EXECUTION_PROVIDER_NAME = "DnnlExecutionProvider"; // a.k.a. OneDNN
 static constexpr const char* OPENVINO_EXECUTION_PROVIDER_NAME = "OpenVINOExecutionProvider";
 static constexpr const char* CPU_EXECUTION_PROVIDER_NAME = "CPUExecutionProvider";
 
@@ -553,18 +560,16 @@ bool NeuralNetTracker::load_and_initialize_model()
     try
     {
         env_ = Ort::Env{
-            OrtLoggingLevel::ORT_LOGGING_LEVEL_INFO,
+            OrtLoggingLevel::ORT_LOGGING_LEVEL_WARNING,
             "tracker-neuralnet"
         };
         auto opts = Ort::SessionOptions{};
         opts.SetGraphOptimizationLevel(ORT_ENABLE_ALL);
 
-        // Do thread settings here do anything?
-        // There is a warning which says to control number of threads via
-        // openmp settings. Which is what we do.
-        //opts.SetIntraOpNumThreads(num_threads_);
-        //opts.SetInterOpNumThreads(1);
-        // opts.SetEpSelectionPolicy(OrtExecutionProviderDevicePolicy_PREFER_GPU);
+        // OpenMP support was removed recently. This settings works now.
+        // Tested in ORT 1.22.1, Linux, build from sources.
+        opts.SetIntraOpNumThreads(num_threads_);
+        opts.SetInterOpNumThreads(1);
         
         allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
@@ -576,14 +581,28 @@ bool NeuralNetTracker::load_and_initialize_model()
         
         if (ep_selection.provider_name == OPENVINO_EXECUTION_PROVIDER_NAME)
         {
-            opts.AppendExecutionProvider_OpenVINO_V2({{"device_type", "CPU"}});
+            opts.AppendExecutionProvider_OpenVINO_V2({
+                {"device_type", ep_selection.device_id}, 
+                {"num_of_threads", std::to_string(num_threads_)}
+            });
         }
-        else if (ep_selection.provider_name == DML_EXECUTION_PROVIDER_NAME && ep_selection.device_id>=0 && ep_selection.device_id<std::numeric_limits<std::uint32_t>::max())
+        else if (ep_selection.provider_name == DML_EXECUTION_PROVIDER_NAME)
         {
-            const auto device_id = static_cast<std::uint32_t>(ep_selection.device_id);
             // The EP device list seems to be only used on Windows for DirectML.
             append_dml_execution_provider(opts, 0); // Device selection doesn't work here.
-            opts.SetEpSelectionPolicy(select_device_callback,const_cast<std::uint32_t*>(&device_id));
+
+            const auto device_id = std::stoll(ep_selection.device_id);
+            if (device_id>=0 && device_id<std::numeric_limits<std::uint32_t>::max())
+            {
+                auto device_id_uint32_t = static_cast<std::uint32_t>(device_id);
+                opts.SetEpSelectionPolicy(select_device_callback,&device_id_uint32_t);
+            }
+        }
+        else if(ep_selection.provider_name == DNNL_EXECUTION_PROVIDER_NAME)
+        {
+            #ifdef HAVE_ONNXRUNTIME_DNNL_EP
+                opts.AppendExecutionProvider_Dnnl(OrtDnnlProviderOptions{true,nullptr});
+            #endif
         }
 
         qDebug() << "Loading pose net " << poseestimator_model_path_enc;
@@ -836,6 +855,7 @@ void NeuralNetDialog::make_devices_combobox()
 {
     const std::vector<std::string> providers = Ort::GetAvailableProviders();
 
+    bool use_openvino_device_detection = false;
     bool use_dml_style_ep_detection = false;
     for (const auto& p : providers)
     {
@@ -843,9 +863,13 @@ void NeuralNetDialog::make_devices_combobox()
             use_dml_style_ep_detection = true;
             continue;
         }
-
+        if (p == OPENVINO_EXECUTION_PROVIDER_NAME)
+        {
+            use_openvino_device_detection = true;
+            continue;
+        }
         const auto qt_name = QString::fromStdString(p);
-        ui_.deviceBox->addItem(qt_name, ExecutionProviderOption{p,-1}.as_qvariant());
+        ui_.deviceBox->addItem(qt_name, ExecutionProviderOption{p,"0"}.as_qvariant());
     }
 
     if (use_dml_style_ep_detection)
@@ -873,9 +897,30 @@ void NeuralNetDialog::make_devices_combobox()
             }
 
             QString item_str;
-            QTextStream(&item_str) << ep_name << ": Device Id " << dev.DeviceId() << " (" << dev.Vendor() << " " << device_type_str << ")";
+            QTextStream(&item_str) << ep_name << " /w Device " << dev.DeviceId() << " (" << dev.Vendor() << " " << device_type_str << ")";
 
-            ui_.deviceBox->addItem(item_str, ExecutionProviderOption{ep_name, dev.DeviceId()}.as_qvariant());
+            ui_.deviceBox->addItem(item_str, ExecutionProviderOption{ep_name, std::to_string(dev.DeviceId())}.as_qvariant());
+        }
+    }
+
+    if (use_openvino_device_detection)
+    {
+        auto get_device = []() -> std::vector<std::string>
+        {
+#ifdef HAVE_ONNXRUNTIME_OPENVINO_EP
+            ov::Core core{};
+            return core.get_available_devices();
+#else
+            return std::vector<std::string>{};
+#endif
+        };
+        const auto devices = get_device();
+        for (const auto& device : devices)
+        {
+            const char* ep_name = OPENVINO_EXECUTION_PROVIDER_NAME;
+            QString item_str;
+            QTextStream(&item_str) << ep_name << "/w Device " << QString::fromStdString(device);
+            ui_.deviceBox->addItem(item_str, ExecutionProviderOption{ep_name,device}.as_qvariant());
         }
     }
 }
@@ -885,7 +930,7 @@ QVariant ExecutionProviderOption::as_qvariant() const
 {
     return QVariant(QStringList{
         QString::fromStdString(provider_name),
-        QString::number(device_id)
+        QString::fromStdString(device_id)
     });
 }
 
@@ -898,8 +943,8 @@ ExecutionProviderOption ExecutionProviderOption::from_qvariant(const QVariant& v
         if(l.size() == 2)
         {
             const QString ep_name = l[0];
-            const qint64 device_id = l[1].toLongLong();
-            return ExecutionProviderOption{ep_name.toStdString(),device_id};
+            const QString device_id = l[1];
+            return ExecutionProviderOption{ep_name.toStdString(),device_id.toStdString()};
         }
     }
     // Failure

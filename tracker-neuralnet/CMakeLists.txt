@@ -7,6 +7,7 @@ endif()
 find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.
 find_package(ONNXRuntime QUIET)
+find_package(OpenVINO QUIET)
 include(CheckIncludeFileCXX)
 
 if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
@@ -29,6 +30,11 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
 
     find_file(HAVE_ONNXRUNTIME_DML_EP "dml_provider_factory.h" NO_DEFAULT_PATH PATHS ${ONNXRuntime_INCLUDE_DIR} NO_CACHE)
     find_file(HAVE_ONNXRUNTIME_OPENVINO_EP "openvino_provider_factory.h" NO_DEFAULT_PATH PATHS ${ONNXRuntime_INCLUDE_DIR} NO_CACHE)
+    find_file(HAVE_ONNXRUNTIME_DNNL_EP "dnnl_provider_options.h" NO_DEFAULT_PATH PATHS ${ONNXRuntime_INCLUDE_DIR} NO_CACHE)
+    if (HAVE_ONNXRUNTIME_DNNL_EP)
+        target_link_libraries(${self} PRIVATE openvino::runtime)
+    endif()
+
     configure_file(config.h.in config.h @ONLY)
 
     # OpenMP::OpenMP_CXX doesn't set up the -fopenmp linking option, so set it up ourselves.

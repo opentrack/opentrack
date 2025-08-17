@@ -103,7 +103,7 @@ struct Settings : opts {
 struct ExecutionProviderOption
 {
     std::string provider_name;
-    std::int64_t device_id = -1;
+    std::string device_id;
 
     QVariant as_qvariant() const;
     static ExecutionProviderOption from_qvariant(const QVariant& v);
