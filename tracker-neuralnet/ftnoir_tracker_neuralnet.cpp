@@ -28,7 +28,7 @@
 #  include <dnnl_provider_options.h>
 #endif
 #ifdef HAVE_ONNXRUNTIME_OPENVINO_EP
-#include <openvino/openvino.hpp>
+   #include <openvino/openvino.hpp>
 #endif
 
 #ifdef _MSC_VER
@@ -286,30 +286,6 @@ T iou(const cv::Rect_<T> &a, const cv::Rect_<T> &b)
     auto i = a & b;
     return double{i.area()} / (a.area()+b.area()-i.area());
 }
-
-
-class GuardedThreadCountSwitch
-{
-    int old_num_threads_cv_ = 1;
-    int old_num_threads_omp_ = 1;
-    public:
-        GuardedThreadCountSwitch(int num_threads)
-        {
-            old_num_threads_cv_ = cv::getNumThreads();
-            old_num_threads_omp_ = omp_get_num_threads();
-            omp_set_num_threads(num_threads);
-            cv::setNumThreads(num_threads);
-        }
-
-        ~GuardedThreadCountSwitch()
-        {
-            omp_set_num_threads(old_num_threads_omp_);
-            cv::setNumThreads(old_num_threads_cv_);
-        }
-
-        GuardedThreadCountSwitch(const GuardedThreadCountSwitch&) = delete;
-        GuardedThreadCountSwitch& operator=(const GuardedThreadCountSwitch&) = delete;
-};
 
 
 bool NeuralNetTracker::detect()
@@ -666,8 +642,6 @@ void NeuralNetTracker::run()
 {
     preview_.init(*video_widget_);
 
-    //GuardedThreadCountSwitch switch_num_threads_to(num_threads_);
-
     if (!open_camera())
         return;
 
@@ -911,7 +885,7 @@ void NeuralNetDialog::make_devices_combobox()
             ov::Core core{};
             return core.get_available_devices();
 #else
-            return std::vector<std::string>{};
+            return std::vector<std::string>{"CPU"};
 #endif
         };
         const auto devices = get_device();

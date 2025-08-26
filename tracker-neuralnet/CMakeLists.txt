@@ -5,12 +5,14 @@ if(host-spec MATCHES "^Linux i[3-6]86 4$")
 endif()
 
 find_package(OpenCV QUIET)
-find_package(OpenMP QUIET) # Used to control number of onnx threads.
 find_package(ONNXRuntime QUIET)
-find_package(OpenVINO QUIET)
+find_package(OpenVINO QUIET )
 include(CheckIncludeFileCXX)
 
-if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
+message("OpenVINO: ${OpenVINO_DIR}")
+message(" found: ${OpenVINO_FOUND}")
+
+if(OpenCV_FOUND AND ONNXRuntime_FOUND)
     if(MSVC)
         add_compile_options(-EHsc)
         add_definitions(-D_HAS_EXCEPTIONS=1)
@@ -25,22 +27,18 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
         opencv_imgproc
         opencv_imgcodecs
         opencv_core
-        OpenMP::OpenMP_CXX
         )
 
     find_file(HAVE_ONNXRUNTIME_DML_EP "dml_provider_factory.h" NO_DEFAULT_PATH PATHS ${ONNXRuntime_INCLUDE_DIR} NO_CACHE)
     find_file(HAVE_ONNXRUNTIME_OPENVINO_EP "openvino_provider_factory.h" NO_DEFAULT_PATH PATHS ${ONNXRuntime_INCLUDE_DIR} NO_CACHE)
     find_file(HAVE_ONNXRUNTIME_DNNL_EP "dnnl_provider_options.h" NO_DEFAULT_PATH PATHS ${ONNXRuntime_INCLUDE_DIR} NO_CACHE)
-    if (HAVE_ONNXRUNTIME_DNNL_EP)
+    if (HAVE_ONNXRUNTIME_OPENVINO_EP)
         target_link_libraries(${self} PRIVATE openvino::runtime)
     endif()
+    message("Execution providers:\n DML ${HAVE_ONNXRUNTIME_DML_EP}\n OpenVINO: ${HAVE_ONNXRUNTIME_OPENVINO_EP}")
+    message("  was looking for headers in ${ONNXRuntime_INCLUDE_DIR}")
 
     configure_file(config.h.in config.h @ONLY)
-
-    # OpenMP::OpenMP_CXX doesn't set up the -fopenmp linking option, so set it up ourselves.
-    if(NOT MSVC)
-        target_link_options(${self} PUBLIC ${OpenMP_CXX_FLAGS})
-    endif()
 
     install(
         FILES "models/head-localizer.onnx" 
@@ -53,8 +51,12 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
 
     if(WIN32)
         otr_install_lib("${ONNXRuntime_RUNTIME}" ".")
-    endif()
-    if(MSVC)
-        otr_install_lib("redist/vcomp140.dll" "${opentrack-bin}")
+        # TODO install from openvino
+        # * openvino.dll
+        # * openvino_intel_cpu_plugin.dll
+        # * openvino_onnx_frontend.dll
+        # install from onnx
+        # * onnxruntime_providers_openvino.dll
+        # * onnxruntime_providers_shared.dll
     endif()
 endif()
