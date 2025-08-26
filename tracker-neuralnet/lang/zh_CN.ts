@@ -125,6 +125,10 @@ Don&apos;t roll or change position.</source>
         <source>&lt;the pose net file&gt;</source>
         <translation>&lt;姿态网络模型文件&gt;</translation>
     </message>
+    <message>
+        <source>Device</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>

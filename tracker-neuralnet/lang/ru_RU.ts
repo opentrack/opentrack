@@ -125,6 +125,10 @@ Don&apos;t roll or change position.</source>
         <source>Select the pose network. Changes take affect on the next tracker start</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Device</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>neuralnet_tracker_ns::NeuralNetDialog</name>
