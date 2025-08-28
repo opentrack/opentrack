@@ -11,6 +11,7 @@
 #include "main-settings.hpp"
 #include "api/plugin-support.hpp"
 #include "pipeline.hpp"
+#include "dbus.hpp"
 #include "input/shortcuts.h"
 #include "export.hpp"
 #include "tracklogger.hpp"
@@ -42,6 +43,10 @@ public:
     std::unique_ptr<TrackLogger> logger { make_logger(s) }; // must come before pipeline, since pipeline depends on it
     pipeline pipeline_;
     Shortcuts sc;
+#if defined OTR_DBUS_CONTROL
+    QObject dbus_obj;
+    DBus dbus_;
+#endif
 
     std::vector<key_tuple> keys {
         // third argument means "keydown only"
@@ -62,5 +67,6 @@ public:
     Work(const Mappings& m, QFrame* frame,
          const dylibptr& tracker, const dylibptr& filter, const dylibptr& proto);
     void reload_shortcuts();
+    void connect_dbus();
     bool is_ok() const;
 };
