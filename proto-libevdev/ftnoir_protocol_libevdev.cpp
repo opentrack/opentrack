@@ -55,10 +55,9 @@ evdev::evdev()
     CHECK_LIBEVDEV(libevdev_enable_property(dev, INPUT_PROP_BUTTONPAD));
 
     libevdev_set_name(dev, "opentrack headpose");
-    
+    libevdev_set_id_vendor(dev, 1);
+    libevdev_set_id_product(dev, 1);
     libevdev_set_id_bustype(dev, 3);
-    libevdev_set_id_vendor(dev, 4324);
-    libevdev_set_id_product(dev, 3798);
     libevdev_set_id_version(dev, 123);
 
     struct input_absinfo absinfo;
