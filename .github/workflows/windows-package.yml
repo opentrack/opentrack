@@ -1,0 +1,95 @@
+name: Windows Package
+on:
+  push:
+    tags:
+      - 'opentrack-*'
+  workflow_dispatch:
+env:
+  build_type: Release
+  onnx_version: 1.21.0
+  onnx_prefix: onnxruntime-win-x64
+  file_name: '' # to disable warning in case of a linter
+  Qt5_DIR: '' # to disable warning in case of a linter
+jobs:
+  Package:
+    runs-on: windows-latest
+    steps:
+    - name: Clone opentrack/opentrack
+      uses: actions/checkout@v4
+    - name: Clone opentrack/depends
+      uses: actions/checkout@v4
+      with:
+        repository: opentrack/opentrack-depends
+        submodules: true
+        path: opentrack-depends
+
+    - name: Install Dependencies
+      run: |
+        choco install opencv
+        Invoke-WebRequest https://github.com/microsoft/onnxruntime/releases/download/v${{env.onnx_version}}/${{env.onnx_prefix}}-${{env.onnx_version}}.zip -OutFile ${{env.onnx_prefix}}-${{env.onnx_version}}.zip
+        unzip -q ${{env.onnx_prefix}}-${{env.onnx_version}}.zip
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 5.15
+        archives: icu qtbase qttools qtserialport
+
+    - name: Configure and Build
+      run: |
+        cd opentrack-depends/aruco
+        cmake . -DCMAKE_BUILD_TYPE=${{env.build_type}} -DOpenCV_DIR="C:/tools/opencv/build/" && cmake --build . --config ${{env.build_type}}
+        cp src/${{env.build_type}}/aruco.lib src/aruco.lib
+        cd ../..
+
+        cd opentrack-depends/trackhat-c-library-driver
+        cmake . -B build -DCMAKE_BUILD_TYPE=${{env.build_type}} -DCMAKE_INSTALL_PREFIX=install && cmake --build build --config ${{env.build_type}} --target INSTALL
+        cd ../..
+
+        cd opentrack-depends/LibOVR-140
+        cmake . -B build -DCMAKE_BUILD_TYPE=${{env.build_type}} -DCMAKE_INSTALL_PREFIX=install && cmake --build build --config ${{env.build_type}}
+        cd ../..
+
+        cd opentrack-depends/oscpack
+        cmake . -B build -DCMAKE_BUILD_TYPE=${{env.build_type}} && cmake --build build --config ${{env.build_type}}
+        cp build/Release/oscpack* .
+        cp -r osc include
+        cp -r osc include/osc
+        cd ../..
+
+        cmake -S . -B build `
+          -DCMAKE_BUILD_TYPE=${{env.build_type}} `
+          -DONNXRuntime_DIR="${{env.onnx_prefix}}-${{env.onnx_version}}" `
+          -DQt5_DIR="${{env.Qt5_DIR}}" `
+          -DOpenCV_DIR="C:/tools/opencv/build/" `
+          -DSDK_ARUCO_LIBPATH="opentrack-depends/aruco/src/aruco.lib" `
+          -DSDK_EYEWARE_BEAM=opentrack-depends/eyeware-beam-sdk/ `
+          -DSDK_HYDRA=opentrack-depends/SixenseSDK/ `
+          -DSDK_RIFT_140=opentrack-depends/LibOVR-140/ `
+          -DSDK_TRACKHAT_SENSOR=opentrack-depends/trackhat-c-library-driver/install/ `
+          -DSDK_VALVE_STEAMVR=opentrack-depends/steamvr/ `
+          -DSDK_FSUIPC=opentrack-depends/fsuipc/ `
+          -DSDK_OSCPACK=opentrack-depends/oscpack/ `
+          -DSDK_VJOYSTICK=opentrack-depends/vjoystick/
+        cmake --build build --config ${{env.build_type}} --target install -- -m
+
+    - name: Pack
+      shell: bash
+      run: |
+        export VCINSTALLDIR="C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/VS/"
+
+        cd build/install/
+        windeployqt .
+
+        if [[ ${{github.ref_name}} =~ ^opentrack.*$ ]]; then
+          file_name=${{github.ref_name}}-win.zip
+        else
+          file_name=opentrack-dev-win.zip
+        fi
+        echo "file_name=$file_name" >> $GITHUB_ENV
+
+        7z a ../../$file_name .
+    - name: Upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{env.file_name}}
+        path: ${{env.file_name}}
