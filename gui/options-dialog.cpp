@@ -123,6 +123,11 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     tie_setting(main.a_y.src, ui.src_y);
     tie_setting(main.a_z.src, ui.src_z);
 
+    tie_setting(main.enable_camera_offset, ui.enable_camera_offset);
+    tie_setting(main.camera_offset_yaw,   ui.camera_offset_yaw);
+    tie_setting(main.camera_offset_pitch, ui.camera_offset_pitch);
+    tie_setting(main.camera_offset_roll,  ui.camera_offset_roll);
+
     //tie_setting(main.center_method, ui.center_method);
 
     tie_setting(main.tracklogging_enabled, ui.tracklogging_enabled);

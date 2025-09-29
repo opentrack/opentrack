@@ -355,6 +355,53 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
     return value;
 }
 
+Pose pipeline::apply_camera_offset(Pose value) const
+{
+    auto q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+
+    if (!q.isIdentity() && s.enable_camera_offset)
+    {
+        float p = s.camera_offset_pitch;
+        float y = s.camera_offset_yaw;
+        float r = -s.camera_offset_roll;
+        auto inv_offset = QQuaternion::fromEulerAngles(p, y, r).conjugated();
+
+        // XXX TODO order of operations in centering and multiply order with pose?
+
+        auto tʹ = QVector3D{(float)value[TX], (float)value[TY], -(float)value[TZ]};
+        auto t = inv_offset * tʹ;
+        value[TX] = t.x();
+        value[TY] = t.y();
+        value[TZ] = -t.z();
+
+#if 0
+        auto R = (inv_offset * q).toEulerAngles();
+        value[Pitch] = R.x();
+        value[Yaw]   = R.y();
+        value[Roll]  = -R.z();
+#endif
+    }
+
+    return value;
+}
+
+void pipeline::set_camera_offset_rotation()
+{
+    float p = s.camera_offset_pitch;
+    float y = s.camera_offset_yaw;
+    float r = -s.camera_offset_roll;
+    center.camera = QQuaternion::fromEulerAngles(-p, -y, -r);
+}
+
+Pose pipeline::maybe_apply_camera_offset(Pose value) const
+{
+    auto vec = QVector3D{ (float)value.x(), (float)value.y(), (float)value.z() };
+    auto v = center.camera * vec;
+    for (int i = TX; i <= TZ; i++)
+        value[i] = double{v[i]};
+    return value;
+}
+
 std::tuple<Pose, Pose, vec6_bool>
 pipeline::get_selected_axis_values(const Pose& newpose) const
 {
@@ -444,6 +491,7 @@ void pipeline::logic()
 
     {
         maybe_enable_center_on_tracking_started();
+        // logger.write_pose(value); // TODO camera offset applied
         maybe_set_center_pose(s.centering_mode, value, own_center_logic);
         value = apply_center(s.centering_mode, value);
 
@@ -461,6 +509,8 @@ void pipeline::logic()
         nan_check(value);
         logger.write_pose(value); // "filtered"
     }
+
+    value = apply_camera_offset(value);
 
     {
         // CAVEAT rotation only, due to reltrans
@@ -571,12 +621,12 @@ void pipeline::run()
     setPriority(QThread::HighestPriority);
 
     {
-        static const char* const posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
-        static const char* const datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        static const char* const posechannels[] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        static const char* const datachannels[] = { "dt", "raw", /*"offseted",*/ "corrected", "filtered", "mapped" };
 
         logger.write(datachannels[0]);
         char buffer[16];
-        for (unsigned j = 1; j < 5; ++j) // NOLINT(modernize-loop-convert)
+        for (unsigned j = 1; j < std::size(datachannels); ++j) // NOLINT(modernize-loop-convert)
         {
             for (unsigned i = 0; i < 6; ++i) // NOLINT(modernize-loop-convert)
             {
