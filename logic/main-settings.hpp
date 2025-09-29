@@ -61,6 +61,12 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<bool> reltrans_disable_src_pitch { b, "compensate-translation-disable-source-pitch", false };
     value<bool> reltrans_disable_src_roll { b, "compensate-translation-disable-source-roll", false };
 
+    value<bool> enable_camera_offset { b, "enable-camera-offset", false };
+
+    value<int> camera_offset_yaw   { b, "camera-offset-yaw",   0 };
+    value<int> camera_offset_pitch { b, "camera-offset-pitch", 0 };
+    value<int> camera_offset_roll  { b, "camera-offset-roll",  0 };
+
     value<bool> tray_enabled { b, "use-system-tray", false };
     value<bool> tray_start { b, "start-in-tray", false };
 
