@@ -408,6 +408,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <source>Gamepad button %1</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Camera offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra rotation adjustment for reducing axis bleed on asymmetrically mounted cameras.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>process_detector</name>

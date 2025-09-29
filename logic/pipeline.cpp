@@ -355,6 +355,34 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
     return value;
 }
 
+Pose pipeline::apply_camera_offset(Pose value) const
+{
+    auto q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+
+    if (!q.isIdentity())
+    {
+        float p = s.camera_offset_pitch;
+        float y = s.camera_offset_yaw;
+        float r = -s.camera_offset_roll;
+        auto inv_offset = QQuaternion::fromEulerAngles(p, y, r).conjugated();
+
+        // XXX TODO order of operations in centering and multiply order with pose?
+
+        auto tʹ = QVector3D{(float)value[TX], (float)value[TY], (float)value[TZ]};
+        auto t = inv_offset * tʹ;
+        value[TX] = t.x();
+        value[TY] = t.y();
+        value[TZ] = t.z();
+
+        auto R = (inv_offset * q).toEulerAngles();
+        value[Pitch] = R.x();
+        value[Yaw]   = R.y();
+        value[Roll]  = -R.z();
+    }
+
+    return value;
+}
+
 std::tuple<Pose, Pose, vec6_bool>
 pipeline::get_selected_axis_values(const Pose& newpose) const
 {
@@ -444,6 +472,8 @@ void pipeline::logic()
 
     {
         maybe_enable_center_on_tracking_started();
+        value = apply_camera_offset(value);
+        // logger.write_pose(value); // TODO camera offset applied
         maybe_set_center_pose(s.centering_mode, value, own_center_logic);
         value = apply_center(s.centering_mode, value);
 
@@ -469,7 +499,6 @@ void pipeline::logic()
     }
 
     value = apply_reltrans(value, disabled, center_ordered);
-
     {
         // CAVEAT translation only, due to tcomp
         for (int i = 0; i < 3; i++)
@@ -569,8 +598,8 @@ void pipeline::run()
     setPriority(QThread::HighestPriority);
 
     {
-        static const char* const posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
-        static const char* const datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        static const char* const posechannels[] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        static const char* const datachannels[] = { "dt", "raw", /*"offseted",*/ "corrected", "filtered", "mapped" };
 
         logger.write(datachannels[0]);
         char buffer[16];
