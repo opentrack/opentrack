@@ -397,24 +397,24 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>输出-反转</translation>
     </message>
     <message>
+        <source>Gamepad button %1</source>
+        <translation>游戏手柄按钮 %1</translation>
+    </message>
+    <message>
         <source>Keep looking forward while the key is pressed.</source>
-        <translation type="unfinished"></translation>
+        <translation>按住按键时保持向前看。</translation>
     </message>
     <message>
         <source>Freeze the pose like Toggle, except only while they key is still pressed.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Gamepad button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>按住按键时锁定当前视角。</translation>
     </message>
     <message>
         <source>Camera offset</source>
-        <translation type="unfinished"></translation>
+        <translation>摄像头偏移</translation>
     </message>
     <message>
         <source>Extra rotation adjustment for reducing axis bleed on asymmetrically mounted cameras.</source>
-        <translation type="unfinished"></translation>
+        <translation>额外旋转调节功能，用于减少非对称安装摄像头产生的轴向偏移。</translation>
     </message>
 </context>
 <context>
