@@ -103,3 +103,6 @@ The code is held to a high-quality standard and written with utmost care; consid
 ## Building opentrack from source
 
 On Windows, use either mingw-w64 or MS Visual Studio 2015 Update 3/newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C---2017-and-later).
+
+On Linux, see [our wiki's Linux build instructions](https://github.com/opentrack/opentrack/wiki/Building-on-Linux).
+
