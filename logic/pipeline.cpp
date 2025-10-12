@@ -510,9 +510,11 @@ ok:
 
     libs.pProtocol->pose(value, raw);
 
-    QMutexLocker foo(&mtx);
-    output_pose = value;
-    raw_6dof = raw;
+    {
+        QMutexLocker foo(&mtx);
+        output_pose = value;
+        raw_6dof = raw;
+    }
 
     logger.write_pose(value); // "mapped"
 
