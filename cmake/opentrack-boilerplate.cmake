@@ -192,7 +192,7 @@ function(otr_module n_)
     endif()
 
     if(NOT arg_NO-QT)
-        target_link_libraries(${n} PRIVATE ${MY_QT_LIBS})
+        target_link_libraries(${n} PRIVATE ${qt-imported-targets})
     endif()
 
     if(NOT arg_NO-COMPAT)

@@ -4,7 +4,7 @@ set(qt-optional-components SerialPort)
 set(qt-imported-targets Qt6::Core Qt6::Gui Qt6::Network Qt6::Widgets)
 if(APPLE)
     list(APPEND qt-required-components Multimedia)
-    list(APPEND qt-imported-targets Multimedia)
+    list(APPEND qt-imported-targets Qt6::Multimedia)
 endif()
 
 find_package(Qt6 REQUIRED COMPONENTS ${qt-required-components} QUIET)
@@ -12,11 +12,6 @@ find_package(Qt6 COMPONENTS ${qt-optional-components} QUIET)
 
 if(WIN32)
     find_package(Qt6Gui REQUIRED COMPONENTS QWindowsIntegrationPlugin)
-endif()
-
-set(MY_QT_LIBS Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network)
-if(APPLE)
-    list(APPEND MY_QT_LIBS Qt6::Multimedia)
 endif()
 
 function(otr_install_qt_libs)
