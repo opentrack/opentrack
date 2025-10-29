@@ -93,7 +93,7 @@ struct Settings : opts {
     value<int> resolution { b, "force-resolution", 0 };
     value<double> deadzone_size { b, "deadzone-size", 1. };
     value<double> deadzone_hardness { b, "deadzone-hardness", 1.5 };
-    value<QString> posenet_file { b, "posenet-file", "head-pose-0.3-big-quantized.onnx" };
+    value<QString> posenet_file { b, "posenet-file", "head-pose-0.4-big-int8.onnx" };
     Settings();
 };
 
