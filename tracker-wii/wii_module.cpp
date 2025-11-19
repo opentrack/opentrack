@@ -68,9 +68,12 @@ struct OTR_GENERIC_EXPORT wii_metadata_pt : Metadata
 {
     Q_OBJECT
 
-    QString name() { return tr("WiiPointTracker 1.1"); }
-    QIcon icon() { return QIcon(":/Resources/wii.png"); }
+    QString name() override;
+    QIcon icon() override;
 };
+
+QString wii_metadata_pt::name() { return tr("WiiPointTracker 1.1"); }
+QIcon wii_metadata_pt::icon() { return QIcon(":/Resources/wii.png"); }
 
 // ns pt_module
 
