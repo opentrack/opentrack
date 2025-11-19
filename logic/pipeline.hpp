@@ -6,6 +6,7 @@
 #include "api/plugin-support.hpp"
 #include "mappings.hpp"
 #include "compat/euler.hpp"
+#include "compat/dquat.hpp"
 #include "compat/enum-operators.hpp"
 #include "runtime-libraries.hpp"
 
@@ -19,7 +20,6 @@
 
 #include <atomic>
 #include <cmath>
-#include <QQuaternion>
 
 #include "export.hpp"
 
@@ -98,10 +98,8 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     reltrans rel;
 
     struct {
-		Pose P;
-		QQuaternion QC = QQuaternion(1,0,0,0);
-		QQuaternion QR = QQuaternion(1,0,0,0);
-        QQuaternion camera = QQuaternion(1,0,0,0);
+        Pose P;
+        dquat QC, QR, camera;
     } center;
 
     time_units::ms backlog_time {};
