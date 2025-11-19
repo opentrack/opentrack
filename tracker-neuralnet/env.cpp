@@ -70,6 +70,11 @@ void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
     }
     using OrtGetApiBase_t = const OrtApiBase* (ORT_API_CALL*)(void);
     const auto* ort_base = reinterpret_cast<OrtGetApiBase_t>(fn_OrtGetApiBase)();
+    if (!ort_base) {
+        qDebug().nospace() << "tracker/nn: can't find ort API base in onnxruntime: "
+                           << lib.errorString() << ". now crashing.";
+        std::abort();
+    }
     const auto* ort_api = ort_base->GetApi(ORT_API_VERSION);
     if (!ort_api) {
         qDebug().nospace() << "tracker/nn: can't find ort API in onnxruntime: "
