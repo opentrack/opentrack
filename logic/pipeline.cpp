@@ -218,7 +218,7 @@ static inline bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-static never_inline
+static tr_never_inline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
     eval_once(
@@ -230,7 +230,7 @@ void emit_nan_check_msg(const char* text, const char* fun, int line)
 }
 
 template<typename... xs>
-static never_inline
+static tr_never_inline
 bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 {
     bool ret = (is_nan(vals) || ... || false);
@@ -241,14 +241,10 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
     return ret;
 }
 
-#define nan_check(...)                                                                  \
-    do                                                                                  \
-    {                                                                                   \
-        if (likely(!maybe_nan(#__VA_ARGS__, function_name, __LINE__, __VA_ARGS__)))     \
-            (void)0;                                                                    \
-        else                                                                            \
-            goto error;                                                                 \
-    }                                                                                   \
+#define nan_check(...)                                                                      \
+    do                                                                                      \
+        if (maybe_nan(#__VA_ARGS__, tr_function_name, __LINE__, __VA_ARGS__)) [[likely]]    \
+            goto error;                                                                     \
     while (false)
 
 bool pipeline::maybe_enable_center_on_tracking_started()

@@ -186,7 +186,7 @@ void mapping_dialog::refresh_tab()
 
     const int idx = ui.tabWidget->currentIndex();
 
-    if (likely(idx >= 0 && idx < 6))
+    if (idx >= 0 && idx < 6) [[likely]]
     {
         widgets[idx][0]->repaint();
         widgets[idx][1]->repaint();

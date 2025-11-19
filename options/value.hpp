@@ -43,7 +43,7 @@ class value final : public value_
     mutable t cached_value;
     using traits = detail::value_traits<t>;
 
-    never_inline
+    tr_never_inline
     auto get() const noexcept
     {
         if (!b->contains(self_name))
@@ -57,7 +57,7 @@ class value final : public value_
         return traits::pass_value(traits::value_with_default(traits::value_from_qvariant(variant), def));
     }
 
-    never_inline
+    tr_never_inline
     void store_variant(QVariant&& value) noexcept override
     {
         if (traits::is_equal(get(), traits::value_from_qvariant(value)))
@@ -72,7 +72,7 @@ class value final : public value_
             b->store_kv(self_name, traits::qvariant_from_value(def));
     }
 
-    never_inline
+    tr_never_inline
     void store_variant(const QVariant& value) noexcept override
     {
         QVariant copy{value};
@@ -93,7 +93,7 @@ public:
         return traits::qvariant_from_value(def);
     }
 
-    never_inline
+    tr_never_inline
     void notify_() const override
     {
         auto x = get();
@@ -106,7 +106,7 @@ public:
         maybe_trace("notify -");
     }
 
-    never_inline
+    tr_never_inline
     void notify() const override
     {
         if (is_null())
@@ -180,15 +180,15 @@ public:
     operator t() const { return get(); }
 
     template<typename u>
-    explicit force_inline operator u() const { return to<u>(); }
+    explicit tr_force_inline operator u() const { return to<u>(); }
 
     auto operator->() const noexcept
     {
         return detail::dereference_wrapper<t>{get()};
     }
 
-    force_inline auto operator()() const noexcept { return get(); }
-    force_inline auto operator*() const noexcept { return get(); }
+    tr_force_inline auto operator()() const noexcept { return get(); }
+    tr_force_inline auto operator*() const noexcept { return get(); }
 
     template<typename u>
     u to() const noexcept

@@ -23,7 +23,7 @@ void filter_nm::filter(const double* input, double* output)
     tQuat rotation = QuatFromYPR(input + Yaw);
 
     // order of axes: x, y, z, yaw, pitch, roll
-    if (unlikely(first_run))
+    if (first_run) [[unlikely]]
     {
         first_run = false;
         t.start();
