@@ -491,9 +491,17 @@ void pipeline::logic()
 
     {
         maybe_enable_center_on_tracking_started();
+        nan_check(value);
         // logger.write_pose(value); // TODO camera offset applied
         maybe_set_center_pose(s.centering_mode, value, own_center_logic);
-        value = apply_center(s.centering_mode, value);
+        nan_check(value);
+
+        {
+            nan_check(value);
+            auto valueʹ = apply_center(s.centering_mode, value);
+            nan_check(valueʹ);
+            value = valueʹ;
+        }
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
