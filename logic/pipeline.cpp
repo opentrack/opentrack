@@ -284,24 +284,24 @@ void pipeline::maybe_set_center_pose(const centering_state mode, const Pose& val
         if (own_center_logic)
         {
             center.P  = {};
-            center.QC = QQuaternion(1,0,0,0);
-            center.QR = QQuaternion(1,0,0,0);
+            center.QC = {};
+            center.QR = {};
         }
         else
         {
             if (mode)
             {
                 center.P  = value;
-                center.QC = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]).conjugated();
-                center.QR = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], 0).conjugated();
+                center.QC = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]).conjugated();
+                center.QR = dquat::from_euler(value[Pitch], value[Yaw], 0).conjugated();
             }
             else
             {
                 // To reset the centering coordinates
                 // just select "Centering method [Disabled]" and then press [Center] button
                 center.P  = {};
-                center.QC = QQuaternion(1,0,0,0);
-                center.QR = QQuaternion(1,0,0,0);
+                center.QC = {};
+                center.QR = {};
             }
         }
     }
@@ -314,8 +314,8 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
         for (unsigned k = TX; k <= TZ; k++)
             value(k) -= center.P(k);
 
-        QQuaternion q;
-        QVector3D v;
+        dquat q;
+        double v[3];
 
         switch (mode)
         {
@@ -327,20 +327,20 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
             }
             break;
         case center_vr360:
-            q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+            q = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]);
             q = center.QC * q;
-            v = q.toEulerAngles();
-            value[Pitch] =  v.x();
-            value[Yaw]   =  v.y();
-            value[Roll]  = -v.z();
+            q.to_euler(v[0], v[1], v[2]);
+            value[Pitch] =  v[0];
+            value[Yaw]   =  v[1];
+            value[Roll]  = -v[2];
             break;
         case center_roll_compensated:
-            q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], center.P[Roll] - value[Roll]);
+            q = dquat::from_euler(value[Pitch], value[Yaw], center.P[Roll] - value[Roll]);
             q = center.QR * q;
-            v = q.toEulerAngles();
-            value[Pitch] =  v.x();
-            value[Yaw]   =  v.y();
-            value[Roll]  = -v.z();
+            q.to_euler(v[0], v[1], v[2]);
+            value[Pitch] =  v[0];
+            value[Yaw]   =  v[1];
+            value[Roll]  = -v[2];
             break;
         case center_disabled: break;
         }
@@ -357,22 +357,21 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
 
 Pose pipeline::apply_camera_offset(Pose value) const
 {
-    auto q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+    auto q = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]);
 
-    if (!q.isIdentity() && s.enable_camera_offset)
+    if (!q.is_identity() && s.enable_camera_offset)
     {
-        float p = s.camera_offset_pitch;
-        float y = s.camera_offset_yaw;
-        float r = -s.camera_offset_roll;
-        auto inv_offset = QQuaternion::fromEulerAngles(p, y, r).conjugated();
+        double p = s.camera_offset_pitch;
+        double y = s.camera_offset_yaw;
+        double r = -s.camera_offset_roll;
+        auto inv_offset = dquat::from_euler(p, y, r).conjugated();
 
         // XXX TODO order of operations in centering and multiply order with pose?
 
-        auto tʹ = QVector3D{(float)value[TX], (float)value[TY], -(float)value[TZ]};
-        auto t = inv_offset * tʹ;
-        value[TX] = t.x();
-        value[TY] = t.y();
-        value[TZ] = -t.z();
+        auto t = inv_offset.rotate_point({value[TX], value[TY], value[TZ]});
+        value[TX] = t.x;
+        value[TY] = t.y;
+        value[TZ] = -t.z;
 
 #if 0
         auto R = (inv_offset * q).toEulerAngles();
@@ -387,18 +386,18 @@ Pose pipeline::apply_camera_offset(Pose value) const
 
 void pipeline::set_camera_offset_rotation()
 {
-    float p = s.camera_offset_pitch;
-    float y = s.camera_offset_yaw;
-    float r = -s.camera_offset_roll;
-    center.camera = QQuaternion::fromEulerAngles(-p, -y, -r);
+    double p = s.camera_offset_pitch;
+    double y = s.camera_offset_yaw;
+    double r = -s.camera_offset_roll;
+    center.camera = dquat::from_euler(-p, -y, -r);
 }
 
 Pose pipeline::maybe_apply_camera_offset(Pose value) const
 {
-    auto vec = QVector3D{ (float)value.x(), (float)value.y(), (float)value.z() };
-    auto v = center.camera * vec;
-    for (int i = TX; i <= TZ; i++)
-        value[i] = double{v[i]};
+    auto v = center.camera.rotate_point({ value.x(), value.y(), value.z() });
+    value[TX] = v.x;
+    value[TY] = v.y;
+    value[TZ] = v.z;
     return value;
 }
 
