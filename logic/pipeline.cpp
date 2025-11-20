@@ -500,6 +500,9 @@ void pipeline::logic()
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
+
+        value = apply_camera_offset(value);
+        nan_check(value);
     }
 
     {
@@ -512,8 +515,6 @@ void pipeline::logic()
         nan_check(value);
         logger.write_pose(value); // "filtered"
     }
-
-    value = apply_camera_offset(value);
 
     {
         // CAVEAT rotation only, due to reltrans
