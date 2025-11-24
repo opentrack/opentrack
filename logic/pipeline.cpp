@@ -353,49 +353,26 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
 
 Pose pipeline::apply_camera_offset(Pose value) const
 {
-    auto q = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]);
+    auto q = dquat::from_euler(value[Pitch], value[Yaw], value[Roll]);
 
     if (!q.is_identity() && s.enable_camera_offset)
     {
         double p = s.camera_offset_pitch;
         double y = s.camera_offset_yaw;
         double r = -s.camera_offset_roll;
-        auto inv_offset = dquat::from_euler(p, y, r).conjugated();
-
-        // XXX TODO order of operations in centering and multiply order with pose?
+        auto inv_offset = dquat::from_euler(p, y, r);
 
         auto t = inv_offset.rotate_point({value[TX], value[TY], value[TZ]});
         value[TX] = t.x;
         value[TY] = t.y;
-        value[TZ] = -t.z;
+        value[TZ] = t.z;
 
-#if 0
-        auto R = (inv_offset * q).toEulerAngles();
-        value[Pitch] = R.x();
-        value[Yaw]   = R.y();
-        value[Roll]  = -R.z();
-#endif
+        (inv_offset * q).to_euler(value[Pitch],value[Yaw],value[Roll]);
     }
 
     return value;
 }
 
-void pipeline::set_camera_offset_rotation()
-{
-    double p = s.camera_offset_pitch;
-    double y = s.camera_offset_yaw;
-    double r = -s.camera_offset_roll;
-    center.camera = dquat::from_euler(-p, -y, -r);
-}
-
-Pose pipeline::maybe_apply_camera_offset(Pose value) const
-{
-    auto v = center.camera.rotate_point({ value.x(), value.y(), value.z() });
-    value[TX] = v.x;
-    value[TY] = v.y;
-    value[TZ] = v.z;
-    return value;
-}
 
 std::tuple<Pose, Pose, vec6_bool>
 pipeline::get_selected_axis_values(const Pose& newpose) const
@@ -477,6 +454,8 @@ void pipeline::logic()
         Pose tmp;
         libs.pTracker->data(tmp);
         newpose = tmp;
+
+        newpose = apply_camera_offset(newpose);
     }
 
     auto [raw, value, disabled] = get_selected_axis_values(newpose);
@@ -500,9 +479,6 @@ void pipeline::logic()
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
-
-        value = apply_camera_offset(value);
-        nan_check(value);
     }
 
     {
