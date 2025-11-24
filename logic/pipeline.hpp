@@ -113,8 +113,6 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     void maybe_set_center_pose(const centering_state mode, const Pose& value, bool own_center_logic);
     Pose apply_center(const centering_state mode, Pose value) const;
     Pose apply_camera_offset(Pose value) const;
-    void set_camera_offset_rotation();
-    Pose maybe_apply_camera_offset(Pose value) const;
     std::tuple<Pose, Pose, vec6_bool> get_selected_axis_values(const Pose& newpose) const;
     Pose maybe_apply_filter(const Pose& value) const;
     Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);
