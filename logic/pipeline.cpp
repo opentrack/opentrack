@@ -252,7 +252,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
     if (!tracking_started)
     {
         for (int i = 0; i < 6; i++)
-            if (std::fabs(newpose(i)) != 0)
+            if (std::fabs(m_newpose(i)) != 0)
             {
                 tracking_started = true;
                 break;
@@ -353,7 +353,7 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
 
 Pose pipeline::apply_camera_offset(Pose value) const
 {
-    auto q = dquat::from_euler(value[Pitch], value[Yaw], value[Roll]);
+    auto q = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]);
 
     if (!q.is_identity() && s.enable_camera_offset)
     {
@@ -368,6 +368,7 @@ Pose pipeline::apply_camera_offset(Pose value) const
         value[TZ] = t.z;
 
         (inv_offset * q).to_euler(value[Pitch],value[Yaw],value[Roll]);
+        value[Roll] = -value[Roll];
     }
 
     return value;
@@ -453,15 +454,20 @@ void pipeline::logic()
     {
         Pose tmp;
         libs.pTracker->data(tmp);
-        newpose = tmp;
-
-        newpose = apply_camera_offset(newpose);
+        m_newpose = tmp;
     }
 
-    auto [raw, value, disabled] = get_selected_axis_values(newpose);
-    logger.write_pose(raw); // raw
+    m_newpose = apply_camera_offset(m_newpose);
 
-    nan_check(newpose, raw, value);
+    auto [raw, value, disabled] = get_selected_axis_values(m_newpose);
+    logger.write_pose(raw);
+
+    nan_check(raw, value);
+
+    //value = apply_camera_offset(value);
+    //raw = apply_camera_offset(raw);
+
+    nan_check(raw, value);
 
     {
         maybe_enable_center_on_tracking_started();
@@ -513,12 +519,12 @@ error:
     {
         QMutexLocker foo(&mtx);
 
-        value = last_value;
-        raw = raw_6dof;
+        value = m_last_value;
+        raw = m_raw_6dof;
 
         // for widget last value display
         for (int i = 0; i < 6; i++)
-            (void)map(raw_6dof(i), m(i));
+            (void)map(m_raw_6dof(i), m(i));
     }
 
 ok:
@@ -530,8 +536,8 @@ ok:
             value(i) = 0;
 
     if (hold_ordered)
-        value = last_value;
-    last_value = value;
+        value = m_last_value;
+    m_last_value = value;
     value = apply_zero_pos(value);
 
     for (int i = 0; i < 6; i++)
@@ -542,8 +548,8 @@ ok:
 
     {
         QMutexLocker foo(&mtx);
-        output_pose = value;
-        raw_6dof = raw;
+        m_output_pose = value;
+        m_raw_6dof = raw;
     }
 
     logger.write_pose(value); // "mapped"
@@ -666,8 +672,8 @@ void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
 
     for (int i = 0; i < 6; i++)
     {
-        raw[i] = raw_6dof(i);
-        mapped[i] = output_pose(i);
+        raw[i] = m_raw_6dof(i);
+        mapped[i] = m_output_pose(i);
     }
 }
 
