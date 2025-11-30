@@ -34,7 +34,7 @@ private:
     Pose_ R, T;
     QImage front{QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)};
     QImage back {QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)
-                                             .mirrored(true,false)};
+        .flipped(Qt::Horizontal)};
     QImage shine {QImage{front.width(), front.height(), QImage::Format_ARGB32}};
     QImage shadow{QImage{front.width(), front.height(), QImage::Format_ARGB32}};
 };
