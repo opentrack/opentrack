@@ -86,9 +86,10 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     const Mappings& m;
 
     Timer t;
-    Pose output_pose, raw_6dof, last_value;
+    // Members are prefixed to avoid confusion since there are so many
+    // pose variables.
+    Pose m_output_pose, m_raw_6dof, m_last_value, m_newpose;
 
-    Pose newpose;
     runtime_libraries const& libs;
     // The owner of the reference is the main window.
     // This design might be useful if we decide later on to swap out
