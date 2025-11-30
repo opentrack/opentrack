@@ -457,15 +457,13 @@ void pipeline::logic()
         m_newpose = tmp;
     }
 
-    m_newpose = apply_camera_offset(m_newpose);
-
     auto [raw, value, disabled] = get_selected_axis_values(m_newpose);
     logger.write_pose(raw);
 
     nan_check(raw, value);
 
-    //value = apply_camera_offset(value);
-    //raw = apply_camera_offset(raw);
+    value = apply_camera_offset(value);
+    raw = apply_camera_offset(raw);
 
     nan_check(raw, value);
 
