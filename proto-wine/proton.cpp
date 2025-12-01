@@ -78,7 +78,7 @@ std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString&
 }
 
 
-std::tuple<QString, QString, bool> make_wineprefix(int appid)
+std::tuple<QString, QString, bool> make_wineprefix(long appid)
 {
     using ret = std::tuple<QString, QString, bool>;
     QString error = "";

@@ -11,6 +11,10 @@
         <source>Select Wine Prefix</source>
         <translation>选择 Wine Prefix</translation>
     </message>
+    <message>
+        <source>Select Proton Prefix</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UICFTControls</name>
@@ -21,6 +25,30 @@
     <message>
         <source>Wine variant</source>
         <translation>Wine 版本</translation>
+    </message>
+    <message>
+        <source>Proton (select version and mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine (select version and prefix)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Steam Play is Steams System to run Windows titles on Linux via Proton.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam Play (select Steam Application ID)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UMU is a launcher that allows the use of Proton outside of Steam. Some game launchers like Lutris may use this to enable Proton support.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UMU enabled Launchers (select prefix)</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Advanced</source>
@@ -39,14 +67,6 @@
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;当支持时。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <source>Steam application id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Proton (Steam Play)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Protocol</source>
         <translation>协议</translation>
     </message>
@@ -61,10 +81,6 @@
     <message>
         <source>Both</source>
         <translation>两个</translation>
-    </message>
-    <message>
-        <source>Wine (select path and prefix)</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;prefix&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -96,6 +112,10 @@
     <message>
         <source>Must specify application id for Proton (Steam Play)</source>
         <translation>必须提供 Proton (Steam Play) 的应用程序 ID</translation>
+    </message>
+    <message>
+        <source>Prefix has not been defined!</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Wine prefix must be an absolute path (given &apos;%1&apos;)</source>

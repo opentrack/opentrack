@@ -3,14 +3,14 @@
  <class>UICFTControls</class>
  <widget class="QWidget" name="UICFTControls">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>934</width>
-    <height>466</height>
+    <width>988</width>
+    <height>470</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <normaloff>:/images/wine.png</normaloff>:/images/wine.png</iconset>
   </property>
   <property name="layoutDirection">
-   <enum>Qt::LeftToRight</enum>
+   <enum>Qt::LayoutDirection::LeftToRight</enum>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -133,7 +133,10 @@
          </size>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LeftToRight</enum>
+         <enum>Qt::LayoutDirection::LeftToRight</enum>
+        </property>
+        <property name="maxCount">
+         <number>2147483645</number>
         </property>
        </widget>
       </item>
@@ -176,19 +179,6 @@
       <item row="4" column="0" colspan="2">
        <widget class="QGroupBox" name="proton_subgroup">
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="proton_appid">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="maximum">
-            <number>2147483647</number>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QRadioButton" name="subvariant_steamplay">
            <property name="toolTip">
@@ -247,6 +237,22 @@
             </widget>
            </item>
           </layout>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="proton_appid">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="decimals">
+            <number>0</number>
+           </property>
+           <property name="maximum">
+            <double>9007199254740992.000000000000000</double>
+           </property>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -381,7 +387,7 @@
       </sizepolicy>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
      </property>
     </widget>
    </item>
