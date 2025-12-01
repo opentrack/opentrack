@@ -3,14 +3,14 @@
  <class>UICFTControls</class>
  <widget class="QWidget" name="UICFTControls">
   <property name="windowModality">
-   <enum>Qt::WindowModality::NonModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>470</height>
+    <width>934</width>
+    <height>466</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <normaloff>:/images/wine.png</normaloff>:/images/wine.png</iconset>
   </property>
   <property name="layoutDirection">
-   <enum>Qt::LayoutDirection::LeftToRight</enum>
+   <enum>Qt::LeftToRight</enum>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -133,10 +133,7 @@
          </size>
         </property>
         <property name="layoutDirection">
-         <enum>Qt::LayoutDirection::LeftToRight</enum>
-        </property>
-        <property name="maxCount">
-         <number>2147483645</number>
+         <enum>Qt::LeftToRight</enum>
         </property>
        </widget>
       </item>
@@ -387,7 +384,7 @@
       </sizepolicy>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
