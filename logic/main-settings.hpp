@@ -66,6 +66,9 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<int> camera_offset_yaw   { b, "camera-offset-yaw",   0 };
     value<int> camera_offset_pitch { b, "camera-offset-pitch", 0 };
     value<int> camera_offset_roll  { b, "camera-offset-roll",  0 };
+    value<int> camera_offset_x   { b, "camera-offset-x",   0 };
+    value<int> camera_offset_y { b, "camera-offset-y", 0 };
+    value<int> camera_offset_z  { b, "camera-offset-z",  0 };
 
     value<bool> tray_enabled { b, "use-system-tray", false };
     value<bool> tray_start { b, "start-in-tray", false };

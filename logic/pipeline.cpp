@@ -363,9 +363,9 @@ Pose pipeline::apply_camera_offset(Pose value) const
         auto inv_offset = dquat::from_euler(p, y, r);
 
         auto t = inv_offset.rotate_point({value[TX], value[TY], value[TZ]});
-        value[TX] = t.x;
-        value[TY] = t.y;
-        value[TZ] = t.z;
+        value[TX] = t.x + s.camera_offset_x;
+        value[TY] = t.y + s.camera_offset_y;
+        value[TZ] = t.z + s.camera_offset_z;
 
         (inv_offset * q).to_euler(value[Pitch],value[Yaw],value[Roll]);
         value[Roll] = -value[Roll];
@@ -458,14 +458,11 @@ void pipeline::logic()
     }
 
     auto [raw, value, disabled] = get_selected_axis_values(m_newpose);
-    logger.write_pose(raw);
-
-    nan_check(raw, value);
+    logger.write_pose(raw); // raw
 
     value = apply_camera_offset(value);
-    raw = apply_camera_offset(raw);
 
-    nan_check(raw, value);
+    nan_check(m_newpose, raw, value);
 
     {
         maybe_enable_center_on_tracking_started();
