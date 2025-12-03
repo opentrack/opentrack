@@ -471,6 +471,12 @@ NeuralNetTracker::~NeuralNetTracker()
 
 module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
 {
+    if (!load_and_initialize_model())
+        return error("Couldn't initialize the model.");
+
+    if (!open_camera())
+        return error("Couldn't open the camera.");
+
     videoframe->show();
     video_widget_ = std::make_unique<cv_video_widget>(videoframe);
     layout_ = std::make_unique<QHBoxLayout>();
@@ -572,12 +578,6 @@ void NeuralNetTracker::run()
     preview_.init(*video_widget_);
 
     GuardedThreadCountSwitch switch_num_threads_to(num_threads_);
-
-    if (!open_camera())
-        return;
-
-    if (!load_and_initialize_model())
-        return;
 
     std::chrono::high_resolution_clock clk;
 
