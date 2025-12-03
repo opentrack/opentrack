@@ -127,6 +127,9 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     tie_setting(main.camera_offset_yaw,   ui.camera_offset_yaw);
     tie_setting(main.camera_offset_pitch, ui.camera_offset_pitch);
     tie_setting(main.camera_offset_roll,  ui.camera_offset_roll);
+    tie_setting(main.camera_offset_x,  ui.camera_offset_x);
+    tie_setting(main.camera_offset_y,  ui.camera_offset_y);
+    tie_setting(main.camera_offset_z,  ui.camera_offset_z);
 
     //tie_setting(main.center_method, ui.center_method);
 

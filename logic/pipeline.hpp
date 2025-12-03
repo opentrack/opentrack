@@ -86,7 +86,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     const Mappings& m;
 
     Timer t;
-    // Members are prefixed to avoid confusion since there are so many
+    // Pose members are prefixed to avoid confusion since there are so many
     // pose variables.
     Pose m_output_pose, m_raw_6dof, m_last_value, m_newpose;
 
