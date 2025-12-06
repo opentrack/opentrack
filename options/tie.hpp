@@ -12,7 +12,7 @@
 #include "value.hpp"
 #include "compat/run-in-thread.hpp"
 
-#include "proto-wine/qlonglongspinbox.h"
+#include "gui/qlonglongspinbox.h"
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
