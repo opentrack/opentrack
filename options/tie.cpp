@@ -94,6 +94,14 @@ void tie_setting(value<int>& v, QSpinBox* sb)
     value_::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
 }
 
+void tie_setting(value<long long>& v, QLongLongSpinBox* sb)
+{
+    sb->setValue(v);
+    value_::connect(sb, SIGNAL(valueChanged(long long)), &v, SLOT(setValue(long long)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(long long)), sb, SLOT(setValue(long long)), v.SAFE_CONNTYPE);
+}
+
+
 void tie_setting(value<QString>& v, QLineEdit* le)
 {
     le->setText(v);
