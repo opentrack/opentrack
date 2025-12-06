@@ -12,16 +12,16 @@
 #include "value.hpp"
 #include "compat/run-in-thread.hpp"
 
-#include "input/qlonglongspinbox.h"
-#include <QComboBox>
+#include "gui/qlonglongspinbox.h"
 #include <QCheckBox>
+#include <QComboBox>
 #include <QDoubleSpinBox>
-#include <QSpinBox>
-#include <QSlider>
-#include <QLineEdit>
 #include <QLabel>
-#include <QTabWidget>
+#include <QLineEdit>
 #include <QRadioButton>
+#include <QSlider>
+#include <QSpinBox>
+#include <QTabWidget>
 
 #include <cmath>
 
