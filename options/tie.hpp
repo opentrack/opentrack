@@ -12,6 +12,7 @@
 #include "value.hpp"
 #include "compat/run-in-thread.hpp"
 
+#include "input/qlonglongspinbox.h"
 #include <QComboBox>
 #include <QCheckBox>
 #include <QDoubleSpinBox>
@@ -91,6 +92,7 @@ OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QCheckBox* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<bool>& v, QRadioButton* cb);
 OTR_OPTIONS_EXPORT void tie_setting(value<double>& v, QDoubleSpinBox* dsb);
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QSpinBox* sb);
+OTR_OPTIONS_EXPORT void tie_setting(value<long long>& v, QLongLongSpinBox* sb);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLineEdit* le);
 OTR_OPTIONS_EXPORT void tie_setting(value<QString>& v, QLabel* lb);
 OTR_OPTIONS_EXPORT void tie_setting(value<int>& v, QTabWidget* t);

@@ -176,6 +176,16 @@
       <item row="4" column="0" colspan="2">
        <widget class="QGroupBox" name="proton_subgroup">
         <layout class="QGridLayout" name="gridLayout">
+         <item row="0" column="1">
+          <widget class="QLongLongSpinBox" name="proton_appid">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred"/>
+           </property>
+           <property name="minimumSize">
+            <size><width>150</width></size>
+           </property>
+          </widget>
+         </item>
          <item row="0" column="0">
           <widget class="QRadioButton" name="subvariant_steamplay">
            <property name="toolTip">
@@ -234,22 +244,6 @@
             </widget>
            </item>
           </layout>
-         </item>
-         <item row="0" column="1">
-          <widget class="QDoubleSpinBox" name="proton_appid">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="decimals">
-            <number>0</number>
-           </property>
-           <property name="maximum">
-            <double>9007199254740992.000000000000000</double>
-           </property>
-          </widget>
          </item>
         </layout>
        </widget>
