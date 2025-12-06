@@ -14,6 +14,8 @@
 
 #include <cmath>
 
+#include "gui/qlonglongspinbox.h"
+
 namespace options {
 
 void tie_setting(value<int>& v, QComboBox* cb)
