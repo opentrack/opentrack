@@ -37,7 +37,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - BBC micro:bit, LEGO, sensortag support via Smalltalk<sup>[(1)](https://en.wikipedia.org/wiki/Smalltalk)[(2)](https://en.wikipedia.org/wiki/Alan_Kay)</sup>
   [S2Bot](https://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
 - Wiimote (Windows)
-- NeuralNet face tracker
+- NeuralNet Tracker, AI-based head pose estimation with webcams.
 - Eyeware Beam<sup>[[1](https://beam.eyeware.tech/)]</sup>
 - Tobii eye tracker
 

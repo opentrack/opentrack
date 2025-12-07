@@ -215,7 +215,7 @@ private Q_SLOTS:
 class NeuralNetMetadata : public Metadata
 {
     Q_OBJECT
-    QString name() override { return QString("neuralnet tracker"); }
+    QString name() override { return QString("NeuralNet Tracker"); }
     QIcon icon() override { return QIcon(":/images/neuralnet.png"); }
 };
 
