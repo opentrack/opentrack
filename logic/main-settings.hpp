@@ -53,6 +53,8 @@ struct OTR_LOGIC_EXPORT main_settings final
     axis_opts* all_axis_opts[6] { &a_x, &a_y, &a_z, &a_yaw, &a_pitch, &a_roll };
     value<reltrans_state> reltrans_mode { b, "relative-translation-mode", reltrans_disabled };
 
+    value<bool> apply_mapping_curves {b, "apply-mapping-curves", true };
+
     value<bool> reltrans_disable_tx { b, "compensate-translation-disable-x-axis", false };
     value<bool> reltrans_disable_ty { b, "compensate-translation-disable-y-axis", false };
     value<bool> reltrans_disable_tz { b, "compensate-translation-disable-z-axis", false };

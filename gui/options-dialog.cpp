@@ -83,6 +83,8 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     for (int k = 0; k < 3; k++)
         ui.reltrans_mode->setItemData(k, reltrans_modes[k]);
 
+    tie_setting(main.apply_mapping_curves, ui.apply_mapping_curves);
+
     tie_setting(main.reltrans_mode, ui.reltrans_mode);
 
     tie_setting(main.reltrans_disable_tx, ui.tcomp_tx_disable);
