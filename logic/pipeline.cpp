@@ -493,7 +493,7 @@ void pipeline::logic()
         logger.write_pose(value); // "filtered"
     }
 
-    {
+    if (s.apply_mapping_curves) {
         // CAVEAT rotation only, due to reltrans
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
@@ -501,7 +501,7 @@ void pipeline::logic()
 
     value = apply_reltrans(value, disabled, center_ordered);
 
-    {
+    if (s.apply_mapping_curves) {
         // CAVEAT translation only, due to tcomp
         for (int i = 0; i < 3; i++)
             value(i) = map(value(i), m(i));
@@ -517,9 +517,12 @@ error:
         value = m_last_value;
         raw = m_raw_6dof;
 
-        // for widget last value display
-        for (int i = 0; i < 6; i++)
-            (void)map(m_raw_6dof(i), m(i));
+        if (s.apply_mapping_curves)
+        {
+            // for widget last value display
+            for (int i = 0; i < 6; i++)
+                (void)map(m_raw_6dof(i), m(i));
+        }
     }
 
 ok:

@@ -329,6 +329,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>向前偏移</translation>
     </message>
     <message>
+        <source>Mapping curves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Game detection</source>
         <translation>游戏侦测</translation>
     </message>
