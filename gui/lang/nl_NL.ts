@@ -217,6 +217,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Inschakelen</translation>
     </message>
     <message>
+        <source>Mapping curves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Minimize to tray on startup when enabled</source>
         <translation>Programma geminimaliseerd starten (indien minimaliseren is ingeschakeld)</translation>
     </message>

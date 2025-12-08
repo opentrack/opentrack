@@ -370,6 +370,14 @@ Klicke „Kalibrierung löschen“, um jegliche Kalibrierungsdaten der zugehöri
         <translation>Vom Drehpunkt nach vorn verschieben</translation>
     </message>
     <message>
+        <source>Mapping curves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Game detection</source>
         <translation>Spiel-Erkennung</translation>
     </message>
