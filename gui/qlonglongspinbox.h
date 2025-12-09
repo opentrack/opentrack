@@ -1,3 +1,8 @@
+/* Source - https://stackoverflow.com/questions/8383620/64bit-int-spin-box-in-qt
+ * Posted by dontsov, modified by Paul Lacazedieu <pau.lacazedieu@gmail.com>
+ * Retrieved 2025-12-06, License - CC BY-SA 3.0
+ */
+
 #pragma once
 
 #include <QtWidgets/QAbstractSpinBox>
