@@ -326,15 +326,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Forward from center of rotation</source>
-        <translation>向前偏移</translation>
+        <translation>旋转中心偏移</translation>
     </message>
     <message>
         <source>Mapping curves</source>
-        <translation type="unfinished"></translation>
+        <translation>映射曲线</translation>
     </message>
     <message>
         <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
-        <translation type="unfinished"></translation>
+        <translation>开关映射曲线功能。便于单独测试相机偏移的效果。</translation>
     </message>
     <message>
         <source>Game detection</source>
@@ -354,11 +354,11 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Centering method</source>
-        <translation>回中模式</translation>
+        <translation>居中方式</translation>
     </message>
     <message>
         <source>Point</source>
-        <translation>Point 模式</translation>
+        <translation>点校准模式</translation>
     </message>
     <message>
         <source>Wireless VR 360</source>
