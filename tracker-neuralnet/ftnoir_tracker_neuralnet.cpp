@@ -406,7 +406,7 @@ QuatPose NeuralNetTracker::transform_to_world_pose(const cv::Quatf& face_rotatio
 
 QuatPose NeuralNetTracker::compute_filtered_pose(const PoseEstimator::Face& face)
 {
-    if (fps_ > 0.001 && last_pose_ && poseestimator_->has_uncertainty())
+    if (fps_ > 0.001 && last_pose_ && poseestimator_->has_uncertainty() && settings_.internal_filter_enabled)
     {
         auto image2world = [this](const cv::Quatf& face_rotation, const cv::Point2f& face_xy, const float face_size)
         { return this->transform_to_world_pose(face_rotation, face_xy, face_size); };
@@ -720,6 +720,7 @@ NeuralNetDialog::NeuralNetDialog() : trans_calib_(1, 2)
     tie_setting(settings_.resolution, ui_.resolution);
     tie_setting(settings_.force_fps, ui_.cameraFPS);
     tie_setting(settings_.posenet_file, ui_.posenetFileDisplay);
+    tie_setting(settings_.internal_filter_enabled, ui_.internal_filter_enabled);
 
     connect(ui_.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui_.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
