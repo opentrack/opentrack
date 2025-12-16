@@ -436,6 +436,11 @@ NeuralNetTracker::~NeuralNetTracker()
 
 module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
 {
+    // Set internal thread count as reference for initialization. It is used in 
+    // several places and settings_.num_threads could theoretically change due
+    // to concurrent accesses from other threads.
+    num_threads_ = settings_.num_threads;
+
     if (!load_and_initialize_model())
         return error("Couldn't initialize the model.");
 
@@ -449,7 +454,6 @@ module_status NeuralNetTracker::start_tracker(QFrame* videoframe)
     layout_->addWidget(&*video_widget_);
     videoframe->setLayout(&*layout_);
     video_widget_->show();
-    num_threads_ = settings_.num_threads;
     start();
     return status_ok();
 }
@@ -466,9 +470,8 @@ bool NeuralNetTracker::load_and_initialize_model()
         env_ = Ort::Env{ OrtLoggingLevel::ORT_LOGGING_LEVEL_ERROR, "tracker-neuralnet" };
 
         auto opts = Ort::SessionOptions{};
-        // Do thread settings here do anything?
-        // There is a warning which says to control number of threads via
-        // openmp settings. Which is what we do.
+        // In older versions of the ONNX-RT there is a warning which says to control number of threads via OpenMP.
+        // However, recently, OpenMP support was removed. Then this setting should work.
         opts.SetIntraOpNumThreads(num_threads_);
         opts.SetInterOpNumThreads(1);
         allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
