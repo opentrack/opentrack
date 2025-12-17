@@ -9,6 +9,7 @@ if(NOT WIN32)
             add_definitions(-DOTR_WINE_NO_WRAPPER)
         endif()
         otr_module(proto-wine)
+        target_include_directories(opentrack-proto-wine PRIVATE ${PROJECT_SOURCE_DIR}/gui) # needed for qlonglongspinbox
         if(NOT no-wrapper)
             target_link_libraries(opentrack-proto-wine PRIVATE opentrack-csv)
             set(my-rt -lrt)

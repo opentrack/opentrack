@@ -46,6 +46,7 @@ signals:
     OTR_OPTIONS_SIGNAL(double);
     OTR_OPTIONS_SIGNAL(float);
     OTR_OPTIONS_SIGNAL(int);
+    OTR_OPTIONS_SIGNAL(long long);
     OTR_OPTIONS_SIGNAL(bool);
     OTR_OPTIONS_SIGNAL(const QString&);
     OTR_OPTIONS_SIGNAL(const slider_value&);
@@ -80,6 +81,7 @@ public slots:
     OTR_OPTIONS_SLOT(double)
     OTR_OPTIONS_SLOT(int)
     OTR_OPTIONS_SLOT(bool)
+    OTR_OPTIONS_SLOT(long long);
     OTR_OPTIONS_SLOT(const QString&)
     OTR_OPTIONS_SLOT(const slider_value&)
     OTR_OPTIONS_SLOT(const QPointF&)
