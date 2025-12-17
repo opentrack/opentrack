@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>452</width>
-    <height>85</height>
+    <width>520</width>
+    <height>160</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -61,6 +61,38 @@
          </sizepolicy>
         </property>
        </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelCalibration">
+        <property name="text">
+         <string>Calibration</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="calibrationLayout">
+        <item>
+         <widget class="QPushButton" name="runCalibration">
+          <property name="text">
+           <string>Calibration wizard…</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="clearCalibration">
+          <property name="text">
+           <string>Clear</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="calibrationStatus">
+          <property name="text">
+           <string>No calibration</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
