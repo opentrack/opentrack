@@ -153,7 +153,7 @@ add_compile_options(-MT)
 
 add_link_options(-cgthreads:1)
 
-set(_CFLAGS "-diagnostics:caret -Zc:inline -Zc:preprocessor -Zc:static_assert- -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0 -permissive-")
+set(_CFLAGS "-diagnostics:caret -Zc:inline -Zc:static_assert- -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0 -permissive-")
 #if(NOT opentrack-no-static-crt)
 #    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
 #else()
