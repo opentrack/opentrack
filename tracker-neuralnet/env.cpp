@@ -54,7 +54,7 @@ void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
         lib.setFileName(OPENTRACK_BASE_PATH
                         + OPENTRACK_LIBRARY_PATH "onnxruntime-noavx"
                                                  "." OPENTRACK_LIBRARY_EXTENSION);
-    qDebug().nospace() << "tracker/nn: loading onnxruntime library" << lib.fileName();
+    qDebug() << "tracker/nn: loading onnxruntime library" << lib.fileName();
     if (!lib.load())
     {
         qDebug().nospace() << "tracker/nn: can't load onnxruntime library "
