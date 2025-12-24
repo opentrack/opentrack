@@ -11,7 +11,7 @@ else()
     SET(CMAKE_SYSTEM_VERSION 5.01)
 endif()
 
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR CMAKE_INSTALL_PREFIX STREQUAL "")
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
 endif()
 
@@ -21,7 +21,7 @@ endif()
 
 #set(CMAKE_GENERATOR Ninja)
 #set(CMAKE_MAKE_PROGRAM ninja.exe)
-set(CMAKE_ASM_NASM_COMPILER nasm.exe)
+#set(CMAKE_ASM_NASM_COMPILER nasm.exe)
 
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
@@ -120,9 +120,8 @@ if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
          ONNX_USE_MSVC_STATIC_RUNTIME           ON
          protobuf_MSVC_STATIC_RUNTIME           ON
          ABSL_MSVC_STATIC_RUNTIME               ON
-         onnxruntime_USE_AVX                    ON
-         onnxruntime_USE_AVX2                   OFF
-         onnxruntime_USE_AVX512                 OFF
+         BUILD_SHARED_LIBS                      OFF
+         BUILD_TESTING                          OFF
          onnxruntime_BUILD_BENCHMARKS           OFF
          onnxruntime_BUILD_FOR_NATIVE_MACHINE   OFF
          onnxruntime_BUILD_SHARED_LIB           ON
@@ -131,11 +130,10 @@ if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
          protobuf_BUILD_SHARED_LIBS             OFF
          ONNX_BUILD_BENCHMARKS                  OFF
          ONNX_BUILD_TESTS                       OFF
-         ONNX_DISABLE_EXCEPTIONS                OFF # important!
+         ONNX_DISABLE_EXCEPTIONS                OFF
          ONNX_GEN_PB_TYPE_STUBS                 OFF
          onnxruntime_DISABLE_CONTRIB_OPS        ON
-         BUILD_TESTING                          OFF
-         BUILD_SHARED_LIBS                      OFF
+
     )
     if(opentrack-64bit)
         sets(BOOL
@@ -187,7 +185,7 @@ set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS RELEASE DEBUG)
 
 foreach(k "" "_${CMAKE_BUILD_TYPE}")
     set("FLAGS_CXX${k}"     "" CACHE STRING "More CMAKE_CXX_FLAGS${k}")
-    #set("FLAGS_C${k}"     "" CACHE STRING "More CMAKE_C_FLAGS${k} (almost never used)")
+    set("FLAGS_C${k}"       "" CACHE STRING "More CMAKE_C_FLAGS${k} (almost never used)")
     set("FLAGS_LD${k}"      "" CACHE STRING "More CMAKE_(SHARED|EXE|MODULE)_LINKER_FLAGS${k}")
     set("FLAGS_ARCHIVE${k}" "" CACHE STRING "More CMAKE_STATIC_LINKER_FLAGS${k}")
 endforeach()
