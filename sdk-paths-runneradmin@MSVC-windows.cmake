@@ -19,10 +19,16 @@ endfunction()
 
 set(opentrack_install-debug-info FALSE CACHE INTERNAL "" FORCE)
 
+set(CMAKE_CXX_FLAGS_RELEASE "-O0")
+set(CMAKE_C_FLAGS_RELEASE "-O0")
+
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+add_compile_options(-MD)
+
 #setq(OpenCV_DIR "../opencv")
 #setq(SDK_ARUCO_LIBPATH "../aruco")
 #setq(SDK_KINECT20 "../Kinect-v2.0")
-#setq(SDK_LIBUSB "libusb-msvc-x86")
+setq(SDK_LIBUSB "libusb-msvc-2022-md")
 #setq(SDK_REALSENSE "../RSSDK-R2")
 setq(SDK_RIFT_140 "ovr_sdk_win_23.0.0/LibOVR")
 setq(SDK_VALVE_STEAMVR "steamvr")

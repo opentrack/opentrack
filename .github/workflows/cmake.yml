@@ -30,6 +30,8 @@ jobs:
     steps:
     - name: clone opentrack/opentrack
       uses: actions/checkout@v2
+      with:
+        submodules: true
 
     - name: clone opentrack/depends
       uses: actions/checkout@v2
@@ -42,9 +44,10 @@ jobs:
 
     - name: Install Linux Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install libproc2-dev libopencv-dev libopencv-dev wine64-tools
-        sudo apt-get install qt6-tools-dev qt6-serialport-dev qt6-base-private-dev
+        sudo apt update
+        sudo apt install libproc2-dev libopencv-dev libopencv-dev wine64-tools
+        sudo apt install qt6-tools-dev qt6-serialport-dev qt6-base-private-dev
+        sudo apt install libusb-1.0-0-dev libsdl2-dev
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install opencv (Windows)
