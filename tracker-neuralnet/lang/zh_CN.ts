@@ -12,7 +12,7 @@
         <translation>内置噪声过滤器</translation>
     </message>
     <message>
-        <source>Smoothing Alpha</source>
+        <source>ROI Smoothing Alpha</source>
         <translation>平滑强度</translation>
     </message>
     <message>
@@ -20,7 +20,7 @@
         <translation>显示画面</translation>
     </message>
     <message>
-        <source>Zoom</source>
+        <source>ROI Zoom</source>
         <translation>缩放比例</translation>
     </message>
     <message>
@@ -132,6 +132,10 @@ Don&apos;t roll or change position.</source>
     <message>
         <source>&lt;the pose net file&gt;</source>
         <translation>&lt;姿态网络模型文件&gt;</translation>
+    </message>
+    <message>
+        <source>Show Network Input</source>
+        <translation>显示神经网络输入</translation>
     </message>
 </context>
 <context>

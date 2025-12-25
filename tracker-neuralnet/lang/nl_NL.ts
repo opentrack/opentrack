@@ -57,7 +57,7 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Face Crop Options:</source>
+        <source>Show Network Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -66,6 +66,14 @@ Don&apos;t roll or change position.</source>
     </message>
     <message>
         <source>Tuning / Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ROI Smoothing Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>ROI Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -101,23 +109,7 @@ Don&apos;t roll or change position.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Internal Noise Filter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Smoothing Alpha</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Zoom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
