@@ -2,15 +2,6 @@
 # when building the software. from repository's root directory:
 # mkdir build && cmake -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../cmake/msvc.cmake build/
 
-SET(CMAKE_SYSTEM_NAME Windows)
-if(opentrack-64bit)
-    set(CMAKE_SYSTEM_PROCESSOR AMD64)
-    SET(CMAKE_SYSTEM_VERSION 5.02)
-else()
-    set(CMAKE_SYSTEM_PROCESSOR x86)
-    SET(CMAKE_SYSTEM_VERSION 5.01)
-endif()
-
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
 endif()
@@ -47,20 +38,14 @@ set(CMAKE_POLICY_DEFAULT_CMP0069 NEW CACHE INTERNAL "" FORCE)
 set(CMAKE_C_EXTENSIONS FALSE)
 set(CMAKE_CXX_EXTENSIONS FALSE)
 
-set(CMAKE_CROSSCOMPILING 0)
-
 function(sets type)
-    set(i 0)
-    list(LENGTH ARGN max)
-    math(EXPR foo "${max} % 2")
-    if(NOT foo EQUAL 0)
+    list(LENGTH ARGN len)
+    math(EXPR rem "${len} % 2")
+    if(rem)
         message(FATAL_ERROR "argument count not even")
     endif()
-    while(i LESS max)
-        list(GET ARGN "${i}" name)
-        math(EXPR i "${i} + 1")
-        list(GET ARGN "${i}" value)
-        math(EXPR i "${i} + 1")
+    while(NOT ARGN STREQUAL "")
+        list(POP_FRONT ARGN name value)
         set(${name} "${value}" CACHE "${type}" "" FORCE)
     endwhile()
 endfunction()
@@ -90,7 +75,6 @@ if(CMAKE_PROJECT_NAME MATCHES "^Qt(Base)?$")
     #set(FEATURE_ltcg ON)
     set(FEATURE_shared ON)
     add_definitions(-DNDEBUG)
-    add_compile_options(-MT)
 endif()
 
 if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
@@ -119,9 +103,9 @@ set(opentrack-simd "SSE2")
 
 if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
     sets(BOOL
-         ONNX_USE_MSVC_STATIC_RUNTIME           ON
-         protobuf_MSVC_STATIC_RUNTIME           ON
-         ABSL_MSVC_STATIC_RUNTIME               ON
+        #ONNX_USE_MSVC_STATIC_RUNTIME           ON
+        #protobuf_MSVC_STATIC_RUNTIME           ON
+        #ABSL_MSVC_STATIC_RUNTIME               ON
          BUILD_SHARED_LIBS                      OFF
          BUILD_TESTING                          OFF
          onnxruntime_BUILD_BENCHMARKS           OFF
@@ -149,7 +133,7 @@ endif()
 #endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-add_compile_options(-MT)
+add_compile_options(-MD)
 
 add_link_options(-cgthreads:1)
 
@@ -177,6 +161,7 @@ set(_LDFLAGS_STATIC_RELEASE "")
 set(_LDFLAGS_STATIC_DEBUG "")
 
 set(CMAKE_BUILD_TYPE_INIT "RELEASE" CACHE INTERNAL "")
+set(CMAKE_BUILD_TYPE "RELEASE" CACHE INTERNAL "")
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "" FORCE)

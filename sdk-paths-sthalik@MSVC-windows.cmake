@@ -1,16 +1,3 @@
-#
-# qtbase configure line for safekeeping
-#
-
-# "../configure" -prefix d:\dev\qt-5.10.0 -no-ico -no-gif               \
-# -opengl desktop -no-fontconfig -no-harfbuzz                           \
-# -nomake tests -no-mp -release -opensource -shared -confirm-license    \
-# -no-freetype -force-debug-info -separate-debug-info                   \
-# -make-tool jom -platform win32-msvc -static-runtime
-
-# remember to change -MD to -MT in mkspecs/
-# also add CFLAGS -Zi and LFLAGS -DEBUG
-
 set(__depdir "${CMAKE_CURRENT_LIST_DIR}/../opentrack-depends")
 
 function(setq name value)
@@ -30,35 +17,31 @@ setq(SDK_HYDRA "SixenseSDK")
 setq(SDK_EYEWARE_BEAM "eyeware-beam-sdk")
 setq(SDK_TOBII "nonfree/tobii-streamengine")
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-setq(Qt6_DIR "../qt-6.9.1-msvc-2022/lib/cmake/Qt6")
-setq(OpenCV_DIR "opencv/build/2022/install")
-setq(SDK_ARUCO_LIBPATH "aruco/build/2022/src/aruco.lib")
-setq(SDK_LIBUSB "libusb-2022")
-setq(SDK_GAMEINPUT "gameinput")
-
-setq(ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-2022-avx")
-install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-2022-noavx/bin/onnxruntime.dll" RENAME "onnxruntime-noavx.dll" DESTINATION "modules")
-install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-2022-avx/bin/onnxruntime.dll" RENAME "onnxruntime-avx.dll" DESTINATION "modules")
-set(opentrack-use-onnxruntime-avx-dispatch 1)
-
-set(SDK_TRACKHAT_SENSOR "FALSE" CACHE INTERNAL "" FORCE)
-setq(SDK_OSCPACK "oscpack/build/2022")
+    setq(Qt6_DIR "../qt-6.10.1-msvc-2022/lib/cmake/Qt6")
+    setq(OpenCV_DIR "opencv/build/2022/install")
+    setq(SDK_ARUCO_LIBPATH "aruco/build/2022/src/aruco.lib")
+    setq(SDK_LIBUSB "libusb-2022")
+    setq(SDK_GAMEINPUT "gameinput")
+    setq(ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-2022-avx")
+    install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-2022-noavx/bin/onnxruntime.dll" RENAME "onnxruntime-noavx.dll" DESTINATION "modules")
+    install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-2022-avx/bin/onnxruntime.dll" RENAME "onnxruntime-avx.dll" DESTINATION "modules")
+    set(opentrack-use-onnxruntime-avx-dispatch 1)
+    setq(SDK_OSCPACK "oscpack/build/2022")
 elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
     etq(Qt6_DIR "../qt-6.9.1-msvc-2022-x86/lib/cmake/Qt6")
-setq(OpenCV_DIR "opencv/build/2022-x86/install")
-setq(SDK_ARUCO_LIBPATH "aruco/build/2022-x86/src/aruco.lib")
-setq(SDK_LIBUSB "libusb-2022-x86")
-setq(ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-2022-avx-x86")
-set(SDK_TRACKHAT_SENSOR "FALSE" CACHE INTERNAL "" FORCE)
-setq(SDK_OSCPACK "oscpack/build/2022-x86")
+    setq(OpenCV_DIR "opencv/build/2022-x86/install")
+    setq(SDK_ARUCO_LIBPATH "aruco/build/2022-x86/src/aruco.lib")
+    setq(SDK_LIBUSB "libusb-2022-x86")
+    setq(ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-2022-avx-x86")
+    setq(SDK_OSCPACK "oscpack/build/2022-x86")
 else()
     message(FATAL_ERROR "unknown word size ${CMAKE_SIZEOF_VOID_P}")
 endif()
 
-set(CMAKE_ASM_NASM_COMPILER nasm.exe CACHE FILEPATH "" FORCE)
+#set(CMAKE_ASM_NASM_COMPILER nasm.exe CACHE FILEPATH "" FORCE)
 
-set(qt6Core_DIR "${qt6_DIR}Core" CACHE PATH "" FORCE)
-set(qt6Gui_DIR "${qt6_DIR}Gui" CACHE PATH "" FORCE)
+#set(qt6Core_DIR "${qt6_DIR}Core" CACHE PATH "" FORCE)
+#set(qt6Gui_DIR "${qt6_DIR}Gui" CACHE PATH "" FORCE)
 
 if(CMAKE_GENERATOR STREQUAL "NMake Makefiles")
     set(CMAKE_MAKE_PROGRAM "jom" CACHE STRING "" FORCE)
