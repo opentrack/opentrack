@@ -1,7 +1,3 @@
-# this file only serves as toolchain file when specified so explicitly
-# when building the software. from repository's root directory:
-# mkdir build && cmake -DCMAKE_TOOLCHAIN_FILE=$(pwd)/../cmake/msvc.cmake build/
-
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR "${CMAKE_INSTALL_PREFIX}" STREQUAL "")
     set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
 endif()
@@ -10,18 +6,12 @@ if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake")
     include("${CMAKE_CURRENT_LIST_DIR}/opentrack-policy.cmake" NO_POLICY_SCOPE)
 endif()
 
-#set(CMAKE_GENERATOR Ninja)
-#set(CMAKE_MAKE_PROGRAM ninja.exe)
-#set(CMAKE_ASM_NASM_COMPILER nasm.exe)
-
 # search for programs in the host directories
 SET(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 # don't poison with system compile-time data
 SET(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 SET(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-
-#add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
 #add_compile_options(-Qvec-report:2)
 #add_compile_options(-d2cgsummary)
 add_definitions(-D_HAS_EXCEPTIONS=0)
@@ -62,93 +52,92 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
     foreach(i ${warns-error})
         add_compile_options(-w1${i} -we${i})
     endforeach()
-endif()
 
-if(CMAKE_PROJECT_NAME MATCHES "^Qt(Base)?$")
-    set(QT_BUILD_TOOLS_WHEN_CROSSCOMPILING TRUE CACHE BOOL "" FORCE)
-    set(QT_DEBUG_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
-    set(QT_USE_DEFAULT_CMAKE_OPTIMIZATION_FLAGS TRUE CACHE BOOL "" FORCE)
+    set(opentrack-use-onnxruntime-avx-dispatch 1)
 
-    set(FEATURE_debug OFF)
-    set(FEATURE_debug_and_release OFF)
-    set(FEATURE_force_debug_info ON)
-    #set(FEATURE_ltcg ON)
-    set(FEATURE_shared ON)
-    add_definitions(-DNDEBUG)
-endif()
-
-if(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
+elseif(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     set(PARALLEL_ENABLE_PLUGINS FALSE)
     set(HIGHGUI_ENABLE_PLUGINS FALSE)
     set(VIDEOIO_ENABLE_PLUGINS FALSE)
 
-    set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG TRUE)
-    set(OPENCV_DISABLE_THREAD_SUPPORT TRUE)
+    set(ENABLE_FAST_MATH                        ON)
+    set(ENABLE_PRECOMPILED_HEADERS              ON)
+    set(CV_TRACE                                OFF)
+    set(OPENCV_DISABLE_THREAD_SUPPORT           1)
+    set(OPENCV_SKIP_MSVC_EXCEPTIONS_FLAG        1)
+    set(OPENCV_SKIP_MSVC_PARALLEL               1)
+    set(BUILD_PACKAGE                           OFF)
+    set(BUILD_PERF_TESTS                        OFF)
+    set(BUILD_PROTOBUF                          OFF)
+    set(BUILD_TESTS                             OFF)
+    set(BUILD_PERF_TESTS                        OFF)
+    set(BUILD_opencv_apps                       OFF)
+    set(BUILD_opencv_dnn                        OFF)
+    set(BUILD_opencv_gapi                       OFF)
+    set(BUILD_opencv_java_bindings_generator    OFF)
+    set(BUILD_opencv_js                         OFF)
+    set(BUILD_opencv_js_bindings_generator      OFF)
+    set(BUILD_opencv_ml                         OFF)
+    set(BUILD_opencv_objc_bindings_generator    OFF)
+    set(BUILD_opencv_photo                      OFF)
+    set(BUILD_opencv_python_bindings_generator  OFF)
+    set(BUILD_opencv_python_tests               OFF)
+    set(BUILD_opencv_stitching                  OFF)
+    set(BUILD_opencv_ts                         OFF)
 
-    set(ENABLE_FAST_MATH    ON)
-    set(BUILD_TESTS         OFF)
-    set(BUILD_PERF_TESTS    OFF)
-    set(BUILD_opencv_apps   OFF)
-    set(BUILD_opencv_gapi   OFF)
-
-    set(OPENCV_SKIP_MSVC_PARALLEL 1)
-    set(OPENCV_DISABLE_THREAD_SUPPORT 1)
-endif()
-
-if(CMAKE_PROJECT_NAME STREQUAL "TestOscpack")
+elseif(CMAKE_PROJECT_NAME STREQUAL "TestOscpack")
     add_compile_definitions(OSC_HOST_LITTLE_ENDIAN)
+
+elseif(PROJECT_NAME STREQUAL "onnxruntime")
+    set(onnxruntime_BUILD_SHARED_LIB           ON)
+    set(BUILD_SHARED_LIBS                      OFF)
+    set(ONNX_USE_MSVC_STATIC_RUNTIME           OFF)
+    set(protobuf_MSVC_STATIC_RUNTIME           OFF)
+    set(ABSL_MSVC_STATIC_RUNTIME               OFF)
+    set(BUILD_TESTING                          OFF)
+    set(onnxruntime_BUILD_BENCHMARKS           OFF)
+    set(onnxruntime_BUILD_FOR_NATIVE_MACHINE   OFF)
+    set(onnxruntime_BUILD_UNIT_TESTS           OFF)
+    set(protobuf_BUILD_EXAMPLES                OFF)
+    set(protobuf_BUILD_SHARED_LIBS             OFF)
+    set(ONNX_BUILD_BENCHMARKS                  OFF)
+    set(ONNX_BUILD_TESTS                       OFF)
+    set(ONNX_DISABLE_EXCEPTIONS                OFF)
+    set(ONNX_GEN_PB_TYPE_STUBS                 OFF)
+    set(onnxruntime_DISABLE_CONTRIB_OPS        ON)
+
+elseif(PROJECT_NAME STREQUAL "Qt")
+    set(QT_BUILD_SUBMODULES "qtbase;qtserialport;qttools")
+    set(QT_BUILD_DOCS           OFF)
+    set(BUILD_qtactiveqt        OFF)
+    set(BUILD_qtdeclarative     OFF)
+    set(BUILD_qtimageformats    OFF)
+    set(BUILD_qtlanguageserver  OFF)
+    set(BUILD_qtshadertools     OFF)
+    set(BUILD_qtsvg             OFF)
+    set(FEATURE_qdoc OFF)
+    set(FEATURE_debug OFF)
+    set(FEATURE_debug_and_release OFF)
+    set(FEATURE_force_debug_info ON)
+    set(FEATURE_shared ON)
+    set(FEATURE_ltcg ON)
+
+    add_definitions(-DNDEBUG)
+
+    get_filename_component(_pfx "${CMAKE_SOURCE_DIR}" DIRECTORY)
+    set(_proj "qt-${PROJECT_VERSION}-msvc-${MSVC_YEAR}")
+    message(FATAL_ERROR "year: '${MSVC_YEAR}'")
+    set(CMAKE_INSTALL_PREFIX "${_pfx}/${_proj}" CACHE PATH "" FORCE)
 endif()
-
-set(opentrack-simd "SSE2")
-
-if(CMAKE_PROJECT_NAME STREQUAL "onnxruntime")
-    sets(BOOL
-        #ONNX_USE_MSVC_STATIC_RUNTIME           ON
-        #protobuf_MSVC_STATIC_RUNTIME           ON
-        #ABSL_MSVC_STATIC_RUNTIME               ON
-         BUILD_SHARED_LIBS                      OFF
-         BUILD_TESTING                          OFF
-         onnxruntime_BUILD_BENCHMARKS           OFF
-         onnxruntime_BUILD_FOR_NATIVE_MACHINE   OFF
-         onnxruntime_BUILD_SHARED_LIB           ON
-         onnxruntime_BUILD_UNIT_TESTS           OFF
-         protobuf_BUILD_EXAMPLES                OFF
-         protobuf_BUILD_SHARED_LIBS             OFF
-         ONNX_BUILD_BENCHMARKS                  OFF
-         ONNX_BUILD_TESTS                       OFF
-         ONNX_DISABLE_EXCEPTIONS                OFF
-         ONNX_GEN_PB_TYPE_STUBS                 OFF
-         onnxruntime_DISABLE_CONTRIB_OPS        ON
-
-    )
-    if(opentrack-64bit)
-        sets(BOOL
-             onnxruntime_USE_AVX                ON
-        )
-    endif()
-endif()
-
-#if(opentrack-64bit)
-#    set(opentrack-simd "AVX")
-#endif()
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
-add_compile_options(-MD)
+#add_compile_options(-MD)
 
-add_link_options(-cgthreads:1)
-
-set(_CFLAGS "-diagnostics:caret -Zi -Zf -Zo -bigobj -vd0")
-#if(NOT opentrack-no-static-crt)
-#    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded" CACHE INTERNAL "" FORCE)
-#else()
-#    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDLL" CACHE INTERNAL "" FORCE)
-#endif()
-set(_CXXFLAGS "${_CFLAGS}")
-set(_CFLAGS_RELEASE "-O2 -Oit -Oy- -Ob3 -fp:fast -GS- -GF -Gy -Gw-")
-if(NOT "${opentrack-simd}" STREQUAL "")
-    set(_CFLAGS_RELEASE "${_CFLAGS_RELEASE} -arch:${opentrack-simd}")
-endif()
+set(_CFLAGS "-diagnostics:caret -Zc:inline -Zc:static_assert- -wd4117 -Zi -Zf -Zo -bigobj -cgthreads1 -vd0")
+set(_CFLAGS_RELEASE "-O2 -Oit -Oy- -Ob3 -fp:fast -GS- -GF -GL -Gw -Gy")
 set(_CFLAGS_DEBUG "-guard:cf -MTd -Gs0 -RTCs")
+
+set(_CXXFLAGS "${_CFLAGS} -Zc:throwingNew -Zc:lambda")
 set(_CXXFLAGS_RELEASE "${_CFLAGS_RELEASE}")
 set(_CXXFLAGS_DEBUG "${_CFLAGS_DEBUG}")
 
@@ -160,15 +149,13 @@ set(_LDFLAGS_STATIC "")
 set(_LDFLAGS_STATIC_RELEASE "")
 set(_LDFLAGS_STATIC_DEBUG "")
 
-set(CMAKE_BUILD_TYPE_INIT "RELEASE" CACHE INTERNAL "")
-set(CMAKE_BUILD_TYPE "RELEASE" CACHE INTERNAL "")
+set(CMAKE_BUILD_TYPE Release)
 
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING "" FORCE)
 if (NOT CMAKE_BUILD_TYPE STREQUAL "RELEASE" AND NOT CMAKE_BUILD_TYPE STREQUAL "DEBUG")
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
 endif()
-set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS RELEASE DEBUG)
 
 foreach(k "" "_${CMAKE_BUILD_TYPE}")
     set("FLAGS_CXX${k}"     "" CACHE STRING "More CMAKE_CXX_FLAGS${k}")
