@@ -19,22 +19,22 @@ setq(SDK_TOBII "nonfree/tobii-streamengine")
 
 set(opentrack-use-onnxruntime-avx-dispatch 1)
 if(CMAKE_SIZEOF_VOID_P GREATER 4)
-    setq(Qt6_DIR "../qt-6.10.1-msvc-2022/lib/cmake/Qt6")
-    setq(OpenCV_DIR "opencv/build/2022/install")
-    setq(SDK_ARUCO_LIBPATH "aruco/build/2022/src/aruco.lib")
-    setq(SDK_LIBUSB "libusb-2022")
-    setq(SDK_GAMEINPUT "gameinput")
-    setq(SDK_OSCPACK "oscpack/build/2022")
-    setq(ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-2022-avx")
-    install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-2022-noavx/bin/onnxruntime.dll" RENAME "onnxruntime-noavx.dll" DESTINATION "modules")
-    install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-2022-avx/bin/onnxruntime.dll" RENAME "onnxruntime-avx.dll" DESTINATION "modules")
+    setq(Qt6_DIR "../qt-6.10.1-msvc/lib/cmake/Qt6"
+         OpenCV_DIR "opencv/build/msvc/install"
+         SDK_ARUCO_LIBPATH "aruco/build/msvc/src/aruco.lib"
+         SDK_LIBUSB "libusb-msvc"
+         SDK_GAMEINPUT "gameinput"
+         SDK_OSCPACK "oscpack/build/msvc"
+         ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-noavx")
+    install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-noavx/bin/onnxruntime.dll" RENAME "onnxruntime-noavx.dll" DESTINATION "modules")
+    install(FILES "${__depdir}/onnxruntime-1.23.2-msvc-avx/bin/onnxruntime.dll" RENAME "onnxruntime-avx.dll" DESTINATION "modules")
 else()
-    setq(Qt6_DIR "../qt-6.9.1-msvc-2022-x86/lib/cmake/Qt6")
-    setq(OpenCV_DIR "opencv/build/2022-x86/install")
-    setq(SDK_ARUCO_LIBPATH "aruco/build/2022-x86/src/aruco.lib")
-    setq(SDK_LIBUSB "libusb-2022-x86")
-    setq(ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-2022-avx-x86")
-    setq(SDK_OSCPACK "oscpack/build/2022-x86")
+    setq(Qt6_DIR "../qt-6.9.1-msvc-x86/lib/cmake/Qt6"
+         OpenCV_DIR "opencv/build/msvc-x86/install"
+         SDK_ARUCO_LIBPATH "aruco/build/msvc-x86/src/aruco.lib"
+         SDK_LIBUSB "libusb-msvc-x86"
+         ONNXRuntime_DIR "onnxruntime-1.23.2-msvc-msvc-avx-x86"
+         SDK_OSCPACK "oscpack/build/msvc-x86")
 endif()
 
 if(CMAKE_GENERATOR STREQUAL "NMake Makefiles")
