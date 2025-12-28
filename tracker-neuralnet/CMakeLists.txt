@@ -52,6 +52,8 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
               "models/head-pose-0.4-big-int8.onnx"
               "models/head-pose-0.4-small-f32.onnx"
               "models/head-pose-0.4-small-int8.onnx"
+              "models/head-pose-0.2-big.onnx"
+              "models/head-pose-0.2-small.onnx"
         DESTINATION "${opentrack-libexec}/models"
         PERMISSIONS ${opentrack-perms-file}
         )
