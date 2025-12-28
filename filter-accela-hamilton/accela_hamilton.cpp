@@ -30,7 +30,7 @@ void accela_hamilton::filter(const double* input, double *output)
     const tQuat current_rot = QuatFromYPR(input + Yaw);
     const tVector current_pos(input[TX], input[TY], input[TZ]);
 
-    if (unlikely(first_run))
+    if (first_run) [[unlikely]]
     {
         first_run = false;
         last_rotation = current_rot;

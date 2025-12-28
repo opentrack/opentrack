@@ -261,6 +261,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Mapping curves</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Disable for X</source>
         <translation type="unfinished"></translation>
     </message>
@@ -406,6 +414,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Freeze the pose like Toggle, except only while they key is still pressed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Camera offset</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Extra rotation adjustment for reducing axis bleed on asymmetrically mounted cameras.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

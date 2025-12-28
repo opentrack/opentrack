@@ -42,7 +42,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
     case 4:
         break;
     default:
-        unreachable();
+        tr_unreachable();
         break;
     }
 

@@ -218,7 +218,7 @@ static inline bool is_nan(const dmat<u,w>& r)
     return false;
 }
 
-static never_inline
+static tr_never_inline
 void emit_nan_check_msg(const char* text, const char* fun, int line)
 {
     eval_once(
@@ -230,7 +230,7 @@ void emit_nan_check_msg(const char* text, const char* fun, int line)
 }
 
 template<typename... xs>
-static never_inline
+static tr_never_inline
 bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
 {
     bool ret = (is_nan(vals) || ... || false);
@@ -241,14 +241,10 @@ bool maybe_nan(const char* text, const char* fun, int line, const xs&... vals)
     return ret;
 }
 
-#define nan_check(...)                                                                  \
-    do                                                                                  \
-    {                                                                                   \
-        if (likely(!maybe_nan(#__VA_ARGS__, function_name, __LINE__, __VA_ARGS__)))     \
-            (void)0;                                                                    \
-        else                                                                            \
-            goto error;                                                                 \
-    }                                                                                   \
+#define nan_check(...)                                                                      \
+    do                                                                                      \
+        if (maybe_nan(#__VA_ARGS__, tr_function_name, __LINE__, __VA_ARGS__)) [[likely]]    \
+            goto error;                                                                     \
     while (false)
 
 bool pipeline::maybe_enable_center_on_tracking_started()
@@ -256,7 +252,7 @@ bool pipeline::maybe_enable_center_on_tracking_started()
     if (!tracking_started)
     {
         for (int i = 0; i < 6; i++)
-            if (std::fabs(newpose(i)) != 0)
+            if (std::fabs(m_newpose(i)) != 0)
             {
                 tracking_started = true;
                 break;
@@ -284,24 +280,24 @@ void pipeline::maybe_set_center_pose(const centering_state mode, const Pose& val
         if (own_center_logic)
         {
             center.P  = {};
-            center.QC = QQuaternion(1,0,0,0);
-            center.QR = QQuaternion(1,0,0,0);
+            center.QC = {};
+            center.QR = {};
         }
         else
         {
             if (mode)
             {
                 center.P  = value;
-                center.QC = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]).conjugated();
-                center.QR = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], 0).conjugated();
+                center.QC = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]).conjugated();
+                center.QR = dquat::from_euler(value[Pitch], value[Yaw], 0).conjugated();
             }
             else
             {
                 // To reset the centering coordinates
                 // just select "Centering method [Disabled]" and then press [Center] button
                 center.P  = {};
-                center.QC = QQuaternion(1,0,0,0);
-                center.QR = QQuaternion(1,0,0,0);
+                center.QC = {};
+                center.QR = {};
             }
         }
     }
@@ -314,8 +310,8 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
         for (unsigned k = TX; k <= TZ; k++)
             value(k) -= center.P(k);
 
-        QQuaternion q;
-        QVector3D v;
+        dquat q;
+        double v[3];
 
         switch (mode)
         {
@@ -327,20 +323,20 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
             }
             break;
         case center_vr360:
-            q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], -value[Roll]);
+            q = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]);
             q = center.QC * q;
-            v = q.toEulerAngles();
-            value[Pitch] =  v.x();
-            value[Yaw]   =  v.y();
-            value[Roll]  = -v.z();
+            q.to_euler(v[0], v[1], v[2]);
+            value[Pitch] =  v[0];
+            value[Yaw]   =  v[1];
+            value[Roll]  = -v[2];
             break;
         case center_roll_compensated:
-            q = QQuaternion::fromEulerAngles(value[Pitch], value[Yaw], center.P[Roll] - value[Roll]);
+            q = dquat::from_euler(value[Pitch], value[Yaw], center.P[Roll] - value[Roll]);
             q = center.QR * q;
-            v = q.toEulerAngles();
-            value[Pitch] =  v.x();
-            value[Yaw]   =  v.y();
-            value[Roll]  = -v.z();
+            q.to_euler(v[0], v[1], v[2]);
+            value[Pitch] =  v[0];
+            value[Yaw]   =  v[1];
+            value[Roll]  = -v[2];
             break;
         case center_disabled: break;
         }
@@ -354,6 +350,30 @@ Pose pipeline::apply_center(const centering_state mode, Pose value) const
 
     return value;
 }
+
+Pose pipeline::apply_camera_offset(Pose value) const
+{
+    auto q = dquat::from_euler(value[Pitch], value[Yaw], -value[Roll]);
+
+    if (!q.is_identity() && s.enable_camera_offset)
+    {
+        double p = s.camera_offset_pitch;
+        double y = s.camera_offset_yaw;
+        double r = -s.camera_offset_roll;
+        auto inv_offset = dquat::from_euler(p, y, r);
+
+        auto t = inv_offset.rotate_point({value[TX], value[TY], value[TZ]});
+        value[TX] = t.x + s.camera_offset_x;
+        value[TY] = t.y + s.camera_offset_y;
+        value[TZ] = t.z + s.camera_offset_z;
+
+        (inv_offset * q).to_euler(value[Pitch],value[Yaw],value[Roll]);
+        value[Roll] = -value[Roll];
+    }
+
+    return value;
+}
+
 
 std::tuple<Pose, Pose, vec6_bool>
 pipeline::get_selected_axis_values(const Pose& newpose) const
@@ -434,18 +454,29 @@ void pipeline::logic()
     {
         Pose tmp;
         libs.pTracker->data(tmp);
-        newpose = tmp;
+        m_newpose = tmp;
     }
 
-    auto [raw, value, disabled] = get_selected_axis_values(newpose);
+    auto [raw, value, disabled] = get_selected_axis_values(m_newpose);
     logger.write_pose(raw); // raw
 
-    nan_check(newpose, raw, value);
+    value = apply_camera_offset(value);
+
+    nan_check(m_newpose, raw, value);
 
     {
         maybe_enable_center_on_tracking_started();
+        nan_check(value);
+        // logger.write_pose(value); // TODO camera offset applied
         maybe_set_center_pose(s.centering_mode, value, own_center_logic);
-        value = apply_center(s.centering_mode, value);
+        nan_check(value);
+
+        {
+            nan_check(value);
+            auto valueʹ = apply_center(s.centering_mode, value);
+            nan_check(valueʹ);
+            value = valueʹ;
+        }
 
         // "corrected" - after various transformations to account for camera position
         logger.write_pose(value);
@@ -462,7 +493,7 @@ void pipeline::logic()
         logger.write_pose(value); // "filtered"
     }
 
-    {
+    if (s.apply_mapping_curves) {
         // CAVEAT rotation only, due to reltrans
         for (int i = 3; i < 6; i++)
             value(i) = map(value(i), m(i));
@@ -470,7 +501,7 @@ void pipeline::logic()
 
     value = apply_reltrans(value, disabled, center_ordered);
 
-    {
+    if (s.apply_mapping_curves) {
         // CAVEAT translation only, due to tcomp
         for (int i = 0; i < 3; i++)
             value(i) = map(value(i), m(i));
@@ -483,12 +514,15 @@ error:
     {
         QMutexLocker foo(&mtx);
 
-        value = last_value;
-        raw = raw_6dof;
+        value = m_last_value;
+        raw = m_raw_6dof;
 
-        // for widget last value display
-        for (int i = 0; i < 6; i++)
-            (void)map(raw_6dof(i), m(i));
+        if (s.apply_mapping_curves)
+        {
+            // for widget last value display
+            for (int i = 0; i < 6; i++)
+                (void)map(m_raw_6dof(i), m(i));
+        }
     }
 
 ok:
@@ -500,8 +534,8 @@ ok:
             value(i) = 0;
 
     if (hold_ordered)
-        value = last_value;
-    last_value = value;
+        value = m_last_value;
+    m_last_value = value;
     value = apply_zero_pos(value);
 
     for (int i = 0; i < 6; i++)
@@ -510,9 +544,11 @@ ok:
 
     libs.pProtocol->pose(value, raw);
 
-    QMutexLocker foo(&mtx);
-    output_pose = value;
-    raw_6dof = raw;
+    {
+        QMutexLocker foo(&mtx);
+        m_output_pose = value;
+        m_raw_6dof = raw;
+    }
 
     logger.write_pose(value); // "mapped"
 
@@ -569,12 +605,12 @@ void pipeline::run()
     setPriority(QThread::HighestPriority);
 
     {
-        static const char* const posechannels[6] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
-        static const char* const datachannels[5] = { "dt", "raw", "corrected", "filtered", "mapped" };
+        static const char* const posechannels[] = { "TX", "TY", "TZ", "Yaw", "Pitch", "Roll" };
+        static const char* const datachannels[] = { "dt", "raw", /*"offseted",*/ "corrected", "filtered", "mapped" };
 
         logger.write(datachannels[0]);
         char buffer[16];
-        for (unsigned j = 1; j < 5; ++j) // NOLINT(modernize-loop-convert)
+        for (unsigned j = 1; j < std::size(datachannels); ++j) // NOLINT(modernize-loop-convert)
         {
             for (unsigned i = 0; i < 6; ++i) // NOLINT(modernize-loop-convert)
             {
@@ -634,8 +670,8 @@ void pipeline::raw_and_mapped_pose(double* mapped, double* raw) const
 
     for (int i = 0; i < 6; i++)
     {
-        raw[i] = raw_6dof(i);
-        mapped[i] = output_pose(i);
+        raw[i] = m_raw_6dof(i);
+        mapped[i] = m_output_pose(i);
     }
 }
 

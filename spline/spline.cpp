@@ -1,4 +1,5 @@
 #include "spline.hpp"
+#include "compat/macros.h"
 #include "compat/math.hpp"
 
 #include <algorithm>
@@ -249,7 +250,7 @@ void spline::update_interp_data() const
                         data[x] = y;
                     break;
                 default:
-                    unreachable();
+                    tr_unreachable();
                 }
             }
         }

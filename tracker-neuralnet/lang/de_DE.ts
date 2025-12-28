@@ -38,6 +38,26 @@ Bitte nicht rollen oder die Position ändern.</translation>
         <translation>Kalibrierung starten</translation>
     </message>
     <message>
+        <source>Internal Noise Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Face Crop Options:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Smoothing Alpha</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Camera Configuration</source>
         <translation>Kamera-Konfiguration</translation>
     </message>
@@ -94,20 +114,8 @@ Bitte nicht rollen oder die Position ändern.</translation>
         <translation>Zeigt den Bildausschnitt, den das Modell zur Posenabschätzung sieht.</translation>
     </message>
     <message>
-        <source>Show Network Input</source>
-        <translation>Zeige Netzwerk-Eingabe</translation>
-    </message>
-    <message>
-        <source>ROI Smoothing Alpha</source>
-        <translation>ROI-Glättungsalpha</translation>
-    </message>
-    <message>
         <source>Amount of smoothing of the face region coordinates. Can help stabilize the pose.</source>
         <translation>Umfang der Glättung der Gesichtkoordinaten. Kann helfen, die Pose zu stabilisieren.</translation>
-    </message>
-    <message>
-        <source>ROI Zoom</source>
-        <translation>ROI-Zoom</translation>
     </message>
     <message>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>

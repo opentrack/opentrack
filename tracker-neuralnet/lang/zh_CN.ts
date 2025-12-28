@@ -8,6 +8,22 @@
         <translation>追踪器设置</translation>
     </message>
     <message>
+        <source>Internal Noise Filter</source>
+        <translation>内置噪声过滤器</translation>
+    </message>
+    <message>
+        <source>Smoothing Alpha</source>
+        <translation>平滑强度</translation>
+    </message>
+    <message>
+        <source>Show</source>
+        <translation>显示画面</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>缩放比例</translation>
+    </message>
+    <message>
         <source>Diagonal FOV</source>
         <translation>对角线视场角</translation>
     </message>
@@ -58,24 +74,12 @@ Don&apos;t roll or change position.</source>
         <translation>向上</translation>
     </message>
     <message>
-        <source>Show Network Input</source>
-        <translation>显示神经网络输入</translation>
-    </message>
-    <message>
         <source>MJPEG</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Tuning / Debug</source>
         <translation>调整/调试</translation>
-    </message>
-    <message>
-        <source>ROI Smoothing Alpha</source>
-        <translation>图像ROI区域平滑</translation>
-    </message>
-    <message>
-        <source>ROI Zoom</source>
-        <translation>图像ROI区域缩放</translation>
     </message>
     <message>
         <source>Thread Count</source>
@@ -102,16 +106,20 @@ Don&apos;t roll or change position.</source>
         <translation>线程数，用于平衡游戏进程与跟踪器的CPU资源占用。</translation>
     </message>
     <message>
+        <source>Face Crop Options:</source>
+        <translation>人脸裁剪选项：</translation>
+    </message>
+    <message>
         <source>Show the image patch that the pose estimation model sees.</source>
-        <translation>显示神经网络模型识别到的原始图像。</translation>
+        <translation>显示姿态网络模型识别到的原始图像。</translation>
     </message>
     <message>
         <source>Amount of smoothing of the face region coordinates. Can help stabilize the pose.</source>
-        <translation>面部区域坐标平滑度，数值越大姿态输出越稳定。</translation>
+        <translation>人脸区域坐标平滑度，数值越大姿态输出越稳定。</translation>
     </message>
     <message>
         <source>Zoom factor for the face region. Applied before the patch is fed into the pose estimation model. There is a sweet spot near 1.</source>
-        <translation>面部区域缩放比例 (预处理参数) ，数值接近1.0时效果最佳。</translation>
+        <translation>人脸区域缩放比例 (预处理参数) ，数值接近1.0时效果最佳。</translation>
     </message>
     <message>
         <source>Select the pose network. Changes take affect on the next tracker start</source>

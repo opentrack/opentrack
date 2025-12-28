@@ -83,6 +83,8 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     for (int k = 0; k < 3; k++)
         ui.reltrans_mode->setItemData(k, reltrans_modes[k]);
 
+    tie_setting(main.apply_mapping_curves, ui.apply_mapping_curves);
+
     tie_setting(main.reltrans_mode, ui.reltrans_mode);
 
     tie_setting(main.reltrans_disable_tx, ui.tcomp_tx_disable);
@@ -122,6 +124,14 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     tie_setting(main.a_x.src, ui.src_x);
     tie_setting(main.a_y.src, ui.src_y);
     tie_setting(main.a_z.src, ui.src_z);
+
+    tie_setting(main.enable_camera_offset, ui.enable_camera_offset);
+    tie_setting(main.camera_offset_yaw,   ui.camera_offset_yaw);
+    tie_setting(main.camera_offset_pitch, ui.camera_offset_pitch);
+    tie_setting(main.camera_offset_roll,  ui.camera_offset_roll);
+    tie_setting(main.camera_offset_x,  ui.camera_offset_x);
+    tie_setting(main.camera_offset_y,  ui.camera_offset_y);
+    tie_setting(main.camera_offset_z,  ui.camera_offset_z);
 
     //tie_setting(main.center_method, ui.center_method);
 

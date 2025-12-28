@@ -32,7 +32,7 @@ namespace options::detail {
         void put(const QString& s, QVariant&& d);
         bool contains(const QString& s) const;
 
-        never_inline QVariant get_variant(const QString& name) const;
+        tr_never_inline QVariant get_variant(const QString& name) const;
     };
 } // ns options::detail
 

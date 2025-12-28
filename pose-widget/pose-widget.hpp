@@ -31,12 +31,17 @@ private:
     void resizeEvent(QResizeEvent *event) override;
     void paintEvent(QPaintEvent*) override;
 
+    QT_WARNING_PUSH
+    QT_WARNING_DISABLE_DEPRECATED
+
     Pose_ R, T;
     QImage front{QImage{":/images/side1.png"}.convertToFormat(QImage::Format_ARGB32)};
     QImage back {QImage{":/images/side6.png"}.convertToFormat(QImage::Format_ARGB32)
                                              .mirrored(true,false)};
     QImage shine {QImage{front.width(), front.height(), QImage::Format_ARGB32}};
     QImage shadow{QImage{front.width(), front.height(), QImage::Format_ARGB32}};
+
+    QT_WARNING_POP
 };
 
 }

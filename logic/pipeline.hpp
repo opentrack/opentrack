@@ -6,6 +6,7 @@
 #include "api/plugin-support.hpp"
 #include "mappings.hpp"
 #include "compat/euler.hpp"
+#include "compat/dquat.hpp"
 #include "compat/enum-operators.hpp"
 #include "runtime-libraries.hpp"
 
@@ -19,7 +20,6 @@
 
 #include <atomic>
 #include <cmath>
-#include <QQuaternion>
 
 #include "export.hpp"
 
@@ -86,9 +86,10 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     const Mappings& m;
 
     Timer t;
-    Pose output_pose, raw_6dof, last_value;
+    // Pose members are prefixed to avoid confusion since there are so many
+    // pose variables.
+    Pose m_output_pose, m_raw_6dof, m_last_value, m_newpose;
 
-    Pose newpose;
     runtime_libraries const& libs;
     // The owner of the reference is the main window.
     // This design might be useful if we decide later on to swap out
@@ -98,9 +99,8 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     reltrans rel;
 
     struct {
-		Pose P;
-		QQuaternion QC = QQuaternion(1,0,0,0);
-		QQuaternion QR = QQuaternion(1,0,0,0);
+        Pose P;
+        dquat QC, QR, camera;
     } center;
 
     time_units::ms backlog_time {};
@@ -113,6 +113,7 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     bool maybe_enable_center_on_tracking_started();
     void maybe_set_center_pose(const centering_state mode, const Pose& value, bool own_center_logic);
     Pose apply_center(const centering_state mode, Pose value) const;
+    Pose apply_camera_offset(Pose value) const;
     std::tuple<Pose, Pose, vec6_bool> get_selected_axis_values(const Pose& newpose) const;
     Pose maybe_apply_filter(const Pose& value) const;
     Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);

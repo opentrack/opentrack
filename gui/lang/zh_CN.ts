@@ -326,7 +326,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Forward from center of rotation</source>
-        <translation>向前偏移</translation>
+        <translation>旋转中心偏移</translation>
+    </message>
+    <message>
+        <source>Mapping curves</source>
+        <translation>映射曲线</translation>
+    </message>
+    <message>
+        <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
+        <translation>开关映射曲线功能。便于单独测试相机偏移的效果。</translation>
     </message>
     <message>
         <source>Game detection</source>
@@ -346,11 +354,11 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Centering method</source>
-        <translation>回中模式</translation>
+        <translation>居中方式</translation>
     </message>
     <message>
         <source>Point</source>
-        <translation>Point 模式</translation>
+        <translation>点校准模式</translation>
     </message>
     <message>
         <source>Wireless VR 360</source>
@@ -397,16 +405,24 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>输出-反转</translation>
     </message>
     <message>
+        <source>Gamepad button %1</source>
+        <translation>游戏手柄按钮 %1</translation>
+    </message>
+    <message>
         <source>Keep looking forward while the key is pressed.</source>
-        <translation type="unfinished"></translation>
+        <translation>按住按键时保持向前看。</translation>
     </message>
     <message>
         <source>Freeze the pose like Toggle, except only while they key is still pressed.</source>
-        <translation type="unfinished"></translation>
+        <translation>按住按键时锁定当前视角。</translation>
     </message>
     <message>
-        <source>Gamepad button %1</source>
-        <translation type="unfinished"></translation>
+        <source>Camera offset</source>
+        <translation>摄像头偏移</translation>
+    </message>
+    <message>
+        <source>Extra rotation adjustment for reducing axis bleed on asymmetrically mounted cameras.</source>
+        <translation>额外旋转调节功能，用于减少非对称安装摄像头产生的轴向偏移。</translation>
     </message>
 </context>
 <context>
