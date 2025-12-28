@@ -19,8 +19,10 @@ endfunction()
 
 set(opentrack_install-debug-info FALSE CACHE INTERNAL "" FORCE)
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O0")
-set(CMAKE_C_FLAGS_RELEASE "-O0")
+set(CMAKE_CXX_FLAGS "")
+set(CMAKE_C_FLAGS "")
+set(CMAKE_CXX_FLAGS_RELEASE "")
+set(CMAKE_C_FLAGS_RELEASE "")
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 add_compile_options(-MD)
