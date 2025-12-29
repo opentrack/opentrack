@@ -40,7 +40,8 @@ else()
 endif()
 
 function(otr_escape_string var str)
-    string(REGEX REPLACE "([^_A-Za-z0-9./:-])" "\\\\\\1" str "${str}")
+    string(REGEX REPLACE "([\\\"$;])" "\\\\\\1" str "${str}")
+    string(REPLACE "\n" "\\n" str "${str}")
     set(${var} "${str}" PARENT_SCOPE)
 endfunction()
 
