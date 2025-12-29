@@ -16,7 +16,7 @@ endfunction()
 set(opentrack_install-debug-info TRUE CACHE INTERNAL "" FORCE)
 
 setq(OpenCV_DIR "opencv/build/clang-asan/install")
-#setq(SDK_ARUCO_LIBPATH "aruco/build-mingw-w64/src/libaruco.a")
+setq(SDK_ARUCO_LIBPATH "aruco/build/clang-asan/src/libaruco.a")
 setq(SDK_FSUIPC "fsuipc")
 setq(SDK_HYDRA "SixenseSDK")
 setq(SDK_VALVE_STEAMVR "steamvr")
