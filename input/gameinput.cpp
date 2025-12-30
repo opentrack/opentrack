@@ -208,7 +208,8 @@ void Worker_::init_gameinput()
         return;
     }
 
-    gi->SetFocusPolicy(GameInputDefaultFocusPolicy);
+    // 0x40 is the value for GameInputEnableBackgroundInput in the new API
+    gi->SetFocusPolicy((GameInputFocusPolicy)0x00000040);
 
     constexpr GameInputKind mask =
         //GameInputKindUiNavigation |
