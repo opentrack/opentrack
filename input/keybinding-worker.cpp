@@ -8,6 +8,8 @@
 
 #ifdef _WIN32
 
+#undef NDEBUG
+#include <cassert>
 #include "keybinding-worker.hpp"
 #include "compat/macros.h"
 #include "compat/thread-name.hpp"
@@ -111,10 +113,35 @@ KeybindingWorker::KeybindingWorker()
         start(QThread::HighPriority);
 }
 
+static QMutex kw_mutex;
+
+std::unique_ptr<KeybindingWorker>& KeybindingWorker::makeʹ()
+{
+    static std::unique_ptr<KeybindingWorker> kw{new KeybindingWorker};
+    return kw;
+}
+
 KeybindingWorker& KeybindingWorker::make()
 {
-    static KeybindingWorker k;
-    return k;
+    QMutexLocker l{&kw_mutex};
+    auto& p = makeʹ();
+    if (!p) [[unlikely]]
+    {
+        auto pʹ = std::exchange(p, std::unique_ptr<KeybindingWorker>(new KeybindingWorker));
+        assert(pʹ);
+    }
+    return *p;
+}
+
+void KeybindingWorker::terminate()
+{
+    QMutexLocker l{&kw_mutex};
+    auto& opt = makeʹ();
+    if (opt)
+    {
+        assert(opt->receivers.empty());
+        opt = nullptr;
+    }
 }
 
 void KeybindingWorker::run()
