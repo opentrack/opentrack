@@ -316,3 +316,8 @@ function(otr_install_lib target dest)
         endif()
     endif()
 endfunction()
+
+function(otr_install_pdb_for_imported_target target)
+    set(PDB_PATH "$<PATH:REPLACE_EXTENSION,$<TARGET_FILE:${target}>,.pdb>")
+    install(FILES "${PDB_PATH}" DESTINATION "${opentrack-debug}" OPTIONAL)
+endfunction()
