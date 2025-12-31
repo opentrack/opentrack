@@ -33,7 +33,7 @@ wxr_tracker::wxr_tracker()
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2, 2), &wsaData);
 
-    HMDQuat = QVector4D(0, 0, 0, 0);
+    HMDRawQuat = QVector4D(0, 0, 0, 0);
     HMDPos = QVector3D(0, 0, 0);
 
     std::filesystem::path tmpPath = "Z:/";
@@ -201,13 +201,14 @@ wxr_tracker::wxr_tracker()
 
     // if (bEnableAltEyeRendering)
     //{
+    //
     //     aerMode = "2";
     // }
 
     float targetFOVH = 104.5;
     float targetFOVW = 104.5;
 
-    SendData("0 0 1 " + aerMode + " " + std::to_string(targetFOVH) + " " + std::to_string(targetFOVW));
+    SendData("0 0 2 " + aerMode + " " + std::to_string(targetFOVH) + " " + std::to_string(targetFOVW));
 }
 wxr_tracker::~wxr_tracker()
 {
@@ -352,6 +353,14 @@ module_status wxr_tracker::start_tracker(QFrame*)
     return {};
 }
 
+QVector4D wxr_tracker::QuaternionMultiply(const QVector4D& q1, const QVector4D& q2)
+{
+    return QVector4D(q1.w() * q2.x() + q1.x() * q2.w() + q1.y() * q2.z() - q1.z() * q2.y(),
+                     q1.w() * q2.y() - q1.x() * q2.z() + q1.y() * q2.w() + q1.z() * q2.x(),
+                     q1.w() * q2.z() + q1.x() * q2.y() - q1.y() * q2.x() + q1.z() * q2.w(),
+                     q1.w() * q2.w() - q1.x() * q2.x() - q1.y() * q2.y() - q1.z() * q2.z());
+}
+
 void wxr_tracker::data(double* data)
 {
     // const double dt = t.elapsed_seconds();
@@ -398,21 +407,22 @@ void wxr_tracker::data(double* data)
     // Parse integer value
     iss >> openXRFrameID;
 
-    // WXYZ instead of XYZW
-    // HMDQuat = QVector4D(floats[18], floats[19], floats[20], floats[21]);
-    HMDQuat = QVector4D(floats[21], floats[18], floats[19], floats[20]);
+    HMDRawQuat = QVector4D(floats[18], floats[19], -floats[20], floats[21]);
     HMDPos = QVector3D(floats[22], floats[23], floats[24]);
 
-    // data[1] = openXRFrameID;
-    data[0] = floats[22];
-    data[1] = floats[23];
-    data[2] = floats[24];
+    //QVector4D rollInversion = QVector4D(0.0f, 0.0f, 1.0f, 0.0f); // Quaternion for 180-degree rotation around Z-axis
+    //QVector4D quat = QuaternionMultiply(HMDRawQuat, rollInversion);
 
-    QQuaternion hmdQuat = QQuaternion::QQuaternion(HMDQuat);
+    // data[1] = openXRFrameID;
+    data[0] = floats[22] * -20.0;
+    data[1] = floats[23] * 20.0;
+    data[2] = floats[24] * 20.0;
+
+    QQuaternion hmdQuat = QQuaternion::QQuaternion(HMDRawQuat); // quat);
     QVector3D hmdEuler = hmdQuat.toEulerAngles();
 
-    data[3] = hmdEuler.x();
-    data[4] = hmdEuler.y();
+    data[3] = 360.0 - hmdEuler.y();
+    data[4] = hmdEuler.x();
     data[5] = hmdEuler.z();
 }
 

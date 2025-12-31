@@ -41,9 +41,8 @@ public:
     void data(double* data) override;
 
     QVector4D QuaternionMultiply(const QVector4D& q1, const QVector4D& q2);
-    QMatrix4x4 RotationFromDirection(QVector3D direction);
     QVector3D HMDPos;
-    QVector4D HMDQuat;
+    QVector4D HMDRawQuat;
 
 private:
     int udpPort = 7872;
