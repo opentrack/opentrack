@@ -51,8 +51,6 @@ if(CMAKE_PROJECT_NAME STREQUAL "opentrack")
         add_compile_options(-w1${i} -we${i})
     endforeach()
 
-    setq(opentrack-use-onnxruntime-avx-dispatch 1)
-
 elseif(CMAKE_PROJECT_NAME STREQUAL "OpenCV")
     setq(PARALLEL_ENABLE_PLUGINS                OFF)
     setq(HIGHGUI_ENABLE_PLUGINS                 OFF)
