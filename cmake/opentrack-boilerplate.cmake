@@ -117,7 +117,7 @@ endfunction()
 
 function(otr_install_pdb_for_target target)
     if(MSVC)
-        install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-debug}" PERMISSIONS ${opentrack-perms-file})
+        install(FILES "$<TARGET_PDB_FILE:${target}>" DESTINATION "${opentrack-debug}" PERMISSIONS ${opentrack-perms-file} OPTIONAL)
     endif()
 endfunction()
 
