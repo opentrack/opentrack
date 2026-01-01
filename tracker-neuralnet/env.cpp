@@ -9,6 +9,7 @@ namespace neuralnet_tracker_ns
 
 void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
 {
+#ifdef _WIN32
     QLibrary lib;
     lib.setLoadHints(QLibrary::PreventUnloadHint);
     lib.setFileName(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "onnxruntime" "." OPENTRACK_LIBRARY_EXTENSION);
@@ -41,6 +42,7 @@ void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
     }
 
     Ort::Global<void>::api_ = ort_api; // see ORT_API_MANUAL_INIT in the onnx c++ header.
+#endif
 }
 
 } // namespace neuralnet_tracker_ns
