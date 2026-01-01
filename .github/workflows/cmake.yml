@@ -48,6 +48,11 @@ jobs:
         sudo apt install libproc2-dev libopencv-dev libopencv-dev wine64-tools
         sudo apt install qt6-tools-dev qt6-serialport-dev qt6-base-private-dev
         sudo apt install libusb-1.0-0-dev libsdl2-dev libonnxruntime-dev
+        wget -qO- https://github.com/microsoft/onnxruntime/releases/download/v1.23.2/onnxruntime-linux-x64-1.23.2.tgz  | sudo tar --strip-components=1 -zxf - -C/tmp/a
+        cp -R /tmp/a/{lib,include} /usr
+        tar zxfv 
+        
+        
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install opencv (Windows)
@@ -74,7 +79,7 @@ jobs:
       if: matrix.os != 'ubuntu-latest'
 
     - name: Configure
-      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt6_DIR="${{env.QT_ROOT_DIR}}/lib/cmake/Qt6"
+      run: ${{matrix.cmake}} -GNinja -S ${{github.workspace}}/ -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DQt6_DIR="${{env.QT_ROOT_DIR}}/lib/cmake/Qt6" -DONNXRuntime_DIR=/usr/lib/cmake/onnxruntime
 
     - name: Build
       run: ${{matrix.cmake}} --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
@@ -84,3 +89,4 @@ jobs:
 #      with:
 #        name: buildoutput
 #        path: ${{github.workspace}}/build/
+4
