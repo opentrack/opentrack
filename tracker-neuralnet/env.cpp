@@ -20,7 +20,7 @@ void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
         std::abort();
     }
 
-    void* fn_OrtGetApiBase = lib.resolve("OrtGetApiBase");
+    auto* fn_OrtGetApiBase = (void*)lib.resolve("OrtGetApiBase");
     if (!fn_OrtGetApiBase)
     {
         qDebug().nospace() << "tracker/nn: can't find OrtGetApiBase in onnxruntime: " << lib.errorString() << ". now crashing.";
