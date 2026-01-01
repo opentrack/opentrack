@@ -9,10 +9,14 @@ namespace neuralnet_tracker_ns
 
 void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
 {
-#ifdef _WIN32
+#if defined _WIN32 || (defined __unix__ || defined __unix) && !defined __APPLE__
     QLibrary lib;
     lib.setLoadHints(QLibrary::PreventUnloadHint);
-    lib.setFileName(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH "onnxruntime" "." OPENTRACK_LIBRARY_EXTENSION);
+    lib.setFileName(
+#ifdef _WIN32
+        OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH
+#endif
+        "onnxruntime" "." OPENTRACK_LIBRARY_EXTENSION);
     qDebug() << "tracker/nn: loading onnxruntime library" << lib.fileName();
     if (!lib.load())
     {
