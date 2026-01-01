@@ -47,10 +47,11 @@ jobs:
         sudo apt update
         sudo apt install libproc2-dev libopencv-dev libopencv-dev wine64-tools
         sudo apt install qt6-tools-dev qt6-serialport-dev qt6-base-private-dev
-        sudo apt install libusb-1.0-0-dev libsdl2-dev libonnxruntime-dev
-        wget -qO- https://github.com/microsoft/onnxruntime/releases/download/v1.23.2/onnxruntime-linux-x64-1.23.2.tgz  | sudo tar --strip-components=1 -zxf - -C/tmp/a
-        cp -R /tmp/a/{lib,include} /usr
+        sudo apt install libusb-1.0-0-dev libsdl2-dev
 
+        mkdir /tmp/a
+        wget -qO- https://github.com/microsoft/onnxruntime/releases/download/v1.23.2/onnxruntime-linux-x64-1.23.2.tgz  | tar --strip-components=1 -zxf - -C/tmp/a
+        sudo cp -R /tmp/a/{lib,include} /usr
       if: matrix.os == 'ubuntu-latest'
 
     - name: Install opencv (Windows)
@@ -87,4 +88,3 @@ jobs:
 #      with:
 #        name: buildoutput
 #        path: ${{github.workspace}}/build/
-4
