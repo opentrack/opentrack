@@ -131,8 +131,6 @@ class Worker_ final : public Worker
     std::unordered_map<device_id, Device, hasher, comparator> _devices{};
     std::bitset<std::size(gamepad_buttons)> button_state;
 
-    void poll(const std::function<void(const Key&)>& fn, Mods mods) override;
-
     void add_device(IGameInputDevice* dev);
     void remove_device(IGameInputDevice* dev);
     bool should_skip_device(GameInputKind kind);
@@ -160,6 +158,8 @@ public:
 
     void init_gameinput();
     void kill_gameinput();
+
+    void poll(const std::function<void(const Key&)>& fn, Mods mods) override;
 
     friend class Token;
 };
@@ -208,7 +208,8 @@ void Worker_::init_gameinput()
         return;
     }
 
-    gi->SetFocusPolicy(GameInputDefaultFocusPolicy);
+    // 0x40 is the value for GameInputEnableBackgroundInput in the new API
+    gi->SetFocusPolicy((GameInputFocusPolicy)0x00000040);
 
     constexpr GameInputKind mask =
         //GameInputKindUiNavigation |
@@ -265,7 +266,7 @@ void Worker_::device_callback(GameInputCallbackToken,
     bool is_connected = currentStatus & GameInputDeviceConnected,
          was_connected = previousStatus & GameInputDeviceConnected;
 
-    std::lock_guard l{_lock};
+    std::scoped_lock l{_lock};
 
     if(auto* info = device->GetDeviceInfo(); should_skip_device(info->supportedInput))
         return;
@@ -298,7 +299,7 @@ bool Worker_::should_skip_device(GameInputKind kind)
 
 void Worker_::poll(const std::function<void(const Key&)>& fn, Mods mods)
 {
-    std::lock_guard l{_lock};
+    std::scoped_lock l{_lock};
     for (auto& [_, d] : _devices)
     {
         if (!d.supportedInput)

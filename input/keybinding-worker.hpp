@@ -19,6 +19,7 @@
 #include "dinput.hpp"
 
 #include <functional>
+#include <memory>
 #include <vector>
 
 #include <QThread>
@@ -30,6 +31,9 @@
 struct OTR_INPUT_EXPORT KeybindingWorker : private QThread
 {
     using fun = std::function<void(const Key&)>;
+
+    static void terminate();
+    ~KeybindingWorker() override;
 
     KeybindingWorker(const KeybindingWorker&) = delete;
     KeybindingWorker& operator=(const KeybindingWorker&) = delete;
@@ -46,10 +50,10 @@ private:
     bool init_(IDirectInputDevice8A*& dev, const char* name, const GUID& guid, const DIDATAFORMAT& fmt);
     KeybindingWorker();
 
+    static std::unique_ptr<KeybindingWorker>& makeʹ();
     static KeybindingWorker& make();
     fun* add_receiver(fun& receiver);
     void remove_receiver(fun* pos);
-    ~KeybindingWorker() override;
 
     static constexpr int num_keyboard_states = 128;
     static constexpr int num_mouse_buttons = 8;

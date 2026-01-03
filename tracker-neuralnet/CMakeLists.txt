@@ -3,9 +3,9 @@ set(host-spec "${CMAKE_SYSTEM_NAME} ${CMAKE_SYSTEM_PROCESSOR} ${CMAKE_SIZEOF_VOI
 if(host-spec MATCHES "^Linux i[3-6]86 4$")
     return()
 endif()
-if(NOT DEFINED opentrack-use-onnxruntime-avx-dispatch)
-    set(opentrack-use-onnxruntime-avx-dispatch 0)
-endif()
+#if(NOT DEFINED opentrack-use-onnxruntime-avx-dispatch)
+#    set(opentrack-use-onnxruntime-avx-dispatch 0)
+#endif()
 
 find_package(OpenCV QUIET)
 find_package(OpenMP QUIET) # Used to control number of onnx threads.
@@ -19,17 +19,10 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
 
     otr_module(tracker-neuralnet)
 
-    if(opentrack-use-onnxruntime-avx-dispatch)
-        target_compile_definitions(${self} PRIVATE "OPENTRACK_HAS_ONNXRUNTIME_CPU_DISPATCH")
-        add_library(${self}-if INTERFACE)
-        target_include_directories(${self}-if INTERFACE $<TARGET_PROPERTY:onnxruntime::onnxruntime,INTERFACE_INCLUDE_DIRECTORIES>)
-        target_compile_definitions(${self}-if INTERFACE $<TARGET_PROPERTY:onnxruntime::onnxruntime,INTERFACE_COMPILE_DEFINITIONS>)
-        target_compile_options(${self}-if INTERFACE $<TARGET_PROPERTY:onnxruntime::onnxruntime,INTERFACE_COMPILE_OPTIONS>)
-        target_link_libraries(${self} PRIVATE ${self}-if)
-        #target_link_libraries(${self} PRIVATE onnxruntime::onnxruntime)
+    target_link_libraries(${self} PRIVATE onnxruntime::onnxruntime)
+    otr_install_pdb_for_imported_target(onnxruntime::onnxruntime)
+    if(WIN32)
         target_compile_definitions(${self} PRIVATE ORT_API_MANUAL_INIT)
-    else()
-        target_link_libraries(${self} PRIVATE onnxruntime::onnxruntime)
     endif()
 
     target_link_libraries(${self} PRIVATE
@@ -52,6 +45,8 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
               "models/head-pose-0.4-big-int8.onnx"
               "models/head-pose-0.4-small-f32.onnx"
               "models/head-pose-0.4-small-int8.onnx"
+              "models/head-pose-0.2-big.onnx"
+              "models/head-pose-0.2-small.onnx"
         DESTINATION "${opentrack-libexec}/models"
         PERMISSIONS ${opentrack-perms-file}
         )

@@ -8,7 +8,7 @@
 #include "compat/timer.hpp"
 #include "ui_dialog.h"
 
-#include <QDialog>
+#include <optional>
 #include <QProcess>
 #include <QTimer>
 
@@ -52,7 +52,7 @@ public:
 
 struct ps3eye_camera final : video::impl::camera
 {
-    QProcess wrapper;
+    std::optional<QProcess> wrapper;
     shm_wrapper shm { "ps3eye-driver-shm", nullptr, sizeof(ps3eye::shm) };
     settings s;
     frame fr;
