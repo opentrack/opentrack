@@ -20,8 +20,10 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
     otr_module(tracker-neuralnet)
 
     target_link_libraries(${self} PRIVATE onnxruntime::onnxruntime)
-    target_compile_definitions(${self} PRIVATE ORT_API_MANUAL_INIT)
     otr_install_pdb_for_imported_target(onnxruntime::onnxruntime)
+    if(WIN32)
+        target_compile_definitions(${self} PRIVATE ORT_API_MANUAL_INIT)
+    endif()
 
     target_link_libraries(${self} PRIVATE
         opentrack-cv
