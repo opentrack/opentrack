@@ -110,22 +110,7 @@ bool ps3eye_camera_::can_show_dialog(const QString& name)
     return name == camera_name && check_device_exists();
 }
 
-ps3eye_camera::ps3eye_camera()
-{
-    if (!shm.success())
-        return;
-
-    static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
-
-    wrapper.setWorkingDirectory(library_path);
-#ifdef _WIN32
-    wrapper.setProgram("\"ps3eye-subprocess.exe\"");
-    // workaround apparent Qt 5.15.2 bug -sh 20210817
-    wrapper.setProcessChannelMode(QProcess::ForwardedChannels);
-#else
-    wrapper.setProgram("ps3eye-subprocess");
-#endif
-}
+ps3eye_camera::ps3eye_camera() = default;
 
 ps3eye_camera::~ps3eye_camera()
 {
@@ -136,16 +121,19 @@ void ps3eye_camera::stop()
 {
     open = false;
 
-    if (wrapper.state() != QProcess::NotRunning)
+    if (wrapper && wrapper->state() != QProcess::NotRunning)
     {
         volatile auto& ptr = *(ps3eye::shm*)shm.ptr();
         ptr.in.do_exit = 1;
         std::atomic_thread_fence(std::memory_order_seq_cst);
-        wrapper.waitForFinished(1000);
+        run_in_thread_sync(qApp, [this] {
+            wrapper->waitForFinished(1000);
 
-        if (wrapper.state() != QProcess::NotRunning)
-            wrapper.kill();
-        wrapper.waitForFinished(1000);
+            if (wrapper->state() != QProcess::NotRunning)
+                wrapper->kill();
+            wrapper->waitForFinished(1000);
+            wrapper = std::nullopt;
+        });
     }
 }
 
@@ -185,7 +173,21 @@ bool ps3eye_camera::start(info& args)
 
     sleep_ms = std::clamp(int(std::floor(450./ptr.in.framerate)), 1, 10);
 
-    wrapper.start();
+    static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
+
+    run_in_thread_sync(qApp, [this] {
+        wrapper.emplace(qApp);
+
+        wrapper->setWorkingDirectory(library_path);
+#ifdef _WIN32
+        wrapper->setProgram("\"ps3eye-subprocess.exe\"");
+        // workaround apparent Qt 5.15.2 bug -sh 20210817
+        wrapper->setProcessChannelMode(QProcess::ForwardedChannels);
+#else
+        wrapper->setProgram("ps3eye-subprocess");
+#endif
+        wrapper->start();
+    });
 
     constexpr int sleep_ms = 10, max_sleeps = 2000/sleep_ms;
 

@@ -27,7 +27,7 @@ else()
 endif()
 
 if(DEFINED OPENTRACK_USERCONFIG)
-    if(IS_ABSOLUTE OPENTRACK_USERCONFIG)
+    if(IS_ABSOLUTE "${OPENTRACK_USERCONFIG}")
         set(__sdk_file "${OPENTRACK_USERCONFIG}")
     else()
         set(__sdk_file "${CMAKE_CURRENT_SOURCE_DIR}/${OPENTRACK_USERCONFIG}")

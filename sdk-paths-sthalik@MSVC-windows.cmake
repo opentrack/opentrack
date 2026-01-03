@@ -1,16 +1,3 @@
-#
-# qtbase configure line for safekeeping
-#
-
-# "../configure" -prefix d:\dev\qt-5.10.0 -no-ico -no-gif               \
-# -opengl desktop -no-fontconfig -no-harfbuzz                           \
-# -nomake tests -no-mp -release -opensource -shared -confirm-license    \
-# -no-freetype -force-debug-info -separate-debug-info                   \
-# -make-tool jom -platform win32-msvc -static-runtime
-
-# remember to change -MD to -MT in mkspecs/
-# also add CFLAGS -Zi and LFLAGS -DEBUG
-
 set(__depdir "${CMAKE_CURRENT_LIST_DIR}/../opentrack-depends")
 
 function(setq name value)
@@ -29,39 +16,17 @@ setq(SDK_FSUIPC "fsuipc")
 setq(SDK_HYDRA "SixenseSDK")
 setq(SDK_EYEWARE_BEAM "eyeware-beam-sdk")
 setq(SDK_TOBII "nonfree/tobii-streamengine")
-if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-setq(Qt6_DIR "../qt-6.10.1-msvc-amd64/lib/cmake/Qt6")
-setq(OpenCV_DIR "opencv/build/amd64/install")
-setq(SDK_ARUCO_LIBPATH "aruco/build/amd64/src/aruco.lib")
-setq(SDK_LIBUSB "libusb-msvc-amd64")
-setq(SDK_GAMEINPUT "gameinput")
 
-setq(ONNXRuntime_DIR "onnxruntime-1.22.1-noavx")
-install(FILES "${__depdir}/onnxruntime-1.22.1-noavx/bin/onnxruntime.dll" RENAME "onnxruntime-noavx.dll" DESTINATION "modules")
-install(FILES "${__depdir}/onnxruntime-1.22.1-avx/bin/onnxruntime.dll" RENAME "onnxruntime-avx.dll" DESTINATION "modules")
 set(opentrack-use-onnxruntime-avx-dispatch 1)
-
-#setq(SDK_TRACKHAT_SENSOR "trackhat-c-library-driver/build/amd64/install")
-set(SDK_TRACKHAT_SENSOR "FALSE" CACHE INTERNAL "" FORCE)
-setq(SDK_OSCPACK "oscpack/build/amd64")
-elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
-setq(Qt6_DIR "../qt-6.10.1-msvc-x86/lib/cmake/Qt6")
-setq(OpenCV_DIR "opencv/build/x86/install")
-setq(SDK_ARUCO_LIBPATH "aruco/build/x86/src/aruco.lib")
-setq(SDK_LIBUSB "libusb-msvc-x86")
-setq(ONNXRuntime_DIR "onnxruntime-1.22.1-nolto-x86")
-setq(ONNXRuntime_DIR "")
-#setq(SDK_TRACKHAT_SENSOR "trackhat-c-library-driver/build/install")
-set(SDK_TRACKHAT_SENSOR "FALSE" CACHE INTERNAL "" FORCE)
-setq(SDK_OSCPACK "oscpack/build/x86")
-else()
-    message(FATAL_ERROR "unknown word size ${CMAKE_SIZEOF_VOID_P}")
+if(CMAKE_SIZEOF_VOID_P GREATER 4)
+    setq(Qt6_DIR "../qt-6.10.1-msvc/lib/cmake/Qt6")
+    setq(OpenCV_DIR "opencv/build/msvc/install")
+    setq(SDK_ARUCO_LIBPATH "aruco/build/msvc/src/aruco.lib")
+    setq(SDK_LIBUSB "libusb-msvc")
+    setq(SDK_GAMEINPUT "gameinput")
+    setq(SDK_OSCPACK "oscpack/build/msvc")
+    setq(ONNXRuntime_DIR "onnxruntime-win-x64-1.23.2")
 endif()
-
-set(CMAKE_ASM_NASM_COMPILER nasm.exe CACHE FILEPATH "" FORCE)
-
-set(qt6Core_DIR "${qt6_DIR}Core" CACHE PATH "" FORCE)
-set(qt6Gui_DIR "${qt6_DIR}Gui" CACHE PATH "" FORCE)
 
 if(CMAKE_GENERATOR STREQUAL "NMake Makefiles")
     set(CMAKE_MAKE_PROGRAM "jom" CACHE STRING "" FORCE)
