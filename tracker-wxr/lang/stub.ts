@@ -15,7 +15,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Pressing &quot;Abort&quot; will immediately close the application.</source>
+        <source>Adjust the scale of Yaw, Pitch, and Roll when in Windowed or Fullscreen (Immersive) Mode.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Roll</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pitch</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Immersive Scale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yaw</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Regular Scale</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

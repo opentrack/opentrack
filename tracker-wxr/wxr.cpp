@@ -69,7 +69,7 @@ wxr_tracker::wxr_tracker()
             std::ofstream verFile(versionPath);
             if (verFile.is_open())
             {
-                verFile << "0.2";
+                verFile << "0.3";
                 verFile.close();
             }
             else
@@ -197,11 +197,11 @@ wxr_tracker::wxr_tracker()
     udpReadThread = std::thread(&wxr_tracker::ReceiveData, this);
     udpReadThread.detach();
 
-    std::string aerMode = "0";
+    std::string aerMode = "-1";
 
+    // AER is not likely necessary for non-VR apps, they can use SBS via reshade most often
     // if (bEnableAltEyeRendering)
     //{
-    //
     //     aerMode = "2";
     // }
 
@@ -405,7 +405,29 @@ void wxr_tracker::data(double* data)
     }
 
     // Parse integer value
-    iss >> openXRFrameID;
+    iss >> openXRFrameID >> buttonString;
+
+    std::vector<bool> buttonBools;
+
+    if (buttonString.empty())
+    {
+        buttonString = "FFFFFFFFFFFFFFFFFFFFF";
+    }
+
+    for (char c : buttonString)
+    {
+        if (c == 'F')
+        {
+            buttonBools.push_back(false);
+        }
+        else if (c == 'T')
+        {
+            buttonBools.push_back(true);
+        }
+    }
+
+    isImmersive = buttonBools[19];
+    isSBS = buttonBools[20];
 
     HMDRawQuat = QVector4D(floats[18], floats[19], -floats[20], floats[21]);
     HMDPos = QVector3D(floats[22], floats[23], floats[24]);
@@ -421,9 +443,18 @@ void wxr_tracker::data(double* data)
     QQuaternion hmdQuat = QQuaternion::QQuaternion(HMDRawQuat); // quat);
     QVector3D hmdEuler = hmdQuat.toEulerAngles();
 
-    data[3] = 360.0 - hmdEuler.y();
-    data[4] = hmdEuler.x();
-    data[5] = hmdEuler.z();
+    if (isImmersive)
+    {
+        data[3] = 360.0 - (hmdEuler.y() * s.yaw_scale_immersive);
+        data[4] = hmdEuler.x() * s.pitch_scale_immersive;
+        data[5] = hmdEuler.z() * s.roll_scale_immersive;
+    }
+    else
+    {
+        data[3] = 360.0 - (hmdEuler.y() * s.yaw_scale);
+        data[4] = hmdEuler.x() * s.pitch_scale;
+        data[5] = hmdEuler.z() * s.roll_scale;
+    }
 }
 
 OPENTRACK_DECLARE_TRACKER(wxr_tracker, wxr_dialog, wxr_metadata)
