@@ -67,18 +67,6 @@ struct XRealOneIMUFrame
 
     // Offset 120-133: Frame footer (14 bytes)
     uint8_t footer[14];
-
-public:
-
-    inline bool is_header_valid() const
-    {
-        return memcmp(header, DefaultHeader, 6) == 0;
-    }
-
-    inline bool is_gyro_accel_data() const
-    {
-        return memcmp(data_type, DefaultGyroAccelType, 6) == 0;
-    }
 };
 #pragma pack(pop)
 
