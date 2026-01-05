@@ -5,7 +5,7 @@
     <name>dialog_rift_140</name>
     <message>
         <source>Oculus Rift tracker settings FaceTrackNoIR</source>
-        <translation type="unfinished"></translation>
+        <translation>Oculus Rift 追踪器设置 (FaceTrackNoIR版)</translation>
     </message>
 </context>
 <context>

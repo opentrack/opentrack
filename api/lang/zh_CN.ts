@@ -5,7 +5,7 @@
     <name>module_status_mixin</name>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>未知错误</translation>
     </message>
 </context>
 </TS>

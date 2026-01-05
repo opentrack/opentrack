@@ -42,7 +42,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
     case 4:
         break;
     default:
-        unreachable();
+        tr_unreachable();
         break;
     }
 
@@ -57,7 +57,7 @@ void cv_video_widget::update_image(const cv::Mat& frame)
         color = scaled;
 
     int width = color->cols, height = color->rows;
-    unsigned stride = color->step.p[0];
+    unsigned stride = (unsigned)color->step.p[0];
     set_image(color->data, width, height, stride, QImage::Format_ARGB32);
 
     set_fresh(true);

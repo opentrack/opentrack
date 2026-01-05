@@ -6,6 +6,9 @@
  * notice appear in all copies.
  */
 
+#undef NDEBUG
+#include <cassert>
+
 #include "main-window.hpp"
 #include "logic/pipeline.hpp"
 #include "options/options.hpp"
@@ -24,7 +27,6 @@
 
 #include <QMessageBox>
 #include <QDesktopServices>
-#include <QDesktopWidget>
 #include <QApplication>
 
 #include <QFile>
@@ -81,6 +83,9 @@ main_window::main_window() : State(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH)
 
 void main_window::init_shortcuts()
 {
+    assert(!global_shortcuts);
+    global_shortcuts = std::make_unique<Shortcuts>();
+
     register_shortcuts();
 
     // ctrl+q exits
@@ -271,7 +276,7 @@ void main_window::init_buttons()
 
 void main_window::register_shortcuts()
 {
-    global_shortcuts.reload({
+    global_shortcuts->reload({
         { s.key_start_tracking1, [this](bool) { start_tracker(); }, true },
         { s.key_start_tracking2, [this](bool) { start_tracker(); }, true },
 
@@ -325,6 +330,11 @@ main_window::~main_window()
 
         portable::sleep(1000);
     }
+
+#ifdef _WIN32
+    global_shortcuts = {};
+    KeybindingWorker::terminate();
+#endif
 
     exit();
 }
@@ -980,7 +990,7 @@ void main_window::set_keys_enabled(bool flag)
     {
         if (work)
             work->sc.reload({});
-        global_shortcuts.reload({});
+        global_shortcuts->reload({});
     }
     else
         register_shortcuts();

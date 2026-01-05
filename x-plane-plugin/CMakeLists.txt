@@ -40,7 +40,7 @@ if(LINUX OR APPLE)
             PREFIX "" SUFFIX "")
 
         if(UNIX AND NOT APPLE)
-            target_link_libraries(${self} rt)
+            target_link_libraries(${self} PRIVATE rt)
         endif()
     endif()
 endif()

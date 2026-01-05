@@ -20,7 +20,7 @@
     </message>
     <message>
         <source>Diagonal field of view</source>
-        <translation>对角线</translation>
+        <translation>对角线视野范围</translation>
     </message>
     <message>
         <source>Width</source>
@@ -32,15 +32,15 @@
     </message>
     <message>
         <source>Desired capture height</source>
-        <translation>期望高度</translation>
+        <translation>预设高度</translation>
     </message>
     <message>
         <source> px</source>
-        <translation> 像素点</translation>
+        <translation> 像素</translation>
     </message>
     <message>
         <source>Desired capture framerate</source>
-        <translation>期望帧数</translation>
+        <translation>目标帧率</translation>
     </message>
     <message>
         <source> Hz</source>
@@ -48,7 +48,7 @@
     </message>
     <message>
         <source>Desired capture width</source>
-        <translation>期望宽度</translation>
+        <translation>预设宽度</translation>
     </message>
     <message>
         <source>Height</source>
@@ -56,7 +56,7 @@
     </message>
     <message>
         <source>Device</source>
-        <translation>设备名称</translation>
+        <translation>设备</translation>
     </message>
     <message>
         <source>Open</source>
@@ -64,15 +64,15 @@
     </message>
     <message>
         <source>Camera settings (when available)</source>
-        <translation>摄像头设置 （连接时）</translation>
+        <translation>摄像头设置 (连接时)</translation>
     </message>
     <message>
         <source>Max size</source>
-        <translation>最大</translation>
+        <translation>最大尺寸</translation>
     </message>
     <message>
         <source>Min size</source>
-        <translation>最小</translation>
+        <translation>最小尺寸</translation>
     </message>
     <message>
         <source>Maximum point diameter</source>
@@ -96,23 +96,23 @@
     </message>
     <message>
         <source>Debug (full size preview)</source>
-        <translation type="unfinished"></translation>
+        <translation>调试 (全尺寸预览)</translation>
     </message>
     <message>
         <source>Deadzone</source>
-        <translation type="unfinished"></translation>
+        <translation>死区</translation>
     </message>
     <message>
         <source>Size in pixels of half the edge defining deadzone squares around tracked points</source>
-        <translation type="unfinished"></translation>
+        <translation>定义跟踪点周围死区方块的半边缘的像素大小</translation>
     </message>
     <message>
         <source>Perspective-N-Point solver</source>
-        <translation type="unfinished"></translation>
+        <translation>N 点透视解算</translation>
     </message>
     <message>
         <source>Make sure you pick a solver supporting the number of marker you are using. For three points detection use either P3P or AP3P.</source>
-        <translation type="unfinished"></translation>
+        <translation>请根据标记点数量选择算法：3点检测用P3P/AP3P。</translation>
     </message>
     <message>
         <source>P3P</source>
@@ -140,11 +140,11 @@
     </message>
     <message>
         <source>Tracker</source>
-        <translation type="unfinished"></translation>
+        <translation>输入</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>设置</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;X&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -160,91 +160,91 @@
     </message>
     <message>
         <source>Auto center</source>
-        <translation type="unfinished"></translation>
+        <translation>自动居中</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use P3P or AP3P for three and four points setup. Use EPNP or ITERATIVE for five points setup. Inconsistent configuration will result in undefined behavior.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;使用 P3P 或 AP3P 进行三点或四点设置。使用 EPNP 或 ITERATIVE 进行五点设置。不正确的配置会导致功能异常。&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Auto center timeout</source>
-        <translation type="unfinished"></translation>
+        <translation>自动居中超时</translation>
     </message>
     <message>
         <source>If no valid pose can be determined after that much time the center pose will be used.</source>
-        <translation type="unfinished"></translation>
+        <translation>超时后未识别到有效姿态时，将自动应用预设居中姿态。</translation>
     </message>
     <message>
         <source> ms</source>
-        <translation type="unfinished"></translation>
+        <translation> 毫秒</translation>
     </message>
     <message>
         <source>Easy Tracker Settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Easy Tracker 设置</translation>
     </message>
     <message>
         <source>Model type:</source>
-        <translation type="unfinished"></translation>
+        <translation>模型类型：</translation>
     </message>
     <message>
         <source>Hat three vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>帽子三点式</translation>
     </message>
     <message>
         <source>Hat four vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>帽子四点式</translation>
     </message>
     <message>
         <source>Hat five vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>帽子五点式</translation>
     </message>
     <message>
         <source>Clip three vertices</source>
-        <translation type="unfinished"></translation>
+        <translation>夹子三点式</translation>
     </message>
     <message>
         <source>Vertices: </source>
-        <translation type="unfinished"></translation>
+        <translation>点数: </translation>
     </message>
     <message>
         <source>Top:</source>
-        <translation type="unfinished"></translation>
+        <translation>顶部：</translation>
     </message>
     <message>
         <source>Right:</source>
-        <translation type="unfinished"></translation>
+        <translation>右边：</translation>
     </message>
     <message>
         <source>Left:</source>
-        <translation type="unfinished"></translation>
+        <translation>左边：</translation>
     </message>
     <message>
         <source>Center:</source>
-        <translation type="unfinished"></translation>
+        <translation>中心：</translation>
     </message>
     <message>
         <source>Top right:</source>
-        <translation type="unfinished"></translation>
+        <translation>右上：</translation>
     </message>
     <message>
         <source>Top left:</source>
-        <translation type="unfinished"></translation>
+        <translation>左上：</translation>
     </message>
     <message>
         <source>Clip top:</source>
-        <translation type="unfinished"></translation>
+        <translation>夹子顶部：</translation>
     </message>
     <message>
         <source>Clip middle:</source>
-        <translation type="unfinished"></translation>
+        <translation>夹子中间：</translation>
     </message>
     <message>
         <source>Clip bottom:</source>
-        <translation type="unfinished"></translation>
+        <translation>夹子底部：</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;Version 1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;See &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;documentation on GitHub&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Easy Tracker&lt;br/&gt;版本1.1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;by Stéphane Lenclud&lt;/span&gt;&lt;/p&gt;&lt;p&gt;请查看 &lt;a href=&quot;https://github.com/opentrack/opentrack/wiki/Easy-Tracker&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#9999aa;&quot;&gt;在 GitHub 上的文档&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 </TS>

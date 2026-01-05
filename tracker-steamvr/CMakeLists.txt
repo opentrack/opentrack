@@ -41,6 +41,6 @@ if(steamvr-dll AND opentrack-intel)
         install(FILES "${SDK_VALVE_STEAMVR}/bin/${steamvr-dir}/${steamvr-dll}" DESTINATION "${opentrack-libexec}")
 
         target_include_directories(opentrack-tracker-steamvr SYSTEM PRIVATE "${SDK_VALVE_STEAMVR}/headers")
-        target_link_libraries(opentrack-tracker-steamvr "${SDK_VALVE_STEAMVR}/lib/${steamvr-dir}/${steamvr-lib}")
+        target_link_libraries(opentrack-tracker-steamvr PRIVATE "${SDK_VALVE_STEAMVR}/lib/${steamvr-dir}/${steamvr-lib}")
     endif()
 endif()

@@ -1,18 +1,16 @@
-## Intro
-
 [<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
 
-opentrack project home is located at <<http://github.com/opentrack/opentrack>>.
+## Intro
+
+opentrack is a program for tracking user's head rotation and transmitting it to flight simulation software and military-themed video games. Project home is located at <<https://github.com/opentrack/opentrack>>.
+
+Looking for **railway planning software**? <<https://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
 For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>> Download an `.exe` installer or a `.7z` archive. Currently installers and portable versions for Windows are available for each release. It supports [USB stick truly "portable" installations](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
 
 Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
 for [new user guide](https://github.com/opentrack/opentrack/wiki/Quick-Start-Guide-(WIP)), [frequent answers](https://github.com/opentrack/opentrack/wiki/common-issues), specific tracker/filter
 documentation. See also the [gameplay video](https://www.youtube.com/watch?v=XI73ul_FnBI) with opentrack set up.
-
-## Looking for railway planning software?
-
-**Railway planning software** <<http://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
 
 ## Usage
 
@@ -37,12 +35,13 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - Arduino with custom Hatire firmware
 - Intel RealSense 3D camera (Windows)
 - BBC micro:bit, LEGO, sensortag support via Smalltalk<sup>[(1)](https://en.wikipedia.org/wiki/Smalltalk)[(2)](https://en.wikipedia.org/wiki/Alan_Kay)</sup>
-  [S2Bot](http://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
+  [S2Bot](https://www.picaxe.com/Teaching/Other-Software/Scratch-Helper-Apps/)
 - Wiimote (Windows)
-- NeuralNet face tracker
+- NeuralNet Tracker, AI-based head pose estimation with webcams.
 - Eyeware Beam<sup>[[1](https://beam.eyeware.tech/)]</sup>
 - Tobii eye tracker
 - SmoothTrack Head Tracker (iOS/Android)<sup>[[1](https://smoothtrack.app/)]</sup>
+- XReal One<sup>[[1](https://next.xreal.com/one/)]</sup> and probably XReal One Pro<sup>[[2](https://www.xreal.com/one-pro)]</sup>glasses, see details [here](https://gist.github.com/X-Stuff/0c21145b07a4baa3012fae8bffbe0577)
 
 ## Output protocols
 
@@ -60,7 +59,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 ## Credits, in chronological order
 
 - Stanisław Halik (maintainer)
-- Wim Vriend -- author of [FaceTrackNoIR](http://facetracknoir.sourceforge.net/) that served as the initial codebase for `opentrack`. While the  code was almost entirely rewritten, we still hold on to many of `FaceTrackNoIR`'s ideas.
+- Wim Vriend -- author of [FaceTrackNoIR](https://facetracknoir.sourceforge.net/) that served as the initial codebase for `opentrack`. While the  code was almost entirely rewritten, we still hold on to many of `FaceTrackNoIR`'s ideas.
 - Chris Thompson (aka mm0zct, Rift and Razer Hydra author and maintainer)
 - Patrick Ruoff (PT tracker author)
 - Xavier Hallade (Intel RealSense tracker author and maintainer)
@@ -93,6 +92,8 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 
 See guides for writing new modules\[[1](https://github.com/opentrack/opentrack/blob/master/api/plugin-api.hpp)\]\[[2](https://github.com/opentrack/opentrack/blob/master/tracker-test/test.h)\], and for [working with core code](https://github.com/opentrack/opentrack/wiki/Hacking-opentrack).
 
+To edit the wiki, send pull requests to the [opentrack/wiki](https://github.com/opentrack/wiki) repository. The [user-facing wiki](https://github.com/opentrack/opentrack/wiki) will automatically update itself once the commit is merged.
+
 ## License and warranty
 
 Almost all code is licensed under the [ISC license](https://en.wikipedia.org/wiki/ISC_license). There are very few proprietary dependencies. There is no copyleft code. See individual files for licensing and authorship information.
@@ -104,3 +105,6 @@ The code is held to a high-quality standard and written with utmost care; consid
 ## Building opentrack from source
 
 On Windows, use either mingw-w64 or MS Visual Studio 2015 Update 3/newer. On other platforms use GNU or LLVM. Refer to [Visual C++ 2015 build instructions](https://github.com/opentrack/opentrack/wiki/Building-under-MS-Visual-C---2017-and-later).
+
+On Linux, see [our wiki's Linux build instructions](https://github.com/opentrack/opentrack/wiki/Building-on-Linux).
+

@@ -11,7 +11,7 @@
 #include "main-settings.hpp"
 #include "api/plugin-support.hpp"
 #include "pipeline.hpp"
-#include "shortcuts.h"
+#include "input/shortcuts.h"
 #include "export.hpp"
 #include "tracklogger.hpp"
 #include "logic/runtime-libraries.hpp"

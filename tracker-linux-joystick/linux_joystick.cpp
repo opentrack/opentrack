@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QVariant>
+#include <QRegularExpression>
 
 // Discovery is done by searching for devices in the sys file system.
 //
@@ -16,7 +17,7 @@ std::tuple<QString, QString> sysfsDeviceToJsDev(QFileInfo device) {
     QString symlink = device.symLinkTarget();
     QString js_dev = QString("/dev/input/%1").arg(device.fileName());
 
-    QRegExp sep(QString("[:.%1]").arg(QDir::separator()));
+    QRegularExpression sep(QString("[:.%1]").arg(QDir::separator()));
     QString device_id = symlink.section(sep, -6, -5);
     return ret(js_dev, device_id);
 }

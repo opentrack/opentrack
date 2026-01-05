@@ -1,6 +1,7 @@
 #include "impl.hpp"
 #include "compat/sleep.hpp"
 #include "video-property-page.hpp"
+#include <opencv2/core/utils/logger.hpp>
 
 namespace opencv_camera_impl {
 
@@ -33,6 +34,7 @@ bool cam::is_open()
 bool cam::start(info& args)
 {
     stop();
+    cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_WARNING);
     cap.emplace(idx, video_capture_backend);
 
     if (args.width > 0 && args.height > 0)
@@ -71,7 +73,7 @@ bool cam::get_frame_()
             frame_.data = mat.data;
             frame_.width = mat.cols;
             frame_.height = mat.rows;
-            frame_.stride = mat.step.p[0];
+            frame_.stride = (int)mat.step.p[0];
             if (mat.step.p[0] == (unsigned)frame_.width * mat.elemSize())
                 frame_.stride = cv::Mat::AUTO_STEP;
 

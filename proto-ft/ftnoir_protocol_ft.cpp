@@ -6,6 +6,10 @@
  * copyright notice and this permission notice appear in all copies.
  */
 
+#ifdef __CLION_IDE__
+#define _CRT_USE_BUILTIN_OFFSETOF
+#endif
+
 #include "compat/library-path.hpp"
 
 #include "ftnoir_protocol_ft.h"
@@ -40,7 +44,7 @@ freetrack::~freetrack()
 static_assert(sizeof(LONG) == sizeof(std::int32_t));
 static_assert(sizeof(LONG) == 4u);
 
-never_inline void store(float volatile& place, const float value)
+tr_never_inline void store(float volatile& place, const float value)
 {
     union
     {
@@ -112,7 +116,7 @@ void freetrack::pose(const double* headpose, const double* raw)
 
         t.ints[0] = 0; t.ints[1] = 0;
 
-        (void)CSV::getGameData(id, t.table, gamename);
+        (void)getGameData(id, t.table, gamename);
 
         {
             // FTHeap pMemData happens to be aligned on a page boundary by virtue of

@@ -5,47 +5,47 @@
     <name>UI_freepie_udp_dialog</name>
     <message>
         <source>Tracker settings</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪器设置</translation>
     </message>
     <message>
         <source>UDP port</source>
-        <translation type="unfinished"></translation>
+        <translation>UDP 端口</translation>
     </message>
     <message>
         <source>Axis order</source>
-        <translation type="unfinished"></translation>
+        <translation>轴序设置</translation>
     </message>
     <message>
         <source>output yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>偏航输出</translation>
     </message>
     <message>
         <source>input yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>偏航输入</translation>
     </message>
     <message>
         <source>input pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>俯仰输入</translation>
     </message>
     <message>
         <source>input roll</source>
-        <translation type="unfinished"></translation>
+        <translation>滚转输入</translation>
     </message>
     <message>
         <source>output pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>俯仰输出</translation>
     </message>
     <message>
         <source>output roll</source>
-        <translation type="unfinished"></translation>
+        <translation>滚转输出</translation>
     </message>
     <message>
         <source>Add to axis</source>
-        <translation type="unfinished"></translation>
+        <translation>添加轴向</translation>
     </message>
     <message>
         <source>yaw</source>
-        <translation type="unfinished"></translation>
+        <translation>偏航</translation>
     </message>
     <message>
         <source>0</source>
@@ -69,11 +69,11 @@
     </message>
     <message>
         <source>pitch</source>
-        <translation type="unfinished"></translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>roll</source>
-        <translation type="unfinished"></translation>
+        <translation>滚转</translation>
     </message>
 </context>
 <context>

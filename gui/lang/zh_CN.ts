@@ -17,32 +17,31 @@
     <message>
         <source>Press &quot;calibrate&quot; in given row to calibrate that axis. Follow instructions in the next window.
 Press &quot;clear calibration&quot; to remove any calibration data pertaining to that axis of position change or rotation.</source>
-        <translation>按 &quot;校准&quot; in given row to calibrate that axis. 按照下一个窗口的指示继续.
-按 &quot;清除校准&quot; to remove any calibration data pertaining to that axis of position change or rotation.</translation>
+        <translation>校准操作：点击对应行的&quot;校准&quot;按钮进行轴向校准，按后续弹窗指引操作，点击&quot;清除校准&quot;可删除该轴向 (位置/旋转) 的所有校准数据。</translation>
     </message>
     <message>
         <source>X</source>
-        <translation></translation>
+        <translation>X轴</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation></translation>
+        <translation>Y轴</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation></translation>
+        <translation>Z轴</translation>
     </message>
     <message>
         <source>Yaw</source>
-        <translation>航向</translation>
+        <translation>偏航</translation>
     </message>
     <message>
         <source>Pitch</source>
-        <translation>仰俯</translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>Roll</source>
-        <translation>横滚</translation>
+        <translation>滚转</translation>
     </message>
     <message>
         <source>Calibrate</source>
@@ -54,18 +53,18 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>1</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>keyboard_listener</name>
     <message>
         <source>Dialog</source>
-        <translation>按键绑定对话框</translation>
+        <translation>按键设置窗口</translation>
     </message>
     <message>
         <source>Press a key or close this window to remove the keybinding.</source>
-        <translation>按键绑定，或者关闭窗口消除绑定。</translation>
+        <translation>按下任意键绑定按键，关闭窗口可清除绑定。</translation>
     </message>
 </context>
 <context>
@@ -76,7 +75,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Yaw</source>
-        <translation>航向</translation>
+        <translation>偏航</translation>
     </message>
     <message>
         <source>Max input</source>
@@ -88,7 +87,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Pitch</source>
-        <translation>仰俯</translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>Max output</source>
@@ -96,35 +95,35 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>180°</source>
-        <translation></translation>
+        <translation>180度</translation>
     </message>
     <message>
         <source>90°</source>
-        <translation></translation>
+        <translation>90度</translation>
     </message>
     <message>
         <source>Roll</source>
-        <translation>横滚</translation>
+        <translation>滚转</translation>
     </message>
     <message>
         <source>X</source>
-        <translation></translation>
+        <translation>X轴</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation></translation>
+        <translation>Y轴</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation></translation>
+        <translation>Z轴</translation>
     </message>
     <message>
         <source>%1°</source>
-        <translation></translation>
+        <translation>%1度</translation>
     </message>
     <message>
         <source>%1 cm</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 厘米</translation>
     </message>
 </context>
 <context>
@@ -143,7 +142,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Center</source>
-        <translation>回中位置</translation>
+        <translation>视角回中</translation>
     </message>
     <message>
         <source>Bind</source>
@@ -163,7 +162,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Toggle</source>
-        <translation>盯着看</translation>
+        <translation>锁定视角</translation>
     </message>
     <message>
         <source>Zero while held</source>
@@ -171,11 +170,11 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Restart tracking</source>
-        <translation>重新开始跟踪</translation>
+        <translation>重新跟踪</translation>
     </message>
     <message>
         <source>Toggle while held</source>
-        <translation>长按盯着看</translation>
+        <translation>长按锁定</translation>
     </message>
     <message>
         <source>Toggle tracking</source>
@@ -191,15 +190,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Minimize to tray</source>
-        <translation>最小化到任务栏</translation>
+        <translation>最小化到托盘</translation>
     </message>
     <message>
         <source>Enable tray</source>
-        <translation>开启任务栏图标</translation>
+        <translation>开启托盘图标</translation>
     </message>
     <message>
         <source>Minimize to tray on startup when enabled</source>
-        <translation>启动时最小化到任务栏</translation>
+        <translation>启动时最小化到托盘</translation>
     </message>
     <message>
         <source>Output</source>
@@ -207,27 +206,27 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>X</source>
-        <translation></translation>
+        <translation>X轴</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation></translation>
+        <translation>Y轴</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation></translation>
+        <translation>Z轴</translation>
     </message>
     <message>
         <source>Yaw</source>
-        <translation>航向</translation>
+        <translation>偏航</translation>
     </message>
     <message>
         <source>Pitch</source>
-        <translation>仰俯</translation>
+        <translation>俯仰</translation>
     </message>
     <message>
         <source>Roll</source>
-        <translation>横滚</translation>
+        <translation>滚转</translation>
     </message>
     <message>
         <source>Disabled</source>
@@ -235,15 +234,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Relative translation only</source>
-        <translation>相对位移</translation>
+        <translation>仅相对位移</translation>
     </message>
     <message>
         <source>Source</source>
-        <translation>源头</translation>
+        <translation>输入源头</translation>
     </message>
     <message>
         <source>Destination</source>
-        <translation>目标</translation>
+        <translation>输出目标</translation>
     </message>
     <message>
         <source>Custom center pose</source>
@@ -251,15 +250,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Alter the centered position sent to games. Useful if the default position is too much downward or upward.</source>
-        <translation>改变发送到游戏的回中位置. 对于默认位置有明显偏移的很有用.</translation>
+        <translation>更改发送到游戏的居中位置。如果默认位置过于向下或向上，则很有用。</translation>
     </message>
     <message>
         <source>°</source>
-        <translation></translation>
+        <translation>度</translation>
     </message>
     <message>
         <source> cm</source>
-        <translation></translation>
+        <translation> 厘米</translation>
     </message>
     <message>
         <source>CSV Data Logging</source>
@@ -267,7 +266,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Enable - You will be asked for a filename whenever tracking starts</source>
-        <translation>启用 - 当跟踪开始时会被要求输入文件名</translation>
+        <translation>启用 - 追踪启动时将提示输入记录文件名</translation>
     </message>
     <message>
         <source>Relative translation</source>
@@ -275,7 +274,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>With relative mode on, translation is applied after rotation. For example, rotating +180 degrees yaw and moving backwards results in moving forward as a result of that rotation.</source>
-        <translation>相对位移开启时，位移会被后考虑.例如,航向旋转+180度,然后后退的结果是,直接向前移动.</translation>
+        <translation>开启相对位移后，位移的方向会跟随旋转的角度而发生改变，例如：当您向右转动180度后，此时向后移动会变成向前移动（因方向坐标已经发生反转）。</translation>
     </message>
     <message>
         <source>Mode</source>
@@ -287,7 +286,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Enabled when not aiming</source>
-        <translation>没有朝向它时启用</translation>
+        <translation>不朝前看时启用</translation>
     </message>
     <message>
         <source>Disable for Y</source>
@@ -299,27 +298,27 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Disable effect by roll</source>
-        <translation>横滚时，不启用</translation>
+        <translation>滚转不启用</translation>
     </message>
     <message>
         <source>Disable for Z (for zoom on Z axis)</source>
-        <translation>Z轴不启用(用于Z轴放大)</translation>
+        <translation>Z轴不启用 (用于Z轴缩放时)</translation>
     </message>
     <message>
         <source>Disable effect by pitch</source>
-        <translation>仰俯不启用</translation>
+        <translation>俯仰不启用</translation>
     </message>
     <message>
         <source>Disable effect by yaw</source>
-        <translation>航向不启用</translation>
+        <translation>偏航不启用</translation>
     </message>
     <message>
         <source>Neck displacement</source>
-        <translation>脖子的偏移</translation>
+        <translation>脖子偏移调整</translation>
     </message>
     <message>
         <source>Eyes will be offset from the pivot of rotation, assumed to be the neck. It also works with relative translation disabled.</source>
-        <translation>眼睛的移动支点其实是脖子。本功能在相对位移功能不开启的情况下也生效。</translation>
+        <translation>调整眼睛相对于脖子旋转中心的位置偏移。即使关闭&quot;相对位移&quot;功能，此设置依然生效。</translation>
     </message>
     <message>
         <source>Enable</source>
@@ -327,7 +326,15 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Forward from center of rotation</source>
-        <translation>向前偏移</translation>
+        <translation>旋转中心偏移</translation>
+    </message>
+    <message>
+        <source>Mapping curves</source>
+        <translation>映射曲线</translation>
+    </message>
+    <message>
+        <source>Toggle application of mapping curves. Useful for isolating the effect of camera offset.</source>
+        <translation>开关映射曲线功能。便于单独测试相机偏移的效果。</translation>
     </message>
     <message>
         <source>Game detection</source>
@@ -339,23 +346,23 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Joy button %1</source>
-        <translation>游戏手柄按钮 %1</translation>
+        <translation>摇杆按钮 %1</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>空</translation>
+        <translation>无</translation>
     </message>
     <message>
         <source>Centering method</source>
-        <translation>回中方法</translation>
+        <translation>居中方式</translation>
     </message>
     <message>
         <source>Point</source>
-        <translation type="unfinished"></translation>
+        <translation>点校准模式</translation>
     </message>
     <message>
         <source>Wireless VR 360</source>
-        <translation type="unfinished">无线 VR 360</translation>
+        <translation>无线 VR 360</translation>
     </message>
     <message>
         <source>Roll compensated</source>
@@ -363,7 +370,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Freeze the position returned by the tracker while this mode is active.</source>
-        <translation type="unfinished"></translation>
+        <translation>当该模式激活后将锁定当前视角。</translation>
     </message>
     <message>
         <source>Tracker</source>
@@ -375,27 +382,47 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Mouse %1</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标按钮 %1</translation>
     </message>
     <message>
         <source>Use current tracker pose as looking perfectly forward.</source>
-        <translation type="unfinished"></translation>
+        <translation>将当前头部位置设为正前方视角。</translation>
     </message>
     <message>
         <source>Keep looking forward until next zero keypress.</source>
-        <translation type="unfinished"></translation>
+        <translation>保持向前看，直到下一次按归零键。</translation>
     </message>
     <message>
         <source>Axis assignment</source>
-        <translation>输出重新映射</translation>
+        <translation>轴向重新映射</translation>
     </message>
     <message>
         <source>Pre-invert</source>
-        <translation type="unfinished"></translation>
+        <translation>输入-反转</translation>
     </message>
     <message>
         <source>Post-invert</source>
-        <translation type="unfinished"></translation>
+        <translation>输出-反转</translation>
+    </message>
+    <message>
+        <source>Gamepad button %1</source>
+        <translation>游戏手柄按钮 %1</translation>
+    </message>
+    <message>
+        <source>Keep looking forward while the key is pressed.</source>
+        <translation>按住按键时保持向前看。</translation>
+    </message>
+    <message>
+        <source>Freeze the pose like Toggle, except only while they key is still pressed.</source>
+        <translation>按住按键时锁定当前视角。</translation>
+    </message>
+    <message>
+        <source>Camera offset</source>
+        <translation>摄像头偏移</translation>
+    </message>
+    <message>
+        <source>Extra rotation adjustment for reducing axis bleed on asymmetrically mounted cameras.</source>
+        <translation>额外旋转调节功能，用于减少非对称安装摄像头产生的轴向偏移。</translation>
     </message>
 </context>
 <context>
@@ -406,23 +433,23 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Start profiles from game executable names in this list</source>
-        <translation>运行以下列表可执行文件时启用对应的配置文件</translation>
+        <translation>自动关联配置：下列游戏启动时会自动加载对应的配置文件</translation>
     </message>
     <message>
         <source>Executable</source>
-        <translation>可执行文件</translation>
+        <translation>游戏主程序</translation>
     </message>
     <message>
         <source>Profile</source>
-        <translation>配置</translation>
+        <translation>配置文件</translation>
     </message>
     <message>
         <source>+</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>-</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

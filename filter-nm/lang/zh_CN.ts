@@ -5,19 +5,19 @@
     <name>UICdialog_nm</name>
     <message>
         <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>窗口</translation>
     </message>
     <message>
         <source>°/s</source>
-        <translation></translation>
+        <translation>度/秒</translation>
     </message>
     <message>
         <source>mm/s</source>
-        <translation></translation>
+        <translation>毫米/秒</translation>
     </message>
     <message>
         <source>Responsiveness</source>
-        <translation>反应</translation>
+        <translation>响应能力</translation>
     </message>
     <message>
         <source>10.0</source>
@@ -37,7 +37,7 @@
     </message>
     <message>
         <source>Natural movement filter by Tom Brazier: Cancels higher frequency noise and the natural tendency for our heads to drift even when we think we are sitting still.</source>
-        <translation>Natural movement filter by Tom Brazier: 过滤高频噪声与我们头部的自然飘移, 即便我们认为我们保持不动.</translation>
+        <translation>Tom Brazier 的 Natural movement 过滤器：消除高频噪声及头部自然漂移倾向 (即便我们认为自己保持静止时仍会发生的微小移动) 。</translation>
     </message>
     <message>
         <source>Rotation</source>
@@ -49,7 +49,7 @@
     </message>
     <message>
         <source>Instructions: Set all sliders to minimum. Then for each of rotation and position: First, increase responsiveness until the filter only just cancels jerkiness for faster head movements. Second, increase drift speed until the filter only just cancels drift movement when your head is still.</source>
-        <translation>先将所有滑块最小化. 然后, 对于每个旋转和位置: 首先提高响应能力，直到过滤器只是刚好消除抖动(以获得更快的头部运动); 其次，增加漂移速度，直到过滤器只是在头部静止时刚好消除漂移. </translation>
+        <translation>操作说明：首先将所有滑块调至最小值。旋转与位置分别进行以下设置：第一步：逐步提高响应速度，直到过滤器仅能消除头部较快移动时的顿挫感，第二步：逐步提高漂移速度，直到头部静止时过滤器恰好能消除漂移现象。</translation>
     </message>
 </context>
 <context>

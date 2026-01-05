@@ -7,7 +7,7 @@ if(OpenCV_FOUND)
                             "-DCXX_STANDARD=20" "-DCXX_STANDARD_REQUIRED=1"
                 OUTPUT_VARIABLE krap)
     otr_module(cv STATIC)
-    target_link_libraries(${self} opencv_core opentrack-video)
+    target_link_libraries(${self} PRIVATE opencv_core opentrack-video)
     target_include_directories(${self} SYSTEM PRIVATE ${OpenCV_INCLUDE_DIRS})
     if(cv_use-ipp)
         target_compile_definitions(${self} PUBLIC -DOTR_HAS_CV_IPP)

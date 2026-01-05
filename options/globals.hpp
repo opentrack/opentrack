@@ -7,7 +7,7 @@
 
 #include <QString>
 #include <QSettings>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 namespace options::globals::detail {
 
@@ -17,7 +17,7 @@ struct OTR_OPTIONS_EXPORT ini_ctx
 {
     std::optional<QSettings> qsettings { std::in_place };
     QString pathname;
-    QMutex mtx { QMutex::Recursive };
+    QRecursiveMutex mtx;
 
     unsigned refcount = 0;
     bool modifiedp = false;
@@ -29,12 +29,12 @@ struct OTR_OPTIONS_EXPORT saver_ final
 {
     ini_ctx& ctx;
 
-    never_inline ~saver_();
-    explicit never_inline saver_(ini_ctx& ini);
+    tr_never_inline ~saver_();
+    explicit tr_never_inline saver_(ini_ctx& ini);
 };
 
 template<typename F>
-never_inline
+tr_never_inline
 auto with_settings_object_(ini_ctx& ini, F&& fun)
 {
     saver_ saver { ini };

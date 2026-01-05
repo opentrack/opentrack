@@ -1,14 +1,16 @@
 #include "ftnoir_protocol_wine.h"
+#include <qprocess.h>
 #ifndef OTR_WINE_NO_WRAPPER
 #   include "csv/csv.h"
 #endif
-#include "compat/library-path.hpp"
 
 #include <cstring>
 #include <cmath>
 
 #include <QString>
 #include <QDebug>
+
+#include "proton.h"
 
 wine::wine() = default;
 
@@ -49,7 +51,7 @@ void wine::pose(const double *headpose, const double*)
             QMutexLocker foo(&game_name_mutex);
             /* only EZCA for FSX requires dummy process, and FSX doesn't work on Linux */
             /* memory-hacks DLL can't be loaded into a Linux process, either */
-            CSV::getGameData(shm->gameid, shm->table, gamename);
+            getGameData(shm->gameid, shm->table, gamename);
             gameid = shm->gameid2 = shm->gameid;
             connected_game = gamename;
         }
@@ -63,50 +65,91 @@ module_status wine::initialize()
 #ifndef OTR_WINE_NO_WRAPPER
     static const QString library_path(OPENTRACK_BASE_PATH + OPENTRACK_LIBRARY_PATH);
 
+    /////////////////////////
+    // determine wine path //
+    /////////////////////////
     QString wine_path = "wine";
-    if (s.wine_select_path().toString() != "WINE") {
-        // if we are not supposed to use system wine then:
-        if (s.wine_select_path().toString() != "CUSTOM") {
-            // if we don't have a custom path then change the wine_path to the path corresponding to the selected version
-            wine_path = s.wine_select_path().toString();
-        }
-        else if (!s.wine_custom_path->isEmpty()) {
-            // if we do have a custom path and it is not empty then
-            wine_path = s.wine_custom_path;
-        }
-    }
-    if (wine_path[0] == '~')
-        wine_path = qgetenv("HOME") + wine_path.mid(1);
 
+    if (s.variant_wine) {
+        // NORMAL WINE
+
+        // resolve combo box
+        if (s.wine_select_path().toString() != "WINE") {
+            // if we are not supposed to use system wine then:
+            if (s.wine_select_path().toString() != "CUSTOM") {
+                // if we don't have a custom path then change the wine_path to the path corresponding to the selected version
+                wine_path = s.wine_select_path().toString();
+            }
+            else if (!s.wine_custom_path->isEmpty()) {
+                // if we do have a custom path and it is not empty then
+                wine_path = s.wine_custom_path;
+            }
+        }
+
+        // parse tilde if present
+        if (wine_path[0] == '~')
+            wine_path = qgetenv("HOME") + wine_path.mid(1);
+    }
+    else if (s.variant_proton)
+    {
+        // PROTON
+
+        wine_path = s.proton_path().toString() + "/bin/wine";
+    }
     qDebug() << "proto/wine: wine_path:" << wine_path;
 
-    auto env = QProcessEnvironment::systemEnvironment();
 
+    /////////////////////////////////////
+    // determine environment variables //
+    /////////////////////////////////////
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+    // if proton is used setup proton environment
     if (s.variant_proton)
     {
+        auto [proton_env, env_error_string, env_success] = make_steam_environ(s.proton_path().toString());
+        env = proton_env;
+
+        if (!env_success)
+            return error(env_error_string);
+    }
+
+    // determine wineprefix
+    if (s.variant_proton && s.variant_proton_steamplay) {
+        // wine prefix is dependend on steam
+
         if (s.proton_appid == 0)
             return error(tr("Must specify application id for Proton (Steam Play)"));
 
-        std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_dist_path, int appid);
-        QString proton_path(const QString& proton_dist_path);
-
-        QString proton_dist_path = s.proton_path().toString();
-
-        wine_path = proton_path(proton_dist_path);
-        auto [proton_env, error_string, success] = make_steam_environ(proton_dist_path, s.proton_appid);
-        env = proton_env;
+        auto [prefix, error_string, success] = make_wineprefix(s.proton_appid);
+        qDebug() << "proto/wine: wineprefix:" << prefix;
+        env.insert("WINEPREFIX", prefix);
 
         if (!success)
             return error(error_string);
     }
-    else
-    {
-        QString wineprefix = "~/.wine";
-        if (!s.wineprefix->isEmpty())
+    else {
+        // wine prefix was supplied via path
+
+        QString wineprefix = "";
+
+        // check if prefix was supplied via wine
+        if (s.variant_wine && !s.wineprefix->isEmpty())
             wineprefix = s.wineprefix;
+
+        // check if prefix was supplied via proton
+        if (s.variant_proton_external && !s.protonprefix->isEmpty())
+            wineprefix = s.protonprefix;
+
+        // check if the user specified a prefix anywhere
+        if (wineprefix.isEmpty())
+            return error(tr("Prefix has not been defined!").arg(wineprefix));
+
+        // handle tilde
         if (wineprefix[0] == '~')
             wineprefix = qgetenv("HOME") + wineprefix.mid(1);
 
+        // return error if relative path is given
         if (wineprefix[0] != '/')
             return error(tr("Wine prefix must be an absolute path (given '%1')").arg(wineprefix));
 
@@ -115,12 +158,19 @@ module_status wine::initialize()
         env.insert("WINEPREFIX", wineprefix);
     }
 
+    // ESYNC and FSYNC
     if (s.esync)
         env.insert("WINEESYNC", "1");
     if (s.fsync)
         env.insert("WINEFSYNC", "1");
 
+    // Headtracking Protocol
     env.insert("OTR_WINE_PROTO", QString::number(s.protocol+1));
+
+
+    ////////////////////////////////
+    // launch the wrapper program //
+    ////////////////////////////////
 
     wrapper.setProcessEnvironment(env);
     wrapper.setWorkingDirectory(OPENTRACK_BASE_PATH);

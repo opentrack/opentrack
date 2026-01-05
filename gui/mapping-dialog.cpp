@@ -42,9 +42,6 @@ mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
 
     load();
 
-    connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
-    connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));
-
     tie_setting(s.a_yaw.altp, ui.rx_altp);
     tie_setting(s.a_pitch.altp, ui.ry_altp);
     tie_setting(s.a_roll.altp, ui.rz_altp);
@@ -64,6 +61,11 @@ mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
     tie_setting(s.a_z.clamp_y_, ui.max_z_out);
 
     tie_setting(s.a_pitch.clamp_y_, ui.max_pitch_output);
+
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &mapping_dialog::accept);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &mapping_dialog::reject);
+    connect(this, &mapping_dialog::accepted, this, &mapping_dialog::doAccept);
+    connect(this, &mapping_dialog::rejected, this, &mapping_dialog::doReject);
 }
 
 void mapping_dialog::load()
@@ -177,11 +179,6 @@ void mapping_dialog::load()
     }
 }
 
-void mapping_dialog::closeEvent(QCloseEvent*)
-{
-    invalidate_dialog();
-}
-
 void mapping_dialog::refresh_tab()
 {
     if (!isVisible())
@@ -189,13 +186,13 @@ void mapping_dialog::refresh_tab()
 
     const int idx = ui.tabWidget->currentIndex();
 
-    if (likely(idx >= 0 && idx < 6))
+    if (idx >= 0 && idx < 6) [[likely]]
     {
         widgets[idx][0]->repaint();
         widgets[idx][1]->repaint();
     }
     else
-        qDebug() << "map-widget: bad index" << idx;
+        qDebug() << "mapping_dialog: bad index" << idx;
 }
 
 void mapping_dialog::save_dialog()
@@ -225,14 +222,32 @@ void mapping_dialog::invalidate_dialog()
     });
 }
 
+void mapping_dialog::closeEvent(QCloseEvent *)
+{
+    qDebug() << "mapping_dialog: closeEvent";
+    reject();
+}
+
 void mapping_dialog::doOK()
 {
-    save_dialog();
-    close();
+    qDebug() << "mapping_dialog: doOK";
+    accept();
 }
 
 void mapping_dialog::doCancel()
 {
+    qDebug() << "mapping_dialog: doCancel";
+    reject();
+}
+
+void mapping_dialog::doAccept()
+{
+    qDebug() << "mapping_dialog: doAccept";
+    save_dialog();
+}
+
+void mapping_dialog::doReject()
+{
+    qDebug() << "mapping_dialog: doReject";
     invalidate_dialog();
-    close();
 }

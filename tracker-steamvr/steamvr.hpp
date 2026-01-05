@@ -8,7 +8,7 @@
 #include <climits>
 
 #include <QString>
-#include <QMutex>
+#include <QRecursiveMutex>
 #include <QList>
 
 #include <openvr.h>
@@ -48,7 +48,7 @@ struct device_list final
     void refresh_device_list();
     const QList<device_spec>& devices() const { return device_specs; }
 
-    static never_inline maybe_pose get_pose(int k);
+    static tr_never_inline maybe_pose get_pose(int k);
     static QString error_string(vr_error_t error);
     static constexpr unsigned max_devices = vr::k_unMaxTrackedDeviceCount;
 
@@ -57,7 +57,7 @@ struct device_list final
 
 private:
     QList<device_spec> device_specs;
-    static QMutex mtx;
+    static QRecursiveMutex mtx;
     static tt vr_init_();
     static void fill_device_specs(QList<device_spec>& list);
     static tt vr_init();

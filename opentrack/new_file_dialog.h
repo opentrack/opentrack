@@ -3,7 +3,6 @@
 #include "ui_new_config.h"
 #include "options/options.hpp"
 #include <QFile>
-#include <QRegExp>
 #include <QString>
 #include <QMessageBox>
 

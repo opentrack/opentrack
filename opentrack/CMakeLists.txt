@@ -18,8 +18,16 @@ if(APPLE)
     target_sources(${self} PRIVATE appnap_mac.mm)
 endif()
 
-target_link_libraries(${self} opentrack-user-interface opentrack-version)
+target_link_libraries(${self} PRIVATE
+    opentrack-user-interface
+    opentrack-input
+    opentrack-logic
+    opentrack-migration
+    opentrack-spline
+    opentrack-pose-widget
+    opentrack-version
+)
 
 if(APPLE)
-    target_link_libraries(${self} "-framework Foundation")
+    target_link_libraries(${self} PRIVATE "-framework Foundation")
 endif()

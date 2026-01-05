@@ -11,6 +11,10 @@
         <source>Select Wine Prefix</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select Proton Prefix</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UICFTControls</name>
@@ -39,14 +43,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Steam application id</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Proton (Steam Play)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Protocol</source>
         <translation type="unfinished"></translation>
     </message>
@@ -60,10 +56,6 @@
     </message>
     <message>
         <source>Both</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Wine (select path and prefix)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -86,6 +78,30 @@
         <source>Browse Wine Path</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Proton (select version and mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Steam Play (select Steam Application ID)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>UMU enabled Launchers (select prefix)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Wine (select version and prefix)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Steam Play is Steams System to run Windows titles on Linux via Proton.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;UMU is a launcher that allows the use of Proton outside of Steam. Some game launchers like Lutris may use this to enable Proton support.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>wine</name>
@@ -103,6 +119,10 @@
     </message>
     <message>
         <source>Failed to start Wine! Make sure the binary is set correctly.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Prefix has not been defined!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

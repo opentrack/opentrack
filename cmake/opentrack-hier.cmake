@@ -14,7 +14,7 @@ if(APPLE)
     set(opentrack-runtime-libexec "/Plugins/")                        # MUST HAVE A TRAILING BACKSLASH, Used in APP
     set(opentrack-runtime-doc "/")                         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-bin "${CMAKE_INSTALL_PREFIX}")
-    set(opentrack-doc "./doc")
+    set(opentrack-doc "doc")
     set(opentrack-i18n "opentrack.app/Contents/Resources") # used during install
     set(opentrack-runtime-i18n "../Resources/i18n") # used in application
     set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/Library")
@@ -23,24 +23,25 @@ elseif(WIN32)
     set(opentrack-runtime-libexec "/${opentrack-libexec}/")  # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-runtime-doc "/doc/")                     # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-bin ".")
-    set(opentrack-doc "./doc")
-    set(opentrack-i18n "./i18n")
+    set(opentrack-doc "doc")
+    set(opentrack-i18n "i18n")
     set(opentrack-runtime-i18n "./i18n")
-    set(opentrack-debug "./debug")
+    set(opentrack-debug "debug")
     set(opentrack-install-rpath "")
 else()
     set(opentrack-libexec "libexec/opentrack")
     set(opentrack-runtime-libexec "/../${opentrack-libexec}/")   # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-runtime-doc "/../share/doc/opentrack/")         # MUST HAVE A TRAILING BACKSLASH
     set(opentrack-bin "bin")
-    set(opentrack-doc "./share/doc/opentrack")
+    set(opentrack-doc "share/doc/opentrack")
     set(opentrack-install-rpath "${CMAKE_INSTALL_PREFIX}/${opentrack-libexec}")
-    set(opentrack-i18n "./share/opentrack/i18n")
+    set(opentrack-i18n "share/opentrack/i18n")
     set(opentrack-runtime-i18n "../share/opentrack/i18n")
 endif()
 
 function(otr_escape_string var str)
-    string(REGEX REPLACE "([^_A-Za-z0-9./:-])" "\\\\\\1" str "${str}")
+    string(REGEX REPLACE "([\\\"$;])" "\\\\\\1" str "${str}")
+    string(REPLACE "\n" "\\n" str "${str}")
     set(${var} "${str}" PARENT_SCOPE)
 endfunction()
 

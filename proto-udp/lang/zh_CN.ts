@@ -5,22 +5,22 @@
     <name>UICFTNControls</name>
     <message>
         <source>UDP protocol settings</source>
-        <translation type="unfinished"></translation>
+        <translation>UDP 协议设置</translation>
     </message>
     <message>
         <source>Remote IP address</source>
-        <translation type="unfinished"></translation>
+        <translation>远程 IP 地址</translation>
     </message>
     <message>
         <source>Port</source>
-        <translation type="unfinished"></translation>
+        <translation>端口</translation>
     </message>
 </context>
 <context>
     <name>udp</name>
     <message>
         <source>Can&apos;t bind socket: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>无法绑定套接字：%1</translation>
     </message>
     <message>
         <source>UDP over network</source>

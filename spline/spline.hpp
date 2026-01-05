@@ -118,7 +118,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     void disconnect_signals();
     void invalidate_settings_();
 
-    mutex mtx { mutex::Recursive };
+    mutex<QRecursiveMutex> mtx;
     std::shared_ptr<settings> s;
     QMetaObject::Connection conn_points, conn_maxx, conn_maxy;
 
@@ -130,7 +130,7 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     mutable axis_opts::max_clamp clamp_x = axis_opts::x1000, clamp_y = axis_opts::x1000;
     mutable bool activep = false;
 
-    static constexpr unsigned value_count = 8192;
+    static constexpr unsigned value_count = 16384;
     static constexpr f magic_fill_value = -(1 << 24) + 1;
     static constexpr double c_interp = 5;
 

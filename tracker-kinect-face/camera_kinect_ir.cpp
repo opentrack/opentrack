@@ -126,7 +126,7 @@ namespace Kinect {
         iFrame.height = iHeight;
         iFrame.stride = cv::Mat::AUTO_STEP;
         iFrame.channels = iMatFrame.channels();
-        iFrame.channel_size = iMatFrame.elemSize1();
+        iFrame.channel_size = (int)iMatFrame.elemSize1();
         return { iFrame, new_frame };
     }
 

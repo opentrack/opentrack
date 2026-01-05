@@ -15,7 +15,7 @@
 #include "gui/process_detector.h"
 #include "logic/main-settings.hpp"
 #include "logic/pipeline.hpp"
-#include "logic/shortcuts.h"
+#include "input/shortcuts.h"
 #include "logic/work.hpp"
 #include "logic/state.hpp"
 #include "options/options.hpp"
@@ -48,7 +48,7 @@ class main_window final : public QMainWindow, private State
     QTimer det_timer;
     QTimer profile_list_timer;
 
-    Shortcuts global_shortcuts;
+    std::unique_ptr<Shortcuts> global_shortcuts;
     QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
 
 #ifdef UI_NO_VIDEO_FEED

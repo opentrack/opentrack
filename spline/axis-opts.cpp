@@ -31,8 +31,8 @@ axis_opts::axis_opts(QString pfx, Axis idx) :
     axis_(idx),
     zero(b_settings_window, n(pfx, "zero-pos"), 0),
     src(b_settings_window, n(pfx, "source-index"), idx),
-    invert_post(b_settings_window, n(pfx, "invert-sign-post"), false),
     invert_pre(b_settings_window, n(pfx, "invert-sign"), false),
+    invert_post(b_settings_window, n(pfx, "invert-sign-post"), false),
     altp(b_mapping_window, n(pfx, "alt-axis-sign"), false),
     clamp_x_(b_mapping_window, n(pfx, "max-value"), get_max_x(idx)),
     clamp_y_(b_mapping_window, n(pfx, "max-output-value"), get_max_y(idx))

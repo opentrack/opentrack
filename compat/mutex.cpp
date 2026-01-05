@@ -1,33 +1,31 @@
+#include "export.hpp"
 #include "mutex.hpp"
 #include <cstdlib>
+#include <QMutex>
+#include <QRecursiveMutex>
 
-mutex& mutex::operator=(const mutex& rhs)
+template<typename M>
+mutex<M>& mutex<M>::operator=(const mutex& rhs)
 {
-    if (rhs->isRecursive() != inner.isRecursive())
-        std::abort();
-
     return *this;
 }
 
-mutex::mutex(const mutex& datum) : mutex{datum.inner.isRecursive() ? Recursive : NonRecursive}
-{
-}
+template<typename MutexType> MutexType* mutex<MutexType>::operator&() const { return &inner; }
 
-mutex::mutex(RecursionMode m) : inner{m}
-{
-}
+template<typename M> mutex<M>::mutex(const mutex<M>& datum) {}
+template<typename M> mutex<M>::mutex() = default;
 
-QMutex* mutex::operator&() const noexcept
+template<typename M>
+mutex<M>::operator M*() const noexcept
 {
     return &inner;
 }
 
-mutex::operator QMutex*() const noexcept
+template<typename M>
+M* mutex<M>::operator->() const noexcept
 {
     return &inner;
 }
 
-QMutex* mutex::operator->() const noexcept
-{
-    return &inner;
-}
+template class OTR_COMPAT_EXPORT mutex<QMutex>;
+template class OTR_COMPAT_EXPORT mutex<QRecursiveMutex>;

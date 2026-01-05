@@ -12,6 +12,7 @@
 #include "options/options.hpp"
 #include "api/plugin-api.hpp"
 #include "spline/axis-opts.hpp"
+#include "input/key-opts.hpp"
 
 #include "export.hpp"
 
@@ -34,15 +35,6 @@ namespace main_settings_impl {
 
 using namespace options;
 
-struct OTR_LOGIC_EXPORT key_opts
-{
-    value<QString> keycode, guid;
-    value<int> button;
-
-    key_opts(bundle b, const QString& name);
-    key_opts& operator=(const key_opts& x);
-};
-
 struct OTR_LOGIC_EXPORT module_settings
 {
     bundle b { make_bundle("modules") };
@@ -61,6 +53,8 @@ struct OTR_LOGIC_EXPORT main_settings final
     axis_opts* all_axis_opts[6] { &a_x, &a_y, &a_z, &a_yaw, &a_pitch, &a_roll };
     value<reltrans_state> reltrans_mode { b, "relative-translation-mode", reltrans_disabled };
 
+    value<bool> apply_mapping_curves {b, "apply-mapping-curves", true };
+
     value<bool> reltrans_disable_tx { b, "compensate-translation-disable-x-axis", false };
     value<bool> reltrans_disable_ty { b, "compensate-translation-disable-y-axis", false };
     value<bool> reltrans_disable_tz { b, "compensate-translation-disable-z-axis", false };
@@ -68,6 +62,15 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<bool> reltrans_disable_src_yaw { b, "compensate-translation-disable-source-yaw", false };
     value<bool> reltrans_disable_src_pitch { b, "compensate-translation-disable-source-pitch", false };
     value<bool> reltrans_disable_src_roll { b, "compensate-translation-disable-source-roll", false };
+
+    value<bool> enable_camera_offset { b, "enable-camera-offset", false };
+
+    value<int> camera_offset_yaw   { b, "camera-offset-yaw",   0 };
+    value<int> camera_offset_pitch { b, "camera-offset-pitch", 0 };
+    value<int> camera_offset_roll  { b, "camera-offset-roll",  0 };
+    value<int> camera_offset_x   { b, "camera-offset-x",   0 };
+    value<int> camera_offset_y { b, "camera-offset-y", 0 };
+    value<int> camera_offset_z  { b, "camera-offset-z",  0 };
 
     value<bool> tray_enabled { b, "use-system-tray", false };
     value<bool> tray_start { b, "start-in-tray", false };
@@ -112,6 +115,5 @@ struct OTR_LOGIC_EXPORT main_settings final
 
 } // ns main_settings_impl
 
-using key_opts = main_settings_impl::key_opts;
 using module_settings = main_settings_impl::module_settings;
 using main_settings = main_settings_impl::main_settings;

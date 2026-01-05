@@ -24,7 +24,6 @@
 
 #include <cmath>
 #include <algorithm>
-#include <cinttypes>
 #include <memory>
 
 #include <QDebug>
@@ -345,7 +344,7 @@ void PointExtractor::extract_points(const pt_frame& frame_,
         {
             if (ptr_bin[x] != 255)
                 continue;
-            idx = blobs.size() + 1;
+            idx = (unsigned)(blobs.size() + 1);
 
             cv::Rect rect;
             cv::floodFill(frame_bin,
@@ -400,7 +399,7 @@ end:
     const int W = frame_gray.cols;
     const int H = frame_gray.rows;
 
-    const unsigned sz = blobs.size();
+    const unsigned sz = (unsigned)blobs.size();
 
     std::sort(blobs.begin(), blobs.end(), [](const blob& b1, const blob& b2) { return b2.brightness < b1.brightness; });
 
@@ -431,7 +430,7 @@ end:
 
     if (preview_visible)
         draw_blobs(preview_frame_.as<Frame>()->mat,
-                   blobs.data(), blobs.size(),
+                   blobs.data(), (unsigned)blobs.size(),
                    frame_gray.size());
 
 

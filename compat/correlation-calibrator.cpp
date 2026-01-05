@@ -154,7 +154,7 @@ mat66 correlation_calibrator::get_coefficients() const
 
 unsigned correlation_calibrator::sample_count() const
 {
-    return data.size();
+    return (unsigned)data.size();
 }
 
 } // ns correlation_calibrator_impl

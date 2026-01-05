@@ -15,6 +15,8 @@
 
 #include "pt-api.hpp"
 
+#include "compat/linkage-macros.hpp"
+
 #include <memory>
 
 static const QString module_name = "tracker-wii-pt";
@@ -62,11 +64,16 @@ struct wii_dialog_pt : TrackerDialog_PT
     wii_dialog_pt();
 };
 
-struct wii_metadata_pt : Metadata
+struct OTR_GENERIC_EXPORT wii_metadata_pt : Metadata
 {
-    QString name() { return tr("WiiPointTracker 1.1"); }
-    QIcon icon() { return QIcon(":/Resources/wii.png"); }
+    Q_OBJECT
+
+    QString name() override;
+    QIcon icon() override;
 };
+
+QString wii_metadata_pt::name() { return tr("WiiPointTracker 1.1"); }
+QIcon wii_metadata_pt::icon() { return QIcon(":/Resources/wii.png"); }
 
 // ns pt_module
 

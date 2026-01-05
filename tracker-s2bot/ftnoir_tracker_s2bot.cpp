@@ -51,7 +51,7 @@ void tracker_s2bot::run() {
                 return;
             }
 
-            const QStringList slist = QString::fromLatin1(reply->readAll()).split(QRegExp("[\r\n]+"), QString::SkipEmptyParts);
+            const QStringList slist = QString::fromLatin1(reply->readAll()).split(QRegularExpression("[\r\n]+"), Qt::SkipEmptyParts);
             reply->close();
             reply->deleteLater();
 

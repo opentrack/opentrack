@@ -19,8 +19,10 @@ using namespace options;
 struct settings : opts
 {
     settings() : opts{"proto-wine"} {}
-    value<bool> variant_proton{b, "variant-proton", false },
-                variant_wine{b, "variant-wine", true },
+    value<bool> variant_wine{b, "variant-wine", true },
+                variant_proton{b, "variant-proton", false },
+                variant_proton_steamplay{b, "variant-proton-steamplay", true },
+                variant_proton_external{b, "variant-proton-external", false },
                 fsync{b, "fsync", true},
                 esync{b, "esync", true};
 
@@ -29,6 +31,7 @@ struct settings : opts
     value<QVariant> wine_select_path{b, "wine-select-version", {"WINE"}};
     value<QString> wine_custom_path{b, "wine-custom-version", ""};
     value<QString> wineprefix{b, "wineprefix", "~/.wine/"};
+    value<QString> protonprefix{b, "protonprefix", ""};
     value<int>     protocol{b, "protocol", 2};
 };
 
@@ -79,10 +82,13 @@ private:
     settings s;
 
 private slots:
-    void onWinePathComboUpdated(QString selection);
+    void onWinePathComboUpdated();
+    void onRadioButtonsChanged();
 
     void doBrowseWine();
-    void doBrowsePrefix();
+    void doBrowseWinePrefix();
+
+    void doBrowseProtonPrefix();
 
     void doOK();
     void doCancel();

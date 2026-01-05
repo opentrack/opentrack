@@ -5,7 +5,7 @@
     <name>UI_mouse</name>
     <message>
         <source>Mouse protocol</source>
-        <translation type="unfinished"></translation>
+        <translation>鼠标协议</translation>
     </message>
     <message>
         <source>X axis</source>
@@ -17,19 +17,19 @@
     </message>
     <message>
         <source>X</source>
-        <translation></translation>
+        <translation>X轴</translation>
     </message>
     <message>
         <source>Y</source>
-        <translation></translation>
+        <translation>Y轴</translation>
     </message>
     <message>
         <source>Z</source>
-        <translation></translation>
+        <translation>Z轴</translation>
     </message>
     <message>
         <source>Yaw</source>
-        <translation>航向</translation>
+        <translation>偏航</translation>
     </message>
     <message>
         <source>Pitch</source>
@@ -49,15 +49,15 @@
     </message>
     <message>
         <source>Method</source>
-        <translation>方式</translation>
+        <translation>模式</translation>
     </message>
     <message>
         <source>Direct input</source>
-        <translation type="unfinished"></translation>
+        <translation>直接输入</translation>
     </message>
     <message>
         <source>Legacy</source>
-        <translation type="unfinished"></translation>
+        <translation>传统模式</translation>
     </message>
 </context>
 <context>

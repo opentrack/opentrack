@@ -1,5 +1,9 @@
 include_guard(GLOBAL)
 
+if(POLICY CMP0177)
+    cmake_policy(SET CMP0177 NEW)
+endif()
+
 add_custom_target(i18n-lupdate)
 add_custom_target(i18n-lrelease DEPENDS i18n-lupdate)
 add_custom_target(i18n ALL DEPENDS i18n-lrelease)
@@ -7,7 +11,7 @@ add_custom_target(i18n ALL DEPENDS i18n-lrelease)
 function(otr_i18n_for_target_directory n)
     set(k "opentrack-${n}")
 
-    get_property(lupdate-binary TARGET "${Qt5_LUPDATE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
+    get_property(lupdate-binary TARGET Qt6::lupdate PROPERTY IMPORTED_LOCATION)
 
     #make_directory("${CMAKE_CURRENT_BINARY_DIR}/lang")
 
@@ -29,13 +33,6 @@ function(otr_i18n_for_target_directory n)
         endif()
     endforeach()
 
-    # all sorts of problems
-    if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Windows")
-        set(to-null "2>NUL")
-    else()
-        set(to-null "2>/dev/null")
-    endif()
-
     add_custom_command(OUTPUT "${stamp}"
                        COMMAND "${lupdate-binary}"
                        -I "${CMAKE_SOURCE_DIR}"
@@ -45,7 +42,6 @@ function(otr_i18n_for_target_directory n)
                        -locations none
                        .
                        -ts ${ts-files}
-                       ${to-null}
                        COMMAND "${CMAKE_COMMAND}" -E touch "${stamp}"
                        #BYPRODUCTS ${ts-files}
                        DEPENDS "opentrack-${n}"
@@ -58,11 +54,12 @@ endfunction()
 
 function(otr_merge_translations)
     otr_escape_string(i18n-pfx "${opentrack-i18n}")
-    install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/${i18n-pfx}\")")
+    #install(CODE "message(FATAL_ERROR \"foo \${CMAKE_INSTALL_PREFIX}\")")
+    #install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/${i18n-pfx}\")")
 
     foreach(i ${opentrack_all-translations})
         get_property(ts-files GLOBAL PROPERTY "opentrack-ts-files-${i}")
-        get_property(lrelease-binary TARGET "${Qt5_LRELEASE_EXECUTABLE}" PROPERTY IMPORTED_LOCATION)
+        get_property(lrelease-binary TARGET Qt6::lrelease PROPERTY IMPORTED_LOCATION)
 
         set(qm-output "${CMAKE_BINARY_DIR}/${i}.qm")
 
@@ -90,7 +87,7 @@ function(otr_merge_translations)
         add_dependencies(i18n-lrelease ${target-name})
 
         install(FILES "${qm-output}"
-                DESTINATION "${CMAKE_INSTALL_PREFIX}/${opentrack-i18n}"
+                DESTINATION "${opentrack-i18n}"
                 PERMISSIONS ${opentrack-perms-file})
     endforeach()
 endfunction()

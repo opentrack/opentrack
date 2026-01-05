@@ -67,10 +67,7 @@ if(CMAKE_C_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_CLANG TRUE)
 endif()
 
-if(APPLE AND NOT CMAKE_OSX_ARCHITECTURES)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64")
-    set(opentrack-intel TRUE)
-elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*|i[0-9]86.*|x86.*")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "amd64.*|x86_64.*|AMD64.*|i[0-9]86.*|x86.*")
     set(opentrack-intel TRUE)
 elseif(MSVC AND CMAKE_SYSTEM_NAME STREQUAL "Windows" AND CMAKE_SYSTEM_PROCESSOR STREQUAL "")
     set(opentrack-intel TRUE)
@@ -133,7 +130,7 @@ if(MSVC)
     endif()
 
     add_link_options(-DYNAMICBASE -NXCOMPAT)
-    add_link_options(-WX)
+    #add_link_options(-WX)
     add_link_options(-ignore:4020)
     add_link_options(-ignore:4217) # debug build
 

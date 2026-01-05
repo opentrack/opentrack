@@ -1,0 +1,12 @@
+set(CMAKE_OSX_ARCHITECTURES arm64)
+
+if(DEFINED ENV{GITHUB_ACTIONS} AND DEFINED ENV{GITHUB_WORKSPACE})
+    set(OpenCV_STATIC ON)
+    set(ARTIFACTS_DIR "$ENV{GITHUB_WORKSPACE}/artifacts")
+    #set(OpenCV_DIR "${ARTIFACTS_DIR}/opencv/$ENV{opencv_tag}/mac-x64")
+    set(OpenCV_DIR "${ARTIFACTS_DIR}/opencv/$ENV{opencv_tag}/mac-x64/lib/cmake/opencv4")
+    message(STATUS "OpenCV_DIR=${OpenCV_DIR}")
+    find_package(OpenCV REQUIRED)
+    set(CMAKE_CXX_FLAGS_RELEASE "-O0")
+    set(CMAKE_C_FLAGS_RELEASE "-O0")
+endif()

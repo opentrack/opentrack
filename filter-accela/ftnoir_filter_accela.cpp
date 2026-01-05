@@ -22,7 +22,7 @@ accela::accela()
 }
 
 template<typename F>
-never_inline
+tr_never_inline
 static void do_deltas(const double* deltas, double* output, F&& fun)
 {
     constexpr unsigned N = 3;
@@ -65,7 +65,7 @@ static void do_deltas(const double* deltas, double* output, F&& fun)
 
 template<typename F>
 [[maybe_unused]]
-never_inline
+tr_never_inline
 static void do_delta(double delta, double* output, F&& fun)
 {
     *output = fun(fabs(delta)) * signum(delta);
@@ -76,7 +76,7 @@ void accela::filter(const double* input, double *output)
     static constexpr double full_turn = 360.0;	
     static constexpr double half_turn = 180.0;	
 
-    if (unlikely(first_run))
+    if (first_run) [[unlikely]]
     {
         first_run = false;
 

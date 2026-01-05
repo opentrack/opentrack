@@ -7,12 +7,14 @@
 #   include <cwchar>
 #   define NO_DSHOW_STRSAFE
 #   include <dshow.h>
+#   include <wrl/client.h>
 #elif defined(__unix) || defined(__linux__) || defined(__APPLE__)
 #   include <unistd.h>
 #endif
 
 #ifdef __APPLE__
-#   include <QCameraInfo>
+#   include <QCameraDevice>
+#   include <QMediaDevices>
 #endif
 
 #ifdef __linux__
@@ -75,53 +77,41 @@ std::vector<std::tuple<QString, int>> get_camera_names()
 {
     std::vector<std::tuple<QString, int>> ret;
 #ifdef _WIN32
+    using Microsoft::WRL::ComPtr;
+
     // Create the System Device Enumerator.
     HRESULT hr;
     CoInitialize(nullptr);
-    ICreateDevEnum *pSysDevEnum = nullptr;
-    hr = CoCreateInstance(CLSID_SystemDeviceEnum, nullptr, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void **)&pSysDevEnum);
-    if (FAILED(hr))
+    ComPtr<ICreateDevEnum> pSysDevEnum;
+    hr = CoCreateInstance(CLSID_SystemDeviceEnum, nullptr, CLSCTX_INPROC_SERVER, IID_ICreateDevEnum, (void**)pSysDevEnum.GetAddressOf());
+    if (hr != S_OK)
     {
         qDebug() << "failed CLSID_SystemDeviceEnum" << hr;
         return ret;
     }
     // Obtain a class enumerator for the video compressor category.
-    IEnumMoniker *pEnumCat = nullptr;
-    hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, &pEnumCat, 0);
+    ComPtr<IEnumMoniker> pEnumCat;
+    hr = pSysDevEnum->CreateClassEnumerator(CLSID_VideoInputDeviceCategory, pEnumCat.GetAddressOf(), 0);
 
     if (hr == S_OK) {
         // Enumerate the monikers.
-        IMoniker *pMoniker = nullptr;
+        ComPtr<IMoniker> pMoniker;
         ULONG cFetched;
-        while (pEnumCat->Next(1, &pMoniker, &cFetched) == S_OK)
+        while (pEnumCat->Next(1, pMoniker.GetAddressOf(), &cFetched) == S_OK)
         {
-            IPropertyBag *pPropBag;
-            hr = pMoniker->BindToStorage(nullptr, nullptr, IID_IPropertyBag, (void **)&pPropBag);
-            if (SUCCEEDED(hr)) {
+            ComPtr<IPropertyBag> pPropBag;
+            hr = pMoniker->BindToStorage(nullptr, nullptr, IID_IPropertyBag, (void **)pPropBag.GetAddressOf());
+            if (hr == S_OK) {
                 // To retrieve the filter's friendly name, do the following:
-                if (SUCCEEDED(hr))
-                {
-                    QString str = prop_to_qstring(pPropBag, L"FriendlyName");
-                    QString path = device_path_from_qstring(prop_to_qstring(pPropBag, L"DevicePath"));
-                    if (!path.isNull())
-                        str += QStringLiteral(" [%1]").arg(path);
-                    ret.push_back({ str, (int)ret.size() });
-                }
-                pPropBag->Release();
+                QString str = prop_to_qstring(pPropBag.Get(), L"FriendlyName");
+                QString path = device_path_from_qstring(prop_to_qstring(pPropBag.Get(), L"DevicePath"));
+                if (!path.isNull())
+                    str += QStringLiteral(" [%1]").arg(path);
+                ret.push_back({str, (int)ret.size()});
             }
-            pMoniker->Release();
         }
-        pEnumCat->Release();
     }
-#if 0
-    else
-        qDebug() << "failed CLSID_VideoInputDeviceCategory" << hr;
-#endif
-
-    pSysDevEnum->Release();
-#endif
-
-#ifdef __linux__
+#elif defined __linux__
     for (int i = 0; i < 16; i++) {
         char buf[32];
         snprintf(buf, sizeof(buf), "/dev/video%d", i);
@@ -141,11 +131,9 @@ std::vector<std::tuple<QString, int>> get_camera_names()
             close(fd);
         }
     }
-#endif
-#ifdef __APPLE__
-    QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    for (const QCameraInfo &cameraInfo : cameras)
-        ret.push_back({ cameraInfo.description(), ret.size() });
+#elif defined __APPLE__
+    for (const QCameraDevice& camera_info : QMediaDevices::videoInputs())
+        ret.push_back({ camera_info.description(), ret.size() });
 #endif
 
     return ret;

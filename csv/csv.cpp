@@ -1,94 +1,41 @@
-/* Homepage http://facetracknoir.sourceforge.net/home/default.htm
- *
- * ISC License (ISC)                                                             *
- *                                                                               *
- * Copyright (c) 2015, Wim Vriend                                                *
- *                                                                               *
- * Permission to use, copy, modify, and/or distribute this software for any      *
- * purpose with or without fee is hereby granted, provided that the above        *
- * copyright notice and this permission notice appear in all copies.             *
- */
-
 #include "csv.h"
 #include "compat/library-path.hpp"
-#include <QTextDecoder>
-#include <QFile>
+#include <utility>
+#include <cstdio>
+#include <QByteArray>
+#include <QByteArrayView>
 #include <QString>
+#include <QStringDecoder>
+#include <QFile>
 #include <QDebug>
 
-#include <utility>
-#include <algorithm>
+namespace {
 
-const QTextCodec* const CSV::m_codec = QTextCodec::codecForName("UTF-8");
-const QRegExp CSV::m_rx = QRegExp(QString("((?:(?:[^;\\n]*;?)|(?:\"[^\"]*\";?))*)?\\n?"));
-const QRegExp CSV::m_rx2 = QRegExp(QString("(?:\"([^\"]*)\";?)|(?:([^;]*);?)?"));
-
-CSV::CSV(QIODevice* device) :
-    m_device(device),
-    m_pos(0)
+void chomp(QString& str)
 {
-    if (m_device && m_device->isReadable())
+    if (!str.isEmpty() && str.back() == '\n')
     {
-        QTextDecoder dec(m_codec);
-        m_string = dec.toUnicode(m_device->readAll());
+        str.chop(1);
+        if (!str.isEmpty() && str.back() == '\r')
+            str.chop(1);
     }
 }
 
-QString CSV::readLine()
+auto do_scanf(QLatin1StringView s, unsigned(&tmp)[8])
 {
-    QString line;
+    unsigned fuzz[3];
+    return std::sscanf(s.constData(),
+                       "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+                       fuzz + 2,
+                       fuzz + 0,
+                       tmp + 3, tmp + 2, tmp + 1, tmp + 0,
+                       tmp + 7, tmp + 6, tmp + 5, tmp + 4,
+                       fuzz + 1);
+};
 
-    if ((m_pos = m_rx.indexIn(m_string,m_pos)) != -1)
-    {
-        line = m_rx.cap(1);
-        m_pos += m_rx.matchedLength();
-    }
-    else
-    {
-        const QChar lf(QChar::LineFeed);
-
-        while (m_pos < m_string.length())
-            if (m_string[m_pos++] == lf)
-                break;
-    }
-    return line;
 }
 
-bool CSV::parseLine(QStringList& ret)
-{
-    QString line(readLine());
-
-    QStringList list;
-    int pos2 = 0;
-
-    if (line.size() == 0)
-    {
-        ret = QStringList();
-        return m_device->size() > m_pos;
-    }
-    else
-    {
-        while (line.size() > pos2 && (pos2 = m_rx2.indexIn(line, pos2)) != -1)
-        {
-            QString col;
-            if (m_rx2.cap(1).size() > 0)
-                col = m_rx2.cap(1);
-            else if (m_rx2.cap(2).size() > 0)
-                col = m_rx2.cap(2);
-
-            list << col;
-
-            if (col.size())
-                pos2 += m_rx2.matchedLength();
-            else
-                pos2++;
-        }
-    }
-    ret = std::move(list);
-    return true;
-}
-
-bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
+bool getGameData(int id, unsigned char* table, QString& gamename)
 {
     for (int i = 0; i < 8; i++)
         table[i] = 0;
@@ -96,59 +43,56 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
     if (id != 0)
         qDebug() << "csv: lookup game id" << id;
 
-    QString id_str(QString::number(id));
-
     static const QString csv_path(OPENTRACK_BASE_PATH +
                                   OPENTRACK_DOC_PATH "settings/facetracknoir supported games.csv");
+    auto id_str = QString::number(id);
 
     QFile file(csv_path);
-
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    if (!file.open(QIODevice::ReadOnly))
     {
         qDebug() << "csv: can't open game list for freetrack protocol!";
         return false;
     }
+    QStringDecoder decoder{QStringConverter::Encoding::Utf8};
+    QStringList gameLine; gameLine.reserve(8);
+    unsigned lineno = 1;
+    // TODO QIODevice::readLineInto() is Qt 6.9 - sh 20250515
+    char buf[256];
+    qint64 sz;
 
-    CSV csv(&file);
-
-    unsigned tmp[8];
-    unsigned fuzz[3];
-
-    QStringList gameLine;
-
-    for (int lineno = 0; csv.parseLine(gameLine); lineno++)
+    while ((sz = file.readLine(buf, sizeof buf)) > 0)
     {
-        //qDebug() << "Column 0: " << gameLine.at(0);		// No.
-        //qDebug() << "Column 1: " << gameLine.at(1);		// Game Name
-        //qDebug() << "Column 2: " << gameLine.at(2);		// Game Protocol
-        //qDebug() << "Column 3: " << gameLine.at(3);		// Supported since version
-        //qDebug() << "Column 4: " << gameLine.at(4);		// Verified
-        //qDebug() << "Column 5: " << gameLine.at(5);		// By
-        //qDebug() << "Column 6: " << gameLine.at(6);		// International ID
-        //qDebug() << "Column 7: " << gameLine.at(7);		// FaceTrackNoIR ID
+        QString line = decoder.decode(QByteArrayView{buf, sz});
 
-        if (gameLine.count() == 8)
+        if (line.isEmpty())
+            break;
+        chomp(line);
+        if (line.isEmpty())
+            continue;
+
+        gameLine = line.split(';', Qt::SplitBehaviorFlags::KeepEmptyParts);
+
+        // 0 No.
+        // 1 Game Name
+        // 2 Game Protocol
+        // 3 Supported since version
+        // 4 Verified
+        // 5 By
+        // 6 International ID
+        // 7 FaceTrackNoIR ID
+
+        if (gameLine.size() == 8)
         {
             if (gameLine.at(6).compare(id_str, Qt::CaseInsensitive) == 0)
             {
                 const QString& proto = gameLine[3];
                 QString& name = gameLine[1];
-
                 const QByteArray id_cstr = gameLine[7].toLatin1();
-
-                auto do_scanf = [&]() {
-                    return sscanf(id_cstr.constData(),
-                                  "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
-                                  fuzz + 2,
-                                  fuzz + 0,
-                                  tmp + 3, tmp + 2, tmp + 1, tmp + 0,
-                                  tmp + 7, tmp + 6, tmp + 5, tmp + 4,
-                                  fuzz + 1);
-                };
+                unsigned tmp[8] {};
 
                 if (proto == QStringLiteral("V160") || id_cstr.length() != 22)
                     (void)0;
-                else if (id_cstr.length() != 22 || do_scanf() != 11)
+                else if (id_cstr.length() != 22 || do_scanf(QLatin1StringView(id_cstr), tmp) != 11)
                     qDebug() << "scanf failed" << lineno;
                 else
                 {
@@ -161,7 +105,9 @@ bool CSV::getGameData(int id, unsigned char* table, QString& gamename)
             }
         }
         else
-            qDebug() << "malformed csv line" << lineno;
+            qDebug() << "csv: wrong column count on line" << lineno;
+
+        lineno++;
     }
 
     if (id)

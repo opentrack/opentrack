@@ -10,28 +10,30 @@
 #include <QDebug>
 #include <QDir>
 #include <QFileInfo>
-#include <QProcessEnvironment>
 #include <QtGlobal>
 
+#include "proton.h"
 
 static const char* steam_paths[] = {
     "/.steam/steam/steamapps/compatdata",
     "/.local/share/Steam/steamapps/compatdata",
+    "/.steam/debian-installation/steamapps/compatdata",
 };
 
 static const char* runtime_paths[] = {
     "/.local/share/Steam/ubuntu12_32/steam-runtime",
     "/.steam/ubuntu12_32/steam-runtime",
+    "/.steam/debian-installation/ubuntu12_32/steam-runtime",
 };
 
 
-std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_dist_path, int appid)
+std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString& proton_dist_path)
 {
     using ret = std::tuple<QProcessEnvironment, QString, bool>;
     auto env = QProcessEnvironment::systemEnvironment();
     QString error = "";
     QString home = qgetenv("HOME");
-    QString runtime_path, app_wineprefix;
+    QString runtime_path;
 
     auto expand = [&](QString x) {
                       x.replace("HOME", home);
@@ -48,14 +50,6 @@ std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString&
 
     if (runtime_path.isEmpty())
         error = QString("Couldn't find a Steam runtime.");
-
-    for (const char* path : steam_paths) {
-        QDir dir(QDir::homePath() + path + expand("/%1/pfx").arg(appid));
-        if (dir.exists())
-            app_wineprefix = dir.absolutePath();
-    }
-    if (app_wineprefix.isEmpty())
-        error = QString("Couldn't find a Wineprefix for AppId %1").arg(appid);
 
     QString path = expand(
         ":PROTON_DIST_PATH/bin"
@@ -79,14 +73,25 @@ std::tuple<QProcessEnvironment, QString, bool> make_steam_environ(const QString&
     );
     library_path += ':'; library_path += qgetenv("LD_LIBRARY_PATH");
     env.insert("LD_LIBRARY_PATH", library_path);
-    env.insert("WINEPREFIX", app_wineprefix);
 
     return ret(env, error, error.isEmpty());
 }
 
 
-QString proton_path(const QString& proton_dist_path)
+std::tuple<QString, QString, bool> make_wineprefix(int appid)
 {
-    return proton_dist_path + "/bin/wine";
+    using ret = std::tuple<QString, QString, bool>;
+    QString error = "";
+    QString app_wineprefix;
+    for (const char* path : steam_paths) {
+        QDir dir(QDir::homePath() + path + QString("/%1/pfx").arg(appid));
+        if (dir.exists())
+            app_wineprefix = dir.absolutePath();
+    }
+    if (app_wineprefix.isEmpty())
+        error = QString("Couldn't find a Wineprefix for AppId %1").arg(appid);
+
+    return ret(app_wineprefix, error, error.isEmpty());
 }
+
 #endif

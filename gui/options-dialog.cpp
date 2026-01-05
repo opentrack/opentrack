@@ -7,8 +7,7 @@
  */
 
 #include "options-dialog.hpp"
-#include "keyboard.h"
-#include "compat/library-path.hpp"
+#include "listener.h"
 
 #include <utility>
 
@@ -22,6 +21,7 @@ using namespace options::globals;
 
 QString options_dialog::kopts_to_string(const key_opts& kopts)
 {
+    using namespace Qt::Literals::StringLiterals;
     if (!kopts.guid->isEmpty())
     {
         const int btn = kopts.button & ~Qt::KeyboardModifierMask;
@@ -30,8 +30,10 @@ QString options_dialog::kopts_to_string(const key_opts& kopts)
         if (mods & Qt::ControlModifier) mm += "Control+";
         if (mods & Qt::AltModifier) mm += "Alt+";
         if (mods & Qt::ShiftModifier) mm += "Shift+";
-        const auto& str = kopts.guid == QStringLiteral("mouse")
+        const auto& str = kopts.guid == "mouse"_L1
                           ? tr("Mouse %1")
+                          : kopts.guid->startsWith("GI!"_L1)
+                          ? tr("Gamepad button %1")
                           : tr("Joy button %1");
         return mm + str.arg(QString::number(btn));
     }
@@ -57,9 +59,6 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
 {
     ui.setupUi(this);
 
-    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &options_dialog::doOK);
-    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &options_dialog::close);
-
     tie_setting(main.tray_enabled, ui.trayp);
     tie_setting(main.tray_start, ui.tray_start);
 
@@ -83,6 +82,8 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
 
     for (int k = 0; k < 3; k++)
         ui.reltrans_mode->setItemData(k, reltrans_modes[k]);
+
+    tie_setting(main.apply_mapping_curves, ui.apply_mapping_curves);
 
     tie_setting(main.reltrans_mode, ui.reltrans_mode);
 
@@ -123,6 +124,14 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     tie_setting(main.a_x.src, ui.src_x);
     tie_setting(main.a_y.src, ui.src_y);
     tie_setting(main.a_z.src, ui.src_z);
+
+    tie_setting(main.enable_camera_offset, ui.enable_camera_offset);
+    tie_setting(main.camera_offset_yaw,   ui.camera_offset_yaw);
+    tie_setting(main.camera_offset_pitch, ui.camera_offset_pitch);
+    tie_setting(main.camera_offset_roll,  ui.camera_offset_roll);
+    tie_setting(main.camera_offset_x,  ui.camera_offset_x);
+    tie_setting(main.camera_offset_y,  ui.camera_offset_y);
+    tie_setting(main.camera_offset_z,  ui.camera_offset_z);
 
     //tie_setting(main.center_method, ui.center_method);
 
@@ -198,6 +207,11 @@ options_dialog::options_dialog(std::unique_ptr<ITrackerDialog>& tracker_dialog_,
     add_module_tab(tracker_dialog, tracker_dialog_, tr("Tracker"));
     add_module_tab(proto_dialog, proto_dialog_, tr("Output"));
     add_module_tab(filter_dialog, filter_dialog_, tr("Filter"));
+
+    connect(ui.buttonBox, &QDialogButtonBox::accepted, this, &options_dialog::accept);
+    connect(ui.buttonBox, &QDialogButtonBox::rejected, this, &options_dialog::reject);
+    connect(this, &options_dialog::accepted, this, &options_dialog::doAccept);
+    connect(this, &options_dialog::rejected, this, &options_dialog::doReject);
 }
 
 void options_dialog::bind_key(key_opts& kopts, QLabel* label)
@@ -205,36 +219,42 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
     kopts.button = -1;
     kopts.guid = {};
     kopts.keycode = {};
-    auto k = new keyboard_listener;
-    k->setWindowModality(Qt::ApplicationModal);
-    k->deleteLater();
 
-    connect(k,
-            &keyboard_listener::key_pressed,
-            this,
-            [&](const QKeySequence& s)
-            {
-                kopts.keycode = s.toString(QKeySequence::PortableText);
-                kopts.guid = {};
-                kopts.button = -1;
-                k->close();
-            });
-    connect(k, &keyboard_listener::joystick_button_pressed,
-            this,
-            [&](const QString& guid, int idx, bool held)
-            {
-                if (!held)
+    auto* k = new keyboard_listener;
+    k->deleteLater();
+    k->setWindowModality(Qt::ApplicationModal);
+
+    {
+        QObject obj;
+        connect(&*k, &keyboard_listener::key_pressed,
+                &obj,
+                [&](const QKeySequence& s)
                 {
-                    kopts.guid = guid;
-                    kopts.keycode = {};
-                    kopts.button = idx;
+                    kopts.keycode = s.toString(QKeySequence::PortableText);
+                    kopts.guid = {};
+                    kopts.button = -1;
                     k->close();
-                }
-            });
-    connect(&*main.b, &options::detail::bundle::reloading, k, &QDialog::close);
-    pause_keybindings(true);
-    k->exec();
-    pause_keybindings(false);
+                });
+        connect(&*k, &keyboard_listener::joystick_button_pressed,
+                &obj,
+                [&](const QString& guid, int idx, bool held)
+                {
+                    if (!k)
+                        std::abort();
+                    if (!held)
+                    {
+                        kopts.guid = guid;
+                        kopts.keycode = {};
+                        kopts.button = idx;
+                        k->close();
+                    }
+                });
+        connect(&*main.b, &options::detail::bundle::reloading, &*k, &QDialog::close);
+        pause_keybindings(false);
+        k->exec();
+        k = nullptr;
+        pause_keybindings(true);
+    }
     const bool is_crap = progn(
         for (const QChar& c : kopts.keycode())
             if (!c.isPrint())
@@ -250,6 +270,7 @@ void options_dialog::bind_key(key_opts& kopts, QLabel* label)
     }
     else
         label->setText(kopts_to_string(kopts));
+    //qDebug() << "bind_key done" << kopts.guid << kopts.button << kopts.keycode;
 }
 
 void options_dialog::switch_to_tracker_tab()
@@ -349,6 +370,7 @@ using module_list = std::initializer_list<plugin_api::detail::BaseDialog*>;
 
 void options_dialog::save()
 {
+    qDebug() << "options_dialog: save";
     main.b->save();
     ui.game_detector->save();
     set_disable_translation_state(ui.disable_translation->isChecked());
@@ -360,6 +382,7 @@ void options_dialog::save()
 
 void options_dialog::reload()
 {
+    qDebug() << "options_dialog: reload";
     ui.game_detector->revert();
 
     main.b->reload();
@@ -368,28 +391,34 @@ void options_dialog::reload()
             dlg->reload();
 }
 
-void options_dialog::doOK()
-{
-    if (isVisible())
-    {
-        save();
-        close();
-    }
-}
-
-void options_dialog::doCancel()
-{
-    if (isVisible())
-    {
-        reload();
-        close();
-    }
-}
-
 void options_dialog::closeEvent(QCloseEvent *)
 {
-    reload();
+    qDebug() << "options_dialog: closeEvent";
+    reject();
     emit closing();
+}
+
+void options_dialog::doOK()
+{
+    qDebug() << "options_dialog: doOK";
+    accept();
+}
+void options_dialog::doCancel()
+{
+    qDebug() << "options_dialog: doCancel";
+    reject();
+}
+
+void options_dialog::doAccept()
+{
+    qDebug() << "options_dialog: doAccept";
+    save();
+}
+
+void options_dialog::doReject()
+{
+    qDebug() << "options_dialog: doReject";
+    reload();
 }
 
 options_dialog::~options_dialog()

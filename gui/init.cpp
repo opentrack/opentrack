@@ -13,6 +13,7 @@ using namespace options;
 #include "compat/arch.hpp"
 
 #include <memory>
+#include <cstdint>
 #include <cstdlib>
 #include <cstring>
 #include <cstdio>
@@ -36,6 +37,8 @@ using namespace options;
 #ifdef __MINGW32__
 extern "C" __declspec(dllimport) unsigned __cdecl _controlfp(unsigned, unsigned);
 #endif
+
+using std::intptr_t;
 
 static void set_fp_mask()
 {
@@ -244,7 +247,7 @@ static void add_win32_path()
         bool ret = SetEnvironmentVariableW(L"PATH", (const wchar_t*)env_path.constData());
 
         if (!ret)
-            qDebug() << "_putenv() failed with" << (void*)GetLastError();
+            qDebug() << "_putenv() failed with" << (void*)(intptr_t)GetLastError();
     }
 }
 
@@ -300,9 +303,6 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
 #ifdef OTR_X11_THREADS
     enable_x11_threads();
 #endif
-
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     QApplication app(argc, argv);
 

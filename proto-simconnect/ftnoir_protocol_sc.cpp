@@ -15,6 +15,11 @@
 #include "compat/library-path.hpp"
 #include "compat/activation-context.hpp"
 
+#include <cstddef>
+#include <cstdint>
+
+using std::intptr_t;
+
 simconnect::~simconnect()
 {
     requestInterruption();
@@ -44,7 +49,7 @@ void simconnect::run()
         else
         {
             if (!SUCCEEDED(hr = simconnect_subscribe(handle, 0, "1sec")))
-                qDebug() << "fsx: can't subscribe to frame event:" << (void*)hr;
+                qDebug() << "fsx: can't subscribe to frame event:" << (void*)(intptr_t)hr;
             else
             {
                 while (!isInterruptionRequested())
@@ -62,7 +67,7 @@ void simconnect::run()
 
                     if (!SUCCEEDED(hr = simconnect_calldispatch(handle, event_handler, (void*)this)))
                     {
-                        qDebug() << "fsx: calldispatch failed:" << (void*)hr;
+                        qDebug() << "fsx: calldispatch failed:" << (void*)(intptr_t)hr;
                         break;
                     }
                  }

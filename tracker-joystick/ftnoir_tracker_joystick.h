@@ -17,7 +17,7 @@
 #include <cmath>
 #include "api/plugin-api.hpp"
 
-#include "dinput/win32-joystick.hpp"
+#include "input/win32-joystick.hpp"
 #include "options/options.hpp"
 using namespace options;
 
@@ -76,4 +76,3 @@ class joystickDll : public Metadata
     QString name() { return tr("Joystick input"); }
     QIcon icon() { return QIcon(":/images/opentrack.png"); }
 };
-

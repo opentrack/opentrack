@@ -3,9 +3,11 @@
 // this is to avoid dealing with QMetaObject for the time being -sh 20190203
 
 #include "export.hpp"
-namespace options { class slider_value; }
+#include "options/slider.hpp"
 #include <QObject>
 #include <QList>
+#include <QPointF>
+#include <QVariant>
 
 namespace _qt_sig_impl {
 
@@ -59,7 +61,7 @@ OTR_GENERATE_SIGNAL(double);
 OTR_GENERATE_SIGNAL(float);
 OTR_GENERATE_SIGNAL(bool);
 OTR_GENERATE_SIGNAL(QString);
-OTR_GENERATE_SIGNAL(slider_value);
+//OTR_GENERATE_SIGNAL(slider_value);
 OTR_GENERATE_SIGNAL(QPointF);
 OTR_GENERATE_SIGNAL(QVariant);
 
@@ -69,4 +71,3 @@ OTR_GENERATE_SIGNAL(QVariant);
 #undef OTR_GENERATE_SIGNAL
 
 template<typename t> using qt_signal = typename _qt_sig_impl::sig<t>::t;
-

@@ -5,11 +5,11 @@
     <name>UICSCControls</name>
     <message>
         <source>Protocol settings</source>
-        <translation type="unfinished"></translation>
+        <translation>协议设置</translation>
     </message>
     <message>
         <source>FSX version</source>
-        <translation type="unfinished"></translation>
+        <translation>FSX 版本</translation>
     </message>
     <message>
         <source>RTM</source>
@@ -21,15 +21,15 @@
     </message>
     <message>
         <source>SP2 -- Acceleration</source>
-        <translation type="unfinished"></translation>
+        <translation>SP2 -- 加速</translation>
     </message>
     <message>
         <source>Steam FSX (older)</source>
-        <translation type="unfinished"></translation>
+        <translation>Steam FSX(旧版)</translation>
     </message>
     <message>
         <source>You need to install SimConnect SDK for your FSX version. For the Steam version, choose SP1 in the above combo box.</source>
-        <translation type="unfinished"></translation>
+        <translation>您需要为您的 FSX 版本安装 SimConnect SDK，对于 Steam 版本，请在上面的组合框中选择 SP1。</translation>
     </message>
     <message>
         <source>Prepar3d / SP2 XPACK</source>
@@ -37,22 +37,22 @@
     </message>
     <message>
         <source>Steam FSX (newer)</source>
-        <translation type="unfinished"></translation>
+        <translation>Steam FSX(新版)</translation>
     </message>
 </context>
 <context>
     <name>simconnect</name>
     <message>
         <source>dll load failed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation>dll 加载失败： %1</translation>
     </message>
     <message>
         <source>can&apos;t import %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation>无法导入 %1: %2</translation>
     </message>
     <message>
         <source>Install FSX/Prepar3D SimConnect SDK.</source>
-        <translation type="unfinished"></translation>
+        <translation>安装 FSX/Prepar3D SimConnect SDK。</translation>
     </message>
     <message>
         <source>FSX / Prepar3D</source>
