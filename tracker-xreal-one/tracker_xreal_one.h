@@ -24,19 +24,19 @@ struct settings : opts
     value<int> port = { b, "port", 52998 };
 
     // Default IP address of the XReal One device in own network
-    value<QString> ip_address = { b, "ip_address", "169.254.2.1" };
+    value<QString> ip_address = { b, "ip-address", "169.254.2.1" };
 
     // Gravitational constant in m/s² used to convert accelerometer data from m/s² to g
-    value<double> g_constant = { b, "g_constant", 9.80665 };
+    value<double> g_constant = { b, "g-constant", 9.80665 };
 
     // Use Fusion Offset correction algorithm for gyroscope data
-    value<bool> use_fusion_offset = { b, "use_fusion_offset", true };
+    value<bool> use_fusion_offset = { b, "use-fusion-offset", true };
 
     // Expected packet header in hexadecimal string format, probably this may change in future firmware versions
-    value<QString> header_value = { b, "header_value", "283600000080" };
+    value<QString> header_value = { b, "header-value", "283600000080" };
 
     // Gyroscope and Accelerometer data type marker, probably this may change in future firmware versions
-    value<QString> ga_marker_value = { b, "ga_marker_value", "00401f000040" };
+    value<QString> ga_marker_value = { b, "ga-marker-value", "00401f000040" };
 
     // Not configurable by user, used to track if any setting changed
     value<bool> changed = { b, "changed", false };
