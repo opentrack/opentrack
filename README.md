@@ -40,6 +40,7 @@ Don't be afraid to submit an **issue/feature request** if you have any problems!
 - NeuralNet Tracker, AI-based head pose estimation with webcams.
 - Eyeware Beam<sup>[[1](https://beam.eyeware.tech/)]</sup>
 - Tobii eye tracker
+- XReal One<sup>[[1](https://next.xreal.com/one/)]</sup> and probably XReal One Pro<sup>[[2](https://www.xreal.com/one-pro)]</sup>glasses, see details [here](https://gist.github.com/X-Stuff/0c21145b07a4baa3012fae8bffbe0577)
 
 ## Output protocols
 
