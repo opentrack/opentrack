@@ -1,13 +1,3 @@
-## OpenTrack WinlatorXR XrAPI module
-
-This fork / conversion of opentrack is designed to be used with WinlatorXR applications
-
-Tested to work with QT 6.8.3
-
-Code added or modified from the parent project in this fork is subject to the [LGPLv3 license](https://www.gnu.org/licenses/lgpl-3.0.en.html) so that others may adapt it as they wish!
-
-## Original ReadMe Below
-
 [<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
 
 ## Intro
