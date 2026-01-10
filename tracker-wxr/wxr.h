@@ -22,6 +22,7 @@ using namespace options;
 #include <thread>
 #include <vector>
 
+#include <QThread>
 #include <QMatrix4x4>
 #include <QQuaternion>
 #include <QVector2D>
@@ -42,8 +43,9 @@ struct settings : opts
     {}
 };
 
-class wxr_tracker : public ITracker
+class wxr_tracker : protected QThread, public ITracker
 {
+    Q_OBJECT
 public:
     wxr_tracker();
     void Init();

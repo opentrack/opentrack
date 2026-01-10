@@ -213,6 +213,8 @@ wxr_tracker::wxr_tracker()
 wxr_tracker::~wxr_tracker()
 {
     KillReceiver();
+    requestInterruption();
+    wait();
 }
 
 void wxr_tracker::ReceiveData()
