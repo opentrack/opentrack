@@ -3,10 +3,10 @@
 #include <QFileDialog>
 #include <QDir>
 #include <QDirIterator>
-#include <qcombobox.h>
-#include <qdebug.h>
-#include <qdir.h>
-#include <qradiobutton.h>
+#include <QComboBox>
+#include <QDebug>
+#include <QDir>
+#include <QRadioButton>
 
 #include "api/plugin-api.hpp"
 #include "options/tie.hpp"

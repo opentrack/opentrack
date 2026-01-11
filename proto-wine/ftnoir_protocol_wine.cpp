@@ -1,5 +1,5 @@
 #include "ftnoir_protocol_wine.h"
-#include <qprocess.h>
+#include <QProcess>
 #ifndef OTR_WINE_NO_WRAPPER
 #   include "csv/csv.h"
 #endif
