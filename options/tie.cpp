@@ -9,9 +9,8 @@
 #include "tie.hpp"
 #include "compat/run-in-thread.hpp"
 #include "compat/macros.h"
-
 #include "value-traits.hpp"
-
+#include "compat/spinbox64.hpp"
 #include <cmath>
 
 namespace options {
@@ -93,6 +92,14 @@ void tie_setting(value<int>& v, QSpinBox* sb)
     value_::connect(sb, SIGNAL(valueChanged(int)), &v, SLOT(setValue(int)), v.DIRECT_CONNTYPE);
     value_::connect(&v, SIGNAL(valueChanged(int)), sb, SLOT(setValue(int)), v.SAFE_CONNTYPE);
 }
+
+void tie_setting(value<long long>& v, spinbox64* sb)
+{
+    sb->setValue(v);
+    value_::connect(sb, SIGNAL(valueChanged(long long)), &v, SLOT(setValue(long long)), v.DIRECT_CONNTYPE);
+    value_::connect(&v, SIGNAL(valueChanged(long long)), sb, SLOT(setValue(long long)), v.SAFE_CONNTYPE);
+}
+
 
 void tie_setting(value<QString>& v, QLineEdit* le)
 {

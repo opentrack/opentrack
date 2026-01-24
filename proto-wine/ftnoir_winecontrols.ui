@@ -177,15 +177,12 @@
        <widget class="QGroupBox" name="proton_subgroup">
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="1">
-          <widget class="QSpinBox" name="proton_appid">
+          <widget class="spinbox64" name="proton_appid">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred"/>
            </property>
-           <property name="maximum">
-            <number>2147483647</number>
+           <property name="minimumSize">
+            <size><width>150</width></size>
            </property>
           </widget>
          </item>
@@ -405,6 +402,13 @@
   <tabstop>fsync</tabstop>
   <tabstop>protocol_selection</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>spinbox64</class>
+   <extends>QAbstractSpinBox</extends>
+   <header>compat/spinbox64.hpp</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="wine-protocol.qrc"/>
  </resources>

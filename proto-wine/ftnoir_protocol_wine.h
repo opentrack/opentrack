@@ -26,7 +26,7 @@ struct settings : opts
                 fsync{b, "fsync", true},
                 esync{b, "esync", true};
 
-    value<int>     proton_appid{b, "proton-appid", 0};
+    value<long long>     proton_appid{b, "proton-appid", 0};
     value<QVariant> proton_path{b, "proton-version", {} };
     value<QVariant> wine_select_path{b, "wine-select-version", {"WINE"}};
     value<QString> wine_custom_path{b, "wine-custom-version", ""};

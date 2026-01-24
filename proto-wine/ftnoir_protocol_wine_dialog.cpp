@@ -4,8 +4,6 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QComboBox>
-#include <QDebug>
-#include <QDir>
 #include <QRadioButton>
 
 #include "api/plugin-api.hpp"
