@@ -318,11 +318,8 @@ bool main_window::profile_name_from_dialog(QString& ret)
 main_window::~main_window()
 {
     // stupid ps3 eye has LED issues
-#ifndef UI_NO_VIDEO_FEED
-    if (work && ui.video_frame->layout())
-#else
+
     if (work)
-#endif
     {
         hide();
         stop_tracker_();
