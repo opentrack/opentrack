@@ -17,6 +17,14 @@ if(TRUE OR NOT APPLE AND NOT WINDOWS)
     endif()
 endif()
 
+set(OPENTRACK_DBUS_CONTROL CACHE BOOL "Expose DBus services for control purposes")
+if(OPENTRACK_DBUS_CONTROL)
+    add_definitions(-DOTR_DBUS_CONTROL)
+
+    list(APPEND qt-required-components "DBus")
+    list(APPEND qt-imported-targets Qt6::DBus)
+endif()
+
 find_package(Qt6 REQUIRED COMPONENTS ${qt-required-components} QUIET)
 find_package(Qt6 COMPONENTS ${qt-optional-components} QUIET)
 
