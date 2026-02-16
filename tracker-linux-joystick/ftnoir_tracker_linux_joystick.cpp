@@ -48,7 +48,7 @@ void joystick::data(double *data)
     };
 
     const QString guid = s.guid;
-    int axes[8];
+    int axes[JOY_CHANNELS];
     struct js_event event;
     bool ret = true;
     if (read(joy_fd, &event, sizeof(event)) > 0)
@@ -56,9 +56,8 @@ void joystick::data(double *data)
         switch (event.type)
         {
         case JS_EVENT_AXIS:
-            if (event.number >= 8) break;
+            if (event.number >= JOY_CHANNELS) break;
             axes_state[event.number] = event.value;
-
             break;
         default:
             /* Ignore init/button events. */
@@ -66,7 +65,7 @@ void joystick::data(double *data)
         }
     }
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < JOY_CHANNELS; i++)
     {
         axes[i] = axes_state[i];
     }
@@ -75,7 +74,7 @@ void joystick::data(double *data)
         for (int i = 0; i < 6; i++)
         {
             int k = map[i];
-            if (k < 0 || k >= 8)
+            if (k < 0 || k >= JOY_CHANNELS)
                 data[i] = 0;
             else
                 data[i] = std::clamp(axes[k] * limits[i] / AXIS_MAX,
