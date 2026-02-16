@@ -57,7 +57,8 @@ public:
     settings s;
     QString guid;
     static constexpr int AXIS_MAX = USHRT_MAX;
-    int axes_state[6] = {0};
+    static constexpr int JOY_CHANNELS = 8;
+    int axes_state[JOY_CHANNELS] = {0};
     int joy_fd;
 };
 
