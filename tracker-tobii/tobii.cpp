@@ -91,7 +91,7 @@ void tobii_tracker::data(double* data)
         return;
     }
 
-    // Tobii coordinate system is different from OpenTrack's
+    // Tobii coordinate system is different from opentrack's
     // Tobii: +x is to the right, +y is up, +z is towards the user
     // Rotation xyz is in radians, x is pitch, y is yaw, z is roll
 

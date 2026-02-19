@@ -12,6 +12,10 @@
         <translation>IP-адрес</translation>
     </message>
     <message>
+        <source>169.254.2.1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>TCP Port</source>
         <translation>TCP-порт</translation>
     </message>
@@ -40,8 +44,16 @@
         <translation>Маркер заголовка пакета (hex)</translation>
     </message>
     <message>
+        <source>283600000080</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Sensors data marker (hex)</source>
         <translation>Маркер данных сенсоров (hex)</translation>
+    </message>
+    <message>
+        <source>00401f000040</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

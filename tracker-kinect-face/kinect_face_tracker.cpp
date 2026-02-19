@@ -189,7 +189,7 @@ void KinectFaceTracker::data(double *data)
 	}
 
 	// Feed our framework our last valid position and rotation
-	data[0] = (iLastFacePosition.X - iFacePositionCenter.X) * 100; // Convert to centimer to be in a range that suites OpenTrack.
+	data[0] = (iLastFacePosition.X - iFacePositionCenter.X) * 100; // Convert to centimer to be in a range that suites opentrack.
 	data[1] = (iLastFacePosition.Y - iFacePositionCenter.Y) * 100;
 	data[2] = (iLastFacePosition.Z - iFacePositionCenter.Z) * 100;
 

@@ -27,8 +27,8 @@
   <key>NSHighResolutionCapable</key>
   <string>True</string>
   <key>NSCameraUsageDescription</key>
-  <string>OpenTrack need's to access your camera to capture track head position.</string>
+  <string>opentrack needs to access your camera to capture head position.</string>
   <key>NSDocumentsFolderUsageDescription</key>
-  <string>OpenTrack need's to access your to your documents folder to store settings</string>
+  <string>opentrack needs to access your to your documents folder to store settings</string>
 </dict>
 </plist>

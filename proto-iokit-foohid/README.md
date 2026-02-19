@@ -6,7 +6,7 @@ Adds support for a virtual joystick output, based on the foohid driver for virtu
 
 Install the latest [foohid HID driver](https://github.com/unbit/foohid/releases/).
 
-Select "Virtual Joystick" as the output in OpenTrack.
+Select "Virtual Joystick" as the output in opentrack.
 
 The X, Y, Z, Yaw, Pitch, and Roll tracking axes are mapped to the joystick's X, Y, Z, RX, RY,
 and RZ axes respectively.
