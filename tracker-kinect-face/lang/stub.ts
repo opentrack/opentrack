@@ -22,7 +22,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Start OpenTrack to check if Kinect Face Tracker is working.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note&lt;/span&gt;: When using OpenTrack with a Kinect for Windows v2 Sensor, Microsoft will collect telemetry data (e.g. operating system, number of processors, graphic chipset, memory, device type, locale, time) in order to improve Microsoft products and services. The data will not be used to identify specific individuals.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;justify&quot;&gt;Start opentrack to check if Kinect Face Tracker is working.&lt;/p&gt;&lt;p align=&quot;justify&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Note&lt;/span&gt;: When using opentrack with a Kinect for Windows v2 Sensor, Microsoft will collect telemetry data (e.g. operating system, number of processors, graphic chipset, memory, device type, locale, time) in order to improve Microsoft products and services. The data will not be used to identify specific individuals.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

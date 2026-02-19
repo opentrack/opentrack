@@ -158,6 +158,13 @@ Press OK to capture your neutral pose.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Device tracking is unstable. Please ensure the device is properly tracking
+and keep your head completely still during the neutral pose capture.
+
+Position variance: %.2f mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Calibration saved. It will be applied when tracking starts.</source>
         <translation type="unfinished"></translation>
     </message>

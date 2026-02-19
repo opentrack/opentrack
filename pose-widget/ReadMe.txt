@@ -1,7 +1,7 @@
 Hi everyone!
 
-In the extreme version of OpenTrack-2.3.12, the Octopus pose is still displayed incorrectly.
-The pose-widget is responsible for displaying the Octopus pose in OpenTrack. I have fixed this widget.
+In the extreme version of opentrack-2.3.12, the Octopus pose is still displayed incorrectly.
+The pose-widget is responsible for displaying the Octopus pose in opentrack. I have fixed this widget.
 
 Fixed bugs:
 - The turns and movements of the Octopussy are now performed truly independently of each other, as it should be in 6DOF.
@@ -17,7 +17,7 @@ Additional features:
 - Added [Mirror] checkbox, mirroring positions and rotations. It is often more convenient to observe the Octopussy's mirror pose.
 - If before compilation in the file "pose-widget.hpp" include line 19: "#define TEST", then a rectangular frame will be drawn around the Octopus. This is useful when testing a pose-widget to assess distortion and size.
 
-The corrected pose-widget now displays the Octopus pose correctly and can be used to check OpenTrack settings, sometimes even without launching the flight simulator.
+The corrected pose-widget now displays the Octopus pose correctly and can be used to check opentrack settings, sometimes even without launching the flight simulator.
 
 A video of the corrected pose-widget is available here:
 

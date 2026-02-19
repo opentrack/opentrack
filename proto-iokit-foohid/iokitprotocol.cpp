@@ -14,7 +14,7 @@
 
 IOKitProtocol::IOKitProtocol()
 {
-    joystick = std::make_unique<FooHIDJoystick>("OpenTrack Virtual Joystick",
+    joystick = std::make_unique<FooHIDJoystick>("opentrack Virtual Joystick",
                                                 "SN 983457");
     if (joystick->hasError())
         qWarning("%s\n", qPrintable(joystick->errorMessage()));
