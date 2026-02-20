@@ -20,6 +20,7 @@
 #include "logic/state.hpp"
 #include "options/options.hpp"
 #include "compat/qt-signal.hpp"
+#include "dbus.hpp"
 
 #include <QMainWindow>
 #include <QKeySequence>
@@ -50,6 +51,11 @@ class main_window final : public QMainWindow, private State
 
     std::unique_ptr<Shortcuts> global_shortcuts;
     QShortcut kbd_quit { QKeySequence("Ctrl+Q"), this };
+
+#if defined OTR_DBUS_CONTROL
+    QObject dbus_obj;
+    MainDBus dbus;
+#endif
 
 #ifdef UI_NO_VIDEO_FEED
     QWidget fake_video_frame_parent;
@@ -89,6 +95,7 @@ public:
     void init_tray_menu();
     void init_profiles();
     void init_buttons();
+    void init_dbus();
 
     void init_shortcuts();
     void register_shortcuts();
@@ -123,6 +130,7 @@ public:
     void stop_tracker_();
     void restart_tracker_();
     void toggle_tracker_();
+    bool tracker_running() const;
 
     [[nodiscard]] bool create_profile_from_preset(const QString& name);
     void set_profile(const QString& new_name, bool migrate = true);

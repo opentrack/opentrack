@@ -689,7 +689,9 @@ void pipeline::set_enabled(bool value) { b.set(f_enabled_h, value); }
 void pipeline::set_zero(bool value) { b.set(f_zero, value); }
 
 void pipeline::toggle_zero() { b.negate(f_zero); }
+bool pipeline::is_zero() const { return !!(b.flags & f_zero); }
 void pipeline::toggle_enabled() { b.negate(f_enabled_p); }
+bool pipeline::is_enabled() const { return !!(b.flags & f_enabled_p); }
 
 void bits::set(bit_flags flag, bool val)
 {

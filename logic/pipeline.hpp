@@ -119,8 +119,6 @@ class OTR_LOGIC_EXPORT pipeline : private QThread
     Pose apply_reltrans(Pose value, vec6_bool disabled, bool centerp);
     Pose apply_zero_pos(Pose value) const;
 
-    void set_center(bool x);
-
     bits b;
 
 public:
@@ -131,8 +129,11 @@ public:
     void start() { QThread::start(QThread::HighPriority); }
 
     void toggle_zero();
+    bool is_zero() const;
     void toggle_enabled();
+    bool is_enabled() const;
 
+    void set_center(bool value);
     void set_held_center(bool value);
     void set_enabled(bool value);
     void set_zero(bool value);
