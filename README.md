@@ -22,6 +22,10 @@ software.
 
 Don't be afraid to submit an **issue/feature request** if you have any problems! We're a friendly bunch.
 
+### Alpha Spectrum filter tuning
+
+For the new Alpha Spectrum filter parameter guide, see [filter-alpha-spectrum/README.md](filter-alpha-spectrum/README.md).
+
 ## Tracking input
 
 - PointTracker by Patrick Ruoff, FreeTrack-like light points
