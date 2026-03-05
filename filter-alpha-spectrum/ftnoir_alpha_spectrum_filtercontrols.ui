@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UICdialog_alpha_spectrum</class>
+ <widget class="QWidget" name="UICdialog_alpha_spectrum">
+  <property name="windowModality">
+   <enum>Qt::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1040</width>
+    <height>760</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Alpha Spectrum filter settings</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../gui/opentrack-res.qrc">
+    <normaloff>:/images/filter-16.png</normaloff>:/images/filter-16.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+  <item>
+   <widget class="QFrame" name="simple_controls_frame">
+    <layout class="QGridLayout" name="simple_controls_layout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="simple_alpha_text">
+       <property name="text">
+        <string>EMA Min/Max Range</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QSlider" name="simple_alpha_slider">
+       <property name="maximum">
+        <number>10000</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+       <property name="pageStep">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="simple_alpha_label">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Min 0.5% / Max 2.0%</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="simple_shape_text">
+       <property name="text">
+        <string>Curve/Deadzone Coupling</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSlider" name="simple_shape_slider">
+       <property name="maximum">
+        <number>10000</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+       <property name="pageStep">
+        <number>100</number>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
+      <widget class="QLabel" name="simple_shape_label">
+       <property name="minimumSize">
+        <size>
+         <width>200</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignVCenter</set>
+       </property>
+       <property name="text">
+        <string>Curve 0.20 / RotDZ 0.000° / PosDZ 0.000mm</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </item>
+  <item>
+   <widget class="QFrame" name="controls_frame">
+    <layout class="QHBoxLayout" name="controls_layout">
+    <item>
+     <widget class="QFrame" name="advanced_heads_frame">
+      <layout class="QGridLayout" name="advanced_heads_layout">
+      <item row="0" column="0" colspan="3">
+       <widget class="QLabel" name="advanced_column_title">
+        <property name="text">
+        <string>Hydra / NGC Controls</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0"><widget class="QLabel" name="brownian_gain_text"><property name="text"><string>Brownian Head Gain</string></property></widget></item>
+      <item row="1" column="1"><widget class="QSlider" name="brownian_gain_slider"><property name="maximum"><number>20000</number></property><property name="singleStep"><number>20</number></property><property name="pageStep"><number>200</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="1" column="2"><widget class="QLabel" name="brownian_gain_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>1.00x</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="2" column="0"><widget class="QLabel" name="adaptive_threshold_text"><property name="text"><string>Adaptive Threshold Lift</string></property></widget></item>
+      <item row="2" column="1"><widget class="QSlider" name="adaptive_threshold_slider"><property name="maximum"><number>6000</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="2" column="2"><widget class="QLabel" name="adaptive_threshold_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>15.0%</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="3" column="0"><widget class="QLabel" name="predictive_gain_text"><property name="text"><string>Predictive Head Gain</string></property></widget></item>
+      <item row="3" column="1"><widget class="QSlider" name="predictive_gain_slider"><property name="maximum"><number>20000</number></property><property name="singleStep"><number>20</number></property><property name="pageStep"><number>200</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="3" column="2"><widget class="QLabel" name="predictive_gain_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>1.00x</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="4" column="0"><widget class="QLabel" name="mtm_shoulder_text"><property name="text"><string>MTM Shoulder Base</string></property></widget></item>
+      <item row="4" column="1"><widget class="QSlider" name="mtm_shoulder_slider"><property name="maximum"><number>10000</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="4" column="2"><widget class="QLabel" name="mtm_shoulder_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>50.0%</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="5" column="0"><widget class="QLabel" name="ngc_kappa_text"><property name="text"><string>NGC Kappa</string></property></widget></item>
+      <item row="5" column="1"><widget class="QSlider" name="ngc_kappa_slider"><property name="maximum"><number>3000</number></property><property name="singleStep"><number>5</number></property><property name="pageStep"><number>50</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="5" column="2"><widget class="QLabel" name="ngc_kappa_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0.078</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="6" column="0"><widget class="QLabel" name="ngc_nominal_z_text"><property name="text"><string>NGC Nominal Z</string></property></widget></item>
+      <item row="6" column="1"><widget class="QSlider" name="ngc_nominal_z_slider"><property name="maximum"><number>17000</number></property><property name="singleStep"><number>20</number></property><property name="pageStep"><number>200</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="6" column="2"><widget class="QLabel" name="ngc_nominal_z_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0.85m</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QFrame" name="frame">
+      <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0" colspan="3"><widget class="QLabel" name="core_column_title"><property name="text"><string>Core EMA Controls</string></property></widget></item>
+      <item row="1" column="0"><widget class="QLabel" name="rot_min_text"><property name="text"><string>Rotation Min</string></property></widget></item>
+      <item row="1" column="1"><widget class="QSlider" name="rot_min_slider"><property name="maximum"><number>3950</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="1" column="2"><widget class="QLabel" name="rot_min_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0%</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="2" column="0"><widget class="QLabel" name="rot_max_text"><property name="text"><string>Rotation Max</string></property></widget></item>
+      <item row="2" column="1"><widget class="QSlider" name="rot_max_slider"><property name="maximum"><number>9800</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="value"><number>5000</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="2" column="2"><widget class="QLabel" name="rot_max_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0%</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="3" column="0"><widget class="QLabel" name="rot_curve_text"><property name="text"><string>Rotation Curve</string></property></widget></item>
+      <item row="3" column="1"><widget class="QSlider" name="rot_curve_slider"><property name="maximum"><number>7800</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="value"><number>1200</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="3" column="2"><widget class="QLabel" name="rot_curve_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0.00</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="4" column="0"><widget class="QLabel" name="rot_deadzone_text"><property name="text"><string>Rotation Deadzone</string></property></widget></item>
+      <item row="4" column="1"><widget class="QSlider" name="rot_deadzone_slider"><property name="maximum"><number>3000</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="4" column="2"><widget class="QLabel" name="rot_deadzone_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0°</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="5" column="0"><widget class="QLabel" name="pos_min_text"><property name="text"><string>Translation Min</string></property></widget></item>
+      <item row="5" column="1"><widget class="QSlider" name="pos_min_slider"><property name="maximum"><number>3950</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="5" column="2"><widget class="QLabel" name="pos_min_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0%</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="6" column="0"><widget class="QLabel" name="pos_max_text"><property name="text"><string>Translation Max</string></property></widget></item>
+      <item row="6" column="1"><widget class="QSlider" name="pos_max_slider"><property name="maximum"><number>9800</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="value"><number>6000</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="6" column="2"><widget class="QLabel" name="pos_max_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0%</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="7" column="0"><widget class="QLabel" name="pos_curve_text"><property name="text"><string>Translation Curve</string></property></widget></item>
+      <item row="7" column="1"><widget class="QSlider" name="pos_curve_slider"><property name="maximum"><number>7800</number></property><property name="singleStep"><number>10</number></property><property name="pageStep"><number>100</number></property><property name="value"><number>1000</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="7" column="2"><widget class="QLabel" name="pos_curve_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0.00</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      <item row="8" column="0"><widget class="QLabel" name="pos_deadzone_text"><property name="text"><string>Translation Deadzone</string></property></widget></item>
+      <item row="8" column="1"><widget class="QSlider" name="pos_deadzone_slider"><property name="maximum"><number>20000</number></property><property name="singleStep"><number>20</number></property><property name="pageStep"><number>200</number></property><property name="orientation"><enum>Qt::Horizontal</enum></property></widget></item>
+      <item row="8" column="2"><widget class="QLabel" name="pos_deadzone_label"><property name="minimumSize"><size><width>64</width><height>0</height></size></property><property name="text"><string>0mm</string></property><property name="alignment"><set>Qt::AlignRight|Qt::AlignVCenter</set></property></widget></item>
+      </layout>
+     </widget>
+    </item>
+    </layout>
+   </widget>
+  </item>
+    <item>
+     <widget class="QCheckBox" name="adaptive_mode_check">
+      <property name="text">
+      <string>Adaptive</string>
+      </property>
+      <property name="checked">
+      <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="advanced_mode_check">
+      <property name="text">
+       <string>Advanced</string>
+      </property>
+      <property name="checked">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="ema_enabled_check">
+      <property name="text">
+       <string>Enable EMA smoothing head</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="brownian_enabled_check">
+      <property name="text">
+       <string>Enable Brownian interface contribution</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="predictive_enabled_check">
+      <property name="text">
+       <string>Enable Predictive memory head (next-frame lookup)</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="mtm_enabled_check">
+      <property name="text">
+       <string>Enable Rényi MTM shoulder composition</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="reset_defaults_button">
+      <property name="text">
+      <string>Reset sliders to defaults</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+    <widget class="QFrame" name="status_frame">
+      <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+      </property>
+      <layout class="QGridLayout" name="status_layout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="status_text">
+        <property name="text">
+        <string>Status:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="status_value">
+        <property name="text">
+        <string>Idle</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="info_rot_text">
+        <property name="text">
+        <string>Rotation jitter/objective:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="info_rot_value">
+        <property name="text">
+        <string>0.000 / 0.000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="info_pos_text">
+        <property name="text">
+        <string>Translation jitter/objective:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="info_pos_value">
+        <property name="text">
+        <string>0.000 / 0.000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="info_rot_brownian_text">
+        <property name="text">
+        <string>Rotation brownian raw/filtered/delta/damped:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="info_rot_brownian_value">
+        <property name="text">
+        <string>0.000 / 0.000 / Δ0.000 / 0%</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="info_pos_brownian_text">
+        <property name="text">
+        <string>Translation brownian raw/filtered/delta/damped:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="info_pos_brownian_value">
+        <property name="text">
+        <string>0.000 / 0.000 / Δ0.000 / 0%</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="info_rot_contrib_text">
+        <property name="text">
+        <string>Rotation contribution (EMA/Brownian/Adaptive/Predictive/MTM):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLabel" name="info_rot_contrib_value">
+        <property name="text">
+        <string>EMA:0.000 Br:0.000 Ad:0.000 Pr:0.000 MTM:0.000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QLabel" name="info_pos_contrib_text">
+        <property name="text">
+        <string>Translation contribution (EMA/Brownian/Adaptive/Predictive/MTM):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLabel" name="info_pos_contrib_value">
+        <property name="text">
+        <string>EMA:0.000 Br:0.000 Ad:0.000 Pr:0.000 MTM:0.000</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QLabel" name="info_predictive_error_text">
+        <property name="text">
+         <string>Predictive error (rot/pos):</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QLabel" name="info_predictive_error_value">
+        <property name="text">
+         <string>0.0000 / 0.0000</string>
+        </property>
+       </widget>
+      </item>
+      </layout>
+     </widget>
+    </item>
+   <item>
+    <widget class="QLabel" name="help_label">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="text">
+      <string>Alpha Spectrum composes Hydra heads (EMA, Brownian, Adaptive, Predictive) over Rényi MTM shoulders.\nUse status info to compare raw-vs-filtered Brownian energy and per-head contribution while tuning.\nStatus updates continuously while this settings window is open.</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../gui/opentrack-res.qrc"/>
+ </resources>
+ <connections/>
+</ui>
