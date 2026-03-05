@@ -300,24 +300,6 @@ Code references:
 - Filter state and status definitions: [filter-alpha-spectrum/ftnoir_filter_alpha_spectrum.h](filter-alpha-spectrum/ftnoir_filter_alpha_spectrum.h)
 - Settings dialog status presentation: [filter-alpha-spectrum/ftnoir_filter_alpha_spectrum_dialog.cpp](filter-alpha-spectrum/ftnoir_filter_alpha_spectrum_dialog.cpp)
 
-## Plan forward and target rationale
+## Author discussion
 
-Near-term targets are chosen to preserve the current strong user experience (high stability + low perceived latency) while making adaptation more robust:
-
-1. **Lock adaptive tuning against rail behavior**
-  - Why: avoids profile drift and keeps results reproducible across hardware.
-2. **Improve status-action coupling**
-  - Why: ensure optimization objective and visible brownian damping move together.
-3. **Add profile-safe calibration persistence controls**
-  - Why: users can keep known-good states and iterate safely.
-
-Mid-term targets move toward the theory documents:
-
-1. **Introduce explicit multi-mode state (still/slow/fast/outlier)**
-  - Why: matches the MTM framing and improves regime handling.
-2. **Add Rényi-style likelihood scoring between hypotheses**
-  - Why: provides principled mode weighting instead of purely heuristic scalar drive.
-3. **Introduce mode-transition dynamics (MTM/IMM-like)**
-  - Why: controlled switching reduces chatter while preserving responsiveness.
-
-The intent is to evolve from a high-performing adaptive heuristic into a mathematically explicit MTM pipeline without regressing practical tracking quality.
+https://github.com/ganzuul/ancg_spectrum/blob/main/README.md
