@@ -63,6 +63,9 @@ runtime_libraries::runtime_libraries(QFrame* frame, dylibptr t, dylibptr p, dyli
         goto end;
     }
 
+    if (pFilter)
+        pFilter->set_tracker(&*pTracker);
+
     correct = true;
     return;
 

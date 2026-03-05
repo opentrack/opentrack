@@ -31,6 +31,8 @@ Metadata_::Metadata_() = default;
 Metadata_::~Metadata_() = default;
 Metadata::Metadata() = default;
 Metadata::~Metadata() = default;
+IHighrateSource::IHighrateSource() = default;
+IHighrateSource::~IHighrateSource() = default;
 
 IFilter::IFilter() = default;
 IFilter::~IFilter() = default;

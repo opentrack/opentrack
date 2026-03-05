@@ -7,6 +7,7 @@
 
 #include <atomic>
 #include <array>
+#include <chrono>
 
 namespace detail::alpha_spectrum {
 
@@ -63,6 +64,7 @@ struct alpha_spectrum : IFilter
 {
     alpha_spectrum();
     void filter(const double* input, double* output) override;
+    void set_tracker(ITracker* tracker) override;
     void center() override { first_run = true; }
     module_status initialize() override { return status_ok(); }
 
@@ -100,6 +102,15 @@ private:
     std::array<double, mode_count> rot_mode_prob {};
     std::array<double, mode_count> pos_mode_prob {};
     bool first_run = true;
+    
+    // High-rate gyro integration for Predictive head
+    IHighrateSource* highrate_source = nullptr;
+    double gyro_integrated_rotation[3] {}; // Per-frame integrated delta for Yaw/Pitch/Roll
+    double last_highrate_pose[3] {};
+    bool last_highrate_pose_valid = false;
+    bool has_highrate_source = false;
+
+    void integrate_highrate_samples();
 };
 
 class dialog_alpha_spectrum : public IFilterDialog

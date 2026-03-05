@@ -3,6 +3,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <vector>
+#include <QDebug>
 
 alpha_spectrum::alpha_spectrum() = default;
 
@@ -102,6 +104,63 @@ detail::alpha_spectrum::calibration_status& detail::alpha_spectrum::shared_calib
     return status;
 }
 
+void alpha_spectrum::set_tracker(ITracker* tracker)
+{
+    highrate_source = dynamic_cast<IHighrateSource*>(tracker);
+    has_highrate_source = false;
+    qDebug() << "alpha-spectrum: set_tracker called, highrate_source =" << (highrate_source ? "available" : "null");
+    last_highrate_pose_valid = false;
+    std::fill(gyro_integrated_rotation, gyro_integrated_rotation + 3, 0.0);
+}
+
+void alpha_spectrum::integrate_highrate_samples()
+{
+    std::fill(gyro_integrated_rotation, gyro_integrated_rotation + 3, 0.0);
+    has_highrate_source = false;
+
+    if (!highrate_source)
+        return;
+
+    std::vector<highrate_pose_sample> samples;
+    if (!highrate_source->get_highrate_samples(samples))
+        return;
+
+    has_highrate_source = true;
+    
+    static int log_counter = 0;
+    if (++log_counter <= 3 || log_counter % 250 == 0)
+        qDebug() << "alpha-spectrum: integrated" << samples.size() << "high-rate samples";
+
+    static constexpr double full_turn = 360.0;
+    static constexpr double half_turn = 180.0;
+
+    for (const auto& sample : samples)
+    {
+        if (!last_highrate_pose_valid)
+        {
+            last_highrate_pose[0] = sample.pose[Yaw];
+            last_highrate_pose[1] = sample.pose[Pitch];
+            last_highrate_pose[2] = sample.pose[Roll];
+            last_highrate_pose_valid = true;
+            continue;
+        }
+
+        for (int axis = 0; axis < 3; axis++)
+        {
+            const int pose_axis = Yaw + axis;
+            double delta = sample.pose[pose_axis] - last_highrate_pose[axis];
+            if (std::fabs(delta) > half_turn)
+            {
+                const double wrap = std::copysign(full_turn, delta);
+                delta -= wrap;
+            }
+
+            gyro_integrated_rotation[axis] += delta;
+            last_highrate_pose[axis] = sample.pose[pose_axis];
+        }
+    }
+}
+
 void alpha_spectrum::filter(const double* input, double* output)
 {
     static constexpr double full_turn = 360.0;
@@ -124,6 +183,8 @@ void alpha_spectrum::filter(const double* input, double* output)
         std::copy(input, input + axis_count, predicted_next_output);
         coupling_residual = 0.0;
         last_Z = std::max(std::fabs(input[TZ]), 0.3);
+        std::fill(gyro_integrated_rotation, gyro_integrated_rotation + 3, 0.0);
+        last_highrate_pose_valid = false;
         initialize_uniform(rot_mode_prob);
         initialize_uniform(pos_mode_prob);
         std::copy(last_output, last_output + axis_count, output);
@@ -133,6 +194,9 @@ void alpha_spectrum::filter(const double* input, double* output)
     const double dt = timer.elapsed_seconds();
     timer.start();
     const double safe_dt = std::min(dt_max, std::max(dt_min, dt));
+
+    // Integrate high-rate gyro samples into Predictive head prediction
+    integrate_highrate_samples();
 
     noise_rc = std::min(noise_rc + safe_dt, noise_rc_max);
     const double delta_alpha = safe_dt / (safe_dt + delta_rc);
@@ -473,7 +537,20 @@ void alpha_spectrum::filter(const double* input, double* output)
             prediction_delta -= wrap;
         }
         const double predicted_velocity = prediction_delta / safe_dt;
-        predicted_next_output[i] = last_output[i] + predicted_velocity * safe_dt;
+        
+        // Predictive head: incorporate high-rate gyro integration for rotation axes
+        if (is_rotation && has_highrate_source && (i == Yaw || i == Pitch || i == Roll))
+        {
+            // Use gyro-integrated rotation instead of velocity extrapolation
+            const int gyro_idx = i - 3; // Map Yaw/Pitch/Roll to gyro_integrated_rotation[0/1/2]
+            predicted_next_output[i] = last_output[i] + gyro_integrated_rotation[gyro_idx];
+            // Reset accumulator after use
+            gyro_integrated_rotation[gyro_idx] = 0.0;
+        }
+        else
+        {
+            predicted_next_output[i] = last_output[i] + predicted_velocity * safe_dt;
+        }
 
         double filtered_delta = last_output[i] - filtered_prev;
         if (is_rotation && std::fabs(filtered_delta) > half_turn)

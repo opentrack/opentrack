@@ -15,12 +15,15 @@
 #include <QWidget>
 #include <QDialog>
 #include <QCoreApplication>
+#include <vector>
 
 #include "../compat/simple-mat.hpp"
 #include "../compat/tr.hpp"
 #include "export.hpp"
 
 using Pose = Mat<double, 6, 1>;
+
+struct ITracker;
 
 enum Axis : int
 {
@@ -31,6 +34,22 @@ enum Axis : int
     Axis_MIN = TX, Axis_MAX = 5,
 
     Axis_COUNT = 6,
+};
+
+struct OTR_API_EXPORT highrate_pose_sample
+{
+    double dt_seconds = 0.0;
+    double pose[Axis_COUNT] {};
+    int source_id = 0;
+};
+
+struct OTR_API_EXPORT IHighrateSource
+{
+    IHighrateSource();
+    virtual ~IHighrateSource();
+
+    // Returns true if one or more samples were appended to `out`.
+    virtual bool get_highrate_samples(std::vector<highrate_pose_sample>& out) = 0;
 };
 
 namespace plugin_api::detail {
@@ -135,6 +154,8 @@ struct OTR_API_EXPORT IFilter : module_status_mixin
     // perform filtering step.
     // you have to take care of dt on your own, try "opentrack-compat/timer.hpp"
     virtual void filter(const double *input, double *output) = 0;
+    // optional tracker binding for filters that consume tracker-specific side channels
+    virtual void set_tracker(ITracker* tracker) { (void)tracker; }
     // optionally reset the filter when centering
     virtual void center() {}
 };

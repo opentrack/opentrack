@@ -1,0 +1,34 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../labware/generalized renyi filter"
+		},
+		{
+			"path": "../monado-1"
+		},
+		{
+			"path": "../OpenHMD"
+		}
+	],
+	"settings": {
+		"files.watcherExclude": {
+			"**/build/**": true,
+			"**/.pkg/**": true,
+			"**/cmake-build-*/**": true
+		},
+		"search.exclude": {
+			"**/build/**": true,
+			"**/.pkg/**": true,
+			"**/cmake-build-*/**": true
+		},
+		"C_Cpp.files.exclude": {
+			"**/build/**": true,
+			"**/.pkg/**": true,
+			"**/cmake-build-*/**": true
+		},
+		"C_Cpp.workspaceParsingPriority": "low"
+	}
+}

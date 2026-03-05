@@ -1,0 +1,12 @@
+find_package(PkgConfig QUIET)
+if(PKG_CONFIG_FOUND)
+    pkg_check_modules(OPENHMD QUIET openhmd)
+endif()
+
+if(OPENHMD_FOUND)
+    otr_module(tracker-openhmd)
+    target_include_directories(${self} SYSTEM PRIVATE ${OPENHMD_INCLUDE_DIRS})
+    target_link_libraries(${self} PRIVATE ${OPENHMD_LIBRARIES})
+else()
+    message(STATUS "OpenHMD not found - skipping tracker-openhmd")
+endif()
