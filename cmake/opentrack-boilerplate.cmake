@@ -94,6 +94,13 @@ endfunction()
 function(otr_compat target)
     if(NOT MSVC)
         set_property(SOURCE ${${target}-moc} APPEND PROPERTY COMPILE_OPTIONS "-w;-Wno-error")
+    else()
+        set_property(SOURCE ${${target}-moc} APPEND PROPERTY COMPILE_OPTIONS
+            # build\msvc\filter-alpha-spectrum\ui_ftnoir_alpha_spectrum_filtercontrols.h(715,98):
+            # warning C4125: decimal digit terminates octal escape sequence
+            #    info_pos_brownian_value->setText(QCoreApplication::translate("UICdialog_alpha_spectrum", "0.000 / 0.000 / \316\2240.000 / 0%", nullptr));
+            -wd4125
+        )
     endif()
 
     if(UNIX) # no-op on OSX

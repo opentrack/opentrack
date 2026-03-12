@@ -58,33 +58,33 @@ dialog_alpha_spectrum::dialog_alpha_spectrum()
     tie_setting(s.ngc_nominal_z, ui.ngc_nominal_z_slider);
 
     tie_setting(s.rot_alpha_min, ui.rot_min_label,
-                [](double x) { return QStringLiteral("%1%").arg(x * 100.0, 0, 'f', 1); });
+                [](double x) { return tr("%1%").arg(x * 100.0, 0, 'f', 1); });
     tie_setting(s.rot_alpha_max, ui.rot_max_label,
-                [](double x) { return QStringLiteral("%1%").arg(x * 100.0, 0, 'f', 1); });
+                [](double x) { return tr("%1%").arg(x * 100.0, 0, 'f', 1); });
     tie_setting(s.rot_curve, ui.rot_curve_label,
-                [](double x) { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
+                [](double x) { return tr("%1").arg(x, 0, 'f', 2); });
     tie_setting(s.pos_alpha_min, ui.pos_min_label,
-                [](double x) { return QStringLiteral("%1%").arg(x * 100.0, 0, 'f', 1); });
+                [](double x) { return tr("%1%").arg(x * 100.0, 0, 'f', 1); });
     tie_setting(s.pos_alpha_max, ui.pos_max_label,
-                [](double x) { return QStringLiteral("%1%").arg(x * 100.0, 0, 'f', 1); });
+                [](double x) { return tr("%1%").arg(x * 100.0, 0, 'f', 1); });
     tie_setting(s.pos_curve, ui.pos_curve_label,
-                [](double x) { return QStringLiteral("%1").arg(x, 0, 'f', 2); });
+                [](double x) { return tr("%1").arg(x, 0, 'f', 2); });
     tie_setting(s.rot_deadzone, ui.rot_deadzone_label,
                 [](double x) { return tr("%1°").arg(x, 0, 'f', 3); });
     tie_setting(s.pos_deadzone, ui.pos_deadzone_label,
                 [](double x) { return tr("%1mm").arg(x, 0, 'f', 3); });
     tie_setting(s.brownian_head_gain, ui.brownian_gain_label,
-                [](double x) { return QStringLiteral("%1x").arg(x, 0, 'f', 2); });
+                [](double x) { return tr("%1x").arg(x, 0, 'f', 2); });
     tie_setting(s.adaptive_threshold_lift, ui.adaptive_threshold_label,
-                [](double x) { return QStringLiteral("%1%").arg(x * 100.0, 0, 'f', 1); });
+                [](double x) { return tr("%1%").arg(x * 100.0, 0, 'f', 1); });
     tie_setting(s.predictive_head_gain, ui.predictive_gain_label,
-                [](double x) { return QStringLiteral("%1x").arg(x, 0, 'f', 2); });
+                [](double x) { return tr("%1x").arg(x, 0, 'f', 2); });
     tie_setting(s.mtm_shoulder_base, ui.mtm_shoulder_label,
-                [](double x) { return QStringLiteral("%1%").arg(x * 100.0, 0, 'f', 1); });
+                [](double x) { return tr("%1%").arg(x * 100.0, 0, 'f', 1); });
     tie_setting(s.ngc_kappa, ui.ngc_kappa_label,
-                [](double x) { return QStringLiteral("%1").arg(x, 0, 'f', 3); });
+                [](double x) { return tr("%1").arg(x, 0, 'f', 3); });
     tie_setting(s.ngc_nominal_z, ui.ngc_nominal_z_label,
-                [](double x) { return QStringLiteral("%1m").arg(x, 0, 'f', 2); });
+                [](double x) { return tr("%1m").arg(x, 0, 'f', 2); });
 
     connect(ui.rot_min_slider, &QSlider::valueChanged, this,
             [&](int v) { if (ui.rot_max_slider->value() < v) ui.rot_max_slider->setValue(v); });
@@ -114,7 +114,7 @@ dialog_alpha_spectrum::dialog_alpha_spectrum()
         s.pos_alpha_min = options::slider_value{min_value, pos_min_cfg.min(), pos_min_cfg.max()};
         s.pos_alpha_max = options::slider_value{max_value, pos_max_cfg.min(), pos_max_cfg.max()};
 
-        ui.simple_alpha_label->setText(QStringLiteral("Min %1% / Max %2%")
+        ui.simple_alpha_label->setText(tr("Min %1% / Max %2%")
                                            .arg(min_value * 100.0, 0, 'f', 1)
                                            .arg(max_value * 100.0, 0, 'f', 1));
     };
@@ -135,7 +135,7 @@ dialog_alpha_spectrum::dialog_alpha_spectrum()
         s.rot_deadzone = options::slider_value{rot_deadzone_value, rot_deadzone_cfg.min(), rot_deadzone_cfg.max()};
         s.pos_deadzone = options::slider_value{pos_deadzone_value, pos_deadzone_cfg.min(), pos_deadzone_cfg.max()};
 
-        ui.simple_shape_label->setText(QStringLiteral("Curve %1 / RotDZ %2° / PosDZ %3mm")
+        ui.simple_shape_label->setText(tr("Curve %1 / RotDZ %2° / PosDZ %3mm")
                                            .arg(curve_value, 0, 'f', 2)
                                            .arg(rot_deadzone_value, 0, 'f', 3)
                                            .arg(pos_deadzone_value, 0, 'f', 3));
@@ -202,7 +202,7 @@ dialog_alpha_spectrum::dialog_alpha_spectrum()
     ui.info_predictive_error_value->setFont(fixed_font);
 
     const QFontMetrics fm(fixed_font);
-    const QString status_template = QStringLiteral("Mon|E1 B1 A1 P1 M1|rE0.000 rP0.000 pE0.000 pP0.000 k0.000");
+    const QString status_template = tr("Mon|E1 B1 A1 P1 M1|rE0.000 rP0.000 pE0.000 pP0.000 k0.000");
     ui.status_value->setMinimumWidth(fm.horizontalAdvance(status_template));
     ui.status_value->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
@@ -294,46 +294,46 @@ void dialog_alpha_spectrum::pull_status_into_ui(bool commit_to_settings)
         ui.pos_deadzone_slider->setValue(options::slider_value{pos_deadzone, pos_deadzone_cfg.min(), pos_deadzone_cfg.max()}.to_slider_pos(ui.pos_deadzone_slider->minimum(), ui.pos_deadzone_slider->maximum()));
     }
 
-    ui.rot_min_label->setText(QStringLiteral("%1%").arg(rot_min * 100.0, 0, 'f', 1));
-    ui.rot_max_label->setText(QStringLiteral("%1%").arg(rot_max * 100.0, 0, 'f', 1));
-    ui.rot_curve_label->setText(QStringLiteral("%1").arg(rot_curve, 0, 'f', 2));
+    ui.rot_min_label->setText(tr("%1%").arg(rot_min * 100.0, 0, 'f', 1));
+    ui.rot_max_label->setText(tr("%1%").arg(rot_max * 100.0, 0, 'f', 1));
+    ui.rot_curve_label->setText(tr("%1").arg(rot_curve, 0, 'f', 2));
     ui.rot_deadzone_label->setText(tr("%1°").arg(rot_deadzone, 0, 'f', 3));
-    ui.pos_min_label->setText(QStringLiteral("%1%").arg(pos_min * 100.0, 0, 'f', 1));
-    ui.pos_max_label->setText(QStringLiteral("%1%").arg(pos_max * 100.0, 0, 'f', 1));
-    ui.pos_curve_label->setText(QStringLiteral("%1").arg(pos_curve, 0, 'f', 2));
+    ui.pos_min_label->setText(tr("%1%").arg(pos_min * 100.0, 0, 'f', 1));
+    ui.pos_max_label->setText(tr("%1%").arg(pos_max * 100.0, 0, 'f', 1));
+    ui.pos_curve_label->setText(tr("%1").arg(pos_curve, 0, 'f', 2));
     ui.pos_deadzone_label->setText(tr("%1mm").arg(pos_deadzone, 0, 'f', 3));
 
-    ui.info_rot_value->setText(QStringLiteral("%1 / %2")
+    ui.info_rot_value->setText(tr("%1 / %2")
                                         .arg(rot_jitter, 0, 'f', 4)
                                         .arg(rot_objective, 0, 'f', 4));
-    ui.info_pos_value->setText(QStringLiteral("%1 / %2")
+    ui.info_pos_value->setText(tr("%1 / %2")
                                         .arg(pos_jitter, 0, 'f', 4)
                                         .arg(pos_objective, 0, 'f', 4));
     ui.info_rot_brownian_value->setText(
-        QStringLiteral("%1 / %2 / Δ%3 / %4%")
+        tr("%1 / %2 / Δ%3 / %4%")
             .arg(rot_brownian_raw, 0, 'f', 4)
             .arg(rot_brownian_filtered, 0, 'f', 4)
             .arg(rot_brownian_delta, 0, 'f', 4)
             .arg(rot_brownian_damped * 100.0, 0, 'f', 1));
     ui.info_pos_brownian_value->setText(
-        QStringLiteral("%1 / %2 / Δ%3 / %4%")
+        tr("%1 / %2 / Δ%3 / %4%")
             .arg(pos_brownian_raw, 0, 'f', 4)
             .arg(pos_brownian_filtered, 0, 'f', 4)
             .arg(pos_brownian_delta, 0, 'f', 4)
             .arg(pos_brownian_damped * 100.0, 0, 'f', 1));
     ui.info_predictive_error_value->setText(
-        QStringLiteral("%1 / %2")
+        tr("%1 / %2")
             .arg(rot_predictive_error, 0, 'f', 4)
             .arg(pos_predictive_error, 0, 'f', 4));
     ui.info_rot_contrib_value->setText(
-        QStringLiteral("EMA:%1 Br:%2 Ad:%3 Pr:%4 MTM:%5")
+        tr("EMA:%1 Br:%2 Ad:%3 Pr:%4 MTM:%5")
             .arg(rot_ema_drive, 0, 'f', 3)
             .arg(rot_brownian_drive, 0, 'f', 3)
             .arg(rot_adaptive_drive, 0, 'f', 3)
             .arg(rot_predictive_drive, 0, 'f', 3)
             .arg(rot_mtm_drive, 0, 'f', 3));
     ui.info_pos_contrib_value->setText(
-        QStringLiteral("EMA:%1 Br:%2 Ad:%3 Pr:%4 MTM:%5")
+        tr("EMA:%1 Br:%2 Ad:%3 Pr:%4 MTM:%5")
             .arg(pos_ema_drive, 0, 'f', 3)
             .arg(pos_brownian_drive, 0, 'f', 3)
             .arg(pos_adaptive_drive, 0, 'f', 3)
@@ -341,7 +341,7 @@ void dialog_alpha_spectrum::pull_status_into_ui(bool commit_to_settings)
             .arg(pos_mtm_drive, 0, 'f', 3));
     ui.status_value->setText(
         active ?
-            QStringLiteral("Mon|E%1 B%2 A%3 P%4 M%5|rE%6 rP%7 pE%8 pP%9 k%10")
+            tr("Mon|E%1 B%2 A%3 P%4 M%5|rE%6 rP%7 pE%8 pP%9 k%10")
                 .arg(*s.ema_enabled ? 1 : 0)
                 .arg(*s.brownian_enabled ? 1 : 0)
                 .arg(*s.adaptive_mode ? 1 : 0)
@@ -415,10 +415,10 @@ void dialog_alpha_spectrum::reset_to_defaults()
         ui.simple_shape_slider->setValue(static_cast<int>(shape_t * ui.simple_shape_slider->maximum()));
     }
 
-    ui.simple_alpha_label->setText(QStringLiteral("Min %1% / Max %2%")
+    ui.simple_alpha_label->setText(tr("Min %1% / Max %2%")
                                        .arg((*s.rot_alpha_min) * 100.0, 0, 'f', 1)
                                        .arg((*s.rot_alpha_max) * 100.0, 0, 'f', 1));
-    ui.simple_shape_label->setText(QStringLiteral("Curve %1 / RotDZ %2° / PosDZ %3mm")
+    ui.simple_shape_label->setText(tr("Curve %1 / RotDZ %2° / PosDZ %3mm")
                                        .arg(static_cast<double>(*s.rot_curve), 0, 'f', 2)
                                        .arg(static_cast<double>(*s.rot_deadzone), 0, 'f', 3)
                                        .arg(static_cast<double>(*s.pos_deadzone), 0, 'f', 3));

@@ -218,11 +218,55 @@
 <context>
     <name>dialog_alpha_spectrum</name>
     <message>
+        <source>%1%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>%1°</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>%1mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1x</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Min %1% / Max %2%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Curve %1 / RotDZ %2° / PosDZ %3mm</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mon|E1 B1 A1 P1 M1|rE0.000 rP0.000 pE0.000 pP0.000 k0.000</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 / %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 / %2 / Δ%3 / %4%</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EMA:%1 Br:%2 Ad:%3 Pr:%4 MTM:%5</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Mon|E%1 B%2 A%3 P%4 M%5|rE%6 rP%7 pE%8 pP%9 k%10</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
