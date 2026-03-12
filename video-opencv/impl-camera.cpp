@@ -37,8 +37,10 @@ bool cam::start(info& args)
     cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_WARNING);
     cap.emplace(idx, video_capture_backend);
 
+#if !defined _WIN32 && !defined __APPLE__
     if (args.use_mjpeg)
         cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+#endif
 
     if (args.width > 0 && args.height > 0)
     {
@@ -47,6 +49,11 @@ bool cam::start(info& args)
     }
     if (args.fps > 0)
         cap->set(cv::CAP_PROP_FPS, args.fps);
+
+#if defined _WIN32 || defined __APPLE__
+    if (args.use_mjpeg)
+        cap->set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
+#endif
 
     if (!cap->isOpened())
         goto fail;
