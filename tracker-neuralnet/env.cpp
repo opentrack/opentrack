@@ -43,7 +43,7 @@ void NeuralNetTracker::maybe_load_onnxruntime_dynamically()
         std::abort();
     }
 
-    Ort::Global<void>::api_ = ort_api; // see ORT_API_MANUAL_INIT in the onnx c++ header.
+    Ort::InitApi(ort_api);
 #endif
 }
 
