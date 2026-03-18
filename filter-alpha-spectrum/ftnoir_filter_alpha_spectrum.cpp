@@ -402,8 +402,9 @@ void alpha_spectrum::filter(const double* input, double* output)
                         residual += coupling_residual * 1.3;
                 }
 
+                const double coupling_sq = is_rotation ? 0.0 : coupling_residual * coupling_residual;
                 const double mahalanobis_sq =
-                    (residual * residual) / sigma2 + coupling_residual * coupling_residual;
+                    (residual * residual) / sigma2 + coupling_sq;
                 const double likelihood = renyi_tsallis_likelihood(mahalanobis_sq, alpha);
                 heads[h].weight = likelihood;
                 sum += heads[h].weight;
