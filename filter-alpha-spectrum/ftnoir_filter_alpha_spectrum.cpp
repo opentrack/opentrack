@@ -279,7 +279,7 @@ void alpha_spectrum::filter(const double* input, double* output)
             const double filtered_brownian = std::sqrt(std::max(filtered_brownian_energy[i], 0.0));
             const double brownian_drive =
                 brownian_enabled && raw_brownian > 1e-12 ?
-                    clamp01(1.0 - filtered_brownian / raw_brownian) : 0.0;
+                    clamp01(filtered_brownian / raw_brownian) : 0.0;
             const double instantaneous_drive = std::max(std::max(norm_innovation, brownian_drive), mtm_drive);
             activity += activity_alpha * (instantaneous_drive - activity);
             activity = std::clamp(activity, 0.0, 1.0);
@@ -299,7 +299,7 @@ void alpha_spectrum::filter(const double* input, double* output)
         const double filtered_brownian = std::sqrt(std::max(filtered_brownian_energy[i], 0.0));
         const double brownian_drive =
             brownian_enabled && raw_brownian > 1e-12 ?
-                clamp01(1.0 - filtered_brownian / raw_brownian) : 0.0;
+                clamp01(filtered_brownian / raw_brownian) : 0.0;
 
         const double tuned_brownian_drive = clamp01(brownian_drive * brownian_head_gain);
         double alpha_brownian = alpha_min + (alpha_max - alpha_min) * std::pow(tuned_brownian_drive, curve);
@@ -402,8 +402,9 @@ void alpha_spectrum::filter(const double* input, double* output)
                         residual += coupling_residual * 1.3;
                 }
 
+                const double coupling_sq = is_rotation ? 0.0 : coupling_residual * coupling_residual;
                 const double mahalanobis_sq =
-                    (residual * residual) / sigma2 + coupling_residual * coupling_residual;
+                    (residual * residual) / sigma2 + coupling_sq;
                 const double likelihood = renyi_tsallis_likelihood(mahalanobis_sq, alpha);
                 heads[h].weight = likelihood;
                 sum += heads[h].weight;
