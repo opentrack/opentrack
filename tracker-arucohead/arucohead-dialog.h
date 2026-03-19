@@ -43,9 +43,6 @@ class arucohead_dialog : public ITrackerDialog
 {
     Q_OBJECT
 
-    Ui::arucohead_dialog ui;
-    arucohead_tracker *tracker;
-
 public:
     arucohead_dialog();
     void register_tracker(ITracker *) override;
@@ -56,6 +53,8 @@ public:
     void reload() override;
 private:
     settings s;
+    Ui::arucohead_dialog ui;
+    arucohead_tracker *tracker;
 private slots:
     void doOK();
     void doCancel();

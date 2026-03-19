@@ -11,7 +11,8 @@
 #include <opencv2/objdetect.hpp>
 #include <QPushButton>
 
-arucohead_dialog::arucohead_dialog() // NOLINT(cppcoreguidelines-pro-type-member-init)
+arucohead_dialog::arucohead_dialog() : // NOLINT(cppcoreguidelines-pro-type-member-init)
+    tracker(nullptr)
 {
     ui.setupUi(this);
 
