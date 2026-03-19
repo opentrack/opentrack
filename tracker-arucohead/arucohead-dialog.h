@@ -26,7 +26,7 @@ struct settings : public opts
     value<int> frame_height { b, "frame_height", 480 };
     value<int> fps { b, "fps", 30 };
     value<bool> use_mjpeg { b, "use_mjpeg", false };
-    value<int> aruco_marker_size_mm { b, "aruco_marker_size_mm", 60 };
+    value<int> aruco_marker_size_mm { b, "aruco_marker_size_mm", 80 };
     value<int> number_of_markers { b, "number_of_markers", 1 };
     value<int> first_marker_id { b, "first_marker_id", 1 };
     value<double> head_circumference_cm { b, "head_circumference_cm", 60 };
