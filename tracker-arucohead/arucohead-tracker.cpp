@@ -274,7 +274,7 @@ void arucohead_tracker::draw_head_bounding_box(cv::Mat &image)
     const cv::Scalar brightness2(0.8, 0.8, 0.8);
     const cv::Scalar brightness1(0.5, 0.5, 0.5);
 
-    const double line_thickness = image.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR;
+    const double line_thickness = std::max(image.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
 
     cv::line(image, image_points[0], image_points[1], box_color * brightness2, line_thickness);
     cv::line(image, image_points[1], image_points[2], box_color * brightness3, line_thickness);
@@ -302,7 +302,7 @@ void arucohead_tracker::draw_marker_border(cv::Mat &image, const std::vector<cv:
 
     cv::Point2f center(0, 0);
 
-    const double line_thickness = image.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR;
+    const double line_thickness = std::max(image.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
     const double font_scale = line_thickness * 0.5;
 
     for (size_t v = 0; v < vertex_count; ++v) {
@@ -334,7 +334,7 @@ void arucohead_tracker::draw_axes(cv::Mat &image, const cv::Vec3d &rvec, const c
     std::vector<cv::Point2d> image_points;
     cv::projectPoints(axis_points, rvec, tvec, camera_matrix, dist_coeffs, image_points);
 
-    const double line_thickness = image.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR;
+    const double line_thickness = std::max(image.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
         
     cv::line(image, image_points[0], image_points[1], color ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 255, 255), line_thickness);
     cv::line(image, image_points[0], image_points[2], color ? cv::Scalar(0, 255, 0) : cv::Scalar(255, 255, 255), line_thickness);
@@ -406,14 +406,15 @@ void arucohead_tracker::run() {
             }
         }
 
-        auto frame_mat_t = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
+        auto frame_mat_temp = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
 
         /* Apply zoom (as region of interest).
         */
         const double zoom = s.zoom / 100.0;
-        const int zoomed_width = frame_mat_t.size().width / zoom;
-        const int zoomed_height = frame_mat_t.size().height / zoom;
-        cv::Mat frame_mat = frame_mat_t(cv::Rect((frame_mat_t.size().width - zoomed_width)/2, (frame_mat_t.size().height - zoomed_height)/2, zoomed_width, zoomed_height));
+        const int zoomed_width = frame_mat_temp.size().width / zoom;
+        const int zoomed_height = frame_mat_temp.size().height / zoom;
+
+        cv::Mat frame_mat = frame_mat_temp(cv::Rect((frame_mat_temp.size().width - zoomed_width)/2, (frame_mat_temp.size().height - zoomed_height)/2, zoomed_width, zoomed_height));
 
         /* Adjust FOV according to zoom level and set camera matrix.
         */
@@ -432,7 +433,7 @@ void arucohead_tracker::run() {
         std::stringstream ss;
         ss << "Hz: " << int(fps);
 
-        const double line_thickness = frame_mat.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR;
+        const double line_thickness = std::max(frame_mat.cols * ARUCOHEAD_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
         const double font_scale = line_thickness * 0.5;
 
         const auto text_size = cv::getTextSize(ss.str(), cv::FONT_HERSHEY_SIMPLEX, font_scale, line_thickness, nullptr);
