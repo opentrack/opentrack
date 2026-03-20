@@ -62,6 +62,11 @@ void arucohead_tracker::process_frame(cv::Mat &image)
     std::vector<std::vector<cv::Point2f>> corners;
     std::vector<int> ids;
 
+    /* Pose vectors for each detected marker.
+    */
+    std::unordered_map<int, cv::Vec3d> marker_rvecs;
+    std::unordered_map<int, cv::Vec3d> marker_tvecs;
+
     /* Head pose vectors for each detected marker.
     */
     std::unordered_map<int, cv::Vec3d> pose_rvecs;
@@ -105,6 +110,19 @@ void arucohead_tracker::process_frame(cv::Mat &image)
         }
     }
 
+    /* Caclulate poses for detected markers.
+    */
+    for (size_t i = 0; i < ids.size(); ++i) {
+        cv::Vec3d rvec;
+        cv::Vec3d tvec;
+
+        if (cv::solvePnP(objectPoints, corners[i], camera_matrix, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_IPPE)) {
+            const int id = ids[i];
+            marker_rvecs[id] = rvec;
+            marker_tvecs[id] = tvec;
+        }
+    }
+
     /* Find first marker if none has yet been detected.
     */
     if (!has_marker) {
@@ -121,19 +139,16 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                 if (id < s.first_marker_id || id >= s.first_marker_id + s.number_of_markers)
                     continue;
 
-                cv::Vec3d rvec;
-                cv::Vec3d tvec;
-
-                if (cv::solvePnP(objectPoints, corners[i], camera_matrix, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_IPPE)) {
-                    auto v = get_xz_direction_vector(rvec);
+                if (marker_rvecs.count(id) > 0) {
+                    auto v = get_xz_direction_vector(marker_rvecs[id]);
                     auto c = circle_edge_intersection(circumference_to_radius(s.head_circumference_cm), v);
 
                     if (cv::abs(c[0]) < cv::abs(best_marker_x)) {
                         has_marker = true;
                         best_marker_x = c[0];
                         best_marker_z = c[1];
-                        best_marker_rvec = rvec;
-                        best_marker_tvec = tvec;
+                        best_marker_rvec = marker_rvecs[id];
+                        best_marker_tvec = marker_tvecs[id];
                         best_marker_id = id;
                     }
                 }
@@ -169,12 +184,9 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                 if (sample_count < ARUCOHEAD_MIN_VECTOR_SAMPLES && ids.size() != 1)
                     continue;
 
-                cv::Vec3d rvec;
-                cv::Vec3d tvec;
-
-                if (cv::solvePnP(objectPoints, corners[i], camera_matrix, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_IPPE)) {
-                    std::tie(pose_rvecs[id], pose_tvecs[id]) = head.get_pose_from_handle_transform(id, rvec, tvec, circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
-                    draw_axes(image, rvec, tvec, 6, false);
+                if (marker_rvecs.count(id) > 0) {
+                    std::tie(pose_rvecs[id], pose_tvecs[id]) = head.get_pose_from_handle_transform(id, marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                    draw_axes(image, marker_rvecs[id], marker_tvecs[id], 6, false);
                 }
             }
         }
@@ -198,12 +210,9 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                 if (id < s.first_marker_id || id >= s.first_marker_id + s.number_of_markers)
                     continue;
 
-                cv::Vec3d rvec;
-                cv::Vec3d tvec;
-
-                if (cv::solvePnP(objectPoints, corners[i], camera_matrix, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_IPPE)) {
+                if (marker_rvecs.count(id) > 0) {
                     if (!head.has_handle(id)) {
-                        auto [rvec_local, tvec_local] = head.get_marker_local_transform(rvec, tvec, circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                        auto [rvec_local, tvec_local] = head.get_marker_local_transform(marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
                         head.set_handle(Marker(id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
                     } else if (pose_rvecs.size() > 1) {
                         auto &handle = head.get_handle(id);
@@ -212,7 +221,7 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                             const auto pose_rvec = average_rotation(pose_rvecs, id);
                             const auto pose_tvec = average_translation(pose_tvecs, id);
 
-                            auto [rvec_local, tvec_local] = get_marker_local_transform(rvec, tvec, pose_rvec, pose_tvec, circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                            auto [rvec_local, tvec_local] = get_marker_local_transform(marker_rvecs[id], marker_tvecs[id], pose_rvec, pose_tvec, circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
 
                             handle.rvec_local.update(rvec_local);
                             handle.tvec_local.update(tvec_local);
