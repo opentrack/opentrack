@@ -9,6 +9,7 @@
 #include <QThread>
 #include <QHBoxLayout>
 #include <QMutex>
+#include <unordered_map>
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
 #include "video/camera.hpp"
@@ -35,6 +36,7 @@ private:
     cv::Mat camera_matrix;
     std::vector<double> dist_coeffs;
     bool has_marker;
+    std::unordered_map<int, cv::Vec3d> previous_marker_rvecs;
     settings s;
     std::unique_ptr<cv_video_widget> videoWidget;
     std::unique_ptr<QHBoxLayout> layout;

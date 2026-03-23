@@ -5,6 +5,7 @@
  * copyright notice and this permission notice appear in all copies.
  */
 #include "arucohead-util.h"
+#include "config.h"
 #include <opencv2/opencv.hpp>
 #include <math.h>
 
@@ -214,6 +215,15 @@ namespace arucohead {
         return cv::Mat(3, 3, CV_64F, data).clone();
     }
 
+    cv::Vec4d quaternion_multiply(const cv::Vec4d &q1, const cv::Vec4d &q2) {
+        const double w = q1[0]*q2[0] - q1[1]*q2[1] - q1[2]*q2[2] - q1[3]*q2[3];
+        const double x = q1[0]*q2[1] + q1[1]*q2[0] + q1[2]*q2[3] - q1[3]*q2[2];
+        const double y = q1[0]*q2[2] - q1[1]*q2[3] + q1[2]*q2[0] + q1[3]*q2[1];
+        const double z = q1[0]*q2[3] + q1[1]*q2[2] - q1[2]*q2[1] + q1[3]*q2[0];
+
+        return { w, x, y, z };
+    }
+
     /* Convert rotation matrix to euler angles (ZYX).
     */
     cv::Vec3d rotation_matrix_to_euler_zyx(const cv::Mat &R) {
@@ -279,5 +289,24 @@ namespace arucohead {
         tvec_local = tvec_local_mat.reshape(1, 1);
 
         return {rvec_local, shrink_tvec(tvec_local, xz_reference, y_reference)};
+    }
+
+    double angle_between_rotations(const cv::Vec3d &v1, const cv::Vec3d &v2) {
+        cv::Mat R1;
+        cv::Rodrigues(v1, R1);
+
+        cv::Mat R2;
+        cv::Rodrigues(v2, R2);
+
+        const auto q1 = rotation_matrix_to_quaternion(R1);
+        const auto q2 = rotation_matrix_to_quaternion(R2);
+
+        const auto q_diff = quaternion_multiply(q2, cv::Vec4d(q1[0], -q1[1], -q1[2], -q1[3]));
+
+        return acos(std::min(fabs(q_diff[0]), 1.0)) * 2.0;
+    }
+
+    bool marker_has_flipped(cv::Vec3d previous_rvec, cv::Vec3d &rvec) {
+        return angle_between_rotations(rvec, previous_rvec) > CV_PI / 180.0 * ARUCOHEAD_MARKER_FLIP_DETECTION_THRESHOLD;
     }
 }

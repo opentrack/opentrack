@@ -113,13 +113,44 @@ void arucohead_tracker::process_frame(cv::Mat &image)
     /* Caclulate poses for detected markers.
     */
     for (size_t i = 0; i < ids.size(); ++i) {
-        cv::Vec3d rvec;
-        cv::Vec3d tvec;
+        std::vector<cv::Vec3d> rvecs;
+        std::vector<cv::Vec3d> tvecs;
+        std::vector<double> reprojection_errors;
 
-        if (cv::solvePnP(objectPoints, corners[i], camera_matrix, dist_coeffs, rvec, tvec, false, cv::SOLVEPNP_IPPE)) {
+        if (cv::solvePnPGeneric(objectPoints, corners[i], camera_matrix, dist_coeffs, rvecs, tvecs, false, cv::SOLVEPNP_IPPE, cv::noArray(), cv::noArray(), reprojection_errors)) {
             const int id = ids[i];
-            marker_rvecs[id] = rvec;
-            marker_tvecs[id] = tvec;
+
+            /* Choose the best solution among the two candidates. */
+            const double error0 = reprojection_errors[0];
+            const double error1 = reprojection_errors[1];
+            const double error_ratio = std::min(error0, error1) / std::max(error0, error1);
+
+            const int solution_index = error0 <= error1 ? 0 : 1;
+
+            /* Detect and correct for sudden flips in a marker orientation when pose solutions are ambiguous.
+            */
+            if (error_ratio < ARUCOHEAD_MARKER_REPROJECTION_ERROR_THRESHOLD) {
+                // We have a good pose, so use it (or else we might get stuck on a wrong solution).
+                marker_rvecs[id] = rvecs[solution_index];
+                marker_tvecs[id] = tvecs[solution_index];
+            } else if (previous_marker_rvecs.count(id) != 0 && marker_has_flipped(previous_marker_rvecs[id], rvecs[solution_index])) {
+                // Marker flip detected, so correct it by choosing the pose closest to the previous one.
+                if (angle_between_rotations(previous_marker_rvecs[id], rvecs[0]) < angle_between_rotations(previous_marker_rvecs[id], rvecs[1])) {
+                    marker_rvecs[id] = rvecs[0];
+                    marker_tvecs[id] = tvecs[0];
+                } else {
+                    marker_rvecs[id] = rvecs[1];
+                    marker_tvecs[id] = tvecs[1];
+                }
+            } else {
+                // No flip, so use pose with the least reprojection error even if not ideal.
+                marker_rvecs[id] = rvecs[solution_index];
+                marker_tvecs[id] = tvecs[solution_index];
+            }
+
+            /* Save current marker rvec for next frame.
+            */
+            previous_marker_rvecs[id] = marker_rvecs[id];
         }
     }
 
