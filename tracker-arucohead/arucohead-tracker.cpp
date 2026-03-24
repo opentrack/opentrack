@@ -98,7 +98,13 @@ void arucohead_tracker::process_frame(cv::Mat &image)
         std::vector<aruco::Marker> markers;
         detector.detect(image, markers, cv::Mat(), cv::Mat(), -1, false);
 
+        const int min_marker_id = s.first_marker_id;
+        const int max_marker_id = s.first_marker_id + s.number_of_markers - 1;
+
         for (const auto &marker : markers) {
+            if (marker.id < min_marker_id || marker.id > max_marker_id)
+                continue;
+
             corners.push_back(marker);
             ids.push_back(marker.id);
 
@@ -109,7 +115,13 @@ void arucohead_tracker::process_frame(cv::Mat &image)
         */
         auto markers = aruconano::MarkerDetector::detect(image, 10U, s.aruco_dictionary == arucohead_dictionary::ARUCOHEAD_DICT_ARUCO_MIP_36h12 ? aruconano::MarkerDetector::ARUCO_MIP_36h12 : aruconano::MarkerDetector::APRILTAG_36h11);
 
+        const int min_marker_id = s.first_marker_id;
+        const int max_marker_id = s.first_marker_id + s.number_of_markers - 1;
+
         for (const auto &marker : markers) {
+            if (marker.id < min_marker_id || marker.id > max_marker_id)
+                continue;
+
             corners.push_back(marker);
             ids.push_back(marker.id);
 
@@ -237,9 +249,6 @@ void arucohead_tracker::process_frame(cv::Mat &image)
             for (size_t i = 0; i < ids.size(); ++i) {
                 const int id = ids[i];
 
-                if (id < s.first_marker_id || id >= s.first_marker_id + s.number_of_markers)
-                    continue;
-
                 if (marker_rvecs.count(id) > 0) {
                     auto v = get_xz_direction_vector(marker_rvecs[id]);
                     auto c = circle_edge_intersection(circumference_to_radius(s.head_circumference_cm), v);
@@ -276,9 +285,6 @@ void arucohead_tracker::process_frame(cv::Mat &image)
         for (size_t i = 0; i < ids.size(); ++i) {
             const int id = ids[i];
 
-            if (id < s.first_marker_id || id >= s.first_marker_id + s.number_of_markers)
-                continue;
-
             if (head.has_handle(id)) {
                 const auto sample_count = head.get_handle(id).rvec_local.get_max_sample_count();
 
@@ -307,9 +313,6 @@ void arucohead_tracker::process_frame(cv::Mat &image)
             */
             for (size_t i = 0; i < ids.size(); ++i) {
                 const int id = ids[i];
-
-                if (id < s.first_marker_id || id >= s.first_marker_id + s.number_of_markers)
-                    continue;
 
                 if (marker_rvecs.count(id) > 0) {
                     if (!head.has_handle(id)) {
