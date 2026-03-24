@@ -27,6 +27,7 @@ namespace arucohead {
     cv::Vec3d shrink_tvec(const cv::Vec3d &tvec, double xz_reference, double y_reference);
     cv::Vec3d expand_tvec(const cv::Vec3d &tvec, double xz_reference, double y_reference);
     std::pair<cv::Vec3d, cv::Vec3d> get_marker_local_transform(const cv::Vec3d &rvec_measured, const cv::Vec3d &tvec_measured, const cv::Vec3d &pose_rvec, const cv::Vec3d &pose_tvec, double xz_reference, double y_reference);
+    double get_marker_z_angle(const cv::Vec3d &rvec);
     double angle_between_rotations(const cv::Vec3d &rvec1, const cv::Vec3d &rvec2);
     bool marker_has_flipped(cv::Vec3d previous_rvec, cv::Vec3d& rvec);
 }

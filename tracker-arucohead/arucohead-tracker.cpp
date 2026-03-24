@@ -14,6 +14,7 @@
 #include "aruco_nano.h"
 #include "config.h"
 #include <unordered_map>
+#include <unordered_set>
 #include <QDebug>
 
 using namespace arucohead;
@@ -71,6 +72,12 @@ void arucohead_tracker::process_frame(cv::Mat &image)
     */
     std::unordered_map<int, cv::Vec3d> pose_rvecs;
     std::unordered_map<int, cv::Vec3d> pose_tvecs;
+
+    /* Marker reliability metrics.
+    */
+    std::unordered_map<int, double> marker_error_ratios;
+    std::unordered_map<int, double> marker_z_angles;
+    std::unordered_set<int> excluded_markers;
 
     /* Marker corners (in object space).
     */
@@ -148,9 +155,72 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                 marker_tvecs[id] = tvecs[solution_index];
             }
 
+            /* Collect reliability metrics.
+            */
+            marker_error_ratios[id] = error_ratio;
+            marker_z_angles[id] = get_marker_z_angle(marker_rvecs[id]);
+
+            /* Exclude markers that are too ambiguous or too close to head-on.
+            */
+            if (error_ratio > ARUCOHEAD_MARKER_EXCLUSION_AMBIGUITY_THRESHOLD || marker_z_angles[id] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD)
+                excluded_markers.insert(id);
+
             /* Save current marker rvec for next frame.
             */
             previous_marker_rvecs[id] = marker_rvecs[id];
+        }
+    }
+
+    /* Prune away unreliable markers unless none would remain.
+     */
+    const size_t excluded_marker_count = excluded_markers.size();
+
+    if (excluded_marker_count > 0) {
+        if (excluded_marker_count < ids.size()) {
+            /* Keep only reliable markers.
+            */
+            std::vector<int> pruned_markers;
+
+            for (size_t i = 0; i < ids.size(); ++i)
+                if (excluded_markers.count(ids[i]) == 0)
+                    pruned_markers.push_back(ids[i]);
+
+            ids = pruned_markers;
+        } else if (ids.size() > 0) {
+            /* Fallback: no good markers, so choose among the remaining markers.
+            */
+            std::sort(ids.begin(), ids.end(), [&marker_z_angles, &marker_error_ratios](const auto &a, const auto &b) {
+                const bool a_is_head_on = marker_z_angles[a] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD;
+                const bool b_is_head_on = marker_z_angles[b] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD;
+
+                if (!a_is_head_on && b_is_head_on)
+                    return true;
+                else if (a_is_head_on && !b_is_head_on)
+                    return false;
+
+                if (marker_error_ratios[a] < marker_error_ratios[b])
+                    return true;
+                else
+                    return false;
+            });
+
+            /* Add first marker.
+            */
+            std::vector<int> added_ids = { ids[0] };
+
+            /* Also add any remaining IDs that are not head-on.
+            */
+            for (size_t i = 1; i < ids.size(); ++i) {
+                const int id = ids[i];
+                const bool marker_is_head_on = marker_z_angles[id] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD;
+
+                if (!marker_is_head_on)
+                    added_ids.push_back(id);
+                else
+                    break;
+            }
+
+            ids = added_ids;
         }
     }
 
