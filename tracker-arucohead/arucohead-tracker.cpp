@@ -269,10 +269,10 @@ void arucohead_tracker::process_frame(cv::Mat &image)
 
                 cv::Vec3d reference_tvec = best_marker_tvec;
                 reference_tvec[0] += best_marker_x;
-                reference_tvec[1] += s.shoulder_to_marker_cm;
+                reference_tvec[1] += s.marker_height_cm;
                 reference_tvec[2] += best_marker_z;
 
-                auto [rvec_local, tvec_local] = get_marker_local_transform(best_marker_rvec, best_marker_tvec, reference_rvec, reference_tvec, circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                auto [rvec_local, tvec_local] = get_marker_local_transform(best_marker_rvec, best_marker_tvec, reference_rvec, reference_tvec, circumference_to_radius(s.head_circumference_cm), s.marker_height_cm);
 
                 head.set_handle(Marker(best_marker_id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
             }
@@ -292,7 +292,7 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                     continue;
 
                 if (marker_rvecs.count(id) > 0) {
-                    std::tie(pose_rvecs[id], pose_tvecs[id]) = head.get_pose_from_handle_transform(id, marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                    std::tie(pose_rvecs[id], pose_tvecs[id]) = head.get_pose_from_handle_transform(id, marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.marker_height_cm);
                     draw_axes(image, marker_rvecs[id], marker_tvecs[id], 6, false);
                 }
             }
@@ -316,7 +316,7 @@ void arucohead_tracker::process_frame(cv::Mat &image)
 
                 if (marker_rvecs.count(id) > 0) {
                     if (!head.has_handle(id)) {
-                        auto [rvec_local, tvec_local] = head.get_marker_local_transform(marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                        auto [rvec_local, tvec_local] = head.get_marker_local_transform(marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.marker_height_cm);
                         head.set_handle(Marker(id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
                     } else if (pose_rvecs.size() > 1) {
                         auto &handle = head.get_handle(id);
@@ -325,7 +325,7 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                             const auto pose_rvec = average_rotation(pose_rvecs, id);
                             const auto pose_tvec = average_translation(pose_tvecs, id);
 
-                            auto [rvec_local, tvec_local] = get_marker_local_transform(marker_rvecs[id], marker_tvecs[id], pose_rvec, pose_tvec, circumference_to_radius(s.head_circumference_cm), s.shoulder_to_marker_cm);
+                            auto [rvec_local, tvec_local] = get_marker_local_transform(marker_rvecs[id], marker_tvecs[id], pose_rvec, pose_tvec, circumference_to_radius(s.head_circumference_cm), s.marker_height_cm);
 
                             handle.rvec_local.update(rvec_local);
                             handle.tvec_local.update(tvec_local);
@@ -373,10 +373,10 @@ void arucohead_tracker::draw_head_bounding_box(cv::Mat &image)
         cv::Point3d(-head_radius, 0, head_radius),
         cv::Point3d(head_radius, 0, head_radius),
         cv::Point3d(head_radius, 0, -head_radius),
-        cv::Point3d(-head_radius, s.shoulder_to_marker_cm, -head_radius),
-        cv::Point3d(-head_radius, s.shoulder_to_marker_cm, head_radius),
-        cv::Point3d(head_radius, s.shoulder_to_marker_cm, head_radius),
-        cv::Point3d(head_radius, s.shoulder_to_marker_cm, -head_radius)
+        cv::Point3d(-head_radius, s.marker_height_cm, -head_radius),
+        cv::Point3d(-head_radius, s.marker_height_cm, head_radius),
+        cv::Point3d(head_radius, s.marker_height_cm, head_radius),
+        cv::Point3d(head_radius, s.marker_height_cm, -head_radius)
     };
 
     std::vector<cv::Point2d> image_points;
