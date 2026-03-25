@@ -60,7 +60,7 @@ class arucohead_metadata : public Metadata
 {
     Q_OBJECT
 
-    QString name() override { return tr("ArUcoHead Tracker"); }
+    QString name() override { return tr("ArUcoHead paper marker tracker"); }
     QIcon icon() override { return QIcon(":/images/arucohead.png"); }
 };
 
