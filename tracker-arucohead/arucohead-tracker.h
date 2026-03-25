@@ -61,6 +61,6 @@ class arucohead_metadata : public Metadata
     Q_OBJECT
 
     QString name() override { return tr("ArUcoHead Tracker"); }
-    QIcon icon() override { return QIcon(":/images/opentrack.png"); }
+    QIcon icon() override { return QIcon(":/images/arucohead.png"); }
 };
 
