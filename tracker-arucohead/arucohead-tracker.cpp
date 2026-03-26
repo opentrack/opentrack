@@ -519,6 +519,13 @@ void arucohead_tracker::run() {
             }
         }
 
+        /* Frames must have 1 (grayscale) or 3 (color) channels.
+        */
+        if (frame.channels != 1 && frame.channels != 3) {
+            qDebug() << "ArUcoHead: can't handle" << frame.channels << "color channels";
+            return;
+        }
+
         auto frame_mat_temp = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
 
         /* Apply zoom (as region of interest).
