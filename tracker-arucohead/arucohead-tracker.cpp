@@ -291,10 +291,8 @@ void arucohead_tracker::process_frame(cv::Mat &image)
                 if (sample_count < ARUCOHEAD_MIN_VECTOR_SAMPLES && ids.size() != 1)
                     continue;
 
-                if (marker_rvecs.count(id) > 0) {
+                if (marker_rvecs.count(id) > 0)
                     std::tie(pose_rvecs[id], pose_tvecs[id]) = head.get_pose_from_handle_transform(id, marker_rvecs[id], marker_tvecs[id], circumference_to_radius(s.head_circumference_cm), s.marker_height_cm);
-                    draw_axes(image, marker_rvecs[id], marker_tvecs[id], 6, false);
-                }
             }
         }
 
