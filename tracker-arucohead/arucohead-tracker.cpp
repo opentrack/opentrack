@@ -172,10 +172,14 @@ void arucohead_tracker::process_frame(cv::Mat &image)
             marker_error_ratios[id] = error_ratio;
             marker_z_angles[id] = get_marker_z_angle(marker_rvecs[id]);
 
-            /* Exclude markers that are too ambiguous or too close to head-on.
+            /* Exclude markers that are too ambiguous, too close to head-on, or too oblique.
             */
-            if (error_ratio > ARUCOHEAD_MARKER_EXCLUSION_AMBIGUITY_THRESHOLD || marker_z_angles[id] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD)
+            if (error_ratio > ARUCOHEAD_MARKER_EXCLUSION_AMBIGUITY_THRESHOLD ||
+                marker_z_angles[id] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_LOW_THRESHOLD ||
+                marker_z_angles[id] > CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_HIGH_THRESHOLD)
+            {
                 excluded_markers.insert(id);
+            }
 
             /* Save current marker rvec for next frame.
             */
@@ -202,14 +206,6 @@ void arucohead_tracker::process_frame(cv::Mat &image)
             /* Fallback: no good markers, so choose among the remaining markers.
             */
             std::sort(ids.begin(), ids.end(), [&marker_z_angles, &marker_error_ratios](const auto &a, const auto &b) {
-                const bool a_is_head_on = marker_z_angles[a] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD;
-                const bool b_is_head_on = marker_z_angles[b] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD;
-
-                if (!a_is_head_on && b_is_head_on)
-                    return true;
-                else if (a_is_head_on && !b_is_head_on)
-                    return false;
-
                 if (marker_error_ratios[a] < marker_error_ratios[b])
                     return true;
                 else
@@ -220,13 +216,12 @@ void arucohead_tracker::process_frame(cv::Mat &image)
             */
             std::vector<int> added_ids = { ids[0] };
 
-            /* Also add any remaining IDs that are not head-on.
-            */
+            /* Also add any remaining markers that have acceptable error ratios.
+             */
             for (size_t i = 1; i < ids.size(); ++i) {
                 const int id = ids[i];
-                const bool marker_is_head_on = marker_z_angles[id] < CV_PI / 180.0 * ARUCOHEAD_MARKER_EXCLUSION_ANGLE_THRESHOLD;
 
-                if (!marker_is_head_on)
+                if (marker_error_ratios[id] < ARUCOHEAD_MARKER_REPROJECTION_ERROR_THRESHOLD)
                     added_ids.push_back(id);
                 else
                     break;
