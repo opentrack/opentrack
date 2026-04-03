@@ -6,7 +6,15 @@ if(GIT_FOUND)
     git_describe(OPENTRACK_COMMIT --tags --always)
 endif()
 
-file(WRITE ${CMAKE_BINARY_DIR}/opentrack-version.hxx "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
+set(_ver_content "#define OPENTRACK_VERSION \"${OPENTRACK_COMMIT}\"")
+set(_ver_file "${CMAKE_BINARY_DIR}/opentrack-version.hxx")
+set(_ver_old "")
+if(EXISTS "${_ver_file}")
+    file(READ "${_ver_file}" _ver_old)
+endif()
+if(NOT (_ver_old STREQUAL _ver_content))
+    file(WRITE "${_ver_file}" "${_ver_content}")
+endif()
 
 set(version-string "\
 #ifdef __cplusplus

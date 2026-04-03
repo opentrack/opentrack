@@ -21,6 +21,7 @@ function(otr_i18n_for_target_directory n)
         set_property(GLOBAL APPEND PROPERTY "opentrack-ts-files-${k}" "${CMAKE_CURRENT_SOURCE_DIR}/lang/${k}.ts")
     endforeach()
     set(stamp "${CMAKE_CURRENT_BINARY_DIR}/lupdate.stamp")
+    set_property(GLOBAL APPEND PROPERTY "opentrack-lupdate-stamps" "${stamp}")
 
     foreach(i ${opentrack_all-translations})
         set(t "${CMAKE_CURRENT_SOURCE_DIR}/lang/${i}.ts")
@@ -57,6 +58,8 @@ function(otr_merge_translations)
     #install(CODE "message(FATAL_ERROR \"foo \${CMAKE_INSTALL_PREFIX}\")")
     #install(CODE "file(REMOVE_RECURSE \"\${CMAKE_INSTALL_PREFIX}/${i18n-pfx}\")")
 
+    get_property(lupdate-stamps GLOBAL PROPERTY "opentrack-lupdate-stamps")
+
     foreach(i ${opentrack_all-translations})
         get_property(ts-files GLOBAL PROPERTY "opentrack-ts-files-${i}")
         get_property(lrelease-binary TARGET Qt6::lrelease PROPERTY IMPORTED_LOCATION)
@@ -78,7 +81,7 @@ function(otr_merge_translations)
                 ${ts-files}
                 -qm "${qm-output}"
                 ${to-null}
-            DEPENDS i18n-lupdate ${ts-files}
+            DEPENDS ${lupdate-stamps} ${ts-files}
             COMMENT "Running lrelease for ${i}"
             WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
 
