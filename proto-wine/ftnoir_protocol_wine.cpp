@@ -60,6 +60,20 @@ void wine::pose(const double *headpose, const double*)
     }
 }
 
+bool wine::center_requested()
+{
+    if (!shm) return false;
+    lck_shm.lock();
+    const int current = shm->center_seq;
+    lck_shm.unlock();
+    if (current == last_seen_center_seq) return false;
+    qDebug() << "proto/wine: center_seq edge"
+             << last_seen_center_seq << "->" << current
+             << "- triggering set_center";
+    last_seen_center_seq = current;
+    return true;
+}
+
 module_status wine::initialize()
 {
 #ifndef OTR_WINE_NO_WRAPPER

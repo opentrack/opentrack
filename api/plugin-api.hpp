@@ -170,6 +170,17 @@ struct OTR_API_EXPORT IProtocol : module_status_mixin
     virtual void pose(const double* pose, const double* raw) = 0;
     // return game name or placeholder text
     virtual QString game_name() = 0;
+    // Optional: let the protocol signal back to opentrack that the user
+    // (via the sim/game-side, not a keyboard shortcut) has requested a
+    // re-center. The pipeline polls this once per pose-tick and, when
+    // it returns true, fires set_center() the same way the Center
+    // shortcut does. Default: never request. Protocols that receive
+    // signals from the sim (e.g. proto-wine, whose shared-memory
+    // layout has a center_seq counter bumped by the opentrack.xpl
+    // X-Plane plugin) override this. Call is edge-triggered: a single
+    // bump of center_seq should return true exactly once so the user
+    // doesn't get re-centered every frame after one button press.
+    virtual bool center_requested() { return false; }
 };
 
 struct OTR_API_EXPORT IProtocolDialog : public plugin_api::detail::BaseDialog

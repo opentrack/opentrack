@@ -45,6 +45,13 @@ public:
 
     module_status initialize() override;
     void pose(const double* headpose, const double*) override;
+    // Edge-triggered re-center request from the sim side. See
+    // proto-wine/wine-shm.h center_seq comment and the
+    // opentrack.xpl CenterHandler: the X-Plane plugin bumps
+    // center_seq when the user presses a sim-bound button.
+    // Returns true exactly once per bump so opentrack re-centers
+    // on rising edge rather than every frame after the button.
+    bool center_requested() override;
 
     QString game_name() override
     {
@@ -59,6 +66,7 @@ private:
     shm_wrapper lck_shm { WINE_SHM_NAME, WINE_MTX_NAME, sizeof(WineSHM) };
     WineSHM* shm = nullptr;
     settings s;
+    int last_seen_center_seq = 0;
 
 #ifndef OTR_WINE_NO_WRAPPER
     QProcess wrapper;

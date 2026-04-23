@@ -544,6 +544,18 @@ ok:
 
     libs.pProtocol->pose(value, raw);
 
+    // Bridge from sim-side re-center buttons back into opentrack's
+    // centering logic. The protocol (e.g. proto-wine) sees a rising
+    // edge on its signal channel (shared memory bumped by the X-Plane
+    // opentrack.xpl plugin when the user presses a joystick button
+    // bound to the "opentrack/center" command), and returns true
+    // here exactly once per press. This sidesteps the macOS Carbon
+    // global-hotkey limitation where X-Plane's exclusive focus
+    // swallows F-key shortcuts before they reach opentrack's
+    // keyboard-level shortcut system.
+    if (libs.pProtocol->center_requested())
+        set_center(true);
+
     {
         QMutexLocker foo(&mtx);
         m_output_pose = value;
