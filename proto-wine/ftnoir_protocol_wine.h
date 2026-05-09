@@ -104,6 +104,6 @@ public:
     QIcon icon() override { return QIcon(":/images/wine.png"); }
 #else
     QString name() override { return tr("X-Plane"); }
-    QIcon icon() override { return {}; }
+    QIcon icon() override { return QIcon(":/images/x-plane.png"); }
 #endif
 };
