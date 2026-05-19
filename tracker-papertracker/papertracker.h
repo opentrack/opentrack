@@ -53,6 +53,10 @@ private:
         */
         std::vector<aruco::Marker> returned_markers;
 
+        /* Temporary list of markers.
+        */
+        std::vector<aruco::Marker> temp_markers;
+
         /* Head pose vectors for each detected marker.
         */
         std::vector<std::pair<int, cv::Vec3d>> pose_rvecs;
@@ -80,6 +84,7 @@ private:
             const size_t reserve_count = 16;
 
             returned_markers.reserve(reserve_count);
+            temp_markers.reserve(reserve_count);
             pose_rvecs.reserve(reserve_count);
             pose_tvecs.reserve(reserve_count);
             temp_vecs.reserve(reserve_count);
@@ -129,6 +134,7 @@ private:
     bool process_frame(cv::Mat& frame, const cv::Rect2i *roi = nullptr);
     void cycle_threshold_params();
     void set_threshold_params();
+    void detect_markers_optimal(const cv::Mat& image, std::vector<aruco::Marker> &best_markers);
     cv::Matx33d build_camera_matrix(int image_width, int image_height, double diagonal_fov);
     std::vector<size_t> get_key_markers(const std::vector<marker_detection_info> &detection_info);
     cv::Vec3d get_approximate_head_origin(const std::vector<cv::Vec3d> &marker_rvecs, const std::vector<cv::Vec3d> &marker_tvecs);
