@@ -107,11 +107,14 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         image = frame;
     }
 
-    /* Detect markers and draw their borders.
+    /* Detect markers.
     */
     frame_data.returned_markers.clear();
 
-    detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+    if (!has_key_marker)
+        detect_markers_optimal(image, frame_data.returned_markers);
+    else
+        detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
 
     const int min_marker_id = s.first_marker_id;
     const int max_marker_id = s.first_marker_id + s.number_of_markers - 1;
@@ -416,6 +419,63 @@ void PaperTracker::set_threshold_params()
         detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
 
     detector.setThresholdParams(adaptive_threshold_sizes[adaptive_size_pos], PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
+}
+
+/* Detect markers using threshold parameters that maximize the number of detected markers. This is especially
+   important during initial detection as lighting conditions can sometimes result in missed markers and we
+   depend on context to determine the initial head position.
+*/
+void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruco::Marker> &best_markers)
+{
+    // Detect markers using current threshold parameters.
+    detector.detect(image, best_markers, cv::Mat(), cv::Mat(), -1, false);
+
+    // Set current threshold parameters as current best.
+    auto best_threshold_fixed = use_fixed_threshold;
+    auto best_adaptive_size_pos = adaptive_size_pos;
+
+    // Search is slow, so to minimize the impact on frame rate only proceed if we've found at least one marker
+    // using current parameters. If none are detected the parameters will be cycled normally elsewhere.
+    if (best_markers.size() == 0) return;
+
+    // Skip current threshold parameters in detections that follow.
+    const auto skip_fixed_threshold = use_fixed_threshold;
+    const auto skip_adaptive_size_pos = adaptive_size_pos;
+
+    // Try fixed threshold.
+    if (!skip_fixed_threshold) {
+        use_fixed_threshold = true;
+        set_threshold_params();
+
+        detector.detect(image, frame_data.temp_markers, cv::Mat(), cv::Mat(), -1, false);
+
+        if (frame_data.temp_markers.size() > best_markers.size()) {
+            best_markers.assign(frame_data.temp_markers.begin(), frame_data.temp_markers.end());
+            best_threshold_fixed = true;
+        }
+    }
+
+    // Try adaptive thresholds.
+    use_fixed_threshold = false;
+    for (size_t i = 0; i < std::size(adaptive_threshold_sizes); ++i) {
+        if (!skip_fixed_threshold && skip_adaptive_size_pos == static_cast<int>(i))
+            continue; // already tried this combination
+
+        adaptive_size_pos = static_cast<int>(i);
+        set_threshold_params();
+
+        detector.detect(image, frame_data.temp_markers, cv::Mat(), cv::Mat(), -1, false);
+
+        if (frame_data.temp_markers.size() > best_markers.size()) {
+            best_markers.assign(frame_data.temp_markers.begin(), frame_data.temp_markers.end());
+            best_threshold_fixed = false;
+            best_adaptive_size_pos = adaptive_size_pos;
+        }
+    }
+
+    use_fixed_threshold = best_threshold_fixed;
+    adaptive_size_pos = best_adaptive_size_pos;
+    set_threshold_params();
 }
 
 /* Generate a camera matrix for the given image dimension and field of view (in radians).
