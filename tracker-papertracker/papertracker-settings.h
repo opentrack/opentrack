@@ -26,7 +26,7 @@ struct papertracker_settings : public opts
     value<int> number_of_markers { b, "number_of_markers", 1 };
     value<int> first_marker_id { b, "first_marker_id", 1 };
     value<double> head_circumference_cm { b, "head_circumference_cm", 60 };
-    value<double> marker_height_cm { b, "marker_height_cm", 20 };
+    value<double> marker_height_cm { b, "marker_height_cm", 15 };
     value<papertracker_dictionary> aruco_dictionary { b, "aruco_dictionary", papertracker_dictionary::PAPERTRACKER_DICT_ARUCO_MIP_36h12 };
     value<QString> camera_name { b, "camera_name", "" };
     value<int> zoom { b, "zoom", 100 };
