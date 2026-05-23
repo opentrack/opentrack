@@ -167,7 +167,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Jawline to marker distance</string>
+         <string>Head joint to marker distance</string>
         </property>
        </widget>
       </item>

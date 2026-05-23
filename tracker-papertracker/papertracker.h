@@ -140,9 +140,8 @@ private:
     cv::Vec3d get_approximate_head_origin(const std::vector<cv::Vec3d> &marker_rvecs, const std::vector<cv::Vec3d> &marker_tvecs);
     cv::Rect2f get_marker_detected_region(const std::vector<marker_detection_info> &markers);
     bool markers_disappeared(const std::vector<int> &expected, const std::vector<marker_detection_info> &detected);
-    void draw_head_bounding_box(cv::Mat &image);
+    void draw_head_indicator(cv::Mat &image);
     void draw_marker_border(cv::Mat &image, const std::array<cv::Point2f, 4> &image_points, int id, const cv::Scalar &marker_border = cv::Scalar(0, 0, 255));
-    void draw_axes(cv::Mat &image, const cv::Vec3d &rvec, const cv::Vec3d &tvec, double axis_length=1, bool color=true);
     void update_fps();
 
     friend class PaperTrackerDialog;

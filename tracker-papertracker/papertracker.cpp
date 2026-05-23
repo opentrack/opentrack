@@ -651,47 +651,59 @@ bool PaperTracker::markers_disappeared(const std::vector<int> &expected, const s
     return false;
 }
 
-/* Draw a bounding box around the head from dimensions defined in settings.
+/* Draw reference points around the head from dimensions defined in settings.
 */
-void PaperTracker::draw_head_bounding_box(cv::Mat &image)
+void PaperTracker::draw_head_indicator(cv::Mat &image)
 {
     double head_radius = circumference_to_radius(s.head_circumference_cm);
 
-    std::vector<cv::Point3d> box_points = {
+    std::array<cv::Point3d, 8> points = {
+        cv::Point3d(0, 0, 0),
         cv::Point3d(-head_radius, 0, -head_radius),
+        cv::Point3d(head_radius, 0, -head_radius),
         cv::Point3d(-head_radius, 0, head_radius),
         cv::Point3d(head_radius, 0, head_radius),
-        cv::Point3d(head_radius, 0, -head_radius),
-        cv::Point3d(-head_radius, s.marker_height_cm, -head_radius),
-        cv::Point3d(-head_radius, s.marker_height_cm, head_radius),
-        cv::Point3d(head_radius, s.marker_height_cm, head_radius),
-        cv::Point3d(head_radius, s.marker_height_cm, -head_radius)
+        cv::Point3d(head_radius, 0, 0),
+        cv::Point3d(0, head_radius, 0),
+        cv::Point3d(0, 0, head_radius)
     };
 
-    std::vector<cv::Point2d> image_points;
-    cv::projectPoints(box_points, head.rvec, head.tvec, camera_matrix, dist_coeffs, image_points);
+    std::array<cv::Point2d, std::size(points)> image_points;
 
-    const cv::Scalar box_color(0, 255, 0);
-    const cv::Scalar brightness3(1, 1, 1);
-    const cv::Scalar brightness2(0.8, 0.8, 0.8);
+    cv::Mat points_mat(static_cast<int>(points.size()), 1, CV_64FC3, points.data());
+    cv::Mat image_points_mat(static_cast<int>(image_points.size()), 1, CV_64FC2, image_points.data());
+
+    cv::projectPoints(points_mat, head.rvec, head.tvec, camera_matrix, dist_coeffs, image_points_mat);
+
+    const cv::Scalar brightness2(1, 1, 1);
     const cv::Scalar brightness1(0.5, 0.5, 0.5);
 
-    const double line_thickness = std::max(image.cols * PAPERTRACKER_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
+    const double line_thickness = std::max(image.cols * PAPERTRACKER_LINE_THICKNESS_FRAME_SCALING_FACTOR, 2.0);
+    const double corner_radius = std::max(2 * image.cols * PAPERTRACKER_LINE_THICKNESS_FRAME_SCALING_FACTOR, 2.0);
+    const double origin_radius = std::max(3 * image.cols * PAPERTRACKER_LINE_THICKNESS_FRAME_SCALING_FACTOR, 3.0);
 
-    cv::line(image, image_points[0], image_points[1], box_color * brightness2, line_thickness);
-    cv::line(image, image_points[1], image_points[2], box_color * brightness3, line_thickness);
-    cv::line(image, image_points[2], image_points[3], box_color * brightness2, line_thickness);
-    cv::line(image, image_points[3], image_points[0], box_color * brightness1, line_thickness);
+    // back corners
+    cv::circle(image, image_points[1], corner_radius, cv::Scalar(0, 255, 255) * brightness1, -1);
+    cv::circle(image, image_points[2], corner_radius, cv::Scalar(0, 255, 255) * brightness1, -1);
 
-    cv::line(image, image_points[4], image_points[5], box_color * brightness2, line_thickness);
-    cv::line(image, image_points[5], image_points[6], box_color * brightness3, line_thickness);
-    cv::line(image, image_points[6], image_points[7], box_color * brightness2, line_thickness);
-    cv::line(image, image_points[7], image_points[4], box_color * brightness1, line_thickness);
+    // x axis
+    cv::line(image, image_points[0], image_points[5], cv::Scalar(255, 255, 255), line_thickness * 3);
+    cv::line(image, image_points[0], image_points[5], cv::Scalar(0, 0, 255), line_thickness);
 
-    cv::line(image, image_points[0], image_points[4], box_color * brightness1, line_thickness);
-    cv::line(image, image_points[1], image_points[5], box_color * brightness3, line_thickness);
-    cv::line(image, image_points[2], image_points[6], box_color * brightness3, line_thickness);
-    cv::line(image, image_points[3], image_points[7], box_color * brightness1, line_thickness);
+    // y axis
+    cv::line(image, image_points[0], image_points[6], cv::Scalar(255, 255, 255), line_thickness * 3);
+    cv::line(image, image_points[0], image_points[6], cv::Scalar(0, 255, 0), line_thickness);
+
+    // z axis
+    cv::line(image, image_points[0], image_points[7], cv::Scalar(255, 255, 255), line_thickness * 3);
+    cv::line(image, image_points[0], image_points[7], cv::Scalar(255, 0, 0), line_thickness);
+
+    // origin
+    cv::circle(image, image_points[0], origin_radius, cv::Scalar(0, 0, 255), -1);
+
+    // front corners
+    cv::circle(image, image_points[3], corner_radius, cv::Scalar(0, 255, 255) * brightness2, -1);
+    cv::circle(image, image_points[4], corner_radius, cv::Scalar(0, 255, 255) * brightness2, -1);
 }
 
 /* Draw a border around a marker given its vertices in image space.
@@ -718,27 +730,6 @@ void PaperTracker::draw_marker_border(cv::Mat &image, const std::array<cv::Point
     const auto text_size = cv::getTextSize(ss.str(), cv::FONT_HERSHEY_SIMPLEX, font_scale, line_thickness, nullptr);
 
     cv::putText(image, ss.str(), center - cv::Point2f(text_size.width / 2.0, 0), cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255) - border_color, line_thickness, cv::LINE_AA);
-}
-
-/* Draw coordinate axes for a given pose (rvec/tvec).
-*/
-void PaperTracker::draw_axes(cv::Mat &image, const cv::Vec3d &rvec, const cv::Vec3d &tvec, double axis_length, bool color)
-{
-    std::vector<cv::Point3d> axis_points = {
-        {0, 0, 0},
-        {axis_length, 0, 0},
-        {0, axis_length, 0},
-        {0, 0, axis_length}
-    };
-    
-    std::vector<cv::Point2d> image_points;
-    cv::projectPoints(axis_points, rvec, tvec, camera_matrix, dist_coeffs, image_points);
-
-    const double line_thickness = std::max(image.cols * PAPERTRACKER_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
-        
-    cv::line(image, image_points[0], image_points[1], color ? cv::Scalar(0, 0, 255) : cv::Scalar(255, 255, 255), line_thickness);
-    cv::line(image, image_points[0], image_points[2], color ? cv::Scalar(0, 255, 0) : cv::Scalar(255, 255, 255), line_thickness);
-    cv::line(image, image_points[0], image_points[3], color ? cv::Scalar(255, 0, 0) : cv::Scalar(255, 255, 255), line_thickness);
 }
 
 /* Update FPS average.
@@ -889,12 +880,10 @@ void PaperTracker::run() {
                 draw_marker_border(frame_mat, marker, marker.id, cv::Scalar(0, 0, 170));
         }
 
-        /* Draw head bounding box and coordinate axes.
+        /* Draw head indicator.
         */
-        if (head.num_handles() > 0) {
-            draw_head_bounding_box(frame_mat);
-            draw_axes(frame_mat, head.rvec, head.tvec, circumference_to_radius(s.head_circumference_cm) * 1.5);
-        }
+        if (head.num_handles() > 0)
+            draw_head_indicator(frame_mat);
 
         /* Update and render FPS indicator.
         */
