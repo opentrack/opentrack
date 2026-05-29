@@ -41,8 +41,9 @@ private:
         cv::Vec3d rvec;
         cv::Vec3d tvec;
         double z_angle;
+        double weight;
 
-        marker_detection_info(int id, const std::vector<cv::Point2f> &corners) : id(id), solved(false), z_angle(0) {
+        marker_detection_info(int id, const std::vector<cv::Point2f> &corners) : id(id), solved(false), z_angle(0), weight(1) {
             for (size_t i = 0; i < corners.size() && i < 4; ++i)
                 (*this)[i] = corners[i];
         }
@@ -57,14 +58,17 @@ private:
         */
         std::vector<aruco::Marker> temp_markers;
 
-        /* Head pose vectors for each detected marker.
+        /* Head pose data {id, pose_rvec, pose_tvec, weight} for each detected marker.
         */
-        std::vector<std::pair<int, cv::Vec3d>> pose_rvecs;
-        std::vector<std::pair<int, cv::Vec3d>> pose_tvecs;
+        std::vector<std::tuple<int, cv::Vec3d, cv::Vec3d, double>> pose_data;
 
         /* Temporary list of rotation / translation vectors.
         */
         std::vector<cv::Vec3d> temp_vecs;
+
+        /* Temporary list of marker weights.
+        */
+        std::vector<double> temp_weights;
 
         /* Set of markers that are candidates for exclusion.
         */
@@ -85,9 +89,9 @@ private:
 
             returned_markers.reserve(reserve_count);
             temp_markers.reserve(reserve_count);
-            pose_rvecs.reserve(reserve_count);
-            pose_tvecs.reserve(reserve_count);
+            pose_data.reserve(reserve_count);
             temp_vecs.reserve(reserve_count);
+            temp_weights.reserve(reserve_count);
             excluded_markers.reserve(reserve_count);
             selected_markers.reserve(reserve_count);
 

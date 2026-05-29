@@ -62,8 +62,7 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     */
     frame_data.excluded_markers.clear();
     frame_data.selected_markers.clear();
-    frame_data.pose_rvecs.clear();
-    frame_data.pose_tvecs.clear();
+    frame_data.pose_data.clear();
 
     /* Marker corners (in object space).
     */
@@ -151,6 +150,12 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
 
     /* Caclulate poses for detected markers.
     */
+    const double min_angle_radians = s.marker_min_angle * CV_PI / 180.0;
+    const double max_angle_radians = s.marker_max_angle * CV_PI / 180.0;
+    const double angle_range = max_angle_radians - min_angle_radians;
+    const double fadeout_range = PAPERTRACKER_MARKER_ANGLE_FADEOUT_RANGE_PERCENT * angle_range / 2.0;
+    const double sort_reference_angle = min_angle_radians + fadeout_range;
+
     for (size_t i = 0; i < detected_markers.size(); ++i) {
         if (cv::solvePnPGeneric(objectPoints, detected_markers[i], camera_matrix, dist_coeffs, frame_data.pnp_rvecs, frame_data.pnp_tvecs, false, cv::SOLVEPNP_IPPE_SQUARE, cv::noArray(), cv::noArray(), frame_data.pnp_reprojection_errors)) {
             const int id = detected_markers[i].id;
@@ -166,13 +171,21 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             detected_markers[i].tvec = frame_data.pnp_tvecs[solution_index];
             detected_markers[i].solved = true;
 
+            /* Set marker weight.
+            */
+            const auto marker_direction = -detected_markers[i].tvec / cv::norm(detected_markers[i].tvec);
+            detected_markers[i].z_angle = get_marker_relative_angle(detected_markers[i].rvec, marker_direction);
+
+            const double fade_low = std::clamp((detected_markers[i].z_angle - min_angle_radians) / fadeout_range, 0.0, 1.0);
+            const double fade_high = std::clamp((max_angle_radians - detected_markers[i].z_angle) / fadeout_range, 0.0, 1.0);
+
+            detected_markers[i].weight = fade_low * fade_high;
+
             /* Exclude markers that are too ambiguous, too close to head-on, or too oblique.
             */
-            detected_markers[i].z_angle = get_marker_z_angle(detected_markers[i].rvec);
-
             if (error_ratio > PAPERTRACKER_MARKER_EXCLUSION_AMBIGUITY_THRESHOLD ||
-                detected_markers[i].z_angle < CV_PI / 180.0 * s.marker_min_angle ||
-                detected_markers[i].z_angle > CV_PI / 180.0 * s.marker_max_angle)
+                detected_markers[i].z_angle < min_angle_radians ||
+                detected_markers[i].z_angle > max_angle_radians)
             {
                 frame_data.excluded_markers.insert(id);
             }
@@ -198,7 +211,7 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         } else if (detected_markers.size() > 0) {
             /* Fallback: no good markers, so choose among the remaining markers.
             */
-            std::sort(detected_markers.begin(), detected_markers.end(), [this](const auto &a, const auto &b) {
+            std::sort(detected_markers.begin(), detected_markers.end(), [this, sort_reference_angle](const auto &a, const auto &b) {
                 const bool head_has_a = head.has_handle(a.id);
                 const bool head_has_b = head.has_handle(b.id);
 
@@ -207,8 +220,8 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
                 else if (!head_has_a && head_has_b)
                     return false;
 
-                const double sorting_angle_a = fabs(a.z_angle - CV_PI / 180.0 * s.marker_min_angle);
-                const double sorting_angle_b = fabs(b.z_angle - CV_PI / 180.0 * s.marker_min_angle);
+                const double sorting_angle_a = fabs(a.z_angle - sort_reference_angle);
+                const double sorting_angle_b = fabs(b.z_angle - sort_reference_angle);
 
                 return sorting_angle_a < sorting_angle_b;
             });
@@ -282,31 +295,41 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
                 if (detected_markers[marker_index].solved) {
                     auto [pose_rvec, pose_tvec] = head.get_pose_from_handle_transform(id, detected_markers[marker_index].rvec, detected_markers[marker_index].tvec);
 
-                    frame_data.pose_rvecs.push_back({id, pose_rvec});
-                    frame_data.pose_tvecs.push_back({id, pose_tvec});
+                    frame_data.pose_data.push_back({id, pose_rvec, pose_tvec, detected_markers[marker_index].weight});
                 }
             }
         }
 
         /* Add/update handles.
         */
-        if (frame_data.pose_rvecs.size() > 0) {
+        if (frame_data.pose_data.size() > 0) {
             /* Update head pose.
             */
             {
                 QMutexLocker l(&data_mtx);
 
                 frame_data.temp_vecs.clear();
-                for (const auto& [pose_marker_id, pose_rvec] : frame_data.pose_rvecs)
-                    frame_data.temp_vecs.push_back(pose_rvec);
+                frame_data.temp_weights.clear();
 
-                head.rvec = average_rotation(frame_data.temp_vecs);
+                double summed_weights = 0;
+
+                for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data) {
+                    frame_data.temp_vecs.push_back(pose_rvec);
+                    frame_data.temp_weights.push_back(pose_weight);
+                    summed_weights += pose_weight;
+                }
+
+                if (summed_weights > 0.0)
+                    for (auto &weight : frame_data.temp_weights)
+                        weight /= summed_weights;
+
+                head.rvec = average_rotation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
 
                 frame_data.temp_vecs.clear();
-                for (const auto& [pose_marker_id, pose_tvec] : frame_data.pose_tvecs)
+                for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data)
                     frame_data.temp_vecs.push_back(pose_tvec);
 
-                head.tvec = average_translation(frame_data.temp_vecs);
+                head.tvec = average_translation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
             }
 
             /* Compute local transforms for each marker, adding or updating handles as needed.
@@ -319,7 +342,7 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
                     if (!head.has_handle(id)) {
                         auto [rvec_local, tvec_local] = get_marker_local_transform(detected_markers[marker_index].rvec, detected_markers[marker_index].tvec, head.rvec, head.tvec);
                         head.set_handle(Marker(id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
-                    } else if (frame_data.pose_rvecs.size() > 1 && id != key_marker_id) {
+                    } else if (frame_data.pose_data.size() > 1 && id != key_marker_id) {
                         auto &handle = head.get_handle(id);
 
                         if (!handle.rvec_local.outliers_removed() && handle.rvec_local.sample_count() == handle.rvec_local.get_max_sample_count())
@@ -330,18 +353,30 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
 
                         if (handle.rvec_local.sample_count() < handle.rvec_local.get_max_sample_count()) {
                             frame_data.temp_vecs.clear();
-                            for (const auto& [pose_marker_id, pose_rvec] : frame_data.pose_rvecs)
-                                if (pose_marker_id != id)
-                                    frame_data.temp_vecs.push_back(pose_rvec);
+                            frame_data.temp_weights.clear();
 
-                            const auto pose_rvec = average_rotation(frame_data.temp_vecs);
+                            double summed_weights = 0;
+
+                            for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data) {
+                                if (pose_marker_id != id) {
+                                    frame_data.temp_vecs.push_back(pose_rvec);
+                                    frame_data.temp_weights.push_back(pose_weight);
+                                    summed_weights += pose_weight;
+                                }
+                            }
+
+                            if (summed_weights > 0.0)
+                                for (auto &weight : frame_data.temp_weights)
+                                    weight /= summed_weights;
+
+                            const auto pose_rvec = average_rotation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
 
                             frame_data.temp_vecs.clear();
-                            for (const auto& [pose_marker_id, pose_tvec] : frame_data.pose_tvecs)
+                            for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data)
                                 if (pose_marker_id != id)
                                     frame_data.temp_vecs.push_back(pose_tvec);
 
-                            const auto pose_tvec = average_translation(frame_data.temp_vecs);
+                            const auto pose_tvec = average_translation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
 
                             auto [rvec_local, tvec_local] = get_marker_local_transform(detected_markers[marker_index].rvec, detected_markers[marker_index].tvec, pose_rvec, pose_tvec);
 
