@@ -157,6 +157,7 @@ private:
     static constexpr double RC = .25;
     int num_threads_ = 1;
     bool is_visible_ = true;
+    int frames_since_localizer_ = 0;
 
     QMutex mtx_ = {}; // Protects the pose
     std::optional<QuatPose> last_pose_ = {};
