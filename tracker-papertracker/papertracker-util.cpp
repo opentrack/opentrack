@@ -8,6 +8,7 @@
 #include "config.h"
 #include <opencv2/opencv.hpp>
 #include <math.h>
+#include <optional>
 
 namespace papertracker {
     /* Compute average rotation from an std::vector of rotation vectors.
