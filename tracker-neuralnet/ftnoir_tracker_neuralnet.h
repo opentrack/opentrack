@@ -62,8 +62,9 @@ struct resolution_tuple
     int height;
 };
 
-static const std::array<resolution_tuple, 9> resolution_choices = { {
+static const std::array<resolution_tuple, 10> resolution_choices = { {
     { 320, 240 },
+    { 640, 400 },
     { 640, 480 },
     { 800, 600 },
     { 1024, 768 },
@@ -76,7 +77,7 @@ static const std::array<resolution_tuple, 9> resolution_choices = { {
 
 struct Settings : opts
 {
-    value<int> offset_fwd{ b, "offset-fwd", 200 }, // Millimeters
+    value<int> offset_fwd{ b, "offset-fwd", -100 }, // Millimeters
         offset_up{ b, "offset-up", 0 }, offset_right{ b, "offset-right", 0 };
     value<QString> camera_name{ b, "camera-name", "" };
     value<int> fov{ b, "field-of-view", 56 };
@@ -85,7 +86,7 @@ struct Settings : opts
     value<double> roi_filter_alpha{ b, "roi-filter-alpha", 1. };
     value<double> roi_zoom{ b, "roi-zoom", 1. };
     value<bool> use_mjpeg{ b, "use-mjpeg", false };
-    value<int> num_threads{ b, "num-threads", 1 };
+    value<int> num_threads{ b, "num-threads", 2 };
     value<int> resolution{ b, "force-resolution", 0 };
     value<double> deadzone_size{ b, "deadzone-size", 1. };
     value<double> deadzone_hardness{ b, "deadzone-hardness", 1.5 };
