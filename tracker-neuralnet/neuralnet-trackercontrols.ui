@@ -625,7 +625,7 @@ Don't roll or change position.</string>
            <number>35</number>
           </property>
           <property name="maximum">
-           <number>90</number>
+           <number>179</number>
           </property>
          </widget>
         </item>
