@@ -580,7 +580,11 @@ void NeuralNetTracker::run()
 
         intrinsics_ = make_intrinsics(grayscale_, settings_);
 
-        detect();
+        bool tracked = detect();
+        {
+            QMutexLocker lck(&mtx_);
+            tracking_valid_ = tracked;
+        }
 
         if (is_visible_)
             preview_.copy_to_widget(*video_widget_);
@@ -631,8 +635,17 @@ void NeuralNetTracker::data(double* data)
     Affine tmp = [&]()
     {
         QMutexLocker lck(&mtx_);
+        if (!tracking_valid_)
+        {
+            for (int i = 0; i < 6; i++)
+                data[i] = std::numeric_limits<double>::quiet_NaN();
+            return Affine{};
+        }
         return last_pose_affine_;
     }();
+
+    if (std::isnan(data[0]))
+        return;
 
     const auto& mx = tmp.R.col(0);
     const auto& my = tmp.R.col(1);

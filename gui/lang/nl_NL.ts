@@ -317,6 +317,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Bron</translation>
     </message>
     <message>
+        <source>Constant auto-center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centering speed in degrees/pixels per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>CSV Data Logging</source>
         <translation>CSV-data loggen</translation>
     </message>
