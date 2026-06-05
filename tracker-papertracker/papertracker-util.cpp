@@ -21,6 +21,8 @@ namespace papertracker {
         else if (rvecs_size == 1)
             return rvecs[0];
 
+        assert(normalized_weights == 0 || rvecs_size == normalized_weights->size());
+
         cv::Matx33d R;
         cv::Vec4d q_avg;
 
@@ -57,6 +59,8 @@ namespace papertracker {
             return cv::Vec3d();
         else if (tvecs_size == 1)
             return tvecs[0];
+
+        assert(normalized_weights == 0 || tvecs_size == normalized_weights->size());
 
         double avg_x = 0;
         double avg_y = 0;
