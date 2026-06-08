@@ -13,23 +13,31 @@
 namespace papertracker {
     /* Compute average rotation from an std::vector of rotation vectors.
     */
-    cv::Vec3d average_rotation(const std::vector<cv::Vec3d> &rvecs)
+    cv::Vec3d average_rotation(const std::vector<cv::Vec3d> &rvecs, const std::vector<double> *normalized_weights)
     {
-        if (rvecs.size() == 1)
+        const auto rvecs_size = rvecs.size();
+
+        if (rvecs_size == 0)
+            return cv::Vec3d();
+        else if (rvecs_size == 1)
             return rvecs[0];
 
-        cv::Matx33d R;
-        cv::Rodrigues(rvecs[0], R);
-        cv::Vec4d q_avg = rotation_matrix_to_quaternion(R);
+        assert(normalized_weights == 0 || rvecs_size == normalized_weights->size());
 
-        for (size_t i = 1; i < rvecs.size(); ++i) {
+        cv::Matx33d R;
+        cv::Vec4d q_avg;
+
+        for (size_t i = 0; i < rvecs.size(); ++i) {
             cv::Rodrigues(rvecs[i], R);
             cv::Vec4d quat = rotation_matrix_to_quaternion(R);
 
             if (q_avg.dot(quat) < 0)
                 quat = -quat;
 
-            q_avg += quat;
+            if (normalized_weights != nullptr)
+                q_avg += quat * (*normalized_weights)[i];
+            else
+                q_avg += quat;
         }
 
         q_avg /= cv::norm(q_avg);
@@ -44,24 +52,41 @@ namespace papertracker {
 
     /* Compute average translation from an std::vector of translation vectors.
     */
-    cv::Vec3d average_translation(const std::vector<cv::Vec3d> &tvecs)
+    cv::Vec3d average_translation(const std::vector<cv::Vec3d> &tvecs, const std::vector<double> *normalized_weights)
     {
-        if (tvecs.size() == 1)
+        const auto tvecs_size = tvecs.size();
+
+        if (tvecs_size == 0)
+            return cv::Vec3d();
+        else if (tvecs_size == 1)
             return tvecs[0];
+
+        assert(normalized_weights == 0 || tvecs_size == normalized_weights->size());
 
         double avg_x = 0;
         double avg_y = 0;
         double avg_z = 0;
 
         for (size_t v = 0; v < tvecs.size(); ++v) {
-            avg_x += tvecs[v][0];
-            avg_y += tvecs[v][1];
-            avg_z += tvecs[v][2];
+            if (normalized_weights != nullptr) {
+                const double weight = (*normalized_weights)[v];
+
+                avg_x += tvecs[v][0] * weight;
+                avg_y += tvecs[v][1] * weight;
+                avg_z += tvecs[v][2] * weight;
+            } else {
+                avg_x += tvecs[v][0];
+                avg_y += tvecs[v][1];
+                avg_z += tvecs[v][2];
+            }
         }
 
-        avg_x /= (double)tvecs.size();
-        avg_y /= (double)tvecs.size();
-        avg_z /= (double)tvecs.size();
+        if (normalized_weights == nullptr) {
+            const double tvecs_size = tvecs.size();
+            avg_x /= tvecs_size;
+            avg_y /= tvecs_size;
+            avg_z /= tvecs_size;
+        }
 
         return { avg_x, avg_y, avg_z };
     }
@@ -216,25 +241,24 @@ namespace papertracker {
         return {rvec_local, tvec_local};
     }
 
-    /* Get the angle between a marker and the camera's Z axis given the marker's rotation matrix.
+    /* Get the angle between a marker's z axis and a reference vector given the marker's rotation matrix.
     */
-    double get_marker_z_angle(const cv::Matx33d &R) {
+    double get_marker_relative_angle(const cv::Matx33d &R, const cv::Vec3d &reference) {
         const cv::Vec3d marker_z(R(0, 2), R(1, 2), R(2, 2));
-        const cv::Vec3d camera_z(0.0, 0.0, -1.0);
 
-        const double cosine = std::clamp(marker_z.dot(camera_z), -1.0, 1.0);
+        const double cosine = std::clamp(marker_z.dot(reference), -1.0, 1.0);
         const double angle = std::acos(cosine);
 
         return angle;
     }
 
-    /* Get the angle between a marker and the camera's Z axis given the marker's rotation vector.
+    /* Get the angle between a marker's z axis and a reference vector given the marker's rotation vector.
     */
-    double get_marker_z_angle(const cv::Vec3d &rvec) {
+    double get_marker_relative_angle(const cv::Vec3d &rvec, const cv::Vec3d &reference) {
         cv::Matx33d R;
         cv::Rodrigues(rvec, R);
 
-        return get_marker_z_angle(R);
+        return get_marker_relative_angle(R, reference);
     }
 
     /* Get the angle between rotations for a pair of rotation vectors.

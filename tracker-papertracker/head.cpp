@@ -72,7 +72,10 @@ namespace papertracker {
 
             cv::Matx33d R_composite = R_head * R_handle;
 
-            const double angle = get_marker_z_angle(R_composite);
+            cv::Vec3d marker_direction = tvec + R_head * (handle_origin + handle.second.tvec_local.get());
+            marker_direction = marker_direction / -cv::norm(marker_direction);
+
+            const double angle = get_marker_relative_angle(R_composite, marker_direction);
 
             if (angle <= max_angle)
                 visible.push_back(handle.second.id);
