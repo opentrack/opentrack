@@ -418,6 +418,14 @@ Klicke „Kalibrierung löschen“, um jegliche Kalibrierungsdaten der zugehöri
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>Constant auto-center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centering speed in degrees/pixels per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Camera offset</source>
         <translation type="unfinished"></translation>
     </message>
