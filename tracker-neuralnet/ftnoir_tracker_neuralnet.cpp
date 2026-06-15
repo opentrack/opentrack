@@ -37,6 +37,7 @@
 #include <stdexcept>
 #include <string>
 #include <unordered_map>
+#include <cassert>
 
 // Some demo code for onnx
 // https://github.com/microsoft/onnxruntime/blob/master/csharp/test/Microsoft.ML.OnnxRuntime.EndToEndTests.Capi/C_Api_Sample.cpp
@@ -128,12 +129,12 @@ template <class F> struct OnScopeExit
     F f_;
 };
 
-CamIntrinsics make_intrinsics(const cv::Mat& img, const Settings& settings)
+CamIntrinsics make_intrinsics(float aspect_ratio, const Settings& settings)
 {
-    const int w = img.cols, h = img.rows;
     const double diag_fov = settings.fov * M_PI / 180.;
-    const double fov_w = 2. * atan(tan(diag_fov / 2.) / sqrt(1. + h / (double)w * h / (double)w));
-    const double fov_h = 2. * atan(tan(diag_fov / 2.) / sqrt(1. + w / (double)h * w / (double)h));
+    const double aspect_ratio_2 = aspect_ratio*aspect_ratio;
+    const double fov_w = 2. * atan(tan(diag_fov / 2.) / sqrt(1. + 1./aspect_ratio_2));
+    const double fov_h = 2. * atan(tan(diag_fov / 2.) / sqrt(1. + aspect_ratio_2));
     const double focal_length_w = 1. / tan(.5 * fov_w);
     const double focal_length_h = 1. / tan(.5 * fov_h);
     /*  a
@@ -184,6 +185,33 @@ template <class T> cv::Rect_<T> ewa_filter(const cv::Rect_<T>& last, const cv::R
     const cv::Point_<T> new_center = last_center + alpha * (cur_center - last_center);
     return cv::Rect_<T>(new_center - T(0.5) * new_size, as_size(new_size));
 }
+
+template<class T> cv::Rect_<T> scaled(const cv::Rect_<T>& r, T factor)
+{
+    return cv::Rect_<T>(r.x*factor, r.y*factor, r.width*factor, r.height*factor);
+}
+
+static float aspect(const cv::Mat& image)
+{
+    return float(image.cols) / image.rows;
+}
+
+
+// Scales position and size for transforming to other reference resolutions.
+// Leaves rotation unchanged.
+static PoseEstimator::Face scaled(const PoseEstimator::Face& face, float factor)
+{
+    return PoseEstimator::Face{
+        face.rotation,
+        face.rotaxis_cov_tril,
+        scaled(face.box, factor),
+        face.center * factor,
+        face.size * factor,
+        face.center_size_cov_tril * factor
+        
+    };
+}
+
 
 cv::Vec3f image_to_world(float x, float y, float size, float reference_size_in_mm, const cv::Size2i& image_size, const CamIntrinsics& intrinsics)
 {
@@ -270,6 +298,55 @@ template <class T> T iou(const cv::Rect_<T>& a, const cv::Rect_<T>& b)
     return double{ i.area() } / (a.area() + b.area() - i.area());
 }
 
+
+std::tuple<float, int> get_matching_level(const ImagePyramid& pyramid, int current_level, float current_roi_width, float desired_roi_width)
+{
+    assert (current_level >= 0);
+    assert (current_level < pyramid.depth());
+    const auto& full_image = pyramid.image();
+    const auto& current_image = pyramid.image(current_level);
+    const float full_size_width = float(full_image.rows) / current_image.rows * current_roi_width;
+    // ROI width should match roughly the input size of the network.
+    // width(depth) = full_width * 1/2 ** depth
+    // input == width(depth) 
+    // ->
+    // full_width/input = 2 ** depth
+    const float fdepth = std::log2f(full_size_width / desired_roi_width);
+    const int depth = std::clamp(static_cast<int>(std::floor(fdepth)), 0, pyramid.depth()-1);
+    const float factor = float(pyramid.image(depth).rows) / current_image.rows;
+    return { factor, depth };
+}
+
+
+void ImagePyramid::init(const cv::Mat& image)
+{
+    // With of the coarsest level is a bit larger than the localizer's input width.
+    // PyrDown blurs the images quite a lot. So we do the final downscaling with the 
+    // area interpolation which is better.
+    static const int MIN_WIDTH = 320; 
+    images_[0] = image;
+    depth_ = 1;
+    const bool is_color = images_[0].channels()==3;
+    while (depth_ < static_cast<int>(images_.size()) && images_[depth_-1].cols >= (MIN_WIDTH*2))
+    {
+        cv::pyrDown(images_[depth_-1], images_[depth_]);  // This should only allocate memory on the first frame.
+        ++depth_;
+    }
+    for (int i=0; i<depth_; ++i)
+    {
+        if (is_color)
+        {
+            cv::cvtColor(images_[i], greyscale_[i], cv::COLOR_BGR2GRAY);
+        }
+        else
+        {
+            greyscale_[i] = images_[i];
+        }
+    }
+}
+
+
+
 class GuardedThreadCountSwitch
 {
     int old_num_threads_cv_ = 1;
@@ -310,28 +387,47 @@ bool NeuralNetTracker::detect()
     // moves his head far enough - or when the tracking ist lost ...
     if (!last_localizer_roi_ || !last_roi_ || iou(*last_localizer_roi_, *last_roi_) < 0.25)
     {
-        auto [p, rect] = localizer_->run(grayscale_);
+        auto [p, rect] = localizer_->run(pyramid_.coarsest_greyscale());
         inference_time += localizer_->last_inference_time_millis();
-
-        if (last_roi_ && iou(rect, *last_roi_) >= 0.25 && p > 0.5)
+        
+        if (rect.height < 16 && rect.width < 16)
         {
-            // The new ROI matches the result from tracking, so the user is
-            // still there and to not disturb recurrent models, we only update
-            // ...
-            last_localizer_roi_ = rect;
+            //qDebug() << "Tiny localizer ROI";
+            p = 0.f;
         }
-        else if (p > 0.5 && rect.height > 32 && rect.width > 32)
+
+        if (last_roi_ && iou(rect, *last_roi_) >= 0.25 && p > 0.5f)
+        {
+            // The new ROI matches the result from tracking
+            // The user merely moved to a new position
+            last_localizer_roi_ = rect;
+            //qDebug() << "Updating localizer ROI";
+        }
+        else if (p > 0.5f)
         {
             // Tracking probably got lost since the ROI's don't match, but the
             // localizer still finds a face, so we use the ROI from the localizer
             last_localizer_roi_ = rect;
             last_roi_ = rect;
+            //qDebug() << "Updating both ROI";
         }
-        else
+        else if (last_roi_ && p <= 0.5f)
         {
+            // The localizer is uncertain if there is a face.
+            // The user might have moved far back or in another way where the localizer performs badly.
+            // Use the face tracker and hope for the best.
+            // I tried using the localizer when it's confidence is above 0.2 but it's not enough. It returns garbage
+            // ROIs more often than not.
+            last_localizer_roi_.reset();
+            //qDebug() << "Trusing the pose network, localizer confidence: " << p << " roi: " << rect.width << ", " << rect.height;
+        }
+        else 
+        {
+            assert (p <= 0.5f);
             // Tracking lost and no localization result. The user probably can't be seen.
             last_roi_.reset();
             last_localizer_roi_.reset();
+            //qDebug() << "Lost tracking :-/";
         }
     }
 
@@ -343,15 +439,26 @@ bool NeuralNetTracker::detect()
         return false;
     }
 
-    auto face = poseestimator_->run(grayscale_, *last_roi_);
-    inference_time += poseestimator_->last_inference_time_millis();
+    const auto [scale_factor, input_depth] = get_matching_level(
+        pyramid_, 
+        pyramid_.depth()-1, 
+        last_roi_->width, 
+        poseestimator_->input_image_size().width);
+    
+    const auto input_roi = scaled(*last_roi_, scale_factor);
 
+    auto face = poseestimator_->run(pyramid_.greyscale(input_depth), input_roi);
+    inference_time += poseestimator_->last_inference_time_millis();
+    
     if (!face)
     {
         last_roi_.reset();
         draw_gizmos({}, {});
         return false;
     }
+
+    // Transform to reference image
+    *face = scaled(*face, 1.f / scale_factor);
 
     cv::Rect2f roi = expand(face->box, (float)settings_.roi_zoom);
 
@@ -377,7 +484,8 @@ void NeuralNetTracker::draw_gizmos(const std::optional<PoseEstimator::Face>& fac
     if (!is_visible_)
         return;
 
-    preview_.draw_gizmos(face, last_roi_, last_localizer_roi_, world_to_image(pose.t, grayscale_.size(), intrinsics_));
+    const auto& reference_image = pyramid_.coarsest_greyscale();
+    preview_.draw_gizmos(face, last_roi_, last_localizer_roi_, world_to_image(pose.t, reference_image.size(), intrinsics_));
 
     if (settings_.show_network_input)
     {
@@ -388,7 +496,8 @@ void NeuralNetTracker::draw_gizmos(const std::optional<PoseEstimator::Face>& fac
 
 QuatPose NeuralNetTracker::transform_to_world_pose(const cv::Quatf& face_rotation, const cv::Point2f& face_xy, const float face_size) const
 {
-    const vec3 face_world_pos = image_to_world(face_xy.x, face_xy.y, face_size, HEAD_SIZE_MM, grayscale_.size(), intrinsics_);
+    const auto& reference_image = pyramid_.coarsest_greyscale();
+    const vec3 face_world_pos = image_to_world(face_xy.x, face_xy.y, face_size, HEAD_SIZE_MM, reference_image.size(), intrinsics_);
 
     const cv::Quatf rot_correction = compute_rotation_correction(face_world_pos);
 
@@ -552,68 +661,55 @@ void NeuralNetTracker::run()
                 portable::sleep(100);
                 continue;
             }
+            if (img.channels != 1 && img.channels != 3)
+            {
+                qDebug() << "Can't handle" << img.channels << "color channels";
+                return;
+            }
 
             {
                 QMutexLocker lck{ &stats_mtx_ };
                 resolution_ = { img.width, img.height };
             }
 
-            auto color = prepare_input_image(img);
-
-            if (is_visible_)
-                preview_.copy_video_frame(color);
-
-            switch (img.channels)
-            {
-            case 1:
-                grayscale_.create(img.height, img.width, CV_8UC1);
-                color.copyTo(grayscale_);
-                break;
-            case 3:
-                cv::cvtColor(color, grayscale_, cv::COLOR_BGR2GRAY);
-                break;
-            default:
-                qDebug() << "Can't handle" << img.channels << "color channels";
-                return;
-            }
+            copy_frame(img, frame_copy_);
         }
 
-        intrinsics_ = make_intrinsics(grayscale_, settings_);
+        pyramid_.init(frame_copy_);
+        intrinsics_ = make_intrinsics(aspect(pyramid_.image()), settings_);
+
+        if (is_visible_)
+        {
+            preview_.copy_video_frame(pyramid_.coarsest_image());
+        }
 
         detect();
 
         if (is_visible_)
+        {
             preview_.copy_to_widget(*video_widget_);
+        }
 
         update_fps(std::chrono::duration_cast<std::chrono::milliseconds>(clk.now() - t).count() * 1.e-3);
     }
 }
 
-cv::Mat NeuralNetTracker::prepare_input_image(const video::frame& frame)
+
+void NeuralNetTracker::copy_frame(const video::frame& frame, cv::Mat& dest) const
 {
     auto img = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
-
     // Crop if aspect ratio is not 4:3
     if (img.rows * 4 != img.cols * 3)
     {
         img = img(make_crop_rect_for_aspect(img.size(), 4, 3));
     }
 
-    img = img(make_crop_rect_multiple_of(img.size(), 4));
+    constexpr int multiplier = 1 << (pyramid_.max_levels-1);
+    img = img(make_crop_rect_multiple_of(img.size(), multiplier));
 
-    if (img.cols > 640)
-    {
-        cv::pyrDown(img, downsized_original_images_[0]);
-        img = downsized_original_images_[0];
-    }
-    if (img.cols > 640)
-    {
-        cv::pyrDown(img, downsized_original_images_[1]);
-        img = downsized_original_images_[1];
-    }
-
-    return img;
+    img.copyTo(dest);
 }
+
 
 void NeuralNetTracker::update_fps(double dt)
 {

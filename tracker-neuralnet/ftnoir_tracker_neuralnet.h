@@ -103,6 +103,36 @@ struct CamIntrinsics
     float fov_h;
 };
 
+
+class ImagePyramid
+{
+public:
+    // Stores the image as finest level using ref counting.
+    // Then fills the pyramid levels. Only allocates on successive calls when image size changes.
+    // Also generates greyscale versions.
+    void init(const cv::Mat& image);
+    const cv::Mat& image(int level=0) const { return images_[level]; }
+    const cv::Mat& greyscale(int level=0) const { return greyscale_[level]; }
+    const cv::Mat& coarsest_greyscale() const { return greyscale_[depth_-1]; }
+    const cv::Mat& coarsest_image() const { return images_[depth_-1]; }
+    int depth() const { return depth_; }
+    static constexpr int max_levels = 4;
+private:
+    std::array<cv::Mat, static_cast<std::size_t>(max_levels)> images_ = {}; // Image pyramid
+    std::array<cv::Mat, static_cast<std::size_t>(max_levels)> greyscale_ = {};
+    int depth_ = 0;
+};
+
+
+// Tries to find a pyramid level for the "desired_roi_with".
+// Given "current_roi_width" on the "current_level" getting the same crop on a coarser or finer level
+// decreases or increases the resolution respectively. Thus this function figures out a level which
+// matches the desired resolution, returning the level with the smallest resolution which is still higher than
+// the desired one.
+// Return scaling factor and desired level.
+std::tuple<float, int> get_matching_level(const ImagePyramid& pyramid, int current_level, float current_roi_width, float desired_roi_width);
+
+
 class NeuralNetTracker : protected virtual QThread, public ITracker
 {
     // Q_OBJECT
@@ -121,8 +151,7 @@ public:
 private:
     bool detect();
     bool open_camera();
-    void set_intrinsics();
-    cv::Mat prepare_input_image(const video::frame& frame);
+    void copy_frame(const video::frame& frame, cv::Mat& dest) const;
     static void maybe_load_onnxruntime_dynamically();
     bool load_and_initialize_model();
     void draw_gizmos(const std::optional<PoseEstimator::Face>& face, const Affine& pose);
@@ -143,9 +172,10 @@ private:
     std::optional<Localizer> localizer_;
     std::optional<PoseEstimator> poseestimator_;
 
-    CamIntrinsics intrinsics_{};
-    cv::Mat grayscale_;
-    std::array<cv::Mat, 2> downsized_original_images_ = {}; // Image pyramid
+    cv::Mat frame_copy_ = {};
+    ImagePyramid pyramid_ = {};
+    CamIntrinsics intrinsics_ = {};
+
     std::optional<cv::Rect2f> last_localizer_roi_;
     std::optional<cv::Rect2f> last_roi_;
     static constexpr float HEAD_SIZE_MM = 200.f; // In the vertical. Approximately.

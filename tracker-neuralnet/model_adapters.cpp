@@ -164,6 +164,13 @@ std::string PoseEstimator::get_network_output_name(size_t i) const
 #endif
 }
 
+
+cv::Size PoseEstimator::input_image_size() const
+{
+    return { scaled_frame_.cols, scaled_frame_.rows };
+}
+
+
 PoseEstimator::PoseEstimator(Ort::MemoryInfo& allocator_info, Ort::Session&& session)
     : model_version_{ session.GetModelMetadata().GetVersion() }, session_{ std::move(session) }, allocator_{ session_, allocator_info }
 {
@@ -264,7 +271,7 @@ std::optional<PoseEstimator::Face> PoseEstimator::run(const cv::Mat& frame, cons
 {
     cv::Mat cropped;
 
-    const int patch_size = std::max(box.width, box.height) * 1.05;
+    const int patch_size = std::max(box.width, box.height);
     const cv::Point2f patch_center = { std::clamp<float>(box.x + 0.5f * box.width, 0.f, frame.cols),
                                        std::clamp<float>(box.y + 0.5f * box.height, 0.f, frame.rows) };
     cv::getRectSubPix(frame, { patch_size, patch_size }, patch_center, cropped);
