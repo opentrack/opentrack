@@ -484,13 +484,11 @@ void pipeline::logic()
                 
                 // Dead Zone Core
                 // If within deadzone, don't update this axis.
-                if (std::abs(diff) < deadzone)
+                if (std::abs(diff) <= deadzone)
                     continue;
 
-                if (std::abs(diff) > 0.0001) {
-                    center.P(i) += std::clamp(diff, -max_step, max_step);
-                    updated = true;
-                }
+                center.P(i) += std::clamp(diff, -max_step, max_step);
+                updated = true;
             }
 
             if (updated) {
