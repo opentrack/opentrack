@@ -472,15 +472,15 @@ void pipeline::logic()
         nan_check(value);
 
         if (s.auto_center && s.centering_mode != center_disabled && !own_center_logic) {
-            double dt = auto_center_timer.elapsed_seconds();
-            double speed = s.auto_center_speed; 
+            const double dt = auto_center_timer.elapsed_seconds();
+            const double speed = s.auto_center_speed; 
             
-            double max_step = speed * dt;
-            double deadzone = s.auto_center_deadzone;
+            const double max_step = speed * dt;
+            const double deadzone = s.auto_center_deadzone;
             
             bool updated = false;
             for (int i = 0; i < 6; i++) {
-                double diff = value(i) - center.P(i);
+                const double diff = value(i) - center.P(i);
                 
                 // Dead Zone Core
                 // If within deadzone, don't update this axis.
