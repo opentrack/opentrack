@@ -471,6 +471,33 @@ void pipeline::logic()
         maybe_set_center_pose(s.centering_mode, value, own_center_logic);
         nan_check(value);
 
+        if (s.auto_center && s.centering_mode != center_disabled && !own_center_logic) {
+            const double dt = auto_center_timer.elapsed_seconds();
+            const double speed = s.auto_center_speed; 
+            
+            const double max_step = speed * dt;
+            const double deadzone = s.auto_center_deadzone;
+            
+            bool updated = false;
+            for (int i = 0; i < 6; i++) {
+                const double diff = value(i) - center.P(i);
+                
+                // Dead Zone Core
+                // If within deadzone, don't update this axis.
+                if (std::abs(diff) <= deadzone)
+                    continue;
+
+                center.P(i) += std::clamp(diff, -max_step, max_step);
+                updated = true;
+            }
+
+            if (updated) {
+                center.QC = dquat::from_euler(center.P[Pitch], center.P[Yaw], -center.P[Roll]).conjugated();
+                center.QR = dquat::from_euler(center.P[Pitch], center.P[Yaw], 0).conjugated();
+            }
+        }
+        auto_center_timer.start();
+
         {
             nan_check(value);
             auto valueʹ = apply_center(s.centering_mode, value);

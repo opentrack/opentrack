@@ -189,6 +189,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>关闭翻译界面</translation>
     </message>
     <message>
+        <source>Constant auto-center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centering speed in degrees/pixels per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Minimize to tray</source>
         <translation>最小化到托盘</translation>
     </message>
