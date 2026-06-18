@@ -1,4 +1,5 @@
 /* Copyright (c) 2021 Michael Welter <michael@welter-4d.de>
+ * Copyright (c) 2026 Michael Krautkramer <michaelkrauty@gmail.com>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -304,41 +305,83 @@ bool NeuralNetTracker::detect()
                                            inference_time_ = inference_time;
                                        } };
 
-    // If there is no past ROI from the localizer or if the match of its output
-    // with the current ROI is too poor we have to run it again. This causes a
-    // latency spike of maybe an additional 50%. But it only occurs when the user
-    // moves his head far enough - or when the tracking ist lost ...
-    if (!last_localizer_roi_ || !last_roi_ || iou(*last_localizer_roi_, *last_roi_) < 0.25)
+    frames_since_localizer_++;
+
+    // We must run the localizer when there is no trustworthy track to fall back
+    // on, or when the tracked and localizer ROIs have diverged. We additionally
+    // run it periodically so tracking can re-acquire when the subject leaves and
+    // re-enters the frame at a new position; that check bounds re-acquisition
+    // latency (~0.5 s at 90 fps).
+    const bool need_localizer = !last_localizer_roi_ || !last_roi_ || iou(*last_localizer_roi_, *last_roi_) < 0.25;
+    const bool periodic_check = (frames_since_localizer_ >= 45);
+
+    if (need_localizer || periodic_check)
     {
         auto [p, rect] = localizer_->run(grayscale_);
         inference_time += localizer_->last_inference_time_millis();
+        frames_since_localizer_ = 0;
 
-        if (last_roi_ && iou(rect, *last_roi_) >= 0.25 && p > 0.5)
+        if (last_roi_ && iou(rect, *last_roi_) >= 0.25 && p > 0.3)
         {
-            // The new ROI matches the result from tracking, so the user is
-            // still there and to not disturb recurrent models, we only update
-            // ...
+            // Detection overlaps current track - keep tracking, just update
+            // the localizer reference so the scale stays in sync.
             last_localizer_roi_ = rect;
         }
-        else if (p > 0.5 && rect.height > 32 && rect.width > 32)
+        else if (p > 0.1 && rect.height > 32 && rect.width > 32)
         {
-            // Tracking probably got lost since the ROI's don't match, but the
-            // localizer still finds a face, so we use the ROI from the localizer
-            last_localizer_roi_ = rect;
-            last_roi_ = rect;
+            // Localizer found a face that doesn't overlap the current track.
+            if (last_roi_)
+            {
+                float overlap = iou(rect, *last_roi_);
+
+                if (overlap >= 0.15)
+                {
+                    // Moderate overlap - continuation of current track
+                    last_localizer_roi_ = rect;
+                }
+                else if (p >= (periodic_check ? 0.5f : 0.75f))
+                {
+                    // Non-overlapping detection with sufficient confidence -
+                    // switch to the new target. The bar is lower for periodic
+                    // checks because the localizer finding something elsewhere
+                    // repeatedly is itself evidence the current track is stale.
+                    last_localizer_roi_ = rect;
+                    last_roi_ = rect;
+                }
+                // else: low overlap + low confidence - reject, keep current track
+            }
+            else
+            {
+                // No previous track - require reasonable confidence to start
+                if (p >= 0.35)
+                {
+                    last_localizer_roi_ = rect;
+                    last_roi_ = rect;
+                }
+            }
         }
-        else
+        else if (need_localizer)
         {
-            // Tracking lost and no localization result. The user probably can't be seen.
+            // Found nothing usable and there is no trustworthy track to keep.
             last_roi_.reset();
             last_localizer_roi_.reset();
         }
+        // else: this was only a periodic re-acquisition check, so keep the
+        // current track and let the pose estimator below validate it - a single
+        // weak localizer frame must not drop an otherwise-healthy track.
     }
 
     if (!last_roi_)
     {
-        // Last iteration the tracker failed to generate a trustworthy
-        // roi and the localizer also cannot find a face.
+        draw_gizmos({}, {});
+        return false;
+    }
+
+    // Reject garbage tracking when the ROI has shrunk below minimum size
+    if (last_roi_->width < 32 || last_roi_->height < 32)
+    {
+        last_roi_.reset();
+        last_localizer_roi_.reset();
         draw_gizmos({}, {});
         return false;
     }
@@ -349,6 +392,7 @@ bool NeuralNetTracker::detect()
     if (!face)
     {
         last_roi_.reset();
+        last_localizer_roi_.reset();
         draw_gizmos({}, {});
         return false;
     }
@@ -356,6 +400,11 @@ bool NeuralNetTracker::detect()
     cv::Rect2f roi = expand(face->box, (float)settings_.roi_zoom);
 
     last_roi_ = ewa_filter(*last_roi_, roi, float(settings_.roi_filter_alpha));
+
+    // Keep the localizer reference in sync with the refined ROI. Without this,
+    // the localizer's original (larger) box diverges from the pose estimator's
+    // tighter box, causing the IOU check above to fail repeatedly at distance.
+    last_localizer_roi_ = *last_roi_;
 
     QuatPose pose = compute_filtered_pose(*face);
     last_pose_ = pose;
@@ -605,12 +654,17 @@ cv::Mat NeuralNetTracker::prepare_input_image(const video::frame& frame)
 
     img = img(make_crop_rect_multiple_of(img.size(), 4));
 
-    if (img.cols > 640)
+    // The localizer internally resizes its input to a small fixed size, so an
+    // extra pyrDown here discards fine detail that distant (small-in-frame)
+    // faces depend on. Raise the downscale threshold from 640 to 1280 px so
+    // higher-resolution inputs keep that detail; very large frames are still
+    // halved to bound the localizer's resize cost.
+    if (img.cols > 1280)
     {
         cv::pyrDown(img, downsized_original_images_[0]);
         img = downsized_original_images_[0];
     }
-    if (img.cols > 640)
+    if (img.cols > 1280)
     {
         cv::pyrDown(img, downsized_original_images_[1]);
         img = downsized_original_images_[1];
