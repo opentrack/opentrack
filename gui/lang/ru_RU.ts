@@ -185,6 +185,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation>Центрирование при запуске</translation>
     </message>
     <message>
+        <source>Constant auto-center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Centering speed in degrees/pixels per second</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Minimize to tray</source>
         <translation>Настройка трея</translation>
     </message>

@@ -76,6 +76,9 @@ struct OTR_LOGIC_EXPORT main_settings final
     value<bool> tray_start { b, "start-in-tray", false };
 
     value<bool> center_at_startup { b, "center-at-startup", true };
+    value<bool> auto_center { b, "auto-center", false };
+    value<double> auto_center_speed { b, "auto-center-speed", 0.06 };
+    value<double> auto_center_deadzone { b, "auto-center-deadzone", 1.0 };
     value<centering_state> centering_mode { b, "centering-mode", center_roll_compensated };
     value<int> neck_z { b, "neck-depth", 0 };
     value<bool> neck_enable { b, "neck-enable", false };

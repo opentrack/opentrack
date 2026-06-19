@@ -29,6 +29,7 @@
 
 #include <array>
 #include <cinttypes>
+#include <limits>
 #include <memory>
 
 #include <opencv2/core.hpp>
@@ -192,6 +193,7 @@ private:
     QMutex mtx_ = {}; // Protects the pose
     std::optional<QuatPose> last_pose_ = {};
     Affine last_pose_affine_ = {};
+    bool tracking_valid_ = false;
 
     Preview preview_;
     std::unique_ptr<cv_video_widget> video_widget_;
