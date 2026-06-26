@@ -434,11 +434,32 @@ QString hotview::curve_name(bool alt)
 
 QString hotview::key_to_string(const hotview_key& key)
 {
+    if (!key.guid.isEmpty())
+    {
+        const int modifier_mask = int(Qt::KeyboardModifierMask);
+        const int button = key.button & ~modifier_mask;
+        const int modifiers = key.button & modifier_mask;
+
+        QString prefix;
+
+        if (modifiers & int(Qt::ControlModifier))
+            prefix += QStringLiteral("Control+");
+        if (modifiers & int(Qt::AltModifier))
+            prefix += QStringLiteral("Alt+");
+        if (modifiers & int(Qt::ShiftModifier))
+            prefix += QStringLiteral("Shift+");
+
+        const QString format = key.guid == QStringLiteral("mouse")
+            ? QCoreApplication::translate("options_dialog", "Mouse %1")
+            : key.guid.startsWith(QStringLiteral("GI!"))
+                ? QCoreApplication::translate("options_dialog", "Gamepad button %1")
+                : QCoreApplication::translate("options_dialog", "Joy button %1");
+
+        return prefix + format.arg(QString::number(button));
+    }
+
     if (!key.keycode.isEmpty())
         return key.keycode;
-
-    if (!key.guid.isEmpty())
-        return QStringLiteral("%1 #%2").arg(key.guid).arg(key.button);
 
     return QCoreApplication::translate("hotview_table", "None");
 }
