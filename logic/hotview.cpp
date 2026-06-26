@@ -52,19 +52,23 @@ struct hotview::point_settings final
     bool alt = false;
     int index = 0;
 
-    key_opts key;
+    key_opts key1;
+    key_opts key2;
     options::value<bool> present;
     options::value<bool> enabled;
     options::value<double> x;
     options::value<double> y;
 
-    bool active = false;
+    bool active1 = false;
+    bool active2 = false;
 
     point_settings(options::bundle b, Axis axis_, bool alt_, int index_) :
         axis(axis_),
         alt(alt_),
         index(index_),
-        key(b, QStringLiteral("hotview-%1").arg(point_id(axis_, alt_, index_))),
+        // Keep the original option name for the first Hotview shortcut so existing profiles keep working.
+        key1(b, QStringLiteral("hotview-%1").arg(point_id(axis_, alt_, index_))),
+        key2(b, QStringLiteral("hotview-2-%1").arg(point_id(axis_, alt_, index_))),
         present(b, QStringLiteral("present-%1").arg(point_id(axis_, alt_, index_)), false),
         enabled(b, QStringLiteral("enabled-%1").arg(point_id(axis_, alt_, index_)), false),
         x(b, QStringLiteral("x-%1").arg(point_id(axis_, alt_, index_)), 0.),
@@ -182,6 +186,11 @@ bool hotview::key_is_valid(const key_opts& key)
     return !key.keycode().isEmpty() || !key.guid().isEmpty();
 }
 
+bool hotview::key_is_valid(const hotview_key& key)
+{
+    return !key.keycode.isEmpty() || !key.guid.isEmpty();
+}
+
 QVector<hotview_point> hotview::points_unlocked() const
 {
     QVector<hotview_point> ret;
@@ -193,6 +202,8 @@ QVector<hotview_point> hotview::points_unlocked() const
         if (!p.present())
             continue;
 
+        const bool has_key = key_is_valid(p.key1) || key_is_valid(p.key2);
+
         ret.push_back({
             p.axis,
             p.alt,
@@ -200,8 +211,9 @@ QVector<hotview_point> hotview::points_unlocked() const
             p.x(),
             p.y(),
             p.present(),
-            p.enabled() && key_is_valid(p.key),
-            read_key(p.key),
+            p.enabled() && has_key,
+            read_key(p.key1),
+            read_key(p.key2),
         });
     }
 
@@ -244,7 +256,8 @@ void hotview::register_curve(Axis axis, bool alt, const QVector<QPointF>& points
             else
             {
                 p->present = false;
-                p->active = false;
+                p->active1 = false;
+                p->active2 = false;
             }
         }
 
@@ -255,16 +268,17 @@ void hotview::register_curve(Axis axis, bool alt, const QVector<QPointF>& points
     emit changed();
 }
 
-void hotview::update_key(Axis axis, bool alt, int index, const hotview_key& key)
+void hotview::update_key(Axis axis, bool alt, int index, int key_index, const hotview_key& key)
 {
     {
         QMutexLocker lock(&mtx);
 
         if (point_settings* p = find_unlocked(axis, alt, index))
         {
-            assign_key(p->key, key);
-            p->enabled = !key.is_empty();
-            p->active = false;
+            assign_key(key_index == 0 ? p->key1 : p->key2, key);
+            p->enabled = key_is_valid(p->key1) || key_is_valid(p->key2);
+            p->active1 = false;
+            p->active2 = false;
             b->save();
             reload_shortcuts_unlocked();
         }
@@ -273,9 +287,26 @@ void hotview::update_key(Axis axis, bool alt, int index, const hotview_key& key)
     emit changed();
 }
 
-void hotview::clear_key(Axis axis, bool alt, int index)
+void hotview::clear_key(Axis axis, bool alt, int index, int key_index)
 {
-    update_key(axis, alt, index, {});
+    {
+        QMutexLocker lock(&mtx);
+
+        if (point_settings* p = find_unlocked(axis, alt, index))
+        {
+            assign_key(key_index == 0 ? p->key1 : p->key2, {});
+
+            if (!key_is_valid(p->key1) && !key_is_valid(p->key2))
+                p->enabled = false;
+
+            p->active1 = false;
+            p->active2 = false;
+            b->save();
+            reload_shortcuts_unlocked();
+        }
+    }
+
+    emit changed();
 }
 
 void hotview::set_enabled(Axis axis, bool alt, int index, bool enabled)
@@ -285,8 +316,9 @@ void hotview::set_enabled(Axis axis, bool alt, int index, bool enabled)
 
         if (point_settings* p = find_unlocked(axis, alt, index))
         {
-            p->enabled = enabled && key_is_valid(p->key);
-            p->active = false;
+            p->enabled = enabled && (key_is_valid(p->key1) || key_is_valid(p->key2));
+            p->active1 = false;
+            p->active2 = false;
             b->save();
             reload_shortcuts_unlocked();
         }
@@ -316,7 +348,10 @@ void hotview::save()
 void hotview::set_all_inactive_unlocked()
 {
     for (point_ptr& ptr : storage)
-        ptr->active = false;
+    {
+        ptr->active1 = false;
+        ptr->active2 = false;
+    }
 }
 
 void hotview::reload_shortcuts_unlocked()
@@ -328,30 +363,33 @@ void hotview::reload_shortcuts_unlocked()
         shortcuts = std::make_unique<Shortcuts>();
 
     Shortcuts::t_keys keys;
+    std::map<QString, key_opts*> grouped;
 
-    std::map<QString, std::vector<int>> grouped;
-
-    for (int i = 0, n = int(storage.size()); i < n; i++)
+    auto maybe_add = [&grouped](key_opts& key)
     {
-        const point_settings& p = *storage[std::size_t(i)];
+        const hotview_key k = read_key(key);
+        const QString id = key_id(k);
 
-        if (!p.present() || !p.enabled() || !key_is_valid(p.key))
+        if (!id.isEmpty() && grouped.find(id) == grouped.end())
+            grouped.emplace(id, &key);
+    };
+
+    for (point_ptr& ptr : storage)
+    {
+        point_settings& p = *ptr;
+
+        if (!p.present() || !p.enabled())
             continue;
 
-        const QString id = key_id(read_key(p.key));
-        if (!id.isEmpty())
-            grouped[id].push_back(i);
+        maybe_add(p.key1);
+        maybe_add(p.key2);
     }
 
     keys.reserve(grouped.size());
 
-    for (const auto& [id, indexes] : grouped)
+    for (const auto& [id, key] : grouped)
     {
-        if (indexes.empty())
-            continue;
-
-        point_settings& representative = *storage[std::size_t(indexes.front())];
-        keys.emplace_back(representative.key,
+        keys.emplace_back(*key,
                           [this, id](bool held) { set_active_group(id, held); },
                           false);
     }
@@ -370,14 +408,18 @@ void hotview::set_active_group(const QString& id, bool held)
     {
         point_settings& p = *ptr;
 
-        if (!p.present() || !p.enabled() || !key_is_valid(p.key))
+        if (!p.present() || !p.enabled())
         {
-            p.active = false;
+            p.active1 = false;
+            p.active2 = false;
             continue;
         }
 
-        if (key_id(read_key(p.key)) == id)
-            p.active = held;
+        if (key_id(read_key(p.key1)) == id)
+            p.active1 = held;
+
+        if (key_id(read_key(p.key2)) == id)
+            p.active2 = held;
     }
 }
 
@@ -389,7 +431,7 @@ Pose hotview::apply(Pose value) const
     {
         const point_settings& p = *ptr;
 
-        if (!p.present() || !p.enabled() || !p.active)
+        if (!p.present() || !p.enabled() || (!p.active1 && !p.active2))
             continue;
 
         const int axis = int(p.axis);
