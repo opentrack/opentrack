@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2019 Stanislaw Halik <sthalik@misaki.pl>
+﻿/* Copyright (c) 2012-2019 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,6 +19,9 @@
 #include <cmath>
 
 #include <QWidget>
+
+#include <QVector>
+#include <QString>
 #include <QMetaObject>
 
 #include <QDebug>
@@ -55,8 +58,16 @@ public:
 
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }
     void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
+    void set_hotview_axis(Axis axis, bool alt);
+    Axis hotview_axis() const { return hotview_axis_; }
+    bool hotview_alt() const { return hotview_alt_; }
+    QVector<QPointF> hotview_points() const;
+    QPointF hotview_point_to_pixel(const QPointF& point) const;
+    QString hotview_point_name(int index) const;
 
     QSize minimumSizeHint() const override;
+signals:
+    void hotview_points_changed();
 public slots:
     void reload_spline();
 protected slots:
@@ -72,6 +83,8 @@ private:
     void drawBackground();
     void drawFunction();
     void drawPoint(QPainter& painter, const QPointF& pt, const QColor& colBG, const QColor& border = QColor(50, 100, 120, 200));
+    void drawHotviewPointLabel(QPainter& painter, const QPointF& pt, const QString& text);
+    void drawHotviewPointLabels(QPainter& painter);
     void drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen);
     bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 
@@ -89,6 +102,8 @@ private:
 
     QPointF c;
     base_spline* config = nullptr;
+    Axis hotview_axis_ = NonAxis;
+    bool hotview_alt_ = false;
 
     QPixmap background_img;
     QPixmap spline_img;
