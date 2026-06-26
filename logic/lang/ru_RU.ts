@@ -21,6 +21,21 @@
     </message>
 </context>
 <context>
+    <name>hotview_table</name>
+    <message>
+        <source>Alt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>runtime_libraries</name>
     <message>
         <source>Library load failure</source>

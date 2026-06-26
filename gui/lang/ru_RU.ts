@@ -57,6 +57,67 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
 </context>
 <context>
+    <name>hotview_auto_installer</name>
+    <message>
+        <source>Hotview</source>
+        <translation>Быстрый взгляд</translation>
+    </message>
+</context>
+<context>
+    <name>hotview_keybinding_dialog</name>
+    <message>
+        <source>Press Hotview shortcut</source>
+        <translation>Нажмите кнопку быстрого взгляда</translation>
+    </message>
+</context>
+<context>
+    <name>hotview_table</name>
+    <message>
+        <source>Curve</source>
+        <translation>Кривая</translation>
+    </message>
+    <message>
+        <source>Point</source>
+        <translation>Точка</translation>
+    </message>
+    <message>
+        <source>Alt</source>
+        <translation>Альтернативная</translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation>Выход</translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation>Основная</translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation>Вход</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Очистить</translation>
+    </message>
+    <message>
+        <source>Bind</source>
+        <translation>Назначить</translation>
+    </message>
+    <message>
+        <source>Shortcut</source>
+        <translation>Кнопка</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>Не назначена</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation>Включено</translation>
+    </message>
+</context>
+<context>
     <name>keyboard_listener</name>
     <message>
         <source>Dialog</source>
