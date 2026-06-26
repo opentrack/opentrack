@@ -10,30 +10,38 @@
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QSizePolicy>
+#include <QStyle>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QVector>
 
 #include <algorithm>
+#include <array>
+#include <initializer_list>
 
 namespace
 {
 
-constexpr int column_enabled  = 0;
-constexpr int column_point    = 1;
-constexpr int column_curve    = 2;
-constexpr int column_input    = 3;
-constexpr int column_output   = 4;
-constexpr int column_shortcut = 5;
-constexpr int column_bind     = 6;
-constexpr int column_clear    = 7;
-constexpr int column_count    = 8;
+constexpr int column_enabled   = 0;
+constexpr int column_point     = 1;
+constexpr int column_curve     = 2;
+constexpr int column_input     = 3;
+constexpr int column_output    = 4;
+constexpr int column_shortcut1 = 5;
+constexpr int column_bind1     = 6;
+constexpr int column_clear1    = 7;
+constexpr int column_shortcut2 = 8;
+constexpr int column_bind2     = 9;
+constexpr int column_clear2    = 10;
+constexpr int column_count     = 11;
 
-constexpr int role_sort       = Qt::UserRole + 10;
-constexpr int role_axis       = Qt::UserRole + 20;
-constexpr int role_alt        = Qt::UserRole + 21;
-constexpr int role_index      = Qt::UserRole + 22;
+constexpr int role_sort        = Qt::UserRole + 10;
+constexpr int role_axis        = Qt::UserRole + 20;
+constexpr int role_alt         = Qt::UserRole + 21;
+constexpr int role_index       = Qt::UserRole + 22;
 
 class sortable_item final : public QTableWidgetItem
 {
@@ -89,6 +97,29 @@ int text_width(QTableWidget* table, const QString& text)
     return metrics.horizontalAdvance(text) + 24;
 }
 
+int compact_text_width(QTableWidget* table, const QString& text)
+{
+    const QFontMetrics metrics(table->font());
+    return metrics.horizontalAdvance(text) + 12;
+}
+
+bool is_compact_content_column(int column)
+{
+    return column == column_point || column == column_curve ||
+           column == column_input || column == column_output;
+}
+
+bool is_shortcut_column(int column)
+{
+    return column == column_shortcut1 || column == column_shortcut2;
+}
+
+bool is_button_column(int column)
+{
+    return column == column_bind1 || column == column_clear1 ||
+           column == column_bind2 || column == column_clear2;
+}
+
 } // namespace
 
 hotview_table::hotview_table(QWidget* parent) :
@@ -131,7 +162,7 @@ hotview_table::hotview_table(QWidget* parent) :
 void hotview_table::set_headers()
 {
     table->setHorizontalHeaderLabels({
-        tr("Enabled"),
+        QString(),
         tr("Point"),
         tr("Curve"),
         tr("Input"),
@@ -139,7 +170,16 @@ void hotview_table::set_headers()
         tr("Shortcut"),
         tr("Bind"),
         tr("Clear"),
+        tr("Shortcut"),
+        tr("Bind"),
+        tr("Clear"),
     });
+
+    if (QTableWidgetItem* enabled = table->horizontalHeaderItem(column_enabled))
+    {
+        enabled->setToolTip(tr("Enabled"));
+        enabled->setCheckState(Qt::Unchecked);
+    }
 }
 
 void hotview_table::reload()
@@ -164,7 +204,9 @@ void hotview_table::rebuild()
     for (int row = 0; row < points.size(); row++)
     {
         const hotview_point& point = points[row];
-        const bool key_assigned = !point.key.is_empty();
+        const bool key1_assigned = !point.key1.is_empty();
+        const bool key2_assigned = !point.key2.is_empty();
+        const bool key_assigned = key1_assigned || key2_assigned;
         const bool checked = key_assigned && point.enabled;
 
         auto* enabled = new sortable_item;
@@ -183,31 +225,42 @@ void hotview_table::rebuild()
         table->setItem(row, column_curve, readonly_item(point.alt ? tr("Alt") : tr("Main"), curve_sort_key(point.alt)));
         table->setItem(row, column_input, readonly_item(QString::number(point.x, 'f', 1), QStringLiteral("%1").arg(point.x, 20, 'f', 6, QLatin1Char('0'))));
         table->setItem(row, column_output, readonly_item(QString::number(point.y, 'f', 1), QStringLiteral("%1").arg(point.y, 20, 'f', 6, QLatin1Char('0'))));
-        table->setItem(row, column_shortcut, readonly_item(key_assigned ? hotview::key_to_string(point.key) : tr("None")));
 
-        auto* bind = new QPushButton(tr("Bind"), table);
-        connect(bind, &QPushButton::clicked,
-                this,
-                [this, point]
-                {
-                    hotview_key key;
+        table->setItem(row, column_shortcut1, readonly_item(key1_assigned ? hotview::key_to_string(point.key1) : tr("None")));
+        table->setItem(row, column_shortcut2, readonly_item(key2_assigned ? hotview::key_to_string(point.key2) : tr("None")));
 
-                    if (prompt_hotview_key_binding(this, key))
-                        hotview::instance().update_key(point.axis, point.alt, point.index, key);
-                });
-        table->setCellWidget(row, column_bind, bind);
+        auto add_button_pair = [this, point, row](int key_index, int bind_column, int clear_column)
+        {
+            auto* bind = new QPushButton(tr("Bind"), table);
+            bind->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+            connect(bind, &QPushButton::clicked,
+                    this,
+                    [this, point, key_index]
+                    {
+                        hotview_key key;
 
-        auto* clear = new QPushButton(tr("Clear"), table);
-        connect(clear, &QPushButton::clicked,
-                this,
-                [point]
-                {
-                    hotview::instance().clear_key(point.axis, point.alt, point.index);
-                });
-        table->setCellWidget(row, column_clear, clear);
+                        if (prompt_hotview_key_binding(this, key))
+                            hotview::instance().update_key(point.axis, point.alt, point.index, key_index, key);
+                    });
+            table->setCellWidget(row, bind_column, bind);
+
+            auto* clear = new QPushButton(tr("Clear"), table);
+            clear->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
+            connect(clear, &QPushButton::clicked,
+                    this,
+                    [point, key_index]
+                    {
+                        hotview::instance().clear_key(point.axis, point.alt, point.index, key_index);
+                    });
+            table->setCellWidget(row, clear_column, clear);
+        };
+
+        add_button_pair(0, column_bind1, column_clear1);
+        add_button_pair(1, column_bind2, column_clear2);
     }
 
     updating = false;
+    update_header_checkbox();
     apply_sort();
     adjust_columns();
 
@@ -240,11 +293,17 @@ void hotview_table::showEvent(QShowEvent* event)
 
 bool hotview_table::is_sortable_column(int column) const
 {
-    return column == column_enabled || column == column_point || column == column_curve;
+    return column == column_point || column == column_curve;
 }
 
 void hotview_table::header_clicked(int column)
 {
+    if (column == column_enabled)
+    {
+        toggle_all_enabled();
+        return;
+    }
+
     if (!is_sortable_column(column))
         return;
 
@@ -271,6 +330,57 @@ void hotview_table::apply_sort()
     table->sortItems(sort_column, sort_order);
 }
 
+int hotview_table::header_width_for_column(int column) const
+{
+    if (!table)
+        return 1;
+
+    if (column == column_enabled)
+    {
+        const int indicator = table->style()->pixelMetric(QStyle::PM_IndicatorWidth, nullptr, table);
+        return indicator + 8;
+    }
+
+    if (const QTableWidgetItem* item = table->horizontalHeaderItem(column))
+        return is_compact_content_column(column) ?
+            compact_text_width(table, item->text()) :
+            text_width(table, item->text());
+
+    return 1;
+}
+
+int hotview_table::content_width_for_column(int column) const
+{
+    if (!table)
+        return 1;
+
+    int width = header_width_for_column(column);
+
+    for (int row = 0; row < table->rowCount(); row++)
+    {
+        if (QWidget* widget = table->cellWidget(row, column))
+            width = std::max(width, widget->sizeHint().width() + 8);
+
+        if (const QTableWidgetItem* item = table->item(row, column))
+        {
+            if (column == column_enabled)
+            {
+                const int indicator = table->style()->pixelMetric(QStyle::PM_IndicatorWidth, nullptr, table);
+                width = std::max(width, indicator + 8);
+            }
+            else
+            {
+                const int item_width = is_compact_content_column(column) ?
+                    compact_text_width(table, item->text()) :
+                    text_width(table, item->text());
+                width = std::max(width, item_width);
+            }
+        }
+    }
+
+    return std::max(1, width);
+}
+
 void hotview_table::adjust_columns()
 {
     if (!table || table->columnCount() != column_count)
@@ -280,58 +390,190 @@ void hotview_table::adjust_columns()
     if (total_width <= 0)
         return;
 
-    const QString shortcut_header = table->horizontalHeaderItem(column_shortcut)
-                                      ? table->horizontalHeaderItem(column_shortcut)->text()
-                                      : tr("Shortcut");
-
-    int shortcut_width = text_width(table, shortcut_header);
-
-    for (int row = 0; row < table->rowCount(); row++)
-    {
-        if (auto* item = table->item(row, column_shortcut))
-            shortcut_width = std::max(shortcut_width, text_width(table, item->text()));
-    }
-
-    const int minimum_shortcut_width = 60;
-    const int maximum_shortcut_width = std::max(minimum_shortcut_width, int(total_width * 0.30));
-    shortcut_width = std::clamp(shortcut_width, minimum_shortcut_width, maximum_shortcut_width);
-    shortcut_width = std::min(shortcut_width, total_width);
-
-    const int other_columns = column_count - 1;
-    const int remaining_width = std::max(0, total_width - shortcut_width);
-    const int base_width = other_columns > 0 ? remaining_width / other_columns : 0;
-    const int extra_columns = other_columns > 0 ? remaining_width - base_width * other_columns : 0;
-
-    int extra_index = 0;
-    int used_width = 0;
+    std::array<int, column_count> widths {};
+    std::array<int, column_count> minimums {};
 
     for (int column = 0; column < column_count; column++)
     {
-        int width = 0;
-
-        if (column == column_shortcut)
-        {
-            width = shortcut_width;
-        }
-        else
-        {
-            width = base_width + (extra_index < extra_columns ? 1 : 0);
-            extra_index++;
-        }
-
-        table->setColumnWidth(column, width);
-        used_width += width;
+        widths[std::size_t(column)] = content_width_for_column(column);
+        minimums[std::size_t(column)] = 1;
     }
 
-    const int delta = total_width - used_width;
-    if (delta != 0)
-    {
-        int last_equal_column = column_count - 1;
-        if (last_equal_column == column_shortcut)
-            last_equal_column--;
+    const int maximum_shortcut_width = std::max(1, int(total_width * 0.20));
+    widths[std::size_t(column_shortcut1)] = std::min(widths[std::size_t(column_shortcut1)], maximum_shortcut_width);
+    widths[std::size_t(column_shortcut2)] = std::min(widths[std::size_t(column_shortcut2)], maximum_shortcut_width);
 
-        if (last_equal_column >= 0)
-            table->setColumnWidth(last_equal_column, std::max(1, table->columnWidth(last_equal_column) + delta));
+    // Hard minima. Button columns are deliberately allowed to shrink below
+    // the translated header text; otherwise Russian "Назначить"/"Очистить"
+    // makes the table wider than the Options dialog.
+    minimums[std::size_t(column_enabled)] = std::max(1, header_width_for_column(column_enabled));
+    minimums[std::size_t(column_point)] = std::min(widths[std::size_t(column_point)], 34);
+    minimums[std::size_t(column_curve)] = std::min(widths[std::size_t(column_curve)], 30);
+    minimums[std::size_t(column_input)] = std::min(widths[std::size_t(column_input)], 30);
+    minimums[std::size_t(column_output)] = std::min(widths[std::size_t(column_output)], 30);
+    minimums[std::size_t(column_shortcut1)] = std::min(widths[std::size_t(column_shortcut1)], 48);
+    minimums[std::size_t(column_shortcut2)] = std::min(widths[std::size_t(column_shortcut2)], 48);
+    minimums[std::size_t(column_bind1)] = 28;
+    minimums[std::size_t(column_clear1)] = 28;
+    minimums[std::size_t(column_bind2)] = 28;
+    minimums[std::size_t(column_clear2)] = 28;
+
+    auto sum_widths = [&widths]
+    {
+        int sum = 0;
+        for (int width : widths)
+            sum += width;
+        return sum;
+    };
+
+    auto shrink_columns = [&widths, &minimums](std::initializer_list<int> columns, int& overflow)
+    {
+        bool changed = true;
+
+        while (overflow > 0 && changed)
+        {
+            changed = false;
+
+            for (int column : columns)
+            {
+                if (overflow <= 0)
+                    break;
+
+                int& width = widths[std::size_t(column)];
+                const int minimum = std::max(1, minimums[std::size_t(column)]);
+
+                if (width <= minimum)
+                    continue;
+
+                width--;
+                overflow--;
+                changed = true;
+            }
+        }
+    };
+
+    int overflow = sum_widths() - total_width;
+
+    if (overflow > 0)
+    {
+        // First shrink the least information-dense columns.
+        shrink_columns({ column_bind1, column_clear1, column_bind2, column_clear2 }, overflow);
+
+        // Then shrink potentially long shortcut names. The 20% upper bound is
+        // already applied above; here we only reduce them further if the window
+        // is too narrow.
+        shrink_columns({ column_shortcut1, column_shortcut2 }, overflow);
+
+        // Last resort: shrink the short descriptive columns. Their contents are
+        // elided by QTableWidget if the Options dialog is very narrow.
+        shrink_columns({ column_point, column_curve, column_input, column_output }, overflow);
+    }
+
+    int free_width = total_width - sum_widths();
+
+    if (free_width > 0)
+    {
+        // Keep content columns compact and use surplus width on interactive
+        // columns. This also ensures that all columns fill the table width.
+        const std::array<int, 6> expandable = {
+            column_shortcut1, column_bind1, column_clear1,
+            column_shortcut2, column_bind2, column_clear2,
+        };
+
+        bool changed = true;
+
+        while (free_width > 0 && changed)
+        {
+            changed = false;
+
+            for (int column : expandable)
+            {
+                if (free_width <= 0)
+                    break;
+
+                if (is_shortcut_column(column) && widths[std::size_t(column)] >= maximum_shortcut_width)
+                    continue;
+
+                widths[std::size_t(column)]++;
+                free_width--;
+                changed = true;
+            }
+        }
+
+        // If both shortcut columns reached the 20% cap, put the remaining few
+        // pixels into button columns so no blank strip remains on the right.
+        const std::array<int, 4> buttons = { column_bind1, column_clear1, column_bind2, column_clear2 };
+        int button = 0;
+
+        while (free_width > 0)
+        {
+            widths[std::size_t(buttons[std::size_t(button % int(buttons.size()))])]++;
+            button++;
+            free_width--;
+        }
+    }
+
+    for (int column = 0; column < column_count; column++)
+        table->setColumnWidth(column, std::max(1, widths[std::size_t(column)]));
+}
+
+void hotview_table::update_header_checkbox()
+{
+    if (!table)
+        return;
+
+    int assigned = 0;
+    int checked = 0;
+
+    for (int row = 0; row < table->rowCount(); row++)
+    {
+        const QTableWidgetItem* item = table->item(row, column_enabled);
+        if (!item || !item->flags().testFlag(Qt::ItemIsEnabled))
+            continue;
+
+        assigned++;
+        if (item->checkState() == Qt::Checked)
+            checked++;
+    }
+
+    if (QTableWidgetItem* header = table->horizontalHeaderItem(column_enabled))
+    {
+        if (assigned == 0 || checked == 0)
+            header->setCheckState(Qt::Unchecked);
+        else if (checked == assigned)
+            header->setCheckState(Qt::Checked);
+        else
+            header->setCheckState(Qt::PartiallyChecked);
+    }
+}
+
+void hotview_table::toggle_all_enabled()
+{
+    if (!table)
+        return;
+
+    bool any_checked = false;
+    QVector<QTableWidgetItem*> assigned_items;
+
+    for (int row = 0; row < table->rowCount(); row++)
+    {
+        QTableWidgetItem* item = table->item(row, column_enabled);
+        if (!item || !item->flags().testFlag(Qt::ItemIsEnabled))
+            continue;
+
+        assigned_items.push_back(item);
+        if (item->checkState() == Qt::Checked)
+            any_checked = true;
+    }
+
+    const bool new_enabled = !any_checked;
+
+    for (QTableWidgetItem* item : assigned_items)
+    {
+        const Axis axis = static_cast<Axis>(item->data(role_axis).toInt());
+        const bool alt = item->data(role_alt).toBool();
+        const int index = item->data(role_index).toInt();
+        hotview::instance().set_enabled(axis, alt, index, new_enabled);
     }
 }
 
@@ -350,5 +592,6 @@ void hotview_table::item_changed(QTableWidgetItem* item)
     const bool enabled = item->checkState() == Qt::Checked;
 
     item->setData(role_sort, enabled_sort_key(true, enabled));
+    update_header_checkbox();
     hotview::instance().set_enabled(axis, alt, index, enabled);
 }

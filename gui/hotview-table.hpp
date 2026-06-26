@@ -35,6 +35,10 @@ private:
     void adjust_columns();
     void apply_sort();
     bool is_sortable_column(int column) const;
+    int header_width_for_column(int column) const;
+    int content_width_for_column(int column) const;
+    void update_header_checkbox();
+    void toggle_all_enabled();
 
     QTableWidget* table = nullptr;
     bool updating = false;
