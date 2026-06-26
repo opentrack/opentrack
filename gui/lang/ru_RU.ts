@@ -82,7 +82,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Alt</source>
-        <translation>Альтернативная</translation>
+        <translation>Алт.</translation>
     </message>
     <message>
         <source>Output</source>
@@ -90,7 +90,7 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Main</source>
-        <translation>Основная</translation>
+        <translation>Осн.</translation>
     </message>
     <message>
         <source>Input</source>

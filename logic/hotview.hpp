@@ -34,7 +34,8 @@ struct OTR_LOGIC_EXPORT hotview_point final
     double y = 0;
     bool present = false;
     bool enabled = true;
-    hotview_key key;
+    hotview_key key1;
+    hotview_key key2;
 };
 
 class OTR_LOGIC_EXPORT hotview final : public QObject
@@ -52,8 +53,8 @@ public:
     QVector<hotview_point> points() const;
     void register_curve(Axis axis, bool alt, const QVector<QPointF>& points);
 
-    void update_key(Axis axis, bool alt, int index, const hotview_key& key);
-    void clear_key(Axis axis, bool alt, int index);
+    void update_key(Axis axis, bool alt, int index, int key_index, const hotview_key& key);
+    void clear_key(Axis axis, bool alt, int index, int key_index);
     void set_enabled(Axis axis, bool alt, int index, bool enabled);
 
     void reload();
@@ -95,4 +96,5 @@ private:
     static void assign_key(key_opts& dst, const hotview_key& src);
     static QString key_id(const hotview_key& key);
     static bool key_is_valid(const key_opts& key);
+    static bool key_is_valid(const hotview_key& key);
 };

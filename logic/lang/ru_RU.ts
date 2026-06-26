@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
@@ -24,11 +24,11 @@
     <name>hotview_table</name>
     <message>
         <source>Alt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Алт.</translation>
     </message>
     <message>
         <source>Main</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Осн.</translation>
     </message>
     <message>
         <source>None</source>
@@ -83,3 +83,4 @@
     </message>
 </context>
 </TS>
+
