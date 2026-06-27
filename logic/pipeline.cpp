@@ -19,7 +19,7 @@
 #include "compat/thread-name.hpp"
 
 #include "pipeline.hpp"
-#include "hotview.hpp"
+#include "snapview.hpp"
 #include "input/shortcuts.h"
 
 #include <cmath>
@@ -570,7 +570,7 @@ ok:
         if (m(i).opts.invert_post)
             value(i) = -value(i);
 
-    value = hotview::instance().apply(value);
+    value = snapview::instance().apply(value);
 
     libs.pProtocol->pose(value, raw);
 

@@ -1,4 +1,4 @@
-﻿#include "hotview.hpp"
+﻿#include "snapview.hpp"
 
 #include <QCoreApplication>
 #include <QMutexLocker>
@@ -41,12 +41,12 @@ QString point_id(Axis axis, bool alt, int index)
 
 } // namespace
 
-bool hotview_key::is_empty() const
+bool snapview_key::is_empty() const
 {
     return keycode.isEmpty() && guid.isEmpty();
 }
 
-struct hotview::point_settings final
+struct snapview::point_settings final
 {
     Axis axis = Yaw;
     bool alt = false;
@@ -66,7 +66,7 @@ struct hotview::point_settings final
         axis(axis_),
         alt(alt_),
         index(index_),
-        // Keep the original option name for the first hotview shortcut so existing profiles keep working.
+        // Keep the original option name for the first snapview shortcut so existing profiles keep working.
         key1(b, QStringLiteral("Snap View-%1").arg(point_id(axis_, alt_, index_))),
         key2(b, QStringLiteral("Snap View-2-%1").arg(point_id(axis_, alt_, index_))),
         present(b, QStringLiteral("present-%1").arg(point_id(axis_, alt_, index_)), false),
@@ -76,19 +76,19 @@ struct hotview::point_settings final
     {}
 };
 
-hotview& hotview::instance()
+snapview& snapview::instance()
 {
-    static hotview self;
+    static snapview self;
     return self;
 }
 
-hotview::hotview(QObject* parent) :
+snapview::snapview(QObject* parent) :
     QObject(parent),
     b(options::make_bundle(QStringLiteral("opentrack-Snap View")))
 {
     if (QCoreApplication* app = QCoreApplication::instance())
         connect(app, &QCoreApplication::aboutToQuit,
-                this, &hotview::shutdown,
+                this, &snapview::shutdown,
                 Qt::DirectConnection);
 
     QMutexLocker lock(&mtx);
@@ -97,12 +97,12 @@ hotview::hotview(QObject* parent) :
     reload_shortcuts_unlocked();
 }
 
-hotview::~hotview()
+snapview::~snapview()
 {
     shutdown();
 }
 
-void hotview::shutdown()
+void snapview::shutdown()
 {
     std::unique_ptr<Shortcuts> old_shortcuts;
 
@@ -116,7 +116,7 @@ void hotview::shutdown()
     old_shortcuts.reset();
 }
 
-void hotview::build_storage()
+void snapview::build_storage()
 {
     storage.clear();
     storage.reserve(Axis_COUNT * 2 * max_points_per_curve);
@@ -131,13 +131,13 @@ void hotview::build_storage()
     }
 }
 
-int hotview::storage_index(Axis axis, bool alt, int point_index) const
+int snapview::storage_index(Axis axis, bool alt, int point_index) const
 {
     const int a = int(clamp_axis(int(axis))) - Axis_MIN;
     return (a * 2 + (alt ? 1 : 0)) * max_points_per_curve + point_index;
 }
 
-hotview::point_settings* hotview::find_unlocked(Axis axis, bool alt, int point_index)
+snapview::point_settings* snapview::find_unlocked(Axis axis, bool alt, int point_index)
 {
     if (point_index < 0 || point_index >= max_points_per_curve)
         return nullptr;
@@ -149,12 +149,12 @@ hotview::point_settings* hotview::find_unlocked(Axis axis, bool alt, int point_i
     return storage[std::size_t(idx)].get();
 }
 
-const hotview::point_settings* hotview::find_unlocked(Axis axis, bool alt, int point_index) const
+const snapview::point_settings* snapview::find_unlocked(Axis axis, bool alt, int point_index) const
 {
-    return const_cast<hotview*>(this)->find_unlocked(axis, alt, point_index);
+    return const_cast<snapview*>(this)->find_unlocked(axis, alt, point_index);
 }
 
-hotview_key hotview::read_key(const key_opts& key)
+snapview_key snapview::read_key(const key_opts& key)
 {
     return {
         key.keycode(),
@@ -163,14 +163,14 @@ hotview_key hotview::read_key(const key_opts& key)
     };
 }
 
-void hotview::assign_key(key_opts& dst, const hotview_key& src)
+void snapview::assign_key(key_opts& dst, const snapview_key& src)
 {
     dst.keycode = src.keycode;
     dst.guid = src.guid;
     dst.button = src.button;
 }
 
-QString hotview::key_id(const hotview_key& key)
+QString snapview::key_id(const snapview_key& key)
 {
     if (!key.keycode.isEmpty())
         return QStringLiteral("kbd:%1").arg(key.keycode);
@@ -181,19 +181,19 @@ QString hotview::key_id(const hotview_key& key)
     return {};
 }
 
-bool hotview::key_is_valid(const key_opts& key)
+bool snapview::key_is_valid(const key_opts& key)
 {
     return !key.keycode().isEmpty() || !key.guid().isEmpty();
 }
 
-bool hotview::key_is_valid(const hotview_key& key)
+bool snapview::key_is_valid(const snapview_key& key)
 {
     return !key.keycode.isEmpty() || !key.guid.isEmpty();
 }
 
-QVector<hotview_point> hotview::points_unlocked() const
+QVector<snapview_point> snapview::points_unlocked() const
 {
-    QVector<hotview_point> ret;
+    QVector<snapview_point> ret;
 
     for (const point_ptr& ptr : storage)
     {
@@ -217,7 +217,7 @@ QVector<hotview_point> hotview::points_unlocked() const
         });
     }
 
-    std::sort(ret.begin(), ret.end(), [](const hotview_point& a, const hotview_point& b) {
+    std::sort(ret.begin(), ret.end(), [](const snapview_point& a, const snapview_point& b) {
         if (a.axis != b.axis)
             return int(a.axis) < int(b.axis);
         if (a.alt != b.alt)
@@ -228,13 +228,13 @@ QVector<hotview_point> hotview::points_unlocked() const
     return ret;
 }
 
-QVector<hotview_point> hotview::points() const
+QVector<snapview_point> snapview::points() const
 {
     QMutexLocker lock(&mtx);
     return points_unlocked();
 }
 
-void hotview::register_curve(Axis axis, bool alt, const QVector<QPointF>& points)
+void snapview::register_curve(Axis axis, bool alt, const QVector<QPointF>& points)
 {
     {
         QMutexLocker lock(&mtx);
@@ -268,7 +268,7 @@ void hotview::register_curve(Axis axis, bool alt, const QVector<QPointF>& points
     emit changed();
 }
 
-void hotview::update_key(Axis axis, bool alt, int index, int key_index, const hotview_key& key)
+void snapview::update_key(Axis axis, bool alt, int index, int key_index, const snapview_key& key)
 {
     {
         QMutexLocker lock(&mtx);
@@ -287,7 +287,7 @@ void hotview::update_key(Axis axis, bool alt, int index, int key_index, const ho
     emit changed();
 }
 
-void hotview::clear_key(Axis axis, bool alt, int index, int key_index)
+void snapview::clear_key(Axis axis, bool alt, int index, int key_index)
 {
     {
         QMutexLocker lock(&mtx);
@@ -309,7 +309,7 @@ void hotview::clear_key(Axis axis, bool alt, int index, int key_index)
     emit changed();
 }
 
-void hotview::set_enabled(Axis axis, bool alt, int index, bool enabled)
+void snapview::set_enabled(Axis axis, bool alt, int index, bool enabled)
 {
     {
         QMutexLocker lock(&mtx);
@@ -327,7 +327,7 @@ void hotview::set_enabled(Axis axis, bool alt, int index, bool enabled)
     emit changed();
 }
 
-void hotview::reload()
+void snapview::reload()
 {
     {
         QMutexLocker lock(&mtx);
@@ -339,13 +339,13 @@ void hotview::reload()
     emit changed();
 }
 
-void hotview::save()
+void snapview::save()
 {
     QMutexLocker lock(&mtx);
     b->save();
 }
 
-void hotview::set_all_inactive_unlocked()
+void snapview::set_all_inactive_unlocked()
 {
     for (point_ptr& ptr : storage)
     {
@@ -354,7 +354,7 @@ void hotview::set_all_inactive_unlocked()
     }
 }
 
-void hotview::reload_shortcuts_unlocked()
+void snapview::reload_shortcuts_unlocked()
 {
     if (shutting_down)
         return;
@@ -367,7 +367,7 @@ void hotview::reload_shortcuts_unlocked()
 
     auto maybe_add = [&grouped](key_opts& key)
     {
-        const hotview_key k = read_key(key);
+        const snapview_key k = read_key(key);
         const QString id = key_id(k);
 
         if (!id.isEmpty() && grouped.find(id) == grouped.end())
@@ -397,7 +397,7 @@ void hotview::reload_shortcuts_unlocked()
     shortcuts->reload(keys);
 }
 
-void hotview::set_active_group(const QString& id, bool held)
+void snapview::set_active_group(const QString& id, bool held)
 {
     QMutexLocker lock(&mtx);
 
@@ -423,7 +423,7 @@ void hotview::set_active_group(const QString& id, bool held)
     }
 }
 
-Pose hotview::apply(Pose value) const
+Pose snapview::apply(Pose value) const
 {
     QMutexLocker lock(&mtx);
 
@@ -448,7 +448,7 @@ Pose hotview::apply(Pose value) const
     return value;
 }
 
-QString hotview::axis_name(Axis axis)
+QString snapview::axis_name(Axis axis)
 {
     switch (axis)
     {
@@ -462,19 +462,19 @@ QString hotview::axis_name(Axis axis)
     }
 }
 
-QString hotview::point_name(Axis axis, int index)
+QString snapview::point_name(Axis axis, int index)
 {
     return QStringLiteral("%1%2").arg(axis_name(axis)).arg(index + 1);
 }
 
-QString hotview::curve_name(bool alt)
+QString snapview::curve_name(bool alt)
 {
     return alt
-        ? QCoreApplication::translate("hotview_table", "Alt")
-        : QCoreApplication::translate("hotview_table", "Main");
+        ? QCoreApplication::translate("snapview_table", "Alt")
+        : QCoreApplication::translate("snapview_table", "Main");
 }
 
-QString hotview::key_to_string(const hotview_key& key)
+QString snapview::key_to_string(const snapview_key& key)
 {
     if (!key.guid.isEmpty())
     {
@@ -503,5 +503,5 @@ QString hotview::key_to_string(const hotview_key& key)
     if (!key.keycode.isEmpty())
         return key.keycode;
 
-    return QCoreApplication::translate("hotview_table", "None");
+    return QCoreApplication::translate("snapview_table", "None");
 }

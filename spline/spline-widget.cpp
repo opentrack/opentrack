@@ -1,4 +1,4 @@
-﻿#include "spline-widget.hpp"
+#include "spline-widget.hpp"
 #include "compat/math.hpp"
 
 #include <algorithm>
@@ -82,15 +82,15 @@ bool spline_widget::is_preview_only() const
 {
     return preview_only;
 }
-void spline_widget::set_hotview_axis(Axis axis, bool alt)
+void spline_widget::set_snapview_axis(Axis axis, bool alt)
 {
-    hotview_axis_ = axis;
-    hotview_alt_ = alt;
+    snapview_axis_ = axis;
+    snapview_alt_ = alt;
     draw_function = true;
     repaint();
 }
 
-QVector<QPointF> spline_widget::hotview_points() const
+QVector<QPointF> spline_widget::snapview_points() const
 {
     QVector<QPointF> ret;
 
@@ -106,16 +106,16 @@ QVector<QPointF> spline_widget::hotview_points() const
     return ret;
 }
 
-QPointF spline_widget::hotview_point_to_pixel(const QPointF& point) const
+QPointF spline_widget::snapview_point_to_pixel(const QPointF& point) const
 {
     return const_cast<spline_widget*>(this)->point_to_pixel(point);
 }
 
-QString spline_widget::hotview_point_name(int index) const
+QString spline_widget::snapview_point_name(int index) const
 {
     QString name;
 
-    switch (hotview_axis_)
+    switch (snapview_axis_)
     {
     case TX:    name = QStringLiteral("X"); break;
     case TY:    name = QStringLiteral("Y"); break;
@@ -357,7 +357,7 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     p.drawPixmap(e->rect(), spline_img);
 
-    drawHotviewPointLabels(p);
+    drawSnapviewPointLabels(p);
 
     // If the Tracker is active, the 'Last Point' it requested is recorded.
     // Show that point on the graph, with some lines to assist.
@@ -377,7 +377,7 @@ void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColo
                                point_size_in_pixels*2, point_size_in_pixels*2});
     painter.restore();
 }
-void spline_widget::drawHotviewPointLabel(QPainter& painter, const QPointF& pos, const QString& text)
+void spline_widget::drawSnapviewPointLabel(QPainter& painter, const QPointF& pos, const QString& text)
 {
     if (text.isEmpty())
         return;
@@ -430,15 +430,15 @@ void spline_widget::drawHotviewPointLabel(QPainter& painter, const QPointF& pos,
     painter.restore();
 }
 
-void spline_widget::drawHotviewPointLabels(QPainter& painter)
+void spline_widget::drawSnapviewPointLabels(QPainter& painter)
 {
-    if (!config || preview_only || hotview_axis_ == NonAxis)
+    if (!config || preview_only || snapview_axis_ == NonAxis)
         return;
 
     const points_t& points = config->get_points();
 
     for (int i = 0; i < points.size(); i++)
-        drawHotviewPointLabel(painter, point_to_pixel(points[i]), hotview_point_name(i));
+        drawSnapviewPointLabel(painter, point_to_pixel(points[i]), snapview_point_name(i));
 }
 void spline_widget::drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen)
 {
@@ -492,7 +492,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             if (!too_close)
             {
                 config->add_point(pixel_to_point(e->position()));
-                emit hotview_points_changed();
+                emit snapview_points_changed();
                 show_tooltip(e->pos());
             }
         }
@@ -509,7 +509,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 if (point_within_pixel(points[i], e->position()))
                 {
                     config->remove_point(i);
-                    emit hotview_points_changed();
+                    emit snapview_points_changed();
                     draw_function = true;
                     break;
                 }
@@ -570,7 +570,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         if ((!has_prev || check_prev()) && (!has_next || check_next()))
         {
             config->move_point(i, new_pt);
-            emit hotview_points_changed();
+            emit snapview_points_changed();
             draw_function = true;
             repaint();
         }

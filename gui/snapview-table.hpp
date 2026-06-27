@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <QWidget>
 #include <Qt>
@@ -9,12 +9,12 @@ class QShowEvent;
 class QTableWidget;
 class QTableWidgetItem;
 
-class hotview_table final : public QWidget
+class snapview_table final : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit hotview_table(QWidget* parent = nullptr);
+    explicit snapview_table(QWidget* parent = nullptr);
 
 public slots:
     void reload();

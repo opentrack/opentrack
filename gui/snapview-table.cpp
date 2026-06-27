@@ -1,7 +1,7 @@
-#include "hotview-table.hpp"
+﻿#include "snapview-table.hpp"
 
-#include "hotview-keybinding-dialog.hpp"
-#include "logic/hotview.hpp"
+#include "snapview-keybinding-dialog.hpp"
+#include "logic/snapview.hpp"
 
 #include <QAbstractItemView>
 #include <QEvent>
@@ -78,10 +78,10 @@ QString enabled_sort_key(bool key_assigned, bool enabled)
     return enabled ? QStringLiteral("2") : QStringLiteral("1");
 }
 
-QString point_sort_key(const hotview_point& point)
+QString point_sort_key(const snapview_point& point)
 {
     return QStringLiteral("%1-%2-%3")
-        .arg(hotview::point_name(point.axis, point.index), 32, QLatin1Char('0'))
+        .arg(snapview::point_name(point.axis, point.index), 32, QLatin1Char('0'))
         .arg(point.alt ? 1 : 0)
         .arg(point.index, 8, 10, QLatin1Char('0'));
 }
@@ -122,10 +122,10 @@ bool is_button_column(int column)
 
 } // namespace
 
-hotview_table::hotview_table(QWidget* parent) :
+snapview_table::snapview_table(QWidget* parent) :
     QWidget(parent)
 {
-    setObjectName(QStringLiteral("hotview_table"));
+    setObjectName(QStringLiteral("snapview_table"));
 
     auto* layout = new QVBoxLayout(this);
 
@@ -148,18 +148,18 @@ hotview_table::hotview_table(QWidget* parent) :
     layout->addWidget(table);
 
     connect(table, &QTableWidget::itemChanged,
-            this, &hotview_table::item_changed);
+            this, &snapview_table::item_changed);
 
     connect(table->horizontalHeader(), &QHeaderView::sectionClicked,
-            this, &hotview_table::header_clicked);
+            this, &snapview_table::header_clicked);
 
-    connect(&hotview::instance(), &hotview::changed,
-            this, &hotview_table::rebuild);
+    connect(&snapview::instance(), &snapview::changed,
+            this, &snapview_table::rebuild);
 
     rebuild();
 }
 
-void hotview_table::set_headers()
+void snapview_table::set_headers()
 {
     table->setHorizontalHeaderLabels({
         QString(),
@@ -182,28 +182,28 @@ void hotview_table::set_headers()
     }
 }
 
-void hotview_table::reload()
+void snapview_table::reload()
 {
-    hotview::instance().reload();
+    snapview::instance().reload();
 }
 
-void hotview_table::save()
+void snapview_table::save()
 {
-    hotview::instance().save();
+    snapview::instance().save();
 }
 
-void hotview_table::rebuild()
+void snapview_table::rebuild()
 {
     updating = true;
     table->setRowCount(0);
     set_headers();
 
-    const QVector<hotview_point> points = hotview::instance().points();
+    const QVector<snapview_point> points = snapview::instance().points();
     table->setRowCount(points.size());
 
     for (int row = 0; row < points.size(); row++)
     {
-        const hotview_point& point = points[row];
+        const snapview_point& point = points[row];
         const bool key1_assigned = !point.key1.is_empty();
         const bool key2_assigned = !point.key2.is_empty();
         const bool key_assigned = key1_assigned || key2_assigned;
@@ -221,13 +221,13 @@ void hotview_table::rebuild()
         enabled->setData(role_index, point.index);
         table->setItem(row, column_enabled, enabled);
 
-        table->setItem(row, column_point, readonly_item(hotview::point_name(point.axis, point.index), point_sort_key(point)));
+        table->setItem(row, column_point, readonly_item(snapview::point_name(point.axis, point.index), point_sort_key(point)));
         table->setItem(row, column_curve, readonly_item(point.alt ? tr("Alt") : tr("Main"), curve_sort_key(point.alt)));
         table->setItem(row, column_input, readonly_item(QString::number(point.x, 'f', 1), QStringLiteral("%1").arg(point.x, 20, 'f', 6, QLatin1Char('0'))));
         table->setItem(row, column_output, readonly_item(QString::number(point.y, 'f', 1), QStringLiteral("%1").arg(point.y, 20, 'f', 6, QLatin1Char('0'))));
 
-        table->setItem(row, column_shortcut1, readonly_item(key1_assigned ? hotview::key_to_string(point.key1) : tr("None")));
-        table->setItem(row, column_shortcut2, readonly_item(key2_assigned ? hotview::key_to_string(point.key2) : tr("None")));
+        table->setItem(row, column_shortcut1, readonly_item(key1_assigned ? snapview::key_to_string(point.key1) : tr("None")));
+        table->setItem(row, column_shortcut2, readonly_item(key2_assigned ? snapview::key_to_string(point.key2) : tr("None")));
 
         auto add_button_pair = [this, point, row](int key_index, int bind_column, int clear_column)
         {
@@ -237,10 +237,10 @@ void hotview_table::rebuild()
                     this,
                     [this, point, key_index]
                     {
-                        hotview_key key;
+                        snapview_key key;
 
-                        if (prompt_hotview_key_binding(this, key))
-                            hotview::instance().update_key(point.axis, point.alt, point.index, key_index, key);
+                        if (prompt_snapview_key_binding(this, key))
+                            snapview::instance().update_key(point.axis, point.alt, point.index, key_index, key);
                     });
             table->setCellWidget(row, bind_column, bind);
 
@@ -250,7 +250,7 @@ void hotview_table::rebuild()
                     this,
                     [point, key_index]
                     {
-                        hotview::instance().clear_key(point.axis, point.alt, point.index, key_index);
+                        snapview::instance().clear_key(point.axis, point.alt, point.index, key_index);
                     });
             table->setCellWidget(row, clear_column, clear);
         };
@@ -264,39 +264,39 @@ void hotview_table::rebuild()
     apply_sort();
     adjust_columns();
 
-    QTimer::singleShot(0, this, &hotview_table::adjust_columns);
+    QTimer::singleShot(0, this, &snapview_table::adjust_columns);
 }
 
-void hotview_table::changeEvent(QEvent* event)
+void snapview_table::changeEvent(QEvent* event)
 {
     QWidget::changeEvent(event);
 
     if (event && event->type() == QEvent::LanguageChange)
     {
         rebuild();
-        QTimer::singleShot(0, this, &hotview_table::adjust_columns);
+        QTimer::singleShot(0, this, &snapview_table::adjust_columns);
     }
 }
 
-void hotview_table::resizeEvent(QResizeEvent* event)
+void snapview_table::resizeEvent(QResizeEvent* event)
 {
     QWidget::resizeEvent(event);
     adjust_columns();
 }
 
-void hotview_table::showEvent(QShowEvent* event)
+void snapview_table::showEvent(QShowEvent* event)
 {
     QWidget::showEvent(event);
     adjust_columns();
-    QTimer::singleShot(0, this, &hotview_table::adjust_columns);
+    QTimer::singleShot(0, this, &snapview_table::adjust_columns);
 }
 
-bool hotview_table::is_sortable_column(int column) const
+bool snapview_table::is_sortable_column(int column) const
 {
     return column == column_point || column == column_curve;
 }
 
-void hotview_table::header_clicked(int column)
+void snapview_table::header_clicked(int column)
 {
     if (column == column_enabled)
     {
@@ -321,7 +321,7 @@ void hotview_table::header_clicked(int column)
     adjust_columns();
 }
 
-void hotview_table::apply_sort()
+void snapview_table::apply_sort()
 {
     if (!table || !is_sortable_column(sort_column))
         return;
@@ -330,7 +330,7 @@ void hotview_table::apply_sort()
     table->sortItems(sort_column, sort_order);
 }
 
-int hotview_table::header_width_for_column(int column) const
+int snapview_table::header_width_for_column(int column) const
 {
     if (!table)
         return 1;
@@ -349,7 +349,7 @@ int hotview_table::header_width_for_column(int column) const
     return 1;
 }
 
-int hotview_table::content_width_for_column(int column) const
+int snapview_table::content_width_for_column(int column) const
 {
     if (!table)
         return 1;
@@ -381,7 +381,7 @@ int hotview_table::content_width_for_column(int column) const
     return std::max(1, width);
 }
 
-void hotview_table::adjust_columns()
+void snapview_table::adjust_columns()
 {
     if (!table || table->columnCount() != column_count)
         return;
@@ -517,7 +517,7 @@ void hotview_table::adjust_columns()
         table->setColumnWidth(column, std::max(1, widths[std::size_t(column)]));
 }
 
-void hotview_table::update_header_checkbox()
+void snapview_table::update_header_checkbox()
 {
     if (!table)
         return;
@@ -547,7 +547,7 @@ void hotview_table::update_header_checkbox()
     }
 }
 
-void hotview_table::toggle_all_enabled()
+void snapview_table::toggle_all_enabled()
 {
     if (!table)
         return;
@@ -573,11 +573,11 @@ void hotview_table::toggle_all_enabled()
         const Axis axis = static_cast<Axis>(item->data(role_axis).toInt());
         const bool alt = item->data(role_alt).toBool();
         const int index = item->data(role_index).toInt();
-        hotview::instance().set_enabled(axis, alt, index, new_enabled);
+        snapview::instance().set_enabled(axis, alt, index, new_enabled);
     }
 }
 
-void hotview_table::item_changed(QTableWidgetItem* item)
+void snapview_table::item_changed(QTableWidgetItem* item)
 {
     if (updating || !item || item->column() != column_enabled)
         return;
@@ -593,5 +593,5 @@ void hotview_table::item_changed(QTableWidgetItem* item)
 
     item->setData(role_sort, enabled_sort_key(true, enabled));
     update_header_checkbox();
-    hotview::instance().set_enabled(axis, alt, index, enabled);
+    snapview::instance().set_enabled(axis, alt, index, enabled);
 }
