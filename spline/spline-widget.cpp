@@ -82,6 +82,52 @@ bool spline_widget::is_preview_only() const
 {
     return preview_only;
 }
+void spline_widget::set_snapview_axis(Axis axis, bool alt)
+{
+    snapview_axis_ = axis;
+    snapview_alt_ = alt;
+    draw_function = true;
+    repaint();
+}
+
+QVector<QPointF> spline_widget::snapview_points() const
+{
+    QVector<QPointF> ret;
+
+    if (!config)
+        return ret;
+
+    const points_t& points = config->get_points();
+    ret.reserve(points.size());
+
+    for (const QPointF& point : points)
+        ret.push_back(point);
+
+    return ret;
+}
+
+QPointF spline_widget::snapview_point_to_pixel(const QPointF& point) const
+{
+    return const_cast<spline_widget*>(this)->point_to_pixel(point);
+}
+
+QString spline_widget::snapview_point_name(int index) const
+{
+    QString name;
+
+    switch (snapview_axis_)
+    {
+    case TX:    name = QStringLiteral("X"); break;
+    case TY:    name = QStringLiteral("Y"); break;
+    case TZ:    name = QStringLiteral("Z"); break;
+    case Yaw:   name = QStringLiteral("Yaw"); break;
+    case Pitch: name = QStringLiteral("Pitch"); break;
+    case Roll:  name = QStringLiteral("Roll"); break;
+    default:    return {};
+    }
+
+    return QStringLiteral("%1%2").arg(name).arg(index + 1);
+}
 
 void spline_widget::drawBackground()
 {
@@ -311,6 +357,8 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     p.drawPixmap(e->rect(), spline_img);
 
+    drawSnapviewPointLabels(p);
+
     // If the Tracker is active, the 'Last Point' it requested is recorded.
     // Show that point on the graph, with some lines to assist.
     // This new feature is very handy for tweaking the curves!
@@ -329,7 +377,69 @@ void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColo
                                point_size_in_pixels*2, point_size_in_pixels*2});
     painter.restore();
 }
+void spline_widget::drawSnapviewPointLabel(QPainter& painter, const QPointF& pos, const QString& text)
+{
+    if (text.isEmpty())
+        return;
 
+    painter.save();
+
+    QFont font = painter.font();
+    font.setPointSize(8);
+    font.setBold(true);
+    painter.setFont(font);
+
+    const QFontMetricsF metrics(font);
+    QRectF text_rect = metrics.boundingRect(text);
+    text_rect.moveTopLeft(QPointF(pos.x() + point_size_in_pixels + 4,
+                                  pos.y() - point_size_in_pixels - 4));
+
+    QRectF bg = text_rect.adjusted(-3, -2, 3, 2);
+
+    if (bg.right() > width())
+    {
+        bg.moveRight(pos.x() - point_size_in_pixels - 4);
+        text_rect.moveTopLeft(bg.topLeft() + QPointF(3, 2));
+    }
+
+    if (bg.left() < 0)
+    {
+        bg.moveLeft(0);
+        text_rect.moveTopLeft(bg.topLeft() + QPointF(3, 2));
+    }
+
+    if (bg.top() < 0)
+    {
+        bg.moveTop(pos.y() + point_size_in_pixels + 4);
+        text_rect.moveTopLeft(bg.topLeft() + QPointF(3, 2));
+    }
+
+    if (bg.bottom() > height())
+    {
+        bg.moveBottom(height());
+        text_rect.moveTopLeft(bg.topLeft() + QPointF(3, 2));
+    }
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(255, 255, 255, 190));
+    painter.drawRoundedRect(bg, 3, 3);
+
+    painter.setPen(QColor(20, 20, 20, 235));
+    painter.drawText(text_rect, Qt::AlignLeft | Qt::AlignVCenter, text);
+
+    painter.restore();
+}
+
+void spline_widget::drawSnapviewPointLabels(QPainter& painter)
+{
+    if (!config || preview_only || snapview_axis_ == NonAxis)
+        return;
+
+    const points_t& points = config->get_points();
+
+    for (int i = 0; i < points.size(); i++)
+        drawSnapviewPointLabel(painter, point_to_pixel(points[i]), snapview_point_name(i));
+}
 void spline_widget::drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen)
 {
     painter.save();
@@ -382,6 +492,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             if (!too_close)
             {
                 config->add_point(pixel_to_point(e->position()));
+                emit snapview_points_changed();
                 show_tooltip(e->pos());
             }
         }
@@ -398,6 +509,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 if (point_within_pixel(points[i], e->position()))
                 {
                     config->remove_point(i);
+                    emit snapview_points_changed();
                     draw_function = true;
                     break;
                 }
@@ -458,6 +570,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         if ((!has_prev || check_prev()) && (!has_next || check_next()))
         {
             config->move_point(i, new_pt);
+            emit snapview_points_changed();
             draw_function = true;
             repaint();
         }

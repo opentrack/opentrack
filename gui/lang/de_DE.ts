@@ -58,6 +58,13 @@ Klicke „Kalibrierung löschen“, um jegliche Kalibrierungsdaten der zugehöri
     </message>
 </context>
 <context>
+    <name>Snap View_auto_installer</name>
+    <message>
+        <source>Snap View</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>keyboard_listener</name>
     <message>
         <source>Dialog</source>
@@ -459,6 +466,60 @@ Klicke „Kalibrierung löschen“, um jegliche Kalibrierungsdaten der zugehöri
     <message>
         <source>-</source>
         <translation>Entfernen</translation>
+    </message>
+</context>
+<context>
+    <name>snapview_keybinding_dialog</name>
+    <message>
+        <source>Press Snap View shortcut</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>snapview_table</name>
+    <message>
+        <source>Curve</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Point</source>
+        <translation type="unfinished">Punkt</translation>
+    </message>
+    <message>
+        <source>Alt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Output</source>
+        <translation type="unfinished">Ausgabe</translation>
+    </message>
+    <message>
+        <source>Main</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Bind</source>
+        <translation type="unfinished">Belegen</translation>
+    </message>
+    <message>
+        <source>Shortcut</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished">Nichts</translation>
+    </message>
+    <message>
+        <source>Enabled</source>
+        <translation type="unfinished">Eingeschaltet</translation>
     </message>
 </context>
 </TS>

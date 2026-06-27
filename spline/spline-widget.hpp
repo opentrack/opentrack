@@ -19,6 +19,9 @@
 #include <cmath>
 
 #include <QWidget>
+
+#include <QVector>
+#include <QString>
 #include <QMetaObject>
 
 #include <QDebug>
@@ -55,8 +58,16 @@ public:
 
     void set_snap(double x, double y) { snap_x = x; snap_y = y; }
     void get_snap(double& x, double& y) const { x = snap_x; y = snap_y; }
+    void set_snapview_axis(Axis axis, bool alt);
+    Axis snapview_axis() const { return snapview_axis_; }
+    bool snapview_alt() const { return snapview_alt_; }
+    QVector<QPointF> snapview_points() const;
+    QPointF snapview_point_to_pixel(const QPointF& point) const;
+    QString snapview_point_name(int index) const;
 
     QSize minimumSizeHint() const override;
+signals:
+    void snapview_points_changed();
 public slots:
     void reload_spline();
 protected slots:
@@ -72,6 +83,8 @@ private:
     void drawBackground();
     void drawFunction();
     void drawPoint(QPainter& painter, const QPointF& pt, const QColor& colBG, const QColor& border = QColor(50, 100, 120, 200));
+    void drawSnapviewPointLabel(QPainter& painter, const QPointF& pt, const QString& text);
+    void drawSnapviewPointLabels(QPainter& painter);
     void drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen);
     bool point_within_pixel(const QPointF& pt, const QPointF& pixel);
 
@@ -89,6 +102,8 @@ private:
 
     QPointF c;
     base_spline* config = nullptr;
+    Axis snapview_axis_ = NonAxis;
+    bool snapview_alt_ = false;
 
     QPixmap background_img;
     QPixmap spline_img;

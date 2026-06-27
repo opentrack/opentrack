@@ -1,4 +1,4 @@
-/* Copyright (c) 2012-2018 Stanislaw Halik <sthalik@misaki.pl>
+﻿/* Copyright (c) 2012-2018 Stanislaw Halik <sthalik@misaki.pl>
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -19,6 +19,7 @@
 #include "compat/thread-name.hpp"
 
 #include "pipeline.hpp"
+#include "snapview.hpp"
 #include "input/shortcuts.h"
 
 #include <cmath>
@@ -568,6 +569,8 @@ ok:
     for (int i = 0; i < 6; i++)
         if (m(i).opts.invert_post)
             value(i) = -value(i);
+
+    value = snapview::instance().apply(value);
 
     libs.pProtocol->pose(value, raw);
 
