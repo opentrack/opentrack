@@ -1,4 +1,4 @@
-#include "hotview.hpp"
+﻿#include "hotview.hpp"
 
 #include <QCoreApplication>
 #include <QMutexLocker>
@@ -66,9 +66,9 @@ struct hotview::point_settings final
         axis(axis_),
         alt(alt_),
         index(index_),
-        // Keep the original option name for the first Hotview shortcut so existing profiles keep working.
-        key1(b, QStringLiteral("hotview-%1").arg(point_id(axis_, alt_, index_))),
-        key2(b, QStringLiteral("hotview-2-%1").arg(point_id(axis_, alt_, index_))),
+        // Keep the original option name for the first hotview shortcut so existing profiles keep working.
+        key1(b, QStringLiteral("Snap View-%1").arg(point_id(axis_, alt_, index_))),
+        key2(b, QStringLiteral("Snap View-2-%1").arg(point_id(axis_, alt_, index_))),
         present(b, QStringLiteral("present-%1").arg(point_id(axis_, alt_, index_)), false),
         enabled(b, QStringLiteral("enabled-%1").arg(point_id(axis_, alt_, index_)), false),
         x(b, QStringLiteral("x-%1").arg(point_id(axis_, alt_, index_)), 0.),
@@ -84,7 +84,7 @@ hotview& hotview::instance()
 
 hotview::hotview(QObject* parent) :
     QObject(parent),
-    b(options::make_bundle(QStringLiteral("opentrack-hotview")))
+    b(options::make_bundle(QStringLiteral("opentrack-Snap View")))
 {
     if (QCoreApplication* app = QCoreApplication::instance())
         connect(app, &QCoreApplication::aboutToQuit,

@@ -40,7 +40,7 @@ constexpr curve_binding mapping_widgets[] = {
 
 QString hotview_tab_text()
 {
-    return QCoreApplication::translate("hotview_auto_installer", "Hotview");
+    return QCoreApplication::translate("Snap View_auto_installer", "Snap View");
 }
 
 hotview_table* find_hotview_table(QTabWidget* tabs)
@@ -85,7 +85,7 @@ int target_hotview_index(QTabWidget* tabs)
     // In options-dialog.ui the built-in tabs start as:
     //   0: Shortcuts
     //   1: Output
-    // Insert Hotview after Shortcuts and before Output without depending on localized tab text.
+    // Insert hotview after Shortcuts and before Output without depending on localized tab text.
     return std::min(1, tabs->count());
 }
 
@@ -106,10 +106,10 @@ void register_widget_points(spline_widget* widget)
 
 void configure_mapping_dialog(QWidget* dialog)
 {
-    if (!dialog || dialog->property("hotview.mapping.installed").toBool())
+    if (!dialog || dialog->property("Snap View.mapping.installed").toBool())
         return;
 
-    dialog->setProperty("hotview.mapping.installed", true);
+    dialog->setProperty("Snap View.mapping.installed", true);
 
     for (const curve_binding& binding : mapping_widgets)
     {

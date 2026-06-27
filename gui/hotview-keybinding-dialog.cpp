@@ -1,4 +1,4 @@
-#include "hotview-keybinding-dialog.hpp"
+﻿#include "hotview-keybinding-dialog.hpp"
 
 #include "listener.h"
 
@@ -11,7 +11,7 @@ bool prompt_hotview_key_binding(QWidget* parent, hotview_key& out)
 
     keyboard_listener listener(parent);
     listener.setWindowModality(Qt::ApplicationModal);
-    listener.setWindowTitle(QCoreApplication::translate("hotview_keybinding_dialog", "Press Hotview shortcut"));
+    listener.setWindowTitle(QCoreApplication::translate("hotview_keybinding_dialog", "Press Snap View shortcut"));
 
     QObject lifetime;
 

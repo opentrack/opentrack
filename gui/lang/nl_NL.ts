@@ -57,16 +57,16 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
 </context>
 <context>
-    <name>hotview_auto_installer</name>
+    <name>Snap View_auto_installer</name>
     <message>
-        <source>Hotview</source>
+        <source>Snap View</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>hotview_keybinding_dialog</name>
     <message>
-        <source>Press Hotview shortcut</source>
+        <source>Press Snap View shortcut</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
