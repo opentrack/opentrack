@@ -71,10 +71,10 @@ jobs:
       uses: jurplel/install-qt-action@v4
       with:
         dir: "${{ github.workspace }}/qt"
-        version: '6.8.3'
+        version: '6.10.3'
         modules: qtserialport qtmultimedia qtimageformats
         target: 'desktop'
-        use-official: true
+        #use-official: true
       if: matrix.os != 'ubuntu-latest'
 
     - name: Configure
