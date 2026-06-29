@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>livelink.png</file>
+    </qresource>
+</RCC>
