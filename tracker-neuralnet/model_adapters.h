@@ -61,7 +61,7 @@ public:
     cv::Mat last_network_input() const;
     double last_inference_time_millis() const;
     bool has_uncertainty() const { return has_uncertainty_; }
-
+    cv::Size input_image_size() const;
 private:
     std::string get_network_input_name(size_t i) const;
     std::string get_network_output_name(size_t i) const;
