@@ -125,14 +125,12 @@ class OTR_SPLINE_EXPORT spline : public base_spline
     std::shared_ptr<QObject> ctx { std::make_shared<QObject>() };
 
     mutable QPointF last_input_value{-1, -1};
-    mutable std::vector<f> data = std::vector<f>(value_count, magic_fill_value);
+    mutable std::vector<f> data = std::vector<f>(value_count, f(0));
     mutable points_t points;
     mutable axis_opts::max_clamp clamp_x = axis_opts::x1000, clamp_y = axis_opts::x1000;
     mutable bool activep = false;
 
     static constexpr unsigned value_count = 16384;
-    static constexpr f magic_fill_value = -(1 << 24) + 1;
-    static constexpr double c_interp = 5;
 
 public:
     void invalidate_settings();

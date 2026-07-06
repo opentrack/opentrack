@@ -1,5 +1,4 @@
 #include "spline.hpp"
-#include "compat/macros.h"
 #include "compat/math.hpp"
 
 #include <algorithm>
@@ -7,6 +6,7 @@
 #include <cmath>
 #include <memory>
 #include <cinttypes>
+#include <numbers>
 #include <utility>
 
 #include <QObject>
@@ -15,9 +15,81 @@
 #include <QSettings>
 #include <QString>
 
-#include <QDebug>
-
 namespace spline_detail {
+
+namespace {
+
+// real roots of a·t³ + b·t² + c·t + d = 0
+unsigned solve_cubic(double a, double b, double c, double d, double roots[3])
+{
+    // relative threshold for degree reduction; a vanishing leading
+    // coefficient makes the normalized coefficients blow up
+    constexpr double eps = 1e-9;
+    const double scale = std::max({ std::fabs(a), std::fabs(b), std::fabs(c) });
+
+    if (!(scale > 1e-12))
+        return 0; // constant
+
+    if (std::fabs(a) <= eps * scale)
+    {
+        if (std::fabs(b) <= eps * scale) // linear
+        {
+            roots[0] = -d / c;
+            return 1;
+        }
+        const double disc = c * c - 4 * b * d; // quadratic
+        if (disc < 0)
+            return 0;
+        const double q = -.5 * (c + std::copysign(std::sqrt(disc), c));
+        roots[0] = q / b;
+        roots[1] = q != 0 ? d / q : -c / b - roots[0];
+        return 2;
+    }
+
+    // depressed cubic u³ + pu + q, t = u - B/3
+    const double B = b / a, C = c / a, D = d / a;
+    const double ofs = B / 3;
+    const double p = C - B * B / 3;
+    const double q = B * (2 * B * B - 9 * C) / 27 + D;
+    const double disc = q * q / 4 + p * p * p / 27;
+
+    if (disc > 0) // one real root (Cardano)
+    {
+        const double s = std::sqrt(disc);
+        roots[0] = std::cbrt(-q / 2 + s) + std::cbrt(-q / 2 - s) - ofs;
+        return 1;
+    }
+    if (p >= 0) // disc ≤ 0 forces p ≈ 0 here: triple root
+    {
+        roots[0] = std::cbrt(-q) - ofs;
+        return 1;
+    }
+    // three real roots (viète's trigonometric method)
+    const double m = 2 * std::sqrt(-p / 3);
+    const double theta = std::acos(std::clamp(3 * q / (p * m), -1., 1.)) / 3;
+    for (unsigned k = 0; k < 3; k++)
+        roots[k] = m * std::cos(theta - 2 * std::numbers::pi * k / 3) - ofs;
+    return 3;
+}
+
+// largest t ∈ [0, 1] with x(t) = X on a catmull-rom segment given its
+// polynomial coefficients (same layout as `cx' below), or -1 if none.
+// x(0) and x(1) are the segment endpoints, so for X between them a root
+// exists; the largest one is taken so that for a non-monotonic x(t) the
+// later part of the curve wins, like the overwriting sampler did.
+double solve_segment_time(const double cx[4], double X)
+{
+    double roots[3];
+    const unsigned n = solve_cubic(cx[3] / 2, cx[2] / 2, cx[1] / 2, cx[0] / 2 - X, roots);
+    constexpr double eps = 1e-4;
+    double t = -1;
+    for (unsigned i = 0; i < n; i++)
+        if (roots[i] >= -eps && roots[i] <= 1 + eps)
+            t = std::max(t, std::clamp(roots[i], 0., 1.));
+    return t;
+}
+
+} // anonymous ns
 
 settings::~settings() = default;
 base_spline_::~base_spline_() = default;
@@ -157,11 +229,9 @@ void spline::update_interp_data() const
         list.prepend({ max_input(), max_output() });
 
     const double c = bucket_size_coefficient(list);
-    const double c_ = c * c_interp;
-    const f cf = (f)c, c_f = (f)c_;
+    const f cf = (f)c;
 
-    for (unsigned i = 0; i < value_count; i++)
-        data[i] = magic_fill_value;
+    std::fill(data.begin(), data.end(), (f)0);
 
     if (sz < 2) // lerp only
     {
@@ -172,16 +242,8 @@ void spline::update_interp_data() const
 
         for (unsigned k = 0; k <= max; k++)
             data[k] = f(y * k / max); // no need for bresenham
-    }
-    else if (sz == 2 && list[0].y() < 1e-6)
-    {
-        unsigned start = std::clamp((unsigned)iround(list[0].x() * c), 1u, value_count-1);
-        unsigned end = std::clamp((unsigned)iround(list[1].x() * c), 2u, value_count-1);
-        unsigned max = end - start;
-        for (unsigned x = 0; x < start; x++)
-            data[x] = 0;
-        for (unsigned x = 0; x < max; x++)
-            data[start + x] = (f)(list[1].y() * x / max);
+        for (unsigned k = max + 1; k < value_count; k++)
+            data[k] = (f)y; // flat extension past the last point
     }
     else
     {
@@ -197,8 +259,7 @@ void spline::update_interp_data() const
             sz = list.size();
         }
 
-        // now this is hella expensive due to `c_interp'
-        for (int i = 0; i < sz; i++)
+        for (int i = 0; i + 1 < sz; i++)
         {
             f p0_x, p1_x, p2_x, p3_x;
             f p0_y, p1_y, p2_y, p3_y;
@@ -222,55 +283,38 @@ void spline::update_interp_data() const
                 -p0_y + 3 * p1_y - 3 * p2_y + p3_y, // t3
             };
 
-            // multiplier helps fill in all the x's needed
-            const unsigned end = (unsigned)(c_f * (p2_x - p1_x)) + 1;
-            const f end_(end);
+            // `get_value_no_save' reads data[k] as the value at x = k/c
+            // exactly, so evaluate the curve per bucket: solve x(t) = k/c
+            // for t in closed form, then take y(t)
+            const unsigned start = (unsigned)std::ceil(p1_x * cf);
+            const unsigned end = std::min(value_count - 1, (unsigned)std::floor(p2_x * cf));
 
-            for (unsigned k = 0; k <= end; k++)
+            for (unsigned k = start; k <= end; k++)
             {
-                const f t = k / end_;
+                const f X = cf > 0 ? std::clamp((f)k / cf, p1_x, p2_x) : p2_x;
+                f t = (f)solve_segment_time(cx, X);
+                if (t < 0) // fp trouble only; a root in [0, 1] must exist
+                    t = p2_x - p1_x > 1e-9 ? std::clamp((X - p1_x) / (p2_x - p1_x), (f)0, (f)1) : (f)1;
                 const f t2 = t*t;
-                const f t3 = t*t*t;
+                const f t3 = t2*t;
+                const f y = f(.5) * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3);
 
-                const auto x = (unsigned)(f(.5) * cf * (cx[0] + cx[1] * t + cx[2] * t2 + cx[3] * t3));
-                const auto y = (f)(f(.5) * (cy[0] + cy[1] * t + cy[2] * t2 + cy[3] * t3));
-
-                switch (int ret = std::fpclassify(y))
-                {
-                case FP_INFINITE:
-                case FP_NAN:
-                case FP_SUBNORMAL:
-                    eval_once(qDebug() << "spline: fpclassify" << y
-                                       << "returned" << ret
-                                       << "for bundle" << s->b->name());
-                    continue;
-                case FP_ZERO:
-                case FP_NORMAL:
-                    if (x < value_count)
-                        data[x] = y;
-                    break;
-                default:
-                    tr_unreachable();
-                }
+                if (std::isfinite(y))
+                    data[k] = y;
             }
         }
+
+        // flat extension past the last point, for when `clamp_x' rounds
+        // the last point down to an interior bucket
+        const unsigned tail = std::min(value_count - 1, (unsigned)std::floor(list[sz - 1].x() * cf));
+        for (unsigned k = tail + 1; k < value_count; k++)
+            data[k] = data[tail];
     }
 
-    auto maxy = (f)max_output();
-    auto last = (f)0;
-
-#ifdef __clang__
-#   pragma clang diagnostic push
-#   pragma clang diagnostic ignored "-Wfloat-equal" // stupid clang
-#endif
+    const auto maxy = (f)max_output();
 
     for (unsigned i = 0; i < value_count; i++)
-    {
-        if (data[i] == magic_fill_value)
-            data[i] = last;
-        data[i] = std::clamp(data[i], (f)0, (f)maxy);
-        last = data[i];
-    }
+        data[i] = std::clamp(data[i], (f)0, maxy);
 
     // make sure empty places stay empty (see #1341)
     if (auto it = std::find_if(list.cbegin(), list.cend(),
@@ -283,9 +327,6 @@ void spline::update_interp_data() const
         for (unsigned x = 0; x < max; x++)
             data[x] = 0;
     }
-#ifdef __clang__
-#   pragma clang diagnostic pop
-#endif
 }
 
 void spline::remove_point(int i)
