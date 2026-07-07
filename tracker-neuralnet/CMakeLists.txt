@@ -27,7 +27,7 @@ if(OpenCV_FOUND AND ONNXRuntime_FOUND AND OpenMP_FOUND)
 
     target_link_libraries(${self} PRIVATE
         opentrack-cv
-        opencv_calib3d
+        ${OTR_OPENCV_CALIB_MODULES}
         opencv_imgproc
         opencv_imgcodecs
         opencv_core
