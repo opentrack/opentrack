@@ -18,7 +18,11 @@
 #include <QFile>
 #include <QCoreApplication>
 
-#include <opencv2/calib3d.hpp>
+#if __has_include(<opencv2/calib3d.hpp>)
+#   include <opencv2/calib3d.hpp>
+#else
+#   include <opencv2/calib.hpp>
+#endif
 #include <opencv2/highgui/highgui.hpp>
 
 #include <iostream>

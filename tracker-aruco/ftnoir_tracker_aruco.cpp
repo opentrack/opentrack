@@ -16,7 +16,12 @@
 
 #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
-#include <opencv2/calib3d.hpp>
+
+#if __has_include(<opencv2/calib3d.hpp>)
+#   include <opencv2/calib3d.hpp>
+#else
+#   include <opencv2/calib.hpp>
+#endif
 
 #ifdef DEBUG_UNSHARP_MASKING
 #   include <opencv2/highgui.hpp>
