@@ -708,7 +708,7 @@ void NeuralNetTracker::copy_frame(const video::frame& frame, cv::Mat& dest) cons
         img = img(make_crop_rect_for_aspect(img.size(), 4, 3));
     }
 
-    constexpr int multiplier = 1 << (pyramid_.max_levels-1);
+    constexpr int multiplier = 1 << (ImagePyramid::max_levels-1);
     img = img(make_crop_rect_multiple_of(img.size(), multiplier));
 
     img.copyTo(dest);
