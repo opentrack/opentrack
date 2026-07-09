@@ -1,4 +1,8 @@
-#include <opencv2/calib3d.hpp>
+#if __has_include(<opencv2/calib3d.hpp>)
+#   include <opencv2/calib3d.hpp>
+#else
+#   include <opencv2/calib.hpp>
+#endif
 void check_solvep3p()
 {
     cv::Mat x;

@@ -10,7 +10,11 @@
 #include "api/plugin-api.hpp"
 #include "cv/init.hpp"
 #include "compat/sleep.hpp"
-#include <opencv2/calib3d.hpp>
+#if __has_include(<opencv2/calib3d.hpp>)
+#   include <opencv2/calib3d.hpp>
+#else
+#   include <opencv2/calib.hpp>
+#endif
 #include <opencv2/imgproc.hpp>
 #include "config.h"
 #include <unordered_map>
