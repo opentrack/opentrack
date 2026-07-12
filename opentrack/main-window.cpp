@@ -533,8 +533,9 @@ void main_window::stop_tracker_()
 
     if (options_widget)
     {
-        // XXX TODO other module types
         options_widget->unregister_tracker();
+        options_widget->unregister_filter();
+        options_widget->unregister_proto();
     }
 
     if (pTrackerDialog)
