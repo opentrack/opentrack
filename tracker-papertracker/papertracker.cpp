@@ -822,6 +822,9 @@ module_status PaperTracker::start_tracker(QFrame *videoframe)
     videoframe->setLayout(&*layout);
     videoWidget->show();
 
+     if (!open_camera())
+        return error("Could not open camera.");
+
     head.rvec[0] = -CV_PI;
     head.rvec[1] = 0;
     head.rvec[2] = 0;
@@ -838,9 +841,6 @@ module_status PaperTracker::start_tracker(QFrame *videoframe)
 */
 void PaperTracker::run() {
     dist_coeffs = std::vector<double>(5, 0);
-
-    if (!open_camera())
-        return;
 
     update_fps();
 
