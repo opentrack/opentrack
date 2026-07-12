@@ -509,6 +509,14 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
         <translation type="unfinished">Koppelen</translation>
     </message>
     <message>
+        <source>Profile</source>
+        <translation type="unfinished">Profiel</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>

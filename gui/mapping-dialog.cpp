@@ -1,4 +1,4 @@
-/* Copyright (c) 2014-2015, Stanislaw Halik <sthalik@misaki.pl>
+﻿/* Copyright (c) 2014-2015, Stanislaw Halik <sthalik@misaki.pl>
 
  * Permission to use, copy, modify, and/or distribute this
  * software for any purpose with or without fee is hereby granted,
@@ -7,6 +7,7 @@
  */
 
 #include "mapping-dialog.hpp"
+#include "logic/snapview.hpp"
 #include "logic/main-settings.hpp"
 #include "spline/spline-widget.hpp"
 
@@ -17,6 +18,7 @@ using namespace options;
 mapping_dialog::mapping_dialog(Mappings& m) : m(m), widgets{}
 {
     ui.setupUi(this);
+    snapview::instance().set_mappings(&m);
 
     QWidget* pages[] = {
         ui.tabWidgetPage1,
@@ -251,3 +253,4 @@ void mapping_dialog::doReject()
     qDebug() << "mapping_dialog: doReject";
     invalidate_dialog();
 }
+

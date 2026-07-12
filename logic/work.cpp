@@ -1,4 +1,5 @@
 #include "work.hpp"
+#include "snapview.hpp"
 #include "compat/library-path.hpp"
 
 #include <utility>
@@ -66,6 +67,8 @@ Work::Work(const Mappings& m, QFrame* frame,
     , dbus_(&dbus_obj, &pipeline_)
 #endif
 {
+    snapview::instance().set_mappings(const_cast<Mappings*>(&m));
+
     if (!is_ok())
         return;
     reload_shortcuts();

@@ -6,6 +6,8 @@
 class QEvent;
 class QResizeEvent;
 class QShowEvent;
+class QComboBox;
+class QPushButton;
 class QTableWidget;
 class QTableWidgetItem;
 
@@ -29,6 +31,8 @@ protected:
 private slots:
     void item_changed(QTableWidgetItem* item);
     void header_clicked(int column);
+    void profile_changed(int index);
+    void add_profile();
 
 private:
     void set_headers();
@@ -39,7 +43,10 @@ private:
     int content_width_for_column(int column) const;
     void update_header_checkbox();
     void toggle_all_enabled();
+    void rebuild_profile_selector();
 
+    QComboBox* profile_combo = nullptr;
+    QPushButton* add_profile_button = nullptr;
     QTableWidget* table = nullptr;
     bool updating = false;
     int sort_column = 1;

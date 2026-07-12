@@ -89,27 +89,21 @@ int target_snapview_index(QTabWidget* tabs)
     return std::min(1, tabs->count());
 }
 
-void register_widget_points(spline_widget* widget)
+void register_widget_points(spline_widget* widget, Axis axis, bool alt)
 {
-    if (!widget)
+    if (!widget || axis == NonAxis)
         return;
 
-    const Axis axis = widget->snapview_axis();
-    if (axis == NonAxis)
-        return;
-
-    snapview::instance().register_curve(axis,
-                                       widget->snapview_alt(),
-                                       widget->snapview_points());
+    snapview::instance().register_curve(axis, alt, widget->points());
     widget->update();
 }
 
 void configure_mapping_dialog(QWidget* dialog)
 {
-    if (!dialog || dialog->property("Snap View.mapping.installed").toBool())
+    if (!dialog || dialog->property("snap-view.mapping.installed").toBool())
         return;
 
-    dialog->setProperty("Snap View.mapping.installed", true);
+    dialog->setProperty("snap-view.mapping.installed", true);
 
     for (const curve_binding& binding : mapping_widgets)
     {
@@ -117,16 +111,22 @@ void configure_mapping_dialog(QWidget* dialog)
         if (!widget)
             continue;
 
-        widget->set_snapview_axis(binding.axis, binding.alt);
+        widget->set_point_label_provider([axis = binding.axis](int index)
+        {
+            return snapview::point_name(axis, index);
+        });
 
-        QObject::connect(widget, &spline_widget::snapview_points_changed,
+        QObject::connect(widget, &spline_widget::points_changed,
                          widget,
-                         [widget]
+                         [widget, axis = binding.axis, alt = binding.alt]
                          {
-                             register_widget_points(widget);
+                             register_widget_points(widget, axis, alt);
                          });
 
-        QTimer::singleShot(0, widget, [widget] { register_widget_points(widget); });
+        QTimer::singleShot(0, widget, [widget, axis = binding.axis, alt = binding.alt]
+        {
+            register_widget_points(widget, axis, alt);
+        });
     }
 }
 

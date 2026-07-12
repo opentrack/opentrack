@@ -77,6 +77,17 @@
     </message>
 </context>
 <context>
+    <name>snapview</name>
+    <message>
+        <source>Default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Profile %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>snapview_table</name>
     <message>
         <source>Alt</source>

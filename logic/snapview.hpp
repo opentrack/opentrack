@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "api/plugin-api.hpp"
 #include "export.hpp"
@@ -10,11 +10,14 @@
 #include <QMutex>
 #include <QPointF>
 #include <QString>
+#include <QStringList>
 #include <QVector>
+#include <QList>
 
-#include <array>
 #include <memory>
 #include <vector>
+
+class Mappings;
 
 struct OTR_LOGIC_EXPORT snapview_key final
 {
@@ -50,8 +53,17 @@ public:
 
     void shutdown();
 
+    void set_mappings(Mappings* mappings);
+
+    int profile_count() const;
+    int selected_profile() const;
+    QString profile_name(int index) const;
+    QStringList profile_names() const;
+    void set_selected_profile(int index);
+    int add_profile();
+
     QVector<snapview_point> points() const;
-    void register_curve(Axis axis, bool alt, const QVector<QPointF>& points);
+    void register_curve(Axis axis, bool alt, const QList<QPointF>& points);
 
     void update_key(Axis axis, bool alt, int index, int key_index, const snapview_key& key);
     void clear_key(Axis axis, bool alt, int index, int key_index);
@@ -76,12 +88,24 @@ private:
     struct point_settings;
     using point_ptr = std::unique_ptr<point_settings>;
 
+    options::bundle control_b;
+    options::value<int> selected_profile_value;
+    options::value<int> profile_count_value;
     options::bundle b;
     mutable QMutex mtx;
     std::vector<point_ptr> storage;
     std::unique_ptr<Shortcuts> shortcuts;
+    Mappings* mappings = nullptr;
     bool shutting_down = false;
 
+    void normalize_profile_state_unlocked();
+    void set_profile_bundle_unlocked();
+    void rebind_mappings_unlocked();
+    void sync_points_from_mappings_unlocked();
+    bool sync_curve_unlocked(Axis axis, bool alt, const QList<QPointF>& points);
+    void migrate_legacy_profile0_unlocked();
+    void copy_current_mappings_to_profile_unlocked(int profile_index);
+    void copy_point_settings_to_profile_unlocked(int from_profile, int to_profile);
     void build_storage();
     int storage_index(Axis axis, bool alt, int point_index) const;
     point_settings* find_unlocked(Axis axis, bool alt, int point_index);
@@ -92,6 +116,10 @@ private:
     void set_active_group(const QString& key_id, bool held);
     void set_all_inactive_unlocked();
 
+    QString profile_name_unlocked(int index) const;
+
+    static QString profile_bundle_name(int index);
+    static QString profile_mapping_bundle_name(int index, const QString& base_name);
     static snapview_key read_key(const key_opts& key);
     static void assign_key(key_opts& dst, const snapview_key& src);
     static QString key_id(const snapview_key& key);

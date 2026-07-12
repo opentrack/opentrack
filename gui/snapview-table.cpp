@@ -4,13 +4,18 @@
 #include "logic/snapview.hpp"
 
 #include <QAbstractItemView>
+#include <QComboBox>
 #include <QEvent>
 #include <QFontMetrics>
+#include <QHBoxLayout>
 #include <QHeaderView>
+#include <QLabel>
 #include <QPushButton>
 #include <QResizeEvent>
 #include <QScrollBar>
+#include <QSignalBlocker>
 #include <QSizePolicy>
+#include <QStringList>
 #include <QStyle>
 #include <QTableWidget>
 #include <QTableWidgetItem>
@@ -129,6 +134,22 @@ snapview_table::snapview_table(QWidget* parent) :
 
     auto* layout = new QVBoxLayout(this);
 
+    auto* profile_layout = new QHBoxLayout;
+    auto* profile_label = new QLabel(tr("Profile"), this);
+    profile_combo = new QComboBox(this);
+    add_profile_button = new QPushButton(tr("Add"), this);
+
+    profile_layout->addWidget(profile_label);
+    profile_layout->addWidget(profile_combo, 1);
+    profile_layout->addWidget(add_profile_button);
+    layout->addLayout(profile_layout);
+
+    connect(profile_combo, QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this, &snapview_table::profile_changed);
+
+    connect(add_profile_button, &QPushButton::clicked,
+            this, &snapview_table::add_profile);
+
     table = new QTableWidget(this);
     table->setColumnCount(column_count);
     set_headers();
@@ -197,6 +218,7 @@ void snapview_table::rebuild()
     updating = true;
     table->setRowCount(0);
     set_headers();
+    rebuild_profile_selector();
 
     const QVector<snapview_point> points = snapview::instance().points();
     table->setRowCount(points.size());
@@ -265,6 +287,35 @@ void snapview_table::rebuild()
     adjust_columns();
 
     QTimer::singleShot(0, this, &snapview_table::adjust_columns);
+}
+
+void snapview_table::rebuild_profile_selector()
+{
+    if (!profile_combo)
+        return;
+
+    const QSignalBlocker blocker(profile_combo);
+
+    profile_combo->clear();
+
+    const QStringList names = snapview::instance().profile_names();
+    for (const QString& name : names)
+        profile_combo->addItem(name);
+
+    profile_combo->setCurrentIndex(snapview::instance().selected_profile());
+}
+
+void snapview_table::profile_changed(int index)
+{
+    if (updating || index < 0)
+        return;
+
+    snapview::instance().set_selected_profile(index);
+}
+
+void snapview_table::add_profile()
+{
+    snapview::instance().add_profile();
 }
 
 void snapview_table::changeEvent(QEvent* event)

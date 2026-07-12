@@ -510,6 +510,14 @@ Klicke „Kalibrierung löschen“, um jegliche Kalibrierungsdaten der zugehöri
         <translation type="unfinished">Belegen</translation>
     </message>
     <message>
+        <source>Profile</source>
+        <translation type="unfinished">Profil</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Shortcut</source>
         <translation type="unfinished"></translation>
     </message>

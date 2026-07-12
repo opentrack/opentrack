@@ -2,6 +2,7 @@
 #include "compat/math.hpp"
 
 #include <algorithm>
+#include <utility>
 
 #include <QPainter>
 #include <QPainterPath>
@@ -82,51 +83,26 @@ bool spline_widget::is_preview_only() const
 {
     return preview_only;
 }
-void spline_widget::set_snapview_axis(Axis axis, bool alt)
+void spline_widget::set_point_label_provider(point_label_fn fn)
 {
-    snapview_axis_ = axis;
-    snapview_alt_ = alt;
+    point_label_provider_ = std::move(fn);
     draw_function = true;
     repaint();
 }
 
-QVector<QPointF> spline_widget::snapview_points() const
+const points_t& spline_widget::points() const
 {
-    QVector<QPointF> ret;
+    static const points_t empty;
 
     if (!config)
-        return ret;
+        return empty;
 
-    const points_t& points = config->get_points();
-    ret.reserve(points.size());
-
-    for (const QPointF& point : points)
-        ret.push_back(point);
-
-    return ret;
+    return config->get_points();
 }
 
-QPointF spline_widget::snapview_point_to_pixel(const QPointF& point) const
+QPointF spline_widget::point_to_widget_pixel(const QPointF& point) const
 {
     return const_cast<spline_widget*>(this)->point_to_pixel(point);
-}
-
-QString spline_widget::snapview_point_name(int index) const
-{
-    QString name;
-
-    switch (snapview_axis_)
-    {
-    case TX:    name = QStringLiteral("X"); break;
-    case TY:    name = QStringLiteral("Y"); break;
-    case TZ:    name = QStringLiteral("Z"); break;
-    case Yaw:   name = QStringLiteral("Yaw"); break;
-    case Pitch: name = QStringLiteral("Pitch"); break;
-    case Roll:  name = QStringLiteral("Roll"); break;
-    default:    return {};
-    }
-
-    return QStringLiteral("%1%2").arg(name).arg(index + 1);
 }
 
 void spline_widget::drawBackground()
@@ -357,7 +333,7 @@ void spline_widget::paintEvent(QPaintEvent *e)
 
     p.drawPixmap(e->rect(), spline_img);
 
-    drawSnapviewPointLabels(p);
+    drawPointLabels(p);
 
     // If the Tracker is active, the 'Last Point' it requested is recorded.
     // Show that point on the graph, with some lines to assist.
@@ -377,7 +353,7 @@ void spline_widget::drawPoint(QPainter& painter, const QPointF& pos, const QColo
                                point_size_in_pixels*2, point_size_in_pixels*2});
     painter.restore();
 }
-void spline_widget::drawSnapviewPointLabel(QPainter& painter, const QPointF& pos, const QString& text)
+void spline_widget::drawPointLabel(QPainter& painter, const QPointF& pos, const QString& text)
 {
     if (text.isEmpty())
         return;
@@ -430,15 +406,15 @@ void spline_widget::drawSnapviewPointLabel(QPainter& painter, const QPointF& pos
     painter.restore();
 }
 
-void spline_widget::drawSnapviewPointLabels(QPainter& painter)
+void spline_widget::drawPointLabels(QPainter& painter)
 {
-    if (!config || preview_only || snapview_axis_ == NonAxis)
+    if (!config || preview_only || !point_label_provider_)
         return;
 
     const points_t& points = config->get_points();
 
     for (int i = 0; i < points.size(); i++)
-        drawSnapviewPointLabel(painter, point_to_pixel(points[i]), snapview_point_name(i));
+        drawPointLabel(painter, point_to_pixel(points[i]), point_label_provider_(i));
 }
 void spline_widget::drawLine(QPainter& painter, const QPointF& start, const QPointF& end, const QPen& pen)
 {
@@ -492,7 +468,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
             if (!too_close)
             {
                 config->add_point(pixel_to_point(e->position()));
-                emit snapview_points_changed();
+                emit points_changed();
                 show_tooltip(e->pos());
             }
         }
@@ -509,7 +485,7 @@ void spline_widget::mousePressEvent(QMouseEvent *e)
                 if (point_within_pixel(points[i], e->position()))
                 {
                     config->remove_point(i);
-                    emit snapview_points_changed();
+                    emit points_changed();
                     draw_function = true;
                     break;
                 }
@@ -570,7 +546,7 @@ void spline_widget::mouseMoveEvent(QMouseEvent *e)
         if ((!has_prev || check_prev()) && (!has_next || check_next()))
         {
             config->move_point(i, new_pt);
-            emit snapview_points_changed();
+            emit points_changed();
             draw_function = true;
             repaint();
         }
