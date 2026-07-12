@@ -120,10 +120,12 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     */
     frame_data.returned_markers.clear();
 
-    if (!has_key_marker)
-        detect_markers_optimal(image, frame_data.returned_markers);
-    else
-        detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+    if (QMutexLocker l(&settings_update_mtx); true) {
+        if (!has_key_marker)
+            detect_markers_optimal(image, frame_data.returned_markers);
+        else
+            detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+    }
 
     const int min_marker_id = s.first_marker_id;
     const int max_marker_id = s.first_marker_id + s.number_of_markers - 1;
@@ -964,6 +966,8 @@ bool PaperTracker::tracking_started() const
 
 void PaperTracker::update_settings()
 {
+    QMutexLocker l(&settings_update_mtx);
+
     if (current_dictionary != s.aruco_dictionary) {
         switch (s.aruco_dictionary) {
             case PAPERTRACKER_DICT_ARUCO_MIP_36h12:

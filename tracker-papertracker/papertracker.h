@@ -130,6 +130,7 @@ private:
     double no_detection_timeout = 0;
     QMutex camera_mtx;
     QMutex data_mtx;
+    QMutex settings_update_mtx;
     bool started_;
     bool use_fixed_threshold;
     unsigned int adaptive_size_pos;
