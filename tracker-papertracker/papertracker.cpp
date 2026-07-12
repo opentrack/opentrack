@@ -35,8 +35,14 @@ bool PaperTracker::open_camera()
     */
     QString camera_name = static_settings.camera_name;
 
-    if (static_settings.camera_name == "")
-        camera_name = video::camera_names()[0];
+    if (static_settings.camera_name == "") {
+        const auto camera_names = video::camera_names();
+
+        if (camera_names.size() == 0)
+            return false;
+
+        camera_name = camera_names[0];
+    }
 
     camera = video::make_camera(camera_name);
     if (!camera)
