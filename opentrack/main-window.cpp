@@ -535,7 +535,7 @@ void main_window::stop_tracker_()
     {
         options_widget->unregister_tracker();
         options_widget->unregister_filter();
-        options_widget->unregister_proto();
+        options_widget->unregister_protocol();
     }
 
     if (pTrackerDialog)
