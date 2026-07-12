@@ -269,8 +269,10 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             head.set_handle_origin(tvec_local);
             head.set_handle(Marker(key_marker_id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
 
-            starting_head_origin = head_origin;
-            current_head_origin = head_origin;
+            if (QMutexLocker l(&data_mtx); true) {
+                starting_head_origin = head_origin;
+                current_head_origin = head_origin;
+            }
 
             has_key_marker = true;
         }
@@ -286,9 +288,11 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         last_head_circumference_cm = s.head_circumference_cm;
         last_marker_height_cm = s.marker_height_cm;
 
-        current_head_origin = head_origin;
+        if (QMutexLocker l(&data_mtx); true) {
+            current_head_origin = head_origin;
+        }
     }
-    
+
     if (has_key_marker && !frame_data.selected_markers.empty()) {
         /* Compute poses for known markers.
         */
