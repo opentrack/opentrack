@@ -412,6 +412,8 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         if (bin != last_bin && visited_angles.get_visit_count(last_bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD)
             visited_angles.clear_visits(last_bin);
 
+        last_bin = bin;
+
         if (roi == nullptr && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD)
             visited_angles.add_visit(bin);
 
