@@ -35,8 +35,14 @@ bool PaperTracker::open_camera()
     */
     QString camera_name = static_settings.camera_name;
 
-    if (static_settings.camera_name == "")
-        camera_name = video::camera_names()[0];
+    if (static_settings.camera_name == "") {
+        const auto camera_names = video::camera_names();
+
+        if (camera_names.size() == 0)
+            return false;
+
+        camera_name = camera_names[0];
+    }
 
     camera = video::make_camera(camera_name);
     if (!camera)
@@ -114,10 +120,12 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     */
     frame_data.returned_markers.clear();
 
-    if (!has_key_marker)
-        detect_markers_optimal(image, frame_data.returned_markers);
-    else
-        detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+    if (QMutexLocker l(&settings_update_mtx); true) {
+        if (!has_key_marker)
+            detect_markers_optimal(image, frame_data.returned_markers);
+        else
+            detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+    }
 
     const int min_marker_id = s.first_marker_id;
     const int max_marker_id = s.first_marker_id + s.number_of_markers - 1;
@@ -263,8 +271,10 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             head.set_handle_origin(tvec_local);
             head.set_handle(Marker(key_marker_id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
 
-            starting_head_origin = head_origin;
-            current_head_origin = head_origin;
+            if (QMutexLocker l(&data_mtx); true) {
+                starting_head_origin = head_origin;
+                current_head_origin = head_origin;
+            }
 
             has_key_marker = true;
         }
@@ -280,9 +290,11 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         last_head_circumference_cm = s.head_circumference_cm;
         last_marker_height_cm = s.marker_height_cm;
 
-        current_head_origin = head_origin;
+        if (QMutexLocker l(&data_mtx); true) {
+            current_head_origin = head_origin;
+        }
     }
-    
+
     if (has_key_marker && !frame_data.selected_markers.empty()) {
         /* Compute poses for known markers.
         */
@@ -401,6 +413,8 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
 
         if (bin != last_bin && visited_angles.get_visit_count(last_bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD)
             visited_angles.clear_visits(last_bin);
+
+        last_bin = bin;
 
         if (roi == nullptr && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD)
             visited_angles.add_visit(bin);
@@ -822,6 +836,9 @@ module_status PaperTracker::start_tracker(QFrame *videoframe)
     videoframe->setLayout(&*layout);
     videoWidget->show();
 
+     if (!open_camera())
+        return error("Could not open camera.");
+
     head.rvec[0] = -CV_PI;
     head.rvec[1] = 0;
     head.rvec[2] = 0;
@@ -838,9 +855,6 @@ module_status PaperTracker::start_tracker(QFrame *videoframe)
 */
 void PaperTracker::run() {
     dist_coeffs = std::vector<double>(5, 0);
-
-    if (!open_camera())
-        return;
 
     update_fps();
 
@@ -952,6 +966,8 @@ bool PaperTracker::tracking_started() const
 
 void PaperTracker::update_settings()
 {
+    QMutexLocker l(&settings_update_mtx);
+
     if (current_dictionary != s.aruco_dictionary) {
         switch (s.aruco_dictionary) {
             case PAPERTRACKER_DICT_ARUCO_MIP_36h12:
