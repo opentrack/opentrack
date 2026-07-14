@@ -190,11 +190,11 @@ Press &quot;clear calibration&quot; to remove any calibration data pertaining to
     </message>
     <message>
         <source>Constant auto-center</source>
-        <translation type="unfinished"></translation>
+        <translation>持续自动居中</translation>
     </message>
     <message>
         <source>Centering speed in degrees/pixels per second</source>
-        <translation type="unfinished"></translation>
+        <translation>居中速度（度/像素每秒）</translation>
     </message>
     <message>
         <source>Minimize to tray</source>
