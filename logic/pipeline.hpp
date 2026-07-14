@@ -66,8 +66,8 @@ enum bit_flags : unsigned {
 
 struct OTR_LOGIC_EXPORT bits
 {
+    mutable QMutex lock;
     bit_flags flags{0};
-    QMutex lock;
 
     void set(bit_flags flag, bool val);
     void negate(bit_flags flag);
