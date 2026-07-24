@@ -29,12 +29,12 @@ jobs:
 
     steps:
     - name: clone opentrack/opentrack
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         submodules: true
 
     - name: clone opentrack/depends
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
       with:
         repository: opentrack/opentrack-depends
         submodules: true
