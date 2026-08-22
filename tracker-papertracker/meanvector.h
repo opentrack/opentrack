@@ -20,7 +20,7 @@ namespace papertracker {
             POLAR
         };
 
-        MeanVector();
+        MeanVector(VectorType type);
         MeanVector(const cv::Vec3d &v, VectorType type);
 
         void update(const cv::Vec3d &vector);

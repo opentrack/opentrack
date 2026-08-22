@@ -20,6 +20,10 @@ if(OpenCV_FOUND)
         otr_install_lib("${k}" "${opentrack-libexec}")
     endforeach()
 
+    if(OpenCV_VERSION VERSION_LESS "5.0.0")
+        message(WARNING "Found OpenCV ${OpenCV_VERSION}. Pose-estimation accuracy may be reduced. For best results use OpenCV 5 or later.")
+    endif()
+
     set(SDK_ARUCO_LIBPATH "" CACHE FILEPATH "Aruco paper marker tracker static library path")
     if(SDK_ARUCO_LIBPATH)
         set(modules "${SDK_ARUCO_LIBPATH}" ${OTR_OPENCV_CALIB_MODULES} opencv_imgproc opencv_core)

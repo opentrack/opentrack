@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 
 namespace papertracker {
-    MeanVector::MeanVector() : type(VectorType::POLAR), outliers_removed_(true), outliers_removed_std_dev(0), max_sample_count(PAPERTRACKER_MAX_VECTOR_SAMPLES)
+    MeanVector::MeanVector(VectorType type) : type(type), outliers_removed_(true), outliers_removed_std_dev(0), max_sample_count(PAPERTRACKER_MAX_VECTOR_SAMPLES)
     {}
 
     MeanVector::MeanVector(const cv::Vec3d &v, VectorType type) : type(type), outliers_removed_(true), outliers_removed_std_dev(0), max_sample_count(PAPERTRACKER_MAX_VECTOR_SAMPLES) {
