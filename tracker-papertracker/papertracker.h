@@ -17,8 +17,11 @@
 #include "aruco/markerdetector.h"
 #include "aruco/arucofidmarkers.h"
 #include "papertracker-dialog.h"
-#include "head.h"
 #include "anglecoveragetracker.h"
+#include "marker-model.h"
+#include "marker-detection-info.h"
+
+using papertracker::marker_detection_info;
 
 class PaperTrackerDialog;
 
@@ -35,20 +38,6 @@ public:
     bool restart_required() const;
 
 private:
-    struct marker_detection_info : public std::array<cv::Point2f, 4> {
-        int id;
-        bool solved;
-        cv::Vec3d rvec;
-        cv::Vec3d tvec;
-        double z_angle;
-        double weight;
-
-        marker_detection_info(int id, const std::vector<cv::Point2f> &corners) : id(id), solved(false), z_angle(0), weight(1) {
-            for (size_t i = 0; i < corners.size() && i < 4; ++i)
-                (*this)[i] = corners[i];
-        }
-    };
-
     struct frame_data_ {
         /* List of markers returned by ArUco detector.
         */
@@ -58,17 +47,19 @@ private:
         */
         std::vector<aruco::Marker> temp_markers;
 
-        /* Head pose data {id, pose_rvec, pose_tvec, weight} for each detected marker.
+#if CV_MAJOR_VERSION < 5
+        /* Temporary list of rotation vectors.
         */
-        std::vector<std::tuple<int, cv::Vec3d, cv::Vec3d, double>> pose_data;
+        std::vector<cv::Vec3d> temp_rvecs;
 
-        /* Temporary list of rotation / translation vectors.
+        /* Temporary list of rotation vectors.
         */
-        std::vector<cv::Vec3d> temp_vecs;
+        std::vector<cv::Vec3d> temp_tvecs;
 
         /* Temporary list of marker weights.
         */
         std::vector<double> temp_weights;
+#endif
 
         /* Set of markers that are candidates for exclusion.
         */
@@ -89,9 +80,11 @@ private:
 
             returned_markers.reserve(reserve_count);
             temp_markers.reserve(reserve_count);
-            pose_data.reserve(reserve_count);
-            temp_vecs.reserve(reserve_count);
+#if CV_MAJOR_VERSION < 5
+            temp_rvecs.reserve(reserve_count);
+            temp_tvecs.reserve(reserve_count);
             temp_weights.reserve(reserve_count);
+#endif
             excluded_markers.reserve(reserve_count);
             selected_markers.reserve(reserve_count);
 
@@ -101,7 +94,10 @@ private:
         }
     } frame_data;
 
-    papertracker::Head head;
+    cv::Vec3d head_rvec;
+    cv::Vec3d head_tvec;
+    cv::Vec3d key_marker_local_rvec;
+    cv::Vec3d key_marker_local_tvec;
     aruco::MarkerDetector detector;
     papertracker_dictionary current_dictionary;
     std::unique_ptr<video::impl::camera> camera;
@@ -119,6 +115,7 @@ private:
     double last_head_circumference_cm;
     std::unordered_set<int> marker_highlight_set;
     papertracker::AngleCoverageTracker visited_angles;
+    papertracker::MarkerModel marker_model;
     papertracker::AngleCoverageBin last_bin;
     papertracker_settings s;
     papertracker_static_settings static_settings;
@@ -143,6 +140,7 @@ private:
     cv::Matx33d build_camera_matrix(int image_width, int image_height, double diagonal_fov);
     std::vector<size_t> get_key_markers(const std::vector<marker_detection_info> &detection_info);
     cv::Vec3d get_approximate_head_origin(const std::vector<cv::Vec3d> &marker_rvecs, const std::vector<cv::Vec3d> &marker_tvecs);
+    std::pair<cv::Vec3d, cv::Vec3d> get_head_pose_from_marker_transform(cv::Vec3d &rvec_measured, cv::Vec3d &tvec_measured);
     cv::Rect2f get_marker_detected_region(const std::vector<marker_detection_info> &markers);
     bool markers_disappeared(const std::vector<int> &expected, const std::vector<marker_detection_info> &detected);
     void draw_head_indicator(cv::Mat &image);
