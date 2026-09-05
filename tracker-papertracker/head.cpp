@@ -7,6 +7,11 @@
 #include "head.h"
 #include "papertracker-util.h"
 #include <opencv2/opencv.hpp>
+#if __has_include(<opencv2/calib3d.hpp>)
+#   include <opencv2/calib3d.hpp>
+#else
+#   include <opencv2/calib.hpp>
+#endif
 
 namespace papertracker {
     void Head::set_handle_origin(const cv::Vec3d &origin)
