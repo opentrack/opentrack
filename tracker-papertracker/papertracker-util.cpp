@@ -456,4 +456,65 @@ namespace papertracker {
 
         return false;
     }
+
+    /* Double-precision line clipping using the Liang-Barsky algorithm. Clips the
+       line segment (pt1, pt2) against the rectangle imgRect, storing the results
+       in (pt1_out, pt2_out). Returns true if any part of the line lies within
+       the rectangle, or false if the line lies entirely outside.
+    */
+    bool clip_line(const cv::Rect2d &imgRect, const cv::Point2d &pt1, const cv::Point2d &pt2, cv::Point2d &pt1_out, cv::Point2d &pt2_out) {
+        pt1_out = pt1;
+        pt2_out = pt2;
+
+        const double x0 = pt1.x;
+        const double y0 = pt1.y;
+        const double x1 = pt2.x;
+        const double y1 = pt2.y;
+
+        const double dx = x1 - x0;
+        const double dy = y1 - y0;
+
+        // Rectangle bounds (right/bottom treated as exclusive, matching cv::clipLine).
+        const double xmin = imgRect.x;
+        const double xmax = imgRect.x + imgRect.width - 1.0;
+        const double ymin = imgRect.y;
+        const double ymax = imgRect.y + imgRect.height - 1.0;
+
+        double tMin = 0.0;
+        double tMax = 1.0;
+
+        // p*t < q for each of the four boundaries (Liang-Barsky).
+        const double p[4] = { -dx,  dx, -dy,  dy };
+        const double q[4] = { x0 - xmin, xmax - x0, y0 - ymin, ymax - y0 };
+
+        for (int i = 0; i < 4; ++i) {
+            if (p[i] == 0.0) {
+                // Line is parallel to the current boundary. If outside the boundary, reject immediately.
+                if (q[i] < 0.0)
+                    return false;
+            } else {
+                const double t = q[i] / p[i];
+                if (p[i] < 0.0) {
+                    // Potentially entering: tightens the lower bound.
+                    if (t > tMax) return false;
+                    if (t > tMin) tMin = t;
+                } else {
+                    // Potentially exiting: tightens the upper bound.
+                    if (t < tMin) return false;
+                    if (t < tMax) tMax = t;
+                }
+            }
+        }
+
+        if (tMin > tMax)
+            return false; // no interesection
+
+        // Intersection found. Set the endpoints.
+        pt1_out.x = x0 + tMin * dx;
+        pt1_out.y = y0 + tMin * dy;
+        pt2_out.x = x0 + tMax * dx;
+        pt2_out.y = y0 + tMax * dy;
+
+        return true;
+    }
 }
