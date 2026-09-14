@@ -739,17 +739,28 @@ void PaperTracker::draw_head_indicator(cv::Mat &image)
     cv::circle(image, image_points[1], corner_radius, cv::Scalar(0, 255, 255) * brightness1, -1);
     cv::circle(image, image_points[2], corner_radius, cv::Scalar(0, 255, 255) * brightness1, -1);
 
+    // line-clipping variables
+    cv::Rect2d imageRect(0, 0, image.cols, image.rows);
+    cv::Point2d p1;
+    cv::Point2d p2;
+
     // x axis
-    cv::line(image, image_points[0], image_points[5], cv::Scalar(255, 255, 255), line_thickness * 3);
-    cv::line(image, image_points[0], image_points[5], cv::Scalar(0, 0, 255), line_thickness);
+    if (clip_line(imageRect, image_points[0], image_points[5], p1, p2)) {
+        cv::line(image, p1, p2, cv::Scalar(255, 255, 255), line_thickness * 3);
+        cv::line(image, p1, p2, cv::Scalar(0, 0, 255), line_thickness);
+    }
 
     // y axis
-    cv::line(image, image_points[0], image_points[6], cv::Scalar(255, 255, 255), line_thickness * 3);
-    cv::line(image, image_points[0], image_points[6], cv::Scalar(0, 255, 0), line_thickness);
+    if (clip_line(imageRect, image_points[0], image_points[6], p1, p2)) {
+        cv::line(image, p1, p2, cv::Scalar(255, 255, 255), line_thickness * 3);
+        cv::line(image, p1, p2, cv::Scalar(0, 255, 0), line_thickness);
+    }
 
     // z axis
-    cv::line(image, image_points[0], image_points[7], cv::Scalar(255, 255, 255), line_thickness * 3);
-    cv::line(image, image_points[0], image_points[7], cv::Scalar(255, 0, 0), line_thickness);
+    if (clip_line(imageRect, image_points[0], image_points[7], p1, p2)) {
+        cv::line(image, p1, p2, cv::Scalar(255, 255, 255), line_thickness * 3);
+        cv::line(image, p1, p2, cv::Scalar(255, 0, 0), line_thickness);
+    }
 
     // origin
     cv::circle(image, image_points[0], origin_radius, cv::Scalar(0, 0, 255), -1);
