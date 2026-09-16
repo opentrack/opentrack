@@ -234,14 +234,14 @@ namespace papertracker {
         cv::Rodrigues(rvec_measured, R_marker_to_camera);
 
         const cv::Vec3d rvec_local;
-        cv::Rodrigues(R_body_to_camera.inv() * R_marker_to_camera, rvec_local);
+        cv::Rodrigues(R_body_to_camera.t() * R_marker_to_camera, rvec_local);
 
         cv::Vec3d tvec_relative(3);
         tvec_relative[0] = tvec_measured[0] - pose_tvec[0];
         tvec_relative[1] = tvec_measured[1] - pose_tvec[1];
         tvec_relative[2] = tvec_measured[2] - pose_tvec[2];
 
-        const cv::Vec3d tvec_local = R_body_to_camera.inv() * tvec_relative;
+        const cv::Vec3d tvec_local = R_body_to_camera.t() * tvec_relative;
 
         return {rvec_local, tvec_local};
     }
