@@ -888,7 +888,15 @@ void PaperTracker::run() {
         const int zoomed_width = std::max(frame_mat_temp.size().width / zoom, 1.0);
         const int zoomed_height = std::max(frame_mat_temp.size().height / zoom, 1.0);
 
-        cv::Mat frame_mat = frame_mat_temp(cv::Rect((frame_mat_temp.size().width - zoomed_width)/2, (frame_mat_temp.size().height - zoomed_height)/2, zoomed_width, zoomed_height));
+        cv::Rect frame_rect(
+            (frame_mat_temp.size().width - zoomed_width) / 2,
+            (frame_mat_temp.size().height - zoomed_height) / 2,
+            zoomed_width,
+            zoomed_height
+        );
+        cv::Mat frame_mat = frame_mat_temp(frame_rect);
+
+        marker_model.set_image_point_offset(cv::Vec2d(frame_rect.x, frame_rect.y));
 
         /* Adjust FOV according to zoom level and set camera matrix.
         */
