@@ -117,8 +117,8 @@ bool MarkerPairRefinementSolver::operator()(cv::InputOutputArray param, cv::Outp
 
         // Calculate projection errors / residuals.
         for (int pi = 0; pi < 4; ++pi) {
-            err_mat.at<double>(4 * 2 * si + 2 * pi)     = projected_points[pi].x - samples[si].image_points[pi].x;
-            err_mat.at<double>(4 * 2 * si + 2 * pi + 1) = projected_points[pi].y - samples[si].image_points[pi].y;
+            err_mat.at<double>(4 * 2 * si + 2 * pi)     = projected_points[pi].x - (samples[si].image_points[pi].x - image_point_offset[0]);
+            err_mat.at<double>(4 * 2 * si + 2 * pi + 1) = projected_points[pi].y - (samples[si].image_points[pi].y - image_point_offset[1]);
         }
     }
 
@@ -150,6 +150,11 @@ bool MarkerPairRefinementSolver::add_pair_observation(int parent_id, int child_i
         info.parent_tvec = parent_tvec;
         info.image_points = child_image_points;
 
+        for (auto &image_point : info.image_points) {
+            image_point.x += image_point_offset[0];
+            image_point.y += image_point_offset[1];
+        }
+
         pair_samples[pair].reserve(max_samples_per_pair);
         pair_samples[pair].push_back(info);
 
@@ -157,6 +162,12 @@ bool MarkerPairRefinementSolver::add_pair_observation(int parent_id, int child_i
     }
 
     return false;
+}
+
+/* Set an offset for saved image points to account for changes to camera zoom setting.
+*/
+void MarkerPairRefinementSolver::set_image_point_offset(const cv::Vec2f &image_point_offset) {
+    this->image_point_offset = image_point_offset;
 }
 
 /* Refine the pose of the given child marker relative to the given parent marker.

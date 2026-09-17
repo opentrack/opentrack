@@ -127,6 +127,14 @@ namespace papertracker {
         return rvecs.size();
     }
 
+    /* Set an offset for marker pair image points to account for changes to camera zoom setting.
+    */
+    void MarkerModel::set_image_point_offset(const cv::Vec2f &image_point_offset) {
+#if CV_MAJOR_VERSION >= 5
+        pair_refinement_solver->set_image_point_offset(image_point_offset);
+#endif
+    }
+
     /* Get a list of markers expected to be facing the camera at a maximum  angle of max_angle for the given head pose.
     */
     std::vector<int> MarkerModel::get_expected_visible_markers(const cv::Vec3d &head_rvec, const cv::Vec3d &head_tvec, const cv::Vec3d &origin_rvec, const cv::Vec3d &origin_tvec, double max_angle) {

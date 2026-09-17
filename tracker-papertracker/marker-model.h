@@ -24,6 +24,7 @@ namespace papertracker {
         void build(int key_marker_id, double marker_size_cm, const cv::Matx33d &camera_matrix, const std::vector<double> &dist_coeffs);
         bool has_marker(int id) const;
         size_t num_markers() const;
+        void set_image_point_offset(const cv::Vec2f &image_point_offset);
         std::vector<int> get_expected_visible_markers(const cv::Vec3d &head_rvec, const cv::Vec3d &head_tvec, const cv::Vec3d &origin_rvec, const cv::Vec3d &origin_tvec, double max_angle);
         bool solvePnP(const std::vector<marker_detection_info> &detections, const std::vector<size_t> &selected_markers, double marker_size_cm, const cv::Matx33d &camera_matrix, std::vector<double> &dist_coeffs, cv::Vec3d &rvec, cv::Vec3d &tvec);
         bool get_pose_from_single_marker(int marker_id, const cv::Vec3d &rvec_measured, const cv::Vec3d &tvec_measured, cv::Vec3d &pose_rvec, cv::Vec3d &pose_tvec);
