@@ -49,6 +49,7 @@ namespace papertracker {
 
 #if CV_MAJOR_VERSION >= 5
                 pair_refinement_solver->add_pair_observation(detection_a.id, detection_b.id, detection_a.rvec, detection_a.tvec, detection_b);
+                observation_it->second.use_cached_values = false;
 #endif
             }
         }
@@ -76,21 +77,35 @@ namespace papertracker {
         while (next_reference_index < reference_id_queue.size()) {
             const int reference_id = reference_id_queue[next_reference_index++];
 
-            const auto adjacency_it = adjacency.find(reference_id);
+            auto adjacency_it = adjacency.find(reference_id);
             if (adjacency_it == adjacency.end())
                 continue;
 
-            for (const auto &[target_id, observation] : adjacency_it->second) {
+            for (auto &[target_id, observation] : adjacency_it->second) {
                 if (rvecs.count(target_id) != 0)
                     continue;
 
+#if CV_MAJOR_VERSION >= 5
+                cv::Vec3d rvec_local;
+                cv::Vec3d tvec_local;
+
+                if (!observation->use_cached_values) {
+                    rvec_local = observation->rvec.get();
+                    tvec_local = observation->tvec.get();
+
+                    pair_refinement_solver->refine_pair(observation->reference_marker_id, observation->target_marker_id, rvec_local, tvec_local, marker_size_cm, camera_matrix, dist_coeffs);
+
+                    observation->refined_rvec_cache = rvec_local;
+                    observation->refined_tvec_cache = tvec_local;
+                    observation->use_cached_values = true;
+                } else {
+                    rvec_local = observation->refined_rvec_cache;
+                    tvec_local = observation->refined_tvec_cache;
+                }
+#else
                 auto rvec_local = observation->rvec.get();
                 auto tvec_local = observation->tvec.get();
-
-#if CV_MAJOR_VERSION >= 5
-                pair_refinement_solver->refine_pair(observation->reference_marker_id, observation->target_marker_id, rvec_local, tvec_local, marker_size_cm, camera_matrix, dist_coeffs);
 #endif
-
                 const auto rvec_parent = rvecs[reference_id];
                 const auto tvec_parent = tvecs[reference_id];
 
