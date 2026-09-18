@@ -37,7 +37,8 @@ namespace papertracker {
             MarkerPairObservation(int reference_marker_id, int target_marker_id) :
                 reference_marker_id(reference_marker_id), target_marker_id(target_marker_id),
                 rvec(MeanVector::VectorType::ROTATION),
-                tvec(MeanVector::VectorType::POLAR)
+                tvec(MeanVector::VectorType::POLAR),
+                use_cached_values(false)
             {}
 
             MarkerPairObservation() : MarkerPairObservation(-1, -1)
@@ -47,6 +48,9 @@ namespace papertracker {
             int target_marker_id;
             MeanVector rvec;
             MeanVector tvec;
+            cv::Vec3d refined_rvec_cache;
+            cv::Vec3d refined_tvec_cache;
+            bool use_cached_values;
         };
 
         struct PairHash {
@@ -59,7 +63,7 @@ namespace papertracker {
         };
 
         std::unordered_map<std::pair<int, int>, MarkerPairObservation, PairHash> observations;
-        std::unordered_map<int, std::vector<std::pair<int, const MarkerPairObservation*>>> adjacency;
+        std::unordered_map<int, std::vector<std::pair<int, MarkerPairObservation*>>> adjacency;
         std::unordered_map<int, cv::Vec3d> rvecs;
         std::unordered_map<int, cv::Vec3d> tvecs;
         std::vector<int> reference_id_queue;
