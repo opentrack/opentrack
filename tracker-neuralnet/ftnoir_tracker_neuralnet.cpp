@@ -583,6 +583,9 @@ bool NeuralNetTracker::load_and_initialize_model()
         // However, recently, OpenMP support was removed. Then this setting should work.
         opts.SetIntraOpNumThreads(num_threads_);
         opts.SetInterOpNumThreads(1);
+        // don't busy-wait between frames
+        opts.AddConfigEntry("session.intra_op.allow_spinning", "0");
+        opts.AddConfigEntry("session.inter_op.allow_spinning", "0");
         allocator_info_ = Ort::MemoryInfo::CreateCpu(OrtArenaAllocator, OrtMemTypeDefault);
 
         localizer_.emplace(allocator_info_, Ort::Session{ env_, convert(localizer_model_path_enc).c_str(), opts });
