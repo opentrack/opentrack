@@ -47,25 +47,10 @@ private:
 
 prop_settings_worker::prop_settings_worker(int idx_)
 {
-    int ret = (int)cap.get(cv::CAP_PROP_SETTINGS);
-
-    if (ret != 0)
-    {
-        run_in_thread_async(qApp, [] {
-            QMessageBox::warning(nullptr,
-                                 "Camera properties",
-                                 "Camera dialog already opened",
-                                 QMessageBox::Cancel,
-                                 QMessageBox::NoButton);
-        });
-    }
-    else
-    {
-        idx = idx_;
-        // DON'T MOVE IT
-        // ps3 eye will reset to default settings if done from another thread
-        open_prop_page();
-    }
+    idx = idx_;
+    // DON'T MOVE IT
+    // ps3 eye will reset to default settings if done from another thread
+    open_prop_page();
 }
 
 void prop_settings_worker::open_prop_page()
