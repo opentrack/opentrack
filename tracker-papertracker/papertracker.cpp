@@ -72,7 +72,6 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     */
     frame_data.excluded_markers.clear();
     frame_data.selected_markers.clear();
-    frame_data.pose_data.clear();
 
     /* Marker corners (in object space).
     */
@@ -224,12 +223,12 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             /* Fallback: no good markers, so choose among the remaining markers.
             */
             std::sort(detected_markers.begin(), detected_markers.end(), [this, sort_reference_angle](const auto &a, const auto &b) {
-                const bool head_has_a = head.has_handle(a.id);
-                const bool head_has_b = head.has_handle(b.id);
+                const bool model_has_a = marker_model.has_marker(a.id);
+                const bool model_has_b = marker_model.has_marker(b.id);
 
-                if (head_has_a && !head_has_b)
+                if (model_has_a && !model_has_b)
                     return true;
-                else if (!head_has_a && head_has_b)
+                else if (!model_has_a && model_has_b)
                     return false;
 
                 const double sorting_angle_a = fabs(a.z_angle - sort_reference_angle);
@@ -250,6 +249,17 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         }
     }
 
+    /* Update marker model, if necessary.
+    */
+    cv::Matx33d R;
+    cv::Rodrigues(head_rvec, R);
+    const auto euler = rotation_matrix_to_euler_zyx(R);
+
+    if (!marker_model.is_angle_covered(euler[0], euler[1])) {
+        marker_model.update(detected_markers);
+        marker_model.set_angle_covered(euler[0], euler[1]);
+    }
+
     /* Find key marker if it has not yet been detected.
     */
     if (!has_key_marker) {
@@ -268,8 +278,8 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
 
             auto [rvec_local, tvec_local] = get_marker_local_transform(starting_rvecs[0], starting_tvecs[0], head_orientation, head_origin);
 
-            head.set_handle_origin(tvec_local);
-            head.set_handle(Marker(key_marker_id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
+            key_marker_local_rvec = rvec_local;
+            key_marker_local_tvec = tvec_local;
 
             if (QMutexLocker l(&data_mtx); true) {
                 starting_head_origin = head_origin;
@@ -279,13 +289,13 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             has_key_marker = true;
         }
     } else if (last_head_circumference_cm != s.head_circumference_cm || last_marker_height_cm != s.marker_height_cm) {
-        // update marker origin, if necessary
+        // update marker origin
         auto head_orientation = cv::Vec3d(CV_PI, 0, 0);
         auto head_origin = get_approximate_head_origin(starting_rvecs, starting_tvecs);
 
         auto [rvec_local, tvec_local] = get_marker_local_transform(starting_rvecs[0], starting_tvecs[0], head_orientation, head_origin);
 
-        head.set_handle_origin(tvec_local);
+        key_marker_local_tvec = tvec_local;
 
         last_head_circumference_cm = s.head_circumference_cm;
         last_marker_height_cm = s.marker_height_cm;
@@ -296,117 +306,71 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     }
 
     if (has_key_marker && !frame_data.selected_markers.empty()) {
-        /* Compute poses for known markers.
+        /* Build marker model.
         */
-        for (size_t i = 0; i < frame_data.selected_markers.size(); ++i) {
-            const auto marker_index = frame_data.selected_markers[i];
-            const int id = detected_markers[marker_index].id;
+        marker_model.build(key_marker_id, marker_size_cm, camera_matrix, dist_coeffs);
 
-            if (head.has_handle(id)) {
-                const auto sample_count = head.get_handle(id).rvec_local.get_max_sample_count();
+        #if CV_MAJOR_VERSION >= 5
 
-                if (sample_count < PAPERTRACKER_MIN_VECTOR_SAMPLES && frame_data.selected_markers.size() != 1)
-                    continue;
+        /*  Compute pose using selected markers in a single call to solvePnP.
+        */
+        cv::Vec3d rvec;
+        cv::Vec3d tvec;
+        if (marker_model.solvePnP(detected_markers, frame_data.selected_markers, marker_size_cm, camera_matrix, dist_coeffs, rvec, tvec)) {
+            auto [pose_rvec, pose_tvec] = get_head_pose_from_marker_transform(rvec, tvec);
 
-                if (detected_markers[marker_index].solved) {
-                    auto [pose_rvec, pose_tvec] = head.get_pose_from_handle_transform(id, detected_markers[marker_index].rvec, detected_markers[marker_index].tvec);
-
-                    frame_data.pose_data.push_back({id, pose_rvec, pose_tvec, detected_markers[marker_index].weight});
-                }
+            if (QMutexLocker l(&data_mtx); true) {
+                head_rvec = pose_rvec;
+                head_tvec = pose_tvec;
             }
         }
 
-        /* Add/update handles.
+        #else // CV_MAJOR_VERSION < 5
+
+        /* Compute averaged pose using selected markers.
         */
-        if (frame_data.pose_data.size() > 0) {
-            /* Update head pose.
-            */
-            {
-                QMutexLocker l(&data_mtx);
+        frame_data.temp_rvecs.clear();
+        frame_data.temp_tvecs.clear();
+        frame_data.temp_weights.clear();
 
-                frame_data.temp_vecs.clear();
-                frame_data.temp_weights.clear();
+        double summed_weights = 0;
+        for (auto marker_index : frame_data.selected_markers) {
+            auto &marker = detected_markers[marker_index];
 
-                double summed_weights = 0;
+            if (!marker.solved)
+                continue;
 
-                for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data) {
-                    frame_data.temp_vecs.push_back(pose_rvec);
-                    frame_data.temp_weights.push_back(pose_weight);
-                    summed_weights += pose_weight;
-                }
+            cv::Vec3d rvec;
+            cv::Vec3d tvec;
+            if (marker_model.get_pose_from_single_marker(marker.id, marker.rvec, marker.tvec, rvec, tvec)) {
+                auto [pose_rvec, pose_tvec] = get_head_pose_from_marker_transform(rvec, tvec);
 
-                if (summed_weights > 0.0)
-                    for (auto &weight : frame_data.temp_weights)
-                        weight /= summed_weights;
+                frame_data.temp_rvecs.push_back(pose_rvec);
+                frame_data.temp_tvecs.push_back(pose_tvec);
 
-                head.rvec = average_rotation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
-
-                frame_data.temp_vecs.clear();
-                for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data)
-                    frame_data.temp_vecs.push_back(pose_tvec);
-
-                head.tvec = average_translation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
-            }
-
-            /* Compute local transforms for each marker, adding or updating handles as needed.
-            */
-            for (size_t i = 0; i < frame_data.selected_markers.size(); ++i) {
-                const auto marker_index = frame_data.selected_markers[i];
-                const int id = detected_markers[marker_index].id;
-
-                if (detected_markers[marker_index].solved) {
-                    if (!head.has_handle(id)) {
-                        auto [rvec_local, tvec_local] = get_marker_local_transform(detected_markers[marker_index].rvec, detected_markers[marker_index].tvec, head.rvec, head.tvec);
-                        head.set_handle(Marker(id, MeanVector(rvec_local, MeanVector::VectorType::ROTATION), MeanVector(tvec_local, MeanVector::VectorType::POLAR)));
-                    } else if (frame_data.pose_data.size() > 1 && id != key_marker_id) {
-                        auto &handle = head.get_handle(id);
-
-                        if (!handle.rvec_local.outliers_removed() && handle.rvec_local.sample_count() == handle.rvec_local.get_max_sample_count())
-                            handle.rvec_local.remove_outliers();
-
-                        if (!handle.tvec_local.outliers_removed() && handle.tvec_local.sample_count() == handle.tvec_local.get_max_sample_count())
-                            handle.tvec_local.remove_outliers();
-
-                        if (handle.rvec_local.sample_count() < handle.rvec_local.get_max_sample_count()) {
-                            frame_data.temp_vecs.clear();
-                            frame_data.temp_weights.clear();
-
-                            double summed_weights = 0;
-
-                            for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data) {
-                                if (pose_marker_id != id) {
-                                    frame_data.temp_vecs.push_back(pose_rvec);
-                                    frame_data.temp_weights.push_back(pose_weight);
-                                    summed_weights += pose_weight;
-                                }
-                            }
-
-                            if (summed_weights > 0.0)
-                                for (auto &weight : frame_data.temp_weights)
-                                    weight /= summed_weights;
-
-                            const auto pose_rvec = average_rotation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
-
-                            frame_data.temp_vecs.clear();
-                            for ([[maybe_unused]] const auto& [pose_marker_id, pose_rvec, pose_tvec, pose_weight] : frame_data.pose_data)
-                                if (pose_marker_id != id)
-                                    frame_data.temp_vecs.push_back(pose_tvec);
-
-                            const auto pose_tvec = average_translation(frame_data.temp_vecs, summed_weights > 0.0 ? &frame_data.temp_weights : nullptr);
-
-                            auto [rvec_local, tvec_local] = get_marker_local_transform(detected_markers[marker_index].rvec, detected_markers[marker_index].tvec, pose_rvec, pose_tvec);
-
-                            head.update_handle(handle.id, rvec_local, tvec_local);
-                        }
-                    }
-                }
+                frame_data.temp_weights.push_back(marker.weight);
+                summed_weights += marker.weight;
             }
         }
+
+        if (summed_weights > 0.0)
+            for (auto &weight : frame_data.temp_weights)
+                weight /= summed_weights;
+
+        const auto weighted_rvec = average_rotation(frame_data.temp_rvecs, &frame_data.temp_weights);
+        const auto weighted_tvec = average_translation(frame_data.temp_tvecs, &frame_data.temp_weights);
+
+        if (QMutexLocker l(&data_mtx); true) {
+            head_rvec = weighted_rvec;
+            head_tvec = weighted_tvec;
+        }
+
+        #endif
 
         /* Check detected markers against expectations and signal need to reset ROI if these don't match.
         */
         cv::Matx33d R;
-        cv::Rodrigues(head.rvec, R);
+        cv::Rodrigues(head_rvec, R);
         const auto euler = rotation_matrix_to_euler_zyx(R);
 
         const auto bin = visited_angles.get_bin(euler[0], euler[1]);
@@ -419,10 +383,10 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         if (roi == nullptr && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD)
             visited_angles.add_visit(bin);
 
-        if (head.num_handles() < s.number_of_markers && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD) {
+        if (marker_model.num_markers() < s.number_of_markers && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD) {
             detection_failed = true;
         } else {
-            auto expected_ids = head.get_expected_visible_ids(CV_PI / 180.0 * s.marker_max_angle);
+            auto expected_ids = marker_model.get_expected_visible_markers(head_rvec, head_tvec, key_marker_local_rvec, key_marker_local_tvec, CV_PI / 180.0 * s.marker_max_angle);
 
             if (markers_disappeared(expected_ids, detected_markers))
                 detection_failed = true;
@@ -654,6 +618,24 @@ cv::Vec3d PaperTracker::get_approximate_head_origin(const std::vector<cv::Vec3d>
     }
 }
 
+std::pair<cv::Vec3d, cv::Vec3d> PaperTracker::get_head_pose_from_marker_transform(cv::Vec3d &rvec_measured, cv::Vec3d &tvec_measured) {
+    cv::Vec3d pose_rvec;
+    cv::Vec3d pose_tvec;
+
+    cv::Matx33d R_marker_set;
+    cv::Rodrigues(rvec_measured, R_marker_set);
+
+    cv::Matx33d R_key_marker;
+    cv::Rodrigues(key_marker_local_rvec, R_key_marker);
+
+    cv::Matx33d R_pose = R_marker_set * R_key_marker.t();
+    cv::Rodrigues(R_pose, pose_rvec);
+
+    pose_tvec = R_pose * -key_marker_local_tvec + tvec_measured;
+
+    return {pose_rvec, pose_tvec};
+}
+
 /* Get a bounding box for a set of markers, its size increased by PAPERTRACKER_ROI_GROWTH_FACTOR.
 */
 cv::Rect2f PaperTracker::get_marker_detected_region(const std::vector<marker_detection_info> &markers)
@@ -726,7 +708,7 @@ void PaperTracker::draw_head_indicator(cv::Mat &image)
     cv::Mat points_mat(static_cast<int>(points.size()), 1, CV_64FC3, points.data());
     cv::Mat image_points_mat(static_cast<int>(image_points.size()), 1, CV_64FC2, image_points.data());
 
-    cv::projectPoints(points_mat, head.rvec, head.tvec, camera_matrix, dist_coeffs, image_points_mat);
+    cv::projectPoints(points_mat, head_rvec, head_tvec, camera_matrix, dist_coeffs, image_points_mat);
 
     const cv::Scalar brightness2(1, 1, 1);
     const cv::Scalar brightness1(0.5, 0.5, 0.5);
@@ -739,17 +721,28 @@ void PaperTracker::draw_head_indicator(cv::Mat &image)
     cv::circle(image, image_points[1], corner_radius, cv::Scalar(0, 255, 255) * brightness1, -1);
     cv::circle(image, image_points[2], corner_radius, cv::Scalar(0, 255, 255) * brightness1, -1);
 
+    // line-clipping variables
+    cv::Rect2d imageRect(0, 0, image.cols, image.rows);
+    cv::Point2d p1;
+    cv::Point2d p2;
+
     // x axis
-    cv::line(image, image_points[0], image_points[5], cv::Scalar(255, 255, 255), line_thickness * 3);
-    cv::line(image, image_points[0], image_points[5], cv::Scalar(0, 0, 255), line_thickness);
+    if (clip_line(imageRect, image_points[0], image_points[5], p1, p2)) {
+        cv::line(image, p1, p2, cv::Scalar(255, 255, 255), line_thickness * 3);
+        cv::line(image, p1, p2, cv::Scalar(0, 0, 255), line_thickness);
+    }
 
     // y axis
-    cv::line(image, image_points[0], image_points[6], cv::Scalar(255, 255, 255), line_thickness * 3);
-    cv::line(image, image_points[0], image_points[6], cv::Scalar(0, 255, 0), line_thickness);
+    if (clip_line(imageRect, image_points[0], image_points[6], p1, p2)) {
+        cv::line(image, p1, p2, cv::Scalar(255, 255, 255), line_thickness * 3);
+        cv::line(image, p1, p2, cv::Scalar(0, 255, 0), line_thickness);
+    }
 
     // z axis
-    cv::line(image, image_points[0], image_points[7], cv::Scalar(255, 255, 255), line_thickness * 3);
-    cv::line(image, image_points[0], image_points[7], cv::Scalar(255, 0, 0), line_thickness);
+    if (clip_line(imageRect, image_points[0], image_points[7], p1, p2)) {
+        cv::line(image, p1, p2, cv::Scalar(255, 255, 255), line_thickness * 3);
+        cv::line(image, p1, p2, cv::Scalar(255, 0, 0), line_thickness);
+    }
 
     // origin
     cv::circle(image, image_points[0], origin_radius, cv::Scalar(0, 0, 255), -1);
@@ -839,9 +832,9 @@ module_status PaperTracker::start_tracker(QFrame *videoframe)
      if (!open_camera())
         return error("Could not open camera.");
 
-    head.rvec[0] = -CV_PI;
-    head.rvec[1] = 0;
-    head.rvec[2] = 0;
+    head_rvec[0] = -CV_PI;
+    head_rvec[1] = 0;
+    head_rvec[2] = 0;
 
     last_marker_height_cm = s.marker_height_cm;
     last_head_circumference_cm = s.head_circumference_cm;
@@ -895,7 +888,15 @@ void PaperTracker::run() {
         const int zoomed_width = std::max(frame_mat_temp.size().width / zoom, 1.0);
         const int zoomed_height = std::max(frame_mat_temp.size().height / zoom, 1.0);
 
-        cv::Mat frame_mat = frame_mat_temp(cv::Rect((frame_mat_temp.size().width - zoomed_width)/2, (frame_mat_temp.size().height - zoomed_height)/2, zoomed_width, zoomed_height));
+        cv::Rect frame_rect(
+            (frame_mat_temp.size().width - zoomed_width) / 2,
+            (frame_mat_temp.size().height - zoomed_height) / 2,
+            zoomed_width,
+            zoomed_height
+        );
+        cv::Mat frame_mat = frame_mat_temp(frame_rect);
+
+        marker_model.set_image_point_offset(cv::Vec2d(frame_rect.x, frame_rect.y));
 
         /* Adjust FOV according to zoom level and set camera matrix.
         */
@@ -935,7 +936,7 @@ void PaperTracker::run() {
 
         /* Draw head indicator.
         */
-        if (head.num_handles() > 0)
+        if (has_key_marker)
             draw_head_indicator(frame_mat);
 
         /* Update and render FPS indicator.
@@ -1009,14 +1010,14 @@ void PaperTracker::data(double *data)
     cv::Rodrigues(rvecX, Rx);
 
     cv::Matx33d R;
-    cv::Rodrigues(head.rvec, R);
+    cv::Rodrigues(head_rvec, R);
     auto euler = rotation_matrix_to_euler_zyx(R * Rx);
 
     const auto origin_delta = current_head_origin - starting_head_origin;
 
-    data[TX] = head.tvec[0] - origin_delta[0];
-    data[TY] = -head.tvec[1] + origin_delta[1];
-    data[TZ] = head.tvec[2] - origin_delta[2];
+    data[TX] = head_tvec[0] - origin_delta[0];
+    data[TY] = -head_tvec[1] + origin_delta[1];
+    data[TZ] = head_tvec[2] - origin_delta[2];
 
     data[Roll] = euler[2] * (180.0 / CV_PI);
     data[Pitch] = -euler[0] * (180.0 / CV_PI);
@@ -1041,6 +1042,7 @@ PaperTracker::PaperTracker() :
     set_threshold_params();
     current_dictionary = s.aruco_dictionary;
     marker_highlight_set.reserve(16);
+    marker_model.reserve(16);
 }
 
 /* Tracker destructor.

@@ -26,16 +26,19 @@ set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 set(CMAKE_C_LINKER_PREFERENCE_PROPAGATES OFF)
 set(CMAKE_CXX_LINKER_PREFERENCE_PROPAGATES ON)
 
+# Claim the prefix before project(), not after. project() writes the platform default into
+# the cache even when the configure then fails, and it does so without FORCE -- so a single
+# failed first configure leaves C:/Program Files in the cache and permanently clears
+# CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT, killing any guard placed below.
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "")
+endif()
+
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/")
 include(opentrack-policy NO_POLICY_SCOPE)
 
 cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
 project(opentrack)
-
-# must be prior to CMakeDetermineCXXCompiler due to rpath
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR NOT CMAKE_INSTALL_PREFIX)
-    set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "" FORCE)
-endif()
 
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "RELEASE" CACHE STRING "" FORCE)
