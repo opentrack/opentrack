@@ -1,18 +1,58 @@
-[<img src="https://github.com/opentrack/opentrack/actions/workflows/cmake.yml/badge.svg">](https://github.com/opentrack/opentrack/actions/workflows/cmake.yml)
+[![Windows 11 Build](https://github.com/CyberoniOntoni/opentrack-smoothtrack/actions/workflows/windows-11.yml/badge.svg)](https://github.com/CyberoniOntoni/opentrack-smoothtrack/actions/workflows/windows-11.yml)
 
-## Intro
+# opentrack — SmoothTrack Dual-Platform USB Edition
 
-opentrack is a program for tracking user's head rotation and transmitting it to flight simulation software and military-themed video games. Project home is located at <<https://github.com/opentrack/opentrack>>.
+This is a specialized fork of [opentrack](https://github.com/opentrack/opentrack) that introduces native, plug-and-play **SmoothTrack USB tracking for both iOS and Android devices**, eliminating the latency, jitter, and network packet loss associated with Wi-Fi UDP streaming.
 
-Looking for **railway planning software**? <<https://opentrack.ch>> had the name `opentrack` first. Apologies for the long-standing naming conflict.
+---
 
-For the latest **downloads** visit <<https://github.com/opentrack/opentrack/releases>> Download an `.exe` installer or a `.7z` archive. Currently installers and portable versions for Windows are available for each release. It supports [USB stick truly "portable" installations](https://github.com/opentrack/opentrack/wiki/portable-mode-for-USB-sticks)
+### Highlights & Key Features
 
-Please first refer to <<https://github.com/opentrack/opentrack/wiki>>
-for [new user guide](https://github.com/opentrack/opentrack/wiki/Quick-Start-Guide-(WIP)), [frequent answers](https://github.com/opentrack/opentrack/wiki/common-issues), specific tracker/filter
-documentation. See also the [gameplay video](https://www.youtube.com/watch?v=XI73ul_FnBI) with opentrack set up.
+* **Zero Third-Party Tethering Tools**: No need for Gnirehtet, STUSB, iTunes sync services, or complex reverse proxy setups.
+* **Native iOS USB Support**: Direct USB communication via `usbmuxd` on port `47047`. Bundles required runtime libraries for seamless Windows operation.
+* **Automated Android USB Relay**:
+  * Auto-discovers bundled or system Android Debug Bridge (`adb`).
+  * Auto-detects device CPU architecture (`arm64-v8a` or `armeabi-v7a`).
+  * Stages and supervises a lightweight native bridge (`st-relay`) directly into `/data/local/tmp`.
+  * Configures reverse port-forwarding on port `4242` and cleanly tears down processes on stop.
+* **Fully Synced with Upstream**: Includes all latest bug fixes, CMake install prefix guards, OpenCV 5 compatibility updates, and multi-marker PaperTracker enhancements from upstream `opentrack/opentrack`.
 
-This Fork has Smoothtrack USB input built-in.
+---
+
+## Quick Start Guide: SmoothTrack USB
+
+### For iOS Devices
+1. Connect your iPhone or iPad to your PC using a USB cable and ensure your device trusts your computer.
+2. Launch the **SmoothTrack** app on iOS.
+3. Open app settings and toggle on **Activate USB Connection**.
+4. In OpenTrack:
+   * Set **Input** tracker to **SmoothTrack (USB)**.
+   * Click **`...`** (Settings) and verify the platform is set to **iOS (Apple USB via usbmuxd)** (Default Port: `47047`).
+5. Click **Start** in OpenTrack.
+
+### For Android Devices
+1. On your Android phone, enable **Developer Options** and turn on **USB Debugging**.
+2. Connect your device to your PC via USB cable. If prompted on your phone, tap **Always allow from this computer**.
+3. Launch the **SmoothTrack** app on Android:
+   * Set **Target IP** to `127.0.0.1`.
+   * Set **Port** to `4242`.
+4. In OpenTrack:
+   * Set **Input** tracker to **SmoothTrack (USB)**.
+   * Click **`...`** (Settings) and select **Android (USB via ADB Relay)** (Default Port: `4242`).
+   * *(Optional)*: Leave "Custom ADB" blank for auto-detection from the bundled package or system PATH.
+5. Click **Start** in OpenTrack.
+
+---
+
+## About OpenTrack
+
+opentrack is a program for tracking user's head rotation and transmitting it to flight simulation software and military-themed video games. Upstream project home is located at <https://github.com/opentrack/opentrack>.
+
+Looking for **railway planning software**? <https://opentrack.ch> had the name `opentrack` first. Apologies for the long-standing naming conflict.
+
+For pre-built releases of this fork, visit [Releases](https://github.com/CyberoniOntoni/opentrack-smoothtrack/releases). Automated Windows 11 x64 binaries are built and packaged on every commit.
+
+Please also refer to the [Upstream opentrack Wiki](https://github.com/opentrack/opentrack/wiki) for general tracking, filtering, and game setup documentation.
 
 ## Usage
 
