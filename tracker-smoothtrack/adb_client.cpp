@@ -10,9 +10,12 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QElapsedTimer>
 #include <QFileInfo>
+#include <QHostAddress>
+#include <QObject>
 #include <QStandardPaths>
-#include <QProcessEnvironment>
+#include <QTcpSocket>
 #include <QDebug>
 #include <QThread>
 #include <QRegularExpression>
@@ -25,7 +28,31 @@ constexpr auto SplitSkipEmpty = Qt::SkipEmptyParts;
 constexpr auto SplitSkipEmpty = QString::SkipEmptyParts;
 #endif
 
-// Helper function to invoke adb commands with strict bounded timeout and guarantee no dangling processes
+QStringList with_serial(const QString& serial, QStringList args)
+{
+    if (!serial.isEmpty())
+        args = QStringList{"-s", serial} + args;
+    return args;
+}
+
+bool adb_server_listening()
+{
+    QTcpSocket sock;
+    sock.connectToHost(QHostAddress::LocalHost, 5037);
+    const bool ok = sock.waitForConnected(200);
+    sock.abort();
+    return ok;
+}
+
+QString abi_to_suffix(const QString& abi)
+{
+    if (abi.contains("arm64") || abi.contains("aarch64"))
+        return QStringLiteral("arm64");
+    if (abi.contains("v7") || abi.contains("armeabi"))
+        return QStringLiteral("armv7");
+    return QString();
+}
+
 bool run_adb_cmd(const QString& adb_path, const QStringList& args, int timeout_ms,
                  QString* stdout_str = nullptr, QString* stderr_str = nullptr, int* exit_code = nullptr)
 {
@@ -37,9 +64,23 @@ bool run_adb_cmd(const QString& adb_path, const QStringList& args, int timeout_m
     }
 
     QProcess proc;
+    QElapsedTimer timer;
+    timer.start();
     proc.start(adb_path, args);
 
-    if (!proc.waitForFinished(timeout_ms))
+    if (!proc.waitForStarted(qMin(timeout_ms, 5000)))
+    {
+        proc.kill();
+        proc.waitForFinished(200);
+        if (stderr_str)
+            *stderr_str = QString("Failed to start '%1': %2").arg(adb_path, proc.errorString());
+        if (exit_code)
+            *exit_code = -1;
+        return false;
+    }
+
+    const int remaining = qMax(0, timeout_ms - static_cast<int>(timer.elapsed()));
+    if (!proc.waitForFinished(remaining))
     {
         proc.kill();
         proc.waitForFinished(200);
@@ -60,65 +101,69 @@ bool run_adb_cmd(const QString& adb_path, const QStringList& args, int timeout_m
     return proc.exitCode() == 0;
 }
 
+void kill_device_relay(const QString& adb_path, const QString& serial)
+{
+    static const QString kKill =
+        QStringLiteral("pkill -f st-relay || killall st-relay || "
+                       "kill $(pidof st-relay) || kill $(pidof /data/local/tmp/st-relay) || true");
+    run_adb_cmd(adb_path, with_serial(serial, {"shell", "sh", "-c", kKill}),
+                adb_client::QUICK_TIMEOUT_MS);
+}
+
+QString collect_qprocess_output(QProcess* proc)
+{
+    if (!proc)
+        return QString();
+    const QString err = QString::fromUtf8(proc->readAllStandardError()).trimmed();
+    const QString out = QString::fromUtf8(proc->readAllStandardOutput()).trimmed();
+    if (err.isEmpty())
+        return out;
+    if (out.isEmpty())
+        return err;
+    return err + QLatin1Char('\n') + out;
+}
+
 } // anonymous namespace
 
 QString adb_client::find_adb(const QString& user_hint)
 {
-    // 1. Check user-supplied path / hint
-    if (!user_hint.trimmed().isEmpty())
-    {
-        const QString hint = user_hint.trimmed();
-        if (QFileInfo::exists(hint) && !QFileInfo(hint).isDir())
-            return QDir::toNativeSeparators(hint);
-
-        // Check if user pointed to a directory containing adb
-        const QStringList user_candidates = {
-            hint + "/adb.exe",
-            hint + "/adb",
-            hint + "/platform-tools/adb.exe",
-            hint + "/platform-tools/adb"
-        };
-        for (const QString& c : user_candidates)
-        {
-            if (QFileInfo::exists(c) && !QFileInfo(c).isDir())
-                return QDir::toNativeSeparators(c);
-        }
-    }
-
-    const QString app_dir = QCoreApplication::applicationDirPath();
-    const QStringList candidates = {
-        // app_dir root
-        app_dir + "/adb.exe",
-        app_dir + "/adb",
-        // app_dir/modules
-        app_dir + "/modules/adb.exe",
-        app_dir + "/modules/adb",
-        // app_dir/libexec/opentrack
-        app_dir + "/libexec/opentrack/adb.exe",
-        app_dir + "/libexec/opentrack/adb",
-        app_dir + "/../libexec/opentrack/adb.exe",
-        app_dir + "/../libexec/opentrack/adb",
-        // app_dir/platform-tools
-        app_dir + "/platform-tools/adb.exe",
-        app_dir + "/platform-tools/adb",
-        // app_dir/android
-        app_dir + "/android/adb.exe",
-        app_dir + "/android/adb",
-        // system PATH
-        QStandardPaths::findExecutable("adb"),
-        QStandardPaths::findExecutable("adb.exe"),
-        // Standard Android SDK installation locations
-        QDir::homePath() + "/AppData/Local/Android/Sdk/platform-tools/adb.exe",
-        "C:/platform-tools/adb.exe",
-        "C:/Program Files (x86)/Android/android-sdk/platform-tools/adb.exe",
-        QDir::homePath() + "/Android/Sdk/platform-tools/adb"
+    auto try_exe = [](const QString& path) -> QString {
+        if (!path.isEmpty() && QFileInfo::exists(path) && !QFileInfo(path).isDir())
+            return QDir::toNativeSeparators(path);
+        return QString();
     };
 
-    for (const QString& candidate : candidates)
+    auto try_root = [&](const QString& root) -> QString {
+        if (root.isEmpty())
+            return QString();
+        const QFileInfo fi(root);
+        if (fi.exists() && !fi.isDir())
+            return QDir::toNativeSeparators(root);
+        QString found = try_exe(root + "/adb.exe");
+        if (!found.isEmpty())
+            return found;
+        return try_exe(root + "/adb");
+    };
+
+    const QString hint = user_hint.trimmed();
+    if (!hint.isEmpty())
     {
-        if (!candidate.isEmpty() && QFileInfo::exists(candidate) && !QFileInfo(candidate).isDir())
-            return QDir::toNativeSeparators(candidate);
+        const QString found = try_root(hint);
+        if (!found.isEmpty())
+            return found;
     }
+
+    {
+        const QString found = try_root(QCoreApplication::applicationDirPath());
+        if (!found.isEmpty())
+            return found;
+    }
+
+    QString found = QStandardPaths::findExecutable("adb");
+    if (found.isEmpty())
+        found = QStandardPaths::findExecutable("adb.exe");
+    if (!found.isEmpty())
+        return QDir::toNativeSeparators(found);
 
     return QString();
 }
@@ -204,7 +249,6 @@ bool adb_client::check_device(const QString& adb_path, QString* error_msg, QStri
         return false;
     }
 
-    // 1. First pass: prioritize any ready, authorized device
     for (const device_info& dev : devices)
     {
         if (dev.status == "device")
@@ -215,7 +259,6 @@ bool adb_client::check_device(const QString& adb_path, QString* error_msg, QStri
         }
     }
 
-    // 2. Second pass: surface specific diagnostics for unauthorized or offline devices
     for (const device_info& dev : devices)
     {
         if (dev.status == "unauthorized")
@@ -248,63 +291,30 @@ bool adb_client::check_device(const QString& adb_path, QString* error_msg, QStri
 
 QString adb_client::get_device_abi(const QString& adb_path, const QString& serial)
 {
-    QStringList args;
-    if (!serial.isEmpty())
-        args << "-s" << serial;
-    args << "shell" << "getprop" << "ro.product.cpu.abi";
-
     QString output;
-    if (run_adb_cmd(adb_path, args, 1500, &output))
+    if (run_adb_cmd(adb_path, with_serial(serial, {"shell", "getprop", "ro.product.cpu.abi"}),
+                    QUICK_TIMEOUT_MS, &output))
     {
         const QString abi = output.trimmed();
         if (!abi.isEmpty())
             return abi;
     }
 
-    return "arm64-v8a"; // Default fallback for modern Android devices
+    return QString();
 }
 
 QString adb_client::find_relay_binary(const QString& abi)
 {
+    const QString suffix = abi_to_suffix(abi);
+    if (suffix.isEmpty())
+        return QString();
+
     const QString app_dir = QCoreApplication::applicationDirPath();
-    QString suffix = "arm64";
-    if (abi.contains("v7") || abi.contains("armeabi"))
-        suffix = "armv7";
-    else if (abi.contains("x86_64"))
-        suffix = "x86_64";
-    else if (abi.contains("x86"))
-        suffix = "x86";
-
+    const QString filename = QStringLiteral("st-relay-") + suffix;
     const QStringList candidates = {
-        // 1. app_dir/modules/android (Windows standard installation layout)
-        app_dir + "/modules/android/st-relay-" + suffix,
-        app_dir + "/modules/android/st-relay",
-
-        // 2. app_dir/android (Flat bundle / packaged layout)
-        app_dir + "/android/st-relay-" + suffix,
-        app_dir + "/android/st-relay",
-
-        // 3. app_dir root
-        app_dir + "/st-relay-" + suffix,
-        app_dir + "/st-relay",
-
-        // 4. app_dir/modules
-        app_dir + "/modules/st-relay-" + suffix,
-        app_dir + "/modules/st-relay",
-
-        // 5. libexec/opentrack (Linux / FHS layouts)
-        app_dir + "/../libexec/opentrack/android/st-relay-" + suffix,
-        app_dir + "/libexec/opentrack/android/st-relay-" + suffix,
-        app_dir + "/../libexec/opentrack/st-relay-" + suffix,
-        app_dir + "/libexec/opentrack/st-relay-" + suffix,
-
-        // 6. Source tree directories (development and build tree)
-        app_dir + "/../tracker-smoothtrack/android/st-relay-" + suffix,
-        app_dir + "/../../tracker-smoothtrack/android/st-relay-" + suffix,
-        app_dir + "/tracker-smoothtrack/android/st-relay-" + suffix,
-        app_dir + "/../tracker-smoothtrack/android/st-relay",
-        app_dir + "/../../tracker-smoothtrack/android/st-relay",
-        app_dir + "/tracker-smoothtrack/android/st-relay"
+        app_dir + "/modules/android/" + filename,
+        app_dir + "/../libexec/opentrack/android/" + filename,
+        app_dir + "/../Plugins/android/" + filename,
     };
 
     for (const QString& candidate : candidates)
@@ -319,13 +329,11 @@ QString adb_client::find_relay_binary(const QString& abi)
 bool adb_client::setup_reverse(const QString& adb_path, int host_port, int device_port,
                                const QString& serial, QString* error_msg)
 {
-    QStringList args;
-    if (!serial.isEmpty())
-        args << "-s" << serial;
-    args << "reverse" << QString("tcp:%1").arg(device_port) << QString("tcp:%1").arg(host_port);
-
     QString err_str;
-    if (!run_adb_cmd(adb_path, args, DEFAULT_TIMEOUT_MS, nullptr, &err_str))
+    if (!run_adb_cmd(adb_path,
+                     with_serial(serial, {"reverse", QString("tcp:%1").arg(device_port),
+                                          QString("tcp:%1").arg(host_port)}),
+                     DEFAULT_TIMEOUT_MS, nullptr, &err_str))
     {
         if (error_msg)
         {
@@ -343,12 +351,9 @@ bool adb_client::setup_reverse(const QString& adb_path, int host_port, int devic
 
 bool adb_client::remove_reverse(const QString& adb_path, int device_port, const QString& serial)
 {
-    QStringList args;
-    if (!serial.isEmpty())
-        args << "-s" << serial;
-    args << "reverse" << "--remove" << QString("tcp:%1").arg(device_port);
-
-    return run_adb_cmd(adb_path, args, 1500);
+    return run_adb_cmd(adb_path,
+                       with_serial(serial, {"reverse", "--remove", QString("tcp:%1").arg(device_port)}),
+                       QUICK_TIMEOUT_MS);
 }
 
 adb_client::adb_client() = default;
@@ -363,7 +368,20 @@ bool adb_client::start(const QString& adb_path, int udp_port, int tcp_port, QStr
     stop();
 
     active_adb = adb_path;
-    active_port = tcp_port;
+    last_relay_stderr.clear();
+
+    const bool server_already_up = adb_server_listening();
+    QString err_str;
+    if (!run_adb_cmd(active_adb, {"start-server"}, START_SERVER_TIMEOUT_MS, nullptr, &err_str))
+    {
+        started_adb_server = !server_already_up;
+        if (error_msg)
+            *error_msg = QObject::tr("Failed to start ADB server: %1")
+                             .arg(err_str.trimmed().isEmpty() ? "Unknown error" : err_str.trimmed());
+        stop();
+        return false;
+    }
+    started_adb_server = !server_already_up;
 
     if (!check_device(active_adb, error_msg, &active_serial))
     {
@@ -371,86 +389,81 @@ bool adb_client::start(const QString& adb_path, int udp_port, int tcp_port, QStr
         return false;
     }
 
-    // 1. Setup reverse tunnel: Android tcp:tcp_port -> PC tcp:tcp_port
     if (!setup_reverse(active_adb, tcp_port, tcp_port, active_serial, error_msg))
     {
         stop();
         return false;
     }
+    active_port = tcp_port;
+    reverse_installed = true;
 
-    // 2. Locate relay binary matching target ABI
     const QString abi = get_device_abi(active_adb, active_serial);
-    const QString relay_bin = find_relay_binary(abi);
-    const QString suffix = abi.contains("v7") || abi.contains("armeabi") ? "armv7" : "arm64";
+    const QString suffix = abi_to_suffix(abi);
+    if (suffix.isEmpty())
+    {
+        if (error_msg)
+            *error_msg = abi.isEmpty()
+                             ? QObject::tr("Could not determine Android ABI (need armv7 or arm64).")
+                             : QObject::tr("Unsupported Android ABI '%1' (need armv7 or arm64).").arg(abi);
+        stop();
+        return false;
+    }
 
+    const QString relay_bin = find_relay_binary(abi);
     if (relay_bin.isEmpty())
     {
-        // Check if relay is already deployed on the device
-        QStringList check_args;
-        if (!active_serial.isEmpty())
-            check_args << "-s" << active_serial;
-        check_args << "shell" << "test" << "-x" << "/data/local/tmp/st-relay";
-
-        if (!run_adb_cmd(active_adb, check_args, 1500))
-        {
-            if (error_msg)
-                *error_msg = QObject::tr("Relay binary (st-relay-%1) not found in OpenTrack directory.\n"
-                                         "Please ensure OpenTrack modules/android files are intact.")
-                                 .arg(suffix);
-            stop();
-            return false;
-        }
+        if (error_msg)
+            *error_msg = QObject::tr("Relay binary (st-relay-%1) not found.\n"
+                                     "Looked in modules/android, libexec/opentrack/android, and Plugins/android.")
+                             .arg(suffix);
+        stop();
+        return false;
     }
-    else
+
+    QString push_err;
+    if (!run_adb_cmd(active_adb,
+                     with_serial(active_serial, {"push", relay_bin, "/data/local/tmp/st-relay"}),
+                     PUSH_TIMEOUT_MS, nullptr, &push_err))
     {
-        // Push relay to /data/local/tmp/st-relay
-        QStringList push_args;
-        if (!active_serial.isEmpty())
-            push_args << "-s" << active_serial;
-        push_args << "push" << relay_bin << "/data/local/tmp/st-relay";
-
-        QString push_err;
-        if (!run_adb_cmd(active_adb, push_args, DEFAULT_TIMEOUT_MS, nullptr, &push_err))
-        {
-            if (error_msg)
-                *error_msg = QObject::tr("Failed to push relay binary to Android device: %1")
-                                 .arg(push_err.trimmed().isEmpty() ? "Transfer error or timeout" : push_err.trimmed());
-            stop();
-            return false;
-        }
-
-        // Ensure executable permissions (chmod 755)
-        QStringList chmod_args;
-        if (!active_serial.isEmpty())
-            chmod_args << "-s" << active_serial;
-        chmod_args << "shell" << "chmod" << "755" << "/data/local/tmp/st-relay";
-        run_adb_cmd(active_adb, chmod_args, 1500);
+        if (error_msg)
+            *error_msg = QObject::tr("Failed to push relay binary to Android device: %1")
+                             .arg(push_err.trimmed().isEmpty() ? "Transfer error or timeout" : push_err.trimmed());
+        stop();
+        return false;
     }
 
-    // 3. Kill any previously hanging relay instances on the device
-    QStringList kill_args;
-    if (!active_serial.isEmpty())
-        kill_args << "-s" << active_serial;
-    kill_args << "shell" << "pkill" << "-f" << "st-relay";
-    run_adb_cmd(active_adb, kill_args, QUICK_TIMEOUT_MS);
+    run_adb_cmd(active_adb,
+                with_serial(active_serial, {"shell", "chmod", "755", "/data/local/tmp/st-relay"}),
+                QUICK_TIMEOUT_MS);
 
-    // Give socket a brief moment to unbind if killed
+    kill_device_relay(active_adb, active_serial);
     QThread::msleep(100);
 
-    // 4. Launch relay as a managed background process
     relay_proc = std::make_unique<QProcess>();
-    QStringList run_args;
-    if (!active_serial.isEmpty())
-        run_args << "-s" << active_serial;
-    run_args << "shell" << "/data/local/tmp/st-relay"
-             << QString::number(udp_port) << QString::number(tcp_port);
-
-    relay_proc->start(active_adb, run_args);
+    relay_proc->start(active_adb,
+                      with_serial(active_serial,
+                                  {"shell", "/data/local/tmp/st-relay",
+                                   QString::number(udp_port), QString::number(tcp_port)}));
     if (!relay_proc->waitForStarted(DEFAULT_TIMEOUT_MS))
     {
         if (error_msg)
-            *error_msg = QObject::tr("Failed to launch relay daemon on Android device.");
+            *error_msg = QObject::tr("Failed to start '%1': %2")
+                             .arg(active_adb, relay_proc->errorString());
         relay_proc.reset();
+        stop();
+        return false;
+    }
+
+    if (relay_proc->waitForFinished(400))
+    {
+        last_relay_stderr = collect_qprocess_output(relay_proc.get());
+        if (error_msg)
+        {
+            *error_msg = last_relay_stderr.isEmpty()
+                             ? QObject::tr("st-relay exited immediately (code %1).")
+                                   .arg(relay_proc->exitCode())
+                             : last_relay_stderr;
+        }
         stop();
         return false;
     }
@@ -474,18 +487,17 @@ void adb_client::stop()
         relay_proc.reset();
     }
 
-    if (!active_adb.isEmpty() && QFileInfo::exists(active_adb))
+    if (reverse_installed && active_port > 0 && !active_adb.isEmpty() && QFileInfo::exists(active_adb))
     {
-        QStringList kill_args;
-        if (!active_serial.isEmpty())
-            kill_args << "-s" << active_serial;
-        kill_args << "shell" << "pkill" << "-f" << "st-relay";
-        run_adb_cmd(active_adb, kill_args, QUICK_TIMEOUT_MS);
-
-        if (active_port > 0)
-            remove_reverse(active_adb, active_port, active_serial);
+        kill_device_relay(active_adb, active_serial);
+        remove_reverse(active_adb, active_port, active_serial);
     }
 
+    if (started_adb_server && !active_adb.isEmpty() && QFileInfo::exists(active_adb))
+        run_adb_cmd(active_adb, {"kill-server"}, DEFAULT_TIMEOUT_MS);
+
+    reverse_installed = false;
+    started_adb_server = false;
     active_adb.clear();
     active_serial.clear();
     active_port = 0;
@@ -494,4 +506,12 @@ void adb_client::stop()
 bool adb_client::is_running() const
 {
     return relay_proc && relay_proc->state() == QProcess::Running;
+}
+
+QString adb_client::relay_stderr()
+{
+    const QString chunk = collect_qprocess_output(relay_proc.get());
+    if (!chunk.isEmpty())
+        last_relay_stderr = chunk;
+    return last_relay_stderr;
 }

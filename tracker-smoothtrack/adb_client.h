@@ -17,9 +17,10 @@
 class adb_client
 {
 public:
-    // Explicit bounded execution timeouts (in milliseconds) to prevent UI/tracker deadlocks
-    static constexpr int DEFAULT_TIMEOUT_MS = 2000;
-    static constexpr int QUICK_TIMEOUT_MS   = 1000;
+    static constexpr int START_SERVER_TIMEOUT_MS = 20000;
+    static constexpr int PUSH_TIMEOUT_MS = 15000;
+    static constexpr int DEFAULT_TIMEOUT_MS = 5000;
+    static constexpr int QUICK_TIMEOUT_MS = 1500;
 
     struct device_info
     {
@@ -44,10 +45,14 @@ public:
     bool start(const QString& adb_path, int udp_port, int tcp_port, QString* error_msg);
     void stop();
     bool is_running() const;
+    QString relay_stderr();
 
 private:
     QString active_adb;
     QString active_serial;
     int active_port{0};
+    bool reverse_installed{false};
+    bool started_adb_server{false};
+    QString last_relay_stderr;
     std::unique_ptr<QProcess> relay_proc;
 };

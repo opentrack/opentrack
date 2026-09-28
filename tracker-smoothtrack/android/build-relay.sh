@@ -3,7 +3,8 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-cd "${SCRIPT_DIR}"
+OUT_DIR="${OUT_DIR:-$SCRIPT_DIR/out}"
+mkdir -p "${OUT_DIR}"
 
 if [[ -z "${ANDROID_NDK_ROOT:-}" && -n "${ANDROID_NDK_HOME:-}" ]]; then
     ANDROID_NDK_ROOT="${ANDROID_NDK_HOME}"
@@ -34,22 +35,26 @@ if [[ -n "${ANDROID_NDK_ROOT:-}" && -d "${ANDROID_NDK_ROOT}" ]]; then
     TOOLCHAIN="${ANDROID_NDK_ROOT}/toolchains/llvm/prebuilt/${HOST_OS}/bin"
     API_LEVEL=24
 
-    # Build arm64-v8a (64-bit ARM - standard for all modern Android phones)
+    CLANG="${TOOLCHAIN}/clang"
+    if [[ ! -x "${CLANG}" && -x "${CLANG}.exe" ]]; then
+        CLANG="${CLANG}.exe"
+    fi
     echo "Compiling st-relay-arm64..."
-    "${TOOLCHAIN}/aarch64-linux-android${API_LEVEL}-clang" \
-        -O2 -Wall -Wextra -static relay.c -o st-relay-arm64
-    chmod +x st-relay-arm64
+    "${CLANG}" --target=aarch64-linux-android${API_LEVEL} \
+        -O2 -Wall -Wextra -fPIE -pie -Wl,-z,max-page-size=16384 \
+        "${SCRIPT_DIR}/relay.c" -o "${OUT_DIR}/st-relay-arm64"
+    chmod +x "${OUT_DIR}/st-relay-arm64"
 
-    # Build armeabi-v7a (32-bit ARM - for older Android devices)
     echo "Compiling st-relay-armv7..."
-    "${TOOLCHAIN}/armv7a-linux-androideabi${API_LEVEL}-clang" \
-        -O2 -Wall -Wextra -static relay.c -o st-relay-armv7
-    chmod +x st-relay-armv7
+    "${CLANG}" --target=armv7a-linux-androideabi${API_LEVEL} \
+        -O2 -Wall -Wextra -fPIE -pie -Wl,-z,max-page-size=16384 \
+        "${SCRIPT_DIR}/relay.c" -o "${OUT_DIR}/st-relay-armv7"
+    chmod +x "${OUT_DIR}/st-relay-armv7"
 
-    echo "Relay binaries successfully built!"
-    ls -la st-relay-arm64 st-relay-armv7
+    echo "Relay binaries successfully built in ${OUT_DIR}"
+    ls -la "${OUT_DIR}/st-relay-arm64" "${OUT_DIR}/st-relay-armv7"
 else
     echo "Android NDK not found. To compile manually:"
-    echo "  \$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/<host>/bin/aarch64-linux-android24-clang -O2 -static relay.c -o st-relay-arm64"
+    echo "  \$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/<host>/bin/clang --target=aarch64-linux-android24 -O2 -fPIE -pie -Wl,-z,max-page-size=16384 relay.c -o st-relay-arm64"
     exit 1
 fi

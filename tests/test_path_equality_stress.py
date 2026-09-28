@@ -11,20 +11,12 @@ import tempfile
 import zipfile
 import subprocess
 import unittest
-import yaml
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-WORKFLOW_FILE = os.path.join(REPO_ROOT, ".github", "workflows", "windows-11.yml")
+_TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TESTS_DIR not in sys.path:
+    sys.path.insert(0, _TESTS_DIR)
 
-
-def extract_workflow_step(step_name: str) -> str:
-    with open(WORKFLOW_FILE, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    steps = data["jobs"]["windows-11-x64"]["steps"]
-    for s in steps:
-        if s.get("name") == step_name:
-            return s.get("run", "")
-    raise ValueError(f"Step '{step_name}' not found in {WORKFLOW_FILE}")
+from extract import REPO_ROOT, extract_workflow_step
 
 
 class TestPathEqualityStress(unittest.TestCase):
@@ -158,8 +150,8 @@ class TestPathEqualityStress(unittest.TestCase):
             os.makedirs(ws, exist_ok=True)
             install_dir = os.path.join(ws, "build", "install")
             os.makedirs(os.path.join(install_dir, "modules"), exist_ok=True)
-            android_src = os.path.join(ws, "tracker-smoothtrack", "android")
-            os.makedirs(android_src, exist_ok=True)
+            relay_dest = os.path.join(install_dir, "modules", "android")
+            os.makedirs(relay_dest, exist_ok=True)
             mock_sdk = os.path.join(base_tmp, "mock sdk with spaces", "platform-tools")
             os.makedirs(mock_sdk, exist_ok=True)
 
@@ -167,9 +159,9 @@ class TestPathEqualityStress(unittest.TestCase):
                 f.write(b"OPENTRACK_EXE" * 10)
             with open(os.path.join(install_dir, "modules", "opentrack-tracker-smoothtrack.dll"), "wb") as f:
                 f.write(b"SMOOTHTRACK_DLL" * 10)
-            with open(os.path.join(android_src, "st-relay-arm64"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-arm64"), "wb") as f:
                 f.write(b"ARM64" * 10)
-            with open(os.path.join(android_src, "st-relay-armv7"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-armv7"), "wb") as f:
                 f.write(b"ARMV7" * 10)
             with open(os.path.join(mock_sdk, "adb.exe"), "wb") as f:
                 f.write(b"ADB" * 10)
@@ -198,16 +190,16 @@ class TestPathEqualityStress(unittest.TestCase):
             os.makedirs(ws, exist_ok=True)
             install_dir = os.path.join(ws, "build", "install")
             os.makedirs(os.path.join(install_dir, "modules"), exist_ok=True)
-            android_src = os.path.join(ws, "tracker-smoothtrack", "android")
-            os.makedirs(android_src, exist_ok=True)
+            relay_dest = os.path.join(install_dir, "modules", "android")
+            os.makedirs(relay_dest, exist_ok=True)
             mock_sdk = os.path.join(base_tmp, "mock_sdk", "platform-tools")
             os.makedirs(mock_sdk, exist_ok=True)
 
             with open(os.path.join(install_dir, "opentrack.exe"), "wb") as f:
                 f.write(b"OPENTRACK" * 10)
-            with open(os.path.join(android_src, "st-relay-arm64"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-arm64"), "wb") as f:
                 f.write(b"ARM64" * 10)
-            with open(os.path.join(android_src, "st-relay-armv7"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-armv7"), "wb") as f:
                 f.write(b"ARMV7" * 10)
             with open(os.path.join(mock_sdk, "adb.exe"), "wb") as f:
                 f.write(b"ADB" * 10)
@@ -232,16 +224,16 @@ class TestPathEqualityStress(unittest.TestCase):
             os.makedirs(ws, exist_ok=True)
             install_dir = os.path.join(ws, "build", "install")
             os.makedirs(os.path.join(install_dir, "modules"), exist_ok=True)
-            android_src = os.path.join(ws, "tracker-smoothtrack", "android")
-            os.makedirs(android_src, exist_ok=True)
+            relay_dest = os.path.join(install_dir, "modules", "android")
+            os.makedirs(relay_dest, exist_ok=True)
             mock_sdk = os.path.join(base_tmp, "mock_sdk", "platform-tools")
             os.makedirs(mock_sdk, exist_ok=True)
 
             with open(os.path.join(install_dir, "opentrack.exe"), "wb") as f:
                 f.write(b"OPENTRACK" * 10)
-            with open(os.path.join(android_src, "st-relay-arm64"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-arm64"), "wb") as f:
                 f.write(b"ARM64" * 10)
-            with open(os.path.join(android_src, "st-relay-armv7"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-armv7"), "wb") as f:
                 f.write(b"ARMV7" * 10)
             with open(os.path.join(mock_sdk, "adb.exe"), "wb") as f:
                 f.write(b"ADB" * 10)
@@ -274,9 +266,11 @@ class TestPathEqualityStress(unittest.TestCase):
 
             with open(os.path.join(install_dir, "opentrack.exe"), "wb") as f:
                 f.write(b"OPENTRACK" * 10)
-            with open(os.path.join(install_dir, "st-relay-arm64"), "wb") as f:
+            relay_dest = os.path.join(install_dir, "modules", "android")
+            os.makedirs(relay_dest, exist_ok=True)
+            with open(os.path.join(relay_dest, "st-relay-arm64"), "wb") as f:
                 f.write(b"ARM64" * 10)
-            with open(os.path.join(install_dir, "st-relay-armv7"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-armv7"), "wb") as f:
                 f.write(b"ARMV7" * 10)
             with open(os.path.join(mock_sdk, "adb.exe"), "wb") as f:
                 f.write(b"ADB" * 10)
@@ -294,8 +288,8 @@ class TestPathEqualityStress(unittest.TestCase):
             res = self.run_ps_script(self.package_script, env_vars)
             self.assertEqual(res.returncode, 0, f"Failed on fallback in path with spaces:\nSTDOUT:\n{res.stdout}\nSTDERR:\n{res.stderr}")
             self.assertNotIn("Cannot overwrite the item", res.stderr)
-            self.assertTrue(os.path.exists(os.path.join(install_dir, "android", "st-relay-arm64")))
             self.assertTrue(os.path.exists(os.path.join(install_dir, "modules", "android", "st-relay-arm64")))
+            self.assertFalse(os.path.exists(os.path.join(install_dir, "android", "st-relay-arm64")))
 
     def test_adb_self_overwrite_with_spaces_in_path(self):
         """Verify ADB self-overwrite guard works in directories containing spaces."""
@@ -304,14 +298,14 @@ class TestPathEqualityStress(unittest.TestCase):
             install_dir = os.path.join(ws, "build", "install")
             pt_dir = os.path.join(install_dir, "platform-tools")
             os.makedirs(pt_dir, exist_ok=True)
-            android_src = os.path.join(ws, "tracker-smoothtrack", "android")
-            os.makedirs(android_src, exist_ok=True)
+            relay_dest = os.path.join(install_dir, "modules", "android")
+            os.makedirs(relay_dest, exist_ok=True)
 
             with open(os.path.join(install_dir, "opentrack.exe"), "wb") as f:
                 f.write(b"OPENTRACK" * 10)
-            with open(os.path.join(android_src, "st-relay-arm64"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-arm64"), "wb") as f:
                 f.write(b"ARM64" * 10)
-            with open(os.path.join(android_src, "st-relay-armv7"), "wb") as f:
+            with open(os.path.join(relay_dest, "st-relay-armv7"), "wb") as f:
                 f.write(b"ARMV7" * 10)
             with open(os.path.join(pt_dir, "adb.exe"), "wb") as f:
                 f.write(b"ADB" * 10)
@@ -330,7 +324,7 @@ class TestPathEqualityStress(unittest.TestCase):
             self.assertEqual(res.returncode, 0, f"Failed on ADB self-overwrite with spaces:\nSTDOUT:\n{res.stdout}\nSTDERR:\n{res.stderr}")
             self.assertNotIn("Cannot overwrite the item", res.stderr)
             self.assertTrue(os.path.exists(os.path.join(install_dir, "adb.exe")))
-            self.assertTrue(os.path.exists(os.path.join(install_dir, "modules", "adb.exe")))
+            self.assertFalse(os.path.exists(os.path.join(install_dir, "modules", "adb.exe")))
 
     # -------------------------------------------------------------------------
     # Category 3: Bracket character wildcard vulnerability analysis

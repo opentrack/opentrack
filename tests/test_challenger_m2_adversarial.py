@@ -12,27 +12,19 @@ import tempfile
 import stat
 import subprocess
 import unittest
-import yaml
 
-REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-WORKFLOW_FILE = os.path.join(REPO_ROOT, ".github", "workflows", "windows-11.yml")
+_TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+if _TESTS_DIR not in sys.path:
+    sys.path.insert(0, _TESTS_DIR)
 
-
-def extract_workflow_step(step_name: str) -> str:
-    with open(WORKFLOW_FILE, "r", encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    steps = data["jobs"]["windows-11-x64"]["steps"]
-    for s in steps:
-        if s.get("name") == step_name:
-            return s.get("run", "")
-    raise ValueError(f"Step '{step_name}' not found in {WORKFLOW_FILE}")
+from extract import REPO_ROOT, extract_workflow_step
 
 
 class TestM2ChallengerAdversarial(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.package_script = extract_workflow_step("Package install tree")
-        cls.compile_script = extract_workflow_step("Compile Android SmoothTrack USB relay daemon")
+        cls.compile_script = extract_workflow_step("Export Android NDK")
         cls.powershell_exe = "powershell.exe"
 
     def run_ps_script(self, script_text: str, env_vars: dict) -> subprocess.CompletedProcess:
@@ -71,10 +63,8 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
     # 1. PRE-COMPILATION CLEANUP TESTS
     # =========================================================================
 
-    def test_precompilation_clean_purges_stale_binaries_on_compiler_failure(self):
-        """If stale $out64 and $out32 exist and the compiler subsequently FAILS,
-        the pre-compilation clean must have already purged them so stale binaries
-        do not linger and mask compilation failures."""
+    def test_ndk_locate_does_not_write_source_tree_relays(self):
+        """NDK locate must export ANDROID_NDK_ROOT and leave source-tree st-relay files untouched."""
         with tempfile.TemporaryDirectory() as test_dir:
             ws = os.path.join(test_dir, "workspace")
             os.makedirs(ws)
@@ -90,33 +80,37 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
             with open(out32, "wb") as f:
                 f.write(b"STALE_OLD_ARMV7_BINARY")
 
-            self.assertTrue(os.path.exists(out64))
-            self.assertTrue(os.path.exists(out32))
-
             mock_ndk = os.path.join(test_dir, "mock_ndk")
             llvm_bin = os.path.join(mock_ndk, "toolchains", "llvm", "prebuilt", "windows-x86_64", "bin")
             os.makedirs(llvm_bin, exist_ok=True)
 
-            # A compiler wrapper that deliberately fails immediately without writing any output
-            failing_bat = "@echo off\r\necho Compilation failed intentionally 1>&2\r\nexit /b 1\r\n"
+            failing_bat = "@echo off\r\necho should not be invoked 1>&2\r\nexit /b 1\r\n"
             with open(os.path.join(llvm_bin, "aarch64-linux-android24-clang.cmd"), "w") as f:
                 f.write(failing_bat)
             with open(os.path.join(llvm_bin, "armv7a-linux-androideabi24-clang.cmd"), "w") as f:
                 f.write(failing_bat)
 
+            github_env = os.path.join(test_dir, "github_env.txt")
+            with open(github_env, "w", encoding="utf-8") as f:
+                pass
+
             env_vars = {
                 "GITHUB_WORKSPACE": ws,
-                "ANDROID_NDK_LATEST_HOME": mock_ndk
+                "ANDROID_NDK_ROOT": mock_ndk,
+                "GITHUB_ENV": github_env,
             }
             result = self.run_ps_script(self.compile_script, env_vars)
-            # Must fail
-            self.assertNotEqual(result.returncode, 0)
-            # Stale files must NOT exist anymore! They must have been removed prior to compilation
-            self.assertFalse(os.path.exists(out64), "Stale st-relay-arm64 was NOT purged prior to compilation!")
-            self.assertFalse(os.path.exists(out32), "Stale st-relay-armv7 was NOT purged prior to compilation!")
+            self.assertEqual(result.returncode, 0, f"NDK locate failed:\n{result.stdout}\n{result.stderr}")
+            with open(out64, "rb") as f:
+                self.assertEqual(f.read(), b"STALE_OLD_ARM64_BINARY")
+            with open(out32, "rb") as f:
+                self.assertEqual(f.read(), b"STALE_OLD_ARMV7_BINARY")
+            with open(github_env, encoding="utf-8") as f:
+                exported = f.read()
+            self.assertIn("ANDROID_NDK_ROOT=", exported)
 
-    def test_precompilation_clean_purges_readonly_stale_binaries(self):
-        """Verify that stale binaries marked Read-Only on Windows are purged successfully by -Force."""
+    def test_ndk_locate_does_not_overwrite_readonly_source_tree_relays(self):
+        """Read-only source-tree st-relay files must not be rewritten by the NDK locate step."""
         with tempfile.TemporaryDirectory() as test_dir:
             ws = os.path.join(test_dir, "workspace")
             os.makedirs(ws)
@@ -132,7 +126,6 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
             with open(out32, "wb") as f:
                 f.write(b"STALE_READONLY_ARMV7")
 
-            # Set READ-ONLY file attribute
             os.chmod(out64, stat.S_IREAD)
             os.chmod(out32, stat.S_IREAD)
 
@@ -140,17 +133,7 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
             llvm_bin = os.path.join(mock_ndk, "toolchains", "llvm", "prebuilt", "windows-x86_64", "bin")
             os.makedirs(llvm_bin, exist_ok=True)
 
-            mock_clang_bat = (
-                "@echo off\r\n"
-                ":loop\r\n"
-                "if \"%~1\"==\"\" goto done\r\n"
-                "if \"%~1\"==\"-o\" (set OUT=%~2& shift& shift& goto loop)\r\n"
-                "shift\r\n"
-                "goto loop\r\n"
-                ":done\r\n"
-                "echo FRESH_NEW_BINARY > \"%OUT%\"\r\n"
-                "exit /b 0\r\n"
-            )
+            mock_clang_bat = "@echo off\r\necho FRESH_NEW_BINARY\r\nexit /b 0\r\n"
             with open(os.path.join(llvm_bin, "aarch64-linux-android24-clang.cmd"), "w") as f:
                 f.write(mock_clang_bat)
             with open(os.path.join(llvm_bin, "armv7a-linux-androideabi24-clang.cmd"), "w") as f:
@@ -158,19 +141,17 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
 
             env_vars = {
                 "GITHUB_WORKSPACE": ws,
-                "ANDROID_NDK_LATEST_HOME": mock_ndk
+                "ANDROID_NDK_ROOT": mock_ndk
             }
             result = self.run_ps_script(self.compile_script, env_vars)
-            self.assertEqual(result.returncode, 0, f"Clean of read-only files failed:\n{result.stdout}\n{result.stderr}")
+            self.assertEqual(result.returncode, 0, f"NDK locate failed:\n{result.stdout}\n{result.stderr}")
 
-            # Verify new files were written with fresh content
+            os.chmod(out64, stat.S_IWRITE | stat.S_IREAD)
+            os.chmod(out32, stat.S_IWRITE | stat.S_IREAD)
             with open(out64, "rb") as f:
-                c64 = f.read()
+                self.assertEqual(f.read(), b"STALE_READONLY_ARM64")
             with open(out32, "rb") as f:
-                c32 = f.read()
-
-            self.assertIn(b"FRESH_NEW_BINARY", c64)
-            self.assertIn(b"FRESH_NEW_BINARY", c32)
+                self.assertEqual(f.read(), b"STALE_READONLY_ARMV7")
 
     # =========================================================================
     # 2. PRE-PACKAGING ASSERTION TESTS
@@ -179,8 +160,8 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
     def _setup_valid_staging_tree(self, ws: str, test_dir: str):
         install_dir = os.path.join(ws, "build", "install")
         os.makedirs(os.path.join(install_dir, "modules"), exist_ok=True)
-        android_src_dir = os.path.join(ws, "tracker-smoothtrack", "android")
-        os.makedirs(android_src_dir, exist_ok=True)
+        relay_dest = os.path.join(install_dir, "modules", "android")
+        os.makedirs(relay_dest, exist_ok=True)
         mock_sdk = os.path.join(test_dir, "mock_sdk", "platform-tools")
         os.makedirs(mock_sdk, exist_ok=True)
 
@@ -188,9 +169,9 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
             f.write(b"OPENTRACK_EXE_VALID" * 10)
         with open(os.path.join(install_dir, "modules", "opentrack-tracker-smoothtrack.dll"), "wb") as f:
             f.write(b"SMOOTHTRACK_DLL" * 10)
-        with open(os.path.join(android_src_dir, "st-relay-arm64"), "wb") as f:
+        with open(os.path.join(relay_dest, "st-relay-arm64"), "wb") as f:
             f.write(b"ARM64_VALID" * 10)
-        with open(os.path.join(android_src_dir, "st-relay-armv7"), "wb") as f:
+        with open(os.path.join(relay_dest, "st-relay-armv7"), "wb") as f:
             f.write(b"ARMV7_VALID" * 10)
         with open(os.path.join(mock_sdk, "adb.exe"), "wb") as f:
             f.write(b"ADB_VALID" * 10)
@@ -199,7 +180,7 @@ class TestM2ChallengerAdversarial(unittest.TestCase):
         with open(os.path.join(mock_sdk, "AdbWinUsbApi.dll"), "wb") as f:
             f.write(b"ADB_WIN_USB_API_VALID" * 10)
 
-        return install_dir, android_src_dir, mock_sdk
+        return install_dir, relay_dest, mock_sdk
 
     def test_prepackaging_assertion_fails_when_opentrack_exe_missing(self):
         with tempfile.TemporaryDirectory() as test_dir:

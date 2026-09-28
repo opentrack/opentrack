@@ -20,3 +20,5 @@
 
 *.cmd text eol=crlf
 *.bat text eol=crlf
+
+tests/mock_adb/adb text eol=lf

@@ -1,0 +1,5 @@
+#!/bin/sh
+if [ -n "$PYTHON" ]; then
+  exec "$PYTHON" "$(dirname "$0")/adb.py" "$@"
+fi
+exec python3 "$(dirname "$0")/adb.py" "$@"

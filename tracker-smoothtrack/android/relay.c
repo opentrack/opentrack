@@ -14,13 +14,14 @@
 #include <errno.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <netinet/tcp.h>
 #include <sys/socket.h>
+
+#include "relay_io.h"
 
 #define PACKET_SIZE 48 // 6 * sizeof(double)
 #define MAX_BUFFER 256
 
-static volatile int running = 1;
+volatile int running = 1;
 
 static void handle_signal(int sig)
 {
@@ -78,18 +79,6 @@ int main(int argc, char* argv[])
     }
 
     // 2. Setup TCP connection to ADB reverse port (tunnels to host PC OpenTrack)
-    int tcp_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (tcp_fd < 0)
-    {
-        perror("socket(SOCK_STREAM)");
-        close(udp_fd);
-        return 3;
-    }
-
-    // Disable Nagle's algorithm for minimum latency
-    int nodelay = 1;
-    setsockopt(tcp_fd, IPPROTO_TCP, TCP_NODELAY, &nodelay, sizeof(nodelay));
-
     struct sockaddr_in tcp_addr;
     memset(&tcp_addr, 0, sizeof(tcp_addr));
     tcp_addr.sin_family = AF_INET;
@@ -98,58 +87,34 @@ int main(int argc, char* argv[])
     {
         fprintf(stderr, "Invalid connect IP: %s\n", connect_ip);
         close(udp_fd);
-        close(tcp_fd);
         return 4;
     }
 
+    int tcp_fd = -1;
     // Retry connect for up to 5 seconds while host PC finishes starting listener
-    int connected = 0;
-    for (int retry = 0; retry < 50 && running; ++retry)
-    {
-        if (connect(tcp_fd, (struct sockaddr*)&tcp_addr, sizeof(tcp_addr)) == 0)
-        {
-            connected = 1;
-            break;
-        }
-        usleep(100000); // 100ms
-    }
-
-    if (!connected)
+    if (connect_retry(&tcp_fd, &tcp_addr, 50, 100000) != 0)
     {
         fprintf(stderr, "Failed to connect to TCP reverse tunnel %s:%d: %s\n",
                 connect_ip, tcp_port, strerror(errno));
         close(udp_fd);
-        close(tcp_fd);
+        if (tcp_fd >= 0)
+            close(tcp_fd);
         return 5;
     }
 
     fprintf(stderr, "st-relay: ready, bridging UDP %s:%d -> TCP %s:%d\n",
             bind_ip, udp_port, connect_ip, tcp_port);
 
-    // 3. Relay datagrams
+    // 3. Relay datagrams; poll TCP so a host close is noticed without waiting for UDP
     char buf[MAX_BUFFER];
     while (running)
     {
-        ssize_t n = recv(udp_fd, buf, sizeof(buf), 0);
-        if (n <= 0)
-        {
-            if (n < 0 && errno == EINTR)
-                continue;
+        if (relay_poll_once(udp_fd, tcp_fd, buf, sizeof(buf)) <= 0)
             break;
-        }
-
-        // Send payload over TCP to OpenTrack
-        ssize_t sent = send(tcp_fd, buf, (size_t)n, 0);
-        if (sent <= 0)
-        {
-            if (sent < 0 && errno == EINTR)
-                continue;
-            // Connection closed by host PC (tracking stopped)
-            break;
-        }
     }
 
     close(udp_fd);
-    close(tcp_fd);
+    if (tcp_fd >= 0)
+        close(tcp_fd);
     return 0;
 }
