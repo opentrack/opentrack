@@ -35,9 +35,6 @@ struct settings : opts
     // Expected packet header in hexadecimal string format, probably this may change in future firmware versions
     value<QString> header_value = { b, "header-value", "283600000080" };
 
-    // Gyroscope and Accelerometer data type marker, probably this may change in future firmware versions
-    value<QString> ga_marker_value = { b, "ga-marker-value", "00401f000040" };
-
     // Not configurable by user, used to track if any setting changed
     value<bool> changed = { b, "changed", false };
 };
@@ -78,9 +75,6 @@ private:
     // Validate the frame header against expected header
     bool is_header_valid(const XRealOneIMUFrame& frame) const;
 
-    // Determine if the frame contains gyroscope and accelerometer data
-    bool is_gyro_accel_data(const XRealOneIMUFrame& frame) const;
-
 private:
     QTcpSocket sock;
 
@@ -98,13 +92,9 @@ private:
     // Last received packet timestamp
     uint64_t last_timestamp_ns = 0;
 
-    // Expected header and data type values, copied from default values in constructor
+    // Expected header value, copied from default value in constructor
     // Updated from settings if changed
     uint8_t header[6] = {0};
-
-    // Expected gyro and accelerometer data type marker, copied from default value in constructor
-    // Updated from settings if changed
-    uint8_t ga_marker[6] = {0};
 };
 
 

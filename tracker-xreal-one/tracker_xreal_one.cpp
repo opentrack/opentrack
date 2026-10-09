@@ -27,10 +27,8 @@
 XRealOneTracker::XRealOneTracker()
 {
     static_assert(sizeof(header) == sizeof(XRealOneIMUFrame::DefaultHeader), "Header size mismatch");
-    static_assert(sizeof(ga_marker) == sizeof(XRealOneIMUFrame::DefaultGyroAccelType), "Gyro/Accel marker size mismatch");
 
     memcpy(header, XRealOneIMUFrame::DefaultHeader, sizeof(header));
-    memcpy(ga_marker, XRealOneIMUFrame::DefaultGyroAccelType, sizeof(ga_marker));
 }
 
 XRealOneTracker::~XRealOneTracker()
@@ -157,16 +155,6 @@ void XRealOneTracker::update_from_settings(bool force /*= false*/)
         {
             qWarning() << "XRealOneTracker::update_from_settings: Invalid header value, using default";
         }
-
-        auto ga_marker_hex = QByteArray::fromHex(s.ga_marker_value().toUtf8());
-        if (ga_marker_hex.size() == sizeof(ga_marker))
-        {
-            memcpy(ga_marker, ga_marker_hex.data(), sizeof(ga_marker));
-        }
-        else
-        {
-            qWarning() << "XRealOneTracker::update_from_settings: Invalid GA marker value, using default";
-        }
     }
 
     s.changed = false;
@@ -175,11 +163,6 @@ void XRealOneTracker::update_from_settings(bool force /*= false*/)
 bool XRealOneTracker::is_header_valid(const XRealOneIMUFrame& frame) const
 {
     return memcmp(frame.header, header, sizeof(header)) == 0;
-}
-
-bool XRealOneTracker::is_gyro_accel_data(const XRealOneIMUFrame& frame) const
-{
-    return memcmp(frame.data_type, ga_marker, sizeof(ga_marker)) == 0;
 }
 
 void XRealOneTracker::parse_packet(const QByteArray& packet)
@@ -199,7 +182,7 @@ void XRealOneTracker::parse_packet(const QByteArray& packet)
         return;
     }
 
-    if (is_gyro_accel_data(frame))
+    if (frame.is_gyro_accel())
     {
         process_ga_packet(frame);
     }
