@@ -1,7 +1,17 @@
 #pragma once
 
+#include <bit>
 #include <cstdint>
+#include <limits>
 #include <string>
+
+// True unless v is NaN or infinite. Tests the exponent bits rather than calling std::isfinite(), which -ffast-math
+// (set in opentrack's Release toolchain files) lets the compiler replace with true.
+inline bool xreal_one_is_finite(float v)
+{
+    static_assert(std::numeric_limits<float>::is_iec559, "IEEE 754 floats expected");
+    return (std::bit_cast<uint32_t>(v) & 0x7f800000u) != 0x7f800000u;
+}
 
 /**
  *  Frame structure for XReal One IMU data packets.
@@ -72,6 +82,13 @@ struct XRealOneIMUFrame
     bool is_gyro_accel() const
     {
         return (flags & GyroAccelFlags) == GyroAccelFlags;
+    }
+
+    // True if all gyroscope and accelerometer values are finite (magnetometer frames have NaN there)
+    bool has_finite_gyro_accel() const
+    {
+        return xreal_one_is_finite(gyro_x) && xreal_one_is_finite(gyro_y) && xreal_one_is_finite(gyro_z) &&
+               xreal_one_is_finite(accel_x) && xreal_one_is_finite(accel_y) && xreal_one_is_finite(accel_z);
     }
 };
 #pragma pack(pop)

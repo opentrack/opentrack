@@ -124,6 +124,7 @@ void XRealOneTracker::initialize_fusion_ahrs()
     ahrs = {};
     offset = {};
     euler_angles = {};
+    last_timestamp_ns = 0;
 
     // Initialise Fusion algorithms
     FusionOffsetInitialise(&offset, AvgSampleRateHz);
@@ -182,14 +183,27 @@ void XRealOneTracker::parse_packet(const QByteArray& packet)
         return;
     }
 
-    if (frame.is_gyro_accel())
+    // Skip frames whose values would turn the AHRS state into NaN until the next reconnect
+    if (frame.is_gyro_accel() && frame.has_finite_gyro_accel())
     {
         process_ga_packet(frame);
     }
 }
 
+// True if all three values are finite
+static bool is_finite(const FusionVector& v)
+{
+    return xreal_one_is_finite(v.axis.x) && xreal_one_is_finite(v.axis.y) && xreal_one_is_finite(v.axis.z);
+}
+
 void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
 {
+    // A frame with the timestamp of the previous sample repeats it, and Fusion would integrate it twice
+    if (last_timestamp_ns != 0 && frame.timestamp_ns == last_timestamp_ns)
+    {
+        return;
+    }
+
     // At the moment, we do not apply any calibration
     static constexpr bool UseCalibration = false;
 
@@ -218,6 +232,12 @@ void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
         accelerometer = FusionCalibrationInertial(accelerometer, accelerometerMisalignment, accelerometerSensitivity, accelerometerOffset);
     }
 
+    // Checked again after scaling: a large finite value can overflow, and a g-constant of 0 gives infinity
+    if (!is_finite(gyroscope) || !is_finite(accelerometer))
+    {
+        return;
+    }
+
     // Apply gyroscope offset correction (filtering)
     if (s.use_fusion_offset)
     {
@@ -226,8 +246,12 @@ void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
 
     static constexpr float DefaultDt = 1.0f / AvgSampleRateHz;
 
-    // get delta time in seconds
-    const float dt = (last_timestamp_ns == 0) ? (DefaultDt) : std::min((frame.timestamp_ns - last_timestamp_ns) * 1e-9f, DefaultDt * 10);
+    // get delta time in seconds; the default for the first frame of a connection and if the timestamp went backwards
+    float dt = DefaultDt;
+    if (last_timestamp_ns != 0 && frame.timestamp_ns > last_timestamp_ns)
+    {
+        dt = std::min((frame.timestamp_ns - last_timestamp_ns) * 1e-9f, DefaultDt * 10);
+    }
     last_timestamp_ns = frame.timestamp_ns;
 
     // Update gyroscope AHRS algorithm
