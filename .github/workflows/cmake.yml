@@ -31,7 +31,7 @@ jobs:
     - name: clone opentrack/opentrack
       uses: actions/checkout@v7
       with:
-        submodules: true
+        submodules: recursive
 
     - name: clone opentrack/depends
       uses: actions/checkout@v7
