@@ -1,3 +1,6 @@
 [submodule "video-ps3eye/ps3eye-driver"]
 	path = video-ps3eye/ps3eye-driver
 	url = https://github.com/opentrack/PS3EYEDriver
+[submodule "tracker-smoothtrack/opentrack-usbmux"]
+	path = tracker-smoothtrack/opentrack-usbmux
+	url = https://github.com/andreabedini/opentrack-usbmux.git
