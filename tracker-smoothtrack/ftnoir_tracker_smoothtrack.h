@@ -30,7 +30,6 @@ class smoothtrack : protected QThread, public ITracker
 {
     Q_OBJECT
 public:
-    smoothtrack();
     ~smoothtrack() override;
     module_status start_tracker(QFrame*) override;
     void data(double* data) override;
@@ -49,7 +48,7 @@ private:
     static constexpr quint16 device_port = 47047;
 
     QTcpSocket sock;
-    double last_recv_pose[6];
+    double last_recv_pose[6] {};
     QMutex mutex;
     settings s;
 

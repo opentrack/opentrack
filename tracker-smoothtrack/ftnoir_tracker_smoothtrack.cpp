@@ -12,10 +12,6 @@
 #include <QDebug>
 #include <cmath>
 
-smoothtrack::smoothtrack() : last_recv_pose{ 0, 0, 0, 0, 0, 0 }
-{
-}
-
 smoothtrack::~smoothtrack()
 {
     requestInterruption();
