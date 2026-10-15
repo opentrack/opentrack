@@ -27,10 +27,8 @@
 XRealOneTracker::XRealOneTracker()
 {
     static_assert(sizeof(header) == sizeof(XRealOneIMUFrame::DefaultHeader), "Header size mismatch");
-    static_assert(sizeof(ga_marker) == sizeof(XRealOneIMUFrame::DefaultGyroAccelType), "Gyro/Accel marker size mismatch");
 
     memcpy(header, XRealOneIMUFrame::DefaultHeader, sizeof(header));
-    memcpy(ga_marker, XRealOneIMUFrame::DefaultGyroAccelType, sizeof(ga_marker));
 }
 
 XRealOneTracker::~XRealOneTracker()
@@ -126,6 +124,10 @@ void XRealOneTracker::initialize_fusion_ahrs()
     ahrs = {};
     offset = {};
     euler_angles = {};
+    last_timestamp_ns = 0;
+    unused = {};
+    ahrs_resets = 0;
+    ahrs_reset_warning_timer.invalidate();
 
     // Initialise Fusion algorithms
     FusionOffsetInitialise(&offset, AvgSampleRateHz);
@@ -157,16 +159,6 @@ void XRealOneTracker::update_from_settings(bool force /*= false*/)
         {
             qWarning() << "XRealOneTracker::update_from_settings: Invalid header value, using default";
         }
-
-        auto ga_marker_hex = QByteArray::fromHex(s.ga_marker_value().toUtf8());
-        if (ga_marker_hex.size() == sizeof(ga_marker))
-        {
-            memcpy(ga_marker, ga_marker_hex.data(), sizeof(ga_marker));
-        }
-        else
-        {
-            qWarning() << "XRealOneTracker::update_from_settings: Invalid GA marker value, using default";
-        }
     }
 
     s.changed = false;
@@ -175,11 +167,6 @@ void XRealOneTracker::update_from_settings(bool force /*= false*/)
 bool XRealOneTracker::is_header_valid(const XRealOneIMUFrame& frame) const
 {
     return memcmp(frame.header, header, sizeof(header)) == 0;
-}
-
-bool XRealOneTracker::is_gyro_accel_data(const XRealOneIMUFrame& frame) const
-{
-    return memcmp(frame.data_type, ga_marker, sizeof(ga_marker)) == 0;
 }
 
 void XRealOneTracker::parse_packet(const QByteArray& packet)
@@ -196,17 +183,92 @@ void XRealOneTracker::parse_packet(const QByteArray& packet)
     if (!is_header_valid(frame))
     {
         qDebug() << "XRealOneTracker::parse_packet: Invalid header";
+        count_frame(FrameResult::BadHeader, frame.flags);
         return;
     }
 
-    if (is_gyro_accel_data(frame))
+    // Skip frames whose values would turn the AHRS state into NaN until the next reconnect
+    FrameResult result = FrameResult::OtherType;
+    if (frame.is_gyro_accel())
     {
-        process_ga_packet(frame);
+        result = frame.has_finite_gyro_accel() ? process_ga_packet(frame) : FrameResult::NotFinite;
+    }
+    else if (frame.is_magnetometer())
+    {
+        result = FrameResult::Magnetometer;
+    }
+    count_frame(result, frame.flags);
+}
+
+void XRealOneTracker::count_frame(FrameResult result, uint32_t flags)
+{
+    if (result == FrameResult::Used)
+    {
+        unused = {};
+        return;
+    }
+
+    ++unused.total;
+    switch (result)
+    {
+    case FrameResult::Used:
+        break;
+    case FrameResult::BadHeader:
+        ++unused.bad_header;
+        break;
+    case FrameResult::Magnetometer:
+        ++unused.magnetometer;
+        break;
+    case FrameResult::OtherType:
+        ++unused.other_type;
+        unused.last_other_flags = flags;
+        break;
+    case FrameResult::NotFinite:
+        ++unused.not_finite;
+        break;
+    case FrameResult::RepeatedTimestamp:
+        ++unused.repeated_timestamp;
+        break;
+    }
+
+    // The orientation stops changing when no usable samples arrive, so say why; again only after usable data
+    if (unused.total >= WarnAfterFrames && !unused.warned)
+    {
+        unused.warned = true;
+        qWarning().noquote() << QStringLiteral("XReal One Tracker: No usable gyro/accel data in the last %1 frames: "
+                                               "%2 with a bad header, %3 magnetometer, %4 of another type (last flags "
+                                               "0x%5), %6 with non-finite values, %7 repeating a timestamp")
+                                    .arg(unused.total)
+                                    .arg(unused.bad_header)
+                                    .arg(unused.magnetometer)
+                                    .arg(unused.other_type)
+                                    .arg(unused.last_other_flags, 0, 16)
+                                    .arg(unused.not_finite)
+                                    .arg(unused.repeated_timestamp);
     }
 }
 
-void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
+// True if all three values are finite
+static bool is_finite(const FusionVector& v)
 {
+    return xreal_one_is_finite(v.axis.x) && xreal_one_is_finite(v.axis.y) && xreal_one_is_finite(v.axis.z);
+}
+
+// True if all four values are finite
+static bool is_finite(const FusionQuaternion& q)
+{
+    return xreal_one_is_finite(q.element.w) && xreal_one_is_finite(q.element.x) && xreal_one_is_finite(q.element.y) &&
+           xreal_one_is_finite(q.element.z);
+}
+
+XRealOneTracker::FrameResult XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
+{
+    // A frame with the timestamp of the previous sample repeats it, and Fusion would integrate it twice
+    if (last_timestamp_ns != 0 && frame.timestamp_ns == last_timestamp_ns)
+    {
+        return FrameResult::RepeatedTimestamp;
+    }
+
     // At the moment, we do not apply any calibration
     static constexpr bool UseCalibration = false;
 
@@ -235,6 +297,12 @@ void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
         accelerometer = FusionCalibrationInertial(accelerometer, accelerometerMisalignment, accelerometerSensitivity, accelerometerOffset);
     }
 
+    // Checked again after scaling: a large finite value can overflow, and a g-constant of 0 gives infinity
+    if (!is_finite(gyroscope) || !is_finite(accelerometer))
+    {
+        return FrameResult::NotFinite;
+    }
+
     // Apply gyroscope offset correction (filtering)
     if (s.use_fusion_offset)
     {
@@ -243,17 +311,39 @@ void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
 
     static constexpr float DefaultDt = 1.0f / AvgSampleRateHz;
 
-    // get delta time in seconds
-    const float dt = (last_timestamp_ns == 0) ? (DefaultDt) : std::min((frame.timestamp_ns - last_timestamp_ns) * 1e-9f, DefaultDt * 10);
+    // get delta time in seconds; the default for the first frame of a connection and if the timestamp went backwards
+    float dt = DefaultDt;
+    if (last_timestamp_ns != 0 && frame.timestamp_ns > last_timestamp_ns)
+    {
+        dt = std::min((frame.timestamp_ns - last_timestamp_ns) * 1e-9f, DefaultDt * 10);
+    }
     last_timestamp_ns = frame.timestamp_ns;
 
     // Update gyroscope AHRS algorithm
     const FusionVector NoMagnetometer = { 0.0f, 0.0f, 0.0f };
     FusionAhrsUpdate(&ahrs, gyroscope, accelerometer, NoMagnetometer, dt);
 
+    // A NaN or infinity in the AHRS state would stay until the next reconnect, whatever caused it. Start the AHRS over
+    // instead, and keep the last finite orientation until it has a new one.
+    const FusionQuaternion quaternion = FusionAhrsGetQuaternion(&ahrs);
+    if (!is_finite(quaternion))
+    {
+        FusionAhrsReset(&ahrs);
+        ++ahrs_resets;
+        if (!ahrs_reset_warning_timer.isValid() || ahrs_reset_warning_timer.hasExpired(10000))
+        {
+            qWarning() << "XReal One Tracker: The orientation stopped being finite; reset the AHRS" << ahrs_resets
+                       << "time(s) since connecting";
+            ahrs_reset_warning_timer.start();
+        }
+        return FrameResult::Used;
+    }
+
     // Update internal Euler angles representation
     // NoMutex lock since we have 1 writer and 1 reader
-    euler_angles = FusionEulerFrom(FusionAhrsGetQuaternion(&ahrs));
+    euler_angles = FusionEulerFrom(quaternion);
+
+    return FrameResult::Used;
 }
 
 void XRealOneTracker::data(double *data)
