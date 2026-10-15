@@ -59,14 +59,44 @@ protected:
     void run() override;
 
 private:
+    // What became of a frame
+    enum class FrameResult
+    {
+        Used,              // a gyro/accel sample that reached Fusion
+        BadHeader,
+        Magnetometer,
+        OtherType,         // flags that mark neither a gyro/accel nor a magnetometer frame
+        NotFinite,         // a gyro/accel sample with a value that isn't finite
+        RepeatedTimestamp, // a gyro/accel sample with the timestamp of the previous one
+    };
+
+    // Frames since the last sample that reached Fusion, by why they didn't
+    struct UnusedFrames
+    {
+        qint64 total = 0;
+        qint64 bad_header = 0;
+        qint64 magnetometer = 0;
+        qint64 other_type = 0;
+        qint64 not_finite = 0;
+        qint64 repeated_timestamp = 0;
+        uint32_t last_other_flags = 0;
+        bool warned = false;
+    };
+
+    // Frames in a row without a usable gyro/accel sample before warning, about 1 s of the glasses' frames
+    static constexpr qint64 WarnAfterFrames = 1400;
+
     // Parse a received data into XReal IMU Frame data and process it if valid and contains gyroscope and accelerometer data
     void parse_packet(const QByteArray& packet);
 
     // Process XReal IMU Frame containing gyroscope and accelerometer data
-    void process_ga_packet(const XRealOneIMUFrame& frame);
+    FrameResult process_ga_packet(const XRealOneIMUFrame& frame);
 
-    // Initialize Fusion AHRS and Offset algorithms, reset state to default values
-    // Called on before connect
+    // Count a frame, and warn once when WarnAfterFrames frames in a row had no usable gyro/accel sample
+    void count_frame(FrameResult result, uint32_t flags);
+
+    // Initialize Fusion AHRS and Offset algorithms and reset the per-connection state (time step, frame counts)
+    // Called after each connect
     void initialize_fusion_ahrs();
 
     // Update internal settings from user-configurable options
@@ -91,6 +121,9 @@ private:
 
     // Last received packet timestamp
     uint64_t last_timestamp_ns = 0;
+
+    // Frames since the last usable gyro/accel sample
+    UnusedFrames unused;
 
     // Expected header value, copied from default value in constructor
     // Updated from settings if changed

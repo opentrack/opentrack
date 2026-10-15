@@ -125,6 +125,7 @@ void XRealOneTracker::initialize_fusion_ahrs()
     offset = {};
     euler_angles = {};
     last_timestamp_ns = 0;
+    unused = {};
 
     // Initialise Fusion algorithms
     FusionOffsetInitialise(&offset, AvgSampleRateHz);
@@ -180,13 +181,68 @@ void XRealOneTracker::parse_packet(const QByteArray& packet)
     if (!is_header_valid(frame))
     {
         qDebug() << "XRealOneTracker::parse_packet: Invalid header";
+        count_frame(FrameResult::BadHeader, frame.flags);
         return;
     }
 
     // Skip frames whose values would turn the AHRS state into NaN until the next reconnect
-    if (frame.is_gyro_accel() && frame.has_finite_gyro_accel())
+    FrameResult result = FrameResult::OtherType;
+    if (frame.is_gyro_accel())
     {
-        process_ga_packet(frame);
+        result = frame.has_finite_gyro_accel() ? process_ga_packet(frame) : FrameResult::NotFinite;
+    }
+    else if (frame.is_magnetometer())
+    {
+        result = FrameResult::Magnetometer;
+    }
+    count_frame(result, frame.flags);
+}
+
+void XRealOneTracker::count_frame(FrameResult result, uint32_t flags)
+{
+    if (result == FrameResult::Used)
+    {
+        unused = {};
+        return;
+    }
+
+    ++unused.total;
+    switch (result)
+    {
+    case FrameResult::Used:
+        break;
+    case FrameResult::BadHeader:
+        ++unused.bad_header;
+        break;
+    case FrameResult::Magnetometer:
+        ++unused.magnetometer;
+        break;
+    case FrameResult::OtherType:
+        ++unused.other_type;
+        unused.last_other_flags = flags;
+        break;
+    case FrameResult::NotFinite:
+        ++unused.not_finite;
+        break;
+    case FrameResult::RepeatedTimestamp:
+        ++unused.repeated_timestamp;
+        break;
+    }
+
+    // The orientation stops changing when no usable samples arrive, so say why; again only after usable data
+    if (unused.total >= WarnAfterFrames && !unused.warned)
+    {
+        unused.warned = true;
+        qWarning().noquote() << QStringLiteral("XReal One Tracker: No usable gyro/accel data in the last %1 frames: "
+                                               "%2 with a bad header, %3 magnetometer, %4 of another type (last flags "
+                                               "0x%5), %6 with non-finite values, %7 repeating a timestamp")
+                                    .arg(unused.total)
+                                    .arg(unused.bad_header)
+                                    .arg(unused.magnetometer)
+                                    .arg(unused.other_type)
+                                    .arg(unused.last_other_flags, 0, 16)
+                                    .arg(unused.not_finite)
+                                    .arg(unused.repeated_timestamp);
     }
 }
 
@@ -196,12 +252,12 @@ static bool is_finite(const FusionVector& v)
     return xreal_one_is_finite(v.axis.x) && xreal_one_is_finite(v.axis.y) && xreal_one_is_finite(v.axis.z);
 }
 
-void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
+XRealOneTracker::FrameResult XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
 {
     // A frame with the timestamp of the previous sample repeats it, and Fusion would integrate it twice
     if (last_timestamp_ns != 0 && frame.timestamp_ns == last_timestamp_ns)
     {
-        return;
+        return FrameResult::RepeatedTimestamp;
     }
 
     // At the moment, we do not apply any calibration
@@ -235,7 +291,7 @@ void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
     // Checked again after scaling: a large finite value can overflow, and a g-constant of 0 gives infinity
     if (!is_finite(gyroscope) || !is_finite(accelerometer))
     {
-        return;
+        return FrameResult::NotFinite;
     }
 
     // Apply gyroscope offset correction (filtering)
@@ -261,6 +317,8 @@ void XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
     // Update internal Euler angles representation
     // NoMutex lock since we have 1 writer and 1 reader
     euler_angles = FusionEulerFrom(FusionAhrsGetQuaternion(&ahrs));
+
+    return FrameResult::Used;
 }
 
 void XRealOneTracker::data(double *data)

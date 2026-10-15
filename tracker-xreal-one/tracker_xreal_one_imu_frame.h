@@ -36,11 +36,14 @@ struct XRealOneIMUFrame
 
     static constexpr uint8_t DefaultHeader[6]          = { 0x28, 0x36, 0x00, 0x00, 0x00, 0x80 };
 
-    // Flags of frames with gyroscope and accelerometer data. Magnetometer frames (about 400 per second, interleaved
-    // with the 1000 per second gyro/accel frames) have 0x04 and no gyro/accel data. The flags look like a mask of
-    // the sensors in a frame, but which bit is which isn't known, so a frame counts as gyro/accel when it has all of
-    // these bits, whatever else is set.
+    // Flags of frames with gyroscope and accelerometer data (1000 per second). The flags look like a mask of the
+    // sensors in a frame, but which bit is which isn't known, so a frame counts as gyro/accel when it has all of these
+    // bits, whatever else is set.
     static constexpr uint32_t GyroAccelFlags = 0x0b;
+
+    // Flags of the magnetometer frames (about 400 per second, interleaved with the gyro/accel frames), which have no
+    // gyro/accel data
+    static constexpr uint32_t MagnetometerFlags = 0x04;
 
     // Offset 0-5: Frame header (6 bytes)
     uint8_t header[6];
@@ -82,6 +85,12 @@ struct XRealOneIMUFrame
     bool is_gyro_accel() const
     {
         return (flags & GyroAccelFlags) == GyroAccelFlags;
+    }
+
+    // True if the flags mark a magnetometer frame
+    bool is_magnetometer() const
+    {
+        return !is_gyro_accel() && (flags & MagnetometerFlags) != 0;
     }
 
     // True if all gyroscope and accelerometer values are finite (magnetometer frames have NaN there)
