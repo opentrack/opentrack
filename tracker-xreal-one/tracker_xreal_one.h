@@ -1,6 +1,7 @@
 #pragma once
 #include "ui_tracker_xreal_one_controls.h"
 
+#include <QElapsedTimer>
 #include <QTcpSocket>
 #include <QThread>
 
@@ -124,6 +125,10 @@ private:
 
     // Frames since the last usable gyro/accel sample
     UnusedFrames unused;
+
+    // AHRS resets after its orientation stopped being finite, and the time of the last warning about them
+    qint64 ahrs_resets = 0;
+    QElapsedTimer ahrs_reset_warning_timer;
 
     // Expected header value, copied from default value in constructor
     // Updated from settings if changed

@@ -126,6 +126,8 @@ void XRealOneTracker::initialize_fusion_ahrs()
     euler_angles = {};
     last_timestamp_ns = 0;
     unused = {};
+    ahrs_resets = 0;
+    ahrs_reset_warning_timer.invalidate();
 
     // Initialise Fusion algorithms
     FusionOffsetInitialise(&offset, AvgSampleRateHz);
@@ -252,6 +254,13 @@ static bool is_finite(const FusionVector& v)
     return xreal_one_is_finite(v.axis.x) && xreal_one_is_finite(v.axis.y) && xreal_one_is_finite(v.axis.z);
 }
 
+// True if all four values are finite
+static bool is_finite(const FusionQuaternion& q)
+{
+    return xreal_one_is_finite(q.element.w) && xreal_one_is_finite(q.element.x) && xreal_one_is_finite(q.element.y) &&
+           xreal_one_is_finite(q.element.z);
+}
+
 XRealOneTracker::FrameResult XRealOneTracker::process_ga_packet(const XRealOneIMUFrame& frame)
 {
     // A frame with the timestamp of the previous sample repeats it, and Fusion would integrate it twice
@@ -314,9 +323,25 @@ XRealOneTracker::FrameResult XRealOneTracker::process_ga_packet(const XRealOneIM
     const FusionVector NoMagnetometer = { 0.0f, 0.0f, 0.0f };
     FusionAhrsUpdate(&ahrs, gyroscope, accelerometer, NoMagnetometer, dt);
 
+    // A NaN or infinity in the AHRS state would stay until the next reconnect, whatever caused it. Start the AHRS over
+    // instead, and keep the last finite orientation until it has a new one.
+    const FusionQuaternion quaternion = FusionAhrsGetQuaternion(&ahrs);
+    if (!is_finite(quaternion))
+    {
+        FusionAhrsReset(&ahrs);
+        ++ahrs_resets;
+        if (!ahrs_reset_warning_timer.isValid() || ahrs_reset_warning_timer.hasExpired(10000))
+        {
+            qWarning() << "XReal One Tracker: The orientation stopped being finite; reset the AHRS" << ahrs_resets
+                       << "time(s) since connecting";
+            ahrs_reset_warning_timer.start();
+        }
+        return FrameResult::Used;
+    }
+
     // Update internal Euler angles representation
     // NoMutex lock since we have 1 writer and 1 reader
-    euler_angles = FusionEulerFrom(FusionAhrsGetQuaternion(&ahrs));
+    euler_angles = FusionEulerFrom(quaternion);
 
     return FrameResult::Used;
 }
