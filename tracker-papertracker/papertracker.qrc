@@ -5,6 +5,6 @@
         <file>images/markers-centered.png</file>
         <file>images/markers-offset.png</file>
         <file>images/markers-angled.png</file>
-        <file>html/papertracker-help.html</file>
+        <file>html/en/papertracker-help.html</file>
     </qresource>
 </RCC>
