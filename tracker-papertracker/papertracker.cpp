@@ -148,14 +148,12 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         }
     }
 
-    /* If no markers detected and ROI is not null, signal need to reset ROI.
+    /* If no markers detected, note it as a failed detection.
     */
-    bool detection_failed;
+    bool detection_failed = detected_markers.empty();
 
-    if (detected_markers.size() == 0 && roi != nullptr)
-        return false;
-    else
-        detection_failed = false;
+    if (detection_failed && roi != nullptr)
+        return false; // ROI needs to be reset, so return immediately.
 
     last_roi = get_marker_detected_region(detected_markers);
 
