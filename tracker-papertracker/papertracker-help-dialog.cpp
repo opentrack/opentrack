@@ -6,6 +6,7 @@
  */
 #include "papertracker-help-dialog.h"
 #include "ui_papertracker-help.h"
+#include "localizedfilename.h"
 #include <QIODevice>
 #include <QFile>
 #include <QRegularExpression>
@@ -15,7 +16,10 @@ PaperTrackerHelpDialog::PaperTrackerHelpDialog(QWidget *parent) :
     ui(new Ui::PaperTrackerHelpDialog)
 {
     ui->setupUi(this);
-    loadHelpText(":html/papertracker-help.html");
+
+    const auto filename = papertracker::localized_filename(":html", "papertracker-help.html");
+    if (!filename.isEmpty())
+        loadHelpText(filename);
 }
 
 PaperTrackerHelpDialog::~PaperTrackerHelpDialog()
