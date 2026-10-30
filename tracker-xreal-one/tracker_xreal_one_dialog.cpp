@@ -28,7 +28,6 @@ XRealOneSettingsDialog::XRealOneSettingsDialog()
     tie_setting(s.ip_address, ui.lineEditIPAddress);
     tie_setting(s.g_constant, ui.spinGConstant);
     tie_setting(s.header_value, ui.lineEditHeaderValue);
-    tie_setting(s.ga_marker_value, ui.lineEditDataTypeValue);
     tie_setting(s.use_fusion_offset, ui.checkBoxUseFusionOffset);
 }
 
