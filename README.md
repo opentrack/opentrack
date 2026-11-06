@@ -111,3 +111,5 @@ On Windows, use either mingw-w64 or MS Visual Studio 2015 Update 3/newer. On oth
 
 On Linux, see [our wiki's Linux build instructions](https://github.com/opentrack/opentrack/wiki/Building-on-Linux).
 
+On macOS, see [docs/macos-build.md](docs/macos-build.md).
+
