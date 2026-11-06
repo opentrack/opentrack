@@ -14,7 +14,12 @@ int main(int argc, char** argv)
     return run_application(argc, argv, [] { return std::make_unique<main_window>(); });
 }
 
-#if defined _MSC_VER
+#if defined _MSC_VER || defined __MINGW32__
+// -mwindows demands a WinMain; providing our own keeps Qt's entry-point
+// shim (which assumes an msvcrt-flavored CRT) out of the link. This
+// matters for UCRT-based mingw toolchains.
+extern "C" int __argc;
+extern "C" char** __argv;
 
 int CALLBACK WinMain(HINSTANCE, HINSTANCE, LPSTR, int /* nCmdShow */)
 {
