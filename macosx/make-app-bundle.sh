@@ -38,6 +38,12 @@ cp "$dir/PkgInfo" "$install/$APPNAME.app/Contents/"
 mkdir -p "$install/$APPNAME.app/Contents/MacOS/Plugins"
 cp -r "$install/Plugins" "$install/$APPNAME.app/Contents/MacOS/"
 
+# macdeployqt skips files it already deployed, so a reinstall would keep
+# stale copies of Qt and libraries from the previous build. Wipe the
+# directories it manages; the freshly installed binary and plugins are
+# re-copied below or re-deployed by macdeployqt.
+rm -rf "$install/$APPNAME.app/Contents/Frameworks" "$install/$APPNAME.app/Contents/PlugIns"
+
 # Use either of these, two of them at the same time will break things!
 macdeployqt "$install/$APPNAME.app" -libpath="$install/Library"
 #sh "$dir/install-fail-tool" "$install/$APPNAME.app/Contents/Frameworks"
