@@ -36,8 +36,7 @@
 
 
 #ifdef __APPLE__
-void disable_appnap_start();
-void disable_appnap_stop();
+#   include "compat/appnap.hpp"
 #endif
 
 extern "C" const char* const opentrack_version;

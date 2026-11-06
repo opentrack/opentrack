@@ -72,8 +72,14 @@ end:
     pProtocol = nullptr;
 
     if (!status.is_ok())
-        QMessageBox::critical(nullptr,
-                              tr("Startup failure"), status.error,
-                              QMessageBox::Cancel, QMessageBox::NoButton);
+    {
+        // headless mode has nobody to click the message box away
+        if (qEnvironmentVariableIsSet("OTR_HEADLESS"))
+            qCritical().noquote() << "opentrack: startup failure:" << status.error;
+        else
+            QMessageBox::critical(nullptr,
+                                  tr("Startup failure"), status.error,
+                                  QMessageBox::Cancel, QMessageBox::NoButton);
+    }
 }
 

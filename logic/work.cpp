@@ -36,7 +36,21 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
 {
     if (s.tracklogging_enabled)
     {
-        QString filename = browse_datalogging_file(s);
+        if (qEnvironmentVariableIsSet("OTR_HEADLESS"))
+        {
+            // no file dialog in headless mode; honor a preconfigured filename
+            if (s.tracklogging_filename->isEmpty())
+            {
+                qWarning() << "opentrack: track logging enabled but no filename set, skipping";
+                return nullptr;
+            }
+        }
+        else
+        {
+            browse_datalogging_file(s);
+        }
+
+        QString filename = s.tracklogging_filename;
 
         if (!filename.isEmpty())
         {
@@ -44,10 +58,13 @@ std::unique_ptr<TrackLogger> Work::make_logger(main_settings &s)
 
             if (!logger->is_open())
             {
-                QMessageBox::warning(nullptr,
-                    tr("Logging error"),
-                    tr("Unable to open file '%1'. Proceeding without logging.").arg(s.tracklogging_filename),
-                    QMessageBox::Ok, QMessageBox::NoButton);
+                if (qEnvironmentVariableIsSet("OTR_HEADLESS"))
+                    qWarning() << "opentrack: unable to open log file" << filename << ", proceeding without logging";
+                else
+                    QMessageBox::warning(nullptr,
+                        tr("Logging error"),
+                        tr("Unable to open file '%1'. Proceeding without logging.").arg(s.tracklogging_filename),
+                        QMessageBox::Ok, QMessageBox::NoButton);
             }
             else
                 return logger;

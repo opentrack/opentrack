@@ -6,6 +6,7 @@
  */
 
 #include "init.hpp"
+#include "headless.hpp"
 #include "migration/migration.hpp"
 #include "options/options.hpp"
 using namespace options;
@@ -19,6 +20,7 @@ using namespace options;
 #include <cstdio>
 
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QStyleFactory>
 #include <QLocale>
 #include <QTranslator>
@@ -342,7 +344,28 @@ int otr_main(int argc, char** argv, std::function<std::unique_ptr<QWidget>()> co
         }
     }
 
-    int ret = run_window(make_main_window());
+    int ret;
+
+    {
+        QCommandLineParser parser;
+        QCommandLineOption headless_option(
+            "headless",
+            "Run without the main window: start tracking immediately and run until SIGINT/SIGTERM.");
+        QCommandLineOption profile_option(
+            {"p", "profile"},
+            "Profile to use. Defaults to the last selected profile.",
+            "name");
+        parser.addOption(headless_option);
+        parser.addOption(profile_option);
+        // unknown arguments are none of our business here; the GUI must
+        // keep working exactly as before
+        (void)parser.parse(QApplication::arguments());
+
+        if (parser.isSet(headless_option))
+            ret = run_headless(parser.value(profile_option));
+        else
+            ret = run_window(make_main_window());
+    }
 
 #if 0
     // msvc crashes in Qt plugin system's dtor
