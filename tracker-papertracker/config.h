@@ -15,3 +15,11 @@
 #define PAPERTRACKER_NO_DETECTION_TIMEOUT 0.35
 #define PAPERTRACKER_NO_DETECTION_TIMEOUT_BACKOFF_C 0.25
 #define PAPERTRACKER_ADAPTIVE_THRESHOLD_C 6
+
+static constexpr int adaptive_threshold_sizes[] =
+{
+    5,
+    7,
+    9,
+    11
+};

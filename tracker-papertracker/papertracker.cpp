@@ -120,10 +120,16 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     frame_data.returned_markers.clear();
 
     if (QMutexLocker l(&settings_update_mtx); true) {
-        if (!has_key_marker)
+        /* Until the key marker has been established, use the cycled thresholding parameters and search for
+           optimal ones regardless of contrast method. Afterwards, use the configured contrast method.
+        */
+        if (!has_key_marker) {
+            set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
             detect_markers_optimal(image, frame_data.returned_markers);
-        else
+        } else {
+            apply_contrast_method();
             detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+        }
     }
 
     const int min_marker_id = s.first_marker_id;
@@ -394,14 +400,6 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     return !detection_failed;
 }
 
-static const int adaptive_threshold_sizes[] =
-{
-    5,
-    7,
-    9,
-    11
-};
-
 /* Cycle through thresholding parameters. Adapted from ftnoir_tracker_aruco.cpp.
 */
 void PaperTracker::cycle_threshold_params()
@@ -415,25 +413,56 @@ void PaperTracker::cycle_threshold_params()
         adaptive_size_pos %= std::size(adaptive_threshold_sizes);
     }
 
-    set_threshold_params();
+    set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 
     qDebug() << "aruco: switched thresholding params"
              << "fixed:" << use_fixed_threshold
              << "size:" << adaptive_threshold_sizes[adaptive_size_pos];
 }
 
-/* Update detector thresholding parameters. Adapted from ftnoir_tracker_aruco.cpp.
+/* Set detector thresholding parameters explicitly. Adapted from ftnoir_tracker_aruco.cpp.
 */
-void PaperTracker::set_threshold_params()
+void PaperTracker::set_threshold_params(bool fixed_threshold, int adaptive_size)
 {
     detector.setDesiredSpeed(3);
 
-    if (use_fixed_threshold)
+    if (fixed_threshold)
         detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
     else
         detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
 
-    detector.setThresholdParams(adaptive_threshold_sizes[adaptive_size_pos], PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
+    detector.setThresholdParams(adaptive_size, PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
+}
+
+/* Apply thresholding parameters for the configured contrast method.
+*/
+void PaperTracker::apply_contrast_method()
+{
+    const papertracker_contrast_method method = s.contrast_method;
+
+    switch (method) {
+    case PAPERTRACKER_CONTRAST_METHOD_GLOBAL:
+        set_threshold_params(true, adaptive_threshold_sizes[0]);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_5_5:
+        set_threshold_params(false, 5);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_7_7:
+        set_threshold_params(false, 7);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_9_9:
+        set_threshold_params(false, 9);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_11_11:
+        set_threshold_params(false, 11);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_LOCKED_AUTO:
+    case PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO:
+    default:
+        // use settings from last time either auto mode was run
+        set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
+        break;
+    }
 }
 
 /* Detect markers using threshold parameters that maximize the number of detected markers. This is especially
@@ -460,7 +489,7 @@ void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruc
     // Try fixed threshold.
     if (!skip_fixed_threshold) {
         use_fixed_threshold = true;
-        set_threshold_params();
+        set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 
         detector.detect(image, frame_data.temp_markers, cv::Mat(), cv::Mat(), -1, false);
 
@@ -477,7 +506,7 @@ void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruc
             continue; // already tried this combination
 
         adaptive_size_pos = static_cast<int>(i);
-        set_threshold_params();
+        set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 
         detector.detect(image, frame_data.temp_markers, cv::Mat(), cv::Mat(), -1, false);
 
@@ -490,7 +519,7 @@ void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruc
 
     use_fixed_threshold = best_threshold_fixed;
     adaptive_size_pos = best_adaptive_size_pos;
-    set_threshold_params();
+    set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 }
 
 /* Generate a camera matrix for the given image dimension and field of view (in radians).
@@ -917,7 +946,14 @@ void PaperTracker::run() {
 
             if (no_detection_timeout > PAPERTRACKER_NO_DETECTION_TIMEOUT) {
                 no_detection_timeout = 0;
-                cycle_threshold_params();
+
+                /* Cycle threshold parameters when the key marker has not yet been established, or when the
+                   contrast method is set to continuous auto.
+                */
+                if (!has_key_marker || s.contrast_method == PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO) {
+                    QMutexLocker l(&settings_update_mtx);
+                    cycle_threshold_params();
+                }
             }
         }
 
@@ -1037,7 +1073,7 @@ PaperTracker::PaperTracker() :
     adaptive_size_pos(0)
 {
     opencv_init();
-    set_threshold_params();
+    set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
     current_dictionary = s.aruco_dictionary;
     marker_highlight_set.reserve(16);
     marker_model.reserve(16);

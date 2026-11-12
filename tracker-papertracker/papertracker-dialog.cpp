@@ -24,6 +24,14 @@ PaperTrackerDialog::PaperTrackerDialog() : // NOLINT(cppcoreguidelines-pro-type-
     ui.cmbArucoDictionary->addItem("ArUco MIP 36h12", papertracker_dictionary::PAPERTRACKER_DICT_ARUCO_MIP_36h12);
     ui.cmbArucoDictionary->addItem("AprilTag 36h11", papertracker_dictionary::PAPERTRACKER_DICT_APRILTAG_36h11);
 
+    ui.cmbArucoContrastMethod->addItem("Auto (Continuous)", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO);
+    ui.cmbArucoContrastMethod->addItem("Auto (Locked)", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_LOCKED_AUTO);
+    ui.cmbArucoContrastMethod->addItem("Global", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_GLOBAL);
+    ui.cmbArucoContrastMethod->addItem("Adaptive (5 x 5)", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_5_5);
+    ui.cmbArucoContrastMethod->addItem("Adaptive (7 x 7)", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_7_7);
+    ui.cmbArucoContrastMethod->addItem("Adaptive (9 x 9)", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_9_9);
+    ui.cmbArucoContrastMethod->addItem("Adaptive (11 x 11)", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_11_11);
+
     tie_setting(s.frame_width, ui.sbFrameWidth);
     tie_setting(s.frame_height, ui.sbFrameHeight);
     tie_setting(s.fps, ui.sbFPS);
@@ -39,6 +47,7 @@ PaperTrackerDialog::PaperTrackerDialog() : // NOLINT(cppcoreguidelines-pro-type-
     tie_setting(s.fov, ui.sbFOV);
     tie_setting(s.marker_min_angle, ui.sbMarkerMinimumAngle);
     tie_setting(s.marker_max_angle, ui.sbMarkerMaximumAngle);
+    tie_setting(s.contrast_method, ui.cmbArucoContrastMethod);
 
     connect(ui.buttonBox, SIGNAL(accepted()), this, SLOT(doOK()));
     connect(ui.buttonBox, SIGNAL(rejected()), this, SLOT(doCancel()));

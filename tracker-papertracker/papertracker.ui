@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>353</width>
-    <height>690</height>
+    <height>722</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -46,17 +46,27 @@
       <string>ArUco</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="9" column="1">
-       <widget class="QLabel" name="label_16">
-        <property name="text">
-         <string>Preferred marker angle (maximum)</string>
-        </property>
-       </widget>
-      </item>
       <item row="7" column="1">
        <widget class="QLabel" name="label_6">
         <property name="text">
          <string>Preferred marker angle (minimum)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QLabel" name="label_17">
+        <property name="text">
+         <string>Contrast method</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="2">
+       <widget class="QSpinBox" name="sbNumberOfMarkers">
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>1000</number>
         </property>
        </widget>
       </item>
@@ -70,20 +80,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Marker size</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Dictionary</string>
-        </property>
-       </widget>
-      </item>
       <item row="9" column="2">
        <widget class="QSpinBox" name="sbMarkerMaximumAngle">
         <property name="suffix">
@@ -94,16 +90,24 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QComboBox" name="cmbArucoDictionary"/>
-      </item>
-      <item row="4" column="2">
-       <widget class="QSpinBox" name="sbNumberOfMarkers">
-        <property name="minimum">
-         <number>1</number>
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Marker size</string>
         </property>
-        <property name="maximum">
-         <number>1000</number>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_12">
+        <property name="text">
+         <string>Number of markers</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QLabel" name="label_16">
+        <property name="text">
+         <string>Preferred marker angle (maximum)</string>
         </property>
        </widget>
       </item>
@@ -117,19 +121,8 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_12">
-        <property name="text">
-         <string>Number of markers</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="label_13">
-        <property name="text">
-         <string>First marker ID</string>
-        </property>
-       </widget>
+      <item row="1" column="2">
+       <widget class="QComboBox" name="cmbArucoDictionary"/>
       </item>
       <item row="3" column="2">
        <widget class="QSpinBox" name="sbFirstMarkerID">
@@ -138,6 +131,23 @@
         </property>
         <property name="maximum">
          <number>2320</number>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="2">
+       <widget class="QComboBox" name="cmbArucoContrastMethod"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Dictionary</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLabel" name="label_13">
+        <property name="text">
+         <string>First marker ID</string>
         </property>
        </widget>
       </item>

@@ -135,7 +135,8 @@ private:
     bool open_camera();
     bool process_frame(cv::Mat& frame, const cv::Rect2i *roi = nullptr);
     void cycle_threshold_params();
-    void set_threshold_params();
+    void set_threshold_params(bool fixed_threshold, int adaptive_size);
+    void apply_contrast_method();
     void detect_markers_optimal(const cv::Mat& image, std::vector<aruco::Marker> &best_markers);
     cv::Matx33d build_camera_matrix(int image_width, int image_height, double diagonal_fov);
     std::vector<size_t> get_key_markers(const std::vector<marker_detection_info> &detection_info);
