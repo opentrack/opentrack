@@ -238,16 +238,65 @@ namespace papertracker {
         return true;
     }
 
+    /* Determine the error between the vertex positions of individual markers in world space and the vertex positions of those same
+       markers in the marker model when the model is transformed by head_rvec and head_tvec. The error is the maximum
+       distance out of all pairs of corresponding vertices (measured vs model).
+    */
+    double MarkerModel::transformation_error(const cv::Vec3d &head_rvec, const cv::Vec3d &head_tvec, const cv::Vec3d &origin_rvec, const cv::Vec3d &origin_tvec, const std::vector<marker_detection_info> &detected_markers, const std::vector<size_t> &selected_markers, double marker_size_cm) {
+        const std::array<cv::Vec3d, 4> objectPoints = {{
+            { -marker_size_cm / 2.0,  marker_size_cm / 2.0, 0.0 },
+            { marker_size_cm / 2.0,  marker_size_cm / 2.0, 0.0 },
+            { marker_size_cm / 2.0, -marker_size_cm / 2.0, 0.0 },
+            { -marker_size_cm / 2.0, -marker_size_cm / 2.0, 0.0 }
+        }};
 
-    bool MarkerModel::is_angle_covered(double pitch, double yaw) const {
-        return recorded_angles.get_visit_count(pitch, yaw) > 0;
+        double max_error = 0;
+        for (const auto marker_index : selected_markers) {
+            const auto detection = detected_markers[marker_index];
+
+            cv::Matx33d R;
+            cv::Rodrigues(detection.rvec, R);
+
+            cv::Matx34d T(R(0,0), R(0,1), R(0,2), detection.tvec[0],
+                          R(1,0), R(1,1), R(1,2), detection.tvec[1],
+                          R(2,0), R(2,1), R(2,2), detection.tvec[2]);
+
+            const std::array<cv::Vec3d, 4> detectedMarkerPoints;
+            cv::transform(objectPoints, detectedMarkerPoints, T);
+
+            if (rvecs.count(detection.id) > 0) {
+                cv::Vec3d rvec_temp;
+                cv::Vec3d tvec_temp;
+                cv::composeRT(rvecs[detection.id], tvecs[detection.id], origin_rvec, origin_tvec, rvec_temp, tvec_temp);
+
+                cv::Vec3d composed_rvec;
+                cv::Vec3d composed_tvec;
+                cv::composeRT(rvec_temp, tvec_temp, head_rvec, head_tvec, composed_rvec, composed_tvec);
+
+                cv::Matx33d R_composed;
+                cv::Rodrigues(composed_rvec, R_composed);
+
+                cv::Matx34d T_model(R_composed(0,0), R_composed(0,1), R_composed(0,2), composed_tvec[0],
+                                    R_composed(1,0), R_composed(1,1), R_composed(1,2), composed_tvec[1],
+                                    R_composed(2,0), R_composed(2,1), R_composed(2,2), composed_tvec[2]);
+
+                std::array<cv::Vec3d, 4> modelMarkerPoints;
+                cv::transform(objectPoints, modelMarkerPoints, T_model);
+
+                for (size_t i = 0; i < 4; ++i)
+                    max_error = std::max(max_error, cv::norm(modelMarkerPoints[i] - detectedMarkerPoints[i]));
+            }
+        }
+
+        return max_error;
     }
 
-    void MarkerModel::set_angle_covered(double pitch, double yaw) {
-        const auto bin = recorded_angles.get_bin(pitch, yaw);
+    int MarkerModel::get_visit_count(double pitch, double yaw) const {
+        return recorded_angles.get_visit_count(pitch, yaw);
+    }
 
-        if (recorded_angles.get_visit_count(bin) == 0)
-            recorded_angles.add_visit(bin);
+    void MarkerModel::add_visit(double pitch, double yaw) {
+        recorded_angles.add_visit(recorded_angles.get_bin(pitch, yaw));
     }
 
     /* Reserve enough space for count markers and a suitable number of observation pairs.

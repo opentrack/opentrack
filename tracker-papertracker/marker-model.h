@@ -28,8 +28,9 @@ namespace papertracker {
         std::vector<int> get_expected_visible_markers(const cv::Vec3d &head_rvec, const cv::Vec3d &head_tvec, const cv::Vec3d &origin_rvec, const cv::Vec3d &origin_tvec, double max_angle);
         bool solvePnP(const std::vector<marker_detection_info> &detections, const std::vector<size_t> &selected_markers, double marker_size_cm, const cv::Matx33d &camera_matrix, std::vector<double> &dist_coeffs, cv::Vec3d &rvec, cv::Vec3d &tvec);
         bool get_pose_from_single_marker(int marker_id, const cv::Vec3d &rvec_measured, const cv::Vec3d &tvec_measured, cv::Vec3d &pose_rvec, cv::Vec3d &pose_tvec);
-        bool is_angle_covered(double pitch, double yaw) const;
-        void set_angle_covered(double pitch, double yaw);
+        double transformation_error(const cv::Vec3d &head_rvec, const cv::Vec3d &head_tvec, const cv::Vec3d &origin_rvec, const cv::Vec3d &origin_tvec, const std::vector<marker_detection_info> &detections, const std::vector<size_t> &selected_markers, double marker_size_cm);
+        int get_visit_count(double pitch, double yaw) const;
+        void add_visit(double pitch, double yaw);
         void reserve(size_t count);
 
     private:
