@@ -1,6 +1,7 @@
 #pragma once
 #include "ui_tracker_xreal_one_controls.h"
 
+#include <QElapsedTimer>
 #include <QTcpSocket>
 #include <QThread>
 
@@ -35,9 +36,6 @@ struct settings : opts
     // Expected packet header in hexadecimal string format, probably this may change in future firmware versions
     value<QString> header_value = { b, "header-value", "283600000080" };
 
-    // Gyroscope and Accelerometer data type marker, probably this may change in future firmware versions
-    value<QString> ga_marker_value = { b, "ga-marker-value", "00401f000040" };
-
     // Not configurable by user, used to track if any setting changed
     value<bool> changed = { b, "changed", false };
 };
@@ -62,14 +60,44 @@ protected:
     void run() override;
 
 private:
+    // What became of a frame
+    enum class FrameResult
+    {
+        Used,              // a gyro/accel sample that reached Fusion
+        BadHeader,
+        Magnetometer,
+        OtherType,         // flags that mark neither a gyro/accel nor a magnetometer frame
+        NotFinite,         // a gyro/accel sample with a value that isn't finite
+        RepeatedTimestamp, // a gyro/accel sample with the timestamp of the previous one
+    };
+
+    // Frames since the last sample that reached Fusion, by why they didn't
+    struct UnusedFrames
+    {
+        qint64 total = 0;
+        qint64 bad_header = 0;
+        qint64 magnetometer = 0;
+        qint64 other_type = 0;
+        qint64 not_finite = 0;
+        qint64 repeated_timestamp = 0;
+        uint32_t last_other_flags = 0;
+        bool warned = false;
+    };
+
+    // Frames in a row without a usable gyro/accel sample before warning, about 1 s of the glasses' frames
+    static constexpr qint64 WarnAfterFrames = 1400;
+
     // Parse a received data into XReal IMU Frame data and process it if valid and contains gyroscope and accelerometer data
     void parse_packet(const QByteArray& packet);
 
     // Process XReal IMU Frame containing gyroscope and accelerometer data
-    void process_ga_packet(const XRealOneIMUFrame& frame);
+    FrameResult process_ga_packet(const XRealOneIMUFrame& frame);
 
-    // Initialize Fusion AHRS and Offset algorithms, reset state to default values
-    // Called on before connect
+    // Count a frame, and warn once when WarnAfterFrames frames in a row had no usable gyro/accel sample
+    void count_frame(FrameResult result, uint32_t flags);
+
+    // Initialize Fusion AHRS and Offset algorithms and reset the per-connection state (time step, frame counts)
+    // Called after each connect
     void initialize_fusion_ahrs();
 
     // Update internal settings from user-configurable options
@@ -77,9 +105,6 @@ private:
 
     // Validate the frame header against expected header
     bool is_header_valid(const XRealOneIMUFrame& frame) const;
-
-    // Determine if the frame contains gyroscope and accelerometer data
-    bool is_gyro_accel_data(const XRealOneIMUFrame& frame) const;
 
 private:
     QTcpSocket sock;
@@ -98,13 +123,16 @@ private:
     // Last received packet timestamp
     uint64_t last_timestamp_ns = 0;
 
-    // Expected header and data type values, copied from default values in constructor
+    // Frames since the last usable gyro/accel sample
+    UnusedFrames unused;
+
+    // AHRS resets after its orientation stopped being finite, and the time of the last warning about them
+    qint64 ahrs_resets = 0;
+    QElapsedTimer ahrs_reset_warning_timer;
+
+    // Expected header value, copied from default value in constructor
     // Updated from settings if changed
     uint8_t header[6] = {0};
-
-    // Expected gyro and accelerometer data type marker, copied from default value in constructor
-    // Updated from settings if changed
-    uint8_t ga_marker[6] = {0};
 };
 
 

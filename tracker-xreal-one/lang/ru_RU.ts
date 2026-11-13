@@ -47,14 +47,6 @@
         <source>283600000080</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Sensors data marker (hex)</source>
-        <translation>Маркер данных сенсоров (hex)</translation>
-    </message>
-    <message>
-        <source>00401f000040</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>XRealOneMetadata</name>
