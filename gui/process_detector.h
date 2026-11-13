@@ -26,6 +26,8 @@ struct OTR_GUI_EXPORT proc_detector_settings
     static void set_game_list(const QString& game_list);
     static bool is_enabled();
     static void set_is_enabled(bool enabled);
+    static bool is_load_only();
+    static void set_is_load_only(bool load_only);
 };
 
 class OTR_GUI_EXPORT process_detector final : public QWidget
@@ -65,6 +67,7 @@ class OTR_GUI_EXPORT process_detector_worker : QObject
     proc_detector_settings s;
 public:
     [[nodiscard]] bool profile_to_start(QString& str);
+    static bool load_only();
     bool should_stop();
 };
 

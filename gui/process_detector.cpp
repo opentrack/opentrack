@@ -56,6 +56,21 @@ void proc_detector_settings::set_is_enabled(bool enabled)
     });
 }
 
+bool proc_detector_settings::is_load_only()
+{
+    return with_global_settings_object([&](QSettings& settings) {
+        return settings.value("executable-detector-load-only", false).toBool();
+    });
+}
+
+void proc_detector_settings::set_is_load_only(bool load_only)
+{
+    with_global_settings_object([&](QSettings& settings) {
+        settings.setValue("executable-detector-load-only", load_only);
+        mark_global_ini_modified();
+    });
+}
+
 #ifdef __GNUG__
 #   pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 #endif
@@ -149,7 +164,11 @@ process_detector::process_detector(QWidget* parent) : QWidget(parent)
 
     QResizeEvent e(ui.tableWidget->size(), ui.tableWidget->size());
     ui.tableWidget->resizeEvent(&e);
+
+    connect(ui.enabled, &QCheckBox::toggled, ui.load_only, &QCheckBox::setEnabled);
     ui.enabled->setChecked(s.is_enabled());
+    ui.load_only->setChecked(s.is_load_only());
+    ui.load_only->setEnabled(ui.enabled->isChecked());
 }
 
 void process_detector::save()
@@ -168,12 +187,15 @@ void process_detector::save()
 
     s.set_game_list(str);
     s.set_is_enabled(ui.enabled->isChecked());
+    s.set_is_load_only(ui.load_only->isChecked());
 }
 
 void process_detector::revert()
 {
     load_rows();
     ui.enabled->setChecked(s.is_enabled());
+    ui.load_only->setChecked(s.is_load_only());
+    ui.load_only->setEnabled(ui.enabled->isChecked());
 }
 
 void process_detector::add()
@@ -201,6 +223,10 @@ bool process_detector_worker::should_stop()
         return false;
     }
 
+    // in load-only mode the user controls starting and stopping the tracker
+    if (s.is_load_only())
+        return false;
+
     QStringList exe_list = get_all_executable_names();
 
     if (exe_list.contains(last_exe_name))
@@ -209,6 +235,11 @@ bool process_detector_worker::should_stop()
     last_exe_name = QString{};
 
     return true;
+}
+
+bool process_detector_worker::load_only()
+{
+    return proc_detector_settings::is_load_only();
 }
 
 bool process_detector_worker::profile_to_start(QString& str)

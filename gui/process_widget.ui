@@ -22,6 +22,13 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="load_only">
+     <property name="text">
+      <string>Only load the profile, don't start the tracker</string>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="FancyTable" name="tableWidget">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -142,6 +149,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>enabled</tabstop>
+  <tabstop>load_only</tabstop>
   <tabstop>add</tabstop>
   <tabstop>remove</tabstop>
  </tabstops>

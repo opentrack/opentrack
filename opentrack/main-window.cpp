@@ -994,7 +994,8 @@ void main_window::maybe_start_profile_from_executable()
         if (det.profile_to_start(profile) && profile_list.contains(profile))
         {
             set_profile(profile);
-            start_tracker_();
+            if (!det.load_only())
+                start_tracker_();
         }
     }
     else
