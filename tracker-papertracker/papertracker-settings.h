@@ -16,6 +16,16 @@ enum papertracker_dictionary {
     PAPERTRACKER_DICT_APRILTAG_36h11
 };
 
+enum papertracker_contrast_method {
+    PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO,
+    PAPERTRACKER_CONTRAST_METHOD_LOCKED_AUTO,
+    PAPERTRACKER_CONTRAST_METHOD_GLOBAL,
+    PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_5_5,
+    PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_7_7,
+    PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_9_9,
+    PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_11_11
+};
+
 struct papertracker_settings : public opts
 {
     value<int> frame_width { b, "frame_width", 640 };
@@ -33,6 +43,7 @@ struct papertracker_settings : public opts
     value<int> fov { b, "fov", 56 };
     value<int> marker_min_angle { b, "marker_min_angle", 15 };
     value<int> marker_max_angle { b, "marker_max_angle", 80 };
+    value<papertracker_contrast_method> contrast_method { b, "contrast_method", papertracker_contrast_method::PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO };
 
     papertracker_settings();
 };

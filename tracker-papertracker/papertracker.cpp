@@ -19,6 +19,7 @@
 #include "config.h"
 #include <unordered_map>
 #include <unordered_set>
+#include <limits>
 #include <QDebug>
 
 using namespace papertracker;
@@ -120,10 +121,16 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     frame_data.returned_markers.clear();
 
     if (QMutexLocker l(&settings_update_mtx); true) {
-        if (!has_key_marker)
+        /* Until the key marker has been established, use the cycled thresholding parameters and search for
+           optimal ones regardless of contrast method. Afterwards, use the configured contrast method.
+        */
+        if (!has_key_marker) {
+            set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
             detect_markers_optimal(image, frame_data.returned_markers);
-        else
+        } else {
+            apply_contrast_method();
             detector.detect(image, frame_data.returned_markers, cv::Mat(), cv::Mat(), -1, false);
+        }
     }
 
     const int min_marker_id = s.first_marker_id;
@@ -136,6 +143,10 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
 
         detected_markers.push_back(marker_detection_info(marker.id, marker));
     }
+
+    /* Track how many consecutive frames each marker has been detected for.
+    */
+    update_marker_streaks(detected_markers);
 
     /* Express corners in terms of original frame, if necessary.
     */
@@ -180,15 +191,17 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             detected_markers[i].tvec = frame_data.pnp_tvecs[solution_index];
             detected_markers[i].solved = true;
 
-            /* Set marker weight.
+            /* Set marker weight. Markers near configured angle limits get a lower weight, as do markers having a
+               low stability score (based on the number of frames a marker has been seen consistently).
             */
             const auto marker_direction = -detected_markers[i].tvec / cv::norm(detected_markers[i].tvec);
             detected_markers[i].z_angle = get_marker_relative_angle(detected_markers[i].rvec, marker_direction);
 
             const double fade_low = std::clamp((detected_markers[i].z_angle - min_angle_radians) / fadeout_range, 0.0, 1.0);
             const double fade_high = std::clamp((max_angle_radians - detected_markers[i].z_angle) / fadeout_range, 0.0, 1.0);
+            const double stability = std::clamp(get_marker_stability_score(id), 0.0, 1.0);
 
-            detected_markers[i].weight = fade_low * fade_high;
+            detected_markers[i].weight = fade_low * fade_high * stability;
 
             /* Exclude markers that are too ambiguous, too close to head-on, or too oblique.
             */
@@ -247,23 +260,13 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         }
     }
 
-    /* Update marker model, if necessary.
-    */
-    cv::Matx33d R;
-    cv::Rodrigues(head_rvec, R);
-    const auto euler = rotation_matrix_to_euler_zyx(R);
-
-    if (!marker_model.is_angle_covered(euler[0], euler[1])) {
-        marker_model.update(detected_markers);
-        marker_model.set_angle_covered(euler[0], euler[1]);
-    }
-
     /* Find key marker if it has not yet been detected.
     */
     if (!has_key_marker) {
         const auto key_markers = get_key_markers(detected_markers);
 
         if (key_markers.size() > 0) {
+            // Set the key marker.
             for (const auto marker_index : key_markers) {
                 starting_rvecs.push_back(detected_markers[marker_index].rvec);
                 starting_tvecs.push_back(detected_markers[marker_index].tvec);
@@ -285,6 +288,9 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             }
 
             has_key_marker = true;
+
+            // Initialize the marker model.
+            update_marker_model_at_pose(head_orientation, detected_markers, 1, marker_size_cm);
         }
     } else if (last_head_circumference_cm != s.head_circumference_cm || last_marker_height_cm != s.marker_height_cm) {
         // update marker origin
@@ -308,19 +314,109 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         */
         marker_model.build(key_marker_id, marker_size_cm, camera_matrix, dist_coeffs);
 
+        bool head_pose_solved = false;
+        bool model_updated = false;
+
         #if CV_MAJOR_VERSION >= 5
 
         /*  Compute pose using selected markers in a single call to solvePnP.
         */
+        cv::Vec3d new_head_rvec;
+        cv::Vec3d new_head_tvec;
+
         cv::Vec3d rvec;
         cv::Vec3d tvec;
         if (marker_model.solvePnP(detected_markers, frame_data.selected_markers, marker_size_cm, camera_matrix, dist_coeffs, rvec, tvec)) {
-            auto [pose_rvec, pose_tvec] = get_head_pose_from_marker_transform(rvec, tvec);
+            auto [new_head_rvec, new_head_tvec] = get_head_pose_from_marker_transform(rvec, tvec);
+
+            /* Fall back to individual marker averaging if the combined solve disagrees significantly with observed marker poses.
+            */
+            const double transformation_error = marker_model.transformation_error(new_head_rvec, new_head_tvec, key_marker_local_rvec, key_marker_local_tvec, detected_markers, frame_data.selected_markers, marker_size_cm);
+
+            if (transformation_error > PAPERTRACKER_MARKER_MODEL_TRANSFORMATION_ERROR_THRESHOLD_CM) {
+                /* The combined solve disagrees significantly with the observations. This can happen when the model is
+                   inaccurate, causing solvePnP() to produce a worse pose than individual markers. Choose those individual
+                   markers that best explain all of the selected markers and average their poses together. If the error
+                   persists across several frames, update the model (up to MAX_CORRECTIVE_SAMPLES times).
+                */
+                consecutive_transformation_error_frames++;
+
+                double min_error = transformation_error;
+
+                frame_data.temp_rvecs.clear();
+                frame_data.temp_tvecs.clear();
+                frame_data.temp_weights.clear();
+
+                double summed_weights = 0;
+                for (const auto marker_index : frame_data.selected_markers) {
+                    const auto &marker = detected_markers[marker_index];
+
+                    if (!marker.solved)
+                        continue;
+
+                    if (!marker_model.get_pose_from_single_marker(marker.id, marker.rvec, marker.tvec, rvec, tvec))
+                        continue;
+
+                    const auto [pose_rvec, pose_tvec] = get_head_pose_from_marker_transform(rvec, tvec);
+
+                    const double pose_error = marker_model.transformation_error(pose_rvec, pose_tvec, key_marker_local_rvec, key_marker_local_tvec, detected_markers, frame_data.selected_markers, marker_size_cm);
+
+                    // Keep track of the pose with the smallest error to use as a fallback if no good poses found.
+                    if (pose_error < min_error) {
+                        min_error = pose_error;
+                        new_head_rvec = pose_rvec;
+                        new_head_tvec = pose_tvec;
+                    }
+
+                    // Add poses below the error threshold to the list of poses to be averaged.
+                    if (pose_error < PAPERTRACKER_MARKER_MODEL_TRANSFORMATION_ERROR_THRESHOLD_CM) {
+                        frame_data.temp_rvecs.push_back(pose_rvec);
+                        frame_data.temp_tvecs.push_back(pose_tvec);
+                        frame_data.temp_weights.push_back(marker.weight);
+                        summed_weights += marker.weight;
+                    }
+                }
+
+                /* Compute average of selected poses. If none have been selected, the single pose with the smallest
+                   transformation error will be used instead (from previously set values).
+                */
+                if (!frame_data.temp_rvecs.empty()) {
+                    const std::vector<double> *weights = nullptr;
+
+                    if (summed_weights > 0.0) {
+                        for (auto &weight : frame_data.temp_weights)
+                            weight /= summed_weights;
+
+                        weights = &frame_data.temp_weights;
+                    }
+
+                    new_head_rvec = average_rotation(frame_data.temp_rvecs, weights);
+                    new_head_tvec = average_translation(frame_data.temp_tvecs, weights);
+                }
+
+                if (consecutive_transformation_error_frames >= PAPERTRACKER_MARKER_MODEL_CORRECTION_HYSTERESIS_FRAMES) {
+                    /*  Address persistent errors by updating the model with this frame's observations. Testing reveals this will often serve to
+                        repair the model. The effect may not be immediate and may require samples from other angles. Requiring the error to
+                        persist guards against correcting an accurate model due to a few bad observations. Only markers
+                        whose stability score has reached the stability threshold are used.
+                    */
+                    const auto &stable_markers = get_stable_markers(detected_markers);
+
+                    if (stable_markers.size() >= 2)
+                        model_updated = update_marker_model_at_pose(new_head_rvec, stable_markers, PAPERTRACKER_MARKER_MODEL_MAX_CORRECTIVE_SAMPLES + 1, marker_size_cm);
+
+                    consecutive_transformation_error_frames = 0;
+                }
+            } else {
+                consecutive_transformation_error_frames = 0;
+            }
 
             if (QMutexLocker l(&data_mtx); true) {
-                head_rvec = pose_rvec;
-                head_tvec = pose_tvec;
+                head_rvec = new_head_rvec;
+                head_tvec = new_head_tvec;
             }
+
+            head_pose_solved = true;
         }
 
         #else // CV_MAJOR_VERSION < 5
@@ -351,19 +447,54 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             }
         }
 
-        if (summed_weights > 0.0)
-            for (auto &weight : frame_data.temp_weights)
-                weight /= summed_weights;
+        if (!frame_data.temp_rvecs.empty()) {
+            const std::vector<double> *weights = nullptr;
 
-        const auto weighted_rvec = average_rotation(frame_data.temp_rvecs, &frame_data.temp_weights);
-        const auto weighted_tvec = average_translation(frame_data.temp_tvecs, &frame_data.temp_weights);
+            if (summed_weights > 0.0) {
+                for (auto &weight : frame_data.temp_weights)
+                    weight /= summed_weights;
 
-        if (QMutexLocker l(&data_mtx); true) {
-            head_rvec = weighted_rvec;
-            head_tvec = weighted_tvec;
+                weights = &frame_data.temp_weights;
+            }
+
+            const auto weighted_rvec = average_rotation(frame_data.temp_rvecs, weights);
+            const auto weighted_tvec = average_translation(frame_data.temp_tvecs, weights);
+
+            if (QMutexLocker l(&data_mtx); true) {
+                head_rvec = weighted_rvec;
+                head_tvec = weighted_tvec;
+            }
+
+            head_pose_solved = true;
         }
 
         #endif
+
+        /* Update marker model with this frame's observations if the current head pose falls in an unvisited angle bin,
+           unless the corrective path above already added this frame's observations. Only markers whose stability score
+           has reached the stability threshold are used, so that markers flickering in and out of detection don't
+           corrupt the model. A stable marker that isn't yet part of the model is admitted regardless of whether
+           the angle bin has already been visited, so that it doesn't have to wait for the next unvisited bin.
+        */
+        if (head_pose_solved && !model_updated) {
+            const auto &stable_markers = get_stable_markers(detected_markers);
+
+            if (stable_markers.size() >= 2) {
+                bool has_new_marker = false;
+
+                for (const auto &marker : stable_markers) {
+                    if (!marker_model.has_marker(marker.id)) {
+                        has_new_marker = true;
+                        break;
+                    }
+                }
+
+                // Always add new markers regardless of the number of visits for the current angle.
+                const int max_visits = has_new_marker ? std::numeric_limits<int>::max() : 1;
+
+                update_marker_model_at_pose(head_rvec, stable_markers, max_visits, marker_size_cm);
+            }
+        }
 
         /* Check detected markers against expectations and signal need to reset ROI if these don't match.
         */
@@ -394,14 +525,6 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     return !detection_failed;
 }
 
-static const int adaptive_threshold_sizes[] =
-{
-    5,
-    7,
-    9,
-    11
-};
-
 /* Cycle through thresholding parameters. Adapted from ftnoir_tracker_aruco.cpp.
 */
 void PaperTracker::cycle_threshold_params()
@@ -415,25 +538,56 @@ void PaperTracker::cycle_threshold_params()
         adaptive_size_pos %= std::size(adaptive_threshold_sizes);
     }
 
-    set_threshold_params();
+    set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 
     qDebug() << "aruco: switched thresholding params"
              << "fixed:" << use_fixed_threshold
              << "size:" << adaptive_threshold_sizes[adaptive_size_pos];
 }
 
-/* Update detector thresholding parameters. Adapted from ftnoir_tracker_aruco.cpp.
+/* Set detector thresholding parameters explicitly. Adapted from ftnoir_tracker_aruco.cpp.
 */
-void PaperTracker::set_threshold_params()
+void PaperTracker::set_threshold_params(bool fixed_threshold, int adaptive_size)
 {
     detector.setDesiredSpeed(3);
 
-    if (use_fixed_threshold)
+    if (fixed_threshold)
         detector._thresMethod = aruco::MarkerDetector::FIXED_THRES;
     else
         detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
 
-    detector.setThresholdParams(adaptive_threshold_sizes[adaptive_size_pos], PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
+    detector.setThresholdParams(adaptive_size, PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
+}
+
+/* Apply thresholding parameters for the configured contrast method.
+*/
+void PaperTracker::apply_contrast_method()
+{
+    const papertracker_contrast_method method = s.contrast_method;
+
+    switch (method) {
+    case PAPERTRACKER_CONTRAST_METHOD_GLOBAL:
+        set_threshold_params(true, adaptive_threshold_sizes[0]);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_5_5:
+        set_threshold_params(false, 5);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_7_7:
+        set_threshold_params(false, 7);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_9_9:
+        set_threshold_params(false, 9);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_ADAPTIVE_11_11:
+        set_threshold_params(false, 11);
+        break;
+    case PAPERTRACKER_CONTRAST_METHOD_LOCKED_AUTO:
+    case PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO:
+    default:
+        // use settings from last time either auto mode was run
+        set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
+        break;
+    }
 }
 
 /* Detect markers using threshold parameters that maximize the number of detected markers. This is especially
@@ -460,7 +614,7 @@ void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruc
     // Try fixed threshold.
     if (!skip_fixed_threshold) {
         use_fixed_threshold = true;
-        set_threshold_params();
+        set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 
         detector.detect(image, frame_data.temp_markers, cv::Mat(), cv::Mat(), -1, false);
 
@@ -477,7 +631,7 @@ void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruc
             continue; // already tried this combination
 
         adaptive_size_pos = static_cast<int>(i);
-        set_threshold_params();
+        set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 
         detector.detect(image, frame_data.temp_markers, cv::Mat(), cv::Mat(), -1, false);
 
@@ -490,7 +644,7 @@ void PaperTracker::detect_markers_optimal(const cv::Mat &image, std::vector<aruc
 
     use_fixed_threshold = best_threshold_fixed;
     adaptive_size_pos = best_adaptive_size_pos;
-    set_threshold_params();
+    set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
 }
 
 /* Generate a camera matrix for the given image dimension and field of view (in radians).
@@ -614,6 +768,81 @@ cv::Vec3d PaperTracker::get_approximate_head_origin(const std::vector<cv::Vec3d>
         else
             return (head_tvec_a + head_tvec_b) / 2.0;
     }
+}
+
+/* Add the given detections to the marker model if the angle bin for pose_rvec has been visited fewer than max_visits times.
+   The model is rebuilt so that later checks in the same frame (marker count, expected visible markers) see any new markers.
+*/
+bool PaperTracker::update_marker_model_at_pose(const cv::Vec3d &pose_rvec, const std::vector<marker_detection_info> &detections, int max_visits, double marker_size_cm) {
+    cv::Matx33d R;
+    cv::Rodrigues(pose_rvec, R);
+    const auto euler = rotation_matrix_to_euler_zyx(R);
+
+    if (marker_model.get_visit_count(euler[0], euler[1]) >= max_visits)
+        return false;
+
+    marker_model.update(detections);
+    marker_model.add_visit(euler[0], euler[1]);
+    marker_model.build(key_marker_id, marker_size_cm, camera_matrix, dist_coeffs);
+
+    return true;
+}
+
+/* Update per-marker counts of consecutive frames in which each marker has been detected. These are used to
+   compute the stability scores for the markers. Counting is keyed to frame_number so that processing the
+   same camera frame more than once (ROI pass followed by full-frame pass) doesn't count it twice. A marker
+   missing from one or more frames starts over from 1 the next time it is seen.
+*/
+void PaperTracker::update_marker_streaks(const std::vector<marker_detection_info> &detections) {
+    for (const auto &detection : detections) {
+        auto [it, inserted] = marker_streaks.try_emplace(detection.id, marker_streak{ frame_number, 1 });
+
+        if (inserted)
+            continue;
+
+        auto &streak = it->second;
+
+        if (streak.last_seen_frame == frame_number)
+            continue; // already counted for this frame
+
+        if (streak.last_seen_frame + 1 == frame_number)
+            streak.count++;
+        else
+            streak.count = 1;
+
+        streak.last_seen_frame = frame_number;
+    }
+}
+
+/* Get a marker's stability score: the number of consecutive frames it has been detected in, including the
+   current one, divided by PAPERTRACKER_MARKER_STABILITY_SCORE_FRAMES. A marker not detected in the current
+   frame scores 0. The score starts at 1/PAPERTRACKER_MARKER_STABILITY_SCORE_FRAMES and is uncapped.
+*/
+double PaperTracker::get_marker_stability_score(int id) const {
+    const auto it = marker_streaks.find(id);
+
+    if (it == marker_streaks.end() || it->second.last_seen_frame != frame_number)
+        return 0.0;
+
+    return static_cast<double>(it->second.count) / PAPERTRACKER_MARKER_STABILITY_SCORE_FRAMES;
+}
+
+/* Determine if a marker's stability score is high enough for its detections to be used to update the marker model.
+*/
+bool PaperTracker::is_marker_stable(int id) const {
+    return get_marker_stability_score(id) >= PAPERTRACKER_MARKER_STABILITY_SCORE_THRESHOLD;
+}
+
+/* Get the subset of solved detections whose markers are considered stable.
+*/
+const std::vector<marker_detection_info> &PaperTracker::get_stable_markers(const std::vector<marker_detection_info> &detections) {
+    frame_data.stable_markers.clear();
+
+    for (const auto &detection : detections)
+        if (detection.solved && is_marker_stable(detection.id))
+            frame_data.stable_markers.push_back(detection);
+
+    return frame_data.stable_markers;
 }
 
 std::pair<cv::Vec3d, cv::Vec3d> PaperTracker::get_head_pose_from_marker_transform(cv::Vec3d &rvec_measured, cv::Vec3d &tvec_measured) {
@@ -904,6 +1133,8 @@ void PaperTracker::run() {
 
         /* Process the current frame.
         */
+        frame_number++;
+
         bool detection_ok = process_frame(frame_mat, &last_roi) || process_frame(frame_mat);
 
         if (detection_ok) {
@@ -917,7 +1148,14 @@ void PaperTracker::run() {
 
             if (no_detection_timeout > PAPERTRACKER_NO_DETECTION_TIMEOUT) {
                 no_detection_timeout = 0;
-                cycle_threshold_params();
+
+                /* Cycle threshold parameters when the key marker has not yet been established, or when the
+                   contrast method is set to continuous auto.
+                */
+                if (!has_key_marker || s.contrast_method == PAPERTRACKER_CONTRAST_METHOD_CONTINUOUS_AUTO) {
+                    QMutexLocker l(&settings_update_mtx);
+                    cycle_threshold_params();
+                }
             }
         }
 
@@ -1034,10 +1272,11 @@ PaperTracker::PaperTracker() :
     last_bin(std::numeric_limits<int>::max(), std::numeric_limits<int>::max()),
     started_(false),
     use_fixed_threshold(false),
-    adaptive_size_pos(0)
+    adaptive_size_pos(0),
+    consecutive_transformation_error_frames(0)
 {
     opencv_init();
-    set_threshold_params();
+    set_threshold_params(use_fixed_threshold, adaptive_threshold_sizes[adaptive_size_pos]);
     current_dictionary = s.aruco_dictionary;
     marker_highlight_set.reserve(16);
     marker_model.reserve(16);

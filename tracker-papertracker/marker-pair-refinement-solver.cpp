@@ -139,12 +139,14 @@ bool MarkerPairRefinementSolver::operator()(cv::InputOutputArray param, cv::Outp
 bool MarkerPairRefinementSolver::add_pair_observation(int parent_id, int child_id, const cv::Vec3d &parent_rvec, const cv::Vec3d &parent_tvec, const std::array<cv::Point2f, 4> &child_image_points, bool evict_oldest) {
     const auto pair = std::pair<int,int>(parent_id, child_id);
 
-    // Remove oldest entry if full and evict_oldest is set.
-    while (evict_oldest && pair_samples[pair].size() >= max_samples_per_pair)
-        pair_samples.erase(pair_samples.begin());
+    auto &samples = pair_samples[pair];
+
+    // Remove oldest sample for this pair if full and evict_oldest is set.
+    if (evict_oldest && samples.size() >= max_samples_per_pair)
+        samples.erase(samples.begin());
 
     // Insert sample if there's space available.
-    if (pair_samples[pair].size() < max_samples_per_pair) {
+    if (samples.size() < max_samples_per_pair) {
         PairInfo info;
         info.parent_rvec = parent_rvec;
         info.parent_tvec = parent_tvec;
@@ -155,8 +157,8 @@ bool MarkerPairRefinementSolver::add_pair_observation(int parent_id, int child_i
             image_point.y += image_point_offset[1];
         }
 
-        pair_samples[pair].reserve(max_samples_per_pair);
-        pair_samples[pair].push_back(info);
+        samples.reserve(max_samples_per_pair);
+        samples.push_back(info);
 
         return true;
     }

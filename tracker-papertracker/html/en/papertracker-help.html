@@ -121,24 +121,33 @@
         <p><b>Number of markers</b>: The maximum number of markers to use for pose estimation. For best performance, set this to the exact number of markers you are using.</p>
         <p><b>Preferred marker angle (minimum)</b>: When using multiple markers, prioritize markers whose angle relative to the camera is greater than this value. This may help reduce the jitter that can be observed when some of the markers are nearly flat to the camera. If no detected markers meet this requirement the tracker will choose among the best available markers instead. The default is 15°.</p>
         <p><b>Preferred marker angle (maximum)</b>: When using multiple markers, prioritize markers whose angle relative to the camera is less than this value. This may help reduce the jitter that can be observed when some of the markers are angled away from the camera, especially at lower resolutions or when marker borders are small. If no detected markers meet this requirement the tracker will choose among the best available markers instead. The default is 80°.</p>
-
+        <p><b>Contrast method</b>: How the tracker tells the dark and light parts of each marker apart, and separates the markers from the background:</p>
+            <ul>
+                <li><b>Auto (Continuous)</b>: The tracker chooses the best contrast method and keeps adjusting it as conditions change. This is the default and works well in most situations. Switching methods can sometimes cause tracking glitches. If that happens, try one of the fixed methods below.</li>
+                <li><b>Auto (Locked)</b>: Picks a method automatically once and keeps it for the entire tracking session. Good for steady lighting.</li>
+                <li><b>Global</b>: Uses a single brightness reference for the entire image. Works best when lighting is even and the markers contrast clearly with their surroundings.</li>
+                <li><b>Adaptive (5 x 5, 7 x 7, 9 x 9, 11 x 11)</b>: Compares each part of the image with its immediate surroundings instead of a global brightness reference. This copes better with uneven lighting, shadows, and glare. The number is the size of the local region used for comparison. Smaller sizes deal better with uneven lighting and small or distant markers, but are less tolerant of noise and large/close markers. Larger sizes deal better with noise and large or close markers, but are less tolerant of uneven lighting and small/distant markers.</li>
+            </ul>
         <h2 id="head">Head / Hat <a href="#top" class="back-link">↑</a></h2>
         <p>These measurements help the software translate marker movement into accurate head movement.</p>
         <p><b>Circumference</b>: Measure around your head or hat at the exact level where the markers are positioned.</p>
         <p><b>Head joint to marker distance</b>: Measure vertically from where the head joins the spine (roughly in line with the back of the jaw) to the marker level, used to determine the pivot point for head tilt and rotation.</p>
 
         <h1 id="troubleshooting">Troubleshooting <a href="#top" class="back-link">↑</a></h1>
-        <p>If the tracking is too jittery you can try the following:</p>
+        <p>If you're having problems with tracking accuracy or jitter you can try the following:</p>
         <p>
             <ul>
                 <li>Increase the size of your printed markers.</li>
                 <li>Give the markers a larger border.</li>
                 <li>Set the camera to a higher resolution.</li>
+                <li>Make sure the diagonal FOV setting is correct for your camera.</li>
+                <li>Adjust exposure, contrast, or other settings in your camera's software or the camera settings dialog. Higher shutter speeds can help with fast motion. Lower shutter speeds can help with dim lighting.</li>
                 <li>Physically move closer to the camera.</li>
                 <li>Adjust your markers so they're not too flat or too slanted, as seen by the camera, when the tracker is started.</li>
-                <li>Choose a different marker configuration (see <a href="#markersetup">Marker Setup</a>).</li>
                 <li>Set the minimum preferred marker angle to a higher value.</li>
                 <li>Set the maximum preferred marker angle to a lower value.</li>
+                <li>Try a different contrast method.</li>
+                <li>Choose a different marker configuration (see <a href="#markersetup">Marker Setup</a>).</li>
                 <li>Adjust filter settings to reduce or eliminate any remaining jitter.</li>
             </ul>
         </p>
