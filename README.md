@@ -113,3 +113,5 @@ On Linux, see [our wiki's Linux build instructions](https://github.com/opentrack
 
 On macOS, see [docs/macos-build.md](docs/macos-build.md).
 
+For running the Windows build under Wine, CrossOver or Proton, including cross-compiling it from a Unix host, see [docs/wine-crossover.md](docs/wine-crossover.md).
+
