@@ -76,6 +76,7 @@ For the new Alpha Spectrum filter parameter guide, see [filter-alpha-spectrum/RE
 - GO63-samara (Hamilton Filter, Pose-widget improvement)
 - Davide Mameli (Eyeware Beam tracker)
 - Khoa Nguyen (Tobii eye tracker)
+- Adrian Lopez (PaperTracker tracker)
 
 ## Thanks
 
