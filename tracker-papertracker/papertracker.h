@@ -77,6 +77,10 @@ private:
         */
         std::vector<marker_detection_info> stable_markers;
 
+        /* Grayscale copy of the detection image, used for corner refinement.
+        */
+        cv::Mat gray;
+
         frame_data_() {
             const size_t reserve_count = 16;
 
