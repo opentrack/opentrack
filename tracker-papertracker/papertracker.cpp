@@ -7,6 +7,7 @@
 #include "papertracker.h"
 #include "papertracker-util.h"
 #include "marker-detect.h"
+#include "marker-refine.h"
 #include "api/plugin-api.hpp"
 #include "cv/init.hpp"
 #include "compat/sleep.hpp"
@@ -142,6 +143,43 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
             continue;
 
         detected_markers.push_back(marker_detection_info(marker.id, marker));
+    }
+
+    /* Refine corners to subpixel accuracy using image gradients rather than the thresholded contour,
+       which makes corner positions independent of thresholding parameters. Then reject markers whose
+       quads look unreliable (degenerate angles, occluded, low contrast). This is done before updating
+       streaks so that a rejected detection breaks the marker's stability streak.
+    */
+    if (!detected_markers.empty()) {
+#if PAPERTRACKER_EDGE_REFINEMENT_ITERATIONS > 0
+        const cv::Mat *gray = &image;
+
+        if (image.type() != CV_8UC1) {
+            cv::cvtColor(image, frame_data.gray, cv::COLOR_BGR2GRAY);
+            gray = &frame_data.gray;
+        }
+#endif
+
+        std::erase_if(detected_markers, [&](marker_detection_info &marker) {
+#if PAPERTRACKER_EDGE_REFINEMENT_ITERATIONS > 0
+            papertracker::marker_edge_quality quality;
+            [[maybe_unused]] const bool refined = papertracker::refine_marker_edges(*gray, marker, PAPERTRACKER_EDGE_REFINEMENT_RANGE,
+                                                    PAPERTRACKER_EDGE_REFINEMENT_MIN_SAMPLE_CONTRAST, &quality,
+                                                    PAPERTRACKER_EDGE_REFINEMENT_ITERATIONS);
+    #if PAPERTRACKER_MARKER_QUALITY_FILTER_ENABLED
+            if (!refined ||
+                quality.min_edge_coverage < PAPERTRACKER_MARKER_QUALITY_MIN_EDGE_COVERAGE ||
+                quality.min_edge_contrast < PAPERTRACKER_MARKER_QUALITY_MIN_EDGE_CONTRAST)
+                return true;
+    #endif
+#endif
+
+#if PAPERTRACKER_MARKER_QUALITY_FILTER_ENABLED
+            return !papertracker::marker_quad_angles_ok(marker, PAPERTRACKER_MARKER_QUALITY_ANGLE_LIMIT_DEGREES * (CV_PI / 180.0));
+#else
+            return false;
+#endif
+        });
     }
 
     /* Track how many consecutive frames each marker has been detected for.
