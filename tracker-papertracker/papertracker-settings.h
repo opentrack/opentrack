@@ -35,6 +35,7 @@ struct papertracker_settings : public opts
     value<int> aruco_marker_size_mm { b, "aruco_marker_size_mm", 80 };
     value<int> number_of_markers { b, "number_of_markers", 1 };
     value<int> first_marker_id { b, "first_marker_id", 1 };
+    value<bool> auto_detect_marker_ids { b, "auto_detect_marker_ids", false };
     value<double> head_circumference_cm { b, "head_circumference_cm", 60 };
     value<double> marker_height_cm { b, "marker_height_cm", 15 };
     value<papertracker_dictionary> aruco_dictionary { b, "aruco_dictionary", papertracker_dictionary::PAPERTRACKER_DICT_ARUCO_MIP_36h12 };

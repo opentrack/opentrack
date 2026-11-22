@@ -39,6 +39,15 @@ PaperTrackerDialog::PaperTrackerDialog() : // NOLINT(cppcoreguidelines-pro-type-
     tie_setting(s.aruco_marker_size_mm, ui.sbMarkerSize);
     tie_setting(s.number_of_markers, ui.sbNumberOfMarkers);
     tie_setting(s.first_marker_id, ui.sbFirstMarkerID);
+    tie_setting(s.auto_detect_marker_ids, ui.cbAutoDetectMarkerIDs);
+
+    // The ID range only applies when automatic ID detection is off.
+    auto update_id_range_enabled = [this](bool auto_detect) {
+        ui.sbFirstMarkerID->setEnabled(!auto_detect);
+        ui.sbNumberOfMarkers->setEnabled(!auto_detect);
+    };
+    connect(ui.cbAutoDetectMarkerIDs, &QCheckBox::toggled, this, update_id_range_enabled);
+    update_id_range_enabled(ui.cbAutoDetectMarkerIDs->isChecked());
     tie_setting(s.head_circumference_cm, ui.sbHeadCircumference);
     tie_setting(s.marker_height_cm, ui.sbMarkerHeight);
     tie_setting(s.aruco_dictionary, ui.cmbArucoDictionary);
