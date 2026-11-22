@@ -121,6 +121,7 @@ private:
     double last_marker_height_cm;
     double last_head_circumference_cm;
     std::unordered_set<int> marker_highlight_set;
+    double threshold_window_scale = 1.0;
     papertracker::AngleCoverageTracker visited_angles;
     cv::Rect2i last_roi;
     papertracker::AngleCoverageBin last_bin;
