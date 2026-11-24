@@ -18,6 +18,7 @@
 #endif
 #include <opencv2/imgproc.hpp>
 #include "config.h"
+#include <cmath>
 #include <unordered_map>
 #include <unordered_set>
 #include <limits>
@@ -596,7 +597,7 @@ void PaperTracker::set_threshold_params(bool fixed_threshold, int adaptive_size)
 
     /* Adaptive window sizes are tuned for 640-pixel frames. At higher resolutions markers cover more pixels, and a
        window much smaller than a marker cell cannot tell a large dark cell from its surroundings, so scale the window
-       with the frame size (rounded up to an odd size, as adaptive thresholding requires).
+       with the frame size (rounded to an odd size, as adaptive thresholding requires).
     */
     int window = static_cast<int>(std::lround(adaptive_size * threshold_window_scale));
     if (window % 2 == 0)
