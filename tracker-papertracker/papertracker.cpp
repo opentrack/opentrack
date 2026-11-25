@@ -135,12 +135,16 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         }
     }
 
+    /* With automatic ID detection any ID in the dictionary is accepted here; IDs not yet in the marker model are
+       held back below until they have been detected consistently. Otherwise only the configured ID range is accepted.
+    */
+    const bool auto_detect_ids = s.auto_detect_marker_ids;
     const int min_marker_id = s.first_marker_id;
     const int max_marker_id = s.first_marker_id + s.number_of_markers - 1;
 
     detected_markers.clear();
     for (const auto &marker : frame_data.returned_markers) {
-        if (marker.id < min_marker_id || marker.id > max_marker_id)
+        if (!auto_detect_ids && (marker.id < min_marker_id || marker.id > max_marker_id))
             continue;
 
         detected_markers.push_back(marker_detection_info(marker.id, marker));
@@ -186,6 +190,21 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
     /* Track how many consecutive frames each marker has been detected for.
     */
     update_marker_streaks(detected_markers);
+
+    /* With automatic ID detection, guard against false detections: a marker not yet in the marker model is used only
+       once its stability score reaches the threshold (detected in enough consecutive frames). Its streak is still
+       counted above while it is held back. Markers that pass are remembered, so that the model counts as complete
+       once all of them have been added to it.
+    */
+    if (auto_detect_ids) {
+        std::erase_if(detected_markers, [&](const marker_detection_info &marker) {
+            return !marker_model.has_marker(marker.id) && !is_marker_stable(marker.id);
+        });
+
+        for (const auto &marker : detected_markers)
+            if (!marker_model.has_marker(marker.id))
+                auto_detected_ids.insert(marker.id);
+    }
 
     /* Express corners in terms of original frame, if necessary.
     */
@@ -551,7 +570,23 @@ bool PaperTracker::process_frame(cv::Mat &frame, const cv::Rect2i *roi)
         if (roi == nullptr && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD)
             visited_angles.add_visit(bin);
 
-        if (marker_model.num_markers() < s.number_of_markers && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD) {
+        /* With automatic ID detection the number of markers is unknown, so the model counts as incomplete only while
+           a marker that has passed the stability check is missing from it.
+        */
+        bool model_incomplete = false;
+
+        if (auto_detect_ids) {
+            for (const int id : auto_detected_ids) {
+                if (!marker_model.has_marker(id)) {
+                    model_incomplete = true;
+                    break;
+                }
+            }
+        } else {
+            model_incomplete = marker_model.num_markers() < static_cast<size_t>(s.number_of_markers);
+        }
+
+        if (model_incomplete && visited_angles.get_visit_count(bin) < PAPERTRACKER_ANGLE_COVERAGE_VISIT_THRESHOLD) {
             detection_failed = true;
         } else {
             auto expected_ids = marker_model.get_expected_visible_markers(head_rvec, head_tvec, key_marker_local_rvec, key_marker_local_tvec, CV_PI / 180.0 * s.marker_max_angle);
