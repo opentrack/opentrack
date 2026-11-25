@@ -18,6 +18,7 @@
 #endif
 #include <opencv2/imgproc.hpp>
 #include "config.h"
+#include <cmath>
 #include <unordered_map>
 #include <unordered_set>
 #include <limits>
@@ -594,7 +595,15 @@ void PaperTracker::set_threshold_params(bool fixed_threshold, int adaptive_size)
     else
         detector._thresMethod = aruco::MarkerDetector::ADPT_THRES;
 
-    detector.setThresholdParams(adaptive_size, PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
+    /* Adaptive window sizes are tuned for 640-pixel frames. At higher resolutions markers cover more pixels, and a
+       window much smaller than a marker cell cannot tell a large dark cell from its surroundings, so scale the window
+       with the frame size (rounded to an odd size, as adaptive thresholding requires).
+    */
+    int window = static_cast<int>(std::lround(adaptive_size * threshold_window_scale));
+    if (window % 2 == 0)
+        window++;
+
+    detector.setThresholdParams(window, PAPERTRACKER_ADAPTIVE_THRESHOLD_C);
 }
 
 /* Apply thresholding parameters for the configured contrast method.
@@ -1146,6 +1155,11 @@ void PaperTracker::run() {
         }
 
         auto frame_mat_temp = cv::Mat(frame.height, frame.width, CV_8UC(frame.channels), (void*)frame.data, frame.stride);
+
+        /* Scale adaptive threshold windows with the camera resolution. Zoom crops without resampling, so marker sizes
+           in pixels depend on the full frame, not the zoomed region.
+        */
+        threshold_window_scale = std::max(1.0, std::max(frame.width, frame.height) / 640.0);
 
         /* Apply zoom (as region of interest).
         */
