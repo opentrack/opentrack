@@ -21,6 +21,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <limits>
+#include <cstdio>
 #include <QDebug>
 
 using namespace papertracker;
@@ -1035,12 +1036,13 @@ void PaperTracker::draw_marker_border(cv::Mat &image, const std::array<cv::Point
 
     center /= (double)image_points.size();
 
-    std::stringstream ss;
-    ss << id;
+    char label[16]; // enough for a 32-bit integer + NUL
+    std::snprintf(label, sizeof(label), "%d", id);
+    osd_label.assign(label);
 
-    const auto text_size = cv::getTextSize(ss.str(), cv::FONT_HERSHEY_SIMPLEX, font_scale, line_thickness, nullptr);
+    const auto text_size = cv::getTextSize(osd_label, cv::FONT_HERSHEY_SIMPLEX, font_scale, line_thickness, nullptr);
 
-    cv::putText(image, ss.str(), center - cv::Point2f(text_size.width / 2.0, 0), cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255) - border_color, line_thickness, cv::LINE_AA);
+    cv::putText(image, osd_label, center - cv::Point2f(text_size.width / 2.0, 0), cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(255, 255, 255) - border_color, line_thickness, cv::LINE_AA);
 }
 
 /* Update FPS average.
@@ -1217,15 +1219,16 @@ void PaperTracker::run() {
         */
         update_fps();
 
-        std::stringstream ss;
-        ss << frame.width << "x" << frame.height << " @ " << int(fps) << "Hz";
+        char label[64]; // enough for three 32-bit integers + text + NUL
+        std::snprintf(label, sizeof(label), "%dx%d @ %dHz", frame.width, frame.height, int(fps));
+        osd_label.assign(label);
 
         const double line_thickness = std::max(frame_mat.cols * PAPERTRACKER_LINE_THICKNESS_FRAME_SCALING_FACTOR, 1.0);
         const double font_scale = line_thickness * 0.5;
 
-        const auto text_size = cv::getTextSize(ss.str(), cv::FONT_HERSHEY_SIMPLEX, font_scale, line_thickness, nullptr);
+        const auto text_size = cv::getTextSize(osd_label, cv::FONT_HERSHEY_SIMPLEX, font_scale, line_thickness, nullptr);
 
-        cv::putText(frame_mat, ss.str(), cv::Point(line_thickness * 5, text_size.height + line_thickness * 5), cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(0, 255, 0), line_thickness, cv::LINE_AA);
+        cv::putText(frame_mat, osd_label, cv::Point(line_thickness * 5, text_size.height + line_thickness * 5), cv::FONT_HERSHEY_SIMPLEX, font_scale, cv::Scalar(0, 255, 0), line_thickness, cv::LINE_AA);
 
         /* Show preview.
         */

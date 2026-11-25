@@ -10,6 +10,7 @@
 #include <QHBoxLayout>
 #include <QMutex>
 #include <unordered_map>
+#include <string>
 #include "api/plugin-api.hpp"
 #include "cv/video-widget.hpp"
 #include "video/camera.hpp"
@@ -132,6 +133,7 @@ private:
     Timer fps_timer;
     Timer last_detection_timer;
     double fps = 0;
+    std::string osd_label;
     double no_detection_timeout = 0;
     QMutex camera_mtx;
     QMutex data_mtx;
